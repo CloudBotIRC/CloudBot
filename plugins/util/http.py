@@ -9,7 +9,6 @@ import urlparse
 from urllib import quote, quote_plus as _quote_plus
 from urllib2 import HTTPError, URLError
 
-from BeautifulSoup import BeautifulSoup
 
 
 from lxml import etree, html
@@ -30,11 +29,6 @@ def get(*args, **kwargs):
 
 def get_html(*args, **kwargs):
     return html.fromstring(get(*args, **kwargs))
-
-
-def get_soup(*args, **kwargs):
-    return BeautifulSoup(get(*args, **kwargs))
-
 
 def get_xml(*args, **kwargs):
     return etree.fromstring(get(*args, **kwargs))

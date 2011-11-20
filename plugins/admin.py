@@ -11,7 +11,7 @@ def join(inp, input=None, db=None, notice=None):
     chan = inp.split(' ', 1)
     #if len(chan) != 1:
         #return "Usage: omg please join <channel>"
-    notice("Joining " + inp)
+    notice("Attempting to join " + inp + "...")
     input.conn.send("JOIN " + inp)
 
 @hook.command
@@ -20,7 +20,7 @@ def cycle(inp, input=None, db=None, notice=None):
     if input.nick not in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return
-    notice("Cycling " + inp + ".")
+    notice("Attempting to cycle " + inp + "...")
     input.conn.send("PART " + inp)
     input.conn.send("JOIN " + inp)
 
@@ -33,7 +33,7 @@ def part(inp, input=None, notice=None):
     chan = inp.split(' ', 1)
     #if len(chan) != 1:
         #return "Usage: omg please part <channel>"
-    notice("Parting from " + inp + ".")
+    notice("Attempting to part from " + inp + "...")
     input.conn.send("PART " + inp)
 
 @hook.command
@@ -81,7 +81,7 @@ def kick(inp, input=None, notice=None):
                 reason = reason + x + " "
             reason = reason[:-1]
             out = out + " :" + reason
-            
+    notice("Attempting to kick " + inp + "...")         
     input.conn.send(out)
 
 @hook.command

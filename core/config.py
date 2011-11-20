@@ -12,11 +12,14 @@ if not os.path.exists('config'):
         {
           "connections":
           {
-            "local irc":
+            "test connection":
             {
-              "server": "localhost",
-              "nick": "skybot",
-              "channels": ["#test"]
+              "server": "irc.esper.net",
+              "nick": "cloudbot_test",
+              "user": "cloudbot",
+              "realname": "CloudBot 3/DEV",
+              "nickserv_password": "",
+              "channels": ["#mau5bot"]
             }
           },
           "disabled_plugins": [],

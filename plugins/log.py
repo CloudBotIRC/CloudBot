@@ -1,7 +1,3 @@
-"""
-log.py: written by Scaevolus 2009
-"""
-
 import os
 import codecs
 import time
@@ -31,8 +27,8 @@ irc_color_re = re.compile(r'(\x03(\d+,\d+|\d)|[\x0f\x02\x16\x1f])')
 
 
 def get_log_filename(dir, server, chan):
-    return os.path.join(dir, 'log', gmtime('%Y'), server,
-            (gmtime('%%s.%m-%d.log') % chan).lower())
+    return os.path.join(dir, 'log', gmtime('%Y'), server, chan, 
+            (gmtime('%m-%d.log')).lower())
 
 
 def gmtime(format):

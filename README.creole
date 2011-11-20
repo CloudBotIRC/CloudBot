@@ -14,4 +14,4 @@
 * Easy plugin development with automatic reloading and a simple hooking API.
 
 ==Requirements==
-CloudBot runs on Python 2.7. Many of the plugins require [[http://codespeak.net/lxml/|lxml]] and BeautifulSoup. It is developed on Ubuntu 11.10 with Python 2.7.2.
+CloudBot runs on Python 2.7. Many of the plugins require [[http://codespeak.net/lxml/|lxml]] and [[www.crummy.com/software/BeautifulSoup/|BeautifulSoup]]. It is developed on Ubuntu 11.10 with Python 2.7.2.

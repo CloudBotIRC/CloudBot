@@ -1,17 +1,16 @@
 import re
-from util import hook, http
+from util import hook, http, misc
 from BeautifulSoup import BeautifulSoup
 
 @hook.command(autohelp=False)
-def wordu(inp, say=False, nick=False):
-    ".word -- gets the word of the day
-    return "true"
+def word(inp, say=False, nick=False):
+    ".word -- gets the word of the day"
     page = http.get('http://merriam-webster.com/word-of-the-day')
 
     soup = BeautifulSoup(page)
 
-    word = soup.find('strong', {'class' : 'main_entry_word'})
-    function = soup.find('p', {'class' : 'word_function'})
+    word = soup.find('strong', {'class' : 'main_entry_word'}).renderContents()
+    function = soup.find('p', {'class' : 'word_function'}).renderContents()
 
     #definitions = re.findall(r'<span class="ssens"><strong>:</strong>'
     #                        r' *([^<]+)</span>', content)

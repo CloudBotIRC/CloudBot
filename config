@@ -14,6 +14,7 @@
   "disabled_plugins": [],
   "disabled_commands": [],
   "acls": {},
+  "prefix": ".",
   "api_keys": {"geoip":"NULL","mc":["USER","PASS"]},
   "censored_strings":
   [
@@ -27,5 +28,5 @@
     "!coz",
     "!tell /x"
   ],
-  "admins": ["TheLuke","Luke"]
+  "admins": ["USERNAME"]
 }

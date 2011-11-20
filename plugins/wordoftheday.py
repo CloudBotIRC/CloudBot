@@ -1,5 +1,5 @@
 import re
-from util import hook, http, misc
+from util import hook, http
 from BeautifulSoup import BeautifulSoup
 
 @hook.command(autohelp=False)

@@ -1,0 +1,914 @@
+   Ed. Note: The following note is from the author's original email
+   announcing this CTCP specification file. All of this came after the
+   original RFC 1459 for the IRC protocol. -Jolo
+
+ From: ben@gnu.ai.mit.edu
+ Subject: REVISED AND UPDATED CTCP SPECIFICATION
+ Date: Fri, 12 Aug 94 00:21:54 edt
+
+ As part of documenting the ZenIRC client, I expanded, revised, and
+ merged two text files that have been around on IRC archive sites for
+ some time: ctcp.doc, and dcc.protocol. The file "ctcp.doc" by Klaus
+ Zeuge described the basic CTCP protocol, and most of the CTCP commands
+ other than DCC.  The file Troy Rollo wrote, "dcc.protocol", contained
+ a description of the CTCP DCC messages as well as the protocols used
+ by DCC CHAT and DCC file transfers. I have merged the two documents to
+ produce this one, edited them for clarity, and expanded on them where I
+ found them unclear while implementing CTCP in the ZenIRC client.
+
+ --Ben
+
+     ----------------------------------------------------------------------
+
+                      The Client-To-Client Protocol (CTCP)
+
+ Klaus Zeuge <sojge@Minsk.DoCS.UU.SE>
+ Troy Rollo <troy@plod.cbme.unsw.oz.au>
+ Ben Mesander <ben@gnu.ai.mit.edu>
+
+
+ The Client-To-Client Protocol is meant to be used as a way to
+         1/      in general send structured data (such as graphics,
+                 voice and different font information) between users
+                 clients, and in a more specific case:
+         2/      place a query to a users client and getting an answer.
+
+ *****************************************
+ BASIC PROTOCOL BETWEEN CLIENTS AND SERVER
+ *****************************************
+
+ Characters between an Internet Relay Chat (IRC) client and server are
+ 8 bit bytes (also known as octets) and can have numeric values from
+ octal \000 to \377 inclusive (0 to 255 decimal). Some characters are
+ special:
+
+         CHARS   ::= '\000' .. '\377'
+         NUL     ::= '\000'
+         NL      ::= '\n'
+         CR      ::= '\r'
+
+ Note: `\' followed by three digits is used to denote an octal value in this
+       paper. `\' followed by an alphabetic character is used to denote a C
+       language style special character, and `..' denotes a range of characters.
+
+ A line sent to a server, or received from a server (here called "low
+ level messages") consist or zero or more octets (expcept NUL, NL or
+ CR) with either a NL or CR appended.
+
+         L-CHARS ::= '\001' .. '\011' | '\013' | '\014' |
+                     '\016' .. '\377'
+         L-LINE  ::= L-CHARS* CR LF
+
+ Note: The `*' is used here to denote "zero or more of the preceding class of
+       characters", and the `|' is used to denote alternation.
+
+ A NUL is never sent to the server.
+
+ *****************
+ LOW LEVEL QUOTING
+ *****************
+
+ Even though messages to and from IRC servers cannot contain NUL, NL,
+ or CR, it still might be desirable to send ANY character (in so called
+ "middle level messages") between clients. In order for this to be
+ possible, those three characters have to be quoted. Therefore a quote
+ character is needed. Of course, the quote character itself has to be
+ quoted too, since it is in-band.
+
+         M-QUOTE ::= '\020'
+
+ (Ie a CNTRL/P).
+
+ When sending a middle level message, if there is a character in the
+ set { NUL, NL, CR, M-QUOTE } present in the message, that character is
+ replaced by a two character sequence according to the following table:
+
+         NUL     --> M-QUOTE '0'
+         NL      --> M-QUOTE 'n'
+         CR      --> M-QUOTE 'r'
+         M-QUOTE --> M-QUOTE M-QUOTE
+
+ When receiving a low level message, if there is a M-QUOTE, look at the
+ next character, and replace those two according to the following table
+ to get the corresponding middle level message:
+
+         M-QUOTE '0'     --> NUL
+         M-QUOTE 'n'     --> NL
+         M-QUOTE 'r'     --> CR
+         M-QUOTE M-QUOTE --> M-QUOTE
+
+ If the character following M-QUOTE is not any of the listed
+ characters, that is an error, so drop the M-QUOTE character from the
+ message, optionally warning the user about it. For example, a string
+ 'x' M-QUOTE 'y' 'z' from a server dequotes into 'x 'y' 'z'.
+
+ Before low level quoting, a message to the server (and in the opposite
+ direction: after low level dequoting, a message from the server) looks
+ like:
+
+         M-LINE  ::= CHARS*
+
+ ***********
+ TAGGED DATA
+ ***********
+
+ To send both extended data and query/reply pairs between clients, an
+ extended data format is needed. The extended data are sent in the text
+ part of a middle level message (and after low level quoting, in the
+ text part of the low level message).
+
+ To send extended data inside the middle level message, we need some
+ way to delimit it.  This is done by starting and ending extended data
+ with a delimiter character, defined as:
+
+         X-DELIM ::= '\001'
+
+ As both the starting and ending delimiter looks the same, the first
+ X-DELIM is called the odd delimiter, and the one that follows, the
+ even delimiter. The next one after that, an odd delimiter, then and
+ even, and so on.
+
+ When data are quoted (and conversely, before being dequoted) any number
+ of characters of any kind except X-DELIM can be used in the extended
+ data inside the X-DELIM pair.
+
+         X-CHR   ::= '\000' | '\002' .. '\377'
+
+ An extended message is either empty (nothing between the odd and even
+ delimiter), has one or more non-space characters (any character but
+ '\040') or has one or more non-space characters followed by a space
+ followed by zero or more characters.
+
+         X-N-AS  ::= '\000'  | '\002' .. '\037' | '\041' .. '\377'
+         SPC     ::= '\040'
+         X-MSG   ::= | X-N-AS+ | X-N-AS+ SPC X-CHR*
+
+ Note: Here `+' is used to denote "one or more of the previous class of
+       characters", and `*' is used to denote "zero or more of the previous
+       class of characters".
+
+ The characters up until the first SPC (or if no SPC, all of the X-MSG)
+ is called the tag of the extended message. The tag is used to denote
+ what kind of extended data is used.
+
+ The tag can be *any* string of characters, and if it contains
+ alphabetics, it is case sensitive, so upper and lower case matters.
+
+ Extended data is only valid in PRIVMSG and NOTICE commands. If the
+ extended data is a reply to a query, it is sent in a NOTICE, otherwise
+ it is sent in a PRIVMSG. Both PRIVMSG and NOTICE to a user and to a
+ channel may contain extended data.
+
+ The text part of a PRIVMSG or NOTICE might contain zero or more
+ extended messages, intermixed with zero or more chunks of non-extended
+ data.
+
+ ******************
+ CTCP LEVEL QUOTING
+ ******************
+
+ In order to be able to send the delimiter X-DELIM inside an extended
+ data message, it has to be quoted. This introduces another quote
+ character (which differs from the low level quote character so it
+ won't have to be quoted yet again).
+
+         X-QUOTE ::=     '\134'
+
+ (a back slash - `\').
+
+ When quoting on the CTCP level, only the actual CTCP message (extended
+ data, queries, replies) are quoted. This enables users to actually
+ send X-QUOTE characters at will. The following translations should be
+ used:
+
+         X-DELIM --> X-QUOTE 'a'
+         X-QUOTE --> X-QUOTE X-QUOTE
+
+ and when dequoting on the CTCP level, only CTCP messages are dequoted
+ whereby the following table is used.
+
+         X-QUOTE 'a'     --> X-DELIM
+         X-QUOTE X-QUOTE --> X-QUOTE
+
+ If an X-QUOTE is seen with a character following it other than the
+ ones above, that is an error and the X-QUOTE character should be
+ dropped. For example the CTCP-quoted string 'x' X-QUOTE 'y' 'z'
+ becomes after dequoting, the three character string 'x' 'y' 'z'.
+
+ If a X-DELIM is found outside a CTCP message, the message will contain
+ the X-DELIM. (This should only happen with the last X-DELIM when there
+ are an odd number of X-DELIM's in a middle level message.)
+
+ ****************
+ QUOTING EXAMPLES
+ ****************
+
+ There are three levels of messages. The highest level (H) is the text
+ on the user-to-client level. The middle layer (M) is on the level
+ where CTCP quoting has been applied to the H-level message. The lowest
+ level (L) is on the client-to-server level, where low level quoting
+ has been applied to the M-level message.
+
+ The following relations are true, with lowQuote(message) being a
+ function doing the low level quoting, lowDequote(message) the low
+ level dequoting function, ctcpQuote(message) the CTCP level quoting
+ function, ctcpDequote(message) the CTCP level dequoting function, and
+ ctcpExtract(message) the function which removes all CTCP messages from
+ a message:
+
+         L = lowQuote(M)
+         M = ctcpDequote(L)
+
+         M = ctcpQuote(H)
+         H = ctcpDequote(ctcpExtract(M))
+
+ When sending a CTCP message embedded in normal text:
+
+         M = ctcpQuote(H1) || '\001' || ctcpQuote(X) || '\001' || ctcpQuote(H2)
+
+ Note: The operator || denotes string concatenation.
+
+ Of course, there might be zero or more normal text messages and zero
+ or more CTCP messages mixed.
+
+ - --- Example 1 -----------------------------------------------------------------
+
+ A user (called actor) wanting to send the string:
+
+         Hi there!\nHow are you?
+
+ to user victim, i.e. a message where the user has entered an inline
+ newline (how this is done, if at all, differs from client to client),
+ will result internaly in the client in the command:
+
+         PRIVMSG victim :Hi there!\nHow are you? \K?
+
+ which will be CTCP quoted into:
+
+         PRIVMSG victim :Hi there!\nHow are you? \\K?
+
+ which in turn will be low level quoted into:
+
+         PRIVMSG victim :Hi there!\020nHow are you? \\K?
+
+ and sent to the server after appending a newline at the end.
+
+ This will arrive on victim's side as:
+
+         :actor PRIVMSG victim :Hi there!\020nHow are you? \\K?
+
+ (where the \\K would look similar to OK in SIS D47 et. al.) which after
+ low level dequoting becomes:
+
+         :actor PRIVMSG victim :Hi there!\nHow are you? \\K?
+
+ and after CTCP dequoting:
+
+         :actom PRIVMSG victim :Hi there!\nHow are you? \K?
+
+ How this is displayed differs from client to client, but it suggested
+ that a line break should occour between the words "there" and "How".
+
+ - --- Example 2 -----------------------------------------------------------------
+
+ If actor's client wants to send the string "Emacs wins" this might
+ become the string "\n\t\big\020\001\000\\:" when being SED-encrypted
+ [SED is a simple encryption protocol between IRC clients implemented
+ with CTCP. I don't have any reference for it -- Ben] using some key,
+ so the client starts by CTCP-quoting this string into the string
+ "\n\t\big\020\\a\000\\\\:" and builds the M-level message:
+
+         PRIVMSG victim :\001SED \n\t\big\020\\a\000\\\\:\001
+
+ which after low level quoting becomes:
+
+         PRIVMSG victim :\001SED \020n\t\big\020\020\\a\0200\\\\:\001
+
+ which will be sent to the server, with a newline tacked on.
+
+ On victim's side, the string:
+
+         :actor PRIVMSG victim :\001SED \020n\t\big\020\020\\a\0200\\\\:\001
+
+ will be received from the server and low level dequoted into:
+
+         :actor PRIVMSG victim :\001SED \n\t\big\020\\a\000\\\\:\001
+
+ whereafter the string "\n\t\big\020\\a\000\\\\:" will be extracted
+ and first CTCP dequoted into "\n\t\big\020\001\000\\:" and then
+ SED decoded getting back "Emacs wins" when using the same key.
+
+ - --- Example 3 -----------------------------------------------------------------
+
+ If the user actor wants to query the USERINFO of user victim, and is
+ in the middle of a conversation, the client may decide to tack on
+ USERINFO request on the end of a normal text message. Let's say actor
+ wants to send the textmessage "Say hi to Ron\n\t/actor" and the CTCP
+ request "USERINFO" to victim:
+
+         PRIVMSG victim :Say hi to Ron\n\t/actor
+
+ plus:
+
+         USERINFO
+
+ which after CTCP quoting become:
+
+         PRIVMSG victim :Say hi to Ron\n\t/actor
+
+ plus:
+
+         USERINFO
+
+ which gets merged into:
+
+         PRIVMSG victim :Say hi to Ron\n\t/actor\001USERINFO\001
+
+ and after low level quoting:
+
+         PRIVMSG victim :Say hi to Ron\020n\t/actor\001USERINFO\001
+
+ and sent off to the server.
+
+ On victim's side, the message:
+
+         :actor PRIVMSG victim :Say hi to Ron\020n\t/actor\001USERINFO\001
+
+ arrives. This gets low level dequoted into:
+
+         :actor PRIVMSG victim :Say hi to Ron\n\t/actor\001USERINFO\001
+
+ and thereafter split up into:
+
+         :actor PRIVMSG victim :Say hi to Ron\n\t/actor
+
+ plus:
+
+         USERINFO
+
+ After CTCP dequoting both, the message:
+
+         :actor PRIVMSG victim :Say hi to Ron\n\t/actor
+
+ gets displayed, while the CTCP command:
+
+         USERINFO
+
+ gets replied to. The reply might be:
+
+         USERINFO :CS student\n\001test\001
+
+ which gets CTCP quoted into:
+
+         USERINFO :CS student\n\\atest\\a
+
+ and sent in a NOTICE as it is a reply:
+
+         NOTICE actor :\001USERINFO :CS student\n\\atest\\a\001
+
+ and low level quoted into:
+
+         NOTICE actor :\001USERINFO :CS student\020n\\atest\\a\001
+
+ after which is it sent to victim's server.
+
+ When arriving on actor's side, the message:
+
+         :victim NOTICE actor :\001USERINFO :CS student\020n\\atest\\a\001
+
+ gets low level dequoted into:
+
+         :victim NOTICE actor :\001USERINFO :CS student\n\\atest\\a\001
+
+ At this point, all CTCP replies get extracted, giving 1 CTCP reply and
+ no normal NOTICE:
+
+         USERINFO :CS student\n\\atest\\a
+
+ The remaining reply gets CTCP dequoted into:
+
+         USERINFO :CS student\n\001test\001
+
+ and presumly displayed to user actor.
+
+ *******************
+ KNOWN EXTENDED DATA
+ *******************
+
+ Extended data passed between clients can be used to pass structured
+ information between them. Currently known extended data types are:
+
+ ACTION          - Used to simulate "role playing" on IRC.
+ DCC             - Negotiates file transfers and direct tcp chat
+                   connections between clients.
+ SED             - Used to send encrypted messages between clients.
+
+ ACTION
+ ======
+ This is used by losers on IRC to simulate "role playing" games. An
+ action message looks like the following:
+
+ \001ACTION barfs on the floor.\001
+
+ Clients that recieve such a message should format them to indicate the
+ user who did this is performing an "action". For example, if the user
+ "actor" sent the above message to the channel "#twilight_zone", other
+ users clients might display the message as:
+
+ [ACTION] actor->#twilight_zone: barfs on the floor.
+
+ Presumably other users on the channel are suitably impressed.
+
+ DCC
+ ===
+ DCC stands for something like "Direct Client Connection". CTCP DCC
+ extended data messages are used to negotiate file transfers between
+ clients and to negotiate chat connections over tcp connections between
+ two clients, with no IRC server involved. Connections between clients
+ involve protocols other than the usual IRC protocol. Due to this
+ complexity, a full description of the DCC protocol is included
+ separately at the end of this document in Appendix A.
+
+ SED
+ ===
+ SED probably stands for something like "Simple Encryption D???". It is
+ used by clients to exchange encrypted messages between clients. A
+ message encoded by SED probably looks something like:
+
+ \001SED encrypted-text-goes-here\001
+
+ Clients which accept such messages should display them in decrypted
+ form. It would be nice if someone documented this, and included the
+ encryption scheme in an Appendix B.
+
+ *************************
+ KNOWN REQUEST/REPLY PAIRS
+ *************************
+
+ A request/reply pair is sent between the two clients in two phases.
+ The first phase is to send the request. This is done with a "privmsg"
+ command (either to a nick or to a channel -- it doesn't matter).
+
+ The second phase is to send a reply. This is done with a "notice"
+ command.
+
+ The known request/reply pairs are for the following commands.
+
+ FINGER          - Returns the user's full name, and idle time.
+ VERSION         - The version and type of the client.
+ SOURCE          - Where to obtain a copy of a client.
+ USERINFO        - A string set by the user (never the client coder)
+ CLIENTINFO      - Dynamic master index of what a client knows.
+ ERRMSG          - Used when an error needs to be replied with.
+ PING            - Used to measure the delay of the IRC network
+                   between clients.
+ TIME            - Gets the local date and time from other clients.
+
+ FINGER
+ ======
+ This is used to get a user's real name, and perhaps also the idle time
+ of the user (this usage has been obsoleted by enhancements to the IRC
+ protocol. The request is in a "privmsg" and looks like
+
+         \001FINGER\001
+
+ while the reply is in a "notice" and looks like
+
+         \001FINGER :#\001
+
+ where the # denotes contains information about the users real name,
+ login name at clientmachine and idle time and is of type X-N-AS.
+
+ VERSION
+ =======
+ This is used to get information about the name of the other client and
+ the version of it. The request in a "privmsg" is simply
+
+         \001VERSION\001
+
+ and the reply
+
+         \001VERSION #:#:#\001
+
+ where the first # denotes the name of the client, the second # denotes
+ the version of the client, the third # the enviroment the client is
+ running in.
+
+ Using
+
+         X-N-CLN ::= '\000' .. '\071' | '\073' .. '\377'
+
+ the client name is a string of type X-N-CLN saying things like "Kiwi"
+ or "ircII", the version saying things like "5.2" or "2.1.5c", the
+ enviroment saying things like "GNU Emacs 18.57.19 under SunOS 4.1.1 on
+ Sun SLC" or "Compiled with gcc -ansi under Ultrix 4.0 on VAX-11/730".
+
+
+ SOURCE
+
+ This is used to get information about where to get a copy of the
+ client. The request in a "privmsg" is simply
+
+         \001SOURCE\001
+
+ and the reply is zero or more CTCP replies of the form
+
+         \001SOURCE #:#:#\001
+
+ followed by an end marker
+
+         \001SOURCE\001
+
+ where the first # is the name of an Internet host where the client can
+ be gotten from with anonymous FTP the second # a directory names, and
+ the third # a space separated list of files to be gotten from that
+ directory.
+
+ Using
+
+         X-N-SPC ::= '\000' .. '\037' | '\041' .. '\377'
+
+ the name of the FTP site is to be given by name like "cs.bu.edu" or
+ "funic.funet.fi".
+
+ The file name field is a directory specification optionally followed
+ by one or more file names, delimited by spaces. If only a directory
+ name is given, all files in that directory should be copied when
+ retrieving the clients source. If some files are given, only those
+ files in that directpry should be copied. Note that the spcification
+ allows for all characters but space in the names, this includes
+ allowing :. Examples are "pub/emacs/irc/" to get all files in
+ directory pub/emacs/irc/, the client should be able to first login as
+ user "ftp" and the give the command "CD pub/emacs/irc/", followed by
+ the command "mget *". (It of course has to take care of binary and
+ prompt mode too). Another example is "/pub/irc Kiwi.5.2.el.Z" in which
+ case a "CD /pub/irc" and "get Kiwi.5.2.el.Z" is what should be done.
+
+
+ USERINFO
+ ========
+ This is used to transmit a string which is settable by the user (and
+ never should be set by the client). The query is simply
+
+         \001USERINFO\001
+
+ with the reply
+
+         \001USERINFO :#\001
+
+ where the # is the value of the string the client's user has set.
+
+ CLIENTINFO
+ ==========
+ This is for client developers use to make it easier to show other
+ client hackers what a certain client knows when it comes to CTCP. The
+ replies should be fairly verbose explaining what CTCP commands are
+ understood, what arguments are expected of what type, and what replies
+ might be expected from the client.
+
+ The query is the word CLIENTINFO in a "privmsg" optionally followed by
+ a colon and one or more specifying words delimited by spaces, where
+ the word CLIENTINFO by itself,
+
+         \001CLIENTINFO\001
+
+ should be replied to by giving a list of known tags (see above in
+ section TAGGED DATA). This is only intended to be read by humans.
+
+ With one argument, the reply should be a description of how to use
+ that tag. With two arguments, a description of how to use that
+ tag's subcommand. And so on.
+
+ ERRMSG
+ ======
+ This is used as a reply whenever an unknown query is seen. Also, when
+ used as a query, the reply should echo back the text in the query,
+ together with an indication that no error has happened. Should the
+ query form be used, it is
+
+         \001ERRMSG #\001
+
+ where # is a string containing any character, with the reply
+
+         \001ERRMSG # :#\001
+
+ where the first # is the same string as in the query and the second #
+ a short text notifying the user that no error has occurred.
+
+ A normal ERRMSG reply which is sent when a corrupted query or some
+ corrupted extended data is received, looks like
+
+         \001ERRMSG # :#\001
+
+ where the first # is the the failed query or corrupted extended data
+ and the second # a text explaining what the problem is, like "unknown
+ query" or "failed decrypting text".
+
+ PING
+ ====
+ Ping is used to measure the time delay between clients on the IRC
+ network. A ping query is encoded in a privmsg, and has the form:
+
+ \001PING timestamp\001
+
+ where `timestamp' is the current time encoded in any form the querying
+ client finds convienent. The replying client sends back an identical
+ message inside a notice:
+
+ \001PING timestamp\001
+
+ The querying client can then subtract the recieved timestamp from the
+ current time to obtain the delay between clients over the IRC network.
+
+ TIME
+ ====
+ Time queries are used to determine what time it is where another
+ user's client is running. This can be useful to determine if someone
+ is probably awake or not, or what timezone they are in. A time query
+ has the form:
+
+ \001TIME\001
+
+ On reciept of such a query in a privmsg, clients should reply with a
+ notice of the form:
+
+ \001TIME :human-readable-time-string\001
+
+ For example:
+
+ \001TIME :Thu Aug 11 22:52:51 1994 CST\001
+
+ ********
+ EXAMPLES
+ ********
+
+
+ Sending
+
+         PRIVMSG victim :\001FINGER\001
+
+ might return
+
+         :victim NOTICE actor :\001FINGER :Please check my USERINFO
+         instead :Klaus Zeuge (sojge@mizar) 1 second has passed since
+         victim gave a command last.\001
+
+ (this is only one line) or why not
+
+         :victim NOTICE actor :\001FINGER :Please check my USERINFO
+         instead :Klaus Zeuge (sojge@mizar) 427 seconds (7 minutes and
+         7 seconds) have passed since victim gave a command last.\001
+
+ if Klaus Zeuge happens to be lazy? :-)
+
+ Sending
+
+         PRIVMSG victim :\001CLIENTINFO\001
+
+ might return
+
+         :victim NOTICE actor :\001CLIENTINFO :You can request help of the
+         commands CLIENTINFO ERRMSG FINGER USERINFO VERSION by giving
+         an argument to CLIENTINFO.\001
+
+ Sending
+
+         PRIVMSG victim :\001CLIENTINFO CLIENTINFO\001
+
+ might return
+
+         :victim NOTICE actor :\001CLIENTINFO :CLIENTINFO with 0
+         arguments gives a list of known client query keywords. With 1
+         argument, a description of the client query keyword is
+         returned.\001
+
+ while sending
+
+         PRIVMSG victim :\001clientinfo clientinfo\001
+
+ probably will return something like
+
+         :victim NOTICE actor :\001ERRMSG clientinfo clientinfo :Query is
+         unknown\001
+
+ as tag "clientinfo" isn't known.
+
+ Sending
+
+         PRIVMSG victim :\001CLIENTINFO ERRMSG\001
+
+ might return
+
+         :victim NOTICE actor :\001CLIENTINFO :ERRMSG is the given answer
+         on seeing an unknown keyword. When seeing the keyword ERRMSG,
+         it works like an echo.\001
+
+ Sending
+
+         PRIVMSG victim :\001USERINFO\001
+
+ might return the somewhat pathetically long
+
+         :victim NOTICE actor :\001USERINFO :I'm studying computer
+         science in Uppsala, I'm male (somehow, that seems to be an
+         important matter on IRC:-) and I speak fluent swedish, decent
+         german, and some english.\001
+
+ Sending
+
+         PRIVMSG victim :\001VERSION\001
+
+ might return:
+
+         :victim NOTICE actor :\001VERSION Kiwi:5.2:GNU Emacs
+         18.57.19 under SunOS 4.1.1 on Sun
+         SLC:FTP.Lysator.LiU.SE:/pub/emacs Kiwi-5.2.el.Z
+         Kiwi.README\001
+
+ if the client is named Kiwi of version 5.2 and is used under GNU Emacs
+ 18.57.19 running on a Sun SLCwith SunOS 4.1.1. The client claims a
+ copy of it can be found with anonymous FTP on FTP.Lysator.LiU.SE after
+ giving the FTP command "cd /pub/emacs/". There, one should get files
+ Kiwi-5.2.el.Z and Kiwi.README; presumably one of the files tells how to
+ proceed with building the client after having gotten the files.
+
+
+     ----------------------------------------------------------------------
+
+
+ **********************************************************************
+ Appendix A --           A description of the DCC protocol
+ **********************************************************************
+
+         By Troy Rollo (troy@plod.cbme.unsw.oz.au)
+         Revised by Ben Mesander (ben@gnu.ai.mit.edu)
+
+         Troy Rollo, the original implementor of the DCC protocol, said
+ that the DCC protocol was never designed to be portable to clients
+ other than IRCII. However, time has shown that DCC is useable in
+ environments other than IRCII. IRC clients in diverse languages, such
+ as ksh, elisp, C, and perl have all had DCC implementations.
+
+                 Why DCC?
+                 ========
+
+         DCC allows the user to overcome some limitations of the IRC
+ server network and to have a somewhat more secure chat connection
+ while still in an IRC-oriented protocol.
+
+         DCC uses direct TCP connections between the clients taking
+ part to carry data. There is no flood control, so packets can be sent
+ at full speed, and there is no dependance on server links (or load
+ imposed on them). In addition, since only the initial handshake for
+ DCC conections is passed through the IRC network, it makes it harder
+ for operators with cracked servers to spy on personal messages.
+
+                 How?
+                 ====
+
+         The initial socket for a DCC connection is created
+ by the side that initiates (Offers) the connection. This socket
+ should be a TCP socket bound to INADDR_ANY, listening for
+ connections.
+
+         The Initiating client, on creating the socket, should
+ send its details to the target client using the CTCP command
+ DCC. This command takes the form:
+
+         DCC type argument address port [size]
+
+ type     - The connection type.
+ argument - The connectin type dependant argument.
+ address  - The host address of the initiator as an integer.
+ port     - The port or the socket on which the initiator expects
+            to receive the connection.
+ size     - If the connection type is "SEND" (see below), then size
+            will indicate the size of the file being offered. Obsolete
+            IRCII clients do not send this, so be prepared if this is
+            not present.
+
+ The address, port, and size should be sent as ASCII representations of
+ the decimal integer formed by converting the values to host byte order
+ and treating them as an unsigned long, unsigned short, and unsigned
+ long respectively.
+
+         Implementations of the DCC protocol should be prepared to
+ accept further arguments in a CTCP DCC message. There has been some
+ discussion of adding another argument that would specify the type of
+ file being transferred - text, binary, and perhaps others if DCC is
+ implemented on operating systems other than UNIX. If additional
+ arguments are added to the protocol, they should have semantics such
+ that clients which ignore them will interoperate with clients that
+ don't in a sensible way.
+
+         The following DCC connection types are defined:
+
+ Type    Purpose                                 Argument
+ CHAT    To carry on a semi-secure conversation  the string "chat"
+ SEND    To send a file to the recipient         the file name
+
+ Although the following subcommand is included in the IRCII DCC command,
+ it does _not_ transmit a DCC request via IRC, and thus is not
+ discussed in this document:
+
+ TALK    Establishes a TALK connection
+
+
+                 Implementation
+                 ==============
+
+         The CHAT and SEND connection types should not be
+ accepted automatically as this would create the potential for
+ terrorism. Instead, they should notify the user that an
+ offer has been made, and allow the user to accept it.
+
+         The recipient should have the opportunity to rename a file
+ offered with the DCC SEND command prior to retrieving it. It is also
+ desirable to ensure that the offered file will not overwrite an
+ existing file.
+
+         Older IRCII clients send the entire pathname of the file being
+ transmitted. This is annoying, and newer clients should simply send
+ the filename portion of the file being transmitted.
+
+         The port number should be scrutinized - if the port number is
+ in the UNIX reserved port range, the connection should only be
+ accepted with caution.
+
+         If it is not possible in the client implementation language to
+ handle a 32-bit integer (for instance emacs 18 elisp and ksh 88), then
+ it is often possible to use the hostname in the originating PRIVMSG.
+
+         The following are the steps which should occur in the clients
+ (this description assumes use of the BSD socket interface on a UNIX
+ system).
+
+ Initiator:
+         DCC command issued.
+         Create a socket, bind it to INADDR_ANY, port 0, and
+                 make it passive (a listening socket).
+         Send the recipient a DCC request via CTCP supplying
+                 the address and port of the socket. (This
+                 is ideally taken from the address of the local
+                 side of the socket which is connected to a
+                 server. This is presumably the interface on
+                 the host which is closest to the rest of
+                 the net, and results in one less routing hop
+                 in the case of gateway nodes).
+         Continue normally until a connection is received.
+
+         On a connection:
+         Accept the connection.
+         Close the original passive socket.
+         Conduct transaction on the new socket.
+
+ Acceptor:
+         CTCP DCC request received.
+         Record information on the DCC request and notify the user.
+
+         At this point, the USER should be able to abort (close) the
+         request, or accept it. The request should be accepted with
+         a command specifying the sender, type, and argument, or
+         a subset of these where no ambiguity exists.
+
+         If accepted, create a TCP socket.
+         Connect the new socket to the address and port supplied.
+         Conduct the transaction over the socket.
+
+
+                 Type specific details.
+                 ======================
+
+ CHAT    Data sent across a CHAT connection should be sent line-by-line
+         without any prefixes or commands. A CHAT connection ends when
+         one party issues the DCC CLOSE command to their clients, which
+         causes the socket to be closed and the information on the connection
+         to be discarded. The terminating character of each line is a
+         newline character, '\n'.
+
+ FILE    Data is sent in packets, rather than dumped in a stream manner.
+         This allows the DCC SEND connection to survive where an FTP
+         connection might fail. The size of the packets is up to the
+         client, and may be set by the user. Smaller packets result
+         in a higher probability of survival over bad links.
+         The recipient should acknowledge each packet by transmitting
+         the total number of bytes received as an unsigned, 4 byte
+         integer in network byte order. The sender should not continue
+         to transmit until the recipient has acknowledged all data
+         already transmitted. Additionally, the sender should not
+         close the connection until the last byte has been
+         acknowledged by the recipient.
+
+         Older IRCII clients do not send the file size of the file
+         being transmitted via DCC. For those clients, note that it is
+         not possible for the recipient to tell if the entire file has
+         been received - only the sender has that information, although
+         IRCII does not report it. Users generally verify the transfer
+         by checking file sizes. Authors of clients are urged to use
+         the size feature.
+
+         Note also that no provision is made for text translation.
+
+         The original block size used by IRCII was 1024. Other clients
+		 have adopted this. Note, however, that an implementation should accept
+		 any blocksize. IRCII currently allows a user-settable blocksize.

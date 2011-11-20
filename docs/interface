@@ -1,0 +1,19 @@
+GOALS:
+simplicity
+as little boilerplate and magic as possible
+multithreaded dispatch
+
+plugins are located in plugins/
+
+input:
+nick -- string, the nickname of whoever sent the message
+channel -- string, the channel the message was sent on. Equal to nick if it's a private message.
+msg -- string, the line that was sent
+raw -- string, the raw full line that was sent
+re -- the result of doing re.match(hook, msg)
+
+attributes and methods of bot:
+say(msg): obvious
+reply(msg): say(input.nick + ": " + msg)
+msg(target, msg): sends msg to target
+(other irc commands, like mode, topic, etc)

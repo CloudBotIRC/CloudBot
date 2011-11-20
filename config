@@ -1,0 +1,31 @@
+{
+  "connections":
+  {
+    "CONNECTION_NAME":
+    {
+      "server": "",
+      "nick": "",
+      "user": "",
+      "realname": "",
+      "nickserv_password": "",
+      "channels": ["#CHANNEL","#CHANNEL"]
+    }
+  },
+  "disabled_plugins": [],
+  "disabled_commands": [],
+  "acls": {},
+  "api_keys": {"geoip":"NULL","mc":["USER","PASS"]},
+  "censored_strings":
+  [
+    "DCC SEND",
+    "1nj3ct",
+    "thewrestlinggame",
+    "startkeylogger",
+    "hybux",
+    "\\0",
+    "\\x01",
+    "!coz",
+    "!tell /x"
+  ],
+  "admins": ["TheLuke","Luke"]
+}

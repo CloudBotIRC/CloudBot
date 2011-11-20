@@ -1,0 +1,27 @@
+All plugins need to 'from util import hook' if they want to be callable.
+
+There are three ways to set when a plugin is called using
+decorators. @hook.command causes it to be callable using normal command
+syntax; an argument will register it under that name (so if my function is
+called foo and I use @hook.command, .foo will work; if I use
+@hook.command("bar"), .bar will work but not .foo). The first argument, inp,
+will be the text that occurs after the command. (e.g., "bar" in ".foo bar").
+
+@hook.regex takes an argument corresponding to the regex string (not the
+compiled regex), followed by optional flags. It will attempt to match the regex
+on all inputs; if so, the hooked function will be called with the match object.
+
+@hook.event requires a parameter; if it's '*", it will trigger on every line. If
+it's 'PRIVMSG', it'll trigger on only actual lines of chat (not
+nick-changes). The first argument in these cases will be a two-element list of
+the form ["#channel", "text"]; I don't know what it's like for NICK or other
+'commands'.
+
+@hook.singlethread indicates that the command should run in its own thread; this
+means that you can't use the existing database connection object!
+
+In addition to the standard argument, plugins can take other arguments; db is
+the database object; input corresponds to the triggering line of text, and bot
+is the bot itself.
+
+TODO: describe what can be done with db, input, and bot.

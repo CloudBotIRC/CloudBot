@@ -1,0 +1,26 @@
+Other bots we should "borrow" ideas from:
+
+supybot http://supybot.com/
+ - horribly bloated plugin structure, each plugin has its own directory and 4 files (unit testing for plugins what)
+
+phenny http://inamidst.com/phenny/
+ - inspiration for skybot, too much magic and not easy enough to change
+
+pyfibot http://code.google.com/p/pyfibot/
+ - interesting, but lots of magic
+
+rbot http://linuxbrit.co.uk/rbot/
+ - Ruby
+ - lots of plugins
+
+pyirc http://www.k-pdt.net/pyirc/
+ - very simple, not multithreaded
+ - poor use of regexes, skybot has much better parsing, but it implements many more irc control codes
+ - can convert irc colors to vt100 escape codes -- should implement this
+ - autoreconnect
+
+pybot
+ - can handle multiple servers, but not multithreaded
+ - ugly modules
+ - too many external dependencies
+ - attempt at NLP

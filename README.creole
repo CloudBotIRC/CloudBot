@@ -1,0 +1,17 @@
+= CloudBot - A fork of SkyBot =
+
+==Goals==
+* simplicity
+** little boilerplate
+** minimal magic
+* power
+** multithreading
+** automatic reloading
+** extensibility
+
+==Features==
+* Multithreaded dispatch and the ability to connect to multiple networks at a time.
+* Easy plugin development with automatic reloading and a simple hooking API.
+
+==Requirements==
+Skybot runs on Python SOMESHIT. Many of the plugins require [[http://codespeak.net/lxml/|lxml]] and BeautifulSoup. It is developed on Ubuntu 11.10 with Python LOLWUT.

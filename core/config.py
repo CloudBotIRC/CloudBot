@@ -30,7 +30,9 @@ if not os.path.exists('config'):
           {
             "geoip": "INSERT KEY FROM ipinfodb.com HERE",
             "bitly_user": "INSERT USERNAME FROM bitly.com HERE",
-            "bitly_api": "INSERT API KEY FROM bitly.com HERE"
+            "bitly_api": "INSERT API KEY FROM bitly.com HERE",
+            "mc_user": "INSERT MINECRAFT USERNAME HERE (used to check login servers in mclogin.py)",
+            "mc_pass": "INSERT MINECRAFT USERNAME HERE (used to check login servers in mclogin.py)"
           },
           "censored_strings":
           [

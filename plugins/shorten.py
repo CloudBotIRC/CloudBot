@@ -12,9 +12,7 @@ except ImportError, e:
 def tiny(url, user, apikey):
   try:
     params = urlencode({'longUrl': url, 'login': user, 'apiKey': apikey, 'format': 'json'})
-    req = Request("http://api.bit.ly/v3/shorten?%s" % params)
-    response = urlopen(req)
-    j = http.get_json(response.read())
+    j = http.get_json("http://api.bit.ly/v3/shorten?%s" % params)
     if j['status_code'] == 200:
       return j['data']['url']
     raise Exception('%s'%j['status_txt'])

@@ -7,12 +7,10 @@ def mcstatus(inp, bot=None):
     username = bot.config["api_keys"]["mc_user"]
     password = bot.config["api_keys"]["mc_pass"]
     login = http.get("https://login.minecraft.net/?user="+username+"&password="+password+"&version=13")
-    print "Username: " + username
-    print "Response: " + login
     if username.lower() in login.lower():
-        return "Attempting to connect to Minecraft login servers... Login servers appear to be online!"
+        return "Minecraft login servers appear to be online!"
     else:
-        return "Attempting to connect to Minecraft login servers... Login servers appear to be offline :("
+        return "Minecraft login servers appear to be offline :("
 
 @hook.command
 def mclogin(inp, say=None):
@@ -25,7 +23,7 @@ def mclogin(inp, say=None):
     if username.lower() in login.lower():
         return "I logged in with " + username
     else:
-        return "I couldn't log in using " + username + ", either the password has been changed or minecraft auth is down :O"
+        return "I couldn't log in using " + username + ", either the password is wrong or minecraft login servers are down D:"
 
 @hook.command
 def haspaid(inp):

@@ -1,11 +1,11 @@
 from util import hook
 import urllib
 
-@hook.command(autohelp=False, input=None, notice=None)
+@hook.command(autohelp=False, input=None, notice=None, bot=None)
 def mccheck(inp):
     ".mccheck - Attempts to log in to minecraft"
-    password = input.bot.config["api_keys"]["mc"][0]
-    password = input.bot.config["api_keys"]["mc"][1]
+    username = bot.config["api_keys"]["mc_user"]
+    password = bot.config["api_keys"]["mc_pass"]
     notice(username + " " + password)
     login = urllib.urlopen("https://login.minecraft.net/?user="+username+"&password="+password+"&&version=13").read()
     if username in login:

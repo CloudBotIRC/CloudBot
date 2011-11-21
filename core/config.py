@@ -14,12 +14,12 @@ if not os.path.exists('config'):
           {
             "test connection":
             {
-              "server": "irc.esper.net",
-              "nick": "cloudbot_test",
+              "server": "localhost",
+              "nick": "nickname",
               "user": "cloudbot",
               "realname": "CloudBot/DEV - http://j.mp/uS5Cvx",
               "nickserv_password": "",
-              "channels": ["#mau5bot"]
+              "channels": ["#channel"]
             }
           },
           "disabled_plugins": [],
@@ -32,7 +32,7 @@ if not os.path.exists('config'):
             "bitly_user": "INSERT USERNAME FROM bitly.com HERE",
             "bitly_api": "INSERT API KEY FROM bitly.com HERE",
             "mc_user": "INSERT MINECRAFT USERNAME HERE (used to check login servers in mclogin.py)",
-            "mc_pass": "INSERT MINECRAFT USERNAME HERE (used to check login servers in mclogin.py)"
+            "mc_pass": "INSERT MINECRAFT PASSWORD HERE (used to check login servers in mclogin.py)"
           },
           "censored_strings":
           [

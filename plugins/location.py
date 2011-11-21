@@ -1,9 +1,8 @@
 from util import hook
 
-def find_location(ip):
+def find_location(ip, api):
     import string
     import urllib
-    api = "6ddac03a5a67a534045f59908e5c17fd68169609b453e3c6398823fff86a87c0"
     response = urllib.urlopen("http://api.ipinfodb.com/v3/ip-city/?key="+api+"&ip="+ip).read()
     response = response.split(";")
     give = {}
@@ -21,9 +20,12 @@ def timezone(ip):
     return int(time)
 
 @hook.command
-def location(inp, say = None, me = None):
+def locations(inp, say = None, me = None, bot = None):
     ".location <ip> - Performs a GeoIP check on the ip given."
-    give = find_location(inp)
+    api = bot.config['api_keys']['geoip']
+    if api == "":
+        return "No API key"
+    give = find_location(inp, api)
     if give["country"] not in [""," ","-"," - "]:
         if give["state"] == give["city"]:
            localstring = give["city"]

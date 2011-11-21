@@ -52,5 +52,4 @@ def onjoin(paraml, conn=None, bot=None):
 
 @hook.regex(r'^\x01VERSION\x01$')
 def version(inp, notice=None):
-    notice('\x01VERSION CloudBot')
-    http.ua_skybot = 'CloudBot'
+    notice('\x01VERSION CloudBot/DEV - https://github.com/lukeroge/CloudBot')

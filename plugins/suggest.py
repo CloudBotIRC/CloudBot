@@ -15,7 +15,7 @@ def suggest(inp, inp_unstripped=''):
         num, inp = m.groups()
         num = int(num)
         if num > 10:
-            return 'I can only get first ten suggestions.'
+            return 'I can only get the first ten suggestions.'
     else:
         num = 0
 

@@ -1,6 +1,6 @@
 """
 TV information, written by Lurchington 2010
-modified by rmmh 2010
+modified by rmmh 2010 && lukeroge 2011
 """
 
 import datetime
@@ -13,7 +13,6 @@ from util import hook, http
 
 
 base_url = "http://thetvdb.com/api/"
-api_key = "F021D0F747892137"
 
 
 def get_zipped_xml(*args, **kwargs):

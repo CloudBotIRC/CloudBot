@@ -45,11 +45,6 @@ def onjoin(paraml, conn=None, bot=None):
         conn.join(channel)
         time.sleep(1)  # don't flood JOINs
 
-    # set user-agent
-
-    http.ua_skybot = 'CloudBot'
-
-
 @hook.regex(r'^\x01VERSION\x01$')
 def version(inp, notice=None):
     notice('\x01VERSION CloudBot/DEV - https://github.com/lukeroge/CloudBot')

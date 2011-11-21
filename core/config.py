@@ -24,6 +24,7 @@ if not os.path.exists('config'):
           },
           "disabled_plugins": [],
           "disabled_commands": [],
+          "prefix": ".",
           "acls": {},
           "api_keys": {},
           "censored_strings":

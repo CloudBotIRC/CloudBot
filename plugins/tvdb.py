@@ -25,7 +25,7 @@ def get_zipped_xml(*args, **kwargs):
     return etree.parse(ZipFile(zip_buffer, "r").open(path))
 
 
-def get_episodes_for_series(seriesname):
+def get_episodes_for_series(seriesname, api_key):
     res = {"error": None, "ended": False, "episodes": None, "name": None}
     # http://thetvdb.com/wiki/index.php/API:GetSeries
     try:
@@ -84,9 +84,11 @@ def get_episode_info(episode):
 
 @hook.command
 @hook.command('tv')
-def tv_next(inp):
+def tv_next(inp, bot = None):
     ".tv_next <series> -- get the next episode of <series>"
-    episodes = get_episodes_for_series(inp)
+
+    api_key = bot.config["api_keys"]["tvdb"]
+    episodes = get_episodes_for_series(inp, api_key)
 
     if episodes["error"]:
         return episodes["error"]
@@ -130,9 +132,11 @@ def tv_next(inp):
 
 @hook.command
 @hook.command('tv_prev')
-def tv_last(inp):
+def tv_last(inp, bot = None):
     ".tv_last <series> -- gets the most recently aired episode of <series>"
-    episodes = get_episodes_for_series(inp)
+
+    api_key = bot.config["api_keys"]["tvdb"]
+    episodes = get_episodes_for_series(inp, api_key)
 
     if episodes["error"]:
         return episodes["error"]

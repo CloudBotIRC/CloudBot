@@ -28,7 +28,8 @@ if not os.path.exists('config'):
           "acls": {},
           "api_keys":
           {
-            "geoip": "INSERT KEY FROM ipinfodb.com HERE",
+            "geoip": "INSERT API KEY FROM ipinfodb.com HERE",
+            "tvdb": "INSERT API KEY FROM thetvdb.com HERE",
             "bitly_user": "INSERT USERNAME FROM bitly.com HERE",
             "bitly_api": "INSERT API KEY FROM bitly.com HERE",
             "mc_user": "INSERT MINECRAFT USERNAME HERE (used to check login servers in mclogin.py)",

@@ -1,5 +1,6 @@
 from util import hook, http, misc
 import re
+import string
 
 def sloganize(word):
     bytes = http.get('http://www.sloganizer.net/en/outbound.php', slogan=word)
@@ -12,4 +13,8 @@ def sloganizr(inp, nick=None, say=None, input=None):
 
     slogan = misc.strip_html(slogan)
 
+    if inp.islower():
+        slogan = slogan.capitalize()
+
     return slogan
+

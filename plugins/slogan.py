@@ -14,7 +14,9 @@ def sloganizr(inp, nick=None, say=None, input=None):
     slogan = misc.strip_html(slogan)
 
     if inp.islower():
-        slogan = slogan.capitalize()
-
+        slogan = slogan.split()
+        slogan[0] = slogan[0].capitalize()
+        slogan = " ".join(slogan)
+           
     return slogan
 

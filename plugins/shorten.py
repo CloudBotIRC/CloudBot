@@ -1,11 +1,11 @@
 # # Lukeroge
-from util import hook
+from util import hook, http
 
 try:
   from re import match
   from urllib2 import urlopen, Request, HTTPError
   from urllib import urlencode
-  from simplejson import loads
+  
 except ImportError, e:
   raise Exception('Required module missing: %s' % e.args[0])
  
@@ -14,12 +14,12 @@ def tiny(url, user, apikey):
     params = urlencode({'longUrl': url, 'login': user, 'apiKey': apikey, 'format': 'json'})
     req = Request("http://api.bit.ly/v3/shorten?%s" % params)
     response = urlopen(req)
-    j = loads(response.read())
+    j = http.get_json(response.read())
     if j['status_code'] == 200:
       return j['data']['url']
     raise Exception('%s'%j['status_txt'])
   except HTTPError, e:
-    raise('HTTP error%s'%e.read())
+    return "Invalid URL!"
 
 @hook.command
 def shorten(inp, bot = None):

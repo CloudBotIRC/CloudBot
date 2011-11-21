@@ -15,7 +15,7 @@ def suggest(inp, inp_unstripped=''):
         num, inp = m.groups()
         num = int(num)
         if num > 10:
-            return 'can only get first ten suggestions'
+            return 'I can only get first ten suggestions.'
     else:
         num = 0
 
@@ -23,10 +23,10 @@ def suggest(inp, inp_unstripped=''):
     page_json = page.split('(', 1)[1][:-1]
     suggestions = json.loads(page_json)[1]
     if not suggestions:
-        return 'no suggestions found'
+        return 'No suggestions found :('
     if num:
         if len(suggestions) + 1 <= num:
-            return 'only got %d suggestions' % len(suggestions)
+            return 'I only got %d suggestions.' % len(suggestions)
         out = suggestions[num - 1]
     else:
         out = random.choice(suggestions)

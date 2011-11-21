@@ -17,7 +17,7 @@ if not os.path.exists('config'):
               "server": "irc.esper.net",
               "nick": "cloudbot_test",
               "user": "cloudbot",
-              "realname": "CloudBot/DEV - https://github.com/lukeroge/CloudBot",
+              "realname": "CloudBot/DEV - http://j.mp/uS5Cvx",
               "nickserv_password": "",
               "channels": ["#mau5bot"]
             }

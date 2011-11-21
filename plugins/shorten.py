@@ -9,22 +9,7 @@ try:
 except ImportError, e:
   raise Exception('Required module missing: %s' % e.args[0])
  
-user = "o_750ro241n9"
-apikey  = "R_f3d0a9b478c53d247a134d0791f898fe"
- 
-def expand(url):
-  try:
-    params = urlencode({'shortUrl': url, 'login': user, 'apiKey': apikey, 'format': 'json'})
-    req = Request("http://api.bit.ly/v3/expand?%s" % params)
-    response = urlopen(req)
-    j = loads(response.read())
-    if j['status_code'] == 200:
-      return j['data']['expand'][0]['long_url']
-    raise Exception('%s'%j['status_txt'])
-  except HTTPError, e:
-    raise('HTTP Error%s'%e.read())
- 
-def tiny(url):
+def tiny(url, user, apikey):
   try:
     params = urlencode({'longUrl': url, 'login': user, 'apiKey': apikey, 'format': 'json'})
     req = Request("http://api.bit.ly/v3/shorten?%s" % params)
@@ -37,6 +22,8 @@ def tiny(url):
     raise('HTTP error%s'%e.read())
 
 @hook.command
-def shorten(inp):
-  ".shorten <url> - Makes an j.mp shortlink to the url provided"
-  return tiny(inp)
+def shorten(inp, bot = None):
+  ".shorten <url> - Makes an j.mp/bit.ly shortlink to the url provided"
+  user = bot.config['api_keys']['bitly_user']
+  api = bot.config['api_keys']['bitly_api']
+  return tiny(inp, user, api)

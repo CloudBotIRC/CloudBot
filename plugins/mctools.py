@@ -2,8 +2,8 @@ from util import hook
 import urllib
 
 @hook.command(autohelp=False)
-def mccheck(inp, bot=None):
-    ".mccheck - Attempts to log in to minecraft"
+def mcstatus(inp, bot=None):
+    ".mcstatus - Attempts to log in to minecraft"
     username = bot.config["api_keys"]["mc_user"]
     password = bot.config["api_keys"]["mc_pass"]
     login = urllib.urlopen("https://login.minecraft.net/?user="+username+"&password="+password+"&&version=13").read()
@@ -11,15 +11,6 @@ def mccheck(inp, bot=None):
         return "Attempting to connect to Minecraft login servers... Login servers appear to be online!"
     else:
         return "Attempting to connect to Minecraft login servers... Login servers appear to be offline :("
-
-@hook.command
-def haspaid(inp):
-    ".haspaid <username> - Checks if a user has a premium Minecraft account"
-    login = urllib.urlopen("http://www.minecraft.net/haspaid.jsp?user=" + inp).read()
-    if "true" in login:
-        return "The user " + inp + " has a premium Minecraft account."
-    else:
-        return "The user " + inp + " either has not paid or is an unused nickname."
 
 @hook.command
 def mclogin(inp, say=None):
@@ -33,3 +24,13 @@ def mclogin(inp, say=None):
         return "I logged in with " + username
     else:
         return "I couldn't log in using " + username + ", either the password changed or minecraft auth is down :O"
+
+@hook.command
+def haspaid(inp):
+    ".haspaid <username> - Checks if a user has a premium Minecraft account"
+    login = urllib.urlopen("http://www.minecraft.net/haspaid.jsp?user=" + inp).read()
+    if "true" in login:
+        return "The user " + inp + " has a premium Minecraft account."
+    else:
+        return "The user " + inp + " either has not paid or is an unused nickname."
+

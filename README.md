@@ -12,7 +12,7 @@ Before you can run the bot, you need to install a few Python modules. These are 
 ```sudo apt-get install python-beautifulsoup
 ```
 
-If you use another OS or distro you can find source packages on the module(s) web site, or you can try to find the packages in your package manager.
+If you use another OS or distro you can find source packages on the module(s) web site, or you can try to find suitable packages in your package manager.
 
 Once installing these packages run the bot once with ```python bot.py``` to generate the config file. Stop the bot, edit the config, and run the bot again with ```python bot.py``` to start it up :)
 

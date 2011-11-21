@@ -12,7 +12,7 @@ def mtg(inp):
 
     name = h.find('body/table/tr/td/span/a')
     if name is None:
-        return "no cards found"
+        return "No cards found :("
     card = name.getparent().getparent().getparent()
 
     type = card.find('td/p').text.replace('\n', '')

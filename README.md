@@ -4,7 +4,7 @@
 CloudBot is very heavily based on Skybot by rmmh. (https://github.com/rmmh/skybot)
 
 ### Install
-Before you can run the bot, you need to install a few Python modules. These are *LXML*, *BeautifulSoup* and *simplejson*.  On Ubuntu these can be installed using the following commands:
+Before you can run the bot, you need to install a few Python modules. These are *LXML* and *BeautifulSoup*.  On Ubuntu these can be installed using the following commands:
 
 ```sudo apt-get install python-lxml
 ```
@@ -12,10 +12,7 @@ Before you can run the bot, you need to install a few Python modules. These are 
 ```sudo apt-get install python-beautifulsoup
 ```
 
-```sudo apt-get install python-simplejson
-```
-
-If you use another OS or distro you can find source packages on the module web sites, or try to find the modules packages in your package manager.
+If you use another OS or distro you can find source packages on the module(s) web site, or you can try to find the packages in your package manager.
 
 Once installing these packages run the bot once with ```python bot.py``` to generate the config file. Stop the bot, edit the config, and run the bot again with ```python bot.py``` to start it up :)
 

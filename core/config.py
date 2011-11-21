@@ -26,7 +26,7 @@ if not os.path.exists('config'):
           "disabled_commands": [],
           "prefix": ".",
           "acls": {},
-          "api_keys": {"geoip":"6ddac03a5a67a534045f59908e5c17fd68169609b453e3c6398823fff86a87c0"},
+          "api_keys": {"geoip":"INSERT KEY FROM ipinfodb.com HERE"},
           "censored_strings":
           [
             "DCC SEND",

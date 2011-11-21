@@ -20,11 +20,10 @@ def timezone(ip):
     return int(time)
 
 @hook.command
-def locations(inp, say = None, me = None, bot = None):
-    ".location <ip> - Performs a GeoIP check on the ip given."
+@hook.command("location")
+def geoip(inp, say = None, bot = None):
+    ".geoip <ip> - Performs a location check on the ip given."
     api = bot.config['api_keys']['geoip']
-    if api == "":
-        return "No API key"
     give = find_location(inp, api)
     if give["country"] not in [""," ","-"," - "]:
         if give["state"] == give["city"]:
@@ -36,3 +35,4 @@ def locations(inp, say = None, me = None, bot = None):
     else:
         say("Either that wasn't an IP or I cannot locate it in my database. :(")
     return
+

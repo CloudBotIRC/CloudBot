@@ -3,7 +3,7 @@ import socket
 import subprocess
 import time
 
-from util import hook, http
+from util import hook
 
 socket.setdefaulttimeout(10)  # global setting
 

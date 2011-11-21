@@ -26,7 +26,12 @@ if not os.path.exists('config'):
           "disabled_commands": [],
           "prefix": ".",
           "acls": {},
-          "api_keys": {"geoip":"INSERT KEY FROM ipinfodb.com HERE"},
+          "api_keys":
+          {
+            "geoip": "INSERT KEY FROM ipinfodb.com HERE",
+            "bitly_user": "INSERT USERNAME FROM bitly.com HERE",
+            "bitly_api": "INSERT API KEY FROM bitly.com HERE"
+          },
           "censored_strings":
           [
             "DCC SEND",

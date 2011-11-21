@@ -26,7 +26,10 @@ CloudBot runs on Python 2.7. Many of the plugins require lxml and BeautifulSoup.
 CloudBot is licenced under the GPL v3 license. The terms are as follows.
 
 
-```   Copyright © 2011 Luke Rogers. <http://www.dempltr.com/> <lukeroge@gmail.com>
+``` 
+    CloudBot 3.0/DEV
+
+    Copyright © 2011 Luke Rogers. <http://www.dempltr.com/> <lukeroge@gmail.com>
 
     CloudBot is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

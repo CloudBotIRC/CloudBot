@@ -33,7 +33,7 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
     append = False
 
     try:
-        head, tail = bind.split(None, 1)
+        head, tail = inp.split(None, 1)
     except ValueError:
         return remember.__doc__
 
@@ -72,7 +72,7 @@ def forget(inp, db=None):
     ".f <word> -- forgets the mapping that word had"
 
     try:
-        head, tail = bind.split(None, 1)
+        head, tail = inp.split(None, 1)
     except ValueError:
         return remember.__doc__
 

@@ -21,13 +21,12 @@ def get_memory(db, word):
         return None
 
 
-@hook.regex(r'^\+ ?(.*)')
+
+@hook.command("r")
 def remember(inp, nick='', db=None, say=None, input=None, notice=None):
-    "+<word> [+]<data> -- maps word to data in the memory"
+    ".r <word> [+]<data> -- maps word to data in the memory"
     if input.nick not in input.bot.config["admins"]:
         return
-    binp = inp.group(0)
-    bind = binp.replace('+', '', 1)
     db_init(db)
 
 
@@ -68,11 +67,9 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
         return
 
 
-@hook.command
+@hook.command("f")
 def forget(inp, db=None):
-    ".forget <word> -- forgets the mapping that word had"
-    if input.nick not in input.bot.config["admins"]:
-    return
+    ".f <word> -- forgets the mapping that word had"
 
     try:
         head, tail = bind.split(None, 1)
@@ -90,6 +87,7 @@ def forget(inp, db=None):
     else:
         return "I don't know about that."
 
+@hook.command("info")
 @hook.regex(r'^\? ?(.+)')
 def question(inp, say=None, db=None):
     "?<word> -- shows what data is associated with word"

@@ -27,6 +27,9 @@ def get(*args, **kwargs):
     return open(*args, **kwargs).read()
 
 
+def get_url(*args, **kwargs):
+    return open(*args, **kwargs).geturl()
+
 def get_html(*args, **kwargs):
     return html.fromstring(get(*args, **kwargs))
 

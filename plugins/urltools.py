@@ -48,9 +48,14 @@ def urlparser(match, say = None):
     title = parse(url)
     if title == "fail":
         return
-
     title = multiwordReplace(title, wordDic)
-    say("(Link) %s" % title)
+    realurl = http.get_url(url)
+    if realurl == url:
+        say("(Link) %s" % title)
+        return
+    else:
+        say("(Link) %s [%s]" % (title, realurl))
+        return
 
 
 

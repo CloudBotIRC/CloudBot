@@ -31,14 +31,6 @@ def parse(match):
         except:
             return "fail"
 
-def tiny(url, user, apikey):
-  try:
-    params = urllib.urlencode({'longUrl': url, 'login': user, 'apiKey': apikey, 'format': 'json'})
-    j = http.get_json("http://api.bit.ly/v3/shorten?%s" % params)
-    if j['status_code'] == 200:
-      return j['data']['url']
-    raise Exception('%s'%j['status_txt'])
-
 def multiwordReplace(text, wordDic):
     rc = re.compile('|'.join(map(re.escape, wordDic)))
     def translate(match):
@@ -48,19 +40,17 @@ def multiwordReplace(text, wordDic):
 
 #@hook.regex(r'^(?#Protocol)(?:(?:ht|f)tp(?:s?)\:\/\/|~\/|\/)?(?#Username:Password)(?:\w+:\w+@)?(?#Subdomains)(?:(?:[-\w]+\.)+(?#TopLevel Domains)(?:com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum|travel|[a-z]{2}))(?#Port)(?::[\d]{1,5})?(?#Directories)(?:(?:(?:\/(?:[-\w~!$+|.,=]|%[a-f\d]{2})+)+|\/)+|\?|#)?(?#Query)(?:(?:\?(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)(?:&(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)*)*(?#Anchor)(?:#(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)?$')
 @hook.regex(r'([a-zA-Z]+://|www\.)[^ ]+')
-def urlparser(match, say = None, bot = None):
+def urlparser(match, say = None):
     url = urlnorm.normalize(match.group().encode('utf-8'))
-    user = bot.config['api_keys']['bitly_user']
-    api = bot.config['api_keys']['bitly_api']
     for x in ignored_urls:
         if x in url:
             return
     title = parse(url)
     if title == "fail":
         return
-    short_url = tiny(url, user, api)
+
     title = multiwordReplace(title, wordDic)
-    say("(Link) %s [%s]" % (title, short_url))
+    say("(Link) %s" % title)
 
 
 

@@ -19,6 +19,8 @@ wordDic = {
 '&lt;': '<',
 '&gt;': '>',
 '&laquo;': '«',
+'&#33;': '!',
+'&#036;': '$',
 '  ': ' '}
 
 def parse(match):
@@ -41,12 +43,14 @@ def multiwordReplace(text, wordDic):
 #@hook.regex(r'^(?#Protocol)(?:(?:ht|f)tp(?:s?)\:\/\/|~\/|\/)?(?#Username:Password)(?:\w+:\w+@)?(?#Subdomains)(?:(?:[-\w]+\.)+(?#TopLevel Domains)(?:com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum|travel|[a-z]{2}))(?#Port)(?::[\d]{1,5})?(?#Directories)(?:(?:(?:\/(?:[-\w~!$+|.,=]|%[a-f\d]{2})+)+|\/)+|\?|#)?(?#Query)(?:(?:\?(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)(?:&(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)*)*(?#Anchor)(?:#(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)?$')
 @hook.regex(r'([a-zA-Z]+://|www\.)[^ ]+')
 def urlparser(match, say = None):
+    print "[debug] URL found"
     url = urlnorm.normalize(match.group().encode('utf-8'))
     for x in ignored_urls:
         if x in url:
             return
     title = parse(url)
     if title == "fail":
+        print "[url] No title found"
         return
     title = multiwordReplace(title, wordDic)
     realurl = http.get_url(url)

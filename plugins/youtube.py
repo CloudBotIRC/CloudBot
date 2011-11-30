@@ -23,40 +23,32 @@ def get_video_description(vid_id):
         return
 
     j = j['data']
-    out = {}
-    out["title"] = '%s' % j['title']
+
+    out = '\x02%s\x02' % j['title']
 
     if not j.get('duration'):
         return out
 
+    out += ' - length \x02'
     length = j['duration']
-    ti = ""
     if length / 3600:  # > 1 hour
-        ti += '%dh ' % (length / 3600)
+        out += '%dh ' % (length / 3600)
     if length / 60:
-        ti += '%dm ' % (length / 60 % 60)
-    out["length"] = ti
-    #out += "%ds\x02" % (length % 60)
-
-    if 'ratingCount' in j and 'likeCount' in j:
-        out["likes"] = int(j['likeCount'])
-        out["dislikes"] = int(j['ratingCount']) - int(j['likeCount'])
-        
-    if 'rating' in j:
-        out["rating"] = (j['rating'])
+        out += '%dm ' % (length / 60 % 60)
+    out += "%ds\x02" % (length % 60)
 
     if 'viewCount' in j:
-        out["views"] =  j['viewCount']
+        out += ' - \x02%s\x02 views' % locale.format('%d',
+                                                     j['viewCount'], 1)
 
     upload_time = time.strptime(j['uploaded'], "%Y-%m-%dT%H:%M:%S.000Z")
-    out["uploadtime"] = (j['uploader'])
+    out += ' - \x02%s\x02 on \x02%s\x02' % (j['uploader'],
+                time.strftime("%Y.%m.%d", upload_time))
 
+    if 'contentRating' in j:
+        out += ' - \x034NSFW\x02'
 
-    # title. uploader. length. upload date.
-    give = '\x02' + j[u'title'] + '\x02'
-    give += " - Length: " + GetInHMS(j['duration'])
-    give += " - "+ j[u'uploaded'][:10] + " by " + j[u'uploader']
-    return give
+    return out
 
 def GetInHMS(seconds):
     hours = seconds / 3600

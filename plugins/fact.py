@@ -15,4 +15,4 @@ def fact(inp, say=False, nick=False):
 
     fact = misc.strip_html(container.renderContents())
 
-    return "%s [%s]" % (fact, link)
+    return "%s [ %s ]" % (fact, link)

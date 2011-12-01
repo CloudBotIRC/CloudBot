@@ -4,35 +4,36 @@ import random
 
 @hook.command(autohelp=False)
 def coin(inp):
-    ".coin - Flips a coin and shares the result."
+    ".coin [amount] -- flips some coins and shares the result."
 
-    flip = random.randint(0,1)
-    if flip == 1:
-        sidename = "heads"
+    if inp.isdigit():
+        count = int(inp)
     else:
-        sidename = "tails"
+        count = 1
+
+    if count > 10:
+        return "Maximum amount of coins is ten."
+
+    if count > 1:
+        coin = "coins"
+    else:
+        coin = "coin"
+
+    msg = "You flip " + str(count) + " " + coin + " and get the following results:" 
+
+    for i in range(count):
+        flip = random.randint(0,1)
+        if flip == 1:
+            if i == 0:
+                msg += " Heads"
+            else:
+                msg += ", Heads"
+        else:
+            if i == 0:
+                msg += " Tails"
+            else:
+                msg += ", Tails"
 		
-    message = "You flip a coin and it lands on " + sidename + "!"
 
+    return msg
 
-    return message
-
-@hook.command(autohelp=False)
-def coins(inp):
-    ".coins - Flips two coins and shares the results."
-
-    flip2 = random.randint(0,1)
-    if flip2 == 1:
-        sidename2 = "heads"
-    else:
-        sidename2 = "tails"
-    flip = random.randint(0,1)
-    if flip == 1:
-        sidename = "heads"
-    else:
-        sidename = "tails"
-		
-    message = "You flip two coins. You get a " + sidename + ", and a " + sidename2 + "!"
-
-
-    return message

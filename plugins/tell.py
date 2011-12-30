@@ -31,6 +31,7 @@ def tellinput(paraml, input=None, db=None, bot=None):
 
     db_init(db)
 
+
     tells = get_tells(db, input.nick)
 
     if tells:
@@ -73,11 +74,11 @@ def showtells(inp, nick='', chan='', notice=None, db=None):
 @hook.command
 def tell(inp, nick='', chan='', db=None, input=None, notice=None):
     ".tell <nick> <message> -- relay <message> to <nick> when <nick> is around"
-
     query = inp.split(' ', 1)
 
     if len(query) != 2:
-        return tell.__doc__
+        notice(tell.__doc__)
+    return
 
     user_to = query[0].lower()
     message = query[1].strip()
@@ -87,12 +88,7 @@ def tell(inp, nick='', chan='', db=None, input=None, notice=None):
         chan = 'a pm'
 
     if user_to == user_from.lower():
-        notice("No.")
-        return
-
-    if user_to.lower() == "mau5bot":
-        # user is looking for us, being a smartass
-        notice("Thanks for the message, " + user_from + "!")
+        notice("No. I'm not doing that. -.-")
         return
 
     if not re.match("^[A-Za-z0-9_|.-\]\[]*$", user_to.lower()):

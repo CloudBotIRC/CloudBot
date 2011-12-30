@@ -78,7 +78,7 @@ def tell(inp, nick='', chan='', db=None, input=None, notice=None):
 
     if len(query) != 2:
         notice(tell.__doc__)
-    return
+        return
 
     user_to = query[0].lower()
     message = query[1].strip()

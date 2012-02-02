@@ -78,7 +78,11 @@ def tell(inp, nick='', chan='', db=None, input=None, notice=None):
 
     if len(query) != 2:
         notice(tell.__doc__)
+<<<<<<< HEAD
 	return
+=======
+        return
+>>>>>>> 8104d82179de3eeca365370685372177649f54a6
 
     user_to = query[0].lower()
     message = query[1].strip()
@@ -89,11 +93,14 @@ def tell(inp, nick='', chan='', db=None, input=None, notice=None):
 
     if user_to == user_from.lower():
         notice("No. I'm not doing that. -.-")
+<<<<<<< HEAD
         return
 
     if user_to.lower() == "mau5bot":
         # user is looking for us, being a smartass
         notice("Thanks for the message, " + user_from + "!")
+=======
+>>>>>>> 8104d82179de3eeca365370685372177649f54a6
         return
 
     if not re.match("^[A-Za-z0-9_|.-\]\[]*$", user_to.lower()):

@@ -61,6 +61,7 @@ def translate(inp):
     '.translate [source language [target language]] <sentence> -- translates' \
     ' <sentence> from source language (default autodetect) to target' \
     ' language (default English) using Google Translate'
+    return "Due to Google deprecating the translation API, this command is no longer available :("
 
     args = inp.split(' ', 2)
 
@@ -96,6 +97,7 @@ def babel_gen(inp):
 @hook.command
 def babel(inp):
     ".babel <sentence> -- translates <sentence> through multiple languages"
+    return "Due to Google deprecating the translation API, this command is no longer available :("
 
     try:
         return list(babel_gen(inp))[-1][2]
@@ -106,6 +108,8 @@ def babel(inp):
 @hook.command
 def babelext(inp):
     ".babelext <sentence> -- like .babel, but with more detailed output"
+
+    return "Due to Google deprecating the translation API, this command is no longer available :("
 
     try:
         babels = list(babel_gen(inp))

@@ -1,7 +1,7 @@
 from util import hook, http
 
 
-api_key = ""
+api_key = "71ebca1c7e6b12ccd900efed95f7c1e0"
 
 api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
 

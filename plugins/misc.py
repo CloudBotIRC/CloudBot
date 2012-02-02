@@ -3,7 +3,7 @@ import socket
 import subprocess
 import time
 
-from util import hook
+from util import hook, http
 
 socket.setdefaulttimeout(10)  # global setting
 
@@ -44,6 +44,11 @@ def onjoin(paraml, conn=None, bot=None):
     for channel in conn.channels:
         conn.join(channel)
         time.sleep(1)  # don't flood JOINs
+
+    # set user-agent
+
+    http.ua_skybot = 'CloudBot'
+
 
 @hook.regex(r'^\x01VERSION\x01$')
 def version(inp, notice=None):

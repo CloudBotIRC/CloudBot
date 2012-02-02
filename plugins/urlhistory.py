@@ -61,10 +61,10 @@ def format_reply(history):
 
     return #"that url has been posted %s in the past %s by %s (%s)." % (ordinal,
 
-@hook.regex(r'([a-zA-Z]+://|www\.)[^ ]+')
-def urlinput(match, nick='', chan='', db=None, bot=None):
+@hook.command
+def url(inp, nick='', chan='', db=None, bot=None):
     db_init(db)
-    url = urlnorm.normalize(match.group().encode('utf-8'))
+    url = urlnorm.normalize(inp.group().encode('utf-8'))
     if url not in ignored_urls:
         url = url.decode('utf-8')
         history = get_history(db, chan, url)

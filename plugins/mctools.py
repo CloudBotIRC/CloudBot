@@ -3,12 +3,10 @@ import string
 
 @hook.command(autohelp=False)
 def mcstatus(inp, bot=None):
-    ".mcstatus -- Attempts to log in to minecraft"
+    ".mcstatus - Attempts to log in to minecraft"
     username = bot.config["api_keys"]["mc_user"]
     password = bot.config["api_keys"]["mc_pass"]
     login = http.get("https://login.minecraft.net/?user="+username+"&password="+password+"&version=13")
-    print "Username: " + username
-    print "Response: " + login
     if username.lower() in login.lower():
         return "Minecraft login servers appear to be online!"
     else:
@@ -16,7 +14,7 @@ def mcstatus(inp, bot=None):
 
 @hook.command
 def mclogin(inp, say=None):
-    ".mclogin <username> <password> -- Attempts to log in to minecraft using the provided username and password, this is NOT logged."
+    ".mclogin <username> <password> - Attempts to log in to minecraft using the provided username and password, this is NOT logged."
     inp = inp.split(" ")
     username = inp[0]
     password = inp[1]
@@ -29,7 +27,7 @@ def mclogin(inp, say=None):
 
 @hook.command
 def haspaid(inp):
-    ".haspaid <username> -- Checks if a user has a premium Minecraft account"
+    ".haspaid <username> - Checks if a user has a premium Minecraft account"
     login = http.get("http://www.minecraft.net/haspaid.jsp?user=" + inp)
     if "true" in login:
         return "The account \'" + inp + "\' is a premium Minecraft account! :D"

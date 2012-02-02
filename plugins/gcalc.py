@@ -29,4 +29,3 @@ def calc(inp):
     output = misc.strip_html(output)
 
     return output
-    

@@ -1,6 +1,6 @@
 """
 TV information, written by Lurchington 2010
-modified by rmmh 2010 && lukeroge 2011
+modified by rmmh 2010
 """
 
 import datetime
@@ -13,6 +13,7 @@ from util import hook, http
 
 
 base_url = "http://thetvdb.com/api/"
+api_key = "469B73127CA0C411"
 
 
 def get_zipped_xml(*args, **kwargs):
@@ -24,19 +25,19 @@ def get_zipped_xml(*args, **kwargs):
     return etree.parse(ZipFile(zip_buffer, "r").open(path))
 
 
-def get_episodes_for_series(seriesname, api_key):
+def get_episodes_for_series(seriesname):
     res = {"error": None, "ended": False, "episodes": None, "name": None}
     # http://thetvdb.com/wiki/index.php/API:GetSeries
     try:
         query = http.get_xml(base_url + 'GetSeries.php', seriesname=seriesname)
     except URLError:
-        res["error"] = "Error contacting thetvdb.com."
+        res["error"] = "error contacting thetvdb.com"
         return res
 
     series_id = query.xpath('//seriesid/text()')
 
     if not series_id:
-        res["error"] = "Unknown TV series (using www.thetvdb.com)."
+        res["error"] = "unknown tv series (using www.thetvdb.com)"
         return res
 
     series_id = series_id[0]
@@ -45,7 +46,7 @@ def get_episodes_for_series(seriesname, api_key):
         series = get_zipped_xml(base_url + '%s/series/%s/all/en.zip' %
                                     (api_key, series_id), path="en.xml")
     except URLError:
-        res["error"] = "Error contacting thetvdb.com."
+        res["error"] = "error contacting thetvdb.com"
         return res
 
     series_name = series.xpath('//SeriesName/text()')[0]
@@ -83,11 +84,9 @@ def get_episode_info(episode):
 
 @hook.command
 @hook.command('tv')
-def tv_next(inp, bot = None):
+def tv_next(inp):
     ".tv_next <series> -- get the next episode of <series>"
-
-    api_key = bot.config["api_keys"]["tvdb"]
-    episodes = get_episodes_for_series(inp, api_key)
+    episodes = get_episodes_for_series(inp)
 
     if episodes["error"]:
         return episodes["error"]
@@ -120,22 +119,20 @@ def tv_next(inp, bot = None):
             break
 
     if not next_eps:
-        return "There are no new episodes scheduled for %s." % series_name
+        return "there are no new episodes scheduled for %s" % series_name
 
     if len(next_eps) == 1:
-        return "The next episode of %s airs %s." % (series_name, next_eps[0])
+        return "the next episode of %s airs %s" % (series_name, next_eps[0])
     else:
         next_eps = ', '.join(next_eps)
-        return "The next episodes of %s: %s." % (series_name, next_eps)
+        return "the next episodes of %s: %s" % (series_name, next_eps)
 
 
 @hook.command
 @hook.command('tv_prev')
-def tv_last(inp, bot = None):
+def tv_last(inp):
     ".tv_last <series> -- gets the most recently aired episode of <series>"
-
-    api_key = bot.config["api_keys"]["tvdb"]
-    episodes = get_episodes_for_series(inp, api_key)
+    episodes = get_episodes_for_series(inp)
 
     if episodes["error"]:
         return episodes["error"]

@@ -66,24 +66,23 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
         return
 
 @hook.command("f")
-def forget(inp, db=None):
+def forget(inp, db=None, input=None, notice=None):
     ".f <word> -- forgets the mapping that word had"
-
-    try:
-        head, tail = inp.split(None, 1)
-    except ValueError:
-        return remember.__doc__
+    if input.nick not in input.bot.config["admins"]:
+        return
 
     db_init(db)
-    data = get_memory(db, binp)
+    data = get_memory(db, inp)
 
     if data:
         db.execute("delete from mem where word=lower(?)",
-                   (inp))
+                   [inp])
         db.commit()
-        return 'forgot `%s`' % data.replace('`', "'")
+        notice('`%s` has been forgotten.' % data.replace('`', "'"))
+        return
     else:
-        return "I don't know about that."
+        notice("I don't know about that.")
+        return
 
 @hook.command("info")
 @hook.regex(r'^\? ?(.+)')

@@ -74,7 +74,7 @@ __version__ = "1.0"
 
 import string, re, sys, random
 
-NAMEDIR = "./namefiles/"
+NAMEDIR = "/home/ircbot/bot/plugins/util/names"
 NAMESECTIONS = [ "inf", "first", "mid", "final", "notes", "end" ]
 
 class NameFile:
@@ -217,4 +217,3 @@ if __name__ == "__main__":
             for i in range(n):
                 print name.name()
         i += 1
-

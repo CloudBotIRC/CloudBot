@@ -10,12 +10,12 @@ def md5(inp):
 def sha1(inp):
     ".hash <text> -- returns a sha1 hash of <text>"
     return hashlib.sha1(inp).hexdigest()
-	
+
 @hook.command
 def sha256(inp):
     ".hash <text> -- returns a sha256 hash of <text>"
     return hashlib.sha256(inp).hexdigest()
-	
+
 @hook.command
 def sha512(inp):
     ".hash <text> -- returns a sha512 hash of <text>"

@@ -4,7 +4,7 @@ from urllib2 import urlopen, Request, HTTPError
 import re
 import BeautifulSoup
 
-ignored_urls = ["http://google.com","http://youtube.com","http://pastebin.com","http://mibpaste.com","http://fpaste.com"]
+ignored_urls = ["http://google.com","http://youtube.com","http://pastebin.com","http://mibpaste.com","http://fpaste.com","beastnode.com"]
 
 wordDic = {
 '&#34;': '"',
@@ -41,7 +41,7 @@ def multiwordReplace(text, wordDic):
 
 
 #@hook.regex(r'^(?#Protocol)(?:(?:ht|f)tp(?:s?)\:\/\/|~\/|\/)?(?#Username:Password)(?:\w+:\w+@)?(?#Subdomains)(?:(?:[-\w]+\.)+(?#TopLevel Domains)(?:com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum|travel|[a-z]{2}))(?#Port)(?::[\d]{1,5})?(?#Directories)(?:(?:(?:\/(?:[-\w~!$+|.,=]|%[a-f\d]{2})+)+|\/)+|\?|#)?(?#Query)(?:(?:\?(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)(?:&(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)*)*(?#Anchor)(?:#(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)?$')
-@hook.regex(r'([a-zA-Z]+://|www\.)[^ ]+')
+#@hook.regex(r'([a-zA-Z]+://|www\.)[^ ]+')
 def urlparser(match, say = None):
     print "[debug] URL found"
     url = urlnorm.normalize(match.group().encode('utf-8'))

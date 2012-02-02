@@ -1,4 +1,3 @@
-
 import socket
 import struct
 
@@ -18,7 +17,7 @@ def get_info(host, port):
         sock.close()
         return "%s - %d/%d players" % (values[0], int(values[1]), int(values[2]))
     except:
-        return "Error pinging "+host+":"+str(port)+", is it up? double-check your address!"
+        return "Error pinging "+host+":"+str(port)+", is it up? Double-check your address!"
 
 @hook.command
 def mcping(inp):

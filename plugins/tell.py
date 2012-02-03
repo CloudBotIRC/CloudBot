@@ -51,7 +51,7 @@ def tellinput(paraml, input=None, db=None, bot=None):
 
 @hook.command(autohelp=False)
 def showtells(inp, nick='', chan='', notice=None, db=None):
-    ".showtells -- view all pending tell messages (sent in PM)."
+    ".showtells -- view all pending tell messages (sent in a notice)."
 
     db_init(db)
 
@@ -88,10 +88,10 @@ def tell(inp, nick='', chan='', db=None, input=None, notice=None):
         chan = 'a pm'
 
     if user_to == user_from.lower():
-        notice("No. I'm not doing that. -.-")
+        notice("Nope.")
         return
 
-    if user_to.lower() == input.conn.nick.lower()":
+    if user_to.lower() == input.conn.nick.lower():
         # user is looking for us, being a smartass
         notice("Thanks for the message, " + user_from + "!")
         return
@@ -116,4 +116,4 @@ def tell(inp, nick='', chan='', db=None, input=None, notice=None):
         notice("Message has already been queued.")
         return
 
-    notice("I'll pass that along.")
+    notice("Your message has been sent!")

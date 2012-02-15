@@ -64,6 +64,7 @@ def GetInHMS(seconds):
 def youtube_url(match):
     return get_video_description(match.group(1))
 
+@hook.command('yt')
 @hook.command('y')
 @hook.command
 def youtube(inp):

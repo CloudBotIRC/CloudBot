@@ -25,7 +25,7 @@ def get_zipped_xml(*args, **kwargs):
     return etree.parse(ZipFile(zip_buffer, "r").open(path))
 
 
-def get_episodes_for_series(seriesname):
+def get_episodes_for_series(seriesname, api_key):
     res = {"error": None, "ended": False, "episodes": None, "name": None}
     # http://thetvdb.com/wiki/index.php/API:GetSeries
     try:
@@ -59,7 +59,7 @@ def get_episodes_for_series(seriesname):
     return res
 
 
-def get_episode_info(episode):
+def get_episode_info(episode, api_key):
     first_aired = episode.findtext("FirstAired")
 
     try:
@@ -84,9 +84,13 @@ def get_episode_info(episode):
 
 @hook.command
 @hook.command('tv')
-def tv_next(inp):
+def tv_next(inp, bot = None):
     ".tv_next <series> -- get the next episode of <series>"
-    episodes = get_episodes_for_series(inp)
+
+    api_key = bot.config.get("api_keys", {}).get("tvdb", None)
+    if api_key is None:
+        return "error: no api key set"
+    episodes = get_episodes_for_series(inp, api_key)
 
     if episodes["error"]:
         return episodes["error"]
@@ -102,7 +106,7 @@ def tv_next(inp):
     today = datetime.date.today()
 
     for episode in reversed(episodes):
-        ep_info = get_episode_info(episode)
+        ep_info = get_episode_info(episode, api_key)
 
         if ep_info is None:
             continue
@@ -130,9 +134,13 @@ def tv_next(inp):
 
 @hook.command
 @hook.command('tv_prev')
-def tv_last(inp):
+def tv_last(inp, bot = None):
     ".tv_last <series> -- gets the most recently aired episode of <series>"
-    episodes = get_episodes_for_series(inp)
+
+    api_key = bot.config.get("api_keys", {}).get("tvdb", None)
+    if api_key is None:
+        return "error: no api key set"
+    episodes = get_episodes_for_series(inp, api_key)
 
     if episodes["error"]:
         return episodes["error"]
@@ -145,7 +153,7 @@ def tv_last(inp):
     today = datetime.date.today()
 
     for episode in reversed(episodes):
-        ep_info = get_episode_info(episode)
+        ep_info = get_episode_info(episode, api_key)
 
         if ep_info is None:
             continue

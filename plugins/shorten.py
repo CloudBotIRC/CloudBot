@@ -22,6 +22,8 @@ def tiny(url, user, apikey):
 @hook.command
 def shorten(inp, bot = None):
   ".shorten <url> - Makes an j.mp/bit.ly shortlink to the url provided"
-  user = bot.config['api_keys']['bitly_user']
-  api = bot.config['api_keys']['bitly_api']
-  return tiny(inp, user, api)
+  api_user = bot.config.get("api_keys", {}).get("bitly_user", None)
+  api_key = bot.config.get("api_keys", {}).get("bitly_api", None)
+  if api_key is None:
+      return "error: no api key set"
+  return tiny(inp, api_user, api_key)

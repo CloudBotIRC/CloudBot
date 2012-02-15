@@ -34,7 +34,7 @@ def wolframalpha(inp, bot=None):
     ret = '. '.join(pod_texts)
 
     if not pod_texts:
-        return 'no results'
+        return 'No results.'
 
     ret = re.sub(r'\\(.)', r'\1', ret)
 
@@ -48,6 +48,6 @@ def wolframalpha(inp, bot=None):
         ret = re.sub(r'\W+$', '', ret) + '...'
 
     if not ret:
-        return 'no results'
+        return 'No results.'
 
     return ret

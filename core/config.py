@@ -33,8 +33,8 @@ if not os.path.exists('config'):
             "bitly_user": "INSERT USERNAME FROM bitly.com HERE",
             "bitly_api": "INSERT API KEY FROM bitly.com HERE",
             "woflramalpha": "INSERT API KEY FROM wolframalpha.com HERE",
-            "mc_user": "INSERT MINECRAFT USERNAME HERE (used to check login servers in mclogin.py)",
-            "mc_pass": "INSERT MINECRAFT PASSWORD HERE (used to check login servers in mclogin.py)"
+            "mc_user": "INSERT MINECRAFT USERNAME HERE (used to check login servers in mctools.py)",
+            "mc_pass": "INSERT MINECRAFT PASSWORD HERE (used to check login servers in mctools.py)"
           },
           "censored_strings":
           [

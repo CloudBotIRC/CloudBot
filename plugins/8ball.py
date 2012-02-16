@@ -34,7 +34,7 @@ answers = [g + "As I see it, yes",
         r + "Very doubtful"]
 
 @hook.command('8ball')
-def ask(inp, me=None):
+def eightball(inp, me=None):
     ".8ball <question> - The all knowing magic eight ball, in electronic form. Ask a question and the answer shall be provided."
     global nextresponsenumber
     inp = inp.strip()

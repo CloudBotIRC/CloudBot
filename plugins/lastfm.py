@@ -1,17 +1,19 @@
 from util import hook, http
 
 
-api_key = "71ebca1c7e6b12ccd900efed95f7c1e0"
-
 api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
 
 
 @hook.command
-def lastfm(inp, nick='', say=None):
+def lastfm(inp, nick='', say=None, bot=None):
     if inp:
         user = inp
     else:
         user = nick
+
+    api_key = bot.config.get("api_keys", {}).get("lastfm", None)
+    if api_key is None:
+        return "error: no api key set"
 
     response = http.get_json(api_url, method="user.getrecenttracks",
                              api_key=api_key, user=user, limit=1)

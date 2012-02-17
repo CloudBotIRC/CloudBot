@@ -22,7 +22,7 @@ if not os.path.exists('config'):
               "channels": ["#channel"],
               "command_prefix": ".",
               "stayalive": "",
-              "stayalive_delay": "20",
+              "stayalive_delay": "20"
             }
           },
           "disabled_plugins": [],

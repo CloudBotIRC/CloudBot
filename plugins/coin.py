@@ -24,9 +24,12 @@ def coin(inp):
         count = int(inp)
     else:
         if inp:
-            return "Invalid Input :("
+            return "Invalid input."
         else:
             count = 1
+
+    if count > 200:
+        return "Too many coins! Maximum is 200."
     # depending on the count, we use two different methods to get the output
     if count == 1:
         flip = random.randint(0,1)

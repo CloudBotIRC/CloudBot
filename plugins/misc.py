@@ -49,6 +49,14 @@ def onjoin(paraml, conn=None, bot=None):
 
     http.ua_skybot = 'CloudBot'
 
+    # stayalive code
+
+    stayalive = conn.conf.get('stayalive')
+    if stayalive:
+        while True:
+            time.sleep(conn.conf.get('stayalive_delay', 20))
+            conn.cmd('PING', [conn.nick])
+
 
 @hook.regex(r'^\x01VERSION\x01$')
 def version(inp, notice=None):

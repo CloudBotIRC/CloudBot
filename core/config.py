@@ -19,12 +19,14 @@ if not os.path.exists('config'):
               "user": "cloudbot",
               "realname": "CloudBot/DEV - http://j.mp/uS5Cvx",
               "nickserv_password": "",
-              "channels": ["#channel"]
+              "channels": ["#channel"],
+              "command_prefix": ".",
+              "stayalive": "",
+              "stayalive_delay": "20",
             }
           },
           "disabled_plugins": [],
           "disabled_commands": [],
-          "prefix": ".",
           "acls": {},
           "api_keys":
           {

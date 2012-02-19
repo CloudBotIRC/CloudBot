@@ -2,10 +2,15 @@
 #  Broken by The Noodle
 from util import hook
 
+def isadmin(input):
+    if input.nick in input.bot.config["admins"]:
+        return True
+    else:
+        return False
 @hook.command
 def join(inp, input=None, db=None, notice=None):
     ".join <channel> -- joins a channel"
-    if input.nick not in input.bot.config["admins"]:
+    if not isadmin(input):
         notice("Only bot admins can use this command!")
         return
     chan = inp.split(' ', 1)
@@ -17,7 +22,7 @@ def join(inp, input=None, db=None, notice=None):
 @hook.command
 def cycle(inp, input=None, db=None, notice=None):
     ".cycle <channel> -- cycles a channel"
-    if input.nick not in input.bot.config["admins"]:
+    if not isadmin(input):
         notice("Only bot admins can use this command!")
         return
     notice("Attempting to cycle " + inp + "...")
@@ -27,7 +32,7 @@ def cycle(inp, input=None, db=None, notice=None):
 @hook.command
 def part(inp, input=None, notice=None):
     ".part <channel> -- leaves a channel"
-    if input.nick not in input.bot.config["admins"]:
+    if not isadmin(input):
         notice("Only bot admins can use this command!")
         return
     chan = inp.split(' ', 1)
@@ -39,7 +44,7 @@ def part(inp, input=None, notice=None):
 @hook.command
 def nick(inp, input=None, notice=None):
     ".nick <nick> -- change the bots nickname to <nick>"
-    if input.nick not in input.bot.config["admins"]:
+    if not isadmin(input):
         notice("Only bot admins can use this command!")
         return
     chan = inp.split(' ', 1)
@@ -51,7 +56,7 @@ def nick(inp, input=None, notice=None):
 @hook.command
 def raw(inp, input=None, notice=None):
     ".raw <command> - Send a RAW IRC command!"
-    if input.nick not in input.bot.config["admins"]:
+    if not isadmin(input):
         notice("Only bot admins can use this command!")
         return
     chan = inp.split(' ', 1)
@@ -61,80 +66,87 @@ def raw(inp, input=None, notice=None):
 @hook.command
 def kick(inp, input=None, notice=None):
     ".kick [channel] <user> [reason] -- kick a user!"
-    if input.nick not in input.bot.config["admins"]:
+    if not isadmin(input):
         notice("Only bot admins can use this command!")
         return
-    stuff = inp.split(" ")
-    if stuff[0][0] == "#":
-        out = "KICK " + stuff[0] + " " + stuff[1]
-        if len(stuff) > 2:
+    split = inp.split(" ")
+
+    if split[0][0] == "#":
+        chan = split[0]
+        user = split[1]
+        out = "KICK %s %s" % (chan, user)
+        if len(split) > 2:
             reason = ""
-            for x in stuff[2:]:
+            for x in split[2:]:
                 reason = reason + x + " "
             reason = reason[:-1]
             out = out+" :"+reason
+
     else:
-        out = "KICK " + input.chan + " " + stuff[0]
-        if len(stuff) > 1:
+        chan = input.chan
+        user = split[0]
+        out = "KICK %s %s" % (input.chan, split[0])
+        if len(split) > 1:
             reason = ""
-            for x in stuff[1:]:
+            for x in split[1:]:
                 reason = reason + x + " "
             reason = reason[:-1]
             out = out + " :" + reason
-    notice("Attempting to kick " + inp + "...")         
+
+    notice("Attempting to kick %s from %s..." % (user, chan))         
     input.conn.send(out)
 
 @hook.command
 def say(inp, input=None, notice=None):
     ".say [channel] <message> -- makes the bot say <message> in [channel]. if [channel] is blank the bot will say the <message> in the channel the command was used in."
-    if input.nick not in input.bot.config["admins"]:
+    if not isadmin(input):
         notice("Only bot admins can use this command!")
         return
-    stuff = inp.split(" ")
-    if stuff[0][0] == "#":
+    split = inp.split(" ")
+    if split[0][0] == "#":
         message = ""
-        for x in stuff[1:]:
+        for x in split[1:]:
             message = message + x + " "
         message = message[:-1]
-        out = "PRIVMSG " + stuff[0] + " :" + message
+        out = "PRIVMSG %s :%s" % (split[0], message)
     else:
         message = ""
-        for x in stuff[0:]:
+        for x in split[0:]:
             message = message + x + " "
         message = message[:-1]
-        out = "PRIVMSG " + input.chan + " :" + message
+        out = "PRIVMSG %s :%s" % (input.chan, message)
     input.conn.send(out)
 
 @hook.command
 def act(inp, input=None, notice=None):
     ".act [channel] <action> -- makes the bot act <action> in [channel]. if [channel] is blank the bot will act the <action> in the channel the command was used in."
-    if input.nick not in input.bot.config["admins"]:
+    if not isadmin(input):
         notice("Only bot admins can use this command!")
         return
-    stuff = inp.split(" ")
-    if stuff[0][0] == "#":
+    split = inp.split(" ")
+    if split[0][0] == "#":
         message = ""
-        for x in stuff[1:]:
+        for x in split[1:]:
             message = message + x + " "
         message = message[:-1]
-        out = "PRIVMSG " + stuff[0] + " :\x01ACTION " + message + "\x01"
+        out = "PRIVMSG %s :\x01ACTION %s\x01" % (split[0], message)
     else:
         message = ""
-        for x in stuff[0:]:
+        for x in split[0:]:
             message = message + x + " "
         message = message[:-1]
-        out = "PRIVMSG " + input.chan + " :\x01ACTION " + message + "\x01"
+        out = "PRIVMSG %s :\x01ACTION %s\x01" % (input.chan, message)
     input.conn.send(out)
 
 @hook.command
 def topic(inp, input=None, notice=None):
     ".topic [channel] <topic> -- change the topic of a channel"
-    if input.nick not in input.bot.config["admins"]:
+    if not isadmin(input):
         notice("Only bot admins can use this command!")
         return
-    stuff = inp.split(" ")
-    if stuff[0][0] == "#":
-        out = "TOPIC " + stuff[0] + " :" + stuff[1]
+    split = inp.split(" ")
+    if split[0][0] == "#":
+        out = "PRIVMSG %s :%s" % (split[0], message)
     else:
-        out = "TOPIC " + input.chan + " :" + stuff[0]
+        out = "TOPIC %s :%s" % (input.chan, message)
     input.conn.send(out)

@@ -49,11 +49,11 @@ def get_quote_num(num, count, name):
     if num: # Make sure num is a number if it isn't false
         num = int(num)
     if count == 0: # If there are no quotes in the database, raise an Exception.
-        raise Exception("No quotes found for %s" % name)
+        raise Exception("No quotes found for %s." % name)
     if num and num < 0: # If the selected quote is less than 0, count back if possible.
         num = count + num + 1 if num + count > -1 else count + 1
     if num and num > count: # If a number is given and and there are not enough quotes, raise an Exception.
-        raise Exception("I only have %d quote%s for %s" % (count, ('s', '')[count == 1], name))
+        raise Exception("I only have %d quote%s for %s." % (count, ('s', '')[count == 1], name))
     if num and num == 0: # If the number is zero, set it to one
         num = 1
     if not num: # If a number is not given, select a random one
@@ -104,7 +104,7 @@ def get_quote_by_chan(db, chan, num=False):
 
 @hook.command('q')
 @hook.command
-def quote(inp, nick='', chan='', db=None):
+def quote(inp, nick='', chan='', db=None, notice=None):
     ".q/.quote [#chan] [nick] [#n]/.quote add <nick> <msg> -- gets " \
         "random or [#n]th quote by <nick> or from <#chan>/adds quote"
     create_table_if_not_exists(db)
@@ -127,4 +127,4 @@ def quote(inp, nick='', chan='', db=None):
         chan, nick, num = retrieve_chan.groups()
         return get_quote_by_nick(db, chan, nick, num)
     
-    return quote.__doc__
+    notice(quote.__doc__)

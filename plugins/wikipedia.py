@@ -48,4 +48,4 @@ def wiki(inp):
     if len(desc) > 300:
         desc = desc[:300] + '...'
 
-    return '%s -- %s' % (desc, http.quote(url, ':/'))
+    return '%s :: %s' % (desc, http.quote(url, ':/'))

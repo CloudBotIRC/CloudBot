@@ -39,9 +39,11 @@ def help(inp, input=None, bot=None, say=None, notice=None):
             else:
                 out[0] += " " + str(x)
         
-        notice(out[0][1:])
+        notice("Commands I recognise: " + out[0][1:])
         if out[1]:
             notice(out[1][1:])
+        notice("For help, do '.help example' where example is the " + 
+               "name of the command you want help for.")
         
         
         

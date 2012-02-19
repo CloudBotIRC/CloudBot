@@ -33,7 +33,7 @@ def google(inp):
         raise IOError('error searching for pages: %d: %s' % (
                 parsed['responseStatus'], ''))
     if not parsed['responseData']['results']:
-        return 'no results found'
+        return 'No results found.'
 
     result = parsed['responseData']['results'][0]
 
@@ -44,6 +44,9 @@ def google(inp):
         content = "No description available."
     else:
         content = http.html.fromstring(content).text_content()
+        
+    if len(content) > 250:
+        content = content[:250] + '...'
 
     out = '%s :: %s :: %s' % (title, content, result['unescapedUrl'])
 

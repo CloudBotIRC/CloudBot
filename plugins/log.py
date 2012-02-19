@@ -89,11 +89,6 @@ def log(paraml, input=None, bot=None):
     fd = get_log_fd(bot.persist_dir, input.server, 'raw')
     fd.write(timestamp + ' ' + input.raw + '\n')
 
-    if input.command == 'QUIT':  # these are temporary fixes until proper
-        input.chan = 'quit'      # presence tracking is implemented
-    if input.command == 'NICK':
-        input.chan = 'nick'
-
     beau = beautify(input)
 
     if beau == '':  # don't log this

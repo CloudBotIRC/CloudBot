@@ -106,6 +106,27 @@ def say(inp, input=None, notice=None):
     input.conn.send(out)
 
 @hook.command
+def act(inp, input=None, notice=None):
+    ".act [channel] <action> -- makes the bot act <action> in [channel]. if [channel] is blank the bot will act the <action> in the channel the command was used in."
+    if input.nick not in input.bot.config["admins"]:
+        notice("Only bot admins can use this command!")
+        return
+    stuff = inp.split(" ")
+    if stuff[0][0] == "#":
+        message = ""
+        for x in stuff[1:]:
+            message = message + x + " "
+        message = message[:-1]
+        out = "PRIVMSG " + stuff[0] + " :\x01ACTION " + message + "\x01"
+    else:
+        message = ""
+        for x in stuff[0:]:
+            message = message + x + " "
+        message = message[:-1]
+        out = "PRIVMSG " + input.chan + " :\x01ACTION " + message + "\x01"
+    input.conn.send(out)
+
+@hook.command
 def topic(inp, input=None, notice=None):
     ".topic [channel] <topic> -- change the topic of a channel"
     if input.nick not in input.bot.config["admins"]:

@@ -81,7 +81,6 @@ def kick(inp, input=None, notice=None):
                 reason = reason + x + " "
             reason = reason[:-1]
             out = out+" :"+reason
-
     else:
         chan = input.chan
         user = split[0]

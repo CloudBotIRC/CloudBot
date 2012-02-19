@@ -49,7 +49,7 @@ def google(inp):
 
     out = ' '.join(out.split())
 
-    if len(out) > 300:
-        out = out[:out.rfind(' ')] + '..."'
+    if len(out) > 250:
+        out = out[:out.rfind(' ')] + '...'
 
     return out

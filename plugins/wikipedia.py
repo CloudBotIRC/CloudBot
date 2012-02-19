@@ -27,7 +27,7 @@ def wiki(inp):
         if x.find('error') is not None:
             return 'error: %(code)s: %(info)s' % x.find('error').attrib
         else:
-            return 'no results found'
+            return 'No results found.'
 
     def extract(item):
         return [item.find(ns + x).text for x in
@@ -48,4 +48,4 @@ def wiki(inp):
     if len(desc) > 300:
         desc = desc[:300] + '...'
 
-    return '%s :: %s' % (desc, http.quote(url, ':/'))
+    return '%s -- %s' % (desc, http.quote(url, ':/'))

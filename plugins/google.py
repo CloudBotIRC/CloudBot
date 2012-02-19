@@ -44,11 +44,8 @@ def google(inp):
         content = "No description available."
     else:
         content = http.html.fromstring(content).text_content()
-        
-    if len(content) > 250:
-        content = content[:250] + '...'
 
-    out = '%s :: %s :: %s' % (title, content, result['unescapedUrl'])
+    out = '%s :: %s :: %s' % (result['unescapedUrl'], title, content)
 
     out = ' '.join(out.split())
 

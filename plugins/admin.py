@@ -37,8 +37,8 @@ def part(inp, input=None, notice=None):
     input.conn.send("PART " + inp)
 
 @hook.command
-def chnick(inp, input=None, notice=None):
-    ".chnick <nick> - Change the nick!"
+def nick(inp, input=None, notice=None):
+    ".nick <nick> -- change the bots nickname to <nick>"
     if input.nick not in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return

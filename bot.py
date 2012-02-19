@@ -13,10 +13,11 @@ os.chdir(sys.path[0] or '.')  # do stuff relative to the install directory
 class Bot(object):
     pass
 
+print 'Welcome to Cloudbot - Version 3/DEV - https://github.com/lukeroge/CloudBot/'
 
 bot = Bot()
 
-print 'Loading plugins'
+print 'Loading plugins...'
 
 # bootstrap the reloader
 eval(compile(open(os.path.join('core', 'reload.py'), 'U').read(),

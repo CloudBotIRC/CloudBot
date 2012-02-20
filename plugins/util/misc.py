@@ -1,13 +1,7 @@
 from htmlentitydefs import name2codepoint
-from time import time as unix_time
 from HTMLParser import HTMLParser
-from datetime import datetime
-import tempfile
-import logging as log
 import errno
 import re
-import sys
-import os
 
 class HTMLStripper(HTMLParser):
 
@@ -28,13 +22,11 @@ class HTMLStripper(HTMLParser):
                 char = int(name)
             self._stripped.append(unichr(char))
         except Exception, error:
-            log.warn('invalid entity: %s' % error)
 
     def handle_entityref(self, name):
         try:
             char = unichr(name2codepoint[name])
         except Exception, error:
-            log.warn('unknown entity: %s' % error)
             char = u'&%s;' % name
         self._stripped.append(char)
 
@@ -44,11 +36,6 @@ class HTMLStripper(HTMLParser):
     @property
     def stripped(self):
         return ''.join(self._stripped)
-
-def superscript(text):
-    if isinstance(text, str):
-        text = decode(text, 'utf-8')
-    return text.translate(SUPER_MAP)
 
 def strip_html(data):
     return HTMLStripper(data).stripped

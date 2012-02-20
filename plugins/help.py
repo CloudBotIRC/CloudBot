@@ -4,7 +4,7 @@ from util import hook
 
 # Standard automatic help command
 @hook.command(autohelp=False)
-def help(inp, input=None, bot=None, say=None, notice=None):
+def help_new(inp, input=None, bot=None, say=None, notice=None):
     ".help  -- gives a list of commands/help for a command"
 
     funcs = {}
@@ -41,10 +41,7 @@ def help(inp, input=None, bot=None, say=None, notice=None):
             notice(out[1][1:])
         notice("For help, do '.help example' where example is the " + 
                "name of the command you want help for.")
-        
-        
-        
+          
     else:
         if inp in commands:
-            input.say(commands[inp].__doc__)
-
+            notice(commands[inp].__doc__)

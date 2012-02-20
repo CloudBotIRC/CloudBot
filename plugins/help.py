@@ -21,17 +21,14 @@ def help(inp, input=None, bot=None, say=None, notice=None):
                     else:
                         funcs[func] = command
 
-    hidden = ["part", "stfu", "kthx", "chnick", "join", "8ballnooxt"]
-
-    commands = dict((value, key) for key, value in funcs.iteritems() if key not in hidden)
+    commands = dict((value, key) for key, value in funcs.iteritems())
 
     if not inp:
         length = 0
         out = ["",""]
         well = []
         for x in commands:
-            if x not in hidden:
-                well.append(x)
+            well.append(x)
         well.sort()
         for x in well:
             if len(out[0]) + len(str(x)) > 440:

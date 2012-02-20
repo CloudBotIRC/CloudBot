@@ -6,7 +6,7 @@ larts = ["swaps <who>'s shampoo with glue",
         "installs windows on <who>'s machine",
         "forces <who> to use perl for 3 weeks",
         "registers <who>'s name with 50 known spammers",
-        "resizes <who>'s  to 40x24",
+        "resizes <who>'s console to 40x24",
         "takes <who>'s drink",
         "dispenses <who>'s email address to a few hundred 'bulk mailing services'",
         "pokes <who> in the eye",
@@ -101,14 +101,6 @@ larts = ["swaps <who>'s shampoo with glue",
         "assigns all of the permissions tickets on the BeastNode support system to <who>",
         "hands <who> a poison ivy joint"]
 
-loves = ["hugs <who>",
-        "gives <who> some love",
-        "gives <who> a cookie",
-        "makes a balloon animal for <who>",
-        "shares a slice of cake with <who>",
-        "slaps <who> heartily on the back",
-        "tickles <who>"]
-
 slaps = ["slaps <who> with a <item>",
         "slaps <who> around a bit with a <item>",
         "throws a <item> at <who>",
@@ -147,22 +139,6 @@ def lart(inp, me = None,  nick = None, input=None, notice=None):
         msg = 'slaps ' + nick + ' in the face!'
     else:
         msg = re.sub ('<who>', inp, random.choice(larts))
-
-    me(msg)
-
-@hook.command
-def love(inp, me = None, input=None, notice=None):
-    ".love <user> - gives a user a nice comment"
-    inp = inp.strip()
-
-    if not re.match("^[A-Za-z0-9_|.-\]\[]*$", inp.lower()):
-        notice("Invalid username!")
-        return
-
-    if inp == input.conn.nick.lower() or inp == "itself":
-        msg = 'hugs themself!'
-    else:
-        msg = re.sub ('<who>', inp, random.choice(loves))
 
     me(msg)
 

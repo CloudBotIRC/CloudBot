@@ -1,8 +1,8 @@
-# # Lukeroge
+#  Created by Lukeroge, improved by TheNoodle
 from util import hook
 import random
 
-# used for tals: x heads: y
+# used for tails: x heads: y
 def flip_simple(count):
     heads = 0
     tails = 0
@@ -40,5 +40,5 @@ def coin(inp):
         return "You flip a coin and get "+sidename+"."
     else:
         flips = flip_simple(count)
-        return "You flip "+str(count)+" coins and get " +str(flips[0])+" heads and "+str(flips[1])+" tails."
+        return "You flip %s coins and get %s heads and %s tails." % (str(count), str(flips[0]), str(flips[0]))
 

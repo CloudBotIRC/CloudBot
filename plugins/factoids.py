@@ -6,6 +6,16 @@ from util import hook
 import re
 
 
+# the dictionary has target_word : replacement_word pairs
+shortcodes = {
+'<b>': '\x02',
+'</b>': '\x02',
+'<u>': '\x1F',
+'</u>': '\x1F',
+'<i>': '\x16',
+'</i>': '\x16'}
+
+
 def db_init(db):
     db.execute("create table if not exists mem(word, data, nick,"
                " primary key(word))")
@@ -19,6 +29,17 @@ def get_memory(db, word):
         return row[0]
     else:
         return None
+
+ 
+def multiwordReplace(text, wordDic):
+    """
+    take a text and replace words that match a key in a dictionary with
+    the associated value, return the changed text
+    """
+    rc = re.compile('|'.join(map(re.escape, wordDic)))
+    def translate(match):
+        return wordDic[match.group(0)]
+    return rc.sub(translate, text)
 
 
 @hook.command("r")
@@ -92,4 +113,5 @@ def question(inp, say=None, db=None):
 
     data = get_memory(db, inp.group(1).strip())
     if data:
-        say(data)
+        out = multiwordReplace(data, shortcodes)
+        say(out)

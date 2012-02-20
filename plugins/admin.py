@@ -1,21 +1,21 @@
 #  Shitty plugin made by iloveportalz0r
 #  Broken by The Noodle
+#  Improved by Lukeroge
 from util import hook
 
+# Added to make the move to a new auth system a lot easier
 def isadmin(input):
     if input.nick in input.bot.config["admins"]:
         return True
     else:
         return False
+
 @hook.command
 def join(inp, input=None, db=None, notice=None):
     ".join <channel> -- joins a channel"
     if not isadmin(input):
         notice("Only bot admins can use this command!")
         return
-    chan = inp.split(' ', 1)
-    #if len(chan) != 1:
-        #return "Usage: omg please join <channel>"
     notice("Attempting to join " + inp + "...")
     input.conn.send("JOIN " + inp)
 
@@ -35,9 +35,6 @@ def part(inp, input=None, notice=None):
     if not isadmin(input):
         notice("Only bot admins can use this command!")
         return
-    chan = inp.split(' ', 1)
-    #if len(chan) != 1:
-        #return "Usage: omg please part <channel>"
     notice("Attempting to part from " + inp + "...")
     input.conn.send("PART " + inp)
 
@@ -47,9 +44,6 @@ def nick(inp, input=None, notice=None):
     if not isadmin(input):
         notice("Only bot admins can use this command!")
         return
-    chan = inp.split(' ', 1)
-    #if len(chan) != 1:
-        #return "Usage: omg please part <channel>"
     notice("Changing nick to " + inp + ".")
     input.conn.send("NICK " + inp)
 
@@ -59,7 +53,6 @@ def raw(inp, input=None, notice=None):
     if not isadmin(input):
         notice("Only bot admins can use this command!")
         return
-    chan = inp.split(' ', 1)
     notice("Raw command sent.")
     input.conn.send(inp)
 
@@ -70,7 +63,6 @@ def kick(inp, input=None, notice=None):
         notice("Only bot admins can use this command!")
         return
     split = inp.split(" ")
-
     if split[0][0] == "#":
         chan = split[0]
         user = split[1]
@@ -116,6 +108,7 @@ def say(inp, input=None, notice=None):
         out = "PRIVMSG %s :%s" % (input.chan, message)
     input.conn.send(out)
 
+@hook.command("me")
 @hook.command
 def act(inp, input=None, notice=None):
     ".act [channel] <action> -- makes the bot act <action> in [channel]. if [channel] is blank the bot will act the <action> in the channel the command was used in."

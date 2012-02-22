@@ -45,11 +45,11 @@ def google(inp):
     else:
         content = http.html.fromstring(content).text_content()
 
-    out = '%s :: %s :: %s' % (result['unescapedUrl'], title, content)
+    out = '%s -- \x02%s\x02: "%s"' % (result['unescapedUrl'], title, content)
 
     out = ' '.join(out.split())
 
-    if len(out) > 250:
+    if len(out) > 300:
         out = out[:out.rfind(' ')] + '...'
 
     return out

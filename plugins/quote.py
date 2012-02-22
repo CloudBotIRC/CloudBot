@@ -32,8 +32,8 @@ def add_quote(db, chan, nick, add_nick, msg):
                    (chan, nick, add_nick, msg, time.time()))
         db.commit()
     except db.IntegrityError:
-        return "message already stored, doing nothing."
-    return "quote added."
+        return "Message already stored, doing nothing."
+    return "Quote added."
 
 def del_quote(db, chan, nick, add_nick, msg):
     """Deletes a quote from a nick"""

@@ -8,7 +8,12 @@ kills = ["rips off <who>'s <body> and leaves them to die.",
         "gags and ties <who> then throws them off a bridge.",
         "crushes <who> with a huge spiked boulder.",
         "rams a rocket launcher up <who>'s ass and lets off a few rounds.",
-        "crushes <who>'s skull in with a spiked mace."]
+        "crushes <who>'s skull in with a spiked mace.",
+        "feeds <who> to an owlbear.",
+        "puts <who> into a sack, throws the sack in the river, and hurls the river into space.",
+        "goes bowling with <who>'s head.",
+        "sends <who> to /dev/null!",
+        "feeds <who> coke and mentos till they pop!"]
 
 body = ['head',
         'arms',

@@ -13,7 +13,7 @@ def fact(inp, say=False, nick=False):
         except:
              pass
 
-    return "%s [ %s ]" % (fact, link)  
+    return u"%s [ %s ]" % (fact, link)  
 
     
 

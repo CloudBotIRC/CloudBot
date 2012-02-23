@@ -14,6 +14,8 @@ base_url = 'http://www.fmylife.com/'
 def fml(inp):
     ".fml [id] -- gets a random quote from fmyfife.com"
 
+    inp = inp.replace("#","") # this lets people use .fml #123456
+
     if inp:
         if not inp.isdigit():
             return "Invalid ID!"

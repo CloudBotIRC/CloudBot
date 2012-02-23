@@ -184,7 +184,14 @@ class Molecule:
             else:
                 self.cursection.append(line)
         fp.close()
-    
+
+    def list_modules(self):
+        files = os.listdir(NAMEDIR)
+        modules = []
+        for i in files:
+            modules.append(os.path.splitext(i)[0])
+        return modules
+
     def name(self):
         n = []
         if len(self.nametbl["first"]) > 0:

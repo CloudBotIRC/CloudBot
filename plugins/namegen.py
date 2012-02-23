@@ -1,33 +1,42 @@
-from util import hook,molecular
+# Plugin by Lukeroge
+# <lukeroge@gmail.com> <https://github.com/lukeroge/CloudBot/>
+
+from util import hook, molecular
 import unicodedata
 
 @hook.command()
 def namegen(inp, say = None, nick = None, input=None, notice=None):
     ".namegen [modules] -- generates some names using the chosen modules. \".namegen list\" will display a list of all modules"
+
     gen = molecular.Molecule()
 
-    all_modules = ["dever_f", "dwarves", "elves_m", "fantasy", "harn_cln", "harn_gar", "harn_m2", " harn_s_m", "human_m", "narn", "dever_m", "elves_d", "elves_n", "felana", " harn_f2", "harn_k_f", "harn_m", "hobbits", "inns", " orcs_t", "dragon", "elves_f", "elves_t", "general", "harn_f", "harn_k_m", "harn_s_f", "human_f", "items", "orcs_wh", "wc_tribes", "wc_cats"]
+    all_modules = gen.list_modules() # get a list of available name files
+
+    # return a list of all available modules
+    if inp == "list":
+        message = "Available modules: "
+        message += ', '.join(map(str, all_modules))
+        notice(message)
+        return
 
     modules = []
 
-    if inp == "list":
-        notice("Available modules: dever_f, dwarves, elves_m, fantasy, harn_cln, harn_gar, harn_m2,  harn_s_m, human_m, narn, dever_m, elves_d, elves_n, felana, harn_f2, harn_k_f, harn_m,   hobbits, inns, orcs_t, dragon, elves_f, elves_t, general, harn_f, harn_k_m, harn_s_f, human_f, items, orcs_wh, wc_tribes, wc_cats")
-        return
+    selected_modules = inp.split(' ') # split the input into a list of modules
 
-    if inp:
-        modules = inp.split(' ')
-    else:
-        modules = ["human_m", "human_f"]
-
-    for module in modules:
+    for module in selected_modules: # loop over the "selected_modules" list, and load any valid modules
         if module in all_modules:
             gen.load(module.encode('ascii'))
 
-    if not gen.name():
+    if not gen.name(): # lets try making a name to see if any modules actually got loaded
         return "No valid modules specified :("
 
+    # time to generate some names and put them in a list
+    name_list = []
+    for i in range(8):
+        name_list.append(gen.name())
+
+    # and finally render the final message :D
     message = "Here are some names: "
-    for i in range(6):
-        message += gen.name() + ", "
+    message += ', '.join(map(str, name_list))
 
     return message

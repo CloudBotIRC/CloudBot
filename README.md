@@ -16,6 +16,10 @@ For the spell.py plugin to work you need *python-enchant*. This can be installed
 ```sudo apt-get install python-enchant
 ```
 
+The whois.py plugin will work by default, but *not very well*. To make it work properly you will need to install the native *whois* package. This can be installed with:
+```sudo apt-get install whois
+```
+
 If you use another OS or distro you can find source packages on the module(s) web site, or you can try to find suitable packages in your package manager.
 
 Once installing these packages run the bot once with ```python bot.py``` to generate the config file. Stop the bot, edit the config, and run the bot again with ```python bot.py``` to start it up :)

@@ -72,9 +72,9 @@ As a module (to be imported) you get the following classes and functions:
 
 __version__ = "1.0"
 
-import string, re, sys, random
+import string, re, sys, random, os
 
-NAMEDIR = "/home/ircbot/bot/plugins/util/names"
+NAMEDIR = os.path.dirname(__file__) + "/namefiles"
 NAMESECTIONS = [ "inf", "first", "mid", "final", "notes", "end" ]
 
 class NameFile:

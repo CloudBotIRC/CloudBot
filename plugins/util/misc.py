@@ -22,6 +22,7 @@ class HTMLStripper(HTMLParser):
                 char = int(name)
             self._stripped.append(unichr(char))
         except Exception, error:
+            return
 
     def handle_entityref(self, name):
         try:

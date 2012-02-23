@@ -38,7 +38,7 @@ def forecast(inp, nick='', server='', reply=None, db=None, notice=None, say=None
         info['low'] = elem.find('low').get('data')
   
         out += '[%(day_of_week)s]: %(condition)s (H:%(high)sF'\
-            ', L:%(low)sF) ' % info
+            ', L:%(low)sF). ' % info
 
     return out
 

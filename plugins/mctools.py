@@ -6,8 +6,8 @@ def mcstatus(inp, bot=None):
     ".mcstatus - Attempts to log in to minecraft"
     username = bot.config.get("api_keys", {}).get("mc_user", None)
     password = bot.config.get("api_keys", {}).get("mc_pass", None)
-    if api_key is None:
-        return "error: no api key set"
+    if password is None:
+        return "error: no login set"
 
     login = http.get("https://login.minecraft.net/?user="+username+"&password="+password+"&version=13")
     if username.lower() in login.lower():

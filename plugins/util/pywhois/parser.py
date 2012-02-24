@@ -133,7 +133,7 @@ class WhoisOrg(WhoisEntry):
         'registrar':        'Registrar:\s?(.+)',
         'whois_server':     'Whois Server:\s?(.+)',
         'referral_url':     'Referral URL:\s?(.+)', # http url of whois_server
-        'updated_date':     'Updated Date:\s?(.+)',
+        'updated_date':     'Last Updated On:\s?(.+)',
         'creation_date':    'Created On:\s?(.+)',
         'expiration_date':  'Expiration Date:\s?(.+)',
         'name_servers':     'Name Server:\s?(.+)', # list of name servers

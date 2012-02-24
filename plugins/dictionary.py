@@ -13,7 +13,7 @@ def urban(inp):
     defs = page['list']
 
     if page['result_type'] == 'no_results':
-        return 'not found.'
+        return 'Not found.'
 
     out = defs[0]['word'] + ': ' + defs[0]['definition']
 
@@ -44,7 +44,7 @@ def define(inp):
 
         correction = h.xpath('//span[@class="correct-word"]/text()')
         if correction:
-            result = 'definition for "%s": ' % correction[0]
+            result = 'Definition for "%s": ' % correction[0]
 
         sections = []
         for section in definition:

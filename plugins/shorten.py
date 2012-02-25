@@ -1,4 +1,6 @@
-# # Lukeroge
+# Plugin by Lukeroge 
+# <lukeroge@gmail.com> <https://github.com/lukeroge/CloudBot/>
+
 from util import hook, http
 
 try:
@@ -15,7 +17,7 @@ class ShortenError(Exception):
     def __str__(self):
         return repr(self.value)
  
-def tiny(url, user, apikey):
+def bitly(url, user, apikey):
   try:
     params = urlencode({'longUrl': url, 'login': user, 'apiKey': apikey, 'format': 'json'})
     j = http.get_json("http://api.bit.ly/v3/shorten?%s" % params)
@@ -28,6 +30,8 @@ def tiny(url, user, apikey):
 @hook.command
 def shorten(inp, bot = None):
   ".shorten <url> - Makes an j.mp/bit.ly shortlink to the url provided"
-  user = bot.config['api_keys']['bitly_user']
-  api = bot.config['api_keys']['bitly_api']
-  return tiny(inp, user, api)
+  api_user = bot.config.get("api_keys", {}).get("bitly_user", None)    	
+  api_key = bot.config.get("api_keys", {}).get("bitly_api", None)
+  if api_key is None:
+     return "error: no api key set"
+  return bitly(inp, api_user, api_key)

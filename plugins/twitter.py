@@ -1,13 +1,14 @@
 """
-twitter.py: written by Scaevolus 2009
+twitter.py: written by Scaevolus 2009, modified by Lukeroge 2012
 retrieves most recent tweets
 """
 
 import random
 import re
 from time import strptime, strftime
+from datetime import datetime
 
-from util import hook, http
+from util import hook, http, timesince
 
 
 def unescape_xml(string):
@@ -23,6 +24,30 @@ def unescape_xml(string):
 
 history = []
 history_max_size = 250
+
+def parseDateTime(s):
+	if s is None:
+		return None
+	m = re.match(r'(.*?)(?:\.(\d+))?(([-+]\d{1,2}):(\d{2}))?$',
+				 str(s))
+	datestr, fractional, tzname, tzhour, tzmin = m.groups()
+ 
+	if tzname is None:
+		tz = None
+	else:
+		tzhour, tzmin = int(tzhour), int(tzmin)
+		if tzhour == tzmin == 0:
+			tzname = 'UTC'
+		tz = FixedOffset(timedelta(hours=tzhour,
+								   minutes=tzmin), tzname)
+ 
+	x = datetime.strptime(datestr, "%Y-%m-%d %H:%M:%S")
+	if fractional is None:
+		fractional = '0'
+	fracpower = 6 - len(fractional)
+	fractional = float(fractional) * (10 ** fracpower)
+ 
+	return x.replace(microsecond=int(fractional), tzinfo=tz)
 
 
 @hook.command
@@ -44,7 +69,7 @@ def twitter(inp):
     if inp[0] == '@':
         reply_inp = find_reply(inp[1:])
         if reply_inp == None:
-            return 'error: no replies to %s found' % inp
+            return 'No replies to %s found.' % inp
         inp = reply_inp
 
     url = 'http://twitter.com'
@@ -105,18 +130,18 @@ def twitter(inp):
         ns = '{http://www.w3.org/2005/Atom}'
         tweets = tweet.findall(ns + 'entry/' + ns + 'id')
         if not tweets:
-            return 'error: hashtag not found'
+            return 'Hashtag not found!'
         id = random.choice(tweets).text
         id = id[id.rfind(':') + 1:]
         return twitter(id)
 
     if getting_nth:
         if tweet.find('status') is None:
-            return 'error: user does not have that many tweets'
+            return 'User does not have that many tweets!'
 
     time = tweet.find(time)
     if time is None:
-        return 'error: user has no tweets'
+        return 'User has no tweets!'
 
     reply_name = tweet.find(reply_name).text
     reply_id = tweet.find(reply_id).text
@@ -125,10 +150,15 @@ def twitter(inp):
             reply_user is not None):
         add_reply(reply_name, reply_id or -1)
 
-    time = strftime('%Y-%m-%d %H:%M:%S',
+    time_raw = strftime('%Y-%m-%d %H:%M:%S',
              strptime(time.text,
              '%a %b %d %H:%M:%S +0000 %Y'))
+
+    time_pretty = timesince.timesince(parseDateTime(time_raw), datetime.utcnow())
+
+    print time_pretty
+
     text = unescape_xml(tweet.find(text).text.replace('\n', ''))
     screen_name = tweet.find(screen_name).text
 
-    return "%s %s: %s" % (time, screen_name, text)
+    return "\x02@%s\x02: %s [ %s ago ]" % (screen_name, text, time_pretty)

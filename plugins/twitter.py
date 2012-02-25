@@ -137,7 +137,7 @@ def twitter(inp):
 
     if getting_nth:
         if tweet.find('status') is None:
-            return 'User does not have that many tweets!'
+            return 'User doesn\'t have that many tweets!'
 
     time = tweet.find(time)
     if time is None:
@@ -155,8 +155,6 @@ def twitter(inp):
              '%a %b %d %H:%M:%S +0000 %Y'))
 
     time_pretty = timesince.timesince(parseDateTime(time_raw), datetime.utcnow())
-
-    print time_pretty
 
     text = unescape_xml(tweet.find(text).text.replace('\n', ''))
     screen_name = tweet.find(screen_name).text

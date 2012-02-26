@@ -2,6 +2,7 @@
 #  Broken by The Noodle
 #  Improved by Lukeroge
 from util import hook
+import sys
 
 # Added to make the move to a new auth system a lot easier
 def isadmin(input):
@@ -9,6 +10,20 @@ def isadmin(input):
         return True
     else:
         return False
+        
+@hook.command
+def quit(inp, input=None, db=None, notice=None):
+    ".quit [reason] -- kills the bot"
+    if not isadmin(input):
+        notice("Only bot admins can use this command!")
+        return
+    if inp:
+        input.conn.send("QUIT :Kill switch activated by "+input.nick+" (" + inp + ")"
+    else:
+        input.conn.send("QUIT :Kill switch activated by "+input.nick+" (no reason)")
+    time.sleep(3)
+    sys.exit()
+        
 
 @hook.command
 def join(inp, input=None, db=None, notice=None):
@@ -18,6 +33,7 @@ def join(inp, input=None, db=None, notice=None):
         return
     notice("Attempting to join " + inp + "...")
     input.conn.send("JOIN " + inp)
+
 
 @hook.command
 def cycle(inp, input=None, db=None, notice=None):

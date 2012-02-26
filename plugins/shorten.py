@@ -30,3 +30,12 @@ def shorten(inp, bot = None):
     if api_key is None:
         return "error: no api key set"
     return bitly(inp, api_user, api_key)
+
+@hook.command
+def expand(inp, bot = None):
+    ".expand <url> - gets the original URL from a shortened link"
+    try:
+        url = http.get_url(inp)
+    except HTTPError, e:
+        return "Failed to expand URL."
+    return url

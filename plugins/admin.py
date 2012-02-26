@@ -18,7 +18,7 @@ def quit(inp, input=None, db=None, notice=None):
         notice("Only bot admins can use this command!")
         return
     if inp:
-        input.conn.send("QUIT :Kill switch activated by "+input.nick+" (" + inp + ")"
+        input.conn.send("QUIT :Kill switch activated by "+input.nick+" (" + inp + ")")
     else:
         input.conn.send("QUIT :Kill switch activated by "+input.nick+" (no reason)")
     time.sleep(3)

@@ -13,14 +13,10 @@ class Input(dict):
         if chan == conn.nick.lower():  # is a PM
             chan = nick
 
-        def say(msg, channel=None):
-            if channel:
-                chan = channel
+        def say(msg):
             conn.msg(chan, msg)
             
-        def pm(msg, channel=None):
-            if channel:
-                chan = channel
+        def pm(msg):
             conn.msg(nick, msg)
 
         def reply(msg):
@@ -32,9 +28,7 @@ class Input(dict):
         def set_nick(nick):
             conn.set_nick(nick)
 
-        def me(msg, channel=None):
-            if channel:
-                chan = channel
+        def me(msg):
             conn.msg(chan, "\x01%s %s\x01" % ("ACTION", msg))
 
         def notice(msg):

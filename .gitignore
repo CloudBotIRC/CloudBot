@@ -8,3 +8,5 @@ pep8.py
 .pydevproject
 *.db
 web
+control.sh
+bot.log

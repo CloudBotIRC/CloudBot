@@ -1,19 +1,27 @@
 from util import hook, http
 
-
-api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
-
-
 @hook.command
-def lastfm(inp, nick='', say=None, bot=None):
-    if inp:
-        user = inp
-    else:
-        user = nick
-
-    api_key = bot.config.get("api_keys", {}).get("lastfm", None)
+def lastfm(inp, nick='', say=None, db=None, bot=None):
+    db.execute("create table if not exists lastfm(nick primary key, acc)")
+    sql = db.execute("select acc from lastfm where nick=lower(?)", (nick,)).fetchone();
+    api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
+    api_key = bot.config.get("api_keys", {}).get("lastfm")
     if api_key is None:
         return "error: no api key set"
+
+
+    if sql:
+        if not inp: user = sql[0]
+        else:
+            user = inp
+            db.execute("insert or replace into lastfm(nick,acc) values(?,?)",(nick.lower(), user))
+            db.commit()
+    else:
+        if not inp: user = nick
+        else:
+            user = inp
+            db.execute("insert or replace into lastfm(nick,acc) values(?,?)",(nick.lower(), user))
+            db.commit()
 
     response = http.get_json(api_url, method="user.getrecenttracks",
                              api_key=api_key, user=user, limit=1)
@@ -22,12 +30,12 @@ def lastfm(inp, nick='', say=None, bot=None):
         if inp:  # specified a user name
             return "error: %s" % response["message"]
         else:
-            return "Your nick is not a LastFM account. Try '.lastfm username'."
+            return "your nick is not a LastFM account. try '.lastfm username'."
 
     tracks = response["recenttracks"]["track"]
 
     if len(tracks) == 0:
-        return "No recent tracks for user %r found." % user
+        return "no recent tracks for user %r found" % user
 
     if type(tracks) == list:
         # if the user is listening to something, the tracks entry is a list
@@ -40,7 +48,7 @@ def lastfm(inp, nick='', say=None, bot=None):
         track = tracks
         status = 'last track'
     else:
-        return "Error parsing track listing"
+        return "error parsing track listing"
 
     title = track["name"]
     album = track["album"]["#text"]
@@ -53,3 +61,4 @@ def lastfm(inp, nick='', say=None, bot=None):
         ret += " on \x02%s\x0f" % album
 
     say(ret)
+

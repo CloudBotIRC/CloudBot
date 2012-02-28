@@ -47,7 +47,7 @@ def onjoin(paraml, conn=None, bot=None):
 
     # set user-agent
 
-    http.ua_skybot = 'CloudBot - https://git.io/cloudbot'
+    http.ua_skybot = 'CloudBot - http://git.io/cloudbot'
 
     # stayalive code
 
@@ -60,7 +60,7 @@ def onjoin(paraml, conn=None, bot=None):
 # CTCPs
 @hook.regex(r'^\x01VERSION\x01$')
 def version(inp, notice=None):
-    notice('\x01VERSION: CloudBot - https://git.io/cloudbot')
+    notice('\x01VERSION: CloudBot - http://git.io/cloudbot')
 @hook.regex(r'^\x01PING\x01$')
 def ping(inp, notice=None):
     notice('\x01PING: PONG')
@@ -74,5 +74,3 @@ def time(inp, notice=None):
 def die(inp, notice=None):
     notice('\x01DIE: IN A FIRE')
 @hook.regex(r'^\x01VIRGIN\x01$')
-def virgin(inp, notice=None):
-    notice('\x01VIRGIN: IS THAT A PROBLEM')

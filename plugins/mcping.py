@@ -21,7 +21,7 @@ def get_info(host, port):
 
 @hook.command
 def mcping(inp):
-    ".mcping server[:port] - Ping a Minecraft server to check status.."
+    ".mcping server[:port] - Ping a Minecraft server to check status."
     inp = inp.strip().split(" ")[0]
 
     if ":" in inp:

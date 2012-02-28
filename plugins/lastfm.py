@@ -1,7 +1,13 @@
 from util import hook, http
 
+@hook.command('l')
+@hook.command('lfm')
 @hook.command
 def lastfm(inp, nick='', say=None, db=None, bot=None):
+    if inp:
+        user = inp
+    else:
+        user = nick
     ".lastfm <user> - display the now playing (or recent) tracks of a LastFM user"
     db.execute("create table if not exists lastfm(nick primary key, acc)")
     sql = db.execute("select acc from lastfm where nick=lower(?)", (nick,)).fetchone();
@@ -9,7 +15,6 @@ def lastfm(inp, nick='', say=None, db=None, bot=None):
     api_key = bot.config.get("api_keys", {}).get("lastfm")
     if api_key is None:
         return "error: no api key set"
-
 
     if sql:
         if not inp: user = sql[0]

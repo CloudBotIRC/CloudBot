@@ -3,38 +3,44 @@
 ### About
 CloudBot is very heavily based on Skybot by rmmh. (https://github.com/rmmh/skybot)
 
+### Download
+Get Cloudbot at [git.io/getcloudbot](http://git.io/getcloudbot "CloudBot").
+Unzip, and follow the install directions.
+
 ### Install
-Before you can run the bot, you need to install a few Python modules. These are *LXML* and *BeautifulSoup*.  On Ubuntu these can be installed using the following commands:
+Before you can run the bot, you need to install a few Python modules. These are `lXML`, `BeautifulSoup`, and `Enchant`.  On Debian based systems, these can be installed using the following commands:
 
-```sudo apt-get install python-lxml
-```
+`sudo apt-get install python-lxml`
 
-```sudo apt-get install python-beautifulsoup
-```
+`sudo apt-get install python-beautifulsoup`
 
-For the spell.py plugin to work you need *Enchant*. This can be installed with:
-```sudo apt-get install python-enchant
-```
+`sudo apt-get install python-enchant`
 
-The whois.py plugin will work by default, but *not very well*. To make it work properly you will need to install the native *whois* package. This can be installed with:
-```sudo apt-get install whois
-```
+In addition, for .whois to work optimally, you must have `whois` installed.
+`sudo apt-get install whois`
 
-If you use another OS or distro you can find source packages on the module(s) web site, or you can try to find suitable packages in your package manager.
+If you are a user of another Linux disto, use your package manager to install the modules, or use Google to locate source packages you can install.
+Once you have installed the required dependencies, run the bot with 
 
-Once installing these packages run the bot once with ```python bot.py``` to generate the config file. Stop the bot, edit the config, and run the bot again with ```python bot.py``` to start it up :)
+`python bot.py`
+
+It will generate a default config for you.  Once you have editied the config, run it again with
+
+`python bot.py`
+
+and it will connect to any server(s) you have added to the config.
 
 ### Requirements
-CloudBot runs on Python 2.7. Many of the plugins require lxml and BeautifulSoup. It is devloped on Ubuntu 11.10 with Python 2.7.2.
+CloudBot runs on Python 2.7.x. It is devloped on Debian Wheezy/Testing with Python 2.7.2.
 
 ### License
 CloudBot is licenced under the GPL v3 license. The terms are as follows.
 
 
-``` 
+`
     CloudBot DEV
 
-    Copyright © 2011 Luke Rogers. <http://www.dempltr.com/> <lukeroge@gmail.com>
+    Copyright © 2011 Luke Rogers <http://www.dempltr.com/> - <lukeroge@gmail.com>
 
     CloudBot is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -48,4 +54,4 @@ CloudBot is licenced under the GPL v3 license. The terms are as follows.
 
     You should have received a copy of the GNU General Public License
     along with CloudBot.  If not, see <http://www.gnu.org/licenses/>.
-```
+`

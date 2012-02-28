@@ -26,6 +26,8 @@ For .spell to work, we also need a library called `Enchant`.  On Debian based sy
 
 `sudo apt-get install python-enchant`
 
+Otherwise, use Google to find source packages.
+
 In addition, for .whois to work optimally, you must have `whois` installed. Again, on Debian based systems, install it with 
 
 `sudo apt-get install whois`

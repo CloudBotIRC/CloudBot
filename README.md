@@ -16,7 +16,7 @@ Before you can run the bot, you need to install a few Python modules. These are 
 
 `sudo apt-get install python-enchant`
 
-In addition, for .whois to work optimally, you must have `whois` installed.
+In addition, for .whois to work optimally, you must have `whois` installed. Again, on Debian based systems, install it with 
 `sudo apt-get install whois`
 
 If you are a user of another Linux disto, use your package manager to install the modules, or use Google to locate source packages you can install.
@@ -38,7 +38,7 @@ CloudBot is licenced under the GPL v3 license. The terms are as follows.
 
 
 `
-    CloudBot DEV
+    CloudBot/DEV
 
     Copyright © 2011 Luke Rogers <http://www.dempltr.com/> - <lukeroge@gmail.com>
 

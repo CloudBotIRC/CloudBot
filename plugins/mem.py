@@ -6,7 +6,7 @@ from util import hook
 
 @hook.command(autohelp=False)
 def mem(inp):
-    ".mem -- returns bot's current memory usage -- linux/windows only"
+    ".mem -- Display the bot's current memory usage."
 
     if os.name == 'posix':
         status_file = open("/proc/%d/status" % os.getpid()).read()

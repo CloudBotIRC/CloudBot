@@ -8,7 +8,7 @@ def sloganize(word):
 
 @hook.command("slogan")
 def sloganizr(inp, nick=None, say=None, input=None):
-    ".slogan <word> -- make a solgan for <word>!"
+    ".slogan <word> -- Makes a slogan for <word>."
     slogan = sloganize(inp)
 
     slogan = misc.strip_html(slogan)

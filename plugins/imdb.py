@@ -5,7 +5,7 @@ from util import hook, http
 
 @hook.command
 def imdb(inp):
-    '''.imdb <movie> -- gets information about <movie> from IMDb'''
+    ".imdb <movie> -- Gets information about <movie> from IMDb."
 
     content = http.get_json("http://www.imdbapi.com/", t=inp)
 

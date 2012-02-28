@@ -6,7 +6,7 @@ from BeautifulSoup import BeautifulSoup
 
 @hook.command("time")
 def clock(inp, say=None):
-    '''.time <area> -- gets the time in <area>'''
+    ".time <area> -- Gets the time in <area>"
 
     white_re = re.compile(r'\s+')
     tags_re = re.compile(r'<[^<]*?>')

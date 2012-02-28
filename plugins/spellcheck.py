@@ -6,7 +6,7 @@ import enchant
 
 @hook.command("spellcheck")
 def spell(inp):
-    '''.time <area> -- gets the time in <area>'''
+    ".spell <word> -- Check spelling of <word>."
     d = enchant.Dict("en_US")
 
     if not (inp.split()[-1] == inp):

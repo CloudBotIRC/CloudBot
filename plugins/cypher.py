@@ -12,7 +12,7 @@ len_chars = len(chars)
 
 @hook.command
 def cypher(inp):
-	".cypher <pass> <string> -- cyphers a string with the password"
+	".cypher <pass> <string> -- Cyphers <string> with <password>."
 
 	passwd = inp.split(" ")[0]
 	len_passwd = len(passwd)
@@ -39,7 +39,7 @@ def cypher(inp):
 
 @hook.command
 def decypher(inp):
-	".decypher <pass> <string> -- decyphers a string with the password"
+	".decypher <pass> <string> -- Decyphers <string> with <password>."
 
 	passwd = inp.split(" ")[0]
 	len_passwd = len(passwd)

@@ -8,7 +8,7 @@ def lastfm(inp, nick='', say=None, db=None, bot=None):
         user = inp
     else:
         user = nick
-    ".lastfm <user> -- displays the now playing (or recent) tracks of a LastFM user"
+    ".lastfm <user> -- Displays the now playing (or recent) tracks of LastFM user <user>."
     db.execute("create table if not exists lastfm(nick primary key, acc)")
     sql = db.execute("select acc from lastfm where nick=lower(?)", (nick,)).fetchone();
     api_url = "http://ws.audioscrobbler.com/2.0/?format=json"

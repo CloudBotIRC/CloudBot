@@ -5,13 +5,13 @@ import time
 from util import hook
 
 def format_quote(q, num, n_quotes):
-    """Returns a formatted string of a quote"""
+    "Returns a formatted string of a quote"
     ctime, nick, msg = q
     return "[%d/%d] <%s> %s" % (num, n_quotes,
          nick, msg)
 
 def create_table_if_not_exists(db):
-    """Creates an empty quote table if one does not already exist"""
+    "Creates an empty quote table if one does not already exist"
     db.execute('''CREATE TABLE IF NOT EXISTS quote (
                      chan, 
                      nick, 
@@ -24,7 +24,7 @@ def create_table_if_not_exists(db):
     db.commit()
 
 def add_quote(db, chan, nick, add_nick, msg):
-    """Adds a quote to a nick, returns message string"""
+    "Adds a quote to a nick, returns message string"
     try:
         db.execute('''INSERT OR FAIL INTO quote 
                       (chan, nick, add_nick, msg, time) 
@@ -36,7 +36,7 @@ def add_quote(db, chan, nick, add_nick, msg):
     return "Quote added."
 
 def del_quote(db, chan, nick, add_nick, msg):
-    """Deletes a quote from a nick"""
+    "Deletes a quote from a nick"
     db.execute('''UPDATE quote 
                   SET deleted = 1 
                   WHERE chan=? 
@@ -45,7 +45,7 @@ def del_quote(db, chan, nick, add_nick, msg):
     db.commit()
 
 def get_quote_num(num, count, name):
-    """Returns the quote number desired from the database"""
+    "Returns the quote number desired from the database"
     if num: # Make sure num is a number if it isn't false
         num = int(num)
     if count == 0: # If there are no quotes in the database, raise an Exception.
@@ -61,7 +61,7 @@ def get_quote_num(num, count, name):
     return num
 
 def get_quote_by_nick(db, chan, nick, num=False):
-    """Returns a formatted quote from a nick, random or selected by number"""
+    "Returns a formatted quote from a nick, random or selected by number"
     count = db.execute('''SELECT COUNT(*)
                           FROM quote
                           WHERE deleted != 1
@@ -83,7 +83,7 @@ def get_quote_by_nick(db, chan, nick, num=False):
     return format_quote(quote, num, count)
 
 def get_quote_by_chan(db, chan, num=False): 
-    """Returns a formatted quote from a channel, random or selected by number"""
+    "Returns a formatted quote from a channel, random or selected by number"
     count = db.execute('''SELECT COUNT(*)
                           FROM quote
                           WHERE deleted != 1
@@ -105,8 +105,8 @@ def get_quote_by_chan(db, chan, num=False):
 @hook.command('q')
 @hook.command
 def quote(inp, nick='', chan='', db=None, notice=None):
-    ".q/.quote [#chan] [nick] [#n]/.quote add <nick> <msg> -- gets " \
-        "random or [#n]th quote by <nick> or from <#chan>/adds quote"
+    ".quote [#chan] [nick] [#n]/.quote add <nick> <msg> -- Gets " \
+        "random or [#n]th quote by <nick> or from <#chan>/adds quote."
     create_table_if_not_exists(db)
 
     add = re.match(r"add[^\w@]+(\S+?)>?\s+(.*)", inp, re.I)

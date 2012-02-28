@@ -23,7 +23,7 @@ body = ['head',
 
 @hook.command
 def kill(inp, me = None, nick = None, input=None, notice=None):
-    ".kill <user> - kill a user"
+    ".kill <user> -- Makes the bot kill <user>."
     inp = inp.strip()
 
     if not re.match("^[A-Za-z0-9_|.-\]\[]*$", inp.lower()):

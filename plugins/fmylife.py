@@ -12,7 +12,7 @@ base_url = 'http://www.fmylife.com/'
 
 @hook.command(autohelp=False)
 def fml(inp):
-    ".fml [id] -- gets a random quote from fmyfife.com"
+    ".fml [id] -- Gets a random quote from fmyfife.com. Optionally gets [id]."
 
     inp = inp.replace("#","") # this lets people use .fml #123456
 

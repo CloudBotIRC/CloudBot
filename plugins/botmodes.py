@@ -83,7 +83,7 @@ def valueadd(bot, input, func, kind, args):
 
 @hook.command
 def mode(inp, input=None, db=None):
-    ".mode -- Set modes on various things"
+    ".mode -- Set modes on various things."
     if input.nick not in input.bot.config["admins"]:
         input.notice("Only bot admins can use this command!")
         return

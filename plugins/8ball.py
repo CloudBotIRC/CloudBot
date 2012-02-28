@@ -12,8 +12,8 @@ answers = [g + "As I see it, yes",
         g + "Most likely",
         g + "Outlook good",
         g + "Signs point to yes",
-        g + "One would be wise to think so",#
-        g + "Naturally",#
+        g + "One would be wise to think so",
+        g + "Naturally",
         g + "Without a doubt",
         g + "Yes",
         g + "Yes, definitely",
@@ -23,11 +23,11 @@ answers = [g + "As I see it, yes",
         y + "Better not tell you now",
         y + "Cannot predict now",
         y + "Concentrate and ask again",
-        y + "You know the answer better than I",#
-        y + "Maybe...",#
-        r + "You're kidding, right?",#
+        y + "You know the answer better than I",
+        y + "Maybe...",
+        r + "You're kidding, right?",
         r + "Don't count on it",
-        r + "In your dreams", #
+        r + "In your dreams", 
         r + "My reply is no",
         r + "My sources say no",
         r + "Outlook not so good",
@@ -35,7 +35,7 @@ answers = [g + "As I see it, yes",
 
 @hook.command('8ball')
 def eightball(inp, me=None):
-    ".8ball <question> - The all knowing magic eight ball, in electronic form. Ask a question and the answer shall be provided."
+    ".8ball <question> -- The all knowing magic eight ball, in electronic form. Ask and it shall be answered!"
     global nextresponsenumber
     inp = inp.strip()
     if re.match("[a-zA-Z0-9]", inp[-1]):

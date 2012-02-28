@@ -4,7 +4,7 @@ from util import hook
 
 @hook.command(autohelp=False)
 def help(inp, input=None, bot=None, say=None, notice=None):
-    ".help  -- gives a list of commands/help for a command"
+    ".help  -- Gives a list of commands/help for a command."
 
     funcs = {}
     disabled = bot.config.get('disabled_plugins', [])
@@ -38,7 +38,7 @@ def help(inp, input=None, bot=None, say=None, notice=None):
         notice("Commands I recognise: " + out[0][1:])
         if out[1]:
             notice(out[1][1:])
-        notice("For help, do '.help example' where example is the " + 
+        notice("For detailed help, do '.help <example>' where <example> is the " + 
                "name of the command you want help for.")
           
     else:

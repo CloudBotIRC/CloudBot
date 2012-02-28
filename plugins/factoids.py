@@ -44,8 +44,9 @@ def multiwordReplace(text, wordDic):
 
 @hook.command("r")
 def remember(inp, nick='', db=None, say=None, input=None, notice=None):
-    ".r <word> [+]<data> -- maps word to data in the memory"
+    ".remember <word> [+]<data> -- Remembers <data> with <word>. Add + to <data> to append."
     if input.nick not in input.bot.config["admins"]:
+        notice("Only bot admins can use this command!")
         return
     db_init(db)
 
@@ -88,8 +89,9 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
 
 @hook.command("f")
 def forget(inp, db=None, input=None, notice=None):
-    ".f <word> -- forgets the mapping that word had"
+    ".forget <word> -- Forgets a remembered <word>."
     if input.nick not in input.bot.config["admins"]:
+        notice("Only bot admins can use this command!")
         return
 
     db_init(db)
@@ -108,7 +110,7 @@ def forget(inp, db=None, input=None, notice=None):
 @hook.command("info")
 @hook.regex(r'^\? ?(.+)')
 def question(inp, say=None, db=None):
-    "?<word> -- shows what data is associated with word"
+    "?<word> -- Shows what data is associated with <word>."
     db_init(db)
 
     data = get_memory(db, inp.group(1).strip())

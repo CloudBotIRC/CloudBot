@@ -22,7 +22,7 @@ def timezone(ip):
 @hook.command
 @hook.command("location")
 def geoip(inp, say = None, bot = None):
-    ".geoip <ip> - Performs a location check on the ip given."
+    ".geoip <ip> - Performs a location check on <ip>."
     api_key = bot.config.get("api_keys", {}).get("geoip", None)
     if api_key is None:
         return "error: no api key set"

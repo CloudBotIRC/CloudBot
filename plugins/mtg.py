@@ -5,7 +5,7 @@ from util import hook, http
 
 @hook.command
 def mtg(inp):
-    ".mtg <name> -- gets information about Magic the Gathering card <name>"
+    ".mtg <name> -- Gets information about Magic the Gathering card <name>."
 
     url = 'http://magiccards.info/query?v=card&s=cname'
     h = http.get_html(url, q=inp)

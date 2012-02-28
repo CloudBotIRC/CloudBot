@@ -52,9 +52,9 @@ def parseDateTime(s):
 
 @hook.command
 def twitter(inp):
-    ".twitter <user>/<user> <n>/<id>/#<hashtag>/@<user> -- gets last/<n>th "\
-    "tweet from <user>/gets tweet <id>/gets random tweet with #<hashtag>/"\
-    "gets replied tweet from @<user>"
+    ".twitter <user>/<user> <n>/<id>/#<hashtag>/@<user> -- Gets last/<n>th "\
+    "tweet from <user>/gets tweet <id>/Gets random tweet with #<hashtag>/"\
+    "gets replied tweet from @<user>."
 
     def add_reply(reply_name, reply_id):
         if len(history) == history_max_size:

@@ -6,7 +6,7 @@ import unicodedata
 
 @hook.command()
 def namegen(inp, say = None, nick = None, input=None, notice=None):
-    ".namegen [modules] -- generates some names using the chosen modules. \".namegen list\" will display a list of all modules"
+    ".namegen [modules] -- Generates some names using the chosen modules. '.namegen list' will display a list of all modules."
 
     gen = molecular.Molecule()
 

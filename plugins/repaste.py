@@ -139,7 +139,7 @@ pasters = dict(
 
 @hook.command
 def repaste(inp, input=None, db=None, isManual=True):
-    ".repaste mode|list|[provider] [syntax] <pastebinurl> -- scrape mibpaste, reupload on given pastebin"
+    ".repaste mode|list|[provider] [syntax] <pastebinurl> -- Reuploads mibpaste to [provider]."
 
     parts = inp.split()
     db_init(db)

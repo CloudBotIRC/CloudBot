@@ -16,7 +16,7 @@ def isadmin(input):
         
 @hook.command
 def quit(inp, input=None, db=None, notice=None):
-    ".quit [reason] -- kills the bot"
+    ".quit [reason] -- Kills the bot, with [reason] reason as its quit message.."
     if not isadmin(input):
         notice("Only bot admins can use this command!")
         return
@@ -30,7 +30,7 @@ def quit(inp, input=None, db=None, notice=None):
 
 @hook.command
 def join(inp, input=None, db=None, notice=None):
-    ".join <channel> -- joins a channel"
+    ".join <channel> -- Joins <channel>."
     if not isadmin(input):
         notice("Only bot admins can use this command!")
         return
@@ -40,7 +40,7 @@ def join(inp, input=None, db=None, notice=None):
 
 @hook.command
 def cycle(inp, input=None, db=None, notice=None):
-    ".cycle <channel> -- cycles a channel"
+    ".cycle <channel> -- Cycles <channel>."
     if not isadmin(input):
         notice("Only bot admins can use this command!")
         return
@@ -50,7 +50,7 @@ def cycle(inp, input=None, db=None, notice=None):
 
 @hook.command
 def part(inp, input=None, notice=None):
-    ".part <channel> -- leaves a channel"
+    ".part <channel> -- Parts from <channel>."
     if not isadmin(input):
         notice("Only bot admins can use this command!")
         return
@@ -59,7 +59,7 @@ def part(inp, input=None, notice=None):
 
 @hook.command
 def nick(inp, input=None, notice=None):
-    ".nick <nick> -- change the bots nickname to <nick>"
+    ".nick <nick> -- Changes the bots nickname to <nick>."
     if not isadmin(input):
         notice("Only bot admins can use this command!")
         return
@@ -68,7 +68,7 @@ def nick(inp, input=None, notice=None):
 
 @hook.command
 def raw(inp, input=None, notice=None):
-    ".raw <command> - Send a RAW IRC command!"
+    ".raw <command> -- Sends a RAW IRC command."
     if not isadmin(input):
         notice("Only bot admins can use this command!")
         return
@@ -77,7 +77,7 @@ def raw(inp, input=None, notice=None):
 
 @hook.command
 def kick(inp, input=None, notice=None):
-    ".kick [channel] <user> [reason] -- kick a user!"
+    ".kick [channel] <user> [reason] -- kicks a user."
     if not isadmin(input):
         notice("Only bot admins can use this command!")
         return
@@ -108,7 +108,7 @@ def kick(inp, input=None, notice=None):
 
 @hook.command
 def say(inp, input=None, notice=None):
-    ".say [channel] <message> -- makes the bot say <message> in [channel]. if [channel] is blank the bot will say the <message> in the channel the command was used in."
+    ".say [channel] <message> -- Makes the bot say <message> in [channel]. If [channel] is blank the bot will say the <message> in the channel the command was used in."
     if not isadmin(input):
         notice("Only bot admins can use this command!")
         return
@@ -130,7 +130,7 @@ def say(inp, input=None, notice=None):
 @hook.command("me")
 @hook.command
 def act(inp, input=None, notice=None):
-    ".act [channel] <action> -- makes the bot act <action> in [channel]. if [channel] is blank the bot will act the <action> in the channel the command was used in."
+    ".act [channel] <action> -- Makes the bot act out <action> in [channel]. Ff [channel] is blank the bot will act the <action> in the channel the command was used in."
     if not isadmin(input):
         notice("Only bot admins can use this command!")
         return
@@ -151,7 +151,7 @@ def act(inp, input=None, notice=None):
 
 @hook.command
 def topic(inp, input=None, notice=None):
-    ".topic [channel] <topic> -- change the topic of a channel"
+    ".topic [channel] <topic> -- Change the topic of a channel."
     if not isadmin(input):
         notice("Only bot admins can use this command!")
         return
@@ -177,7 +177,7 @@ def mutesieve(bot, input, func, kind, args):
 def mute(inp, input=None, db=None, bot=None, users=None):
     if inp and inp in input.conn.users.channels.keys():
         input.chan = inp
-    ".mute <channel> -- Mutes the bot"
+    ".mute <channel> -- Mutes the bot in <channel>. If no channel is specified, it is muted in the current channel."
     if usertracking.query(db, bot.config, input.nick, input.chan, "mute") or "o" in users[input.chan].usermodes[input.nick]:
         users[input.chan].mute = "%s %d" % (input.nick, time.time())
         input.notice("Muted")
@@ -188,7 +188,7 @@ def mute(inp, input=None, db=None, bot=None, users=None):
 def unmute(inp, input=None, db=None, bot=None, users=None):
     if inp and inp in users.channels.keys():
         input.chan = inp
-    ".unmute <channel> -- Unmutes the bot"
+    ".unmute <channel> -- Unmutes the bot in <channel>. If no channel is specified, it is unmuted in the current channel."
     if usertracking.query(db, bot.config, input.nick, input.chan, "mute") or "o" in users[input.chan].usermodes[input.nick]:
         if hasattr(users[input.chan], "mute"):
             input.notice("Unmuted")

@@ -6,7 +6,7 @@ from util import hook, http
 @hook.command('wa')
 @hook.command
 def wolframalpha(inp, bot=None):
-    ".wa/.wolframalpha <query> -- computes <query> using Wolfram Alpha"
+    ".wa <query> -- Computes <query> using Wolfram Alpha."
 
     api_key = bot.config.get("api_keys", {}).get("wolframalpha", None)
     if api_key is None:

@@ -17,7 +17,7 @@ def flip_simple(count):
 
 @hook.command(autohelp=False)
 def coin(inp):
-    ".coin [amount] -- flips some coins and shares the result."
+    ".coin [amount] -- Flips [amount] of coins."
     
     # checking for valid input. if valid input [count=inp], if invalid [return error], if no input [count=1]
     if inp.isdigit():

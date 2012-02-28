@@ -9,7 +9,7 @@ from util import hook, http
 
 @hook.command
 def validate(inp):
-    ".validate <url> -- runs url through w3c markup validator"
+    ".validate <url> -- Runs url through the w3c markup validator."
 
     if not inp.startswith('http://'):
         inp = 'http://' + inp

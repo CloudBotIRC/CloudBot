@@ -5,7 +5,7 @@ import random
 
 @hook.command
 def flip(inp, flip_count=0, say = None):
-    ".flip <text> -- flips the given text"
+    ".flip <text> -- Flips <text> over."
     guy = unicode(random.choice(flips), 'utf8')
     inp = inp.lower()
     inp = inp[::-1]

@@ -128,7 +128,7 @@ items = ["cast iron skillet",
 
 @hook.command
 def lart(inp, me = None,  nick = None, input=None, notice=None):
-    ".lart <user> - LARTs a user of your choice"
+    ".lart <user> -- Makes the bot LART <user>."
     inp = inp.strip()
 
     if not re.match("^[A-Za-z0-9_|.-\]\[]*$", inp.lower()):
@@ -144,7 +144,7 @@ def lart(inp, me = None,  nick = None, input=None, notice=None):
 
 @hook.command
 def slap(inp, me = None, nick = None, input=None, notice=None):
-    ".slap <user> - slap a user"
+    ".slap <user> -- Makes the bot slap <user>."
     inp = inp.strip()
 
     if not re.match("^[A-Za-z0-9_|.-\]\[]*$", inp.lower()):

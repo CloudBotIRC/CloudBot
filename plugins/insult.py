@@ -37,7 +37,7 @@ insults = ["You are the son of a motherless ogre.",
 
 @hook.command(autohelp=False)
 def insult(inp, nick=None, say=None, input=None):
-    ".insult [user] -- insult someone!"
+    ".insult <user> -- Makes the bot insult <user>."
  
     msg = "(" + nick + ") " + random.choice(insults)
     if re.match("^[A-Za-z0-9_|.-\]\[]*$", inp.lower()) and inp != "":

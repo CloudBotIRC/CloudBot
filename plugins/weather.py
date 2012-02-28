@@ -4,7 +4,7 @@ from util import hook, http
 
 @hook.command(autohelp=False)
 def forecast(inp, nick='', server='', reply=None, db=None, notice=None, say=None):
-    ".forecast <location> [dontsave] -- gets a weather forecast from Google"
+    ".forecast <location> [dontsave] -- Gets a weather forecast for <location> from Google."
     loc = inp
 
     dontsave = loc.endswith(" dontsave")
@@ -44,7 +44,7 @@ def forecast(inp, nick='', server='', reply=None, db=None, notice=None, say=None
 
 @hook.command(autohelp=False)
 def weather(inp, nick='', server='', reply=None, db=None, notice=None):
-    ".weather <location> [dontsave] -- gets weather data from Google"
+    ".weather <location> [dontsave] -- Gets weather data for <location> from Google."
     loc = inp
 
     dontsave = loc.endswith(" dontsave")

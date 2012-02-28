@@ -4,7 +4,7 @@ from BeautifulSoup import BeautifulSoup
 
 @hook.command(autohelp=False)
 def fact(inp, say=False, nick=False):
-    ".fact -- gets a fact from OMGFACTS"
+    ".fact -- Gets a random fact from OMGFACTS."
 
     fact = None
     while fact is None:

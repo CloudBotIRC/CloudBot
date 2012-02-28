@@ -6,7 +6,7 @@ from util import hook
 
 @hook.command
 def munge(inp, munge_count=0):
-    ".munge <text> -- munges up the given text"
+    ".munge <text> -- Munges up <text>."
     reps = 0
     for n in xrange(len(inp)):
         rep = character_replacements.get(inp[n])
@@ -20,7 +20,7 @@ def munge(inp, munge_count=0):
 
 character_replacements = {
     'a': 'ä',
-#    'b': 'Б',
+    'b': 'Б',
     'c': 'ċ',
     'd': 'đ',
     'e': 'ë',
@@ -31,16 +31,16 @@ character_replacements = {
     'j': 'ĵ',
     'k': 'ķ',
     'l': 'ĺ',
-#    'm': 'ṁ',
+    'm': 'ṁ',
     'n': 'ñ',
     'o': 'ö',
     'p': 'ρ',
-#    'q': 'ʠ',
+    'q': 'ʠ',
     'r': 'ŗ',
     's': 'š',
     't': 'ţ',
     'u': 'ü',
-#    'v': '',
+    'v': '',
     'w': 'ω',
     'x': 'χ',
     'y': 'ÿ',
@@ -50,7 +50,7 @@ character_replacements = {
     'C': 'Ç',
     'D': 'Ď',
     'E': 'Ē',
-#    'F': 'Ḟ',
+    'F': 'Ḟ',
     'G': 'Ġ',
     'H': 'Ħ',
     'I': 'Í',
@@ -61,12 +61,12 @@ character_replacements = {
     'N': 'Ν',
     'O': 'Ö',
     'P': 'Р',
-#    'Q': 'Ｑ',
+    'Q': 'Ｑ',
     'R': 'Ŗ',
     'S': 'Š',
     'T': 'Ţ',
     'U': 'Ů',
-#    'V': 'Ṿ',
+    'V': 'Ṿ',
     'W': 'Ŵ',
     'X': 'Χ',
     'Y': 'Ỳ',

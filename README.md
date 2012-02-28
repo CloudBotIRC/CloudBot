@@ -1,4 +1,4 @@
-##CloudBot/DEV
+##CloudBot/1.0
 
 ### About
 CloudBot is very heavily based on Skybot by rmmh. (https://github.com/rmmh/skybot)
@@ -25,14 +25,14 @@ If you use another OS or distro you can find source packages on the module(s) we
 Once installing these packages run the bot once with ```python bot.py``` to generate the config file. Stop the bot, edit the config, and run the bot again with ```python bot.py``` to start it up :)
 
 ### Requirements
-CloudBot runs on Python 2.7. Many of the plugins require lxml and BeautifulSoup. It is developed on Ubuntu 11.10 with Python 2.7.2.
+CloudBot runs on Python 2.7. Many of the plugins require lxml and BeautifulSoup. It is devloped on Ubuntu 11.10 with Python 2.7.2.
 
 ### License
 CloudBot is licenced under the GPL v3 license. The terms are as follows.
 
 
 ``` 
-    CloudBot DEV
+    CloudBot 1.0
 
     Copyright © 2011 Luke Rogers. <http://www.dempltr.com/> <lukeroge@gmail.com>
 

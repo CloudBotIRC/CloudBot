@@ -37,6 +37,8 @@ and it will connect to any server(s) you have added to the config. (Config docs 
 ### Requirements
 CloudBot runs on Python 2.7.x. It is developed on Debian Wheezy/Testing with Python 2.7.2.
 
+Windows users: Windows compatibilty is broken, but we do intend to add it back. (Eventually)
+
 ### Example CloudBots
 The developers of CloudBot run two Cloudbots on [Espernet](http://esper.net).
 

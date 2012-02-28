@@ -17,7 +17,7 @@ if not os.path.exists('config'):
               "server": "localhost",
               "nick": "nickname",
               "user": "cloudbot",
-              "realname": "CloudBot - http://j.mp/uS5Cvx",
+              "realname": "CloudBot - http://git.io/cloudbot",
               "nickserv_password": "",
               "channels": ["#channel"],
               "command_prefix": ".",

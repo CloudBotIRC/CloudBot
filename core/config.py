@@ -53,7 +53,11 @@ if not os.path.exists('config'):
           ],
           "admins": []
         }''') + '\n')
-
+    print "Config generated!"
+    print "Please edit the config now."
+    print "For help, see http://git.io/cloudbotwiki"
+    print "Thank you for using CloudBot!"
+    sys.exit()
 
 def config():
     # reload config from file if file has changed

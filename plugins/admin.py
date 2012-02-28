@@ -3,9 +3,10 @@
 #  Improved by Lukeroge
 from util import hook
 import sys
+import subprocess
 import time
         
-@hook.command
+@hook.command(autohelp=False)
 def quit(inp, input=None, db=None, notice=None):
     ".quit [reason] -- Kills the bot, with [reason] reason as its quit message.."
     if not input.nick in input.bot.config["admins"]:
@@ -18,6 +19,19 @@ def quit(inp, input=None, db=None, notice=None):
     time.sleep(3)
     sys.exit()
         
+@hook.command(autohelp=False)
+def restart(inp, input=None, db=None, notice=None):
+    ".restart [reason] -- Restarts the bot, with [reason] reason as its quit message.."
+    if not input.nick in input.bot.config["admins"]:
+        notice("Only bot admins can use this command!")
+        return
+    if inp:
+        input.conn.send("QUIT :Bot restarted by "+input.nick+" (" + inp + ")")
+    else:
+        input.conn.send("QUIT :Bot restarted by "+input.nick+" (no reason)")
+    time.sleep(3)
+    subprocess.call(['lib/restart.sh'])
+    sys.exit()
 
 @hook.command
 def join(inp, input=None, db=None, notice=None):

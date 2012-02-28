@@ -1,7 +1,6 @@
 #  Shitty plugin made by iloveportalz0r
 #  Broken by The Noodle
 #  Improved by Lukeroge
-#  Mute added by neersighted
 from util import hook
 import sys
 import time

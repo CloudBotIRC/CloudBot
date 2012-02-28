@@ -49,7 +49,7 @@ def lastfm(inp, nick='', say=None, db=None, bot=None):
         track = tracks
         status = 'last track'
     else:
-        return "error parsing track listing"
+        return "error: could not parse track listing"
 
     title = track["name"]
     album = track["album"]["#text"]

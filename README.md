@@ -12,15 +12,22 @@ Get Cloudbot at [git.io/getcloudbot](http://git.io/getcloudbot "CloudBot").
 Unzip, and follow the install directions.
 
 ### Install
-Before you can run the bot, you need to install a few Python modules. These are `lXML`, `BeautifulSoup`, and `Enchant`.  On Debian based systems, these can be installed using the following commands:
+Before you can run the bot, you need to install a few Python modules. These are `lXML`, and `BeautifulSoup`.  These can be installed with PIP (The python packager):
 
-`sudo apt-get install python-lxml`
+`sudo pip install lxml`
 
-`sudo apt-get install python-beautifulsoup`
+`sudo pip install beautifulsoup`
+
+On Debian based systems, you can get pip with
+
+`sudo apt-get install pip`
+
+For .spell to work, we also need a library called `Enchant`.  On Debian based systems, install with
 
 `sudo apt-get install python-enchant`
 
 In addition, for .whois to work optimally, you must have `whois` installed. Again, on Debian based systems, install it with 
+
 `sudo apt-get install whois`
 
 If you are a user of another Linux disto, use your package manager to install the modules, or use Google to locate source packages you can install.

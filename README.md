@@ -1,7 +1,11 @@
 ##CloudBot/DEV
 
 ### About
-CloudBot is very heavily based on Skybot by rmmh. (https://github.com/rmmh/skybot)
+CloudBot is very heavily based on [Skybot](https://github.com/rmmh/skybot) by rmmh.  
+
+CloudBot is meant to be a simple, extendable python IRC bot, with minimal magic.  To write your own plugins, vist the [Plugin Wiki Page](http://git.io/cloudbotplugins).
+
+More at the [wiki](http://git.io/cloudbotwiki).
 
 ### Download
 Get Cloudbot at [git.io/getcloudbot](http://git.io/getcloudbot "CloudBot").
@@ -28,14 +32,15 @@ It will generate a default config for you.  Once you have editied the config, ru
 
 `python bot.py`
 
-and it will connect to any server(s) you have added to the config.
+and it will connect to any server(s) you have added to the config. (Config docs at the [wiki](http://git.io/cloudbotconfig))
 
 ### Requirements
 CloudBot runs on Python 2.7.x. It is developed on Debian Wheezy/Testing with Python 2.7.2.
 
 ### Example CloudBots
-The developers of CloudBot run two Cloudbots on [Espernet](http://esper.net)
-They can both be found in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via IRC to #CloudBot on irc.esper.net)
+The developers of CloudBot run two Cloudbots on [Espernet](http://esper.net).
+
+They can both be found in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via IRC to #CloudBot on irc.esper.net).
 
 **mau5bot** is the stable bot, and runs on the lastest release version of CloudBot. (mau5bot is running on Ubuntu Server Oneric Ocelot/11.10 with Python 2.7.2)
 

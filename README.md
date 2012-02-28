@@ -12,13 +12,21 @@ Get Cloudbot at [git.io/getcloudbot](http://git.io/getcloudbot "CloudBot").
 Unzip, and follow the install directions.
 
 ### Install
-Before you can run the bot, you need to install a few Python modules. These are `lXML`, `BeautifulSoup`, and `Enchant`.  On Debian based systems, these can be installed using the following commands:
+Before you can run the bot, you need to install a few Python modules. These are `lXML`, `BeautifulSoup`, `Enchant` and `HTTPlib2.  You will allso need `pip` for MyGengo. On Debian based systems, these can be installed using the following commands:
 
 `sudo apt-get install python-lxml`
 
 `sudo apt-get install python-beautifulsoup`
 
 `sudo apt-get install python-enchant`
+
+`sudo apt-get install python-httplib2`
+
+`sudo apt-get install python-pip`
+
+Install mygengo with
+
+`sudo pip install mygengo`
 
 In addition, for .whois to work optimally, you must have `whois` installed. Again, on Debian based systems, install it with 
 `sudo apt-get install whois`

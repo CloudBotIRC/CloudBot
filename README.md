@@ -1,7 +1,7 @@
 ##CloudBot/DEV
 
 ### About
-CloudBot is very heavily based on [Skybot](https://github.com/rmmh/skybot) by rmmh.  
+CloudBot is very heavily based on [Skybot](http://git.io/skybot) by rmmh.  
 
 CloudBot is meant to be a simple, extendable python IRC bot, with minimal magic.  To write your own plugins, vist the [Plugin Wiki Page](http://git.io/cloudbotplugins).
 

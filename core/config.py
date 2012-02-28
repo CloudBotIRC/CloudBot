@@ -51,7 +51,7 @@ if not os.path.exists('config'):
             "!coz",
             "!tell /x"
           ],
-          "admins": []
+          "admins": ["myname"]
         }''') + '\n')
     print "Config generated!"
     print "Please edit the config now."

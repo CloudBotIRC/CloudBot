@@ -25,7 +25,7 @@ def is_muted(chan, db):
         db.commit()
         return False
 
-@hook.sieve
+#@hook.sieve
 def mutesieve(bot, input, func, kind, args, db):
     if kind == "event":
         return input

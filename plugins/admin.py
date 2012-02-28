@@ -4,15 +4,7 @@
 #  Mute added by neersighted
 from util import hook
 import sys
-import usertracking
 import time
-
-# Added to make the move to a new auth system a lot easier
-def isadmin(input):
-    if input.nick in input.bot.config["admins"]:
-        return True
-    else:
-        return False
         
 @hook.command
 def quit(inp, input=None, db=None, notice=None):
@@ -21,9 +13,9 @@ def quit(inp, input=None, db=None, notice=None):
         notice("Only bot admins can use this command!")
         return
     if inp:
-        input.conn.send("QUIT :Kill switch activated by "+input.nick+" (" + inp + ")")
+        input.conn.send("QUIT :Bot killed by "+input.nick+" (" + inp + ")")
     else:
-        input.conn.send("QUIT :Kill switch activated by "+input.nick+" (no reason)")
+        input.conn.send("QUIT :Bot killed by "+input.nick+" (no reason)")
     time.sleep(3)
     sys.exit()
         
@@ -161,39 +153,3 @@ def topic(inp, input=None, notice=None):
     else:
         out = "TOPIC %s :%s" % (input.chan, message)
     input.conn.send(out)
-
-@hook.sieve
-def mutesieve(bot, input, func, kind, args):
-    if kind == "event":
-        return input
-    if "chan" in input.keys() and input.chan in input.conn.users.channels and hasattr(input.conn.users[input.chan], "mute"):
-        if input.command == "PRIVMSG" and input.lastparam[1:] == "unmute":
-            return input
-        else:
-            return None
-    return input
-
-@hook.command
-def mute(inp, input=None, db=None, bot=None, users=None):
-    if inp and inp in input.conn.users.channels.keys():
-        input.chan = inp
-    ".mute <channel> -- Mutes the bot in <channel>. If no channel is specified, it is muted in the current channel."
-    if usertracking.query(db, bot.config, input.nick, input.chan, "mute") or "o" in users[input.chan].usermodes[input.nick]:
-        users[input.chan].mute = "%s %d" % (input.nick, time.time())
-        input.notice("Muted")
-    else:
-        input.notice("Only bot admins can use this command!")
-
-@hook.command
-def unmute(inp, input=None, db=None, bot=None, users=None):
-    if inp and inp in users.channels.keys():
-        input.chan = inp
-    ".unmute <channel> -- Unmutes the bot in <channel>. If no channel is specified, it is unmuted in the current channel."
-    if usertracking.query(db, bot.config, input.nick, input.chan, "mute") or "o" in users[input.chan].usermodes[input.nick]:
-        if hasattr(users[input.chan], "mute"):
-            input.notice("Unmuted")
-            del users[input.chan].mute
-        else:
-            input.notice("Not Muted")
-    else:
-        input.notice("Only bot admins can use this command!")

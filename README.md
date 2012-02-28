@@ -3,7 +3,7 @@
 ### About
 CloudBot is very heavily based on [Skybot](http://git.io/skybot) by rmmh.  
 
-CloudBot is meant to be a simple, extendable python IRC bot, with minimal magic.  To write your own plugins, vist the [Plugin Wiki Page](http://git.io/cloudbotplugins).
+CloudBot is meant to be a simple, extendable Python IRC bot, with minimal magic.  To write your own plugins, vist the [Plugin Wiki Page](http://git.io/cloudbotplugins).
 
 More at the [wiki](http://git.io/cloudbotwiki).
 
@@ -12,11 +12,15 @@ Get Cloudbot at [git.io/getcloudbot](http://git.io/getcloudbot "CloudBot").
 Unzip, and follow the install directions.
 
 ### Install
-Before you can run the bot, you need to install a few Python modules. These are `lXML`, and `BeautifulSoup`.  These can be installed with PIP (The python packager):
+Before you can run the bot, you need to install a few Python modules. These are `lXML`, `BeautifulSoup`, `MyGengo`, and `HTTPlib2`.  These can be installed with PIP (The python packager):
 
 `sudo pip install lxml`
 
 `sudo pip install beautifulsoup`
+
+`sudo pip install mygengo`
+
+`sudo pip install httplib2`
 
 On Debian based systems, you can get pip with
 
@@ -25,8 +29,6 @@ On Debian based systems, you can get pip with
 For .spell to work, we also need a library called `Enchant`.  On Debian based systems, install with
 
 `sudo apt-get install python-enchant`
-
-Otherwise, use Google to find source packages.
 
 In addition, for .whois to work optimally, you must have `whois` installed. Again, on Debian based systems, install it with 
 

@@ -7,6 +7,16 @@ from util import hook, http
 
 socket.setdefaulttimeout(10)
 
+# Auto-join on Invite (Configurable, defaults to True)
+@hook.event('INVITE')
+def invite(paraml, conn=None):
+    invitejoin = conn.conf.get('invitejoin', True)
+    if invitejoin:
+        conn.join(paraml[-1])
+    else:
+        return None
+
+# Rejoin on kick (Configuragble, defaults to False)
 @hook.event('KICK')
 def rejoin(paraml, conn=None):
     autorejoin = conn.conf.get('autorejoin', False)
@@ -14,11 +24,7 @@ def rejoin(paraml, conn=None):
         conn.join(paraml[0])
     else:
         return None
-
-@hook.event('INVITE')
-def invite(paraml, conn=None):
-    conn.join(paraml[-1])
-
+# Identify to NickServ (or other service)
 @hook.event('004')
 def onjoin(paraml, conn=None, bot=None):
     nickserv_password = conn.conf.get('nickserv_password', '')
@@ -31,22 +37,25 @@ def onjoin(paraml, conn=None, bot=None):
         bot.config['censored_strings'].append(nickserv_password)
         time.sleep(1)
     mode = conn.conf.get('mode')
-
+# Set bot modes
     if mode:
         conn.cmd('MODE', [conn.nick, mode])
 
+# Join config-defined channels
     for channel in conn.channels:
         conn.join(channel)
         time.sleep(1) 
 
+# HTTP Useragent
     http.ua_skybot = 'CloudBot - http://git.io/cloudbot'
 
+# Stay-alive code
     stayalive = conn.conf.get('stayalive')
     if stayalive:
         while True:
             time.sleep(conn.conf.get('stayalive_delay', 20))
             conn.cmd('PING', [conn.nick])
-
+# CTCPs
 @hook.regex(r'^\x01VERSION\x01$')
 def ctcpversion(inp, notice=None):
     notice('\x01VERSION: CloudBot - http://git.io/cloudbot')

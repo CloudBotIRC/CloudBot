@@ -20,6 +20,7 @@ if not os.path.exists('config'):
               "realname": "CloudBot - http://git.io/cloudbot",
               "nickserv_password": "",
               "channels": ["#channel"],
+              "invitejoin": "True",
               "autorejoin": "False",
               "command_prefix": ".",
               "stayalive": "",

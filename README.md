@@ -12,7 +12,7 @@ Before you can run the bot, you need to install a few Python modules. These are 
 ```sudo apt-get install python-beautifulsoup
 ```
 
-For the spell.py plugin to work you need *python-enchant*. This can be installed with:
+For the spell.py plugin to work you need *Enchant*. This can be installed with:
 ```sudo apt-get install python-enchant
 ```
 

@@ -1,7 +1,9 @@
 All plugins need to 'from util import hook' if they want to be callable.
 
 There are three ways to set when a plugin is called using
-decorators. @hook.command causes it to be callable using normal command
+decorators. 
+
+@hook.command causes it to be callable using normal command
 syntax; an argument will register it under that name (so if my function is
 called foo and I use @hook.command, .foo will work; if I use
 @hook.command("bar"), .bar will work but not .foo). The first argument, inp,

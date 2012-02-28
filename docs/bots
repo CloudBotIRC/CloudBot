@@ -10,16 +10,16 @@ pyfibot http://code.google.com/p/pyfibot/
  - interesting, but lots of magic
 
 rbot http://linuxbrit.co.uk/rbot/
- - Ruby
+ - ruby
  - lots of plugins
 
 pyirc http://www.k-pdt.net/pyirc/
  - very simple, not multithreaded
- - poor use of regexes, skybot has much better parsing, but it implements many more irc control codes
+ - poor use of regexes, CloudBot has much better parsing, but it implements many more irc control codes
  - can convert irc colors to vt100 escape codes -- should implement this
  - autoreconnect
 
-pybot
+pybot http://labix.org/pybot
  - can handle multiple servers, but not multithreaded
  - ugly modules
  - too many external dependencies

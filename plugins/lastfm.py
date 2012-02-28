@@ -2,6 +2,7 @@ from util import hook, http
 
 @hook.command
 def lastfm(inp, nick='', say=None, db=None, bot=None):
+    ".lastfm <user> - display the now playing (or recent) tracks of a LastFM user"
     db.execute("create table if not exists lastfm(nick primary key, acc)")
     sql = db.execute("select acc from lastfm where nick=lower(?)", (nick,)).fetchone();
     api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
@@ -30,7 +31,7 @@ def lastfm(inp, nick='', say=None, db=None, bot=None):
         if inp:  # specified a user name
             return "error: %s" % response["message"]
         else:
-            return "your nick is not a LastFM account. try '.lastfm username'."
+            return "your nick is not a LastFM account. try '.lastfm <user>'"
 
     tracks = response["recenttracks"]["track"]
 

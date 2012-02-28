@@ -19,7 +19,7 @@ def mutesieve(bot, input, func, kind, args):
 def mute(inp, input=None, db=None, bot=None, users=None):
     if inp and inp in input.conn.users.channels.keys():
         input.chan = inp
-    ".mute <channel> - Mutes the bot"
+    ".mute <channel> -- Mutes the bot"
     if usertracking.query(db, bot.config, input.nick, input.chan, "mute") or "o" in users[input.chan].usermodes[input.nick]:
         users[input.chan].mute = "%s %d" % (input.nick, time.time())
         input.notice("Muted")
@@ -30,7 +30,7 @@ def mute(inp, input=None, db=None, bot=None, users=None):
 def unmute(inp, input=None, db=None, bot=None, users=None):
     if inp and inp in users.channels.keys():
         input.chan = inp
-    ".unmute <channel> - Unmutes the bot"
+    ".unmute <channel> -- Unmutes the bot"
     if usertracking.query(db, bot.config, input.nick, input.chan, "mute") or "o" in users[input.chan].usermodes[input.nick]:
         if hasattr(users[input.chan], "mute"):
             input.notice("Unmuted")

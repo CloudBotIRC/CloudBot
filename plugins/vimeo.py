@@ -3,6 +3,7 @@ from util import hook, http
 
 @hook.regex(r'vimeo.com/([0-9]+)')
 def vimeo_url(match):
+    ".vimeo <url> -- returns information on the Vimeo video at <url>"
     info = http.get_json('http://vimeo.com/api/v2/video/%s.json'
                          % match.group(1))
 

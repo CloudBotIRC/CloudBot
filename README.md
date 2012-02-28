@@ -1,4 +1,4 @@
-##CloudBot/1.0
+##CloudBot/DEV
 
 ### About
 CloudBot is very heavily based on Skybot by rmmh. (https://github.com/rmmh/skybot)
@@ -32,7 +32,7 @@ CloudBot is licenced under the GPL v3 license. The terms are as follows.
 
 
 ``` 
-    CloudBot 1.0
+    CloudBot DEV
 
     Copyright © 2011 Luke Rogers. <http://www.dempltr.com/> <lukeroge@gmail.com>
 

@@ -32,7 +32,7 @@ CloudBot is licenced under the GPL v3 license. The terms are as follows.
 
 
 ``` 
-    CloudBot 3.0/DEV
+    CloudBot DEV
 
     Copyright © 2011 Luke Rogers. <http://www.dempltr.com/> <lukeroge@gmail.com>
 

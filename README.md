@@ -49,9 +49,7 @@ They can both be found in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via 
 ### License
 CloudBot is licenced under the GPL v3 license. The terms are as follows.
 
-
-`
-    CloudBot/DEV
+#### CloudBot/DEV
 
     Copyright © 2011 Luke Rogers <http://www.dempltr.com/> - <lukeroge@gmail.com>
 
@@ -67,4 +65,3 @@ CloudBot is licenced under the GPL v3 license. The terms are as follows.
 
     You should have received a copy of the GNU General Public License
     along with CloudBot.  If not, see <http://www.gnu.org/licenses/>.
-`

@@ -8,7 +8,7 @@ import time
         
 @hook.command(autohelp=False)
 def quit(inp, input=None, db=None, notice=None):
-    ".quit [reason] -- Kills the bot, with [reason] reason as its quit message.."
+    ".quit [reason] -- Kills the bot, with [reason] reason as its quit message."
     if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return
@@ -21,7 +21,7 @@ def quit(inp, input=None, db=None, notice=None):
         
 @hook.command(autohelp=False)
 def restart(inp, input=None, db=None, notice=None):
-    ".restart [reason] -- Restarts the bot, with [reason] reason as its quit message.."
+    ".restart [reason] -- Restarts the bot, with [reason] reason as its quit message."
     if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return

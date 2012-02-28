@@ -9,7 +9,7 @@ import time
 @hook.command
 def quit(inp, input=None, db=None, notice=None):
     ".quit [reason] -- Kills the bot, with [reason] reason as its quit message.."
-    if not isadmin(input):
+    if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return
     if inp:
@@ -23,7 +23,7 @@ def quit(inp, input=None, db=None, notice=None):
 @hook.command
 def join(inp, input=None, db=None, notice=None):
     ".join <channel> -- Joins <channel>."
-    if not isadmin(input):
+    if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return
     notice("Attempting to join " + inp + "...")
@@ -33,7 +33,7 @@ def join(inp, input=None, db=None, notice=None):
 @hook.command
 def cycle(inp, input=None, db=None, notice=None):
     ".cycle <channel> -- Cycles <channel>."
-    if not isadmin(input):
+    if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return
     notice("Attempting to cycle " + inp + "...")
@@ -43,7 +43,7 @@ def cycle(inp, input=None, db=None, notice=None):
 @hook.command
 def part(inp, input=None, notice=None):
     ".part <channel> -- Parts from <channel>."
-    if not isadmin(input):
+    if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return
     notice("Attempting to part from " + inp + "...")
@@ -52,7 +52,7 @@ def part(inp, input=None, notice=None):
 @hook.command
 def nick(inp, input=None, notice=None):
     ".nick <nick> -- Changes the bots nickname to <nick>."
-    if not isadmin(input):
+    if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return
     notice("Changing nick to " + inp + ".")
@@ -61,7 +61,7 @@ def nick(inp, input=None, notice=None):
 @hook.command
 def raw(inp, input=None, notice=None):
     ".raw <command> -- Sends a RAW IRC command."
-    if not isadmin(input):
+    if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return
     notice("Raw command sent.")
@@ -70,7 +70,7 @@ def raw(inp, input=None, notice=None):
 @hook.command
 def kick(inp, input=None, notice=None):
     ".kick [channel] <user> [reason] -- kicks a user."
-    if not isadmin(input):
+    if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return
     split = inp.split(" ")
@@ -101,7 +101,7 @@ def kick(inp, input=None, notice=None):
 @hook.command
 def say(inp, input=None, notice=None):
     ".say [channel] <message> -- Makes the bot say <message> in [channel]. If [channel] is blank the bot will say the <message> in the channel the command was used in."
-    if not isadmin(input):
+    if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return
     split = inp.split(" ")
@@ -123,7 +123,7 @@ def say(inp, input=None, notice=None):
 @hook.command
 def act(inp, input=None, notice=None):
     ".act [channel] <action> -- Makes the bot act out <action> in [channel]. Ff [channel] is blank the bot will act the <action> in the channel the command was used in."
-    if not isadmin(input):
+    if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return
     split = inp.split(" ")
@@ -144,7 +144,7 @@ def act(inp, input=None, notice=None):
 @hook.command
 def topic(inp, input=None, notice=None):
     ".topic [channel] <topic> -- Change the topic of a channel."
-    if not isadmin(input):
+    if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return
     split = inp.split(" ")

@@ -37,8 +37,9 @@ CloudBot runs on Python 2.7.x. It is developed on Debian Wheezy/Testing with Pyt
 The developers of CloudBot run two Cloudbots on [Espernet](http://esper.net)
 They can both be found in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via IRC to #CloudBot on irc.esper.net)
 
-_mau5bot_ is the stable bot, and runs on the lastest release version of CloudBot. (mau5bot is running on Ubuntu Server Oneric Ocelot/11.10 with Python 2.7.2)
-_neerbot_ is the unstable bot, and runs on the lastest development version of CloudBot. (neerbot is running on Debian Wheezy/Testing with Python 2.7.2)
+**mau5bot** is the stable bot, and runs on the lastest release version of CloudBot. (mau5bot is running on Ubuntu Server Oneric Ocelot/11.10 with Python 2.7.2)
+
+**neerbot** is the unstable bot, and runs on the lastest development version of CloudBot. (neerbot is running on Debian Wheezy/Testing with Python 2.7.2)
 
 ### License
 CloudBot is licenced under the GPL v3 license. The terms are as follows.

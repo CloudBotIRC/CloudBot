@@ -17,6 +17,7 @@ print "|  ,----'|  |     |  |  |  | |  |  |  | |  .--.  ||  |_)  | |  |  |  | `-
 print "|  |     |  |     |  |  |  | |  |  |  | |  |  |  ||   _  <  |  |  |  |     |  |     "
 print "|  `----.|  `----.|  `--'  | |  `--'  | |  '--'  ||  |_)  | |  `--'  |     |  |     "
 print " \______||_______| \______/   \______/  |_______/ |______/   \______/      |__|     "
+print "http://git.io/cloudbot                                                   by lukeroge"
 
 if (len(sys.argv) > 1):
     if( sys.argv[1] == 'start' ):
@@ -27,15 +28,16 @@ if (len(sys.argv) > 1):
         command = restart
     else:
         print "usage: ./cloudbot {start|stop|restart}"
+        sys.exit()
 else:
     print "usage: ./cloudbot {start|stop|restart}"
-'''
-if os.path.isfile("./control.sh"):
-    command = "./control.sh command"
-elif os.path.isfile("./bot.sh"):
-    command = "./bot.sh command"
+    sys.exit()
+
+if os.path.isfile("./bot.py"):
+    command = command
 else:
-    command = "./bot.py"
-'''
+    print "Could not find bot.py! Are you in the wrong folder? (" + pwd + ")"
+    sys.exit()
+
 subprocess.call(command, shell=True)
 sys.exit()

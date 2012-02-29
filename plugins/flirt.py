@@ -43,17 +43,15 @@ flirts = ["I bet your name's Mickey, 'cause you're so fine.",
         "Nice legs. What time do they open?",
         "Your daddy must have been a baker, because you've got a nice set of buns."]
 
+
 @hook.command(autohelp=False)
 def flirt(inp, nick=None, me=None, input=None):
     ".flirt <user> -- Make the bot flirt with <user>."
-
     msg = "flirts with " + nick + "... \"" + random.choice(flirts) + "\""
     if re.match("^[A-Za-z0-9_|.-\]\[]*$", inp.lower()) and inp != "":
         msg = "flirts with " + inp + "... \"" + random.choice(flirts) + "\""
-
     if inp == input.conn.nick.lower() or inp == "itself":
-        msg = "flirts with itself!"
-
+        msg = "flirts with itself... \"" + random.choice(flirts) + "\""
     me(msg)
 
 

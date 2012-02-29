@@ -12,34 +12,46 @@ pwd = os.getcwd()
 clearlog = ": >./bot.log && "
 command = ":"
 
+nocol = "\033[1;m"
+red = "\033[1;31m"
+green = "\033[1;32m"
+
 daemoncheck = subprocess.check_output("locate /usr/bin/daemon", shell=True)
 daemon = re.match(r'^/usr/bin/daemon$', daemoncheck)
 screencheck = subprocess.check_output("locate /usr/bin/screen", shell=True)
-daemon = re.match(r'^/usr/bin/screen$', screencheck)
+screen = re.match(r'^/usr/bin/screen$', screencheck)
 
-error1 = "Neither screen nor daemon is installed! "\
-        "This script cannot run! {ERROR 1}"
-error2 = "Could not find bot.py! Are you in the wrong folder? "\
-        "(" + pwd + ") {ERROR 2}"
-error3 = "Invalid choice, exiting! {ERROR 3}"
-error4 = "Program killed by user! {ERROR 4}"
-error5 = "Author error! We be derpin'! {ERROR 5}"
+try:
+    runningcheck = subprocess.check_output("ps ax|grep cloudbot|"\
+                            "grep -v grep|grep -v ./cloudbot", shell=True)
+    running = re.match(r'^[1-9]+', runningcheck)
+except (subprocess.CalledProcessError):
+    running = False
+
+error1 = red + "Neither screen nor daemon is installed! "\
+        "This script cannot run! {ERROR 1}" + nocol
+error2 = red + "Could not find bot.py! Are you in the wrong folder? "\
+        "(" + pwd + ") {ERROR 2}" + nocol
+error3 = red + "Invalid choice, exiting! {ERROR 3}" + nocol
+error4 = red + "Program killed by user! {ERROR 4}" + nocol
+error5 = red + "Author error! We be derpin'! {ERROR 5}" + nocol
 
 start = "echo " + error1
 stop = "echo " + error1
 restart = "echo " + error1
-status = "ps aux|grep cloudbot|grep -v grep|grep -v ./cloudbot"
 
 if daemon:
     start = "daemon -n cloudbot -O " + pwd + \
             "/bot.log -r python " + pwd + "/bot.py"
     stop = clearlog + "daemon -n cloudbot --stop"
     restart = stop + " && " + start
+    pid = subprocess.check_output("pidof /usr/bin/daemon", shell=True)
 elif screen:
     start = "screen -S cloudbot -dm python" + pwd +\
             "/bot.py >>" + pwd + "/bot.log 2>&1"
     stop = clearlog + "kill `pidof /usr/bin/screen`"
     restart = stop + " && " + start
+    pid = subprocess.check_output("pidof /usr/bin/screen", shell=True)
 else:
     print error1
 
@@ -58,34 +70,69 @@ print " \______||_______| \______/   \______/  "\
 print "http://git.io/cloudbot                  "\
 "                                 by lukeroge"
 try:
-    if (len(sys.argv) > 1):
-        if (sys.argv[1] == 'start'):
-            command = start
-        elif (sys.argv[1] == 'stop'):
-            command = stop
-        elif (sys.argv[1] == 'restart'):
-            command = restart
-        elif (sys.argv[1] == 'status'):
-            command = status
+    if running:
+        if (len(sys.argv) > 1):
+            if (sys.argv[1] == 'start'):
+                print "Bot is alread running, cannot start!"
+            elif (sys.argv[1] == 'stop'):
+                command = stop
+                print "Stopping with: " + command
+            elif (sys.argv[1] == 'restart'):
+                command = restart
+                print "Restarting with: " + command
+            elif (sys.argv[1] == 'status'):
+                print green + "Bot is running! " + pid + nocol
+            else:
+                print usage
+                exit
         else:
-            print usage
-            exit
+            print "{1|start} {2|stop} {3|restart} {4|status} {5|exit}"
+            read = int(raw_input('Please choose a option: '))
+            if read == 1:
+                print "Bot is alread running, cannot start!"
+            elif read == 2:
+                command = stop
+                print "Stopping with: " + command
+            elif read == 3:
+                command = restart
+                print "Restarting with: " + command
+            elif read == 4:
+                print green + "Bot is running! " + pid + nocol
+            elif read == 5:
+                print quit
+            else:
+                print error3
     else:
-        print "{1|start} {2|stop} {3|restart} {4|status} {5|exit}"
-        read = int(raw_input('Please choose a option: '))
-        if read == 1:
-            command = start
-        elif read == 2:
-            command = stop
-        elif read == 3:
-            command = restart
-        elif read == 4:
-            command = status
-        elif read == 5:
-            exit
+        if (len(sys.argv) > 1):
+            if (sys.argv[1] == 'start'):
+                command = start
+                print "Starting with: " + command
+            elif (sys.argv[1] == 'stop'):
+                print "Bot is not running, cannot stop!"
+            elif (sys.argv[1] == 'restart'):
+                print "Bot is not running, cannot restart!"
+            elif (sys.argv[1] == 'status'):
+                print red + "Bot is not running!" +nocol
+            else:
+                print usage
+                exit
         else:
-            print error3
-            exit
+            print "{1|start} {2|stop} {3|restart} {4|status} {5|exit}"
+            read = int(raw_input('Please choose a option: '))
+            if read == 1:
+                command = start
+                print "Starting with: " + command
+            elif read == 2:
+                print "Bot is not running, cannot stop!"
+            elif read == 3:
+                command = restart
+            elif read == 4:
+                print red + "Bot is not running, cannot restart!" + nocol
+            elif read == 5:
+                print quit
+            else:
+                print error3
+                exit
 except (TypeError, ValueError):
     print error3
     exit

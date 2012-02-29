@@ -41,6 +41,10 @@ if not os.path.exists('config'):
             "mc_user": "INSERT MINECRAFT USERNAME HERE",
             "mc_pass": "INSERT MINECRAFT PASSWORD HERE"
           },
+          "wrapper":
+          {
+            "backend": "daemon"
+          },
           "censored_strings":
           [
             "mypass",

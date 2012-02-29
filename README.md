@@ -13,7 +13,7 @@
   * Automatic reloading
   * Little boilerplate
 * Intuitive configuration
-* Fully controlled from in IRC
+* Fully controlled from IRC
 
 ## Download
 

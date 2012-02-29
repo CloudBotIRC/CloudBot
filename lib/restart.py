@@ -4,10 +4,8 @@ import sys
 import os
 import subprocess
 
-if os.path.isfile("./control.sh"):
-    restart = "./control.sh restart"
-elif os.path.isfile("./bot.sh"):
-    restart = "./bot.sh restart"
+if os.path.isfile("./cloudbot"):
+    restart = "./cloudbot restart"
 else:
     restart = "./bot.py"
 

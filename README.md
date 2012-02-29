@@ -6,15 +6,16 @@ CloudBot is a Python IRC bot very heavily based on [Skybot](http://git.io/skybot
 
 ### Goals
 
+* Easy to use wrapper
+* Intuitive configuration
+* Fully controlled from IRC
+* Fully compatable with existing skybot plugins
 * Easily extendable
   * Thorough documentation
   * Cross-platform
 * Muti-threaded, efficient
   * Automatic reloading
   * Little boilerplate
-* Intuitive configuration
-* Fully controlled from IRC
-* Fully compatable with existing skybot plugins
 
 ## Download
 

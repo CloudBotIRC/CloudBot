@@ -1,4 +1,4 @@
-# `CloudBot`/DEV
+# CloudBot/DEV
 
 ## About
 `CloudBot` is very heavily based on [Skybot](http://git.io/skybot) by rmmh.  

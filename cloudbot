@@ -4,6 +4,11 @@ import sys
 import os
 import subprocess
 import re
+import json
+try:
+    config = json.load(open('config'))
+except ValueError, e:
+    print 'error: malformed config', e
 
 nocol = "\033[1;m"
 red = "\033[1;31m"
@@ -19,6 +24,7 @@ daemoncheck = subprocess.check_output("locate /usr/bin/daemon", shell=True)
 daemon = re.match(r'^/usr/bin/daemon$', daemoncheck)
 screencheck = subprocess.check_output("locate /usr/bin/screen", shell=True)
 screen = re.match(r'^/usr/bin/screen$', screencheck)
+backgrounder = config.get("wrapper", {}).get("backgrounder", "daemon")
 
 try:
     runningcheck = subprocess.check_output("ps ax|grep cloudbot|"\
@@ -33,24 +39,44 @@ error2 = red + "Could not find bot.py! Are you in the wrong folder? "\
         "(" + pwd + ") {ERROR 2}" + nocol
 error3 = red + "Invalid choice, exiting! {ERROR 3}" + nocol
 error4 = red + "Program killed by user! {ERROR 4}" + nocol
-error5 = red + "Author error! We be derpin'! {ERROR 5}" + nocol
+error5 = red + "Invalid backgrounder in config! {ERROR 5}" + nocol
+error6 = red + "Author error! We be derpin'! {ERROR 6}" + nocol
 
 start = "echo " + error1
 stop = "echo " + error1
 restart = "echo " + error1
+pid = "echo 'Cannot get pid'"
 
 if daemon:
-    start = "daemon -n cloudbot -O " + pwd + \
-            "/bot.log -r python " + pwd + "/bot.py"
-    stop = clearlog + "daemon -n cloudbot --stop"
-    restart = stop + " && " + start
-    pid = "pidof /usr/bin/daemon"
-elif screen:
-    start = "screen -S cloudbot -dm python" + pwd +\
+    if backgrounder == "daemon":
+        start = "daemon -n cloudbot -O " + pwd + \
+                "/bot.log -r python " + pwd + "/bot.py"
+        stop = clearlog + "daemon -n cloudbot --stop"
+        restart = stop + " && " + start
+        pid = "pidof /usr/bin/daemon"
+    elif backgrounder == "screen":
+        start = "screen -S cloudbot -dm python" + pwd +\
             "/bot.py >>" + pwd + "/bot.log 2>&1"
-    stop = clearlog + "kill `pidof /usr/bin/screen`"
-    restart = stop + " && " + start
-    pid = "pidof /usr/bin/screen"
+        stop = clearlog + "kill `pidof /usr/bin/screen`"
+        restart = stop + " && " + start
+        pid = "pidof /usr/bin/screen"
+    else:
+        print error5
+elif screen:
+    if backgrounder == "daemon":
+        start = "daemon -n cloudbot -O " + pwd + \
+                "/bot.log -r python " + pwd + "/bot.py"
+        stop = clearlog + "daemon -n cloudbot --stop"
+        restart = stop + " && " + start
+        pid = "pidof /usr/bin/daemon"
+    elif backgrounder == "screen":
+        start = "screen -S cloudbot -dm python" + pwd +\
+            "/bot.py >>" + pwd + "/bot.log 2>&1"
+        stop = clearlog + "kill `pidof /usr/bin/screen`"
+        restart = stop + " && " + start
+        pid = "pidof /usr/bin/screen"
+    else:
+        print error5
 else:
     command = ":"
     
@@ -134,14 +160,14 @@ try:
             else:
                 print error3
                 exit
-except (TypeError, ValueError):
+except (TypeError, ValueError), e:
     print error3
     exit
-except (KeyboardInterrupt):
+except (KeyboardInterrupt), e:
     print error4
     exit
-except (NameError, SyntaxError):
-    print error5
+except (NameError, SyntaxError), e:
+    print error6
     exit
 
 if os.path.isfile("./bot.py"):

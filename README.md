@@ -25,7 +25,7 @@ Unzip the resulting file, and continue to read this document.
 
 ## Install
 
-Before you can run the bot, you need to install a few Python modules. These are `lXML`, `BeautifulSoup`, `MyGengo`, and `HTTPlib2`.  These can be installed with PIP (The Python packager):
+Before you can run the bot, you need to install a few Python modules. These are `lXML`, `BeautifulSoup`, `MyGengo`, and `HTTPlib2`.  These can be installed with PIP (The Python package manager):
 
 `sudo pip install lxml`
 
@@ -39,21 +39,21 @@ On Debian based systems, you can get pip with
 
 `sudo apt-get install pip`
 
-For `.spell` to work, we also need a library called `Enchant`.  On Debian based systems, install with
+For `.spell` to work, we also need a library called `Enchant`.  On Debian based systems, install it with:
 
 `sudo apt-get install python-enchant`
 
-In addition, for `.whois` to work optimally, you must have `whois` installed. Again, on Debian based systems, install it with 
+In addition, for `.whois` to work optimally, you must have `whois` installed. Again, on Debian based systems, install it with:
 
 `sudo apt-get install whois`
 
 If you are a user of another Linux disto, use your package manager to install the dependencies, or, for other operating systems,  use **Google** to locate source packages you can install.
 
-Once you have installed the required dependencies, run the wrapper
+Once you have installed the required dependencies, run the wrapper:
 
 `./cloudbot`
 
-It will generate a default config for you.  Once you have edited the config, run it again with
+It will generate a default config for you.  Once you have edited the config, run it again with:
 
 `./cloudbot`
 
@@ -65,7 +65,7 @@ To configure your CloudBot, visit the [Config Wiki Page](http://git.io/cloudbotc
 
 To write your own plugins, visit the [Plugin Wiki Page](http://git.io/cloudbotplugins).
 
-More at the [Wiki Home Page](http://git.io/cloudbotwiki).
+More at the [Wiki Main Page](http://git.io/cloudbotwiki).
 
 ## Support
 

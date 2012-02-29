@@ -71,7 +71,7 @@ More at the [Wiki Main Page](http://git.io/cloudbotwiki).
 
 The developers reside in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via IRC to #CloudBot on irc.esper.net) on [EsperNet](http://esper.net) and would be glad to help you.
 
-If you think you have found a bug/have a idea/suggestion, please open a issue here on Github.
+If you think you have found a bug/have a idea/suggestion, please **open a issue** here on Github.
 
 ## Example CloudBots
 
@@ -85,14 +85,14 @@ They can both be found in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via 
 
 ## Requirements
 
-CloudBot runs on **Python** *2.7.x*. It is developed on *Debian* *Wheezy/Testing* with **Python** *2.7.2*.
+CloudBot runs on **Python** *2.7.x*. It is developed on **Debian** *Wheezy/Testing* with **Python** *2.7.2*.
 
-It **requires** Python modules `lXML`, `BeautifulSoup`, `Enchant`, `MyGengo`, and `HTTPlib2`.
+It **requires Python modules** `lXML`, `BeautifulSoup`, `Enchant`, `MyGengo`, and `HTTPlib2`.
 
 **Windows** users: Windows compatibility is **broken**, but we do intend to add it back. (Eventually)
 
 ## License
-CloudBot is licensed under the GPL v3 license. The terms are as follows.
+CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
     
     CloudBot/DEV
 

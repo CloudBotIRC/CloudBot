@@ -37,11 +37,11 @@ On `Debian` based systems, you can get pip with
 
 `sudo apt-get install pip`
 
-For .spell to work, we also need a library called `Enchant`.  On `Debian` based systems, install with
+For `.spell` to work, we also need a library called `Enchant`.  On `Debian` based systems, install with
 
 `sudo apt-get install python-enchant`
 
-In addition, for .whois to work optimally, you must have `whois` installed. Again, on `Debian` based systems, install it with 
+In addition, for `.whois` to work optimally, you must have `whois` installed. Again, on `Debian` based systems, install it with 
 
 `sudo apt-get install whois`
 

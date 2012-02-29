@@ -1,6 +1,7 @@
 # CloudBot/DEV
 
 ## About
+
 `CloudBot` is a `Python` very heavily based on [`Skybot`](http://git.io/skybot) by [rmmh](http://git.io/rmmh).  
 
 ### Goals
@@ -15,11 +16,13 @@
 * Fully controlled from in IRC
 
 ## Download
-Get `CloudBot` at [git.io/getcloudbot](http://git.io/getcloudbot "Get CloudBot from GitHub!").
+
+Get `CloudBot` at [git.io/getcloudbot](http://git.io/getcloudbot "Get CloudBot from Github!").
 
 Unzip the resulting file, and continue to read this document.
 
 ## Install
+
 Before you can run the bot, you need to install a few `Python` modules. These are `lXML`, `BeautifulSoup`, `MyGengo`, and `HTTPlib2`.  These can be installed with PIP (The `Python` packager):
 
 `sudo pip install lxml`
@@ -61,6 +64,12 @@ To configure your `CloudBot`, visit the [Config Wiki Page](http://git.io/cloudbo
 To write your own plugins, visit the [Plugin Wiki Page](http://git.io/cloudbotplugins).
 
 More at the [Wiki Home Page](http://git.io/cloudbotwiki).
+
+## Support
+
+The developers reside in[#CloudBot](irc://irc.esper.net/cloudbot "Connect via IRC to #CloudBot on irc.esper.net) on [EsperNet](http://esper.net) and would be glad to help you.
+
+If you think you have found a bug/have a idea/suggestion, please open a issue here on Github.
 
 ## Example `CloudBot`s
 

@@ -1,7 +1,7 @@
 # CloudBot/DEV
 
 ## About
-`CloudBot` is very heavily based on [`Skybot`](http://git.io/skybot) by [rmmh](http://git.io/rmmh).  
+`CloudBot` is a `Python` very heavily based on [`Skybot`](http://git.io/skybot) by [rmmh](http://git.io/rmmh).  
 
 ### Goals
 
@@ -13,8 +13,9 @@
 * Fully controlled from in IRC
 
 ## Download
-Get `CloudBot` at [git.io/getcloudbot](http://git.io/getcloudbot "CloudBot").
-Unzip, and follow the install directions.
+Get `CloudBot` at [git.io/getcloudbot](http://git.io/getcloudbot "Get CloudBot from GitHub!").
+
+Unzip the resulting file, and continue to read this document.
 
 ## Install
 Before you can run the bot, you need to install a few `Python` modules. These are `lXML`, `BeautifulSoup`, `MyGengo`, and `HTTPlib2`.  These can be installed with PIP (The `Python` packager):
@@ -39,7 +40,7 @@ In addition, for .whois to work optimally, you must have `whois` installed. Agai
 
 `sudo apt-get install whois`
 
-If you are a user of another Linux disto, use your package manager to install the modules, or use `Google` to locate source packages you can install.
+If you are a user of another Linux disto, use your package manager to install the dependencies, or, for other operating systems,  use **Google** to locate source packages you can install.
 
 Once you have installed the required dependencies, run the bot with 
 
@@ -65,13 +66,15 @@ The developers of `CloudBot` run two `CloudBot`s on [Espernet](http://esper.net)
 
 They can both be found in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via IRC to #CloudBot on irc.esper.net).
 
-**mau5bot** is the stable bot, and runs on the latest release version of `CloudBot`. (mau5bot is running on `Ubuntu Server` Oneric Ocelot/11.10 with `Python` 2.7.2)
+**mau5bot** is the stable bot, and runs on the latest release version of `CloudBot`. (mau5bot is running on `Ubuntu Server` *Oneric Ocelot/11.10* with `Python` 2.7.2)
 
-**neerbot** is the unstable bot, and runs on the latest development version of `CloudBot`. (neerbot is running on `Debian` Wheezy/Testing with `Python` 2.7.2)
+**neerbot** is the unstable bot, and runs on the latest development version of `CloudBot`. (neerbot is running on `Debian` *Wheezy/Testing* with `Python` 2.7.2)
 
 ## Requirements
 
-`CloudBot` runs on `Python` 2.7.x. It is developed on `Debian` Wheezy/Testing with `Python` 2.7.2.
+`CloudBot` runs on `Python` 2.7.x. It is developed on `Debian` *Wheezy/Testing* with `Python` 2.7.2.
+
+It requires `Python` modules `lXML`, `BeautifulSoup`, `Enchant`, `MyGengo`, and `HTTPlib2`.
 
 `Windows` users: `Windows` compatibility is broken, but we do intend to add it back. (Eventually)
 

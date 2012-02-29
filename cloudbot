@@ -1,0 +1,41 @@
+#!/usr/bin/env python
+# Bot Wrapper by neersighted
+import sys
+import os
+import subprocess
+
+pwd = os.getcwd()
+clearlog = ": >./bot.log && "
+start = "daemon -n cloudbot -O " + pwd + "/bot.log -r python " + pwd + "/bot.py"
+stop = clearlog + "daemon -n cloudbot --stop" 
+restart = clearlog + "daemon -n cloudbot --restart"
+command = ":"
+
+print "  ______  __        ______    __    __   _______  .______     ______   .___________."
+print " /      ||  |      /  __  \  |  |  |  | |       \ |   _  \   /  __  \  |           |"
+print "|  ,----'|  |     |  |  |  | |  |  |  | |  .--.  ||  |_)  | |  |  |  | `---|  |----`"
+print "|  |     |  |     |  |  |  | |  |  |  | |  |  |  ||   _  <  |  |  |  |     |  |     "
+print "|  `----.|  `----.|  `--'  | |  `--'  | |  '--'  ||  |_)  | |  `--'  |     |  |     "
+print " \______||_______| \______/   \______/  |_______/ |______/   \______/      |__|     "
+
+if (len(sys.argv) > 1):
+    if( sys.argv[1] == 'start' ):
+        command = start
+    elif( sys.argv[1] == 'stop' ):
+        command = stop
+    elif( sys.argv[1] == 'restart' ):
+        command = restart
+    else:
+        print "usage: ./cloudbot {start|stop|restart}"
+else:
+    print "usage: ./cloudbot {start|stop|restart}"
+'''
+if os.path.isfile("./control.sh"):
+    command = "./control.sh command"
+elif os.path.isfile("./bot.sh"):
+    command = "./bot.sh command"
+else:
+    command = "./bot.py"
+'''
+subprocess.call(command, shell=True)
+sys.exit()

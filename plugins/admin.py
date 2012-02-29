@@ -38,6 +38,17 @@ def restart(inp, input=None, db=None, notice=None):
 
 
 @hook.command
+def clear(inp, input=None, db=None, notice=None):
+    ".clear -- Clears the bot's log"
+    if not input.nick in input.bot.config["admins"]:
+        notice("Only bot admins can use this command!")
+        return
+    time.sleep(3)
+    subprocess.call(['lib/clear.py'])
+    sys.exit()
+
+
+@hook.command
 def join(inp, input=None, db=None, notice=None):
     ".join <channel> -- Joins <channel>."
     if not input.nick in input.bot.config["admins"]:

@@ -15,9 +15,9 @@ def quit(inp, input=None, db=None, notice=None):
         notice("Only bot admins can use this command!")
         return
     if inp:
-        input.conn.send("QUIT :Bot killed by " + input.nick + " (" + inp + ")")
+        input.conn.send("QUIT :Killed by " + input.nick + " (" + inp + ")")
     else:
-        input.conn.send("QUIT :Bot killed by " + input.nick + " (no reason)")
+        input.conn.send("QUIT :Killed by " + input.nick + " (no reason)")
     time.sleep(3)
     sys.exit()
 
@@ -29,9 +29,9 @@ def restart(inp, input=None, db=None, notice=None):
         notice("Only bot admins can use this command!")
         return
     if inp:
-        input.conn.send("QUIT :Bot restarted by " + input.nick + " (" + inp + ")")
+        input.conn.send("QUIT :Restarted by " + input.nick + " (" + inp + ")")
     else:
-        input.conn.send("QUIT :Bot restarted by " + input.nick + " (no reason)")
+        input.conn.send("QUIT :Restarted by " + input.nick + " (no reason)")
     time.sleep(3)
     subprocess.call(['lib/restart.py'])
     sys.exit()
@@ -57,6 +57,7 @@ def cycle(inp, input=None, db=None, notice=None):
     input.conn.send("PART " + inp)
     input.conn.send("JOIN " + inp)
 
+
 @hook.command
 def part(inp, input=None, notice=None):
     ".part <channel> -- Parts from <channel>."
@@ -65,6 +66,7 @@ def part(inp, input=None, notice=None):
         return
     notice("Attempting to part from " + inp + "...")
     input.conn.send("PART " + inp)
+
 
 @hook.command
 def nick(inp, input=None, notice=None):
@@ -75,6 +77,7 @@ def nick(inp, input=None, notice=None):
     notice("Changing nick to " + inp + ".")
     input.conn.send("NICK " + inp)
 
+
 @hook.command
 def raw(inp, input=None, notice=None):
     ".raw <command> -- Sends a RAW IRC command."
@@ -83,6 +86,7 @@ def raw(inp, input=None, notice=None):
         return
     notice("Raw command sent.")
     input.conn.send(inp)
+
 
 @hook.command
 def kick(inp, input=None, notice=None):
@@ -100,7 +104,7 @@ def kick(inp, input=None, notice=None):
             for x in split[2:]:
                 reason = reason + x + " "
             reason = reason[:-1]
-            out = out+" :"+reason
+            out = out + " :" + reason
     else:
         chan = input.chan
         user = split[0]
@@ -115,9 +119,11 @@ def kick(inp, input=None, notice=None):
     notice("Attempting to kick %s from %s..." % (user, chan))         
     input.conn.send(out)
 
+
 @hook.command
 def say(inp, input=None, notice=None):
-    ".say [channel] <message> -- Makes the bot say <message> in [channel]. If [channel] is blank the bot will say the <message> in the channel the command was used in."
+    ".say [channel] <message> -- Makes the bot say <message> in [channel]. "\
+    "If [channel] is blank the bot will say the <message> in the channel the command was used in."
     if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return
@@ -136,10 +142,12 @@ def say(inp, input=None, notice=None):
         out = "PRIVMSG %s :%s" % (input.chan, message)
     input.conn.send(out)
 
+
 @hook.command("me")
 @hook.command
 def act(inp, input=None, notice=None):
-    ".act [channel] <action> -- Makes the bot act out <action> in [channel]. Ff [channel] is blank the bot will act the <action> in the channel the command was used in."
+    ".act [channel] <action> -- Makes the bot act out <action> in [channel]. "
+    \"If [channel] is blank the bot will act the <action> in the channel the command was used in."
     if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return
@@ -157,6 +165,7 @@ def act(inp, input=None, notice=None):
         message = message[:-1]
         out = "PRIVMSG %s :\x01ACTION %s\x01" % (input.chan, message)
     input.conn.send(out)
+
 
 @hook.command
 def topic(inp, input=None, notice=None):

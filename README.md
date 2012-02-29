@@ -7,7 +7,7 @@
 ### Goals
 
 * Easily extendable
-  * Though documentation
+  * Thorough documentation
   * Cross-platform
 * Muti-threaded, efficient
   * Automatic reloading

@@ -9,6 +9,8 @@
   * Though documentation
   * Cross-platform
 * Muti-threaded, efficient
+  * Automatic reloading
+  * Little boilerplate
 * Intuitive configuration
 * Fully controlled from in IRC
 

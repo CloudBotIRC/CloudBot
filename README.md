@@ -85,7 +85,7 @@ They can both be found in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via 
 
 ## Requirements
 
-CloudBot runs on **Python** *2.7.x*. It is developed on *Debian* *Wheezy/Testing* with **Python** 82.7.2*.
+CloudBot runs on **Python** *2.7.x*. It is developed on *Debian* *Wheezy/Testing* with **Python** *2.7.2*.
 
 It **requires** Python modules `lXML`, `BeautifulSoup`, `Enchant`, `MyGengo`, and `HTTPlib2`.
 

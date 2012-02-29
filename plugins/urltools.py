@@ -6,7 +6,7 @@ import BeautifulSoup
 
 ignored_urls = ["http://google.com", "http://youtube.com",
                 "http://pastebin.com", "http://mibpaste.com",
-                "http://fpaste.com"]
+                "http://fpaste.com", "http://git.io"]
 
 wordDic = {
 '&#34;': '"',

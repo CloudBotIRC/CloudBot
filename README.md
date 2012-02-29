@@ -1,9 +1,16 @@
 # CloudBot/DEV
 
 ## About
-`CloudBot` is very heavily based on [Skybot](http://git.io/skybot) by rmmh.  
+`CloudBot` is very heavily based on [`Skybot`](http://git.io/skybot) by [rmmh](http://git.io/rmmh).  
 
-`CloudBot` is meant to be a simple, extendable `Python` IRC bot, with minimal magic.  
+### Goals
+
+* Easily extendable
+  * Though documentation
+  * Cross-platform
+* Muti-threaded, efficient
+* Intuitive configuration
+* Fully controlled from in IRC
 
 ## Download
 Get `CloudBot` at [git.io/getcloudbot](http://git.io/getcloudbot "CloudBot").
@@ -38,7 +45,7 @@ Once you have installed the required dependencies, run the bot with
 
 `python bot.py`
 
-It will generate a default config for you.  Once you have editied the config, run it again with
+It will generate a default config for you.  Once you have edited the config, run it again with
 
 `python bot.py`
 
@@ -46,9 +53,9 @@ and it will connect to any server(s) you have added to the config. (Config docs 
 
 ## Documentation
 
-To configure your `CloudBot`, vist the [Config Wiki Page](http://git.io/cloudbotconfig).
+To configure your `CloudBot`, visit the [Config Wiki Page](http://git.io/cloudbotconfig).
 
-To write your own plugins, vist the [Plugin Wiki Page](http://git.io/cloudbotplugins).
+To write your own plugins, visit the [Plugin Wiki Page](http://git.io/cloudbotplugins).
 
 More at the [Wiki Home Page](http://git.io/cloudbotwiki).
 
@@ -58,18 +65,18 @@ The developers of `CloudBot` run two `CloudBot`s on [Espernet](http://esper.net)
 
 They can both be found in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via IRC to #CloudBot on irc.esper.net).
 
-**mau5bot** is the stable bot, and runs on the lastest release version of `CloudBot`. (mau5bot is running on `Ubuntu Server` Oneric Ocelot/11.10 with `Python` 2.7.2)
+**mau5bot** is the stable bot, and runs on the latest release version of `CloudBot`. (mau5bot is running on `Ubuntu Server` Oneric Ocelot/11.10 with `Python` 2.7.2)
 
-**neerbot** is the unstable bot, and runs on the lastest development version of `CloudBot`. (neerbot is running on `Debian` Wheezy/Testing with `Python` 2.7.2)
+**neerbot** is the unstable bot, and runs on the latest development version of `CloudBot`. (neerbot is running on `Debian` Wheezy/Testing with `Python` 2.7.2)
 
 ## Requirements
 
 `CloudBot` runs on `Python` 2.7.x. It is developed on `Debian` Wheezy/Testing with `Python` 2.7.2.
 
-`Windows` users: `Windows` compatibilty is broken, but we do intend to add it back. (Eventually)
+`Windows` users: `Windows` compatibility is broken, but we do intend to add it back. (Eventually)
 
 ## License
-`CloudBot` is licenced under the GPL v3 license. The terms are as follows.
+`CloudBot` is licensed under the GPL v3 license. The terms are as follows.
     
     CloudBot/DEV
 

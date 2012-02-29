@@ -24,7 +24,7 @@ Unzip the resulting file, and continue to read this document.
 
 ## Install
 
-Before you can run the bot, you need to install a few Python modules. These are `lXML`, `BeautifulSoup`, `MyGengo`, and `HTTPlib2`.  These can be installed with PIP (The `Python` packager):
+Before you can run the bot, you need to install a few Python modules. These are `lXML`, `BeautifulSoup`, `MyGengo`, and `HTTPlib2`.  These can be installed with PIP (The Python packager):
 
 `sudo pip install lxml`
 

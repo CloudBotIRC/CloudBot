@@ -43,15 +43,8 @@ if not os.path.exists('config'):
           },
           "censored_strings":
           [
-            "DCC SEND",
-            "1nj3ct",
-            "thewrestlinggame",
-            "startkeylogger",
-            "hybux",
-            "\\0",
-            "\\x01",
-            "!coz",
-            "!tell /x"
+            "mypass",
+            "mysecret"
           ],
           "admins": ["myname"]
         }''') + '\n')

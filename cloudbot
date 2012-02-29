@@ -3,41 +3,90 @@
 import sys
 import os
 import subprocess
+import re
+
+usage = "usage: ./cloudbot {start|stop|restart|status}"
 
 pwd = os.getcwd()
 clearlog = ": >./bot.log && "
-start = "daemon -n cloudbot -O " + pwd + "/bot.log -r python " + pwd + "/bot.py"
-stop = clearlog + "daemon -n cloudbot --stop" 
-restart = clearlog + "daemon -n cloudbot --restart"
 command = ":"
 
-print "  ______  __        ______    __    __   _______  .______     ______   .___________."
-print " /      ||  |      /  __  \  |  |  |  | |       \ |   _  \   /  __  \  |           |"
-print "|  ,----'|  |     |  |  |  | |  |  |  | |  .--.  ||  |_)  | |  |  |  | `---|  |----`"
-print "|  |     |  |     |  |  |  | |  |  |  | |  |  |  ||   _  <  |  |  |  |     |  |     "
-print "|  `----.|  `----.|  `--'  | |  `--'  | |  '--'  ||  |_)  | |  `--'  |     |  |     "
-print " \______||_______| \______/   \______/  |_______/ |______/   \______/      |__|     "
-print "http://git.io/cloudbot                                                   by lukeroge"
+daemoncheck = subprocess.check_output("locate /usr/bin/daemon", shell=True)
+daemon = re.match(r'^/usr/bin/daemon$', daemoncheck)
+screencheck = subprocess.check_output("locate /usr/bin/screen", shell=True)
+daemon = re.match(r'^/usr/bin/screen$', screencheck)
+
+error1 = "Neither screen nor daemon is installed! "\
+        "This script cannot run! {ERROR 1}"
+error2 = "Could not find bot.py! Are you in the wrong folder? "\
+        (" + pwd + ") {ERROR 2}"
+error3 = "Invalid choice, exiting! {ERROR 3}"
+
+start = "echo " + error1
+stop = "echo " + error1
+restart = "echo " + error1
+status = "ps aux|grep cloudbot"
+
+if daemon:
+    start = "daemon -n cloudbot -O " + pwd + \
+            "/bot.log -r python " + pwd + "/bot.py"
+    stop = clearlog + "daemon -n cloudbot --stop"
+    restart = stop + " && " + start
+elif screen:
+    start = "screen -S cloudbot -dm python" + pwd +\
+            "/bot.py >>" + pwd + "/bot.log 2>&1"
+    stop = clearlog + "kill `pidof /usr/bin/screen`"
+    restart = stop + " && " + start
+else:
+    print error1
+
+print "  ______  __        ______    __    __  "\
+" _______  .______     ______   .___________."
+print " /      ||  |      /  __  \  |  |  |  | "\
+"|       \ |   _  \   /  __  \  |           |"
+print "|  ,----'|  |     |  |  |  | |  |  |  | "\
+"|  .--.  ||  |_)  | |  |  |  | `---|  |----`"
+print "|  |     |  |     |  |  |  | |  |  |  | "\
+"|  |  |  ||   _  <  |  |  |  |     |  |     "
+print "|  `----.|  `----.|  `--'  | |  `--'  | "\
+"|  '--'  ||  |_)  | |  `--'  |     |  |     "
+print " \______||_______| \______/   \______/  "\
+"|_______/ |______/   \______/      |__|     "
+print "http://git.io/cloudbot                  "\
+"                                 by lukeroge"
 
 if (len(sys.argv) > 1):
-    if( sys.argv[1] == 'start' ):
+    if (sys.argv[1] == 'start'):
         command = start
-    elif( sys.argv[1] == 'stop' ):
+    elif (sys.argv[1] == 'stop'):
         command = stop
-    elif( sys.argv[1] == 'restart' ):
+    elif (sys.argv[1] == 'restart'):
         command = restart
+    elif (sys.argv[1] == 'status'):
+        command = status
     else:
-        print "usage: ./cloudbot {start|stop|restart}"
-        sys.exit()
+        print usage
+        exit
 else:
-    print "usage: ./cloudbot {start|stop|restart}"
-    sys.exit()
-
+    print "{1|start} {2|stop} {3|restart} {4|status} {5|exit}"
+    read = int(raw_input('Please choose a option: '))
+    if read == 1:
+        command = start
+    elif read == 2:
+        command = stop
+    elif read == 3:
+        command = restart
+    elif read == 4:
+        command = status
+    elif read == 5:
+        exit
+    else:
+        print error3
+        exit
 if os.path.isfile("./bot.py"):
     command = command
 else:
-    print "Could not find bot.py! Are you in the wrong folder? (" + pwd + ")"
-    sys.exit()
-
+    print error2
+    exit
 subprocess.call(command, shell=True)
-sys.exit()
+exit

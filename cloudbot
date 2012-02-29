@@ -15,10 +15,11 @@ red = "\033[1;31m"
 green = "\033[1;32m"
 
 usage = "usage: ./cloudbot {start|stop|restart|status}"
-quit = nocol + "Goodbye! Thanks for using CloudBot!"
+quit = "Goodbye! Thanks for using CloudBot!"
 
 pwd = os.getcwd()
-clearlog = ": >./bot.log && "
+clearlog1 = ": > ./bot.log && "
+clearlog2 = ": > ./bot.log"
 command = ":"
 
 daemoncheck = subprocess.check_output("locate /usr/bin/daemon", shell=True)
@@ -52,14 +53,14 @@ if daemon:
     if backend == "daemon":
         start = "daemon -n cloudbot -O " + pwd + \
                 "/bot.log -r python " + pwd + "/bot.py"
-        stop = clearlog + "daemon -n cloudbot --stop"
-        restart = clearlog + "daemon -n cloudbot --restart"
+        stop = clearlog1 + "daemon -n cloudbot --stop"
+        restart = clearlog1 + "daemon -n cloudbot --restart"
         pid = "pidof /usr/bin/daemon"
     elif backend == "screen":
         start = "screen -S cloudbot -dm python" + pwd +\
             "/bot.py >>" + pwd + "/bot.log 2>&1"
-        stop = clearlog + "kill `pidof /usr/bin/screen`"
-        restart = clearlog + "daemon -n cloudbot --restart"
+        stop = clearlog1 + "kill `pidof /usr/bin/screen`"
+        restart = clearlog1 + "daemon -n cloudbot --restart"
         pid = "pidof /usr/bin/screen"
     else:
         print error5
@@ -67,13 +68,13 @@ elif screen:
     if backend == "daemon":
         start = "daemon -n cloudbot -O " + pwd + \
                 "/bot.log -r python " + pwd + "/bot.py"
-        stop = clearlog + "daemon -n cloudbot --stop"
+        stop = clearlog1 + "daemon -n cloudbot --stop"
         restart = stop + " && " + start
         pid = "pidof /usr/bin/daemon"
     elif backend == "screen":
         start = "screen -S cloudbot -dm python" + pwd +\
             "/bot.py >>" + pwd + "/bot.log 2>&1"
-        stop = clearlog + "kill `pidof /usr/bin/screen`"
+        stop = clearlog1 + "kill `pidof /usr/bin/screen`"
         restart = stop + " && " + start
         pid = "pidof /usr/bin/screen"
     else:
@@ -109,6 +110,8 @@ try:
             elif (sys.argv[1] == 'status'):
                 command = pid
                 print green + "Bot is running! " + nocol
+            elif (sys.argv[1] == 'clear'):
+                command = clearlog2
             else:
                 print usage
                 exit
@@ -141,6 +144,8 @@ try:
                 print "Bot is not running, cannot restart!"
             elif (sys.argv[1] == 'status'):
                 print red + "Bot is not running!" + nocol
+            elif (sys.argv[1] == 'clear'):
+                command = clearlog2
             else:
                 print usage
                 exit

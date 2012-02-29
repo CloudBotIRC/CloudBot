@@ -37,9 +37,9 @@ def restart(inp, input=None, db=None, notice=None):
     sys.exit()
 
 
-@hook.command
+@hook.command(autohelp=False)
 def clear(inp, input=None, db=None, notice=None):
-    ".clear -- Clears the bot's log"
+    ".clear -- Clears the bot's log."
     if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return

@@ -4,8 +4,8 @@ import sys
 import os
 import subprocess
 
-if os.path.isfile("./bot.log"):
-    clear = ": >./bot.log"
+if os.path.isfile("./cloudbot"):
+    clear = "./cloudbot clear"
 else:
     clear = ":"
 

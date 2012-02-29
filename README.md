@@ -2,7 +2,7 @@
 
 ## About
 
-`CloudBot` is a `Python` very heavily based on [`Skybot`](http://git.io/skybot) by [rmmh](http://git.io/rmmh).  
+`CloudBot` is a `Python` IRC Bot very heavily based on [`Skybot`](http://git.io/skybot) by [*rmmh*](http://git.io/rmmh).  
 
 ### Goals
 

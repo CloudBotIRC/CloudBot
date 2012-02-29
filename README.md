@@ -3,9 +3,7 @@
 ### About
 CloudBot is very heavily based on [Skybot](http://git.io/skybot) by rmmh.  
 
-CloudBot is meant to be a simple, extendable Python IRC bot, with minimal magic.  To write your own plugins, vist the [Plugin Wiki Page](http://git.io/cloudbotplugins).
-
-More at the [wiki](http://git.io/cloudbotwiki).
+CloudBot is meant to be a simple, extendable Python IRC bot, with minimal magic.  
 
 ### Download
 Get Cloudbot at [git.io/getcloudbot](http://git.io/getcloudbot "CloudBot").
@@ -44,6 +42,14 @@ It will generate a default config for you.  Once you have editied the config, ru
 `python bot.py`
 
 and it will connect to any server(s) you have added to the config. (Config docs at the [wiki](http://git.io/cloudbotconfig))
+
+### Documentation
+
+To configure your CloudBot, vist the [Config Wiki Page](http://git.io/cloudbotconfig).
+
+To write your own plugins, vist the [Plugin Wiki Page](http://git.io/cloudbotplugins).
+
+More at the [Wiki Home Page](http://git.io/cloudbotwiki).
 
 ### Requirements
 CloudBot runs on Python 2.7.x. It is developed on Debian Wheezy/Testing with Python 2.7.2.

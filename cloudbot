@@ -53,13 +53,13 @@ if daemon:
         start = "daemon -n cloudbot -O " + pwd + \
                 "/bot.log -r python " + pwd + "/bot.py"
         stop = clearlog + "daemon -n cloudbot --stop"
-        restart = stop + " && " + start
+        restart = clearlog + "daemon -n cloudbot --restart"
         pid = "pidof /usr/bin/daemon"
     elif backend == "screen":
         start = "screen -S cloudbot -dm python" + pwd +\
             "/bot.py >>" + pwd + "/bot.log 2>&1"
         stop = clearlog + "kill `pidof /usr/bin/screen`"
-        restart = stop + " && " + start
+        restart = clearlog + "daemon -n cloudbot --restart"
         pid = "pidof /usr/bin/screen"
     else:
         print error5

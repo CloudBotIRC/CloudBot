@@ -51,11 +51,11 @@ If you are a user of another Linux disto, use your package manager to install th
 
 Once you have installed the required dependencies, run the wrapper
 
-`python cloudbot`
+`./cloudbot`
 
 It will generate a default config for you.  Once you have edited the config, run it again with
 
-`python cloudbot`
+`./cloudbot`
 
 and it will connect to any server(s) you have added to the config. (Config docs at the [wiki](http://git.io/cloudbotconfig))
 

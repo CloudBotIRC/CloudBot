@@ -13,14 +13,16 @@ def gitio(inp):
     except:
         code = None
 
-    # if the first 8 chars of "url" are not "https://" then append "https://" to the url
+    # if the first 8 chars of "url" are not "https://" then append "https://" to the url, also convert "http://" to "https://"
     if url[:8] != "https://":
-        url = "https://" + url
-
+        if url[:7] != "http://":
+            url = "https://" + url
+        else:
+            url = "https://" + url[7:]
     url='url='+str(url)
     if code:
         url = url + '&code=' + str(code)
-    req = urllib2.Request(url='http://git.io', data = url)
+    req = urllib2.Request(url='http://git.io', data=url)
 
     # try getting url, catch http error
     try:

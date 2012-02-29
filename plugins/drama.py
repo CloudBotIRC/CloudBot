@@ -25,4 +25,3 @@ def drama(inp):
             return '%s :: \x02%s\x02' % (summary, url)
 
     return "error"
-

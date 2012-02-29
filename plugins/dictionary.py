@@ -22,6 +22,7 @@ def urban(inp):
 
     return out
 
+
 # define plugin by GhettoWizard & Scaevolus
 @hook.command('dictionary')
 @hook.command

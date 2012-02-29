@@ -20,4 +20,3 @@ def spell(inp):
         return "That word appears to be valid! (suggestions: " + s_string + ")"
     else:
         return "That word appears to be invalid! (suggestions: " + s_string + ")"
-    

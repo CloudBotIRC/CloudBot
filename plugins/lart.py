@@ -102,7 +102,7 @@ larts = ["swaps <who>'s shampoo with glue",
         "hands <who> a poison ivy joint"]
 
 @hook.command
-def lart(inp, me = None,  nick = None, input=None, notice=None):
+def lart(inp, me=None,  nick=None, input=None, notice=None):
     ".lart <user> -- Makes the bot LART <user>."
     inp = inp.strip()
 
@@ -116,4 +116,3 @@ def lart(inp, me = None,  nick = None, input=None, notice=None):
         msg = re.sub ('<who>', inp, random.choice(larts))
 
     me(msg)
-

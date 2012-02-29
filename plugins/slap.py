@@ -30,7 +30,7 @@ items = ["cast iron skillet",
         "chunk of dirt"]
 
 @hook.command
-def slap(inp, me = None, nick = None, input=None, notice=None):
+def slap(inp, me=None, nick=None, input=None, notice=None):
     ".slap <user> -- Makes the bot slap <user>."
     inp = inp.strip()
 
@@ -48,4 +48,3 @@ def slap(inp, me = None, nick = None, input=None, notice=None):
         msg = re.sub ('<item>', random.choice(items), slap)
 
     me(msg)
-

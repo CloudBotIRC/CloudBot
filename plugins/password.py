@@ -29,13 +29,13 @@ def gen_password(types):
         needs_def = 1
     #adds numbers
     if "numeric" in types or "numbers" in types:
-        for x in range(0,10):
+        for x in range(0, 10):
             okay.append(str(x))
     else:
         needs_def = 1
     #adds symbols
     if "symbols" in types:
-        sym = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', '_', '+', '[', ']', '{', '}', '\\', '|', ';', ':', "'", '.', '>', ',', '<', '/', '?', '`', '~','"']
+        sym = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', '_', '+', '[', ']', '{', '}', '\\', '|', ';', ':', "'", '.', '>', ',', '<', '/', '?', '`', '~', '"']
         for x in sym:
             okay.append(x)
     else:

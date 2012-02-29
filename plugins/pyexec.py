@@ -13,7 +13,6 @@ def python(inp):
     inp = inp.replace("~n", "\n")
 
     res = http.get("http://eval.appspot.com/eval", statement=inp).splitlines()
-	
 
     if len(res) == 0:
         return

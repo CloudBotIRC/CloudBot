@@ -30,13 +30,14 @@ def get_memory(db, word):
     else:
         return None
 
- 
+
 def multiwordReplace(text, wordDic):
     """
     take a text and replace words that match a key in a dictionary with
     the associated value, return the changed text
     """
     rc = re.compile('|'.join(map(re.escape, wordDic)))
+
     def translate(match):
         return wordDic[match.group(0)]
     return rc.sub(translate, text)
@@ -49,7 +50,6 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
         notice("Only bot admins can use this command!")
         return
     db_init(db)
-
 
     append = False
 
@@ -87,6 +87,7 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
         notice('Remembered!')
         return
 
+
 @hook.command("f")
 def forget(inp, db=None, input=None, notice=None):
     ".forget <word> -- Forgets a remembered <word>."
@@ -106,6 +107,7 @@ def forget(inp, db=None, input=None, notice=None):
     else:
         notice("I don't know about that.")
         return
+
 
 @hook.command("info")
 @hook.regex(r'^\? ?(.+)')

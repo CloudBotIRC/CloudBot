@@ -22,7 +22,7 @@ body = ['head',
         '"special parts"']
 
 @hook.command
-def kill(inp, me = None, nick = None, input=None, notice=None):
+def kill(inp, me=None, nick=None, input=None, notice=None):
     ".kill <user> -- Makes the bot kill <user>."
     inp = inp.strip()
 
@@ -40,4 +40,3 @@ def kill(inp, me = None, nick = None, input=None, notice=None):
         msg = re.sub ('<body>', random.choice(body), kill)
 
     me(msg)
-

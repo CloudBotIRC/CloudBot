@@ -8,6 +8,8 @@ from util import hook, http
 socket.setdefaulttimeout(10)
 
 # Auto-join on Invite (Configurable, defaults to True)
+
+
 @hook.event('INVITE')
 def invite(paraml, conn=None):
     invitejoin = conn.conf.get('invitejoin', True)
@@ -17,6 +19,8 @@ def invite(paraml, conn=None):
         return None
 
 # Rejoin on kick (Configuragble, defaults to False)
+
+
 @hook.event('KICK')
 def rejoin(paraml, conn=None):
     autorejoin = conn.conf.get('autorejoin', False)
@@ -25,6 +29,8 @@ def rejoin(paraml, conn=None):
     else:
         return None
 # Identify to NickServ (or other service)
+
+
 @hook.event('004')
 def onjoin(paraml, conn=None, bot=None):
     nickserv_password = conn.conf.get('nickserv_password', '')
@@ -32,19 +38,19 @@ def onjoin(paraml, conn=None, bot=None):
     nickserv_command = conn.conf.get('nickserv_command', 'IDENTIFY %s')
     if nickserv_password:
         if nickserv_password in bot.config['censored_strings']:
-	    bot.config['censored_strings'].remove(nickserv_password)
+            bot.config['censored_strings'].remove(nickserv_password)
         conn.msg(nickserv_name, nickserv_command % nickserv_password)
         bot.config['censored_strings'].append(nickserv_password)
         time.sleep(1)
-    mode = conn.conf.get('mode')
 # Set bot modes
+    mode = conn.conf.get('mode')
     if mode:
         conn.cmd('MODE', [conn.nick, mode])
 
 # Join config-defined channels
     for channel in conn.channels:
         conn.join(channel)
-        time.sleep(1) 
+        time.sleep(1)
 
 # HTTP Useragent
     http.ua_cloudbot = 'CloudBot - http://git.io/cloudbot'

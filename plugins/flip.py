@@ -1,10 +1,8 @@
-﻿# -*- coding: utf-8 -*-
-
 from util import hook
 import random
 
 @hook.command
-def flip(inp, flip_count=0, say = None):
+def flip(inp, flip_count=0, say=None):
     ".flip <text> -- Flips <text> over."
     guy = unicode(random.choice(flips), 'utf8')
     inp = inp.lower()
@@ -23,7 +21,7 @@ flips = ["(屮ಠ︵ಠ)屮",
                 "( ﾉ♉︵♉ ）ﾉ",
          "(╯°□°)╯",
                 "( ﾉ⊙︵⊙）ﾉ"]
-        
+
 character_replacements = {
     'a': 'ɐ',
     'b': 'q',

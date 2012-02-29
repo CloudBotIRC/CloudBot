@@ -53,5 +53,3 @@ def flirt(inp, nick=None, me=None, input=None):
     if inp == input.conn.nick.lower() or inp == "itself":
         msg = "flirts with itself... \"" + random.choice(flirts) + "\""
     me(msg)
-
-

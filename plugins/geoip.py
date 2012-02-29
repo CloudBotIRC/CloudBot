@@ -15,21 +15,22 @@ def find_location(ip, api):
 
 def timezone(ip):
     time = find_location(ip)["timezone"]
-    time = time.replace(":",".")
-    time = time.replace(".00","")
+    time = time.replace(":", ".")
+    time = time.replace(".00", "")
     return int(time)
+
 
 @hook.command
 @hook.command("location")
-def geoip(inp, say = None, bot = None):
+def geoip(inp, say=None, bot=None):
     ".geoip <ip> - Performs a location check on <ip>."
     api_key = bot.config.get("api_keys", {}).get("geoip", None)
     if api_key is None:
         return "error: no api key set"
     give = find_location(inp, api_key)
-    if give["country"] not in [""," ","-"," - "]:
+    if give["country"] not in ["", " ", "-", " - "]:
         if give["state"] == give["city"]:
-           localstring = give["city"]
+            localstring = give["city"]
         else:
             localstring = give["city"] + ", " + give["state"]
         say("That IP comes from " + give["country"] + " (" + give["country_short"] + ")")
@@ -37,4 +38,3 @@ def geoip(inp, say = None, bot = None):
     else:
         say("Either that wasn't an IP or I cannot locate it in my database. :(")
     return
-

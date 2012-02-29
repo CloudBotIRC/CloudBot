@@ -46,17 +46,17 @@ def del_quote(db, chan, nick, add_nick, msg):
 
 def get_quote_num(num, count, name):
     "Returns the quote number desired from the database"
-    if num: # Make sure num is a number if it isn't false
+    if num:  # Make sure num is a number if it isn't false
         num = int(num)
-    if count == 0: # If there are no quotes in the database, raise an Exception.
+    if count == 0:  # If there are no quotes in the database, raise an Exception.
         raise Exception("No quotes found for %s." % name)
-    if num and num < 0: # If the selected quote is less than 0, count back if possible.
+    if num and num < 0:  # If the selected quote is less than 0, count back if possible.
         num = count + num + 1 if num + count > -1 else count + 1
-    if num and num > count: # If a number is given and and there are not enough quotes, raise an Exception.
+    if num and num > count:  # If a number is given and and there are not enough quotes, raise an Exception.
         raise Exception("I only have %d quote%s for %s." % (count, ('s', '')[count == 1], name))
-    if num and num == 0: # If the number is zero, set it to one
+    if num and num == 0:  # If the number is zero, set it to one
         num = 1
-    if not num: # If a number is not given, select a random one
+    if not num:  # If a number is not given, select a random one
         num = random.randint(1, count)
     return num
 

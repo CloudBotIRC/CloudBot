@@ -57,10 +57,9 @@ fortunes = ["Help! I'm stuck in the fortune cookie factory!",
 @hook.command(autohelp=False)
 def fortune(inp, nick=None, say=None, input=None):
     ".fortune -- Fortune cookies on demand."
- 
+
     msg = "(" + nick + ") " + random.choice(fortunes)
     if re.match("^[A-Za-z0-9_|.-\]\[]*$", inp.lower()) and inp != "":
         msg = "(@" + inp + ") " + random.choice(fortunes)
 
     say(msg)
-

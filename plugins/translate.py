@@ -1,17 +1,19 @@
 # MyGengo translation plugin by lukeroge and neersighted
-from util import hook, http
-import re, htmlentitydefs
+from util import hook
+from util import http
+import re 
+import htmlentitydefs
 import mygengo
 
 gengo = mygengo.MyGengo(
-    public_key = 'PlwtF1CZ2tu27IdX_SXNxTFmfN0j|_-pJ^Rf({O-oLl--r^QM4FygRdt^jusSSDE',
-    private_key = 'wlXpL=SU[#JpPu[dQaf$v{S3@rg[=95$$TA(k$sb3_6~B_zDKkTbd4#hXxaorIae',
-    sandbox = False,
+    public_key='PlwtF1CZ2tu27IdX_SXNxTFmfN0j|_-pJ^Rf({O-oLl--r^QM4FygRdt^jusSSDE',
+    private_key='wlXpL=SU[#JpPu[dQaf$v{S3@rg[=95$$TA(k$sb3_6~B_zDKkTbd4#hXxaorIae',
+    sandbox=False,
 )
 
 def gengo_translate(text, source, target):
     try:
-        translation = gengo.postTranslationJob(job = {
+        translation = gengo.postTranslationJob(job={
             'type': 'text',
             'slug': 'Translating '+source+' to '+target+' with the myGengo API',
             'body_src': text, 
@@ -111,4 +113,3 @@ lang_pairs = [
     ("cy", "Welsh"),
     ("yi", "Yiddish")
 ]
-

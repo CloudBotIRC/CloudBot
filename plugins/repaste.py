@@ -146,7 +146,6 @@ def repaste(inp, input=None, db=None, isManual=True):
     if parts[0] == 'list':
         return " ".join(pasters.keys())
 
-
     paster = paste_gist
     args = {}
 

@@ -7,6 +7,7 @@ by Vladi
 from util import hook, http
 
 
+@hook.command('w3c')
 @hook.command
 def validate(inp):
     ".validate <url> -- Runs url through the w3c markup validator."

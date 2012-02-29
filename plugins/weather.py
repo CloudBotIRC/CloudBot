@@ -1,10 +1,12 @@
 "weather, thanks to google"
-
 from util import hook, http
 
+
 @hook.command(autohelp=False)
-def forecast(inp, nick='', server='', reply=None, db=None, notice=None, say=None):
-    ".forecast <location> [dontsave] -- Gets a weather forecast for <location> from Google."
+def forecast(inp, nick='', server='',
+    reply=None, db=None, notice=None, say=None):
+    ".forecast <location> [dontsave] -- Gets a weather forecast "\
+    "for <location> from Google."
     loc = inp
 
     dontsave = loc.endswith(" dontsave")
@@ -13,7 +15,7 @@ def forecast(inp, nick='', server='', reply=None, db=None, notice=None, say=None
 
     db.execute("create table if not exists weather(nick primary key, loc)")
 
-    if not loc:  # blank line
+    if not loc:
         loc = db.execute("select loc from weather where nick=lower(?)",
                             (nick,)).fetchone()
         if not loc:
@@ -36,15 +38,16 @@ def forecast(inp, nick='', server='', reply=None, db=None, notice=None, say=None
         info = dict((e.tag, e.get('data')) for e in elem)
         info['high'] = elem.find('high').get('data')
         info['low'] = elem.find('low').get('data')
-  
         out += '[%(day_of_week)s]: %(condition)s (H:%(high)sF'\
             ', L:%(low)sF). ' % info
 
     return out
 
+
 @hook.command(autohelp=False)
 def weather(inp, nick='', server='', reply=None, db=None, notice=None):
-    ".weather <location> [dontsave] -- Gets weather data for <location> from Google."
+    ".weather <location> [dontsave] -- Gets weather data"\
+    " for <location> from Google."
     loc = inp
 
     dontsave = loc.endswith(" dontsave")

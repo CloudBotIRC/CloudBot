@@ -5,16 +5,15 @@ import os
 import subprocess
 import re
 
-usage = "usage: ./cloudbot {start|stop|restart|status}"
-quit = "Goodbye! Thanks for using CloudBot!"
-
-pwd = os.getcwd()
-clearlog = ": >./bot.log && "
-command = ":"
-
 nocol = "\033[1;m"
 red = "\033[1;31m"
 green = "\033[1;32m"
+
+usage = "usage: ./cloudbot {start|stop|restart|status}"
+quit = nocol + "Goodbye! Thanks for using CloudBot!"
+
+pwd = os.getcwd()
+clearlog = ": >./bot.log && "
 
 daemoncheck = subprocess.check_output("locate /usr/bin/daemon", shell=True)
 daemon = re.match(r'^/usr/bin/daemon$', daemoncheck)
@@ -29,7 +28,7 @@ except (subprocess.CalledProcessError):
     running = False
 
 error1 = red + "Neither screen nor daemon is installed! "\
-        "This script cannot run! {ERROR 1}" + nocol
+        "This program cannot run! {ERROR 1}" + nocol
 error2 = red + "Could not find bot.py! Are you in the wrong folder? "\
         "(" + pwd + ") {ERROR 2}" + nocol
 error3 = red + "Invalid choice, exiting! {ERROR 3}" + nocol
@@ -45,16 +44,16 @@ if daemon:
             "/bot.log -r python " + pwd + "/bot.py"
     stop = clearlog + "daemon -n cloudbot --stop"
     restart = stop + " && " + start
-    pid = subprocess.check_output("pidof /usr/bin/daemon", shell=True)
+    pid = "pidof /usr/bin/daemon"
 elif screen:
     start = "screen -S cloudbot -dm python" + pwd +\
             "/bot.py >>" + pwd + "/bot.log 2>&1"
     stop = clearlog + "kill `pidof /usr/bin/screen`"
     restart = stop + " && " + start
-    pid = subprocess.check_output("pidof /usr/bin/screen", shell=True)
+    pid = "pidof /usr/bin/screen"
 else:
-    print error1
-
+    command = ":"
+    
 print "  ______  __        ______    __    __  "\
 " _______  .______     ______   .___________."
 print " /      ||  |      /  __  \  |  |  |  | "\
@@ -81,7 +80,8 @@ try:
                 command = restart
                 print "Restarting with: " + command
             elif (sys.argv[1] == 'status'):
-                print green + "Bot is running! " + pid + nocol
+                command = pid
+                print green + "Bot is running! " + nocol
             else:
                 print usage
                 exit
@@ -97,7 +97,8 @@ try:
                 command = restart
                 print "Restarting with: " + command
             elif read == 4:
-                print green + "Bot is running! " + pid + nocol
+                command = pid
+                print green + "Bot is running! " + nocol
             elif read == 5:
                 print quit
             else:
@@ -112,7 +113,7 @@ try:
             elif (sys.argv[1] == 'restart'):
                 print "Bot is not running, cannot restart!"
             elif (sys.argv[1] == 'status'):
-                print red + "Bot is not running!" +nocol
+                print red + "Bot is not running!" + nocol
             else:
                 print usage
                 exit

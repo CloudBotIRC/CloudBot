@@ -19,6 +19,7 @@ quit = nocol + "Goodbye! Thanks for using CloudBot!"
 
 pwd = os.getcwd()
 clearlog = ": >./bot.log && "
+command = ":"
 
 daemoncheck = subprocess.check_output("locate /usr/bin/daemon", shell=True)
 daemon = re.match(r'^/usr/bin/daemon$', daemoncheck)
@@ -78,8 +79,8 @@ elif screen:
     else:
         print error5
 else:
-    command = ":"
-    
+    command = command
+
 print "  ______  __        ______    __    __  "\
 " _______  .______     ______   .___________."
 print " /      ||  |      /  __  \  |  |  |  | "\
@@ -101,10 +102,10 @@ try:
                 print "Bot is alread running, cannot start!"
             elif (sys.argv[1] == 'stop'):
                 command = stop
-                print "Stopping with: " + command
+                print "Stopping... (" + backgrounder + ")"
             elif (sys.argv[1] == 'restart'):
                 command = restart
-                print "Restarting with: " + command
+                print "Restarting... (" + backgrounder + ")"
             elif (sys.argv[1] == 'status'):
                 command = pid
                 print green + "Bot is running! " + nocol
@@ -118,10 +119,10 @@ try:
                 print "Bot is alread running, cannot start!"
             elif read == 2:
                 command = stop
-                print "Stopping with: " + command
+                print "Stopping... (" + backgrounder + ")"
             elif read == 3:
                 command = restart
-                print "Restarting with: " + command
+                print "Restarting... (" + backgrounder + ")"
             elif read == 4:
                 command = pid
                 print green + "Bot is running! " + nocol
@@ -133,7 +134,7 @@ try:
         if (len(sys.argv) > 1):
             if (sys.argv[1] == 'start'):
                 command = start
-                print "Starting with: " + command
+                print "Starting... (" + backgrounder + ")"
             elif (sys.argv[1] == 'stop'):
                 print "Bot is not running, cannot stop!"
             elif (sys.argv[1] == 'restart'):
@@ -148,7 +149,7 @@ try:
             read = int(raw_input('Please choose a option: '))
             if read == 1:
                 command = start
-                print "Starting with: " + command
+                print "Starting... (" + backgrounder + ")"
             elif read == 2:
                 print "Bot is not running, cannot stop!"
             elif read == 3:

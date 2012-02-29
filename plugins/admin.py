@@ -1,10 +1,9 @@
 #  Shitty plugin made by iloveportalz0r
 #  Broken by The Noodle
 #  Improved by Lukeroge
+#  Further improved by neersighted
 from util import hook
-import sys
-import subprocess
-import time
+import sys, subprocess, time
         
 @hook.command(autohelp=False)
 def quit(inp, input=None, db=None, notice=None):
@@ -30,7 +29,7 @@ def restart(inp, input=None, db=None, notice=None):
     else:
         input.conn.send("QUIT :Bot restarted by "+input.nick+" (no reason)")
     time.sleep(3)
-    subprocess.call(['lib/restart.sh'])
+    subprocess.call(['lib/restart.py'])
     sys.exit()
 
 @hook.command

@@ -8,7 +8,7 @@ from util import hook, http
 locale.setlocale(locale.LC_ALL, '')
 
 youtube_re = (r'(?:youtube.*?(?:v=|/v/)|youtu\.be/|yooouuutuuube.*?id=)'
-              '([-_a-z0-9]+)', re.I)
+              '([-_a-zA-Z0-9]+)', re.I)
 
 base_url = 'http://gdata.youtube.com/feeds/api/'
 url = base_url + 'videos/%s?v=2&alt=jsonc'

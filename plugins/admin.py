@@ -116,14 +116,15 @@ def kick(inp, input=None, notice=None):
             reason = reason[:-1]
             out = out + " :" + reason
 
-    notice("Attempting to kick %s from %s..." % (user, chan))         
+    notice("Attempting to kick %s from %s..." % (user, chan))
     input.conn.send(out)
 
 
 @hook.command
 def say(inp, input=None, notice=None):
     ".say [channel] <message> -- Makes the bot say <message> in [channel]. "\
-    "If [channel] is blank the bot will say the <message> in the channel the command was used in."
+    "If [channel] is blank the bot will say the <message> in "\
+    "the channel the command was used in."
     if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return
@@ -146,8 +147,9 @@ def say(inp, input=None, notice=None):
 @hook.command("me")
 @hook.command
 def act(inp, input=None, notice=None):
-    ".act [channel] <action> -- Makes the bot act out <action> in [channel]. "
-    \"If [channel] is blank the bot will act the <action> in the channel the command was used in."
+    ".act [channel] <action> -- Makes the bot act out <action> in [channel] "\
+    "If [channel] is blank the bot will act the <action> in "\
+    "the channel the command was used in."
     if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return

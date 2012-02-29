@@ -2,7 +2,8 @@ import os
 import sqlite3
 import thread
 
-threaddbs={}
+threaddbs = {}
+
 
 def get_db_connection(conn, name=''):
     "returns an sqlite3 connection to a persistent database"

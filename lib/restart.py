@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # Tiny little restarter by neersighted
-import subprocess, sys, os
+import sys
+import os
+import subprocess
 
 if os.path.isfile("./control.sh"):
     restart = "./control.sh restart"

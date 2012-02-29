@@ -15,7 +15,7 @@ class Input(dict):
 
         def say(msg):
             conn.msg(chan, msg)
-            
+
         def pm(msg):
             conn.msg(nick, msg)
 

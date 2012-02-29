@@ -38,8 +38,8 @@ if not os.path.exists('config'):
             "bitly_api": "INSERT API KEY FROM bitly.com HERE",
             "wolframalpha": "INSERT API KEY FROM wolframalpha.com HERE",
             "lastfm": "INSERT API KEY FROM lastfm HERE",
-            "mc_user": "INSERT MINECRAFT USERNAME HERE (used to check login servers in mctools.py)",
-            "mc_pass": "INSERT MINECRAFT PASSWORD HERE (used to check login servers in mctools.py)"
+            "mc_user": "INSERT MINECRAFT USERNAME HERE",
+            "mc_pass": "INSERT MINECRAFT PASSWORD HERE"
           },
           "censored_strings":
           [
@@ -50,10 +50,10 @@ if not os.path.exists('config'):
         }''') + '\n')
     print "Config generated!"
     print "Please edit the config now!"
-    print "(The default config will work, but you most likely want to change it)"
     print "For help, see http://git.io/cloudbotwiki"
     print "Thank you for using CloudBot!"
     sys.exit()
+
 
 def config():
     # reload config from file if file has changed

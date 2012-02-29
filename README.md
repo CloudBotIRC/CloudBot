@@ -79,17 +79,17 @@ The developers of CloudBot run two CloudBots on [Espernet](http://esper.net).
 
 They can both be found in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via IRC to #CloudBot on irc.esper.net).
 
-**mau5bot** is the stable bot, and runs on the latest release version of CloudBot. (mau5bot is running on Ubuntu Server *Oneric Ocelot/11.10* with Python *2.7.2*)
+**mau5bot** is the stable bot, and runs on the latest release version of CloudBot. (mau5bot is running on **Ubuntu Server** *Oneric Ocelot/11.10* with **Python** *2.7.2*)
 
-**neerbot** is the unstable bot, and runs on the latest development version of CloudBot. (neerbot is running on Debian *Wheezy/Testing* with Python *2.7.2*)
+**neerbot** is the unstable bot, and runs on the latest development version of CloudBot. (neerbot is running on **Debian** *Wheezy/Testing* with **Python** *2.7.2*)
 
 ## Requirements
 
-CloudBot runs on Python 2.7.x. It is developed on Debian *Wheezy/Testing* with Python 2.7.2.
+CloudBot runs on **Python** *2.7.x*. It is developed on *Debian* *Wheezy/Testing* with **Python** 82.7.2*.
 
-It requires Python modules `lXML`, `BeautifulSoup`, `Enchant`, `MyGengo`, and `HTTPlib2`.
+It **requires** Python modules `lXML`, `BeautifulSoup`, `Enchant`, `MyGengo`, and `HTTPlib2`.
 
-Windows users: Windows compatibility is broken, but we do intend to add it back. (Eventually)
+**Windows** users: Windows compatibility is **broken**, but we do intend to add it back. (Eventually)
 
 ## License
 CloudBot is licensed under the GPL v3 license. The terms are as follows.

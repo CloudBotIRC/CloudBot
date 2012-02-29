@@ -12,14 +12,14 @@ if not os.path.exists('config'):
         {
           "connections":
           {
-            "test connection":
+            "EsperNet":
             {
-              "server": "localhost",
-              "nick": "nickname",
+              "server": "irc.esper.net",
+              "nick": "MyNewCloudBot",
               "user": "cloudbot",
               "realname": "CloudBot - http://git.io/cloudbot",
               "nickserv_password": "",
-              "channels": ["#channel"],
+              "channels": ["#cloudbot"],
               "invitejoin": "True",
               "autorejoin": "False",
               "command_prefix": ".",
@@ -56,7 +56,8 @@ if not os.path.exists('config'):
           "admins": ["myname"]
         }''') + '\n')
     print "Config generated!"
-    print "Please edit the config now."
+    print "Please edit the config now!"
+    print "(The default config will work, but you most likely want to change it)"
     print "For help, see http://git.io/cloudbotwiki"
     print "Thank you for using CloudBot!"
     sys.exit()

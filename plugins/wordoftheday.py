@@ -2,6 +2,7 @@ import re
 from util import hook, http, misc
 from BeautifulSoup import BeautifulSoup
 
+
 @hook.command(autohelp=False)
 def word(inp, say=False, nick=False):
     ".word -- Gets the word of the day."
@@ -15,4 +16,5 @@ def word(inp, say=False, nick=False):
     #definitions = re.findall(r'<span class="ssens"><strong>:</strong>'
     #                        r' *([^<]+)</span>', content)
 
-    say("(%s) The word of the day is: \x02%s\x02 (%s)" % (nick, word, function))
+    say("(%s) The word of the day is:"\
+        " \x02%s\x02 (%s)" % (nick, word, function))

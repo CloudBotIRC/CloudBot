@@ -25,7 +25,7 @@ daemoncheck = subprocess.check_output("locate /usr/bin/daemon", shell=True)
 daemon = re.match(r'^/usr/bin/daemon$', daemoncheck)
 screencheck = subprocess.check_output("locate /usr/bin/screen", shell=True)
 screen = re.match(r'^/usr/bin/screen$', screencheck)
-backgrounder = config.get("wrapper", {}).get("backgrounder", "daemon")
+backend = config.get("wrapper", {}).get("backend", "daemon")
 
 try:
     runningcheck = subprocess.check_output("ps ax|grep cloudbot|"\
@@ -40,7 +40,7 @@ error2 = red + "Could not find bot.py! Are you in the wrong folder? "\
         "(" + pwd + ") {ERROR 2}" + nocol
 error3 = red + "Invalid choice, exiting! {ERROR 3}" + nocol
 error4 = red + "Program killed by user! {ERROR 4}" + nocol
-error5 = red + "Invalid backgrounder in config! {ERROR 5}" + nocol
+error5 = red + "Invalid backend in config! {ERROR 5}" + nocol
 error6 = red + "Author error! We be derpin'! {ERROR 6}" + nocol
 
 start = "echo " + error1
@@ -49,13 +49,13 @@ restart = "echo " + error1
 pid = "echo 'Cannot get pid'"
 
 if daemon:
-    if backgrounder == "daemon":
+    if backend == "daemon":
         start = "daemon -n cloudbot -O " + pwd + \
                 "/bot.log -r python " + pwd + "/bot.py"
         stop = clearlog + "daemon -n cloudbot --stop"
         restart = stop + " && " + start
         pid = "pidof /usr/bin/daemon"
-    elif backgrounder == "screen":
+    elif backend == "screen":
         start = "screen -S cloudbot -dm python" + pwd +\
             "/bot.py >>" + pwd + "/bot.log 2>&1"
         stop = clearlog + "kill `pidof /usr/bin/screen`"
@@ -64,13 +64,13 @@ if daemon:
     else:
         print error5
 elif screen:
-    if backgrounder == "daemon":
+    if backend == "daemon":
         start = "daemon -n cloudbot -O " + pwd + \
                 "/bot.log -r python " + pwd + "/bot.py"
         stop = clearlog + "daemon -n cloudbot --stop"
         restart = stop + " && " + start
         pid = "pidof /usr/bin/daemon"
-    elif backgrounder == "screen":
+    elif backend == "screen":
         start = "screen -S cloudbot -dm python" + pwd +\
             "/bot.py >>" + pwd + "/bot.log 2>&1"
         stop = clearlog + "kill `pidof /usr/bin/screen`"
@@ -102,10 +102,10 @@ try:
                 print "Bot is alread running, cannot start!"
             elif (sys.argv[1] == 'stop'):
                 command = stop
-                print "Stopping... (" + backgrounder + ")"
+                print "Stopping... (" + backend + ")"
             elif (sys.argv[1] == 'restart'):
                 command = restart
-                print "Restarting... (" + backgrounder + ")"
+                print "Restarting... (" + backend + ")"
             elif (sys.argv[1] == 'status'):
                 command = pid
                 print green + "Bot is running! " + nocol
@@ -119,10 +119,10 @@ try:
                 print "Bot is alread running, cannot start!"
             elif read == 2:
                 command = stop
-                print "Stopping... (" + backgrounder + ")"
+                print "Stopping... (" + backend + ")"
             elif read == 3:
                 command = restart
-                print "Restarting... (" + backgrounder + ")"
+                print "Restarting... (" + backend + ")"
             elif read == 4:
                 command = pid
                 print green + "Bot is running! " + nocol
@@ -134,7 +134,7 @@ try:
         if (len(sys.argv) > 1):
             if (sys.argv[1] == 'start'):
                 command = start
-                print "Starting... (" + backgrounder + ")"
+                print "Starting... (" + backend + ")"
             elif (sys.argv[1] == 'stop'):
                 print "Bot is not running, cannot stop!"
             elif (sys.argv[1] == 'restart'):
@@ -149,7 +149,7 @@ try:
             read = int(raw_input('Please choose a option: '))
             if read == 1:
                 command = start
-                print "Starting... (" + backgrounder + ")"
+                print "Starting... (" + backend + ")"
             elif read == 2:
                 print "Bot is not running, cannot stop!"
             elif read == 3:

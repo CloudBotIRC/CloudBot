@@ -43,7 +43,7 @@ if not os.path.exists('config'):
           },
           "wrapper":
           {
-            "backgrounder": "screen"
+            "backend": "screen"
           },
           "censored_strings":
           [

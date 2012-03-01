@@ -19,6 +19,7 @@ def quit(inp, input=None, db=None, notice=None):
     else:
         input.conn.send("QUIT :Killed by " + input.nick + " (no reason)")
     time.sleep(3)
+    subprocess.call(['lib/stop.py'])
     sys.exit()
 
 

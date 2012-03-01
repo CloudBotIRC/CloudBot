@@ -9,11 +9,13 @@ import json
 if os.path.isfile("./config"):
     try:
         config = json.load(open('config'))
+        command = ":"
     except ValueError, e:
         print 'error: malformed config', e
 else:
     config = False
-    
+    command = "python bot.py"    
+
 nocol = "\033[1;m"
 red = "\033[1;31m"
 green = "\033[1;32m"
@@ -24,7 +26,6 @@ quit = "Goodbye! Thanks for using CloudBot!"
 pwd = os.getcwd()
 clearlog1 = ": > ./bot.log && "
 clearlog2 = ": > ./bot.log"
-command = ":"
 
 try:
     daemoncheck = subprocess.check_output("locate /usr/bin/daemon", shell=True)
@@ -40,10 +41,7 @@ except (subprocess.CalledProcessError), e:
     print "screen not installed!"
     exit
 screen = re.match(r'^/usr/bin/screen$', screencheck)
-if os.path.isfile("./config"):
-    backend = config.get("wrapper", {}).get("backend", "daemon")
-else:
-    backend = daemon
+backend = config.get("wrapper", {}).get("backend", "daemon")
 
 try:
     runningcheck = subprocess.check_output("ps ax|grep cloudbot|"\
@@ -130,6 +128,7 @@ try:
             elif (sys.argv[1] == 'clear'):
                 command = clearlog2
             else:
+                command = command
                 print usage
                 exit
         else:
@@ -164,6 +163,7 @@ try:
             elif (sys.argv[1] == 'clear'):
                 command = clearlog2
             else:
+                command = command
                 print usage
                 exit
         else:

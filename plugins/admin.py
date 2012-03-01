@@ -18,8 +18,8 @@ def stop(inp, input=None, db=None, notice=None):
         input.conn.send("QUIT :Killed by " + input.nick + " (" + inp + ")")
     else:
         input.conn.send("QUIT :Killed by " + input.nick + " (no reason)")
-    time.sleep(3)
-    subprocess.call("./cloudbot stop", shell=True)
+    subprocess.call("nohup ./cloudbot stop&", shell=True)
+    time.sleep(5)
 
 
 @hook.command(autohelp=False)
@@ -32,8 +32,8 @@ def restart(inp, input=None, db=None, notice=None):
         input.conn.send("QUIT :Restarted by " + input.nick + " (" + inp + ")")
     else:
         input.conn.send("QUIT :Restarted by " + input.nick + " (no reason)")
-    time.sleep(3)
-    subprocess.call("./cloudbot restart", shell=True)
+    subprocess.call("nohup ./cloudbot restart&", shell=True)
+    time.sleep(5)
 
 
 @hook.command(autohelp=False)
@@ -42,8 +42,8 @@ def clear(inp, input=None, db=None, notice=None):
     if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return
-    time.sleep(3)
-    subprocess.call("./cloudbot clear", shell=True)
+    subprocess.call("nohup ./cloudbot clear&", shell=True)
+    time.sleep(5)
 
 
 @hook.command

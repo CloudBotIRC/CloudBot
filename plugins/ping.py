@@ -5,12 +5,12 @@ import re
 
 
 @hook.command
-def ping(inp):
+def ping(inp, reply=None):
     ".ping <host> [count] -- Pings <host> [count] times."
 
     args = inp.split(' ')
     host = args[0]
-
+    
     if len(args) > 1:
         count = args[1]
         count = int(count)
@@ -21,6 +21,8 @@ def ping(inp):
 
     count = str(count)
 
+    reply("Attempting to ping %s %s times..." % (host, count))
+    
     pingcmd = subprocess.check_output("ping -c "\
                                     + count + " " + host, shell=True)
     if 'request timed out' in pingcmd or 'unknown host' in pingcmd:

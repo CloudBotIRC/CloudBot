@@ -61,9 +61,9 @@ error4 = red + "Program killed by user! {ERROR 4}" + nocol
 error5 = red + "Invalid backend in config! {ERROR 5}" + nocol
 error6 = red + "Author error! We be derpin'! {ERROR 6}" + nocol
 
-start = "echo " + error1
-stop = "echo " + error1
-restart = "echo " + error1
+start = "echo " + "'" + error1 + "'"
+stop = "echo " + "'" + error1 + "'"
+restart = "echo " + "'" + error1 + "'"
 pid = "echo 'Cannot get pid'"
 
 if daemon:

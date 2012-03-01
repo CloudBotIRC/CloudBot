@@ -29,12 +29,14 @@ command = ":"
 try:
     daemoncheck = subprocess.check_output("locate /usr/bin/daemon", shell=True)
 except (subprocess.CalledProcessError), e:
+    daemoncheck = False
     print "daemon not installed!"
     exit
 daemon = re.match(r'^/usr/bin/daemon$', daemoncheck)
 try:
     screencheck = subprocess.check_output("locate /usr/bin/screen", shell=True)
 except (subprocess.CalledProcessError), e:
+    screencheck = False
     print "screen not installed!"
     exit
 screen = re.match(r'^/usr/bin/screen$', screencheck)

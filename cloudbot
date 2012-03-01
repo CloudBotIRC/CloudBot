@@ -27,19 +27,9 @@ pwd = os.getcwd()
 clearlog1 = ": > ./bot.log && "
 clearlog2 = ": > ./bot.log"
 
-try:
-    daemoncheck = subprocess.check_output("locate /usr/bin/daemon", shell=True)
-except (subprocess.CalledProcessError), e:
-    daemoncheck = "False"
-    print "daemon not installed!"
-    exit
+daemoncheck = subprocess.check_output("locate /usr/bin/daemon", shell=True)
 daemon = re.match(r'^/usr/bin/daemon$', daemoncheck)
-try:
-    screencheck = subprocess.check_output("locate /usr/bin/screen", shell=True)
-except (subprocess.CalledProcessError), e:
-    screencheck = "False"
-    print "screen not installed!"
-    exit
+screencheck = subprocess.check_output("locate /usr/bin/screen", shell=True)
 screen = re.match(r'^/usr/bin/screen$', screencheck)
 backend = config.get("wrapper", {}).get("backend", "daemon")
 

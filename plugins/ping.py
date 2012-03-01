@@ -2,6 +2,7 @@
 from util import hook
 import subprocess
 import re
+import string
 
 
 @hook.command
@@ -10,7 +11,7 @@ def ping(inp, reply=None):
 
     args = inp.split(' ')
     host = args[0]
-    
+
     if len(args) > 1:
         count = args[1]
         count = int(count)
@@ -21,10 +22,12 @@ def ping(inp, reply=None):
 
     count = str(count)
 
+    host = re.sub(r'([^\s\w\.])+', '', host)
+
     reply("Attempting to ping %s %s times..." % (host, count))
-    
+
     pingcmd = subprocess.check_output("ping -c "\
-                                    + count + " " + host, shell=True)
+                                + count + " " + host, shell=True)
     if 'request timed out' in pingcmd or 'unknown host' in pingcmd:
         return "error: could not ping host"
     else:
@@ -32,3 +35,5 @@ def ping(inp, reply=None):
             "(\d+.\d+)/(\d+.\d+)/(\d+.\d+)/(\d+.\d+)", pingcmd)
         return "min: %sms, max: %sms, average: %sms, range: %sms, count: %s"\
         % (m.group(1), m.group(3), m.group(2), m.group(4), count)
+
+

@@ -18,7 +18,7 @@ def invite(paraml, conn=None):
         return None
 
 
-# Rejoin on kick (Configuragble, defaults to False)
+# Rejoin on kick (Configurable, defaults to False)
 @hook.event('KICK')
 def rejoin(paraml, conn=None):
     autorejoin = conn.conf.get('autorejoin', False)
@@ -56,6 +56,7 @@ def onjoin(paraml, conn=None, bot=None):
 # Stay-alive code
     stayalive = conn.conf.get('stayalive')
     if stayalive:
+        delay = conn.conf.get('stayalive_delay', 20)
         while True:
-            time.sleep(conn.conf.get('stayalive_delay', 20))
+            time.sleep(delay)
             conn.cmd('PING', [conn.nick])

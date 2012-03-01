@@ -49,13 +49,13 @@ In addition, for `.whois` to work optimally, you must have `whois` installed. Ag
 
 If you are a user of another Linux disto, use your package manager to install the dependencies, or, for other operating systems,  use **Google** to locate source packages you can install.
 
-Once you have installed the required dependencies, run the wrapper:
+Once you have installed the required dependencies, run the bot:
 
-`./cloudbot`
+`./bot.py`
 
 It will generate a default config for you.  Once you have edited the config, run it again with:
 
-`./cloudbot`
+`./bot.py`
 
 and it will connect to any server(s) you have added to the config. (Config docs at the [wiki](http://git.io/cloudbotconfig))
 

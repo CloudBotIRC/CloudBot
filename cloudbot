@@ -41,7 +41,7 @@ except (subprocess.CalledProcessError), e:
 screen = re.match(r'^/usr/bin/screen$', screencheck)
 if os.path.isfile("./config"):
     backend = config.get("wrapper", {}).get("backend", "daemon")
-else
+else:
     backend = daemon
 
 try:

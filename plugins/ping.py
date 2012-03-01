@@ -2,7 +2,6 @@
 from util import hook
 import subprocess
 import re
-import string
 
 
 @hook.command

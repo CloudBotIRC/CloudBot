@@ -1,16 +1,61 @@
 #!/usr/bin/env python
 # Bot Wrapper by neersighted
 
-
 # Import required modules
-import sys
 import os
+import sys
 import subprocess
-import re
 import json
+import re
 
-# Check for config
-if os.path.isfile("./config"):
+# Files
+configfile = os.path.isfile("./config")
+os.path.isfile("./bot.py")
+
+# Colors
+nocol = "\033[1;m"
+red = "\033[1;31m"
+green = "\033[1;32m"
+
+# Messages
+firstrun = "Welclome to your first run of: "
+usage = "usage: ./cloudbot {start|stop|restart|status}"
+iusage = "{1|start} {2|stop} {3|restart} {4|status} {5|exit}"
+quit = "Goodbye! Thanks for using CloudBot!"
+
+error1 = red + "Neither screen nor daemon is installed! "\
+        "This program cannot run! {ERROR 1}" + nocol
+error2 = red + "Could not find bot.py! Are you in the wrong folder? "\
+        "{ERROR 2}" + nocol
+error3 = red + "Invalid choice, exiting! {ERROR 3}" + nocol
+error4 = red + "Program killed by user! {ERROR 4}" + nocol
+error5 = red + "Invalid backend in config! {ERROR 5}" + nocol
+error6 = red + "Author error! We be derpin'! {ERROR 6}" + nocol
+
+
+# Commands
+pwd = os.getcwd()
+clearlog = ": > ./bot.log"
+
+start = "echo " + "'" + error1 + "'"
+stop = "echo " + "'" + error1 + "'"
+restart = "echo " + "'" + error1 + "'"
+pid = "echo 'Cannot get pid'"
+
+daemonstart = "daemon -r -n cloudbot -O " + pwd + \
+            "/bot.log python " + pwd + "/bot.py"
+daemonstop = "daemon -n cloudbot --stop"
+daemonrestart = "daemon -n cloudbot --restart"
+daemonpid = "pidof /usr/bin/daemon"
+
+screenstart = "screen -S cloudbot -dm python" + pwd +\
+        "/bot.py >>" + pwd + "/bot.log 2>&1"
+screenstop = "kill `pidof /usr/bin/screen`"
+screenrestart = stop + " && " + start
+screenpid = "pidof /usr/bin/screen"
+
+# Checks
+if configfile:
     try:
         config = json.load(open('config'))
         command = ":"
@@ -18,27 +63,15 @@ if os.path.isfile("./config"):
         print 'error: malformed config', e
 else:
     config = False
-    command = "python bot.py"    
+    command = "python bot.py"
 
-# Colors
-nocol = "\033[1;m"
-red = "\033[1;31m"
-green = "\033[1;32m"
-
-# Commands
-pwd = os.getcwd()
-clearlog = ": > ./bot.log"
-start = "echo " + "'" + error1 + "'"
-stop = "echo " + "'" + error1 + "'"
-restart = "echo " + "'" + error1 + "'"
-pid = "echo 'Cannot get pid'"
-
-# Checks
 daemoncheck = subprocess.check_output("locate /usr/bin/daemon", shell=True)
 daemon = re.match(r'^/usr/bin/daemon$', daemoncheck)
+
 screencheck = subprocess.check_output("locate /usr/bin/screen", shell=True)
 screen = re.match(r'^/usr/bin/screen$', screencheck)
-if os.path.isfile("./config"):
+
+if configfile:
     backend = config.get("wrapper", {}).get("backend", "daemon")
 else:
     backend = False
@@ -50,51 +83,35 @@ try:
 except (subprocess.CalledProcessError):
     running = False
 
-# Messages
-usage = "usage: ./cloudbot {start|stop|restart|status}"
-quit = "Goodbye! Thanks for using CloudBot!"
-error1 = red + "Neither screen nor daemon is installed! "\
-        "This program cannot run! {ERROR 1}" + nocol
-error2 = red + "Could not find bot.py! Are you in the wrong folder? "\
-        "(" + pwd + ") {ERROR 2}" + nocol
-error3 = red + "Invalid choice, exiting! {ERROR 3}" + nocol
-error4 = red + "Program killed by user! {ERROR 4}" + nocol
-error5 = red + "Invalid backend in config! {ERROR 5}" + nocol
-error6 = red + "Author error! We be derpin'! {ERROR 6}" + nocol
-
 # Set commands
 if daemon:
     if backend == "daemon":
-        start = "daemon -r -n cloudbot -O " + pwd + \
-                "/bot.log python " + pwd + "/bot.py"
-        stop = "daemon -n cloudbot --stop"
-        restart = "daemon -n cloudbot --restart"
-        pid = "pidof /usr/bin/daemon"
+        start = daemonstart
+        stop = daemonstop
+        restart = daemonrestart
+        pid = daemonpid
     elif backend == "screen":
-        start = "screen -S cloudbot -dm python" + pwd +\
-            "/bot.py >>" + pwd + "/bot.log 2>&1"
-        stop = "kill `pidof /usr/bin/screen`"
-        restart = stop + " && " + start
-        pid = "pidof /usr/bin/screen"
+        start = screenstart
+        stop = screenstop
+        restart = screenrestart
+        pid = screenpid
     elif backend == False:
-        print "Welcome to your first run of: "
+        print firstrun
     else:
         print error5
 elif screen:
     if backend == "daemon":
-        start = "daemon -r -n cloudbot -O " + pwd + \
-                "/bot.log python " + pwd + "/bot.py"
-        stop = "daemon -n cloudbot --stop"
-        restart = "daemon -n cloudbot --restart"
-        pid = "pidof /usr/bin/daemon"
+        start = daemonstart
+        stop = daemonstop
+        restart = daemonrestart
+        pid = daemonpid
     elif backend == "screen":
-        start = "screen -S cloudbot -dm python" + pwd +\
-            "/bot.py >>" + pwd + "/bot.log 2>&1"
-        stop = clearlog1 + "kill `pidof /usr/bin/screen`"
-        restart = stop + " && " + start
-        pid = "pidof /usr/bin/screen"
+        start = screenstart
+        stop = screenstop
+        restart = screenrestart
+        pid = screenpid
     elif backend == False:
-        print "Welcome to your first run of: "
+        print firstrun
     else:
         print error5
 else:
@@ -115,6 +132,7 @@ print " \______||_______| \______/   \______/  "\
 "|_______/ |______/   \______/      |__|     "
 print "http://git.io/cloudbot                  "\
 "                                 by lukeroge"
+
 # Read arguments/turn interactive
 try:
     if running:
@@ -172,7 +190,7 @@ try:
                 print usage
                 exit
         else:
-            print "{1|start} {2|stop} {3|restart} {4|status} {5|exit}"
+            print iusage
             read = int(raw_input('Please choose a option: '))
             if read == 1:
                 command = start
@@ -200,7 +218,7 @@ except (NameError, SyntaxError), e:
     exit
 
 # Check for bot files
-if os.path.isfile("./bot.py"):
+if botfile:
     command = command
 else:
     print error2

@@ -7,9 +7,8 @@ from util import hook, http
 
 socket.setdefaulttimeout(10)
 
+
 # Auto-join on Invite (Configurable, defaults to True)
-
-
 @hook.event('INVITE')
 def invite(paraml, conn=None):
     invitejoin = conn.conf.get('invitejoin', True)
@@ -18,9 +17,8 @@ def invite(paraml, conn=None):
     else:
         return None
 
+
 # Rejoin on kick (Configuragble, defaults to False)
-
-
 @hook.event('KICK')
 def rejoin(paraml, conn=None):
     autorejoin = conn.conf.get('autorejoin', False)
@@ -28,9 +26,9 @@ def rejoin(paraml, conn=None):
         conn.join(paraml[0])
     else:
         return None
+
+
 # Identify to NickServ (or other service)
-
-
 @hook.event('004')
 def onjoin(paraml, conn=None, bot=None):
     nickserv_password = conn.conf.get('nickserv_password', '')

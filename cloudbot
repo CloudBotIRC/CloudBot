@@ -31,7 +31,10 @@ daemoncheck = subprocess.check_output("locate /usr/bin/daemon", shell=True)
 daemon = re.match(r'^/usr/bin/daemon$', daemoncheck)
 screencheck = subprocess.check_output("locate /usr/bin/screen", shell=True)
 screen = re.match(r'^/usr/bin/screen$', screencheck)
-backend = config.get("wrapper", {}).get("backend", "daemon")
+if os.path.isfile("./config"):
+    backend = config.get("wrapper", {}).get("backend", "daemon")
+else:
+    backend = False
 
 try:
     runningcheck = subprocess.check_output("ps ax|grep cloudbot|"\
@@ -57,7 +60,7 @@ pid = "echo 'Cannot get pid'"
 if daemon:
     if backend == "daemon":
         start = "daemon -n cloudbot -O " + pwd + \
-                "/bot.log -r python " + pwd + "/bot.py"
+                "/bot.log python " + pwd + "/bot.py"
         stop = clearlog1 + "daemon -n cloudbot --stop"
         restart = clearlog1 + "daemon -n cloudbot --restart"
         pid = "pidof /usr/bin/daemon"
@@ -67,6 +70,8 @@ if daemon:
         stop = clearlog1 + "kill `pidof /usr/bin/screen`"
         restart = clearlog1 + "daemon -n cloudbot --restart"
         pid = "pidof /usr/bin/screen"
+    elif backend == False:
+        print "Welcome to your first run of: "
     else:
         print error5
 elif screen:
@@ -82,6 +87,8 @@ elif screen:
         stop = clearlog1 + "kill `pidof /usr/bin/screen`"
         restart = stop + " && " + start
         pid = "pidof /usr/bin/screen"
+    elif backend == False:
+        print "Welcome to your first run of: "
     else:
         print error5
 else:

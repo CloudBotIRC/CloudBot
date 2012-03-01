@@ -31,4 +31,4 @@ def ping(inp, reply=None):
         m = re.search(r"rtt min/avg/max/mdev = "\
             "(\d+.\d+)/(\d+.\d+)/(\d+.\d+)/(\d+.\d+)", pingcmd)
         return "min: %sms, max: %sms, average: %sms, range: %sms, count: %s"\
-        % (m.group(1), m.group(2), m.group(3), m.group(4), count)
+        % (m.group(1), m.group(3), m.group(2), m.group(4), count)

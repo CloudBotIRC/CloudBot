@@ -10,7 +10,7 @@ import re
 
 # Files
 configfile = os.path.isfile("./config")
-os.path.isfile("./bot.py")
+botfile = os.path.isfile("./bot.py")
 
 # Colors
 nocol = "\033[1;m"
@@ -85,32 +85,32 @@ except (subprocess.CalledProcessError):
 
 # Set commands
 if daemon:
-    if backend == "daemon":
+    if (backend == "daemon"):
         start = daemonstart
         stop = daemonstop
         restart = daemonrestart
         pid = daemonpid
-    elif backend == "screen":
+    elif (backend == "screen"):
         start = screenstart
         stop = screenstop
         restart = screenrestart
         pid = screenpid
-    elif backend == False:
+    elif (backend == False):
         print firstrun
     else:
         print error5
 elif screen:
-    if backend == "daemon":
+    if (backend == "daemon"):
         start = daemonstart
         stop = daemonstop
         restart = daemonrestart
         pid = daemonpid
-    elif backend == "screen":
+    elif (backend == "screen"):
         start = screenstart
         stop = screenstop
         restart = screenrestart
         pid = screenpid
-    elif backend == False:
+    elif (backend == False):
         print firstrun
     else:
         print error5
@@ -135,77 +135,46 @@ print "http://git.io/cloudbot                  "\
 
 # Read arguments/turn interactive
 try:
-    if running:
-        if (len(sys.argv) > 1):
-            if (sys.argv[1] == 'start'):
-                print "Bot is alread running, cannot start!"
-            elif (sys.argv[1] == 'stop'):
-                command = stop
-                print "Stopping... (" + backend + ")"
-            elif (sys.argv[1] == 'restart'):
-                command = restart
-                print "Restarting... (" + backend + ")"
-            elif (sys.argv[1] == 'status'):
-                command = pid
-                print green + "Bot is running! " + nocol
-            elif (sys.argv[1] == 'clear'):
-                command = clearlog
-            else:
-                command = command
-                print usage
-                exit
-        else:
-            print "{1|start} {2|stop} {3|restart} {4|status} {5|exit}"
-            read = int(raw_input('Please choose a option: '))
-            if read == 1:
-                print "Bot is alread running, cannot start!"
-            elif read == 2:
-                command = stop
-                print "Stopping... (" + backend + ")"
-            elif read == 3:
-                command = restart
-                print "Restarting... (" + backend + ")"
-            elif read == 4:
-                command = pid
-                print green + "Bot is running! " + nocol
-            elif read == 5:
-                print quit
-            else:
-                print error3
+    if (len(sys.argv) > 1):
+        read = 0
     else:
-        if (len(sys.argv) > 1):
-            if (sys.argv[1] == 'start'):
-                command = start
-                print "Starting... (" + backend + ")"
-            elif (sys.argv[1] == 'stop'):
-                print "Bot is not running, cannot stop!"
-            elif (sys.argv[1] == 'restart'):
-                print "Bot is not running, cannot restart!"
-            elif (sys.argv[1] == 'status'):
-                print red + "Bot is not running!" + nocol
-            elif (sys.argv[1] == 'clear'):
-                command = clearlog
-            else:
-                command = command
-                print usage
-                exit
+        sys.argv = "interactive"
+        print iusage
+        read = int(raw_input("Please choose a option: "))
+
+    if (sys.argv[1] == "start") or (read == 1):
+        if running:
+            print "Bot is already running, cannot start!"
         else:
-            print iusage
-            read = int(raw_input('Please choose a option: '))
-            if read == 1:
-                command = start
-                print "Starting... (" + backend + ")"
-            elif read == 2:
-                print "Bot is not running, cannot stop!"
-            elif read == 3:
-                command = restart
-            elif read == 4:
-                print red + "Bot is not running, cannot restart!" + nocol
-            elif read == 5:
-                print quit
-            else:
-                print error3
-                exit
+            command = start
+    elif (sys.argv[1] == "stop") or (read == 2):
+        if running:
+            command = stop
+            print "Stopping... (" + backend + ")"
+        else:
+            print "Bot is not running, cannot stop!"
+    elif (sys.argv[1] == "restart") or (read == 3):
+        if running:
+            command = restart
+            print "Restarting... (" + backend + ")"
+        else:
+            print "Bot is not running, cannot restart!"
+    elif (sys.argv[1] == "status") or (read == 4):
+        if running:
+            command = pid
+            print green + "Bot is running! " + nocol
+        else:
+            print red + "Bot is not running! " + nocol
+    elif (sys.argv[1] == "clear"):
+        command = clearlog
+    elif (sys.argv[1] == "exit") or (read == 5) or (read == 0):
+        exit
+    elif (sys.argv[1] == "interactive"):
+        pass
+    else:
+        command = command
+        print usage
+        exit
 # Pretify errors
 except (TypeError, ValueError), e:
     print error3

@@ -46,13 +46,13 @@ pid = "echo 'Cannot get pid'"
 daemonstart = "daemon -r -n cloudbot -O " + pwd + \
             "/bot.log python " + pwd + "/bot.py"
 daemonstop = "daemon -n cloudbot --stop"
-daemonrestart = "daemon -n cloudbot --restart"
+daemonrestart = "./cloudbot stop > /dev/null 2>&1 && ./cloudbot start > /dev/null 2>&1"
 daemonpid = "pidof /usr/bin/daemon"
 
 screenstart = "screen -d -m -S cloudbot -t cloudbot python " + pwd +\
-        "/bot.py >> " + pwd + "/bot.log 2>&1"
+        "/bot.py > " + pwd + "/bot.log 2>&1"
 screenstop = "kill `pidof /usr/bin/screen`"
-screenrestart = stop + " && " + start
+screenrestart = "./cloudbot stop > /dev/null 2>&1 && ./cloudbot start > /dev/null 2>&1"
 screenpid = "pidof /usr/bin/screen"
 
 # Checks
@@ -93,6 +93,7 @@ if (backend == "daemon"):
         pid = daemonpid
     else:
         print error5
+        exit
 elif (backend == "screen"):
     if screen:
         start = screenstart
@@ -101,10 +102,12 @@ elif (backend == "screen"):
         pid = screenpid
     else:
         print error5
+        exit
 elif (backend == False):
     print firstrun
 else:
     print error5
+    exit
 
 # Fancy banner
 print "  ______  __        ______    __    __  "\

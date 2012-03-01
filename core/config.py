@@ -23,7 +23,7 @@ if not os.path.exists('config'):
               "invitejoin": true,
               "autorejoin": false,
               "command_prefix": ".",
-              "stayalive": true,
+              "stayalive": false,
               "stayalive_delay": 20
             }
           },

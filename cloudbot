@@ -7,7 +7,6 @@ import re
 import json
 
 if os.path.isfile("./config"):
-    command = command
     try:
         config = json.load(open('config'))
     except ValueError, e:

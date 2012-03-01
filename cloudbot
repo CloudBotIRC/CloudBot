@@ -21,7 +21,7 @@ green = "\033[1;32m"
 firstrun = "Welclome to your first run of: "
 usage = "usage: ./cloudbot {start|stop|restart|status}"
 iusage = "{1|start} {2|stop} {3|restart} {4|status} {5|exit}"
-quit = "Goodbye! Thanks for using CloudBot!"
+quit = "Thanks for using CloudBot!"
 
 error1 = red + "Neither screen nor daemon is installed! "\
         "This program cannot run! {ERROR 1}" + nocol
@@ -29,7 +29,8 @@ error2 = red + "Could not find bot.py! Are you in the wrong folder? "\
         "{ERROR 2}" + nocol
 error3 = red + "Invalid choice, exiting! {ERROR 3}" + nocol
 error4 = red + "Program killed by user! {ERROR 4}" + nocol
-error5 = red + "Invalid backend in config! {ERROR 5}" + nocol
+error5 = red + "Invalid backend in config! (Or, backend not installed)"\
+                " {ERROR 5}" + nocol
 error6 = red + "Author error! We be derpin'! {ERROR 6}" + nocol
 
 
@@ -48,8 +49,8 @@ daemonstop = "daemon -n cloudbot --stop"
 daemonrestart = "daemon -n cloudbot --restart"
 daemonpid = "pidof /usr/bin/daemon"
 
-screenstart = "screen -S cloudbot -dm python" + pwd +\
-        "/bot.py >>" + pwd + "/bot.log 2>&1"
+screenstart = "screen -d -m -S cloudbot -t cloudbot python " + pwd +\
+        "/bot.py >> " + pwd + "/bot.log 2>&1"
 screenstop = "kill `pidof /usr/bin/screen`"
 screenrestart = stop + " && " + start
 screenpid = "pidof /usr/bin/screen"
@@ -84,38 +85,26 @@ except (subprocess.CalledProcessError):
     running = False
 
 # Set commands
-if daemon:
-    if (backend == "daemon"):
+if (backend == "daemon"):
+    if daemon:
         start = daemonstart
         stop = daemonstop
         restart = daemonrestart
         pid = daemonpid
-    elif (backend == "screen"):
+    else:
+        print error5
+elif (backend == "screen"):
+    if screen:
         start = screenstart
         stop = screenstop
         restart = screenrestart
         pid = screenpid
-    elif (backend == False):
-        print firstrun
     else:
         print error5
-elif screen:
-    if (backend == "daemon"):
-        start = daemonstart
-        stop = daemonstop
-        restart = daemonrestart
-        pid = daemonpid
-    elif (backend == "screen"):
-        start = screenstart
-        stop = screenstop
-        restart = screenrestart
-        pid = screenpid
-    elif (backend == False):
-        print firstrun
-    else:
-        print error5
+elif (backend == False):
+    print firstrun
 else:
-    command = command
+    print error5
 
 # Fancy banner
 print "  ______  __        ______    __    __  "\
@@ -147,6 +136,7 @@ try:
             print "Bot is already running, cannot start!"
         else:
             command = start
+            print "Starting... (" + backend + ")"
     elif (sys.argv[1] == "stop") or (read == 2):
         if running:
             command = stop
@@ -167,14 +157,14 @@ try:
             print red + "Bot is not running! " + nocol
     elif (sys.argv[1] == "clear"):
         command = clearlog
-    elif (sys.argv[1] == "exit") or (read == 5) or (read == 0):
+    elif (sys.argv[1] == "exit") or (read == 5):
         exit
     elif (sys.argv[1] == "interactive"):
         pass
     else:
-        command = command
         print usage
         exit
+
 # Pretify errors
 except (TypeError, ValueError), e:
     print error3
@@ -188,7 +178,7 @@ except (NameError, SyntaxError), e:
 
 # Check for bot files
 if botfile:
-    command = command
+    pass
 else:
     print error2
     exit

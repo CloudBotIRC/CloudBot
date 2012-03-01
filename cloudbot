@@ -175,7 +175,8 @@ except (KeyboardInterrupt), e:
 except (NameError, SyntaxError), e:
     print error6
     exit
-
+except (IOError), e:
+    pass
 if os.path.isfile("./bot.py"):
     command = command
 else:

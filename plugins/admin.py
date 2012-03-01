@@ -3,6 +3,7 @@
 #  Improved by Lukeroge
 #  Further improved by neersighted
 from util import hook
+import os
 import sys
 import subprocess
 import time
@@ -19,7 +20,7 @@ def stop(inp, input=None, db=None, notice=None):
     else:
         input.conn.send("QUIT :Killed by " + input.nick + " (no reason)")
     time.sleep(5)
-    subprocess.call("python cloudbot stop", shell=True)
+    subprocess.call("./cloudbot stop", shell=True)
 
 
 @hook.command(autohelp=False)
@@ -33,8 +34,7 @@ def restart(inp, input=None, db=None, notice=None):
     else:
         input.conn.send("QUIT :Restarted by " + input.nick + " (no reason)")
     time.sleep(5)
-    subprocess.call("python cloudbot restart", shell=True)
-
+    os.execl("./cloudbot", "restart")
 
 @hook.command(autohelp=False)
 def clear(inp, input=None, db=None, notice=None):
@@ -43,7 +43,7 @@ def clear(inp, input=None, db=None, notice=None):
         notice("Only bot admins can use this command!")
         return
     time.sleep(5)
-    subprocess.call("python ./cloudbot clear", shell=True)
+    subprocess.call("./cloudbot clear", shell=True)
 
 
 @hook.command

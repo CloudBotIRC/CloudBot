@@ -74,8 +74,12 @@ screen = re.match(r'^/usr/bin/screen$', screencheck)
 
 if configfile:
     backend = config.get("wrapper", {}).get("backend", "daemon")
+    daemonloc = config.get("wrapper", {}).get("daemonloc", "/usr/bin/daemon")
+    screenloc = config.get("wrapper", {}).get("screenloc", "/usr/bin/screen")
 else:
     backend = False
+    daemonloc = "/usr/bin/daemon"
+    screenloc = "/usr/bin/screen"
 
 try:
     runningcheck = subprocess.check_output("ps ax|grep cloudbot|"\

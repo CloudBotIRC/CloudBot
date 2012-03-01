@@ -5,11 +5,16 @@ import os
 import subprocess
 import re
 import json
-try:
-    config = json.load(open('config'))
-except ValueError, e:
-    print 'error: malformed config', e
 
+if os.path.isfile("./config"):
+    command = command
+    try:
+        config = json.load(open('config'))
+    except ValueError, e:
+        print 'error: malformed config', e
+    else:
+        config = False
+    
 nocol = "\033[1;m"
 red = "\033[1;31m"
 green = "\033[1;32m"
@@ -26,7 +31,10 @@ daemoncheck = subprocess.check_output("locate /usr/bin/daemon", shell=True)
 daemon = re.match(r'^/usr/bin/daemon$', daemoncheck)
 screencheck = subprocess.check_output("locate /usr/bin/screen", shell=True)
 screen = re.match(r'^/usr/bin/screen$', screencheck)
-backend = config.get("wrapper", {}).get("backend", "daemon")
+if os.path.isfile("./config"):
+    backend = config.get("wrapper", {}).get("backend", "daemon")
+else
+    backend = daemon
 
 try:
     runningcheck = subprocess.check_output("ps ax|grep cloudbot|"\
@@ -175,8 +183,6 @@ except (KeyboardInterrupt), e:
 except (NameError, SyntaxError), e:
     print error6
     exit
-except (IOError), e:
-    pass
 if os.path.isfile("./bot.py"):
     command = command
 else:

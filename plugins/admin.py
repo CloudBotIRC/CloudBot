@@ -9,8 +9,8 @@ import time
 
 
 @hook.command(autohelp=False)
-def quit(inp, input=None, db=None, notice=None):
-    ".quit [reason] -- Kills the bot, with [reason] as its quit message."
+def stop(inp, input=None, db=None, notice=None):
+    ".stop [reason] -- Kills the bot, with [reason] as its quit message."
     if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return
@@ -19,8 +19,7 @@ def quit(inp, input=None, db=None, notice=None):
     else:
         input.conn.send("QUIT :Killed by " + input.nick + " (no reason)")
     time.sleep(3)
-    subprocess.call(['./cloudbot stop'])
-    sys.exit()
+    subprocess.call("./cloudbot stop", shell=True)
 
 
 @hook.command(autohelp=False)
@@ -34,8 +33,7 @@ def restart(inp, input=None, db=None, notice=None):
     else:
         input.conn.send("QUIT :Restarted by " + input.nick + " (no reason)")
     time.sleep(3)
-    subprocess.call(['./cloudbot restart'])
-    sys.exit()
+    subprocess.call("./cloudbot restart", shell=True)
 
 
 @hook.command(autohelp=False)
@@ -45,8 +43,7 @@ def clear(inp, input=None, db=None, notice=None):
         notice("Only bot admins can use this command!")
         return
     time.sleep(3)
-    subprocess.call(['./cloudbot clear'])
-    sys.exit()
+    subprocess.call("./cloudbot clear", shell=True)
 
 
 @hook.command

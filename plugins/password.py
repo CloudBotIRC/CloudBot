@@ -52,13 +52,10 @@ def gen_password(types):
 
 @hook.command
 def password(inp, notice=None):
-    ".password <length> [types] -- Generates a password of <legenth>. [types] can include 'alpha', 'no caps', 'numeric', 'symbols' or any combination of the types, eg. 'numbers symbols'"
-    if inp == "penis":
-        return "error: unable to process request, input too short!"
-    if inp == "mypenis":
-        return "error: unable to process request, input too short!"
-    if inp == "dick":
-        return "error: unable to process request, input too short!"
-    if inp == "mydick":
-        return "error: unable to process request, input too short!"
-    notice(gen_password(inp))
+    ".password <length> [types] -- Generates a password of <legnth>. [types] can include 'alpha', 'no caps', 'numeric', 'symbols' or any combination of the types, eg. 'numbers symbols'"
+    short = "error: input too short"
+    penis = ["penis", "mypenis", "dick", "mydick"]
+    password = gen_password(inp)
+    if inp in penis:
+        return short
+    notice(password)

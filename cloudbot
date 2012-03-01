@@ -11,8 +11,8 @@ if os.path.isfile("./config"):
         config = json.load(open('config'))
     except ValueError, e:
         print 'error: malformed config', e
-    else:
-        config = False
+else:
+    config = False
     
 nocol = "\033[1;m"
 red = "\033[1;31m"
@@ -29,14 +29,14 @@ command = ":"
 try:
     daemoncheck = subprocess.check_output("locate /usr/bin/daemon", shell=True)
 except (subprocess.CalledProcessError), e:
-    daemoncheck = False
+    daemoncheck = "False"
     print "daemon not installed!"
     exit
 daemon = re.match(r'^/usr/bin/daemon$', daemoncheck)
 try:
     screencheck = subprocess.check_output("locate /usr/bin/screen", shell=True)
 except (subprocess.CalledProcessError), e:
-    screencheck = False
+    screencheck = "False"
     print "screen not installed!"
     exit
 screen = re.match(r'^/usr/bin/screen$', screencheck)

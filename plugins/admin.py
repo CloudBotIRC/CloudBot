@@ -19,7 +19,7 @@ def quit(inp, input=None, db=None, notice=None):
     else:
         input.conn.send("QUIT :Killed by " + input.nick + " (no reason)")
     time.sleep(3)
-    subprocess.call(['lib/stop.py'])
+    subprocess.call(['./cloudbot stop'])
     sys.exit()
 
 
@@ -34,7 +34,7 @@ def restart(inp, input=None, db=None, notice=None):
     else:
         input.conn.send("QUIT :Restarted by " + input.nick + " (no reason)")
     time.sleep(3)
-    subprocess.call(['lib/restart.py'])
+    subprocess.call(['./cloudbot restart'])
     sys.exit()
 
 
@@ -45,7 +45,7 @@ def clear(inp, input=None, db=None, notice=None):
         notice("Only bot admins can use this command!")
         return
     time.sleep(3)
-    subprocess.call(['lib/clear.py'])
+    subprocess.call(['./cloudbot clear'])
     sys.exit()
 
 

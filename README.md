@@ -65,6 +65,8 @@ It will generate a default config for you.  Once you have edited the config, run
 
 and it will connect to any server(s) you have added to the config. (Config docs at the [wiki](http://git.io/cloudbotconfig))
 
+* if you prefer to run the bot with a custom backend/run it manually, or are on **Windows**, run the bot with `./bot.py`
+
 ## Documentation
 
 To configure your CloudBot, visit the [Config Wiki Page](http://git.io/cloudbotconfig).
@@ -95,7 +97,7 @@ CloudBot runs on **Python** *2.7.x*. It is developed on **Debian** *Wheezy/Testi
 
 It **requires Python modules** `lXML`, `BeautifulSoup`, `Enchant`, `MyGengo`, and `HTTPlib2`.
 
-**Windows** users: Windows compatibility is **broken**, but we do intend to add it back. (Eventually)
+**Windows** users: Windows compatibility with the wrapper and some plugins is **broken** (such as the ping), but we do intend to add it. (Eventually)
 
 ## License
 CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.

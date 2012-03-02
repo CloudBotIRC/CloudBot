@@ -95,6 +95,8 @@ CloudBot runs on **Python** *2.7.x*. It is developed on **Debian** *Wheezy/Testi
 
 It **requires Python modules** `lXML`, `BeautifulSoup`, `Enchant`, `MyGengo`, and `HTTPlib2`.
 
+The programs `screen` or `daemon` are recomended for the wrapper to run optimaly.
+
 **Windows** users: Windows compatibility with the wrapper and some plugins is **broken** (such as the ping), but we do intend to add it.☩☩☩
 
 ## License

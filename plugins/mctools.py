@@ -1,5 +1,25 @@
-from util import hook, http
+from util import hook
+from util import http
 import string
+import socket
+import struct
+
+
+def mcping_connect(host, port):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        sock.connect((host, port))
+        sock.send('\xfe')
+        response = sock.recv(1)
+        if response != '\xff':
+            return "Server gave invalid response: "+repr(response)
+        length = struct.unpack('!h', sock.recv(2))[0]
+        values = sock.recv(length*2).decode('utf-16be').split(u'\xa7')
+        sock.close()
+        return "%s - %d/%d players" % (values[0], int(values[1]), int(values[2]))
+    except:
+        return "Error pinging "+host+":"+str(port)+", is it up? Double-check your address!"
+
 
 @hook.command(autohelp=False)
 def mcstatus(inp, bot=None):
@@ -36,3 +56,22 @@ def mcpaid(inp):
         return "The account \'" + inp + "\' is a premium Minecraft account!"
     else:
         return "The account \'" + inp + "\' is not a premium Minecraft account!"
+
+from util import hook
+
+
+@hook.command
+def mcping(inp):
+    ".mcping server[:port] - Ping a Minecraft server to check status."
+    inp = inp.strip().split(" ")[0]
+
+    if ":" in inp:
+        host, port = inp.split(":", 1)
+        try:
+            port = int(port)
+        except:
+            return "Invalid port!"
+    else:
+        host = inp
+        port = 25565
+    return mcping_connect(host, port)

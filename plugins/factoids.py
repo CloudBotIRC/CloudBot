@@ -113,7 +113,10 @@ def forget(inp, db=None, input=None, notice=None):
 @hook.regex(r'^\? ?(.+)')
 def question(inp, say=None, db=None, bot=None):
     "?<word> -- Shows what data is associated with <word>."
-    prefix_on = bot.config["plugins"]["factoids"]["prefix"]
+    try:
+        prefix_on = bot.config["plugins"]["factoids"]["prefix"]
+    except KeyError:
+        prefix_on = False
 
     db_init(db)
 

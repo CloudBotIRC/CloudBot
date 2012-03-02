@@ -118,5 +118,7 @@ CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
     along with CloudBot.  If not, see <http://www.gnu.org/licenses/>.
 
 º if you prefer to run the bot with a custom backend/run it manually, or are on **Windows**, run the bot with `./bot.py`
+
 ºº or whatever version [neersighted](http://git.io/neersighted) is currently hacking on
+
 ººº eventually

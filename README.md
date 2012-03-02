@@ -47,15 +47,21 @@ In addition, for `.whois` to work optimally, you must have `whois` installed. Ag
 
 `sudo apt-get install whois`
 
+For the wrapper to work best, install `screen`, or `daemon`:
+
+`sudo apt-get install screen`
+
+`sudo apt-get install daemon`
+
 If you are a user of another Linux disto, use your package manager to install the dependencies, or, for other operating systems,  use **Google** to locate source packages you can install.
 
 Once you have installed the required dependencies, run the bot:
 
-`./bot.py`
+`./cloudbot start`
 
 It will generate a default config for you.  Once you have edited the config, run it again with:
 
-`./bot.py`
+`./cloudbot start`
 
 and it will connect to any server(s) you have added to the config. (Config docs at the [wiki](http://git.io/cloudbotconfig))
 

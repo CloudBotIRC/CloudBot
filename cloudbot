@@ -103,6 +103,7 @@ processargs() {
             fi
         ;;
         clear)
+            echo "Clearing logs..."
             clear
         ;;
         status)

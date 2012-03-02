@@ -8,7 +8,8 @@ import sys
 import subprocess
 import time
 
-
+@hook.command("quit", autohelp=False)
+@hook.command("exit", autohelp=False)
 @hook.command(autohelp=False)
 def stop(inp, input=None, db=None, notice=None):
     ".stop [reason] -- Kills the bot, with [reason] as its quit message."
@@ -23,6 +24,7 @@ def stop(inp, input=None, db=None, notice=None):
     subprocess.call("./cloudbot stop", shell=True)
 
 
+@hook.command("reboot", autohelp=False)
 @hook.command(autohelp=False)
 def restart(inp, input=None, db=None, notice=None):
     ".restart [reason] -- Restarts the bot, with [reason] as its quit message."
@@ -36,9 +38,10 @@ def restart(inp, input=None, db=None, notice=None):
     time.sleep(5)
     os.execl("./cloudbot", "restart")
 
+@hook.command("clearlogs", autohelp=False)
 @hook.command(autohelp=False)
 def clear(inp, input=None, db=None, notice=None):
-    ".clear -- Clears the bot's log."
+    ".clear -- Clears the bot's log(s)."
     if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return

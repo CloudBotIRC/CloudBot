@@ -41,6 +41,13 @@ if not os.path.exists('config'):
             "mc_user": "INSERT MINECRAFT USERNAME HERE",
             "mc_pass": "INSERT MINECRAFT PASSWORD HERE"
           },
+          "plugins":
+          {
+            "factoids":
+            {
+              "prefix": false
+            }
+          },
           "censored_strings":
           [
             "mypass",
@@ -67,3 +74,4 @@ def config():
 
 
 bot._config_mtime = 0
+

@@ -111,11 +111,16 @@ def forget(inp, db=None, input=None, notice=None):
 
 @hook.command("info")
 @hook.regex(r'^\? ?(.+)')
-def question(inp, say=None, db=None):
+def question(inp, say=None, db=None, bot=None):
     "?<word> -- Shows what data is associated with <word>."
+    prefix_on = bot.config["plugins"]["factoids"]["prefix"]
+
     db_init(db)
 
     data = get_memory(db, inp.group(1).strip())
     if data:
         out = multiwordReplace(data, shortcodes)
-        say(out)
+        if prefix_on:
+            say("\x02[%s]:\x02 %s" % (inp.group(1).strip(), out))
+        else:
+            say(out)

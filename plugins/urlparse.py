@@ -18,7 +18,7 @@ def parse(match):
         except:
             return "fail"
 
-@hook.regex(r'([a-zA-Z]://|www\.)?[^ ]+(\.[a-z]+)+')
+@hook.regex(r'(^[^\.])([a-zA-Z]://|www\.)?[^ ]+(\.[a-z]+)\/(.*)')
 def urlparser(match, say=None):
     url = urlnorm.normalize(match.group().encode('utf-8'))
     if url[:7] != "http://":

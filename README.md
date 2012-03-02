@@ -1,40 +1,110 @@
-##CloudBot/1.0
+# CloudBot/1.1
 
-### About
-CloudBot is very heavily based on Skybot by rmmh. (https://github.com/rmmh/skybot)
+## About
 
-### Install
-Before you can run the bot, you need to install a few Python modules. These are *LXML* and *BeautifulSoup*.  On Ubuntu these can be installed using the following commands:
+CloudBot is a Python IRC bot very heavily based on [Skybot](http://git.io/skybot) by [rmmh](http://git.io/rmmh).  
 
-```sudo apt-get install python-lxml
-```
+### Goals
 
-```sudo apt-get install python-beautifulsoup
-```
+* Easy to use wrapper
+* Intuitive configuration
+* Fully controlled from IRC
+* Fully compatable with existing skybot plugins
+* Easily extendable
+  * Thorough documentation
+  * Cross-platform
+* Muti-threaded, efficient
+  * Automatic reloading
+  * Little boilerplate
 
-For the spell.py plugin to work you need *Enchant*. This can be installed with:
-```sudo apt-get install python-enchant
-```
+## Download
 
-The whois.py plugin will work by default, but *not very well*. To make it work properly you will need to install the native *whois* package. This can be installed with:
-```sudo apt-get install whois
-```
+Get CloudBot at [git.io/getcloudbot](http://git.io/getcloudbot "Get CloudBot from Github!").
 
-If you use another OS or distro you can find source packages on the module(s) web site, or you can try to find suitable packages in your package manager.
+Unzip the resulting file, and continue to read this document.
 
-Once installing these packages run the bot once with ```python bot.py``` to generate the config file. Stop the bot, edit the config, and run the bot again with ```python bot.py``` to start it up :)
+## Install
 
-### Requirements
-CloudBot runs on Python 2.7. Many of the plugins require lxml and BeautifulSoup. It is devloped on Ubuntu 11.10 with Python 2.7.2.
+Before you can run the bot, you need to install a few Python modules. These are `lXML`, `BeautifulSoup`, `MyGengo`, and `HTTPlib2`.  These can be installed with PIP (The Python package manager):
 
-### License
-CloudBot is licenced under the GPL v3 license. The terms are as follows.
+`sudo pip install lxml`
 
+`sudo pip install beautifulsoup`
 
-``` 
-    CloudBot 1.0
+`sudo pip install mygengo`
 
-    Copyright © 2011 Luke Rogers. <http://www.dempltr.com/> <lukeroge@gmail.com>
+`sudo pip install httplib2`
+
+On Debian based systems, you can get pip with
+
+`sudo apt-get install pip`
+
+For `.spell` to work, we also need a library called `Enchant`.  On Debian based systems, install it with:
+
+`sudo apt-get install python-enchant`
+
+In addition, for `.whois` to work optimally, you must have `whois` installed. Again, on Debian based systems, install it with:
+
+`sudo apt-get install whois`
+
+For the wrapper to work best, install `screen`, or `daemon`:
+
+`sudo apt-get install screen`
+
+`sudo apt-get install daemon`
+
+If you are a user of another Linux disto, use your package manager to install the dependencies, or, for other operating systems,  use **Google** to locate source packages you can install.
+
+Once you have installed the required dependencies, run the bot☩:
+
+`./cloudbot start`
+
+It will generate a default config for you.  Once you have edited the config, run it again with:
+
+`./cloudbot start`
+
+and it will connect to any server(s) you have added to the config. (Config docs at the [wiki](http://git.io/cloudbotconfig))
+
+## Documentation
+
+To configure your CloudBot, visit the [Config Wiki Page](http://git.io/cloudbotconfig).
+
+To write your own plugins, visit the [Plugin Wiki Page](http://git.io/cloudbotplugins).
+
+More at the [Wiki Main Page](http://git.io/cloudbotwiki).
+
+## Support
+
+The developers reside in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via IRC to #CloudBot on irc.esper.net) on [EsperNet](http://esper.net) and would be glad to help you.
+
+If you think you have found a bug/have a idea/suggestion, please **open a issue** here on Github.
+
+## Example CloudBots
+
+The developers of CloudBot run two CloudBots on [Espernet](http://esper.net).
+
+They can both be found in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via IRC to #CloudBot on irc.esper.net).
+
+**mau5bot** is the stable bot, and runs on the latest release version of CloudBot. (mau5bot is running on **Ubuntu Server** *Oneric Ocelot/11.10* with **Python** *2.7.2*)
+
+**neerbot** is the unstable bot, and runs on the latest development☩☩ version of CloudBot. (neerbot is running on **Debian** *Wheezy/Testing* with **Python** *2.7.2*)
+
+## Requirements
+
+CloudBot runs on **Python** *2.7.x*. It is developed on **Debian** *Wheezy/Testing* with **Python** *2.7.2*.
+
+It **requires Python modules** `lXML`, `BeautifulSoup`, `Enchant`, `MyGengo`, and `HTTPlib2`.
+
+The programs `screen` or `daemon` are recomended for the wrapper to run optimaly.
+
+**Windows** users: Windows compatibility with the wrapper and some plugins is **broken** (such as the ping), but we do intend to add it.☩☩☩
+
+## License
+CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
+    
+    CloudBot/1.1
+
+    Copyright © 2011 Luke Rogers <http://www.dempltr.com/> - <lukeroge@gmail.com>
 
     CloudBot is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -48,4 +118,11 @@ CloudBot is licenced under the GPL v3 license. The terms are as follows.
 
     You should have received a copy of the GNU General Public License
     along with CloudBot.  If not, see <http://www.gnu.org/licenses/>.
-```
+
+## ☩
+
+☩ if you prefer to run the bot with a custom backend/run it manually, or are on **Windows**, run the bot with `./bot.py`
+
+☩☩ or whatever version [neersighted](http://git.io/neersighted) is currently hacking on
+
+☩☩☩ eventually

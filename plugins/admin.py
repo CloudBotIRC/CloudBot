@@ -1,23 +1,53 @@
 #  Shitty plugin made by iloveportalz0r
 #  Broken by The Noodle
 #  Improved by Lukeroge
+#  Further improved by neersighted
 from util import hook
+import os
 import sys
+import subprocess
 import time
-        
-@hook.command
-def quit(inp, input=None, db=None, notice=None):
-    ".quit [reason] -- Kills the bot, with [reason] reason as its quit message.."
+
+@hook.command("quit", autohelp=False)
+@hook.command("exit", autohelp=False)
+@hook.command(autohelp=False)
+def stop(inp, input=None, db=None, notice=None):
+    ".stop [reason] -- Kills the bot, with [reason] as its quit message."
     if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return
     if inp:
-        input.conn.send("QUIT :Bot killed by "+input.nick+" (" + inp + ")")
+        input.conn.send("QUIT :Killed by " + input.nick + " (" + inp + ")")
     else:
-        input.conn.send("QUIT :Bot killed by "+input.nick+" (no reason)")
-    time.sleep(3)
-    sys.exit()
-        
+        input.conn.send("QUIT :Killed by " + input.nick + " (no reason)")
+    time.sleep(5)
+    subprocess.call("./cloudbot stop", shell=True)
+
+
+@hook.command("reboot", autohelp=False)
+@hook.command(autohelp=False)
+def restart(inp, input=None, db=None, notice=None):
+    ".restart [reason] -- Restarts the bot, with [reason] as its quit message."
+    if not input.nick in input.bot.config["admins"]:
+        notice("Only bot admins can use this command!")
+        return
+    if inp:
+        input.conn.send("QUIT :Restarted by " + input.nick + " (" + inp + ")")
+    else:
+        input.conn.send("QUIT :Restarted by " + input.nick + " (no reason)")
+    time.sleep(5)
+    os.execl("./cloudbot", "restart")
+
+@hook.command("clearlogs", autohelp=False)
+@hook.command(autohelp=False)
+def clear(inp, input=None, db=None, notice=None):
+    ".clear -- Clears the bot's log(s)."
+    if not input.nick in input.bot.config["admins"]:
+        notice("Only bot admins can use this command!")
+        return
+    time.sleep(5)
+    subprocess.call("./cloudbot clear", shell=True)
+
 
 @hook.command
 def join(inp, input=None, db=None, notice=None):
@@ -39,6 +69,7 @@ def cycle(inp, input=None, db=None, notice=None):
     input.conn.send("PART " + inp)
     input.conn.send("JOIN " + inp)
 
+
 @hook.command
 def part(inp, input=None, notice=None):
     ".part <channel> -- Parts from <channel>."
@@ -47,6 +78,7 @@ def part(inp, input=None, notice=None):
         return
     notice("Attempting to part from " + inp + "...")
     input.conn.send("PART " + inp)
+
 
 @hook.command
 def nick(inp, input=None, notice=None):
@@ -57,6 +89,7 @@ def nick(inp, input=None, notice=None):
     notice("Changing nick to " + inp + ".")
     input.conn.send("NICK " + inp)
 
+
 @hook.command
 def raw(inp, input=None, notice=None):
     ".raw <command> -- Sends a RAW IRC command."
@@ -65,6 +98,7 @@ def raw(inp, input=None, notice=None):
         return
     notice("Raw command sent.")
     input.conn.send(inp)
+
 
 @hook.command
 def kick(inp, input=None, notice=None):
@@ -82,7 +116,7 @@ def kick(inp, input=None, notice=None):
             for x in split[2:]:
                 reason = reason + x + " "
             reason = reason[:-1]
-            out = out+" :"+reason
+            out = out + " :" + reason
     else:
         chan = input.chan
         user = split[0]
@@ -94,12 +128,15 @@ def kick(inp, input=None, notice=None):
             reason = reason[:-1]
             out = out + " :" + reason
 
-    notice("Attempting to kick %s from %s..." % (user, chan))         
+    notice("Attempting to kick %s from %s..." % (user, chan))
     input.conn.send(out)
+
 
 @hook.command
 def say(inp, input=None, notice=None):
-    ".say [channel] <message> -- Makes the bot say <message> in [channel]. If [channel] is blank the bot will say the <message> in the channel the command was used in."
+    ".say [channel] <message> -- Makes the bot say <message> in [channel]. "\
+    "If [channel] is blank the bot will say the <message> in "\
+    "the channel the command was used in."
     if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return
@@ -118,10 +155,13 @@ def say(inp, input=None, notice=None):
         out = "PRIVMSG %s :%s" % (input.chan, message)
     input.conn.send(out)
 
+
 @hook.command("me")
 @hook.command
 def act(inp, input=None, notice=None):
-    ".act [channel] <action> -- Makes the bot act out <action> in [channel]. Ff [channel] is blank the bot will act the <action> in the channel the command was used in."
+    ".act [channel] <action> -- Makes the bot act out <action> in [channel] "\
+    "If [channel] is blank the bot will act the <action> in "\
+    "the channel the command was used in."
     if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return
@@ -139,6 +179,7 @@ def act(inp, input=None, notice=None):
         message = message[:-1]
         out = "PRIVMSG %s :\x01ACTION %s\x01" % (input.chan, message)
     input.conn.send(out)
+
 
 @hook.command
 def topic(inp, input=None, notice=None):

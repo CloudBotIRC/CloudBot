@@ -19,7 +19,7 @@ def gis(inp):
                 parsed['responseStatus'], ''))
     if not parsed['responseData']['results']:
         return 'no images found'
-    return random.choice(parsed['responseData']['results'][:10]) \
+    return random.choice(parsed['responseData']['results'][:10])\
             ['unescapedUrl']  # squares is dumb
 
 

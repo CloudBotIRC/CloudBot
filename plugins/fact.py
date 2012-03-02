@@ -11,11 +11,9 @@ def fact(inp, say=False, nick=False):
         try:
             fact, link = get_fact()
         except:
-             pass
+            pass
 
-    return u"%s [ %s ]" % (fact, link)  
-
-    
+    return u"%s [ %s ]" % (fact, link)
 
 def get_fact():
     page = http.get('http://www.omg-facts.com/random')

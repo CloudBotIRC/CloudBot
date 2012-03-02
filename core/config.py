@@ -12,17 +12,19 @@ if not os.path.exists('config'):
         {
           "connections":
           {
-            "test connection":
+            "EsperNet":
             {
-              "server": "localhost",
-              "nick": "nickname",
+              "server": "irc.esper.net",
+              "nick": "MyNewCloudBot",
               "user": "cloudbot",
-              "realname": "CloudBot - http://j.mp/uS5Cvx",
+              "realname": "CloudBot - http://git.io/cloudbot",
               "nickserv_password": "",
-              "channels": ["#channel"],
+              "channels": ["#cloudbot"],
+              "invitejoin": true,
+              "autorejoin": false,
               "command_prefix": ".",
-              "stayalive": "",
-              "stayalive_delay": "20"
+              "stayalive": false,
+              "stayalive_delay": 20
             }
           },
           "disabled_plugins": [],
@@ -36,23 +38,28 @@ if not os.path.exists('config'):
             "bitly_api": "INSERT API KEY FROM bitly.com HERE",
             "wolframalpha": "INSERT API KEY FROM wolframalpha.com HERE",
             "lastfm": "INSERT API KEY FROM lastfm HERE",
-            "mc_user": "INSERT MINECRAFT USERNAME HERE (used to check login servers in mctools.py)",
-            "mc_pass": "INSERT MINECRAFT PASSWORD HERE (used to check login servers in mctools.py)"
+            "mc_user": "INSERT MINECRAFT USERNAME HERE",
+            "mc_pass": "INSERT MINECRAFT PASSWORD HERE"
+          },
+          "plugins":
+          {
+            "factoids":
+            {
+              "prefix": false
+            }
           },
           "censored_strings":
           [
-            "DCC SEND",
-            "1nj3ct",
-            "thewrestlinggame",
-            "startkeylogger",
-            "hybux",
-            "\\0",
-            "\\x01",
-            "!coz",
-            "!tell /x"
+            "mypass",
+            "mysecret"
           ],
-          "admins": []
+          "admins": ["myname"]
         }''') + '\n')
+    print "Config generated!"
+    print "Please edit the config now!"
+    print "For help, see http://git.io/cloudbotwiki"
+    print "Thank you for using CloudBot!"
+    sys.exit()
 
 
 def config():
@@ -63,7 +70,8 @@ def config():
             bot.config = json.load(open('config'))
             bot._config_mtime = config_mtime
         except ValueError, e:
-            print 'ERROR: malformed config!', e
+            print 'error: malformed config', e
 
 
 bot._config_mtime = 0
+

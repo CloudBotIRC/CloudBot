@@ -8,7 +8,7 @@ from util import hook, http
 locale.setlocale(locale.LC_ALL, '')
 
 youtube_re = (r'(?:youtube.*?(?:v=|/v/)|youtu\.be/|yooouuutuuube.*?id=)'
-              '([-_a-z0-9]+)', re.I)
+              '([-_a-zA-Z0-9]+)', re.I)
 
 base_url = 'http://gdata.youtube.com/feeds/api/'
 url = base_url + 'videos/%s?v=2&alt=jsonc'
@@ -50,11 +50,12 @@ def get_video_description(vid_id):
 
     return out
 
+
 def GetInHMS(seconds):
     hours = seconds / 3600
-    seconds -= 3600*hours
+    seconds -= 3600 * hours
     minutes = seconds / 60
-    seconds -= 60*minutes
+    seconds -= 60 * minutes
     if hours == 0:
         return "%02d:%02d" % (minutes, seconds)
     return "%02d:%02d:%02d" % (hours, minutes, seconds)
@@ -63,6 +64,7 @@ def GetInHMS(seconds):
 @hook.regex(*youtube_re)
 def youtube_url(match):
     return get_video_description(match.group(1))
+
 
 @hook.command('yt')
 @hook.command('y')

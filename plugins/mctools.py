@@ -36,4 +36,3 @@ def mcpaid(inp):
         return "The account \'" + inp + "\' is a premium Minecraft account!"
     else:
         return "The account \'" + inp + "\' is not a premium Minecraft account!"
-

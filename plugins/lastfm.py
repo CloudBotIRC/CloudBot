@@ -1,3 +1,4 @@
+# Upgraded with tables/cacheing by ChauffeR of #freebnc on irc.esper.net
 from util import hook, http
 
 @hook.command('l')
@@ -20,13 +21,13 @@ def lastfm(inp, nick='', say=None, db=None, bot=None):
         if not inp: user = sql[0]
         else:
             user = inp
-            db.execute("insert or replace into lastfm(nick,acc) values(?,?)",(nick.lower(), user))
+            db.execute("insert or replace into lastfm(nick,acc) values(?,?)", (nick.lower(), user))
             db.commit()
     else:
         if not inp: user = nick
         else:
             user = inp
-            db.execute("insert or replace into lastfm(nick,acc) values(?,?)",(nick.lower(), user))
+            db.execute("insert or replace into lastfm(nick,acc) values(?,?)", (nick.lower(), user))
             db.commit()
 
     response = http.get_json(api_url, method="user.getrecenttracks",
@@ -67,4 +68,3 @@ def lastfm(inp, nick='', say=None, db=None, bot=None):
         ret += " on \x02%s\x0f" % album
 
     say(ret)
-

@@ -47,4 +47,3 @@ def insult(inp, nick=None, say=None, input=None):
         msg = "*stares at " + nick + "*"
 
     say(msg)
-

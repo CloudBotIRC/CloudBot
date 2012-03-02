@@ -1,12 +1,7 @@
+persist
+config
+*.db
+*.log
 .*.swp
 *.pyc
 *.orig
-persist
-config
-pep8.py
-.project
-.pydevproject
-*.db
-web
-control.sh
-bot.log

@@ -31,4 +31,3 @@ def clock(inp, say=None):
     output = output.decode('utf-8', 'ignore')
 
     return output
-    

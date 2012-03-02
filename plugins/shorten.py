@@ -9,6 +9,7 @@ from urllib import urlencode
 class ShortenError(Exception):
     def __init__(self, value):
         self.value = value
+
     def __str__(self):
         return repr(self.value)
  
@@ -23,7 +24,7 @@ def bitly(url, user, apikey):
         return "Could not shorten %s!" % url
 
 @hook.command
-def shorten(inp, bot = None):
+def shorten(inp, bot=None):
     ".shorten <url> - Makes an j.mp/bit.ly shortlink to the url provided."
     api_user = bot.config.get("api_keys", {}).get("bitly_user", None)    	
     api_key = bot.config.get("api_keys", {}).get("bitly_api", None)
@@ -32,7 +33,7 @@ def shorten(inp, bot = None):
     return bitly(inp, api_user, api_key)
 
 @hook.command
-def expand(inp, bot = None):
+def expand(inp, bot=None):
     ".expand <url> - Gets the original URL from a shortened link."
     try:
         url = http.get_url(inp)

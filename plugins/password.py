@@ -1,8 +1,8 @@
 # Password generation code by <TheNoodle>
-
 from util import hook
 import string
 import random
+
 
 def gen_password(types):
     #Password Generator - The Noodle http://bowlofnoodles.net
@@ -29,13 +29,13 @@ def gen_password(types):
         needs_def = 1
     #adds numbers
     if "numeric" in types or "numbers" in types:
-        for x in range(0,10):
+        for x in range(0, 10):
             okay.append(str(x))
     else:
         needs_def = 1
     #adds symbols
     if "symbols" in types:
-        sym = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', '_', '+', '[', ']', '{', '}', '\\', '|', ';', ':', "'", '.', '>', ',', '<', '/', '?', '`', '~','"']
+        sym = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', '_', '+', '[', ']', '{', '}', '\\', '|', ';', ':', "'", '.', '>', ',', '<', '/', '?', '`', '~', '"']
         for x in sym:
             okay.append(x)
     else:
@@ -50,15 +50,13 @@ def gen_password(types):
         password = password + random.choice(okay)
     return password
 
+
 @hook.command
 def password(inp, notice=None):
-    ".password <length> [types] -- Generates a password of <legenth>. [types] can include 'alpha', 'no caps', 'numeric', 'symbols' or any combination of the types, eg. 'numbers symbols'"
-    if inp == "penis":
-        return "error: unable to process request, input too short!"
-    if inp == "mypenis":
-        return "error: unable to process request, input too short!"
-    if inp == "dick":
-        return "error: unable to process request, input too short!"
-    if inp == "mydick":
-        return "error: unable to process request, input too short!"
-    notice(gen_password(inp))
+    ".password <legenth> [types] -- Generates a password of <legenth> (default 10). [types] can include 'alpha', 'no caps', 'numeric', 'symbols' or any combination of the types, eg. 'numbers symbols'"
+    password = gen_password(inp)
+    short = "error: input too short"
+    penis = ["penis", "mypenis", "dick", "mydick"]
+    if inp in penis:
+        return short
+    notice(password)

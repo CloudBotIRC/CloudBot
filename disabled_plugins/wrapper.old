@@ -1,0 +1,196 @@
+#!/usr/bin/env python
+# Bot Wrapper by neersighted
+
+# Import required modules
+import os
+import sys
+import subprocess
+import json
+import re
+
+# Files
+configfile = os.path.isfile("./config")
+botfile = os.path.isfile("./bot.py")
+
+# Colors
+nocol = "\033[1;m"
+red = "\033[1;31m"
+green = "\033[1;32m"
+
+# Messages
+firstrun = "Welclome to your first run of: "
+usage = "usage: ./cloudbot {start|stop|restart|status}"
+iusage = "{1|start} {2|stop} {3|restart} {4|status} {5|exit}"
+quit = "Thanks for using CloudBot!"
+
+error1 = red + "Neither screen nor daemon is installed! "\
+        "This program cannot run! {ERROR 1}" + nocol
+error2 = red + "Could not find bot.py! Are you in the wrong folder? "\
+        "{ERROR 2}" + nocol
+error3 = red + "Invalid choice, exiting! {ERROR 3}" + nocol
+error4 = red + "Program killed by user! {ERROR 4}" + nocol
+error5 = red + "Invalid backend in config! (Or, backend not installed)"\
+                " {ERROR 5}" + nocol
+error6 = red + "Author error! We be derpin'! {ERROR 6}" + nocol
+
+
+# Commands
+pwd = os.getcwd()
+clearlog = ": > ./bot.log"
+
+start = "echo " + "'" + error1 + "'"
+stop = "echo " + "'" + error1 + "'"
+restart = "echo " + "'" + error1 + "'"
+pid = "echo 'Cannot get pid'"
+
+daemonstart = "daemon -r -n cloudbot -O " + pwd + \
+            "/bot.log python " + pwd + "/bot.py"
+daemonstop = "daemon -n cloudbot --stop"
+daemonrestart = "./cloudbot stop > /dev/null 2>&1 && ./cloudbot start > /dev/null 2>&1"
+daemonpid = "pidof /usr/bin/daemon"
+
+screenstart = "screen -d -m -S cloudbot -t cloudbot python " + pwd +\
+        "/bot.py > " + pwd + "/bot.log 2>&1"
+screenstop = "kill `pidof /usr/bin/screen`"
+screenrestart = "./cloudbot stop > /dev/null 2>&1 && ./cloudbot start > /dev/null 2>&1"
+screenpid = "pidof /usr/bin/screen"
+
+# Checks
+if configfile:
+    try:
+        config = json.load(open('config'))
+        command = ":"
+    except ValueError, e:
+        print 'error: malformed config', e
+else:
+    config = False
+    command = "python bot.py"
+
+daemoncheck = subprocess.check_output("locate /usr/bin/daemon", shell=True)
+daemon = re.match(r'^/usr/bin/daemon$', daemoncheck)
+
+screencheck = subprocess.check_output("locate /usr/bin/screen", shell=True)
+screen = re.match(r'^/usr/bin/screen$', screencheck)
+
+if configfile:
+    backend = config.get("wrapper", {}).get("backend", "daemon")
+    daemonloc = config.get("wrapper", {}).get("daemonloc", "/usr/bin/daemon")
+    screenloc = config.get("wrapper", {}).get("screenloc", "/usr/bin/screen")
+else:
+    backend = False
+    daemonloc = "/usr/bin/daemon"
+    screenloc = "/usr/bin/screen"
+
+try:
+    runningcheck = subprocess.check_output("ps ax|grep cloudbot|"\
+                            "grep -v grep|grep -v ./cloudbot", shell=True)
+    running = re.match(r'^[1-9]+', runningcheck)
+except (subprocess.CalledProcessError):
+    running = False
+
+# Set commands
+if (backend == "daemon"):
+    if daemon:
+        start = daemonstart
+        stop = daemonstop
+        restart = daemonrestart
+        pid = daemonpid
+    else:
+        print error5
+        exit
+elif (backend == "screen"):
+    if screen:
+        start = screenstart
+        stop = screenstop
+        restart = screenrestart
+        pid = screenpid
+    else:
+        print error5
+        exit
+elif (backend == False):
+    print firstrun
+else:
+    print error5
+    exit
+
+# Fancy banner
+print "  ______  __        ______    __    __  "\
+" _______  .______     ______   .___________."
+print " /      ||  |      /  __  \  |  |  |  | "\
+"|       \ |   _  \   /  __  \  |           |"
+print "|  ,----'|  |     |  |  |  | |  |  |  | "\
+"|  .--.  ||  |_)  | |  |  |  | `---|  |----`"
+print "|  |     |  |     |  |  |  | |  |  |  | "\
+"|  |  |  ||   _  <  |  |  |  |     |  |     "
+print "|  `----.|  `----.|  `--'  | |  `--'  | "\
+"|  '--'  ||  |_)  | |  `--'  |     |  |     "
+print " \______||_______| \______/   \______/  "\
+"|_______/ |______/   \______/      |__|     "
+print "http://git.io/cloudbot                  "\
+"                                 by lukeroge"
+
+# Read arguments/turn interactive
+try:
+    if (len(sys.argv) > 1):
+        read = 0
+    else:
+        sys.argv = "interactive"
+        print iusage
+        read = int(raw_input("Please choose a option: "))
+
+    if (sys.argv[1] == "start") or (read == 1):
+        if running:
+            print "Bot is already running, cannot start!"
+        else:
+            command = start
+            print "Starting... (" + backend + ")"
+    elif (sys.argv[1] == "stop") or (read == 2):
+        if running:
+            command = stop
+            print "Stopping... (" + backend + ")"
+        else:
+            print "Bot is not running, cannot stop!"
+    elif (sys.argv[1] == "restart") or (read == 3):
+        if running:
+            command = restart
+            print "Restarting... (" + backend + ")"
+        else:
+            print "Bot is not running, cannot restart!"
+    elif (sys.argv[1] == "status") or (read == 4):
+        if running:
+            command = pid
+            print green + "Bot is running! " + nocol
+        else:
+            print red + "Bot is not running! " + nocol
+    elif (sys.argv[1] == "clear"):
+        command = clearlog
+    elif (sys.argv[1] == "exit") or (read == 5):
+        exit
+    elif (sys.argv[1] == "interactive"):
+        pass
+    else:
+        print usage
+        exit
+
+# Pretify errors
+except (TypeError, ValueError), e:
+    print error3
+    exit
+except (KeyboardInterrupt), e:
+    print error4
+    exit
+except (NameError, SyntaxError), e:
+    print error6
+    exit
+
+# Check for bot files
+if botfile:
+    pass
+else:
+    print error2
+    exit
+
+# Call command
+subprocess.call(command, shell=True)
+print quit
+exit

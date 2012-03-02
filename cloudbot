@@ -1,0 +1,124 @@
+#!/bin/bash
+echo ""
+echo "   ________                ______        __ "
+echo "  / ____/ /___  __  ______/ / __ )____  / /_"
+echo " / /   / / __ \/ / / / __  / __  / __ \/ __/"
+echo "/ /___/ / /_/ / /_/ / /_/ / /_/ / /_/ / /_  "
+echo "\____/_/\____/\__,_/\__,_/_____/\____/\__/  "                                          
+echo " http://git.io/cloudbot         by lukeroge "
+echo ""
+locatefiles() {
+    botfile="/bot.py"
+    botfile=$(pwd)$botfile
+    logfile="/bot.log"
+    logfile=$(pwd)$logfile
+}
+
+running() {
+    if [[ $(ps aux|grep bot.py|grep -v grep|grep -v daemon|grep -v screen) != "" ]]; then
+        true
+    else
+        false
+    fi
+}
+
+checkbackend() {
+        if dpkg -l| grep ^ii|grep daemon|grep 'turns other' > /dev/null; then
+            backend="daemon"
+        elif dpkg -l| grep ^ii|grep screen|grep 'terminal multi' > /dev/null; then
+            backend="screen"
+        else
+            backend="manual"
+        fi
+    return 0
+}
+
+setcommands() {
+    status() {
+        if running; then
+            echo "CloudBot is running!"
+        else
+            echo "CloudBot is not running!"
+        fi
+    }
+    clear() {
+        : > $logfile
+    }
+    if [ "$backend" == "daemon" ]; then
+        start() {
+            daemon -r -n cloudbot -O $logfile python $botfile
+        }
+        stop() {
+            daemon -n cloudbot --stop
+        }
+    elif [ "$backend" == "screen" ]; then
+        start() {
+            screen -d -m -S cloudbot -t cloudbot python $botfile > $logfile 2>&1
+        }
+        stop() {
+            proc=`ps ax|grep -v grep|grep screen|grep $botfile`
+            pid=`top -n 1 -p ${proc:0:5} | grep ${proc:0:5}`
+            kill $pid
+        }
+    elif [ "$backend" == "manual" ]; then
+        start() {
+            $botfile
+        }
+        stop() {
+            proc=`ps ax|grep -v grep|grep python|grep $botfile`
+            pid=`top -n 1 -p ${proc:0:5} | grep ${proc:0:5}`
+            kill $pid
+        }
+    fi
+}
+
+processargs() {
+    case $1 in
+        start)
+            if running; then
+                echo "Cannot start! Bot is already running!"
+            else
+                echo "Starting CloudBot... ($backend)"
+                start
+            fi
+        ;;
+        stop)
+            if running; then
+                echo "Stopping CloudBot... ($backend)"
+                stop
+            else
+                echo "Cannot stop! Bot is not already running!"
+            fi
+        ;;
+        restart)
+            if running; then
+                echo "Restarting CloudBot... ($backend)"
+                stop
+                start
+            else
+                echo "Cannot restart! Bot is not already running!"
+            fi
+        ;;
+        clear)
+            echo "Clearing logs..."
+            clear
+        ;;
+        status)
+            status
+        ;;
+        *)  
+            echo "Please enter a command:"
+            usage="./cloudbot {start|stop|restart|clear|status}"
+            echo $usage
+        ;;
+    esac
+}
+
+main() {
+    locatefiles
+    checkbackend
+    setcommands
+    processargs $1
+}
+
+main $*

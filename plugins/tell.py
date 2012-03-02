@@ -31,7 +31,6 @@ def tellinput(paraml, input=None, db=None, bot=None):
 
     db_init(db)
 
-
     tells = get_tells(db, input.nick)
 
     if tells:

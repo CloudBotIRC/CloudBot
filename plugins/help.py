@@ -24,7 +24,7 @@ def help(inp, input=None, bot=None, say=None, notice=None):
 
     if not inp:
         length = 0
-        out = ["",""]
+        out = ["", ""]
         well = []
         for x in commands:
             well.append(x)

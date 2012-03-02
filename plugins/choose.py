@@ -6,7 +6,8 @@ from util import hook
 
 @hook.command
 def choose(inp):
-    ".choose <choice1>, [choice2], [choice3], [choice4], ... -- Randomly picks one of the given choices."
+    ".choose <choice1>, [choice2], [choice3], [choice4], ... -- "\
+    "Randomly picks one of the given choices."
 
     c = re.findall(r'([^,]+)', inp)
     if len(c) == 1:

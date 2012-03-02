@@ -5,59 +5,58 @@ import time
 
 from util import hook, http
 
-socket.setdefaulttimeout(10)  # global setting
+socket.setdefaulttimeout(10)
 
 
-#autorejoin channels
-#@hook.event('KICK')
-#def rejoin(paraml, conn=None):
-#    if paraml[1] == conn.nick:
-#        if paraml[0].lower() in conn.channels:
-#            conn.join(paraml[0])
-
-
-#join channels when invited
+# Auto-join on Invite (Configurable, defaults to True)
 @hook.event('INVITE')
 def invite(paraml, conn=None):
-    conn.join(paraml[-1])
+    invitejoin = conn.conf.get('invitejoin', True)
+    if invitejoin:
+        conn.join(paraml[-1])
+    else:
+        return None
 
 
+# Rejoin on kick (Configurable, defaults to False)
+@hook.event('KICK')
+def rejoin(paraml, conn=None):
+    autorejoin = conn.conf.get('autorejoin', False)
+    if autorejoin:
+        conn.join(paraml[0])
+    else:
+        return None
+
+
+# Identify to NickServ (or other service)
 @hook.event('004')
 def onjoin(paraml, conn=None, bot=None):
-    # identify to services
     nickserv_password = conn.conf.get('nickserv_password', '')
     nickserv_name = conn.conf.get('nickserv_name', 'nickserv')
     nickserv_command = conn.conf.get('nickserv_command', 'IDENTIFY %s')
     if nickserv_password:
         if nickserv_password in bot.config['censored_strings']:
-	    bot.config['censored_strings'].remove(nickserv_password)
+            bot.config['censored_strings'].remove(nickserv_password)
         conn.msg(nickserv_name, nickserv_command % nickserv_password)
         bot.config['censored_strings'].append(nickserv_password)
         time.sleep(1)
-
-    # set mode on self
+# Set bot modes
     mode = conn.conf.get('mode')
     if mode:
         conn.cmd('MODE', [conn.nick, mode])
 
-    # join channels
+# Join config-defined channels
     for channel in conn.channels:
         conn.join(channel)
-        time.sleep(1)  # don't flood JOINs
+        time.sleep(1)
 
-    # set user-agent
+# HTTP Useragent
+    http.ua_cloudbot = 'CloudBot - http://git.io/cloudbot'
 
-    http.ua_skybot = 'CloudBot'
-
-    # stayalive code
-
+# Stay-alive code
     stayalive = conn.conf.get('stayalive')
     if stayalive:
+        delay = conn.conf.get('stayalive_delay', 20)
         while True:
-            time.sleep(conn.conf.get('stayalive_delay', 20))
+            time.sleep(delay)
             conn.cmd('PING', [conn.nick])
-
-
-@hook.regex(r'^\x01VERSION\x01$')
-def version(inp, notice=None):
-    notice('\x01VERSION CloudBot - https://github.com/lukeroge/CloudBot')

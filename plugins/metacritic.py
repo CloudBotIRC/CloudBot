@@ -7,6 +7,7 @@ from util import hook, http
 
 
 @hook.command('mc')
+@hook.command
 def metacritic(inp):
     ".mc [all|movie|tv|album|x360|ps3|pc|ds|wii] <title> -- Gets rating for <title> from metacritic on the specified medium."
 

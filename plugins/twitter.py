@@ -26,28 +26,28 @@ history = []
 history_max_size = 250
 
 def parseDateTime(s):
-	if s is None:
-		return None
-	m = re.match(r'(.*?)(?:\.(\d+))?(([-+]\d{1,2}):(\d{2}))?$',
-				 str(s))
-	datestr, fractional, tzname, tzhour, tzmin = m.groups()
+    if s is None:
+        return None
+    m = re.match(r'(.*?)(?:\.(\d+))?(([-+]\d{1,2}):(\d{2}))?$',
+                str(s))
+    datestr, fractional, tzname, tzhour, tzmin = m.groups()
+
+    if tzname is None:
+        tz = None
+    else:
+        tzhour, tzmin = int(tzhour), int(tzmin)
+        if tzhour == tzmin == 0:
+            tzname = 'UTC'
+        tz = FixedOffset(timedelta(hours=tzhour,
+                                minutes=tzmin), tzname)
  
-	if tzname is None:
-		tz = None
-	else:
-		tzhour, tzmin = int(tzhour), int(tzmin)
-		if tzhour == tzmin == 0:
-			tzname = 'UTC'
-		tz = FixedOffset(timedelta(hours=tzhour,
-								   minutes=tzmin), tzname)
- 
-	x = datetime.strptime(datestr, "%Y-%m-%d %H:%M:%S")
-	if fractional is None:
-		fractional = '0'
-	fracpower = 6 - len(fractional)
-	fractional = float(fractional) * (10 ** fracpower)
- 
-	return x.replace(microsecond=int(fractional), tzinfo=tz)
+    x = datetime.strptime(datestr, "%Y-%m-%d %H:%M:%S")
+    if fractional is None:
+        fractional = '0'
+    fracpower = 6 - len(fractional)
+    fractional = float(fractional) * (10 ** fracpower)
+
+    return x.replace(microsecond=int(fractional), tzinfo=tz)
 
 
 @hook.command

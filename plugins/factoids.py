@@ -30,13 +30,14 @@ def get_memory(db, word):
     else:
         return None
 
- 
+
 def multiwordReplace(text, wordDic):
     """
     take a text and replace words that match a key in a dictionary with
     the associated value, return the changed text
     """
     rc = re.compile('|'.join(map(re.escape, wordDic)))
+
     def translate(match):
         return wordDic[match.group(0)]
     return rc.sub(translate, text)
@@ -49,7 +50,6 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
         notice("Only bot admins can use this command!")
         return
     db_init(db)
-
 
     append = False
 
@@ -87,6 +87,7 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
         notice('Remembered!')
         return
 
+
 @hook.command("f")
 def forget(inp, db=None, input=None, notice=None):
     ".forget <word> -- Forgets a remembered <word>."
@@ -107,13 +108,22 @@ def forget(inp, db=None, input=None, notice=None):
         notice("I don't know about that.")
         return
 
+
 @hook.command("info")
 @hook.regex(r'^\? ?(.+)')
-def question(inp, say=None, db=None):
+def question(inp, say=None, db=None, bot=None):
     "?<word> -- Shows what data is associated with <word>."
+    try:
+        prefix_on = bot.config["plugins"]["factoids"]["prefix"]
+    except KeyError:
+        prefix_on = False
+
     db_init(db)
 
     data = get_memory(db, inp.group(1).strip())
     if data:
         out = multiwordReplace(data, shortcodes)
-        say(out)
+        if prefix_on:
+            say("\x02[%s]:\x02 %s" % (inp.group(1).strip(), out))
+        else:
+            say(out)

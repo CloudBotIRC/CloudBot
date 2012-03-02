@@ -13,7 +13,7 @@ os.chdir(sys.path[0] or '.')  # do stuff relative to the install directory
 class Bot(object):
     pass
 
-print 'Welcome to Cloudbot - Version 1.0 - https://github.com/lukeroge/CloudBot/'
+print 'Welcome to Cloudbot - Version 1.1 - http://git.io/cloudbot'
 
 bot = Bot()
 

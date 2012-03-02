@@ -87,7 +87,7 @@ processargs() {
         ;;
         stop)
             if running; then
-                echo "Stoppinging... ($backend)"
+                echo "Stopping... ($backend)"
                 stop
             else
                 echo "Cannot stop! Bot is not already running!"
@@ -110,13 +110,13 @@ processargs() {
             status
         ;;
         *)
+            usage="./cloudbot {start|stop|restart|clear|status}"
             echo $usage
         ;;
     esac
 }
 
 main() {
-    usage="./cloudbot {start|stop|restart|clear|status}"
     locatefiles
     checkbackend
     setcommands

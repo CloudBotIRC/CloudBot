@@ -1,15 +1,11 @@
 #!/bin/bash
-echo
-echo "Welcome to:                                                                         "
-echo "  ______  __        ______    __    __   _______  .______     ______   .___________."
-echo " /      ||  |      /  __  \  |  |  |  | |       \ |   _  \   /  __  \  |           |"
-echo "|  ,----'|  |     |  |  |  | |  |  |  | |  .--.  ||  |_)  | |  |  |  | \`---|  |----\`"
-echo "|  |     |  |     |  |  |  | |  |  |  | |  |  |  ||   _  <  |  |  |  |     |  |     "
-echo "|  \`----.|  \`----.|  \`--'  | |  \`--'  | |  '--'  ||  |_)  | |  \`--'  |     |  |     "
-echo " \______||_______| \______/   \______/  |_______/ |______/   \______/      |__|     "
-echo " http://git.io/cloudbot                                                 by lukeroge "
-echo
-
+echo "   ________                ______        __ "
+echo "  / ____/ /___  __  ______/ / __ )____  / /_"
+echo " / /   / / __ \/ / / / __  / __  / __ \/ __/"
+echo "/ /___/ / /_/ / /_/ / /_/ / /_/ / /_/ / /_  "
+echo "\____/_/\____/\__,_/\__,_/_____/\____/\__/  "                                          
+echo " http://git.io/cloudbot          lukeroge "
+echo ""
 locatefiles() {
     botfile="/bot.py"
     botfile=$(pwd)$botfile
@@ -81,13 +77,13 @@ processargs() {
             if running; then
                 echo "Cannot start! Bot is already running!"
             else
-                echo "Starting... ($backend)"
+                echo "Starting CloudBot... ($backend)"
                 start
             fi
         ;;
         stop)
             if running; then
-                echo "Stopping... ($backend)"
+                echo "Stopping CloudBot... ($backend)"
                 stop
             else
                 echo "Cannot stop! Bot is not already running!"
@@ -95,7 +91,7 @@ processargs() {
         ;;
         restart)
             if running; then
-                echo "Restarting... ($backend)"
+                echo "Restarting CloudBot... ($backend)"
                 stop
                 start
             else
@@ -109,7 +105,8 @@ processargs() {
         status)
             status
         ;;
-        *)
+        *)  
+            echo "Please enter a command:"
             usage="./cloudbot {start|stop|restart|clear|status}"
             echo $usage
         ;;

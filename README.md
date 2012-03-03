@@ -104,7 +104,7 @@ CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
     
     CloudBot/DEV
 
-    Copyright © 2011 Luke Rogers <http://www.dempltr.com/> - <lukeroge@gmail.com>
+    Copyright © 2011 ClouDev <http://cloudev.github.com/> - <cloudev@neersighted.com>
 
     CloudBot is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

@@ -2,15 +2,15 @@ from util import hook
 import re
 import random
 
-slaps = ["slaps <who> with a <item>",
-        "slaps <who> around a bit with a <item>",
-        "throws a <item> at <who>",
-        "grabs a <item> and throws it in <who>'s face",
-        "holds <who> down and repeatedly whacks them with a <item>",
-        "prods <who> with a flaming <item>",
-        "picks up a <item>, and whacks <who> with it",
-        "ties <who> to a chair and throws a <item> at them",
-        "hits <who> on the head with a <item>"]
+slaps = ["slaps <who> with a <item>.",
+        "slaps <who> around a bit with a <item>.",
+        "throws a <item> at <who>.",
+        "grabs a <item> and throws it in <who>'s face.",
+        "holds <who> down and repeatedly whacks them with a <item>.",
+        "prods <who> with a flaming <item>.",
+        "picks up a <item>, and whacks <who> with it.",
+        "ties <who> to a chair and throws a <item> at them.",
+        "hits <who> on the head with a <item>."]
 
 items = ["cast iron skillet",
         "large trout",
@@ -20,7 +20,7 @@ items = ["cast iron skillet",
         "diamond sword",
         "physics textbook",
         "television",
-        "mau5 head",
+        "mau5head",
         "five ton truck",
         "roll of duct tape",
         "book",

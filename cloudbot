@@ -77,6 +77,7 @@ processargs() {
         start)
             if running; then
                 echo "Cannot start! Bot is already running!"
+                exit 1
             else
                 echo "Starting CloudBot... ($backend)"
                 start
@@ -88,6 +89,7 @@ processargs() {
                 stop
             else
                 echo "Cannot stop! Bot is not already running!"
+                exit 1
             fi
         ;;
         restart)
@@ -97,6 +99,7 @@ processargs() {
                 start
             else
                 echo "Cannot restart! Bot is not already running!"
+                exit 1
             fi
         ;;
         clear)
@@ -122,3 +125,4 @@ main() {
 }
 
 main $*
+exit 0

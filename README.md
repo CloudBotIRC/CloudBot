@@ -55,7 +55,7 @@ For the wrapper to work best, install `screen`, or `daemon`:
 
 If you are a user of another Linux disto, use your package manager to install the dependencies, or, for other operating systems,  use **Google** to locate source packages you can install.
 
-Once you have installed the required dependencies, run the bot☩:
+Once you have installed the required dependencies, run the bot¹:
 
 `./cloudbot start`
 
@@ -87,17 +87,17 @@ They can both be found in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via 
 
 **mau5bot** is the stable bot, and runs on the latest release version of CloudBot. (mau5bot is running on **Ubuntu Server** *Oneric Ocelot/11.10* with **Python** *2.7.2*)
 
-**neerbot** is the unstable bot, and runs on the latest development☩☩ version of CloudBot. (neerbot is running on **Debian** *Wheezy/Testing* with **Python** *2.7.2*)
+**neerbot** is the unstable bot, and runs on the latest development² version of CloudBot. (neerbot is running on **Debian** *Wheezy/Testing* with **Python** *2.7.2*)
 
 ## Requirements
 
-CloudBot runs on **Python** *2.7.x*. It is developed on **Debian** *Wheezy/Testing* with **Python** *2.7.2*.
+CloudBot runs on **Python** *2.7.x*. It is developed on **Debian** *Wheezy/Testing* and **Ubuntu** *11.10* with **Python** *2.7.2*.
 
 It **requires Python modules** `lXML`, `BeautifulSoup`, `Enchant`, `MyGengo`, and `HTTPlib2`.
 
 The programs `screen` or `daemon` are recomended for the wrapper to run optimaly.
 
-**Windows** users: Windows compatibility with the wrapper and some plugins is **broken** (such as the ping), but we do intend to add it.☩☩☩
+**Windows** users: Windows compatibility with the wrapper and some plugins is **broken** (such as the ping), but we do intend to add it.³
 
 ## License
 CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
@@ -121,8 +121,8 @@ CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
 
 ## ☩
 
-☩ if you prefer to run the bot with a custom backend/run it manually, or are on **Windows**, run the bot with `./bot.py`
+¹ if you prefer to run the bot with a custom backend/run it manually, or are on **Windows**, run the bot with `./bot.py`
 
-☩☩ or whatever version [neersighted](http://git.io/neersighted) is currently hacking on
+² or whatever version [neersighted](http://git.io/neersighted) is currently hacking on
 
-☩☩☩ eventually
+³ eventually

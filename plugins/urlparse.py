@@ -18,8 +18,17 @@ def parse(match):
         except:
             return "fail"
 
-@hook.regex(r'([a-zA-Z]://|www\.)?[^ ]+(\.[a-z]+)(\/)?(.*)')
-def urlparser(match, say=None):
+# there should be " after the ' in the regex string but I was unable to escape it properly
+@hook.regex(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'.,<>?«»“”‘’]))")
+def urlparser(match, say=None, bot=None):
+    try:
+        enabled = bot.config["plugins"]["urlparse"]["enabled"]
+    except KeyError:
+        enabled = False
+
+    if not enabled:
+        return
+
     url = urlnorm.normalize(match.group().encode('utf-8'))
     if url[:7] != "http://":
         if url[:8] != "https://":
@@ -33,8 +42,8 @@ def urlparser(match, say=None):
     title = http.unescape(title)
     realurl = http.get_url(url)
     if realurl == url:
-        say("(Link) %s" % title)
+        say(u"(Link) %s" % title)
         return
     else:
-        say("(Link) %s [%s]" % (title, realurl))
+        say(u"(Link) %s [%s]" % (title, realurl))
         return

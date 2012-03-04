@@ -37,6 +37,10 @@ def get_video_description(vid_id):
         out += '%dm ' % (length / 60 % 60)
     out += "%ds\x02" % (length % 60)
 
+    if 'rating' in j:
+        out += ' - rated \x02%.2f/5.0\x02 (%d)' % (j['rating'],
+                j['ratingCount'])
+
     if 'viewCount' in j:
         out += ' - \x02%s\x02 views' % locale.format('%d',
                                                      j['viewCount'], 1)

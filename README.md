@@ -19,7 +19,7 @@ CloudBot is a Python IRC bot very heavily based on [Skybot](http://git.io/skybot
 
 ## Download
 
-Get CloudBot at [git.io/getcloudbot](http://git.io/getcloudbot "Get CloudBot from Github!").
+Get CloudBot at [git.io/getcloudbotirc](http://git.io/getcloudbotirc "Get CloudBot from Github!").
 
 Unzip the resulting file, and continue to read this document.
 
@@ -63,15 +63,15 @@ It will generate a default config for you.  Once you have edited the config, run
 
 `./cloudbot start`
 
-and it will connect to any server(s) you have added to the config. (Config docs at the [wiki](http://git.io/cloudbotconfig))
+and it will connect to any server(s) you have added to the config. (Config docs at the [wiki](http://git.io/cloudbotircconfig))
 
 ## Documentation
 
-To configure your CloudBot, visit the [Config Wiki Page](http://git.io/cloudbotconfig).
+To configure your CloudBot, visit the [Config Wiki Page](http://git.io/cloudbotircconfig).
 
-To write your own plugins, visit the [Plugin Wiki Page](http://git.io/cloudbotplugins).
+To write your own plugins, visit the [Plugin Wiki Page](http://git.io/cloudbotircplugins).
 
-More at the [Wiki Main Page](http://git.io/cloudbotwiki).
+More at the [Wiki Main Page](http://git.io/cloudbotircwiki).
 
 ## Support
 
@@ -104,7 +104,7 @@ CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
     
     CloudBot/DEV
 
-    Copyright © 2011 ClouDev <http://cloudev.github.com/>
+    Copyright © 2011 ClouDev - <[cloudev.github.com](http://cloudev.github.com)>
 
     CloudBot is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

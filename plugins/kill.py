@@ -48,5 +48,4 @@ def kill(inp, me=None, nick=None, input=None, notice=None):
     kill = random.choice(kills)
     kill = re.sub ('<who>', target, target)
     kill = re.sub ('<body>', random.choice(body), target)
-    msg = kill
-    me(msg)
+    me(kill)

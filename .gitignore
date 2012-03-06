@@ -5,3 +5,5 @@ config
 .*.swp
 *.pyc
 *.orig
+.project
+.pydevproject

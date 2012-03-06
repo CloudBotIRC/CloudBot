@@ -119,8 +119,8 @@ def lart(inp, me=None,  nick=None, input=None, notice=None):
         return
 
     if inp == input.conn.nick.lower() or inp == "itself":
-        msg = re.sub ('<who>', nick, random.choice(larts))
+        target = nick
     else:
-        msg = re.sub ('<who>', inp, random.choice(larts))
-
+        target = inp
+    msg = re.sub ('<who>', target, random.choice(larts))
     me(msg)

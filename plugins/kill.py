@@ -42,12 +42,12 @@ def kill(inp, me=None, nick=None, input=None, notice=None):
         return
 
     if inp == input.conn.nick.lower() or inp == "itself":
-        kill = random.choice(kills)
-        kill = re.sub ('<who>', nick, kill)
-        msg = re.sub ('<body>', random.choice(body), kill)
+        target = random.choice(kills)
+        target = re.sub ('<who>', nick, target)
+        target = re.sub ('<body>', random.choice(body), target)
     else:
-        kill = random.choice(kills)
-        kill = re.sub ('<who>', inp, kill)
-        msg = re.sub ('<body>', random.choice(body), kill)
-
+        target = random.choice(kills)
+        target = re.sub ('<who>', inp, target)
+        target = re.sub ('<body>', random.choice(body), target)
+    msg = target
     me(msg)

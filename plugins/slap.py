@@ -45,12 +45,8 @@ def slap(inp, me=None, nick=None, input=None, notice=None):
         return
 
     if inp == input.conn.nick.lower() or inp == "itself":
-        slap = random.choice(slaps)
-        slap = re.sub ('<who>', nick, slap)
-        msg = re.sub ('<item>', random.choice(items), slap)
+        target = re.sub ('<who>', nick, random.choice(slaps))
     else:
-        slap = random.choice(slaps)
-        slap = re.sub ('<who>', inp, slap)
-        msg = re.sub ('<item>', random.choice(items), slap)
-
+        target = re.sub ('<who>', inp, random.choice(slaps))
+    msg = re.sub ('<item>', random.choice(items), target)
     me(msg)

@@ -60,8 +60,28 @@ def get_quote_num(num, count, name):
         num = random.randint(1, count)
     return num
 
-def get_quote_by_nick(db, chan, nick, num=False):
+def get_quote_by_nick(db, nick, num=False):
     "Returns a formatted quote from a nick, random or selected by number"
+    count = db.execute('''SELECT COUNT(*)
+                          FROM quote
+                          WHERE deleted != 1
+                          AND lower(nick) = lower(?)''', [nick]).fetchall()[0][0]
+
+    try:
+        num = get_quote_num(num, count, nick)
+    except Exception as error_message:
+        return error_message
+        
+    quote = db.execute('''SELECT time, nick, msg
+                          FROM quote
+                          WHERE deleted != 1
+                          AND lower(nick) = lower(?)
+                          ORDER BY time
+                          LIMIT ?, 1''', (nick, (num-1))).fetchall()[0]
+    return format_quote(quote, num, count)
+        
+def get_quote_by_nick_chan(db, chan, nick, num=False):
+    "Returns a formatted quote from a nick in a channel, random or selected by number"
     count = db.execute('''SELECT COUNT(*)
                           FROM quote
                           WHERE deleted != 1
@@ -122,9 +142,9 @@ def quote(inp, nick='', chan='', db=None, notice=None):
         if by_chan: 
             return get_quote_by_chan(db, select, num)
         else:
-            return get_quote_by_nick(db, chan, select, num)
+            return get_quote_by_nick(db, select, num)
     elif retrieve_chan:
         chan, nick, num = retrieve_chan.groups()
-        return get_quote_by_nick(db, chan, nick, num)
+        return get_quote_by_nick_chan(db, chan, nick, num)
     
     notice(quote.__doc__)

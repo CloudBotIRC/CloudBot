@@ -143,6 +143,7 @@ larts = ["swaps <who>'s shampoo with glue.",
         "assigns all of the permissions tickets on the BeastNode support system to <who>.",
         "hands <who> a poison ivy joint."]
 
+
 kills = ["rips off <who>'s <body> and leaves them to die.",
         "grabs <who>'s head and rips it clean off their body.",
         "grabs a machine gun and riddles <who>'s body with bullets.",
@@ -150,7 +151,7 @@ kills = ["rips off <who>'s <body> and leaves them to die.",
         "gags and ties <who> then throws them off a bridge.",
         "crushes <who> with a huge spiked boulder.",
         "glares at <who> until they die of boredom.",
-        "stuffs a few TNT blocks under <who>'s bed, and sets them off.",
+        "stuffs a few TNT blocks under <who>'s bed and sets them off.",
         "shivs <who> in the <body>.",
         "rams a rocket launcher up <who>'s ass and lets off a few rounds.",
         "crushes <who>'s skull in with a spiked mace.",
@@ -159,13 +160,14 @@ kills = ["rips off <who>'s <body> and leaves them to die.",
         "slices <who>'s <body> off with a Katana",
         "throws <who> to Cthulu!",
         "feeds <who> to an owlbear.",
-        "turns <who> into a snail, and salts them.",
+        "turns <who> into a snail and salts them.",
         "snacks on <who>'s <body>.",
         "puts <who> into a sack, throws the sack in the river, and hurls the river into space.",
         "goes bowling with <who>'s head.",
         "uses <who>'s <body> as a back-scratcher.",
         "sends <who> to /dev/null!",
         "feeds <who> coke and mentos till they pop!"]
+
 
 body = ['head',
         'arms',

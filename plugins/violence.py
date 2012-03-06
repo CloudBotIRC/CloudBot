@@ -159,7 +159,7 @@ kills = ["rips off <who>'s <body> and leaves them to die.",
         "slices <who>'s <body> off with a Katana",
         "throws <who> to Cthulu!",
         "feeds <who> to an owlbear.",
-        "turns <who> into a snail, and then salts them.",
+        "turns <who> into a snail, and salts them.",
         "snacks on <who>'s <body>.",
         "puts <who> into a sack, throws the sack in the river, and hurls the river into space.",
         "goes bowling with <who>'s head.",
@@ -220,10 +220,10 @@ def kill(inp, me=None, nick=None, input=None, notice=None):
         return
 
     if inp == input.conn.nick.lower() or inp == "itself":
-        target = inp
-    else:
         target = nick
+    else:
+        target = inp
     msg = random.choice(kills)
-    msg = re.sub ('<who>', target, target)
-    msg = re.sub ('<body>', random.choice(body), target)
+    msg = re.sub ('<who>', target, msg)
+    msg = re.sub ('<body>', random.choice(body), msg)
     me(msg)

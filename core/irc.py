@@ -17,7 +17,6 @@ def decode(txt):
 
 
 def censor(text):
-    text = text.decode('ascii', 'replace')
     replacement = '[censored]'
     if 'censored_strings' in bot.config:
         words = map(re.escape, bot.config['censored_strings'])

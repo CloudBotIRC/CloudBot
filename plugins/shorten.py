@@ -15,9 +15,9 @@ class ShortenError(Exception):
 
 def bitly(url, user, apikey):
     try:
-        if url[:7] != "http://":
-            if url[:8] == "https://":
-                url = url
+        if url[:8] == "https://":
+            pass
+        elif url[:7] != "http://":
             url = "http://" + url
         params = urlencode({'longUrl': url, 'login': user, 'apiKey': apikey, 'format': 'json'})
         j = http.get_json("http://api.bit.ly/v3/shorten?%s" % params)

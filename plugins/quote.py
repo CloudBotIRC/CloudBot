@@ -12,15 +12,9 @@ def format_quote(q, num, n_quotes):
 
 def create_table_if_not_exists(db):
     "Creates an empty quote table if one does not already exist"
-    db.execute('''CREATE TABLE IF NOT EXISTS quote (
-                     chan, 
-                     nick, 
-                     add_nick, 
-                     msg, 
-                     time real,
-                     deleted default 0, 
-                     PRIMARY KEY (chan, nick, msg)
-                  )''')
+    db.execute("create table if not exists quote"
+        "(chan, nick, add_nick, msg, time real, deleted default 0, "
+        "primary key (chan, nick, msg))")
     db.commit()
 
 def add_quote(db, chan, nick, add_nick, msg):
@@ -37,15 +31,12 @@ def add_quote(db, chan, nick, add_nick, msg):
 
 def del_quote(db, chan, nick, add_nick, msg):
     "Deletes a quote from a nick"
-    db.execute('''UPDATE quote 
-                  SET deleted = 1 
-                  WHERE chan=? 
-                  AND lower(nick)=lower(?)
-                  AND msg=msg''')
+    db.execute('''UPDATE quote SET deleted = 1 WHERE
+                  chan=? AND lower(nick)=lower(?) AND msg=msg''')
     db.commit()
 
 def get_quote_num(num, count, name):
-    "Returns the quote number desired from the database"
+    "Returns the quote number to fetch from the DB"
     if num:  # Make sure num is a number if it isn't false
         num = int(num)
     if count == 0:  # If there are no quotes in the database, raise an Exception.
@@ -62,9 +53,7 @@ def get_quote_num(num, count, name):
 
 def get_quote_by_nick(db, nick, num=False):
     "Returns a formatted quote from a nick, random or selected by number"
-    count = db.execute('''SELECT COUNT(*)
-                          FROM quote
-                          WHERE deleted != 1
+    count = db.execute('''SELECT COUNT(*) FROM quote WHERE deleted != 1
                           AND lower(nick) = lower(?)''', [nick]).fetchall()[0][0]
 
     try:

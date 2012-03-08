@@ -240,7 +240,7 @@ def timecommand(inp, say=None):
         try:
             return get_time(inp)
         except ValueError:
-            return "Could not get time for " + inp + "!"
+            return "Could not get the time for " + inp + "!"
       
 
 

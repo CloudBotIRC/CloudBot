@@ -1,5 +1,6 @@
 persist
 config
+gitflow
 *.db
 *.log
 .*.swp

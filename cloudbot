@@ -96,6 +96,7 @@ processargs() {
             if running; then
                 echo "Restarting CloudBot... ($backend)"
                 stop
+                sleep 3
                 start
             else
                 echo "Cannot restart! Bot is not already running!"

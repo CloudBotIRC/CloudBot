@@ -90,7 +90,7 @@ def db_search(db, nick, query):
 
 @hook.command
 def todo(inp, nick='', chan='', db=None, notice=None, bot=None):
-    ".todo (add|del|list|search) [@user] args -- Manipulates your list of todos."
+    ".todo (add|del|list|search) args -- Manipulates your list of todos."
 
     db_init(db)
 
@@ -99,9 +99,11 @@ def todo(inp, nick='', chan='', db=None, notice=None, bot=None):
 
     args = parts[1:]
 
-    if len(args) and args[0].startswith("@"):
-        nick = args[0][1:]
-        args = args[1:]
+    # code to allow users to access each others factoids and a copy of help
+    # ".todo (add|del|list|search) [@user] args -- Manipulates your list of todos."
+    #if len(args) and args[0].startswith("@"):
+    #    nick = args[0][1:]
+    #    args = args[1:]
 
     if cmd == 'add':
         if not len(args):

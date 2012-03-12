@@ -9,7 +9,8 @@ from util import hook
 
 
 whitespace_re = re.compile(r'\s+')
-valid_diceroll = r'^([+-]?(?:\d+|\d*d(?:\d+|F))(?:[+-](?:\d+|\d*d(?:\d+|F)))*)( .+)?$'
+valid_diceroll = r'^([+-]?(?:\d+|\d*d(?:\d+|F))(?:[+-](?:\d+|\d*d(?:\d+|' \
+                 'F)))*)( .+)?$'
 valid_diceroll_re = re.compile(valid_diceroll, re.I)
 sign_re = re.compile(r'[+-]?(?:\d*d)?(?:\d+|F)', re.I)
 split_re = re.compile(r'([\d+-]*)d?(F|\d*)', re.I)
@@ -23,12 +24,12 @@ def nrolls(count, n):
         if count < 100:
             return [random.randint(0, 1) for x in xrange(count)]
         else:  # fake it
-            return [int(random.normalvariate(.5*count, (.75*count)**.5))]
+            return [int(random.normalvariate(.5 * count, (.75 * count) ** .5))]
     else:
         if count < 100:
             return [random.randint(1, n) for x in xrange(count)]
         else:  # fake it
-            return [int(random.normalvariate(.5*(1+n)*count,
+            return [int(random.normalvariate(.5 * (1 + n) * count,
                 (((n+1)*(2*n+1)/6.-(.5*(1+n))**2)*count)**.5))]
 
 
@@ -36,8 +37,8 @@ def nrolls(count, n):
 #@hook.regex(valid_diceroll, re.I)
 @hook.command
 def dice(inp):
-    ".dice <diceroll> -- Simulates dicerolls. Example of <diceroll>: '.dice 2d20-d5+4 roll 2'." \
-        "D20s, subtract 1D5, add 4"
+    ".dice <diceroll> -- Simulates dicerolls. Example of <diceroll>:" \
+    " '.dice 2d20-d5+4 roll 2'. D20s, subtract 1D5, add 4"
 
     try:  # if inp is a re.match object...
         (inp, desc) = inp.groups()

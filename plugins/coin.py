@@ -41,5 +41,5 @@ def coin(inp):
         return "You flip a coin and get " + sidename + "."
     else:
         flips = flip_simple(count)
-        return "You flip %s coins and get "\
+        return "You flip %s coins and get " \
         "%s heads and %s tails." % (str(count), str(flips[0]), str(flips[1]))

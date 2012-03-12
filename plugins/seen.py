@@ -8,7 +8,7 @@ from util import hook, timesince
 
 def db_init(db):
     "check to see that our db has the the seen table and return a connection."
-    db.execute("create table if not exists seen(name, time, quote, chan, "
+    db.execute("create table if not exists seen_user(name, time, quote, chan, host, "
                  "primary key(name, chan))")
     db.commit()
 
@@ -17,9 +17,9 @@ def db_init(db):
 @hook.event('PRIVMSG', ignorebots=False)
 def seeninput(paraml, input=None, db=None, bot=None):
     db_init(db)
-    db.execute("insert or replace into seen(name, time, quote, chan)"
-        "values(?,?,?,?)", (input.nick.lower(), time.time(), input.msg,
-            input.chan))
+    db.execute("insert or replace into seen_user(name, time, quote, chan, host)"
+        "values(?,?,?,?,?)", (input.nick.lower(), time.time(), input.msg,
+            input.chan, input.host))
     db.commit()
 
 
@@ -39,7 +39,7 @@ def seen(inp, nick='', chan='', db=None, input=None):
 
     db_init(db)
 
-    last_seen = db.execute("select name, time, quote from seen where name"
+    last_seen = db.execute("select name, time, quote from seen_user where name"
                            " like ? and chan = ?", (inp, chan)).fetchone()
 
     if last_seen:

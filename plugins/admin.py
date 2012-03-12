@@ -46,6 +46,7 @@ def restart(inp, input=None, db=None, notice=None):
     time.sleep(5)
     os.execl("./cloudbot", "restart")
 
+
 @hook.command("clearlogs", autohelp=False)
 @hook.command(autohelp=False)
 def clear(inp, input=None, db=None, notice=None):

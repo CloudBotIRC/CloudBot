@@ -14,7 +14,7 @@ def admins(inp, bot=None):
     return ", ".join(admins)
 
 
-@hook.command(autohelp=False, adminOnly=True)
+@hook.command(autohelp=False, adminonly=True)
 def stop(inp, input=None, db=None, notice=None):
     ".stop [reason] -- Kills the bot with [reason] as its quit message."
     if inp:

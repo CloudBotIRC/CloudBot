@@ -4,6 +4,7 @@ import os
 import sys
 import subprocess
 import time
+import re
 
 
 @hook.command("owners", autohelp=False)
@@ -69,6 +70,9 @@ def part(inp, input=None, notice=None):
 @hook.command(adminonly=True)
 def nick(inp, input=None, notice=None, set_nick=None):
     ".nick <nick> -- Changes the bots nickname to <nick>."
+    if not re.match("^[A-Za-z0-9_|.-\]\[]*$", inp.lower()):
+        notice("Invalid username!")
+        return
     notice("Changing nick to " + inp + ".")
     set_nick(inp)
 

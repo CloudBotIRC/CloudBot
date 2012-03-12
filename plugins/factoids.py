@@ -43,8 +43,8 @@ def multiwordReplace(text, wordDic):
     return rc.sub(translate, text)
 
 
-@hook.command("r")
-@hook.command
+@hook.command("r", adminonly=True)
+@hook.command(adminonly=True)
 def remember(inp, nick='', db=None, say=None, input=None, notice=None):
     ".remember <word> [+]<data> -- Remembers <data> with <word>. Add + to <data> to append."
     if input.nick not in input.bot.config["admins"]:
@@ -89,8 +89,8 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
         return
 
 
-@hook.command("f")
-@hook.command
+@hook.command("f", adminonly=True)
+@hook.command(adminonly=True)
 def forget(inp, db=None, input=None, notice=None):
     ".forget <word> -- Forgets a remembered <word>."
     if input.nick not in input.bot.config["admins"]:
@@ -113,7 +113,7 @@ def forget(inp, db=None, input=None, notice=None):
 
 @hook.command("info")
 @hook.regex(r'^\? ?(.+)')
-def question(inp, say=None, db=None, bot=None):
+def factoid(inp, say=None, db=None, bot=None):
     "?<word> -- Shows what data is associated with <word>."
     try:
         prefix_on = bot.config["plugins"]["factoids"]["prefix"]

@@ -12,13 +12,14 @@ def help(inp, input=None, bot=None, say=None, notice=None):
     for command, (func, args) in bot.commands.iteritems():
         fn = re.match(r'^plugins.(.+).py$', func._filename)
         if fn.group(1).lower() not in disabled:
-            if command not in disabled_comm:
-                if func.__doc__ is not None:
-                    if func in funcs:
-                        if len(funcs[func]) < len(command):
+            if not args.get('adminonly', False) or input.nick in input.bot.config["admins"]:
+                if command not in disabled_comm:
+                    if func.__doc__ is not None:
+                        if func in funcs:
+                            if len(funcs[func]) < len(command):
+                                funcs[func] = command
+                        else:
                             funcs[func] = command
-                    else:
-                        funcs[func] = command
 
     commands = dict((value, key) for key, value in funcs.iteritems())
 
@@ -30,7 +31,7 @@ def help(inp, input=None, bot=None, say=None, notice=None):
             well.append(x)
         well.sort()
         for x in well:
-            if len(out[0]) + len(str(x)) > 440:
+            if len(out[0]) + len(str(x)) > 405:
                 out[1] += " " + str(x)
             else:
                 out[0] += " " + str(x)

@@ -8,10 +8,22 @@ import sys
 import subprocess
 import time
 
-@hook.command("quit", autohelp=False)
-@hook.command("exit", autohelp=False)
-@hook.command(autohelp=False)
-def stop(inp, input=None, db=None, notice=None):
+
+@hook.command("owners", autohelp = False)
+@hook.command(autohelp = False)
+def admins(inp, bot = None):
+    admins = str(bot.config["admins"])
+    admins = admins.replace("u'", "")
+    admins = admins.replace("'", "")
+    admins = admins.replace("[", "")
+    admins = admins.replace("]", "")
+    return admins
+
+
+@hook.command("quit", autohelp = False)
+@hook.command("exit", autohelp = False)
+@hook.command(autohelp = False)
+def stop(inp, input = None, db = None, notice = None):
     ".stop [reason] -- Kills the bot, with [reason] as its quit message."
     if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
@@ -21,12 +33,12 @@ def stop(inp, input=None, db=None, notice=None):
     else:
         input.conn.send("QUIT :Killed by " + input.nick + " (no reason)")
     time.sleep(5)
-    subprocess.call("./cloudbot stop", shell=True)
+    subprocess.call("./cloudbot stop", shell = True)
 
 
-@hook.command("reboot", autohelp=False)
-@hook.command(autohelp=False)
-def restart(inp, input=None, db=None, notice=None):
+@hook.command("reboot", autohelp = False)
+@hook.command(autohelp = False)
+def restart(inp, input = None, db = None, notice = None):
     ".restart [reason] -- Restarts the bot, with [reason] as its quit message."
     if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
@@ -38,19 +50,19 @@ def restart(inp, input=None, db=None, notice=None):
     time.sleep(5)
     os.execl("./cloudbot", "restart")
 
-@hook.command("clearlogs", autohelp=False)
-@hook.command(autohelp=False)
-def clear(inp, input=None, db=None, notice=None):
+@hook.command("clearlogs", autohelp = False)
+@hook.command(autohelp = False)
+def clear(inp, input = None, db = None, notice = None):
     ".clear -- Clears the bot's log(s)."
     if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
         return
     time.sleep(5)
-    subprocess.call("./cloudbot clear", shell=True)
+    subprocess.call("./cloudbot clear", shell = True)
 
 
 @hook.command
-def join(inp, input=None, db=None, notice=None):
+def join(inp, input = None, db = None, notice = None):
     ".join <channel> -- Joins <channel>."
     if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
@@ -60,7 +72,7 @@ def join(inp, input=None, db=None, notice=None):
 
 
 @hook.command
-def cycle(inp, input=None, db=None, notice=None):
+def cycle(inp, input = None, db = None, notice = None):
     ".cycle <channel> -- Cycles <channel>."
     if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
@@ -71,7 +83,7 @@ def cycle(inp, input=None, db=None, notice=None):
 
 
 @hook.command
-def part(inp, input=None, notice=None):
+def part(inp, input = None, notice = None):
     ".part <channel> -- Parts from <channel>."
     if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
@@ -81,7 +93,7 @@ def part(inp, input=None, notice=None):
 
 
 @hook.command
-def nick(inp, input=None, notice=None):
+def nick(inp, input = None, notice = None):
     ".nick <nick> -- Changes the bots nickname to <nick>."
     if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
@@ -91,7 +103,7 @@ def nick(inp, input=None, notice=None):
 
 
 @hook.command
-def raw(inp, input=None, notice=None):
+def raw(inp, input = None, notice = None):
     ".raw <command> -- Sends a RAW IRC command."
     if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
@@ -101,7 +113,7 @@ def raw(inp, input=None, notice=None):
 
 
 @hook.command
-def kick(inp, input=None, notice=None):
+def kick(inp, input = None, notice = None):
     ".kick [channel] <user> [reason] -- kicks a user."
     if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")
@@ -133,7 +145,7 @@ def kick(inp, input=None, notice=None):
 
 
 @hook.command
-def say(inp, input=None, notice=None):
+def say(inp, input = None, notice = None):
     ".say [channel] <message> -- Makes the bot say <message> in [channel]. "\
     "If [channel] is blank the bot will say the <message> in "\
     "the channel the command was used in."
@@ -158,7 +170,7 @@ def say(inp, input=None, notice=None):
 
 @hook.command("me")
 @hook.command
-def act(inp, input=None, notice=None):
+def act(inp, input = None, notice = None):
     ".act [channel] <action> -- Makes the bot act out <action> in [channel] "\
     "If [channel] is blank the bot will act the <action> in "\
     "the channel the command was used in."
@@ -182,7 +194,7 @@ def act(inp, input=None, notice=None):
 
 
 @hook.command
-def topic(inp, input=None, notice=None):
+def topic(inp, input = None, notice = None):
     ".topic [channel] <topic> -- Change the topic of a channel."
     if not input.nick in input.bot.config["admins"]:
         notice("Only bot admins can use this command!")

@@ -14,7 +14,7 @@ insults = ["You are the son of a motherless ogre.",
         "Shouldn't you have a license for being that ugly?",
         "Calling you an idiot would be an insult to all the stupid people.",
         "Why don't you slip into something more comfortable...like a coma.",
-        "Well, they do say opposites attact...so I sincerely hope you meet somebody who is attractive, honest, intelligent, and cultured..",
+        "Well, they do say opposites attract...so I sincerely hope you meet somebody who is attractive, honest, intelligent, and cultured..",
         "Are you always this stupid or are you just making a special effort today?",
         "Yo momma so fat when she sits around the house she sits AROUND the house.",
         "Yo momma so ugly she made an onion cry.",
@@ -22,7 +22,7 @@ insults = ["You are the son of a motherless ogre.",
         "Bite my shiny metal ass!",
         "Up yours, meatbag.",
         "Jam a bastard in it you crap!",
-        "Don't piss me off today, I'm running out of places to hide to bodies",
+        "Don't piss me off today, I'm running out of places to hide the bodies",
         "Why don't you go outside and play hide and go fuck yourself",
         "I'll use small words you're sure to understand, you warthog-faced buffoon.",
         "You are a sad, strange little man, and you have my pity.",
@@ -36,14 +36,18 @@ insults = ["You are the son of a motherless ogre.",
         "The village called, they want their idiot back."]
 
 @hook.command(autohelp=False)
-def insult(inp, nick=None, say=None, input=None):
+def insult(inp, nick=None, me=None, input=None):
     ".insult <user> -- Makes the bot insult <user>."
- 
-    msg = "(" + nick + ") " + random.choice(insults)
-    if re.match("^[A-Za-z0-9_|.-\]\[]*$", inp.lower()) and inp != "":
-        msg = "(@" + inp + ") " + random.choice(insults)
+    inp = inp.strip()
 
+    if not re.match("^[A-Za-z0-9_|.-\]\[]*$", inp.lower()):
+        notice("Invalid username!")
+        return
+
+    target = nick
+    if inp.lower() and inp != "":
+        target = inp
     if inp == input.conn.nick.lower() or inp == "itself":
-        msg = "*stares at " + nick + "*"
-
-    say(msg)
+        target = nick
+    msg = "insults " + target + "... \"" + random.choice(insults) + "\""
+    me(msg)

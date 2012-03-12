@@ -6,7 +6,7 @@ from util import hook
 import re
 
 
-# the dictionary has target_word : replacement_word pairs
+# some simple "shortcodes" for formatting purposes
 shortcodes = {
 '<b>': '\x02',
 '</b>': '\x02',
@@ -44,6 +44,7 @@ def multiwordReplace(text, wordDic):
 
 
 @hook.command("r")
+@hook.command
 def remember(inp, nick='', db=None, say=None, input=None, notice=None):
     ".remember <word> [+]<data> -- Remembers <data> with <word>. Add + to <data> to append."
     if input.nick not in input.bot.config["admins"]:
@@ -89,6 +90,7 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
 
 
 @hook.command("f")
+@hook.command
 def forget(inp, db=None, input=None, notice=None):
     ".forget <word> -- Forgets a remembered <word>."
     if input.nick not in input.bot.config["admins"]:
@@ -102,7 +104,7 @@ def forget(inp, db=None, input=None, notice=None):
         db.execute("delete from mem where word=lower(?)",
                    [inp])
         db.commit()
-        notice('`%s` has been forgotten.' % data.replace('`', "'"))
+        notice('"%s" has been forgotten.' % data.replace('`', "'"))
         return
     else:
         notice("I don't know about that.")

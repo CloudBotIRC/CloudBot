@@ -12,12 +12,8 @@ import time
 @hook.command("owners", autohelp=False)
 @hook.command(autohelp=False)
 def admins(inp, bot=None):
-    admins = str(bot.config["admins"])
-    admins = admins.replace("u'", "")
-    admins = admins.replace("'", "")
-    admins = admins.replace("[", "")
-    admins = admins.replace("]", "")
-    return admins
+    admins = bot.config["admins"]
+    return ", ".join(admins)
 
 
 @hook.command("quit", autohelp=False)

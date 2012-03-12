@@ -197,28 +197,28 @@ def get_time(tz):
     TZ = tz.upper()
 
     if (TZ == 'UTC') or (TZ == 'Z'):
-        msg = time.strftime("\x02%I:%M%p\x02 %A - \x02Time\x02 in \x02 "
+        msg = time.strftime("\x02%I:%M%p\x02 %A - \x02Time\x02 in \x02 " \
                             "GMT", time.gmtime())
         return msg
     elif r_local.match(tz):
         locale.setlocale(locale.LC_TIME, (tz[1:-1], 'UTF-8'))
-        msg = time.strftime("\x02%I:%M%p\x02 %A - \x02Time\x02 in \x02"
+        msg = time.strftime("\x02%I:%M%p\x02 %A - \x02Time\x02 in \x02" \
                             + str(TZ), time.gmtime())
         return msg
     elif TZ in TimeZones:
         offset = TimeZones[TZ] * 3600
         timenow = time.gmtime(time.time() + offset)
-        msg = time.strftime("\x02%I:%M%p\x02 %A - \x02Time\x02 in \x02"
+        msg = time.strftime("\x02%I:%M%p\x02 %A - \x02Time\x02 in \x02" \
                             + str(TZ), timenow)
         return msg
     elif tz and tz[0] in ('+', '-') and 4 <= len(tz) <= 6:
         timenow = time.gmtime(time.time() + (int(tz[:3]) * 3600))
-        msg = time.strftime("\x02%I:%M%p\x02 %A - \x02Time\x02 in\x02"
+        msg = time.strftime("\x02%I:%M%p\x02 %A - \x02Time\x02 in\x02" \
                             " GMT" + str(tz), timenow)
         return msg
     else:
         timenow = time.gmtime(time.time() + (int(tz) * 3600))
-        msg = time.strftime("\x02%I:%M%p\x02 %A - \x02Time\x02 in\x02"
+        msg = time.strftime("\x02%I:%M%p\x02 %A - \x02Time\x02 in\x02" \
                             " GMT " + str(tz), timenow)
         return msg
 

@@ -191,6 +191,7 @@ TimeZones.update(TZ3)
 
 r_local = re.compile(r'\([a-z]+_[A-Z]+\)')
 
+# gets the time from a timezone (code from phenny)
 def get_time(tz):
    TZ = tz.upper()
 
@@ -206,20 +207,19 @@ def get_time(tz):
        timenow = time.gmtime(time.time() + offset)
        msg = time.strftime("\x02%I:%M%p\x02 %A - \x02Time\x02 in \x02" + str(TZ), timenow)
        return msg
-   #elif tz and tz[0] in ('+', '-') and 4 <= len(tz) <= 6: 
-   #    timenow = time.gmtime(time.time() + (int(tz[:3]) * 3600))
-   #    msg = time.strftime("4\x02%I:%M%p\x02 %A - \x02Time\x02 in \x02" + str(tz), timenow)
-   #    return msg
+   elif tz and tz[0] in ('+', '-') and 4 <= len(tz) <= 6: 
+       timenow = time.gmtime(time.time() + (int(tz[:3]) * 3600))
+       msg = time.strftime("\x02%I:%M%p\x02 %A - \x02Time\x02 in\x02 GMT" + str(tz), timenow)
+       return msg
    else:
        timenow = time.gmtime(time.time() + (int(tz) * 3600))
-       msg = time.strftime("\x02%I:%M%p\x02 %A - \x02Time\x02 in\x02 GMT" + str(tz), timenow)
+       msg = time.strftime("\x02%I:%M%p\x02 %A - \x02Time\x02 in\x02 GMT " + str(tz), timenow)
        return msg
 
 @hook.command("time")
 def timecommand(inp, say = None):
     ".time <area> -- Gets the time in <area>"
-
-    white_re = re.compile(r'\s+')
+    
     tags_re = re.compile(r'<[^<]*?>')
 
     page = http.get('http://www.google.com/search', q = "time in " + inp)
@@ -230,18 +230,11 @@ def timecommand(inp, say = None):
 
     if response:
         output = response.renderContents()
-
-        output = ' '.join(output.splitlines())
-        output = output.replace("\xa0", ",")
-
-        output = white_re.sub(' ', output.strip())
         output = tags_re.sub('\x02', output.strip())
 
-        output = output.decode('utf-8', 'ignore')
         return output
     else:
         try:
-            output = get_time(inp)
-            return output
+            return get_time(inp)
         except ValueError:
             return "Could not get the time for " + inp + "!"

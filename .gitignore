@@ -8,3 +8,4 @@ gitflow
 *.orig
 .project
 .pydevproject
+.geany

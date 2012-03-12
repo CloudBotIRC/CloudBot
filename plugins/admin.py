@@ -1,7 +1,4 @@
-#  Shitty plugin made by iloveportalz0r
-#  Broken by The Noodle
-#  Improved by Lukeroge
-#  Further improved by neersighted
+# Plugin made by iloveportalz0r, TheNoodle, Lukeroge and neersighted
 from util import hook
 import os
 import sys

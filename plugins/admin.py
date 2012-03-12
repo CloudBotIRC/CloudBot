@@ -16,9 +16,6 @@ def admins(inp, bot=None):
 @hook.command(autohelp=False, adminOnly=True)
 def stop(inp, input=None, db=None, notice=None):
     ".stop [reason] -- Kills the bot with [reason] as its quit message."
-    if not input.nick in input.bot.config["admins"]:
-        notice("Only bot admins can use this command!")
-        return
     if inp:
         input.conn.send("QUIT :Killed by " + input.nick + " (" + inp + ")")
     else:
@@ -70,10 +67,10 @@ def part(inp, input=None, notice=None):
 
 
 @hook.command(adminonly=True)
-def nick(inp, input=None, notice=None):
+def nick(inp, input=None, notice=None, set_nick=None):
     ".nick <nick> -- Changes the bots nickname to <nick>."
     notice("Changing nick to " + inp + ".")
-    input.conn.send("NICK " + inp)
+    set_nick(inp)
 
 
 @hook.command(adminonly=True)
@@ -139,9 +136,6 @@ def act(inp, input=None, notice=None):
     ".act [channel] <action> -- Makes the bot act out <action> in [channel] "\
     "If [channel] is blank the bot will act the <action> in "\
     "the channel the command was used in."
-    if not input.nick in input.bot.config["admins"]:
-        notice("Only bot admins can use this command!")
-        return
     split = inp.split(" ")
     if split[0][0] == "#":
         message = ""

@@ -1,15 +1,15 @@
 # Upgraded with tables/cacheing by ChauffeR of #freebnc on irc.esper.net
 from util import hook, http
 
-@hook.command('l')
-@hook.command('lfm')
-@hook.command
+@hook.command('l', autohelp=False)
+@hook.command('lfm', autohelp=False)
+@hook.command(autohelp=False)
 def lastfm(inp, nick='', say=None, db=None, bot=None):
+    ".lastfm <user> -- Displays the now playing (or recent) tracks of LastFM user <user>."
     if inp:
         user = inp
     else:
         user = nick
-    ".lastfm <user> -- Displays the now playing (or recent) tracks of LastFM user <user>."
     db.execute("create table if not exists lastfm(nick primary key, acc)")
     sql = db.execute("select acc from lastfm where nick=lower(?)", (nick,)).fetchone();
     api_url = "http://ws.audioscrobbler.com/2.0/?format=json"

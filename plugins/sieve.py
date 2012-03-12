@@ -37,6 +37,6 @@ def sieve_suite(bot, input, func, kind, args):
         admins = bot.config.get('admins', [])
 
         if input.host not in admins and input.nick not in admins:
-            return
+            return None
 
     return input

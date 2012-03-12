@@ -1,4 +1,4 @@
-# Upgraded with tables/cacheing by ChauffeR of #freebnc on irc.esper.net
+# Upgraded with tables/caching by ChauffeR of #freebnc on irc.esper.net
 from util import hook, http
 
 @hook.command('l', autohelp=False)

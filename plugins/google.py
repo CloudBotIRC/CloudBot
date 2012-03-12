@@ -15,12 +15,12 @@ def gis(inp):
 
     parsed = api_get('images', inp)
     if not 200 <= parsed['responseStatus'] < 300:
-        raise IOError('error searching for images: %d: %s' % (
-                parsed['responseStatus'], ''))
+        raise IOError('error searching for images: %d: %s' % ( \
+                      parsed['responseStatus'], ''))
     if not parsed['responseData']['results']:
         return 'no images found'
-    return random.choice(parsed['responseData']['results'][:10])\
-            ['unescapedUrl']  # squares is dumb
+    return random.choice(parsed['responseData']['results'][:10]) \
+                         ['unescapedUrl']  # squares is dumb
 
 
 @hook.command('g')
@@ -31,7 +31,7 @@ def google(inp):
     parsed = api_get('web', inp)
     if not 200 <= parsed['responseStatus'] < 300:
         raise IOError('error searching for pages: %d: %s' % (
-                parsed['responseStatus'], ''))
+                      parsed['responseStatus'], ''))
     if not parsed['responseData']['results']:
         return 'No results found.'
 

@@ -33,7 +33,7 @@ class Input(dict):
 
         def notice(msg):
             conn.cmd('NOTICE', [nick, msg])
-            
+
         def raw(command):
             conn.send(command)
 

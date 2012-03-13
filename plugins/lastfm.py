@@ -5,7 +5,7 @@ from util import hook, http
 @hook.command('lfm', autohelp=False)
 @hook.command(autohelp=False)
 def lastfm(inp, nick='', say=None, db=None, bot=None):
-    ".lastfm <user> -- Displays the now playing (or recent) tracks of LastFM user <user>."
+    ".lastfm [user] -- Displays the now playing (or recent) tracks of LastFM user [user]."
     if inp:
         user = inp
     else:
@@ -37,7 +37,7 @@ def lastfm(inp, nick='', say=None, db=None, bot=None):
         if inp:  # specified a user name
             return "error: %s" % response["message"]
         else:
-            return "your nick is not a LastFM account. try '.lastfm <user>'"
+            return "your nick is not a LastFM account. try '.lastfm [user]'"
 
     tracks = response["recenttracks"]["track"]
 

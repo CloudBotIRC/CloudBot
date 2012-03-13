@@ -10,6 +10,7 @@ import re
 @hook.command("owners", autohelp=False)
 @hook.command(autohelp=False)
 def admins(inp, bot=None):
+    ".admins -- Lists the bot's admins."
     admins = bot.config["admins"]
     return ", ".join(admins)
 

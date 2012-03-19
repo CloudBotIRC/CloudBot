@@ -37,7 +37,7 @@
 4x Brick Stairs: Bricks, None, None | Bricks, Bricks, None | Bricks, Bricks, Bricks
 4x Stone Brick Stairs: Stone Bricks, None, None | Stone Bricks, Stone Bricks, None | Stone Bricks, Stone Bricks, Stone Bricks
 1x Painting: Stick, Stick, Stick | Stick, Black Wool, Stick | Stick, Stick, Stick
-1x Golden Apple: Block of Gold, Block of Gold, Block of Gold | Block of Gold, Apple, Block of Gold | Block of Gold, Block of Gold, Block of Gold
+1x Golden Apple: Gold Nugget, Gold Nugget, Gold Nugget | Gold Nugget, Apple, Gold Nugget | Gold Nugget, Gold Nugget, Gold Nugget
 1x Clock: None, Gold Ingot, None | Gold Ingot, Redstone, Gold Ingot | None, Gold Ingot, None
 1x Compass: None, Iron Ingot, None | Iron Ingot, Redstone, Iron Ingot | None, Iron Ingot, None
 1x Map: Paper, Paper, Paper | Paper, Compass, Paper | Paper, Paper, Paper

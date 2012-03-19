@@ -99,8 +99,14 @@
 1x Diamond Sword: Diamond | Diamond | Stick
 1x Golden Sword: Gold Ingot | Gold Ingot | Stick
 4x Arrow: Flint | Stick | Feather
-1x Mushroom Stew: Mushroom | Mushroom | Bowl
-1x Mushroom Stew: Mushroom | Mushroom | Bowl
+1x Mushroom Stew: Brown Mushroom | Red Mushroom | Bowl
+1x Fermented Spider Eye: Spider Eye | Brown Mushroom, Sugar
+1x Eye of Ender: Blaze Powder | Ender Pearl
+1x Glistering Melon: Melon Slice, Gold Nugget
+2x Blaze Powder: Blaze Rod
+1x Magma Cream: Ender Pearl | Blaze Powder
+9x Gold Nugget: Gold Ingot
+1x Gold Ingot: Gold Nugget, Gold Nugget, Gold Nugget | Gold Nugget, Gold Nugget, Gold Nugget | Gold Nugget, Gold Nugget, Gold Nugget
 8x Cookie: Wheat, Cocoa Beans, Wheat
 3x Paper: Sugar Canes, Sugar Canes, Sugar Canes
 1x Book: Paper | Paper | Paper

@@ -107,6 +107,10 @@
 1x Magma Cream: Ender Pearl | Blaze Powder
 9x Gold Nugget: Gold Ingot
 1x Gold Ingot: Gold Nugget, Gold Nugget, Gold Nugget | Gold Nugget, Gold Nugget, Gold Nugget | Gold Nugget, Gold Nugget, Gold Nugget
+3x Fire Charge: Blaze Powder | Coal/Charcoal | Gunpowder
+1x Brewing Stand: None, Blaze Rod, None | Cobblestone, Cobblestone, Cobblestonr
+1x Cauldron: Iron Ingot, None, Iron Ingot | Iron Ingot, None, Iron Ingot | Iron Ingot, Iron Ingot, Iron Ingot
+3x Glass Bottle: Glass, None, Glass | None, Glass, None
 8x Cookie: Wheat, Cocoa Beans, Wheat
 3x Paper: Sugar Canes, Sugar Canes, Sugar Canes
 1x Book: Paper | Paper | Paper

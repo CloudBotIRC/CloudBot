@@ -47,37 +47,30 @@ def itemid(input, reply=None):
     ".itemid <item/id> -- gets the id from an item or vice versa"
     input = input.lower().strip()
 
-    
-    all = False
-    limit = 4
-    parts = input.split()
-
-    if parts[0] == "-all":
-        all = True
-        input = " ".join(parts[1:])
-
     if input == "":
-        reply("no input")
+        reply("No input.")
         return
 
     results = []
 
     for id, name in ids:
         if input == id or input in name.lower():
-            results.append("%s %s" % (id, name))
+            results.append("\x02[%s]\x02 %s" % (id, name))
 
     if not len(results):
-        reply("no matches found")
+        reply("No matches found.")
         return
+        
+    out = ", ".join(results)
+         
+    if len(out) > 200:
+        out = out[:out.rfind(' ')] + '...'
+        
+    return out
+ 
 
-    if not all and len(results) > limit:
-        reply("Displaying %d of %d matches, use -all to get all." % (limit, len(results)))
 
-    for result in results if all else itertools.islice(results, limit):
-        reply(result)
-
-
-
+@hook.command("crafting")
 @hook.command
 def recipe(input, reply=None):
     ".recipe <item> -- gets the crafting recipe for an item"
@@ -90,7 +83,11 @@ def recipe(input, reply=None):
             results.append(recipe.line)
 
     if not len(results):
-        reply("no matches found")
+        reply("No matches found.")
+        return
+
+    if len(results) > 3:
+        reply("Too many results (%s)" % len(results))
         return
 
     for result in results:

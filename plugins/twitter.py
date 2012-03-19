@@ -159,4 +159,4 @@ def twitter(inp):
     text = unescape_xml(tweet.find(text).text.replace('\n', ''))
     screen_name = tweet.find(screen_name).text
 
-    return "\x02@%s\x02: %s [ %s ago ]" % (screen_name, text, time_pretty)
+    return "\x02@%s\x02: %s (%s ago)" % (screen_name, text, time_pretty)

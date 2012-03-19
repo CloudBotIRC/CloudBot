@@ -9,7 +9,7 @@ from util import hook
 
 
 whitespace_re = re.compile(r'\s+')
-valid_diceroll = r'^([+-]?(?:\d+|\d*d(?:\d+|F))(?:[+-](?:\d+|\d*d(?:\d+|'
+valid_diceroll = r'^([+-]?(?:\d+|\d*d(?:\d+|F))(?:[+-](?:\d+|\d*d(?:\d+|' \
                  'F)))*)( .+)?$'
 valid_diceroll_re = re.compile(valid_diceroll, re.I)
 sign_re = re.compile(r'[+-]?(?:\d*d)?(?:\d+|F)', re.I)

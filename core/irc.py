@@ -180,7 +180,6 @@ class IRC(object):
 
     def set_nick(self, nick):
         self.cmd("NICK", [nick])
-        self.nick = nick
 
     def join(self, channel):
         self.cmd("JOIN", [channel])

@@ -77,6 +77,7 @@
 1x Boat: Wooden Planks, None, Wooden Planks | Wooden Planks, Wooden Planks, Wooden Planks
 1x Bucket: Iron Ingot, None, Iron Ingot | None, Iron Ingot, None
 1x Redstone Repeater: Redstone Torch, Redstone, Redstone Torch | Stone, Stone, Stone
+1x Redstone Lamp: None, Redstone, None | Redstone, Glowstone, Redstone | None, Redstone, None
 1x Bed: Black Wool, Black Wool, Black Wool | Wooden Planks, Wooden Planks, Wooden Planks
 1x Shears: None, Iron Ingot | Iron Ingot, None
 1x Crafting Table: Wooden Planks, Wooden Planks | Wooden Planks, Wooden Planks

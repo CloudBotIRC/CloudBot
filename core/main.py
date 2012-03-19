@@ -34,9 +34,6 @@ class Input(dict):
         def notice(msg):
             conn.cmd('NOTICE', [nick, msg])
 
-        def raw(command):
-            conn.send(command)
-
         dict.__init__(self, conn=conn, raw=raw, prefix=prefix, command=command,
                     params=params, nick=nick, user=user, host=host,
                     paraml=paraml, msg=msg, server=conn.server, chan=chan,

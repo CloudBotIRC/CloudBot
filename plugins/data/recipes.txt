@@ -1,4 +1,4 @@
-n1x Wooden Pickaxe: Wooden Planks, Wooden Planks, Wooden Planks | None, Stick, None | None, Stick, None
+1x Wooden Pickaxe: Wooden Planks, Wooden Planks, Wooden Planks | None, Stick, None | None, Stick, None
 1x Stone Pickaxe: Cobblestone, Cobblestone, Cobblestone | None, Stick, None | None, Stick, None
 1x Iron Pickaxe: Iron Ingot, Iron Ingot, Iron Ingot | None, Stick, None | None, Stick, None
 1x Diamond Pickaxe: Diamond, Diamond, Diamond | None, Stick, None | None, Stick, None
@@ -65,7 +65,7 @@ n1x Wooden Pickaxe: Wooden Planks, Wooden Planks, Wooden Planks | None, Stick, N
 1x Diamond Helmet: Diamond, Diamond, Diamond | Diamond, None, Diamond
 1x Diamond Boots: Diamond, None, Diamond | Diamond, None, Diamond
 1x Golden Helmet: Gold Ingot, Gold Ingot, Gold Ingot | Gold Ingot, None, Gold Ingot
-1x Golden boots: Gold Ingot, None, Gold Ingot | Gold Ingot, None, Gold Ingot
+1x Golden Boots: Gold Ingot, None, Gold Ingot | Gold Ingot, None, Gold Ingot
 2x Fence: Stick, Stick, Stick | Stick, Stick, Stick
 2x Nether Brick Fence: Nether Brick, Nether Brick, Nether Brick | Nether Brick, Nether Brick, Nether Brick
 1x Fence Gate: Stick, Wooden Planks, Stick | Stick, Wooden Planks, Stick

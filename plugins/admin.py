@@ -7,16 +7,22 @@ import time
 import re
 
 
-@hook.command("owners", autohelp=False)
 @hook.command(autohelp=False)
 def admins(inp, bot=None):
     ".admins -- Lists the bot's admins."
     admins = bot.config["admins"]
     return ", ".join(admins)
+    
+
+@hook.command(autohelp=False)
+def channels(inp, conn=None):
+    ".channels -- Lists the channels that the bot is in."
+    channels = conn.channels
+    return "I am in these channels: " + ", ".join(channels)
 
 
 @hook.command(autohelp=False, adminonly=True)
-def stop(inp, input=None, db=None, notice=None):
+def stop(inp, input=None):
     ".stop [reason] -- Kills the bot with [reason] as its quit message."
     if inp:
         input.conn.send("QUIT :Killed by " + input.nick + " (" + inp + ")")
@@ -28,7 +34,7 @@ def stop(inp, input=None, db=None, notice=None):
 
 @hook.command("reboot", autohelp=False, adminonly=True)
 @hook.command(autohelp=False, adminonly=True)
-def restart(inp, input=None, db=None, notice=None):
+def restart(inp, input=None):
     ".restart [reason] -- Restarts the bot with [reason] as its quit message."
     if inp:
         input.conn.send("QUIT :Restarted by " + input.nick + " (" + inp + ")")
@@ -40,14 +46,14 @@ def restart(inp, input=None, db=None, notice=None):
 
 @hook.command("clearlogs", autohelp=False, adminonly=True)
 @hook.command(autohelp=False, adminonly=True)
-def clear(inp, input=None, db=None, notice=None):
+def clear(inp, input=None):
     ".clear -- Clears the bots log(s)."
     time.sleep(5)
     subprocess.call("./cloudbot clear", shell=True)
 
 
 @hook.command(adminonly=True)
-def join(inp, input=None, db=None, notice=None):
+def join(inp, input=None, notice=None):
     ".join <channel> -- Joins <channel>."
     notice("Attempting to join " + inp + "...")
     input.conn.send("JOIN " + inp)
@@ -74,7 +80,7 @@ def nick(inp, input=None, notice=None, set_nick=None):
     if not re.match("^[A-Za-z0-9_|.-\]\[]*$", inp.lower()):
         notice("Invalid username!")
         return
-    notice("Changing nick to " + inp + ".")
+    notice("Attempting to change nick to " + inp + ".")
     set_nick(inp)
 
 

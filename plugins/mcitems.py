@@ -48,7 +48,7 @@ def itemid(input, reply=None):
     input = input.lower().strip()
 
     if input == "":
-        reply("No input.")
+        reply("error: no input.")
         return
 
     results = []
@@ -58,7 +58,7 @@ def itemid(input, reply=None):
             results.append("\x02[%s]\x02 %s" % (id, name))
 
     if not len(results):
-        reply("No matches found.")
+        reply("error: No matches found.")
         return
         
     out = ", ".join(results)
@@ -83,11 +83,11 @@ def recipe(input, reply=None):
             results.append(recipe.line)
 
     if not len(results):
-        reply("No matches found.")
+        reply("error: no matches found.")
         return
 
     if len(results) > 3:
-        reply("Too many results (%s)" % len(results))
+        reply("error: too many results (%s)" % len(results))
         return
 
     for result in results:

@@ -62,7 +62,7 @@ from util import hook
 
 @hook.command
 def mcping(inp):
-    ".mcping server[:port] - Ping a Minecraft server to check status."
+    ".mcping <server>[:port] - Ping a Minecraft server to check status."
     inp = inp.strip().split(" ")[0]
 
     if ":" in inp:
@@ -70,7 +70,7 @@ def mcping(inp):
         try:
             port = int(port)
         except:
-            return "Invalid port!"
+            return "error: invalid port!"
     else:
         host = inp
         port = 25565

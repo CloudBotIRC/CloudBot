@@ -58,17 +58,21 @@ def itemid(input, reply=None):
     results = []
 
     for id, name in ids:
-        if input == id or input in name.lower():
+        if input == id:
+            results = ["\x02[%s]\x02 %s" % (id, name)]
+            break
+        elif input in name.lower():
             results.append("\x02[%s]\x02 %s" % (id, name))
 
     if not len(results):
-        reply("error: No matches found.")
+        reply("No matches found.")
+        return
+        
+    if len(results) > 12:
+        reply("There are too many options, please narrow your search. (%s)" % len(results))
         return
         
     out = ", ".join(results)
-         
-    if len(out) > 200:
-        out = out[:out.rfind(' ')] + '...'
         
     return out
  
@@ -87,11 +91,11 @@ def recipe(input, reply=None):
             results.append(recipe.line)
 
     if not len(results):
-        reply("error: no matches found.")
+        reply("No matches found.")
         return
 
     if len(results) > 3:
-        reply("error: too many results (%s)" % len(results))
+        reply("There are too many options, please narrow your search. (%s)" % len(results))
         return
 
     for result in results:

@@ -1,174 +1,217 @@
-1x Wooden Pickaxe: Wooden Planks, Wooden Planks, Wooden Planks | None, Stick, None | None, Stick, None
-1x Stone Pickaxe: Cobblestone, Cobblestone, Cobblestone | None, Stick, None | None, Stick, None
-1x Iron Pickaxe: Iron Ingot, Iron Ingot, Iron Ingot | None, Stick, None | None, Stick, None
-1x Diamond Pickaxe: Diamond, Diamond, Diamond | None, Stick, None | None, Stick, None
-1x Golden Pickaxe: Gold Ingot, Gold Ingot, Gold Ingot | None, Stick, None | None, Stick, None
-1x Bow: None, Stick, String | Stick, None, String | None, Stick, String
+//Minecraft Recipes List
+//Created by _303
+//Obtained from https://github.com/ClouDev/CloudBot/blob/develop/plugins/data/recipes.txt
+//Edited by _frozen
+//
+//Summary of Use: Each column is seperated by a comma (,) and rows by a vertical bar (|). Order of Recipes & Categories taken from
+//www.minecraftwiki.net/wiki/Crafting for easier updating in the future (The Future!)
+//
+//Basic Recipes
+//
+4x Wooden Planks: Wood
+4x Stick: Wooden Planks | Wooden Planks
+4x Torch: Coal | Stick
+4x Torch: Charcoal | Stick
+1x Crafting Table: Wooden Planks, Wooden Planks | Wooden Planks, Wooden Planks
+1x Furnace: Cobblestone, Cobblestone, Cobblestone | Cobblestone, None, Cobblestone | Cobblestone, Cobblestone, Cobblestone
+1x Chest: Wooden Planks, Wooden Planks, Wooden Planks | Wooden Planks, None, Wooden Planks | Wooden Planks, Wooden Planks, Wooden Planks
+//
+//Block Recipes
+//
 1x Block of Gold: Gold Ingot, Gold Ingot, Gold Ingot | Gold Ingot, Gold Ingot, Gold Ingot | Gold Ingot, Gold Ingot, Gold Ingot
 1x Block of Iron: Iron Ingot, Iron Ingot, Iron Ingot | Iron Ingot, Iron Ingot, Iron Ingot | Iron Ingot, Iron Ingot, Iron Ingot
 1x Block of Diamond: Diamond, Diamond, Diamond | Diamond, Diamond, Diamond | Diamond, Diamond, Diamond
 1x Lapis Lazuli Block: Lapis Lazuli, Lapis Lazuli, Lapis Lazuli | Lapis Lazuli, Lapis Lazuli, Lapis Lazuli | Lapis Lazuli, Lapis Lazuli, Lapis Lazuli
-1x Melon: Melon, Melon, Melon | Melon, Melon, Melon | Melon, Melon, Melon
-1x Chest: Wooden Planks, Wooden Planks, Wooden Planks | Wooden Planks, None, Wooden Planks | Wooden Planks, Wooden Planks, Wooden Planks
-1x Furnace: Cobblestone, Cobblestone, Cobblestone | Cobblestone, None, Cobblestone | Cobblestone, Cobblestone, Cobblestone
-1x Leather Tunic: Leather, None, Leather | Leather, Leather, Leather | Leather, Leather, Leather
-1x Leather Pants: Leather, Leather, Leather | Leather, None, Leather | Leather, None, Leather
-1x Chain Chestplate: Fire, None, Fire | Fire, Fire, Fire | Fire, Fire, Fire
-1x Chain Leggings: Fire, Fire, Fire | Fire, None, Fire | Fire, None, Fire
-1x Iron Chestplate: Iron Ingot, None, Iron Ingot | Iron Ingot, Iron Ingot, Iron Ingot | Iron Ingot, Iron Ingot, Iron Ingot
-1x Iron Leggings: Iron Ingot, Iron Ingot, Iron Ingot | Iron Ingot, None, Iron Ingot | Iron Ingot, None, Iron Ingot
-1x Diamond Chestplate: Diamond, None, Diamond | Diamond, Diamond, Diamond | Diamond, Diamond, Diamond
-1x Diamond Leggings: Diamond, Diamond, Diamond | Diamond, None, Diamond | Diamond, None, Diamond
-1x Golden Chestplate: Gold Ingot, None, Gold Ingot | Gold Ingot, Gold Ingot, Gold Ingot | Gold Ingot, Gold Ingot, Gold Ingot
-1x Golden Leggings: Gold Ingot, Gold Ingot, Gold Ingot | Gold Ingot, None, Gold Ingot | Gold Ingot, None, Gold Ingot
-1x Jukebox: Wooden Planks, Wooden Planks, Wooden Planks | Wooden Planks, Diamond, Wooden Planks | Wooden Planks, Wooden Planks, Wooden Planks
-1x Note Block: Wooden Planks, Wooden Planks, Wooden Planks | Wooden Planks, Redstone, Wooden Planks | Wooden Planks, Wooden Planks, Wooden Planks
-1x Bookshelf: Wooden Planks, Wooden Planks, Wooden Planks | Book, Book, Book | Wooden Planks, Wooden Planks, Wooden Planks
+1x Glowstone: Glowstone Dust, Glowstone Dust | Glowstone Dust, Glowstone Dust
+1x Wool: String, String | String, String
 1x TNT: Gunpowder, Sand, Gunpowder | Sand, Gunpowder, Sand | Gunpowder, Sand, Gunpowder
-2x Ladder: Stick, None, Stick | Stick, Stick, Stick | Stick, None, Stick
-1x Sign: Wooden Planks, Wooden Planks, Wooden Planks | Wooden Planks, Wooden Planks, Wooden Planks | None, Stick, None
-1x Cake: Milk, Milk, Milk | Sugar, Egg, Sugar | Wheat, Wheat, Wheat
-16x Rail: Iron Ingot, None, Iron Ingot | Iron Ingot, Stick, Iron Ingot | Iron Ingot, None, Iron Ingot
-6x Powered Rail: Gold Ingot, None, Gold Ingot | Gold Ingot, Stick, Gold Ingot | Gold Ingot, Redstone, Gold Ingot
-6x Detector Rail: Iron Ingot, None, Iron Ingot | Iron Ingot, Pressure Plate, Iron Ingot | Iron Ingot, Redstone, Iron Ingot
+3x Cobblestone Slab: Cobblestone, Cobblestone, Cobblestone
+3x Stone Slab: Stone, Stone, Stone
+3x Sandstone Slab: Sandstone, Sandstone, Sandstone
+3x Wooden Slab: Wooden Planks, Wooden Planks, Wooden Planks
+3x Stone Bricks Slab: Stone Bricks, Stone Bricks, Stone Bricks
+3x Bricks Slab: Bricks, Bricks, Bricks
 4x Wooden Stairs: Wooden Planks, None, None | Wooden Planks, Wooden Planks, None | Wooden Planks, Wooden Planks, Wooden Planks
-1x Fishing Rod: None, None, Stick | None, Stick, String | Stick, None, String
 4x Stone Stairs: Cobblestone, None, None | Cobblestone, Cobblestone, None | Cobblestone, Cobblestone, Cobblestone
 4x Brick Stairs: Bricks, None, None | Bricks, Bricks, None | Bricks, Bricks, Bricks
 4x Nether Brick Stairs: Nether Bricks, None, None | Nether Bricks, Nether Bricks, None | Nether Bricks, Nether Bricks, Nether Bricks
 4x Stone Brick Stairs: Stone Bricks, None, None | Stone Bricks, Stone Bricks, None | Stone Bricks, Stone Bricks, Stone Bricks
-1x Painting: Stick, Stick, Stick | Stick, Black Wool, Stick | Stick, Stick, Stick
-1x Golden Apple: Gold Nugget, Gold Nugget, Gold Nugget | Gold Nugget, Apple, Gold Nugget | Gold Nugget, Gold Nugget, Gold Nugget
-1x Clock: None, Gold Ingot, None | Gold Ingot, Redstone, Gold Ingot | None, Gold Ingot, None
-1x Compass: None, Iron Ingot, None | Iron Ingot, Redstone, Iron Ingot | None, Iron Ingot, None
-1x Map: Paper, Paper, Paper | Paper, Compass, Paper | Paper, Paper, Paper
-1x Dispenser: Cobblestone, Cobblestone, Cobblestone | Cobblestone, Bow, Cobblestone | Cobblestone, Redstone, Cobblestone
-1x Piston: Wooden Planks, Wooden Planks, Wooden Planks | Cobblestone, Iron Ingot, Cobblestone | Cobblestone, Redstone, Cobblestone
+1x Snow: Snowball, Snowball | Snowball, Snowball
+1x Clay Block: Clay, Clay | Clay, Clay
+1x Brick Block: Brick, Brick | Brick, Brick
+4x Stone Bricks: Stone, Stone | Stone, Stone
+1x Bookshelf: Wooden Planks, Wooden Planks, Wooden Planks | Book, Book, Book | Wooden Planks, Wooden Planks, Wooden Planks
+1x Sandstone: Sand, Sand | Sand, Sand
+1x Jack 'o' Lantern: Pumpkin | Torch
+//
+//Tool Recipes
+//
+1x Wooden Pickaxe: Wooden Planks, Wooden Planks, Wooden Planks | None, Stick, None | None, Stick, None
 1x Wooden Axe: Wooden Planks, Wooden Planks | Wooden Planks, Stick | None, Stick
 1x Wooden Hoe: Wooden Planks, Wooden Planks | None, Stick | None, Stick
+1x Wooden Shovel: Wooden Planks | Stick | Stick
+1x Stone Pickaxe: Cobblestone, Cobblestone, Cobblestone | None, Stick, None | None, Stick, None
 1x Stone Axe: Cobblestone, Cobblestone | Cobblestone, Stick | None, Stick
 1x Stone Hoe: Cobblestone, Cobblestone | None, Stick | None, Stick
+1x Stone Shovel: Cobblestone | Stick | Stick
+1x Iron Pickaxe: Iron Ingot, Iron Ingot, Iron Ingot | None, Stick, None | None, Stick, None
 1x Iron Axe: Iron Ingot, Iron Ingot | Iron Ingot, Stick | None, Stick
 1x Iron Hoe: Iron Ingot, Iron Ingot | None, Stick | None, Stick
+1x Iron Shovel: Iron Ingot | Stick | Stick
+1x Diamond Pickaxe: Diamond, Diamond, Diamond | None, Stick, None | None, Stick, None
 1x Diamond Axe: Diamond, Diamond | Diamond, Stick | None, Stick
 1x Diamond Hoe: Diamond, Diamond | None, Stick | None, Stick
+1x Diamond Shovel: Diamond | Stick | Stick
+1x Golden Pickaxe: Gold Ingot, Gold Ingot, Gold Ingot | None, Stick, None | None, Stick, None
 1x Golden Axe: Gold Ingot, Gold Ingot | Gold Ingot, Stick | None, Stick
 1x Golden Hoe: Gold Ingot, Gold Ingot | None, Stick | None, Stick
-16x Iron Bars: Iron Ingot, Iron Ingot, Iron Ingot | Iron Ingot, Iron Ingot, Iron Ingot
-16x Glass Pane: Glass, Glass, Glass | Glass, Glass, Glass
-1x Leather Cap: Leather, Leather, Leather | Leather, None, Leather
-1x Leather Boots: Leather, None, Leather | Leather, None, Leather
-1x Chain Helmet: Fire, Fire, Fire | Fire, None, Fire
-1x Chain Boots: Fire, None, Fire | Fire, None, Fire
-1x Iron Helmet: Iron Ingot, Iron Ingot, Iron Ingot | Iron Ingot, None, Iron Ingot
-1x Iron Boots: Iron Ingot, None, Iron Ingot | Iron Ingot, None, Iron Ingot
-1x Diamond Helmet: Diamond, Diamond, Diamond | Diamond, None, Diamond
-1x Diamond Boots: Diamond, None, Diamond | Diamond, None, Diamond
-1x Golden Helmet: Gold Ingot, Gold Ingot, Gold Ingot | Gold Ingot, None, Gold Ingot
-1x Golden Boots: Gold Ingot, None, Gold Ingot | Gold Ingot, None, Gold Ingot
-2x Fence: Stick, Stick, Stick | Stick, Stick, Stick
-2x Nether Brick Fence: Nether Brick, Nether Brick, Nether Brick | Nether Brick, Nether Brick, Nether Brick
-1x Fence Gate: Stick, Wooden Planks, Stick | Stick, Wooden Planks, Stick
-1x Wooden Door: Wooden Planks, Wooden Planks | Wooden Planks, Wooden Planks | Wooden Planks, Wooden Planks
-2x Trapdoor: Wooden Planks, Wooden Planks, Wooden Planks | Wooden Planks, Wooden Planks, Wooden Planks
-1x Iron Door: Iron Ingot, Iron Ingot | Iron Ingot, Iron Ingot | Iron Ingot, Iron Ingot
-4x Bowl: Wooden Planks, None, Wooden Planks | None, Wooden Planks, None
-1x Minecart: Iron Ingot, None, Iron Ingot | Iron Ingot, Iron Ingot, Iron Ingot
-1x Boat: Wooden Planks, None, Wooden Planks | Wooden Planks, Wooden Planks, Wooden Planks
-1x Bucket: Iron Ingot, None, Iron Ingot | None, Iron Ingot, None
-1x Redstone Repeater: Redstone Torch, Redstone, Redstone Torch | Stone, Stone, Stone
-1x Redstone Lamp: None, Redstone, None | Redstone, Glowstone, Redstone | None, Redstone, None
-1x Bed: Black Wool, Black Wool, Black Wool | Wooden Planks, Wooden Planks, Wooden Planks
-1x Shears: None, Iron Ingot | Iron Ingot, None
-1x Crafting Table: Wooden Planks, Wooden Planks | Wooden Planks, Wooden Planks
-1x Sandstone: Sand, Sand | Sand, Sand
-4x Stone Bricks: Stone, Stone | Stone, Stone
-1x Snow: Snowball, Snowball | Snowball, Snowball
-1x Clay: Clay, Clay | Clay, Clay
-1x Bricks: Brick, Brick | Brick, Brick
-1x Glowstone: Glowstone Dust, Glowstone Dust | Glowstone Dust, Glowstone Dust
-1x Wool: String, String | String, String
-1x Flint and Steel: Iron Ingot, None | None, Flint
-1x Wooden Shovel: Wooden Planks | Stick | Stick
-1x Stone Shovel: Cobblestone | Stick | Stick
-1x Iron Shovel: Iron Ingot | Stick | Stick
-1x Diamond Shovel: Diamond | Stick | Stick
 1x Golden Shovel: Gold Ingot | Stick | Stick
+1x Flint and Steel: Iron Ingot, None | None, Flint
+1x Bucket: Iron Ingot, None, Iron Ingot | None, Iron Ingot, None
+1x Compass: None, Iron Ingot, None | Iron Ingot, Redstone, Iron Ingot | None, Iron Ingot, None
+1x Map: Paper, Paper, Paper | Paper, Compass, Paper | Paper, Paper, Paper
+1x Clock: None, Gold Ingot, None | Gold Ingot, Redstone, Gold Ingot | None, Gold Ingot, None
+1x Fishing Rod: None, None, Stick | None, Stick, String | Stick, None, String
+1x Shears: None, Iron Ingot | Iron Ingot, None
+3x Fire Charge: Gunpowder, None, None | Blaze Powder, Coal/Charcoal, None
+//
+//Weapon Recipes
+//
 1x Wooden Sword: Wooden Planks | Wooden Planks | Stick
 1x Stone Sword: Cobblestone | Cobblestone | Stick
 1x Iron Sword: Iron Ingot | Iron Ingot | Stick
 1x Diamond Sword: Diamond | Diamond | Stick
 1x Golden Sword: Gold Ingot | Gold Ingot | Stick
+1x Bow: None, Stick, String | Stick, None, String | None, Stick, String
 4x Arrow: Flint | Stick | Feather
-1x Mushroom Stew: Brown Mushroom | Red Mushroom | Bowl
-1x Fermented Spider Eye: Spider Eye | Brown Mushroom, Sugar
-1x Eye of Ender: Blaze Powder | Ender Pearl
-1x Glistering Melon: Melon Slice, Gold Nugget
-2x Blaze Powder: Blaze Rod
-1x Magma Cream: Ender Pearl | Blaze Powder
-9x Gold Nugget: Gold Ingot
-1x Gold Ingot: Gold Nugget, Gold Nugget, Gold Nugget | Gold Nugget, Gold Nugget, Gold Nugget | Gold Nugget, Gold Nugget, Gold Nugget
-3x Fire Charge: Blaze Powder | Coal/Charcoal | Gunpowder
-1x Brewing Stand: None, Blaze Rod, None | Cobblestone, Cobblestone, Cobblestonr
-1x Cauldron: Iron Ingot, None, Iron Ingot | Iron Ingot, None, Iron Ingot | Iron Ingot, Iron Ingot, Iron Ingot
-3x Glass Bottle: Glass, None, Glass | None, Glass, None
-8x Cookie: Wheat, Cocoa Beans, Wheat
-3x Paper: Sugar Canes, Sugar Canes, Sugar Canes
-1x Book: Paper | Paper | Paper
-3x Cobblestone Slab: Cobblestone, Cobblestone, Cobblestone
-3x Stone Slab: Stone, Stone, Stone
-3x Sandstone Slab: Sandstone, Sandstone, Sandstone
-3x Wooden Slab: Wooden Planks, Wooden Planks, Wooden Planks
-3x Bricks Slab: Bricks, Bricks, Bricks
-3x Stone Bricks Slab: Stone Bricks, Stone Bricks, Stone Bricks
-1x Bread: Wheat, Wheat, Wheat
-4x Stick: Wooden Planks | Wooden Planks
-4x Torch: Coal | Stick
-4x Torch: Charcoal | Stick
-1x Jack 'o' Lantern: Pumpkin | Torch
+//
+//Armor Recipes
+//
+1x Leather Tunic: Leather, None, Leather | Leather, Leather, Leather | Leather, Leather, Leather
+1x Leather Pants: Leather, Leather, Leather | Leather, None, Leather | Leather, None, Leather
+1x Leather Cap: Leather, Leather, Leather | Leather, None, Leather
+1x Leather Boots: Leather, None, Leather | Leather, None, Leather
+1x Chain Chestplate: Fire, None, Fire | Fire, Fire, Fire | Fire, Fire, Fire
+1x Chain Leggings: Fire, Fire, Fire | Fire, None, Fire | Fire, None, Fire
+1x Chain Helmet: Fire, Fire, Fire | Fire, None, Fire
+1x Chain Boots: Fire, None, Fire | Fire, None, Fire
+1x Iron Chestplate: Iron Ingot, None, Iron Ingot | Iron Ingot, Iron Ingot, Iron Ingot | Iron Ingot, Iron Ingot, Iron Ingot
+1x Iron Leggings: Iron Ingot, Iron Ingot, Iron Ingot | Iron Ingot, None, Iron Ingot | Iron Ingot, None, Iron Ingot
+1x Iron Helmet: Iron Ingot, Iron Ingot, Iron Ingot | Iron Ingot, None, Iron Ingot
+1x Iron Boots: Iron Ingot, None, Iron Ingot | Iron Ingot, None, Iron Ingot
+1x Diamond Chestplate: Diamond, None, Diamond | Diamond, Diamond, Diamond | Diamond, Diamond, Diamond
+1x Diamond Leggings: Diamond, Diamond, Diamond | Diamond, None, Diamond | Diamond, None, Diamond
+1x Diamond Helmet: Diamond, Diamond, Diamond | Diamond, None, Diamond
+1x Diamond Boots: Diamond, None, Diamond | Diamond, None, Diamond
+1x Golden Chestplate: Gold Ingot, None, Gold Ingot | Gold Ingot, Gold Ingot, Gold Ingot | Gold Ingot, Gold Ingot, Gold Ingot
+1x Golden Leggings: Gold Ingot, Gold Ingot, Gold Ingot | Gold Ingot, None, Gold Ingot | Gold Ingot, None, Gold Ingot
+1x Golden Helmet: Gold Ingot, Gold Ingot, Gold Ingot | Gold Ingot, None, Gold Ingot
+1x Golden Boots: Gold Ingot, None, Gold Ingot | Gold Ingot, None, Gold Ingot
+//
+//Transportation Recipes
+//
+1x Minecart: Iron Ingot, None, Iron Ingot | Iron Ingot, Iron Ingot, Iron Ingot
 1x Minecart with Chest: Chest | Minecart
 1x Minecart with Furnace: Furnace | Minecart
-1x Lever: Stick | Cobblestone
-1x Redstone Torch: Redstone | Stick
+16x Rail: Iron Ingot, None, Iron Ingot | Iron Ingot, Stick, Iron Ingot | Iron Ingot, None, Iron Ingot
+6x Powered Rail: Gold Ingot, None, Gold Ingot | Gold Ingot, Stick, Gold Ingot | Gold Ingot, Redstone, Gold Ingot
+6x Detector Rail: Iron Ingot, None, Iron Ingot | Iron Ingot, Pressure Plate, Iron Ingot | Iron Ingot, Redstone, Iron Ingot
+1x Boat: Wooden Planks, None, Wooden Planks | Wooden Planks, Wooden Planks, Wooden Planks
+//
+//Mechanism Recipes
+//
+1x Wooden Door: Wooden Planks, Wooden Planks | Wooden Planks, Wooden Planks | Wooden Planks, Wooden Planks
+1x Iron Door: Iron Ingot, Iron Ingot | Iron Ingot, Iron Ingot | Iron Ingot, Iron Ingot
+2x Trapdoor: Wooden Planks, Wooden Planks, Wooden Planks | Wooden Planks, Wooden Planks, Wooden Planks
+1x Stone Pressure Plate: Stone, Stone
+1x Wooden Pressure Plate: Wooden Planks, Wooden Planks
 1x Button: Stone | Stone
-1x Pressure Plate: Stone, Stone
-1x Pressure Plate: Wooden Planks, Wooden Planks
-1x Sticky Piston: Slimeball | Piston
+1x Redstone Torch: Redstone | Stick
+1x Lever: Stick | Cobblestone
+1x Note Block: Wooden Planks, Wooden Planks, Wooden Planks | Wooden Planks, Redstone, Wooden Planks | Wooden Planks, Wooden Planks, Wooden Planks
+1x Jukebox: Wooden Planks, Wooden Planks, Wooden Planks | Wooden Planks, Diamond, Wooden Planks | Wooden Planks, Wooden Planks, Wooden Planks
+1x Dispenser: Cobblestone, Cobblestone, Cobblestone | Cobblestone, Bow, Cobblestone | Cobblestone, Redstone, Cobblestone
+1x Redstone Repeater: Redstone Torch, Redstone, Redstone Torch | Stone, Stone, Stone
+1x Piston: Wooden Planks, Wooden Planks, Wooden Planks | Cobblestone, Iron Ingot, Cobblestone | Cobblestone, Redstone, Cobblestone
+1x Sticky Piston: none, slime ball, none | none, piston, none
+1x Redstone Lamp: none, redstone dust, none | redstone dust, glowstone block, redstone | none, redstone dust, none
+//
+//Food Recipes
+//
+4x Bowl: Wooden Planks, None, Wooden Planks | None, Wooden Planks, None
+1x Mushroom Stew: Brown Mushroom, Red Mushroom | Bowl
+1x Bread: Wheat, Wheat, Wheat
+1x Sugar: Sugar Canes
+1x Cake: Milk, Milk, Milk | Sugar, Egg, Sugar | Wheat, Wheat, Wheat
+8x Cookie: Wheat, Cocoa Beans, Wheat
+1x Golden Apple: Gold Nugget, Gold Nugget, Gold Nugget | Gold Nugget, Apple, Gold Nugget | Gold Nugget, Gold Nugget, Gold Nugget
+1x Melon Block: Melon, Melon, Melon | Melon, Melon, Melon | Melon, Melon, Melon
+1x Melon Seeds: Melon Slice
+4x Pumpkin Seeds: Pumpkin
+//
+//Miscellaneous Recipes
+//
 9x Gold Ingot: Block of Gold
 9x Iron Ingot: Block of Iron
 9x Diamond: Block of Diamond
 9x Lapis Lazuli: Lapis Lazuli Block
-1x Melon Seeds: Melon
-1x Sugar: Sugar Canes
-4x Wooden Planks: Wood
-4x Magenta Dye: Lapis Lazuli, Rose Red, Rose Red, Bone Meal
-3x Light Gray Dye: Ink Sac, Bone Meal, Bone Meal
-3x Magenta Dye: Lapis Lazuli, Rose Red, Pink Dye
-1x Black Wool: Ink Sac, Wool
-1x Red Wool: Rose Red, Wool
-1x Green Wool: Cactus Green, Wool
-1x Brown Wool: Cocoa Beans, Wool
-1x Blue Wool: Lapis Lazuli, Wool
-1x Purple Wool: Purple Dye, Wool
-1x Cyan Wool: Cyan Dye, Wool
-1x Light Gray Wool: Light Gray Dye, Wool
-1x Gray Wool: Gray Dye, Wool
-1x Pink Wool: Pink Dye, Wool
-1x Lime Wool: Lime Dye, Wool
-1x Yellow Wool: Dandelion Yellow, Wool
-1x Light Blue Wool: Light Blue Dye, Wool
-1x Magenta Wool: Magenta Dye, Wool
-1x Orange Wool: Orange Dye, Wool
-1x Wool: Bone Meal, Wool
-2x Pink Dye: Rose Red, Bone Meal
-2x Orange Dye: Rose Red, Dandelion Yellow
-2x Lime Dye: Cactus Green, Bone Meal
-2x Gray Dye: Ink Sac, Bone Meal
+2x Ladder: Stick, None, Stick | Stick, Stick, Stick | Stick, None, Stick
+1x Sign: Wooden Planks, Wooden Planks, Wooden Planks | Wooden Planks, Wooden Planks, Wooden Planks | None, Stick, None
+1x Painting: Stick, Stick, Stick | Stick, Black Wool, Stick | Stick, Stick, Stick
+16x Iron Bars: Iron Ingot, Iron Ingot, Iron Ingot | Iron Ingot, Iron Ingot, Iron Ingot
+16x Glass Pane: Glass, Glass, Glass | Glass, Glass, Glass
+3x Paper: Sugar Canes, Sugar Canes, Sugar Canes
+1x Book: Paper | Paper | Paper
+2x Fence: Stick, Stick, Stick | Stick, Stick, Stick
+2x Nether Brick Fence: Nether Brick, Nether Brick, Nether Brick | Nether Brick, Nether Brick, Nether Brick
+1x Fence Gate: Stick, Wooden Planks, Stick | Stick, Wooden Planks, Stick
+1x Bed: Wool, Wool, Wool | Wooden Planks, Wooden Planks, Wooden Planks
+9x Gold Nugget: Gold Ingot
+1x Gold Ingot: Gold Nugget, Gold Nugget, Gold Nugget | Gold Nugget, Gold Nugget, Gold Nugget | Gold Nugget, Gold Nugget, Gold Nugget
+1x Eye of Ender: Ender Pearl | Blaze Powder
+//
+//Dye Recipes
+//
+3x Bone Meal: Bone
 2x Light Gray Dye: Gray Dye, Bone Meal
+2x Gray Dye: Ink Sac, Bone Meal
+2x Rose Red: Rose
+2x Orange Dye: Rose Red, Dandelion Yellow
+2x Dandelion Yellow: Flower
+2x Lime Dye: Cactus Green, Bone Meal
 2x Light Blue Dye: Lapis Lazuli, Bone Meal
 2x Cyan Dye: Lapis Lazuli, Cactus Green
 2x Purple Dye: Lapis Lazuli, Rose Red
-2x Magenta Dye: Purple Dye, Pink Dye
-2x Dandelion Yellow: Flower
-2x Rose Red: Rose
-3x Bone Meal: Bone
+4x Magenta Dye: Lapis Lazuli, Rose Red, Rose Red, Bone Meal
+2x Pink Dye: Rose Red, Bone Meal
+//
+//Wool Recipes
+//
+1x Light Gray Wool: Light Gray Dye, Wool
+1x Gray Wool: Gray Dye, Wool
+1x Black Wool: Ink Sac, Wool
+1x Red Wool: Rose Red, Wool
+1x Orange Wool: Orange Dye, Wool
+1x Yellow Wool: Dandelion Yellow, Wool
+1x Lime Wool: Lime Dye, Wool
+1x Green Wool: Cactus Green, Wool
+1x Light Blue Wool: Light Blue Dye, Wool
+1x Cyan Wool: Cyan Dye, Wool
+1x Blue Wool: Lapis Lazuli, Wool
+1x Purple Wool: Purple Dye, Wool
+1x Magenta Wool: Magenta Dye, Wool
+1x Pink Wool: Pink Dye, Wool
+1x Brown Wool: Cocoa Beans, Wool
+1x Wool: Bone Meal, Wool
+//
+//Enchancement & Brewing Recipes
+//
+3x Glass Bottle: Glass, None, Glass | None, Glass, None
+1x Cauldron: Iron Ingot, None, Iron Ingot | Iron Ingot, None, Iron Ingot | Iron Ingot, Iron Ingot, Iron Ingot
+1x Brewing Stand: None, Blaze Rod, None | Cobblestone, Cobblestone, Cobblestone
+2x Blaze Powder: Blaze Rod
+1x Magma Cream: Slimeball | Blaze Powder
+1x Fermented Spider Eye: Spider Eye | Brown Mushroom, Sugar
+1x Glistering Melon: Melon Slice, Gold Nugget
+9x Gold Nugget: Gold Ingot
+1x Enchantment Table: None, Book, None | Diamond, Obsidian, Diamond | Obsidian, Obsidian, Obsidian

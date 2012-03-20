@@ -24,6 +24,8 @@ class Recipe(object):
  
 with open("./plugins/data/recipes.txt") as f:
     for line in f.readlines():
+        if line.startswith("//"):
+            continue
         line = line.strip()
         match = pattern.match(line)
         if not match:
@@ -37,6 +39,8 @@ ids = []
 
 with open("./plugins/data/itemids.txt") as f:
     for line in f.readlines():
+        if line.startswith("//"):
+            continue
         parts = line.strip().split()
         id = parts[0]
         name = " ".join(parts[1:])

@@ -1,3 +1,6 @@
+// obtained from <https://github.com/blha303/skybot/commit/d4ba73d6e3f21cc60a01342f3de9d0d4abd14b3d>
+// edited by Lukeroge and _frozen
+// Block id
 1 Stone
 2 Grass Block
 3 Dirt
@@ -31,13 +34,29 @@
 31 Grass
 32 Dead Bush
 33 Piston
-34 Unknown
+34 Piston Extended
 35 Wool
-36 Unknown
+35:1 Orange Wool
+35:2 Magenta Wool
+35:3 Light Blue Wool
+35:4 Yellow Wool
+35:5 Lime Wool
+35:6 Pink Wool
+35:7 Gray Wool
+35:8 Light Gray Wool
+35:9 Cyan Wool
+35:10 Purple Wool
+35:11 Blue Wool
+35:12 Brown Wool
+35:13 Green Wool
+35:14 Red Wool
+35:15 Black Wool
+35:0 White Wool
+36 Block Moved by Piston
 37 Flower
 38 Rose
-39 Mushroom
-40 Mushroom
+39 Brown Mushroom
+40 Red Mushroom
 41 Block of Gold
 42 Block of Iron
 43 Double Slabs
@@ -118,7 +137,11 @@
 118 Cauldron
 119 End Portal
 120 End Portal Frame
-121 White Stone
+121 End Stone
+122 Dragon Egg
+123 Redstone Lamp (Off)
+124 Redstone Lamp (On)
+// Items Ids
 256 Iron Shovel
 257 Iron Pickaxe
 258 Iron Axe
@@ -215,6 +238,22 @@
 349 Raw Fish
 350 Cooked Fish
 351 Dye
+351:0 Ink Sac
+351:1 Rose Red
+351:2 Cactus Green
+351:3 Cocoa Beans
+351:4 Lapis Lazuli
+351:5 Purple Dye
+351:6 Cyan Dye
+351:7 Light Gray Dye
+351:8 Gray Dye
+351:9 Pink Dye
+351:10 Lime Dye
+351:11 Dandelion Yellow
+351:12 Light Blue Dye
+351:13 Magenta Dye
+351:14 Orange Dye
+351:15 Bone Meal
 352 Bone
 353 Sugar
 354 Cake
@@ -237,26 +276,6 @@
 371 Gold Nugget
 372 Nether Wart
 373 Potion
-374 Glass Bottle
-375 Spider Eye
-376 Fermented Spider Eye
-377 Blaze Powder
-378 Magma Cream
-379 Brewing Stand
-380 Cauldron
-381 Eye of Ender
-382 Glistering Melon
-2256 Music Disc 13
-2257 Music Disc Cat
-2258 Music Disc Blocks
-2259 Music Disc Chirp
-2260 Music Disc Far
-2261 Music Disc Mall
-2262 Music Disc Mellohi
-2263 Music Disc Stal
-2264 Music Disc Strad
-2265 Music Disc Ward
-2266 Music Disc 11
 373:16 Awkward Potion
 373:32 Thick Potion
 373:64 Mundane Potion
@@ -304,3 +323,48 @@
 373:16457 Strength Splash (6:00)
 373:16458 Slowness Splash (3:00)
 373:16471 Regeneration Splash II (0:16)
+374 Glass Bottle
+375 Spider Eye
+376 Fermented Spider Eye
+377 Blaze Powder
+378 Magma Cream
+379 Brewing Stand
+380 Cauldron
+381 Eye of Ender
+382 Glistering Melon
+383 Spawn Egg
+383:50 Creeper Egg
+383:51 Skeleton Egg
+383:52 Spider Egg
+383:54 Zombie Egg
+383:55 Slime Egg
+383:56 Ghast Egg
+383:57 Zombie Pigman Egg
+383:58 Enderman Egg
+383:59 Cave Spider Egg
+383:60 Silverfish Egg
+383:61 Blaze Egg
+383:62 Magma Cube Egg
+383:90 Pig Egg
+383:91 Sheep Egg
+383:92 Cow Egg
+383:93 Chicken Egg
+383:94 Squid Egg
+383:95 Wolf Egg
+383:96 Mooshroom Egg
+383:98 Ocelot Egg
+383:120 Villager Egg
+384 Bottle Of Enchanting
+385 Fire Charge
+// Records
+2256 Music Disc 13
+2257 Music Disc Cat
+2258 Music Disc Blocks
+2259 Music Disc Chirp
+2260 Music Disc Far
+2261 Music Disc Mall
+2262 Music Disc Mellohi
+2263 Music Disc Stal
+2264 Music Disc Strad
+2265 Music Disc Ward
+2266 Music Disc 11

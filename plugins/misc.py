@@ -51,7 +51,7 @@ def onjoin(paraml, conn=None, bot=None):
         time.sleep(1)
 
 # HTTP Useragent
-    http.ua_cloudbot = 'CloudBot - http://git.io/cloudbot'
+    http.ua_cloudbot = 'CloudBot - http://git.io/cloudbotirc'
 
 # Stay-alive code
     stayalive = conn.conf.get('stayalive')

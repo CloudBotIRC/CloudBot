@@ -30,7 +30,7 @@ def urban(inp):
         
     # try getting the requested definition
     try:
-        out = "(%s/%s) %s: %s" % \
+        out = "[%s/%s] %s: %s" % \
               (str(id), str(len(defs)), defs[id-1]['word'], defs[id-1]['definition'])
     except IndexError:
         return 'Not found.'

@@ -5,7 +5,7 @@ echo "  / ____/ /___  __  ______/ / __ )____  / /_"
 echo " / /   / / __ \/ / / / __  / __  / __ \/ __/"
 echo "/ /___/ / /_/ / /_/ / /_/ / /_/ / /_/ / /_  "
 echo "\____/_/\____/\__,_/\__,_/_____/\____/\__/  "                                          
-echo " http://git.io/cloudbot          by ClouDev "
+echo " http://git.io/cloudbotirc       by ClouDev "
 echo ""
 locatefiles() {
     botfile="/bot.py"

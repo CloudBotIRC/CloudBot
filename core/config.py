@@ -17,7 +17,7 @@ if not os.path.exists('config'):
               "server": "irc.esper.net",
               "nick": "MyNewCloudBot",
               "user": "cloudbot",
-              "realname": "CloudBot - http://git.io/cloudbot",
+              "realname": "CloudBot - http://git.io/cloudbotirc",
               "nickserv_password": "",
               "channels": ["#cloudbot"],
               "invitejoin": true,
@@ -61,7 +61,7 @@ if not os.path.exists('config'):
         }''') + '\n')
     print "Config generated!"
     print "Please edit the config now!"
-    print "For help, see http://git.io/cloudbotwiki"
+    print "For help, see http://git.io/cloudbotircwiki"
     print "Thank you for using CloudBot!"
     sys.exit()
 

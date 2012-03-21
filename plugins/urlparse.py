@@ -1,8 +1,5 @@
 from util import hook, http, urlnorm
-import urllib
-from urllib2 import urlopen, Request, HTTPError
 import re
-import BeautifulSoup
 
 titler = re.compile(r'(?si)<title>(.+?)</title>');
 
@@ -15,7 +12,6 @@ def parse(url):
         url = "http://" + url
     try:
         # get the title
-        print url
         request = http.open(url)
         real_url = request.geturl()
         text = request.read()

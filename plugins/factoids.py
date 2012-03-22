@@ -47,9 +47,6 @@ def multiwordReplace(text, wordDic):
 @hook.command(adminonly=True)
 def remember(inp, nick='', db=None, say=None, input=None, notice=None):
     ".remember <word> [+]<data> -- Remembers <data> with <word>. Add + to <data> to append."
-    if input.nick not in input.bot.config["admins"]:
-        notice("Only bot admins can use this command!")
-        return
     db_init(db)
 
     append = False
@@ -93,9 +90,6 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
 @hook.command(adminonly=True)
 def forget(inp, db=None, input=None, notice=None):
     ".forget <word> -- Forgets a remembered <word>."
-    if input.nick not in input.bot.config["admins"]:
-        notice("Only bot admins can use this command!")
-        return
 
     db_init(db)
     data = get_memory(db, inp)

@@ -10,7 +10,7 @@ from util import hook
 BUFFER_SIZE = 5000
 MAX_STEPS = 1000000
 
-
+@hook.command('brainfuck')
 @hook.command
 def bf(inp):
     ".bf <prog> -- Executes <prog> as Brainfuck code."

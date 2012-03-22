@@ -5,14 +5,17 @@ muted = []
 
 
 def mute_target(target):
+    target = target.lower()
     muted.append(target)
 
 
 def unmute_target(target):
+    target = target.lower()
     muted.remove(target)
 
 
 def is_muted(target):
+    target = target.lower()
     if target in muted:
         return True
     else:
@@ -31,10 +34,9 @@ def mutesieve(bot, input, func, type, args):
     return input
 
 
-@hook.command("muted")
 @hook.command(autohelp=False)
 def listmuted(inp, bot=None):
-    ".listmuted -- Lists the muted users/channels."
+    ".listmuted -- Lists muted users/channels."
     if muted:
         return "Muted users/channels are: " + ", ".join(muted)
     else:

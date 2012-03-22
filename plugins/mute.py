@@ -21,9 +21,8 @@ def is_muted(target):
 
 @hook.sieve
 def mutesieve(bot, input, func, type, args):
-#    if type == "event":
-#       print "type: event, dying"
-#       return input
+    if type == "event":
+       return input
     if is_muted(input.chan) or is_muted(input.nick):
         if input.command == "PRIVMSG" and input.lastparam[1:] == "unmute":
             return input
@@ -35,8 +34,11 @@ def mutesieve(bot, input, func, type, args):
 @hook.command("muted")
 @hook.command(autohelp=False)
 def listmuted(inp, bot=None):
-    ".muted -- Lists the muted users/channels."
-    return "Muted users/channels are: " + ", ".join(muted)
+    ".listmuted -- Lists the muted users/channels."
+    if muted:
+        return "Muted users/channels are: " + ", ".join(muted)
+    else:
+        return "No users are currently muted."
 
 
 @hook.command(adminonly=True)

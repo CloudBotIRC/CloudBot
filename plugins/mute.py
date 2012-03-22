@@ -39,14 +39,11 @@ def listmuted(inp, bot=None):
     return "Muted users/channels are: " + ", ".join(muted)
 
 
-@hook.command(autohelp=False, adminonly=True)
+@hook.command(adminonly=True)
 def mute(inp, input=None, db=None):
     ".mute <channel/user> -- Makes the bot ignore <channel/user>."
     "If no channel is specified, it is muted in the current channel."
-    if inp:
-        target = inp
-    else:
-        target = input.chan
+    target = inp
 
     if is_muted(target):
         input.notice("%s is already muted." % target)
@@ -55,15 +52,12 @@ def mute(inp, input=None, db=None):
         input.notice("%s has been muted." % target)
 
 
-@hook.command(autohelp=False, adminonly=True)
+@hook.command(adminonly=True)
 def unmute(inp, input=None, db=None):
     ".unmute <channel/user> -- Makes the bot listen to <channel/user>."
     "If no channel is specified, it is unmuted in the current channel."
-    if inp:
-        target = inp
-    else:
-        target = input.chan
-
+    target = inp
+    
     if is_muted(target):
         unmute_target(target)
         input.notice("%s has been unmuted." % target)

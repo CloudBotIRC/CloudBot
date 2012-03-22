@@ -5,16 +5,19 @@ muted = []
 
 
 def mute_target(target):
+    """ mutes someone """
     target = target.lower()
     muted.append(target)
 
 
 def unmute_target(target):
+    """ unmutes someone """
     target = target.lower()
     muted.remove(target)
 
 
 def is_muted(target):
+    """ checks of someone is muted """
     target = target.lower()
     if target in muted:
         return True
@@ -24,8 +27,10 @@ def is_muted(target):
 
 @hook.sieve
 def mutesieve(bot, input, func, type, args):
+    """ blocks input from muted channels/users """
+    # don't block input to event hooks
     if type == "event":
-       return input
+        return input
     if is_muted(input.chan) or is_muted(input.nick):
         if input.command == "PRIVMSG" and input.lastparam[1:] == "unmute":
             return input
@@ -46,7 +51,6 @@ def listmuted(inp, bot=None):
 @hook.command(adminonly=True)
 def mute(inp, input=None, db=None):
     ".mute <channel/user> -- Makes the bot ignore <channel/user>."
-    "If no channel is specified, it is muted in the current channel."
     target = inp
 
     if is_muted(target):
@@ -59,7 +63,6 @@ def mute(inp, input=None, db=None):
 @hook.command(adminonly=True)
 def unmute(inp, input=None, db=None):
     ".unmute <channel/user> -- Makes the bot listen to <channel/user>."
-    "If no channel is specified, it is unmuted in the current channel."
     target = inp
     
     if is_muted(target):

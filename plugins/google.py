@@ -22,7 +22,7 @@ def gis(inp):
     return random.choice(parsed['responseData']['results'][:10]) \
                          ['unescapedUrl']  # squares is dumb
 
-
+@hook.command('search')
 @hook.command('g')
 @hook.command
 def google(inp):

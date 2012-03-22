@@ -163,6 +163,7 @@ class IRC(object):
             else:
                 prefix, command, params = irc_noprefix_rem(msg).groups()
             nick, user, host = irc_netmask_rem(prefix).groups()
+            mask = user + "@" + host
             paramlist = irc_param_ref(params)
             lastparam = ""
             if paramlist:
@@ -170,7 +171,7 @@ class IRC(object):
                     paramlist[-1] = paramlist[-1][1:]
                 lastparam = paramlist[-1]
             self.out.put([msg, prefix, command, params, nick, user, host,
-                    paramlist, lastparam])
+                    mask, paramlist, lastparam])
             if command == "PING":
                 self.cmd("PONG", paramlist)
 
@@ -225,6 +226,7 @@ class FakeIRC(IRC):
             else:
                 prefix, command, params = irc_noprefix_rem(msg).groups()
             nick, user, host = irc_netmask_rem(prefix).groups()
+            mask = user + "@" + host
             paramlist = irc_param_ref(params)
             lastparam = ""
             if paramlist:
@@ -232,7 +234,7 @@ class FakeIRC(IRC):
                     paramlist[-1] = paramlist[-1][1:]
                 lastparam = paramlist[-1]
             self.out.put([msg, prefix, command, params, nick, user, host,
-                    paramlist, lastparam])
+                    mask, paramlist, lastparam])
             if command == "PING":
                 self.cmd("PONG", [params])
 

@@ -4,7 +4,7 @@ import re
 
 r = "\x02\x0305"  # red
 g = "\x02\x0303"  # green
-y = "\x02\x0308"  # yellow
+y = "\x02"  # yellow (not really)
 
 answers = [g + "As I see it, yes",
         g + "It is certain",

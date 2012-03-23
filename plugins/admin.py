@@ -17,20 +17,18 @@ def admins(inp, bot=None):
 @hook.command(autohelp=False)
 def channels(inp, conn=None):
     ".channels -- Lists the channels that the bot is in."
-    channels = conn.channels
-    return "I am in these channels: " + ", ".join(channels)
+    return "I am in these channels: " + ", ".join(conn.channels)
 
 
 @hook.command(autohelp=False, adminonly=True)
-def stop(inp, input=None):
+def stop(inp, nick=None, conn=None):
     ".stop [reason] -- Kills the bot with [reason] as its quit message."
     if inp:
-        input.conn.send("QUIT :Killed by " + input.nick + " (" + inp + ")")
+        conn.cmd("QUIT", ["Killed by %s (%s)" % (nick, inp)])
     else:
-        input.conn.send("QUIT :Killed by " + input.nick + " (no reason)")
+        conn.cmd("QUIT", ["Killed by %s." % nick])
     time.sleep(5)
     subprocess.call("./cloudbot stop", shell=True)
-
 
 @hook.command("reboot", autohelp=False, adminonly=True)
 @hook.command(autohelp=False, adminonly=True)
@@ -44,34 +42,32 @@ def restart(inp, input=None):
     os.execl("./cloudbot", "restart")
 
 
-@hook.command("clearlogs", autohelp=False, adminonly=True)
 @hook.command(autohelp=False, adminonly=True)
-def clear(inp, input=None):
-    ".clear -- Clears the bots log(s)."
-    time.sleep(5)
+def clearlogs(inp, input=None):
+    ".clearlogs -- Clears the bots log(s)."
     subprocess.call("./cloudbot clear", shell=True)
 
 
 @hook.command(adminonly=True)
 def join(inp, input=None, notice=None):
-    ".join <channel> -- Joins <channel>."
+    ".join <channel> -- joins <channel>."
     notice("Attempting to join " + inp + "...")
-    input.conn.send("JOIN " + inp)
+    conn.cmd("JOIN", [inp])
 
 
 @hook.command(adminonly=True)
-def cycle(inp, input=None, db=None, notice=None):
-    ".cycle <channel> -- Cycles <channel>."
+def cycle(inp, conn=None, notice=None):
+    ".cycle <channel> -- cycles <channel>."
     notice("Attempting to cycle " + inp + "...")
-    input.conn.send("PART " + inp)
-    input.conn.send("JOIN " + inp)
+    conn.cmd("PART", [inp])
+    conn.cmd("JOIN", [inp])
 
 
 @hook.command(adminonly=True)
-def part(inp, input=None, notice=None):
-    ".part <channel> -- Parts from <channel>."
+def part(inp, conn=None, notice=None):
+    ".part <channel> -- parts <channel>."
     notice("Attempting to part from " + inp + "...")
-    input.conn.send("PART " + inp)
+    conn.cmd("PART", [inp])
 
 
 @hook.command(adminonly=True)
@@ -85,14 +81,14 @@ def nick(inp, input=None, notice=None, set_nick=None):
 
 
 @hook.command(adminonly=True)
-def raw(inp, input=None, notice=None):
+def raw(inp, conn=None, notice=None):
     ".raw <command> -- Sends a RAW IRC command."
     notice("Raw command sent.")
-    input.conn.send(inp)
+    conn.send(inp)
 
 
 @hook.command(adminonly=True)
-def kick(inp, input=None, notice=None):
+def kick(inp, chan=None, notice=None):
     ".kick [channel] <user> [reason] -- kicks a user."
     split = inp.split(" ")
     if split[0][0] == "#":

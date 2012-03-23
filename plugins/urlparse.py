@@ -1,7 +1,8 @@
 from util import hook, http, urlnorm
 import re
 
-titler = re.compile(r'(?si)<title>(.+?)</title>');
+titler = re.compile(r'(?si)<title>(.+?)</title>')
+
 
 def parse(url):
     """ an improved version of our parsing code - now regex powered """
@@ -20,17 +21,17 @@ def parse(url):
         title = match.group(1)
     except:
         return "Could not parse URL! Are you sure its valid?"
-        
+
     title = http.unescape(title)
-    
+
     # if the url has been redirected, show us
     if real_url == url:
         return title
     else:
         return u"%s [%s]" % (title, real_url)
 
+
 @hook.command
 def title(inp):
     ".title <url> -- gets the title of a web page"
     return parse(inp)
-

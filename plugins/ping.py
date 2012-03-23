@@ -3,7 +3,7 @@ from util import hook
 import subprocess
 import re
 
-PING_REGEX = "rtt min/avg/max/mdev = (\d+.\d+)/(\d+.\d+)/(\d+.\d+)/(\d+.\d+)"
+ping_regex = re.compile(r"(\d+.\d+)/(\d+.\d+)/(\d+.\d+)/(\d+.\d+)")
 
 
 @hook.command
@@ -27,9 +27,9 @@ def ping(inp, reply=None):
     reply("Attempting to ping %s %s times..." % (host, count))
 
     pingcmd = subprocess.check_output(["ping", "-c", count, host])
-    if 'request timed out' in pingcmd or 'unknown host' in pingcmd:
+    if "request timed out" in pingcmd or "unknown host" in pingcmd:
         return "error: could not ping host"
     else:
-        m = re.search(PING_REGEX, pingcmd)
+        m = re.search(ping_regex, pingcmd)
         return "min: %sms, max: %sms, average: %sms, range: %sms, count: %s" \
         % (m.group(1), m.group(3), m.group(2), m.group(4), count)

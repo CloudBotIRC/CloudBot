@@ -1,4 +1,3 @@
-# mute plugin by lukeroge and neersighted
 from util import hook
 
 muted = []
@@ -64,7 +63,7 @@ def mute(inp, input=None, db=None):
 def unmute(inp, input=None, db=None):
     ".unmute <channel/user> -- Makes the bot listen to <channel/user>."
     target = inp
-    
+
     if is_muted(target):
         unmute_target(target)
         input.notice("%s has been unmuted." % target)

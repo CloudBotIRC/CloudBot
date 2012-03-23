@@ -1,5 +1,4 @@
 """ plugin by _303 (?)
-    pulled from <https://github.com/blha303/skybot/commit/d4ba73d6e3f21cc60a01342f3de9d0d4abd14b3d> by lukeroge
 """
 
 from util import hook
@@ -9,6 +8,7 @@ import itertools
 pattern = re.compile(r'^(?P<count>\d+)x (?P<name>.+?): (?P<ingredients>.*)$')
 
 recipelist = []
+
 
 class Recipe(object):
     __slots__ = 'output', 'count', 'ingredients', 'line'
@@ -21,7 +21,8 @@ class Recipe(object):
 
     def __str__(self):
         return self.line
- 
+
+
 with open("./plugins/data/recipes.txt") as f:
     for line in f.readlines():
         if line.startswith("//"):
@@ -44,7 +45,8 @@ with open("./plugins/data/itemids.txt") as f:
         parts = line.strip().split()
         id = parts[0]
         name = " ".join(parts[1:])
-        ids.append((id,name))
+        ids.append((id, name))
+
 
 @hook.command
 def itemid(input, reply=None):
@@ -67,21 +69,21 @@ def itemid(input, reply=None):
     if not len(results):
         reply("No matches found.")
         return
-        
+
     if len(results) > 12:
-        reply("There are too many options, please narrow your search. (%s)" % len(results))
+        reply("There are too many options, please narrow your search."
+              "(%s)" % len(results))
         return
-        
+
     out = ", ".join(results)
-        
+
     return out
- 
 
 
-@hook.command("crafting")
+@hook.command("craft")
 @hook.command
 def recipe(input, reply=None):
-    ".recipe <item> -- gets the crafting recipe for an item"
+    ".recipe/.craft <item> -- gets the crafting recipe for an item"
     input = input.lower().strip()
 
     results = []
@@ -95,10 +97,9 @@ def recipe(input, reply=None):
         return
 
     if len(results) > 3:
-        reply("There are too many options, please narrow your search. (%s)" % len(results))
+        reply("There are too many options, please narrow your search."
+              "(%s)" % len(results))
         return
 
     for result in results:
         reply(result)
-
-

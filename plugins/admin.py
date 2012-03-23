@@ -12,7 +12,7 @@ def admins(inp, bot=None):
     ".admins -- Lists the bot's admins."
     admins = bot.config["admins"]
     return ", ".join(admins)
-    
+
 
 @hook.command(autohelp=False)
 def channels(inp, conn=None):

@@ -37,7 +37,7 @@ def nrolls(count, n):
 #@hook.regex(valid_diceroll, re.I)
 @hook.command
 def dice(inp):
-    ".dice <diceroll> -- Simulates dicerolls. Example of <diceroll>:"
+    ".dice <diceroll> -- Simulates dicerolls. Example of <diceroll>:" \
     " '.dice 2d20-d5+4 roll 2'. D20s, subtract 1D5, add 4"
 
     try:  # if inp is a re.match object...

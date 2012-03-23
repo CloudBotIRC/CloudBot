@@ -5,7 +5,7 @@ import urllib2
 
 @hook.command
 def gitio(inp):
-    ".gitio <url> [code] -- Shorten Github URLs with git.io.  [code] is"
+    ".gitio <url> [code] -- Shorten Github URLs with git.io.  [code] is" \
     " a optional custom short code."
     split = inp.split(" ")
     url = split[0]

@@ -5,8 +5,8 @@ from util import hook, http
 @hook.command(autohelp=False)
 def forecast(inp, nick='', server='',
     reply=None, db=None, notice=None, say=None):
-    ".forecast <location> [dontsave] -- Gets a weather forecast "\
-    "for <location> from Google."
+    ".forecast <location> [dontsave] -- Gets a weather forecast" \
+    " for <location> from Google."
     loc = inp
 
     dontsave = loc.endswith(" dontsave")

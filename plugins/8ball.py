@@ -36,7 +36,7 @@ answers = [g + "As I see it, yes",
 
 @hook.command('8ball')
 def eightball(inp, me=None):
-    ".8ball <question> -- The all knowing magic eight ball, "\
+    ".8ball <question> -- The all knowing magic eight ball, " \
     "in electronic form. Ask and it shall be answered!"
     global nextresponsenumber
     inp = inp.strip()

@@ -24,7 +24,8 @@ def db_init(db):
 
 def get_memory(db, word):
 
-    row = db.execute("select data from mem where word=lower(?)", [word]).fetchone()
+    row = db.execute("select data from mem where word=lower(?)",
+                     [word]).fetchone()
     if row:
         return row[0]
     else:
@@ -46,7 +47,8 @@ def multiwordReplace(text, wordDic):
 @hook.command("r", adminonly=True)
 @hook.command(adminonly=True)
 def remember(inp, nick='', db=None, say=None, input=None, notice=None):
-    ".remember <word> [+]<data> -- Remembers <data> with <word>. Add + to <data> to append."
+    ".remember <word> [+]<data> -- Remembers <data> with <word>. Add +"
+    " to <data> to append."
     db_init(db)
 
     append = False
@@ -78,8 +80,8 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
         if append:
             notice("Appending %s to %s" % (new, data.replace('"', "''")))
         else:
-            notice('Forgetting existing data (%s), remembering this instead!' % \
-                    data.replace('"', "''"))
+            notice('Forgetting existing data (%s), remembering this instead!'
+                    % data.replace('"', "''"))
             return
     else:
         notice('Remembered!')

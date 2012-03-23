@@ -12,18 +12,12 @@ from util import hook, http, timesince
 
 
 def unescape_xml(string):
-    # unescape the 5 chars that might be escaped in xml
-
-    # gratuitously functional
-    # return reduce(lambda x, y: x.replace(*y), (string,
-    #     zip('&gt; &lt; &apos; &quote; &amp'.split(), '> < \' " &'.split()))
-
-    # boring, normal
     return string.replace('&gt;', '>').replace('&lt;', '<').replace('&apos;',
                     "'").replace('&quote;', '"').replace('&amp;', '&')
 
 history = []
 history_max_size = 250
+
 
 def parseDateTime(s):
     if s is None:
@@ -40,7 +34,7 @@ def parseDateTime(s):
             tzname = 'UTC'
         tz = FixedOffset(timedelta(hours=tzhour,
                                 minutes=tzmin), tzname)
- 
+
     x = datetime.strptime(datestr, "%Y-%m-%d %H:%M:%S")
     if fractional is None:
         fractional = '0'
@@ -154,9 +148,9 @@ def twitter(inp):
              strptime(time.text,
              '%a %b %d %H:%M:%S +0000 %Y'))
 
-    time_pretty = timesince.timesince(parseDateTime(time_raw), datetime.utcnow())
+    time_nice = timesince.timesince(parseDateTime(time_raw), datetime.utcnow())
 
     text = unescape_xml(tweet.find(text).text.replace('\n', ''))
     screen_name = tweet.find(screen_name).text
 
-    return "\x02@%s\x02: %s (%s ago)" % (screen_name, text, time_pretty)
+    return "\x02@%s\x02: %s (%s ago)" % (screen_name, text, time_nice)

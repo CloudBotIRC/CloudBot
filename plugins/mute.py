@@ -40,11 +40,11 @@ def mutesieve(bot, input, func, type, args):
 
 @hook.command(autohelp=False)
 def listmuted(inp, bot=None):
-    ".listmuted -- Lists muted users/channels."
+    ".listmuted -- Lists muted channels/users."
     if muted:
-        return "Muted users/channels are: " + ", ".join(muted)
+        return "Muted channels/users are: " + ", ".join(muted)
     else:
-        return "No users are currently muted."
+        return "No channels/users are currently muted."
 
 
 @hook.command(adminonly=True)

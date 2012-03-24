@@ -46,10 +46,6 @@ if not os.path.exists('config'):
             "factoids":
             {
               "prefix": false
-            },
-            "urlparse":
-            {
-              "enabled": false
             }
           },
           "censored_strings":

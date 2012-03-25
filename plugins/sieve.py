@@ -36,11 +36,7 @@ def sieve_suite(bot, input, func, kind, args):
     if args.get('adminonly', False):
         admins = bot.config.get('admins', [])
 
-        # admins = ["u3601@irccloud.com", "brjannc@smurfed.org"]
-
-        mask = input.user + "@" + input.host
-
-        if mask not in admins:
+        if input.mask not in admins and input.nick not in admins:
             return None
 
     return input

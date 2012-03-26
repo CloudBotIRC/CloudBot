@@ -10,6 +10,7 @@ with open("plugins/data/fortunes.txt") as f:
             continue
         fortunes.append(line.strip())
 
+
 @hook.command(autohelp=False)
 def fortune(inp, nick=None, say=None, input=None):
     ".fortune -- Fortune cookies on demand."

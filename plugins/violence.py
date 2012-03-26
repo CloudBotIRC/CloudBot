@@ -11,13 +11,13 @@ with open("plugins/data/slaps.txt") as f:
     for line in f.readlines():
         if line.startswith("//"):
             continue
-        slaps.append(line)
+        slaps.append(line.strip())
 
 with open("plugins/data/slap_items.txt") as f:
     for line in f.readlines():
         if line.startswith("//"):
             continue
-        slap_items.append(line)
+        slap_items.append(line.strip())
 
 larts = ["swaps <who>'s shampoo with glue.",
         "installs Windows on <who>'s computer.",
@@ -160,55 +160,63 @@ body = ['head',
 
 
 @hook.command
-def slap(inp, me=None, nick=None, input=None, notice=None):
+def slap(inp, me=None, nick=None, conn=None, notice=None):
     ".slap <user> -- Makes the bot slap <user>."
-    inp = inp.strip()
-
-    if not re.match(nick_re, inp.lower()):
+    target = inp.lower()
+    
+    if not re.match(nick_re, target):
         notice("Invalid username!")
         return
 
-    if inp == input.conn.nick.lower() or inp == "itself":
-        target = re.sub ('<who>', nick, random.choice(slaps))
-    else:
-        target = re.sub ('<who>', inp, random.choice(slaps))
-    msg = re.sub ('<item>', random.choice(slap_items), target)
-    me(msg)
-
-
-
-@hook.command
-def lart(inp, me=None, nick=None, input=None, notice=None):
-    ".lart <user> -- Makes the bot LART <user>."
-    inp = inp.strip()
-
-    if not re.match(nick_re, inp.lower()):
-        notice("Invalid username!")
-        return
-
-    if inp == input.conn.nick.lower() or inp == "itself":
+    # if the user is trying to make the bot slap itself, slap them
+    if target == conn.nick.lower() or target == "itself":
         target = nick
     else:
         target = inp
-    msg = re.sub ('<who>', target, random.choice(larts))
-    me(msg)
-
+        
+    out = random.choice(slaps)
+    out = out.replace('<who>', target)
+    out = out.replace('<item>', random.choice(slap_items))
+    
+    # act out the message
+    me(out)
 
 
 @hook.command
-def kill(inp, me=None, nick=None, input=None, notice=None):
+def lart(inp, me=None, nick=None, conn=None, notice=None):
+    ".lart <user> -- LARTs <user>."
+    target = inp.lower()
+
+    if not re.match(nick_re, target):
+        notice("Invalid username!")
+        return
+
+    if target == conn.nick.lower() or target == "itself":
+        target = nick
+    else:
+        target = inp
+        
+    out = random.choice(larts)
+    out = out.replace('<who>', target)
+    out = out.replace('<item>', random.choice(slap_items))
+    me(out)
+
+
+@hook.command
+def kill(inp, me=None, nick=None, conn=None, notice=None):
     ".kill <user> -- Makes the bot kill <user>."
-    inp = inp.strip()
+    target = inp.lower()
 
-    if not re.match(nick_re, inp.lower()):
+    if not re.match(nick_re, target):
         notice("Invalid username!")
         return
 
-    if inp == input.conn.nick.lower() or inp == "itself":
+    if target == conn.nick.lower() or target == "itself":
         target = nick
     else:
         target = inp
-    msg = random.choice(kills)
-    msg = re.sub ('<who>', target, msg)
-    msg = re.sub ('<body>', random.choice(body), msg)
-    me(msg)
+        
+    out = random.choice(kills)
+    out = out.replace('<who>', target)
+    out = out.replace('<body>', random.choice(body))
+    me(out)

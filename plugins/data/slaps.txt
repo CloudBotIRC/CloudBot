@@ -7,6 +7,6 @@ launches a <item> in <who>'s general direction.
 sits on <who>'s face, while slamming a <item> into their crotch.
 holds <who> down and repeatedly whacks them with a <item>.
 prods <who> with a flaming <item>.
-picks up a <item>, and whacks <who> with it.
+picks up a <item> and whacks <who> with it.
 ties <who> to a chair and throws a <item> at them.
 hits <who> on the head with a <item>.

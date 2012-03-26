@@ -3,38 +3,20 @@ import re
 import random
 
 
-slaps = ["slaps <who> with a <item>.",
-        "slaps <who> around a bit with a <item>.",
-        "throws a <item> at <who>.",
-        "chucks a few <item>s at <who>.",
-        "grabs a <item> and throws it in <who>'s face.",
-        "launches a <item> in <who>'s general direction.",
-        "sits on <who>'s face, while slamming a <item> into their crotch.",
-        "holds <who> down and repeatedly whacks them with a <item>.",
-        "prods <who> with a flaming <item>.",
-        "picks up a <item>, and whacks <who> with it.",
-        "ties <who> to a chair and throws a <item> at them.",
-        "hits <who> on the head with a <item>."]
+slaps = []
+slap_items = []
 
-items = ["cast iron skillet",
-        "large trout",
-        "baseball bat",
-        "wooden cane",
-        "CRT monitor",
-        "diamond sword",
-        "physics textbook",
-        "television",
-        "mau5head",
-        "five ton truck",
-        "roll of duct tape",
-        "book",
-        "cobblestone block",
-        "lava bucket",
-        "rubber chicken",
-        "gold block",
-        "fire extinguisher",
-        "heavy rock",
-        "chunk of dirt"]
+with open("plugins/data/slaps.txt") as f:
+    for line in f.readlines():
+        if line.startswith("//"):
+            continue
+        slaps.append(line)
+
+with open("plugins/data/slap_items.txt") as f:
+    for line in f.readlines():
+        if line.startswith("//"):
+            continue
+        items.append(line)
 
 larts = ["swaps <who>'s shampoo with glue.",
         "installs Windows on <who>'s computer.",

@@ -88,7 +88,7 @@ def raw(inp, conn=None, notice=None):
 
 
 @hook.command(adminonly=True)
-def kick(inp, input=None, chan=None, conn=None, notice=None):
+def kick(inp, chan=None, conn=None, notice=None):
     ".kick [channel] <user> [reason] -- Makes the bot kick <user> in [channel] "\
     "If [channel] is blank the bot will kick the <user> in "\
     "the channel the command was used in."
@@ -104,9 +104,8 @@ def kick(inp, input=None, chan=None, conn=None, notice=None):
             reason = reason[:-1]
             out = out + " :" + reason
     else:
-        chan = input.chan
         user = split[0]
-        out = "KICK %s %s" % (input.chan, split[0])
+        out = "KICK %s %s" % (chan, split[0])
         if len(split) > 1:
             reason = ""
             for x in split[1:]:
@@ -119,7 +118,7 @@ def kick(inp, input=None, chan=None, conn=None, notice=None):
 
 
 @hook.command(adminonly=True)
-def say(inp, conn=None, notice=None):
+def say(inp, conn=None, chan=None, notice=None):
     ".say [channel] <message> -- Makes the bot say <message> in [channel]. "\
     "If [channel] is blank the bot will say the <message> in "\
     "the channel the command was used in."
@@ -135,13 +134,13 @@ def say(inp, conn=None, notice=None):
         for x in split[0:]:
             message = message + x + " "
         message = message[:-1]
-        out = "PRIVMSG %s :%s" % (input.chan, message)
+        out = "PRIVMSG %s :%s" % (chan, message)
     conn.send(out)
 
 
 @hook.command("me", adminonly=True)
 @hook.command(adminonly=True)
-def act(inp, conn=None, notice=None):
+def act(inp, conn=None, chan=None, notice=None):
     ".act [channel] <action> -- Makes the bot act out <action> in [channel] "\
     "If [channel] is blank the bot will act the <action> in "\
     "the channel the command was used in."
@@ -162,7 +161,7 @@ def act(inp, conn=None, notice=None):
 
 
 @hook.command(adminonly=True)
-def topic(inp, input=None, notice=None):
+def topic(inp, conn=None, chan=None, notice=None):
     ".topic [channel] <topic> -- Change the topic of a channel."
     split = inp.split(" ")
     if split[0][0] == "#":

@@ -11,12 +11,7 @@ with open("plugins/data/fortunes.txt") as f:
         fortunes.append(line.strip())
 
 
-@hook.command(autohelp=False)
-def fortune(inp, nick=None, say=None, input=None):
+@hook.command
+def fortune(inp):
     ".fortune -- Fortune cookies on demand."
-
-    msg = "(" + nick + ") " + random.choice(fortunes)
-    if inp:
-        msg = "(@" + inp + ") " + random.choice(fortunes)
-
-    say(msg)
+    return random.choice(fortunes)

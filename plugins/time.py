@@ -9,6 +9,8 @@ import locale
 import datetime
 from BeautifulSoup import BeautifulSoup
 
+tags_re = re.compile(r'<[^<]*?>')
+
 TimeZones = {'KST': 9, 'CADT': 10.5, 'EETDST': 3, 'MESZ': 2, 'WADT': 9,
              'EET': 2, 'MST': -7, 'WAST': 8, 'IST': 5.5, 'B': 2,
              'MSK': 3, 'X': -11, 'MSD': 4, 'CETDST': 2, 'AST': -4,
@@ -224,21 +226,16 @@ def get_time(tz):
 
 
 @hook.command("time")
-def timecommand(inp, say=None):
+def time_command(inp):
     ".time <area> -- Gets the time in <area>"
 
-    tags_re = re.compile(r'<[^<]*?>')
-
-    page = http.get('http://www.google.com/search', q="time in " + inp)
-
-    soup = BeautifulSoup(page)
-
+    request = http.get('http://www.google.com/search', q="time in " + inp)
+    soup = BeautifulSoup(request)
     response = soup.find('td', {'style': 'font-size:medium'})
 
     if response:
         output = response.renderContents()
         output = tags_re.sub('\x02', output.strip())
-
         return output
     else:
         try:

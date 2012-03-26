@@ -1,0 +1,5 @@
+head
+arms
+leg
+arm
+"special parts"

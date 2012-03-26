@@ -38,18 +38,14 @@ if not os.path.exists('config'):
             "bitly_api": "INSERT API KEY FROM bitly.com HERE",
             "wolframalpha": "INSERT API KEY FROM wolframalpha.com HERE",
             "lastfm": "INSERT API KEY FROM lastfm HERE",
-            "mc_user": "INSERT MINECRAFT USERNAME HERE",
-            "mc_pass": "INSERT MINECRAFT PASSWORD HERE"
+            "mc_user": "INSERT minecraft USERNAME HERE",
+            "mc_pass": "INSERT minecraft PASSWORD HERE"
           },
           "plugins":
           {
             "factoids":
             {
               "prefix": false
-            },
-            "urlparse":
-            {
-              "enabled": false
             }
           },
           "censored_strings":
@@ -57,7 +53,7 @@ if not os.path.exists('config'):
             "mypass",
             "mysecret"
           ],
-          "admins": ["myname"]
+          "admins": ["myname@myhost"]
         }''') + '\n')
     print "Config generated!"
     print "Please edit the config now!"

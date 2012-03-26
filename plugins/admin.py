@@ -49,15 +49,15 @@ def clearlogs(inp, input=None):
 
 
 @hook.command(adminonly=True)
-def join(inp, input=None, notice=None):
-    ".join <channel> -- joins <channel>."
+def join(inp, conn=None, notice=None):
+    ".join <channel> -- Joins <channel>."
     notice("Attempting to join " + inp + "...")
     conn.cmd("JOIN", [inp])
 
 
 @hook.command(adminonly=True)
 def cycle(inp, conn=None, notice=None):
-    ".cycle <channel> -- cycles <channel>."
+    ".cycle <channel> -- Cycles <channel>."
     notice("Attempting to cycle " + inp + "...")
     conn.cmd("PART", [inp])
     conn.cmd("JOIN", [inp])
@@ -65,7 +65,7 @@ def cycle(inp, conn=None, notice=None):
 
 @hook.command(adminonly=True)
 def part(inp, conn=None, notice=None):
-    ".part <channel> -- parts <channel>."
+    ".part <channel> -- Parts from <channel>."
     notice("Attempting to part from " + inp + "...")
     conn.cmd("PART", [inp])
 
@@ -88,8 +88,10 @@ def raw(inp, conn=None, notice=None):
 
 
 @hook.command(adminonly=True)
-def kick(inp, chan=None, notice=None):
-    ".kick [channel] <user> [reason] -- kicks a user."
+def kick(inp, input=None, chan=None, conn=None, notice=None):
+    ".kick [channel] <user> [reason] -- Makes the bot kick <user> in [channel] "\
+    "If [channel] is blank the bot will kick the <user> in "\
+    "the channel the command was used in."
     split = inp.split(" ")
     if split[0][0] == "#":
         chan = split[0]
@@ -113,11 +115,11 @@ def kick(inp, chan=None, notice=None):
             out = out + " :" + reason
 
     notice("Attempting to kick %s from %s..." % (user, chan))
-    input.conn.send(out)
+    conn.send(out)
 
 
 @hook.command(adminonly=True)
-def say(inp, input=None, notice=None):
+def say(inp, conn=None, notice=None):
     ".say [channel] <message> -- Makes the bot say <message> in [channel]. "\
     "If [channel] is blank the bot will say the <message> in "\
     "the channel the command was used in."
@@ -134,12 +136,12 @@ def say(inp, input=None, notice=None):
             message = message + x + " "
         message = message[:-1]
         out = "PRIVMSG %s :%s" % (input.chan, message)
-    input.conn.send(out)
+    conn.send(out)
 
 
 @hook.command("me", adminonly=True)
 @hook.command(adminonly=True)
-def act(inp, input=None, notice=None):
+def act(inp, conn=None, notice=None):
     ".act [channel] <action> -- Makes the bot act out <action> in [channel] "\
     "If [channel] is blank the bot will act the <action> in "\
     "the channel the command was used in."
@@ -156,7 +158,7 @@ def act(inp, input=None, notice=None):
             message = message + x + " "
         message = message[:-1]
         out = "PRIVMSG %s :\x01ACTION %s\x01" % (input.chan, message)
-    input.conn.send(out)
+    conn.send(out)
 
 
 @hook.command(adminonly=True)

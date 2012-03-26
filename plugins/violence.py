@@ -2,6 +2,7 @@ from util import hook
 import re
 import random
 
+nick_re = re.compile(r"^[A-Za-z0-9_|.-\]\[]*$")
 
 slaps = []
 slap_items = []
@@ -16,7 +17,7 @@ with open("plugins/data/slap_items.txt") as f:
     for line in f.readlines():
         if line.startswith("//"):
             continue
-        items.append(line)
+        slap_items.append(line)
 
 larts = ["swaps <who>'s shampoo with glue.",
         "installs Windows on <who>'s computer.",
@@ -163,7 +164,7 @@ def slap(inp, me=None, nick=None, input=None, notice=None):
     ".slap <user> -- Makes the bot slap <user>."
     inp = inp.strip()
 
-    if not re.match("^[A-Za-z0-9_|.-\]\[]*$", inp.lower()):
+    if not re.match(nick_re, inp.lower()):
         notice("Invalid username!")
         return
 
@@ -171,7 +172,7 @@ def slap(inp, me=None, nick=None, input=None, notice=None):
         target = re.sub ('<who>', nick, random.choice(slaps))
     else:
         target = re.sub ('<who>', inp, random.choice(slaps))
-    msg = re.sub ('<item>', random.choice(items), target)
+    msg = re.sub ('<item>', random.choice(slap_items), target)
     me(msg)
 
 
@@ -181,7 +182,7 @@ def lart(inp, me=None, nick=None, input=None, notice=None):
     ".lart <user> -- Makes the bot LART <user>."
     inp = inp.strip()
 
-    if not re.match("^[A-Za-z0-9_|.-\]\[]*$", inp.lower()):
+    if not re.match(nick_re, inp.lower()):
         notice("Invalid username!")
         return
 
@@ -199,7 +200,7 @@ def kill(inp, me=None, nick=None, input=None, notice=None):
     ".kill <user> -- Makes the bot kill <user>."
     inp = inp.strip()
 
-    if not re.match("^[A-Za-z0-9_|.-\]\[]*$", inp.lower()):
+    if not re.match(nick_re, inp.lower()):
         notice("Invalid username!")
         return
 

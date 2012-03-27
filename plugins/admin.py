@@ -28,24 +28,23 @@ def stop(inp, nick=None, conn=None):
     else:
         conn.cmd("QUIT", ["Killed by %s." % nick])
     time.sleep(5)
-    subprocess.call("./cloudbot stop", shell=True)
+    subprocess.call(["./cloudbot", "stop"])
 
-@hook.command("reboot", autohelp=False, adminonly=True)
 @hook.command(autohelp=False, adminonly=True)
-def restart(inp, input=None):
+def restart(inp, nick=None, conn=None):
     ".restart [reason] -- Restarts the bot with [reason] as its quit message."
     if inp:
-        input.conn.send("QUIT :Restarted by " + input.nick + " (" + inp + ")")
+        conn.cmd("QUIT", ["Restarted by %s (%s)" % (nick, inp)])
     else:
-        input.conn.send("QUIT :Restarted by " + input.nick + " (no reason)")
+        conn.cmd("QUIT", ["Restarted by %s." % nick])
     time.sleep(5)
-    os.execl("./cloudbot", "restart")
+    subprocess.call(["./cloudbot", "restart"])
 
 
 @hook.command(autohelp=False, adminonly=True)
 def clearlogs(inp, input=None):
     ".clearlogs -- Clears the bots log(s)."
-    subprocess.call("./cloudbot clear", shell=True)
+    subprocess.call(["./cloudbot", "clear"])
 
 
 @hook.command(adminonly=True)

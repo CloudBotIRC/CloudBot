@@ -51,33 +51,33 @@ def clearlogs(inp, input=None):
 @hook.command(adminonly=True)
 def join(inp, conn=None, notice=None):
     ".join <channel> -- Joins <channel>."
-    notice("Attempting to join " + inp + "...")
-    conn.cmd("JOIN", [inp])
+    notice("Attempting to join %s..." % inp)
+    conn.join(inp)
 
 
 @hook.command(adminonly=True)
 def cycle(inp, conn=None, notice=None):
     ".cycle <channel> -- Cycles <channel>."
-    notice("Attempting to cycle " + inp + "...")
-    conn.cmd("PART", [inp])
-    conn.cmd("JOIN", [inp])
+    notice("Attempting to cycle %s..." % inp)
+    conn.part(inp)
+    conn.join(inp)
 
 
 @hook.command(adminonly=True)
 def part(inp, conn=None, notice=None):
-    ".part <channel> -- Parts from <channel>."
-    notice("Attempting to part from " + inp + "...")
-    conn.cmd("PART", [inp])
+    ".part <channel> -- Leaves <channel>."
+    notice("Attempting to part from %s..." % inp)
+    conn.part(inp)
 
 
 @hook.command(adminonly=True)
-def nick(inp, input=None, notice=None, set_nick=None):
+def nick(inp, input=None, notice=None, conn=None):
     ".nick <nick> -- Changes the bots nickname to <nick>."
     if not re.match("^[A-Za-z0-9_|.-\]\[]*$", inp.lower()):
         notice("Invalid username!")
         return
-    notice("Attempting to change nick to " + inp + ".")
-    set_nick(inp)
+    notice("Attempting to change nick to \"%s\"..." % inp)
+    conn.set_nick(inp)
 
 
 @hook.command(adminonly=True)

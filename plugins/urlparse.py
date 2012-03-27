@@ -4,7 +4,7 @@ import re
 titler = re.compile(r'(?si)<title>(.+?)</title>')
 
 
-def gettitle(url):
+def get_title(url):
     url = urlnorm.normalize(url.encode('utf-8'))
     url = url.decode('utf-8')
     # add http if its missing
@@ -33,4 +33,4 @@ def gettitle(url):
 @hook.command
 def title(inp):
     ".title <url> -- gets the title of a web page"
-    return gettitle(inp)
+    return get_title(inp)

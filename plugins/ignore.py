@@ -42,7 +42,7 @@ def ignoresieve(bot, input, func, type, args):
 def ignored(inp, bot=None):
     ".ignored -- Lists ignored channels/users."
     if ignorelist:
-        return "Ignored channels/users are: " + ", ".join(ignorelist)
+        return "Ignored channels/users are: %s" % ", ".join(ignorelist)
     else:
         return "No channels/users are currently ignored."
 

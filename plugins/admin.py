@@ -38,7 +38,7 @@ def restart(inp, nick=None, conn=None):
     else:
         conn.cmd("QUIT", ["Restarted by %s." % nick])
     time.sleep(5)
-    subprocess.call(["./cloudbot", "restart"])
+    os.execl("./cloudbot", "restart")
 
 
 @hook.command(autohelp=False, adminonly=True)

@@ -17,7 +17,7 @@ def admins(inp, bot=None):
 @hook.command(autohelp=False)
 def channels(inp, conn=None):
     ".channels -- Lists the channels that the bot is in."
-    return "I am in these channels: " + ", ".join(conn.channels)
+    return "I am in these channels: %s" % ", ".join(conn.channels)
 
 
 @hook.command(autohelp=False, adminonly=True)

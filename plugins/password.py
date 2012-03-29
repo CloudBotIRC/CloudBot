@@ -53,6 +53,6 @@ def gen_password(types):
 
 @hook.command
 def password(inp, notice=None):
-    ".password <legenth> [types] -- Generates a password of <legenth> (default 10). [types] can include 'alpha', 'no caps', 'numeric', 'symbols' or any combination of the types, eg. 'numbers symbols'"
+    ".password <length> [types] -- Generates a password of <length> (default 10). [types] can include 'alpha', 'no caps', 'numeric', 'symbols' or any combination of the types, eg. 'numbers symbols'"
     password = gen_password(inp)
     notice(password)

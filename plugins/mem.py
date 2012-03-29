@@ -13,7 +13,7 @@ def mem(inp):
         line_pairs = re.findall(r"^(\w+):\s*(.*)\s*$", status_file, re.M)
         status = dict(line_pairs)
         keys = 'VmSize VmLib VmData VmExe VmRSS VmStk'.split()
-        return ', '.join(key + ':' + status[key] for key in keys)
+        return '\x02, '.join(key + ':\x02' + status[key] for key in keys)
 
     elif os.name == 'nt':
         cmd = "tasklist /FI \"PID eq %s\" /FO CSV /NH" % os.getpid()
@@ -23,6 +23,6 @@ def mem(inp):
         for amount in re.findall(r'([,0-9]+) K', out):
             total += int(amount.replace(',', ''))
 
-        return 'memory usage: %d kB' % total
+        return 'Memory usage: \x02%d kB\x02' % total
 
     return mem.__doc__

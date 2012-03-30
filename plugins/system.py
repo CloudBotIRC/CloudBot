@@ -22,10 +22,9 @@ def checkProc(checked_stats):
         return stats
 
 
-@hook.command("system", autohelp=False)
 @hook.command(autohelp=False)
-def sys(inp):
-    ".sys -- Retrieves information about the host system."
+def system(inp):
+    ".system -- Retrieves information about the host system."
     name = platform.node()
     os = platform.platform()
     python_version = platform.python_implementation() + ' ' + platform.python_version()
@@ -34,10 +33,9 @@ def sys(inp):
     return 'Name: \x02%s\x02, Operating System: \x02%s\x02, Python Version: \x02%s\x02, Architecture: \x02%s\x02, CPU: \x02%s\x02' % (name, os, python_version, arch, cpu)
 
 
-@hook.command("memory", autohelp=False)
 @hook.command(autohelp=False)
-def mem(inp):
-    ".mem -- Displays the bot's current memory usage."
+def memory(inp):
+    ".memory -- Displays the bot's current memory usage."
     if os.name == 'posix':
         checked_stats = 'VmRSS VmSize VmPeak VmStk VmData'
         memory = checkProc(checked_stats)
@@ -65,15 +63,13 @@ def mem(inp):
     return memory
 
 
-@hook.command("uptime", autohelp=False)
 @hook.command(autohelp=False)
-def up(inp):
-    ".up -- Shows the bot's uptime."
+def uptime(inp):
+    ".uptime -- Shows the bot's uptime."
     up_time = subprocess.check_output('ps -eo pid,etime | grep %s | awk \'{print $2}\'' % os.getpid(), shell=True)
     up_time = 'Uptime: \x02' + up_time + '\x02'
     return up_time
 
-@hook.command("proc", autohelp=False)
 @hook.command(autohelp=False)
 def pid(inp):
     ".pid -- Prints the bot's PID."

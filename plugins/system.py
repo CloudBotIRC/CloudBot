@@ -45,11 +45,7 @@ def mem(inp):
         memory = memory.split('\x02')
         numbers = [memory[i] for i in range(len(memory)) if i % 2 == 1]
         memory = [i for i in memory if i not in numbers]
-        numbers = [float(i) for i in numbers]
-        numbers = [i / 1024 for i in numbers]
-        numbers = [round(i, 2) for i in numbers]
-        numbers = [str(i) for i in numbers]
-        numbers = [i + ' MB' for i in numbers]
+        numbers = [str(round(float(i) / 1024, 2)) + ' MB' for i in numbers]
         memory = [list(i) for i in zip(memory, numbers)]
         memory = sum(memory, [])
         memory = '\x02'.join(memory)

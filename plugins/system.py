@@ -52,9 +52,10 @@ def mem(inp):
     return 'error: operating system not currently supported'
 
 
-@hook.command("up", autohelp=False)
+@hook.command("uptime", autohelp=False)
 @hook.command(autohelp=False)
-def uptime(inp):
+def up(inp):
+    ".up -- Shows the bot's uptime."
     proc = psutil.Process(os.getpid())
     up_time = proc.create_time
     up_time = time.time() - up_time
@@ -62,6 +63,8 @@ def uptime(inp):
     up_time = time.strftime("Uptime: \x02%M:%S\x02", up_time)
     return up_time
 
+@hook.command("proc", autohelp=False)
 @hook.command(autohelp=False)
 def pid(inp):
+    ".pid -- Prints the bot's PID."
     return 'PID: \x02%s\x02' % os.getpid()

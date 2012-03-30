@@ -11,30 +11,34 @@ def replace(text, wordDic):
         return wordDic[match.group(0)]
     return rc.sub(translate, text)
 
-@hook.command("memory", autohelp=False)
-@hook.command(autohelp=False)
-def mem(inp):
-    ".mem -- Display the bot's current memory usage."
-    if os.name == 'posix':
+def checkProc(checked_stats):
         status_file = open("/proc/%d/status" % os.getpid()).read()
         line_pairs = re.findall(r"^(\w+):\s*(.*)\s*$", status_file, re.M)
         status = dict(line_pairs)
-        checked_stats = 'VmRSS VmSize VmPeak VmStk'.split()
+        checked_stats = checked_stats.split()
         stats = '\x02, '.join(key + ': \x02' + status[key] for key in checked_stats)
-        pretty_names = {'VmRSS': 'Real Memory', 'VmSize': 'Allocated Memory', 'VmPeak': 'Peak Allocated Memory', 'VmStk': 'Stack Size'}
+        return stats
+
+@hook.command("memory", autohelp=False)
+@hook.command(autohelp=False)
+def mem(inp):
+    ".mem -- Displays the bot's current memory usage."
+    if os.name == 'posix':
+        checked_stats = 'Threads VmRSS VmSize VmPeak VmStk'
+        stats = checkProc(checked_stats)
+        pretty_names = {'Threads': 'Active Threads', 'VmRSS': 'Real Memory', 'VmSize': 'Allocated Memory', 'VmPeak': 'Peak Allocated Memory', 'VmStk': 'Stack Size'}
         stats = replace(stats, pretty_names)
         return stats
+
     elif os.name == 'nt':
         cmd = "tasklist /FI \"PID eq %s\" /FO CSV /NH" % os.getpid()
         out = os.popen(cmd).read()
-
         total = 0
         for amount in re.findall(r'([,0-9]+) K', out):
             total += int(amount.replace(',', ''))
+        return 'Memory Usage: \x02%s kB\x02' % total
+    return 'error: operating system not currently supported'
 
-        return '\x02Memory Usage: %s kB\x02' % total
-
-    return mem.__doc__
 
 @hook.command("system", autohelp=False)
 @hook.command(autohelp=False)

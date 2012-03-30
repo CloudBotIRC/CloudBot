@@ -65,7 +65,7 @@ def onjoin(paraml, conn=None, bot=None):
 # system info command
 @hook.command(autohelp=False)
 def system(inp):
-    ".system -- retrieves information about the host system"
+    ".system -- Retrieves information about the host system."
     python_version = platform.python_version()
     os = platform.platform(aliased=True)
     cpu = platform.machine()

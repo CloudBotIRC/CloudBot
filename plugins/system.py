@@ -4,18 +4,26 @@ import platform
 from util import hook
 
 
+def replace(text, wordDic):
+    rc = re.compile('|'.join(map(re.escape, wordDic)))
+
+    def translate(match):
+        return wordDic[match.group(0)]
+    return rc.sub(translate, text)
+
 @hook.command("memory", autohelp=False)
 @hook.command(autohelp=False)
 def mem(inp):
     ".mem -- Display the bot's current memory usage."
-
     if os.name == 'posix':
         status_file = open("/proc/%d/status" % os.getpid()).read()
         line_pairs = re.findall(r"^(\w+):\s*(.*)\s*$", status_file, re.M)
         status = dict(line_pairs)
-        keys = 'VmSize VmRSS VmStk'.split()
-        return '\x02, '.join(key + ': \x02' + status[key] for key in keys)
-
+        checked_stats = 'VmRSS VmSize VmPeak VmStk'.split()
+        stats = '\x02, '.join(key + ': \x02' + status[key] for key in checked_stats)
+        pretty_names = {'VmRSS': 'Real Memory', 'VmSize': 'Allocated Memory', 'VmPeak': 'Peak Allocated Memory', 'VmStk': 'Stack Size'}
+        stats = replace(stats, pretty_names)
+        return stats
     elif os.name == 'nt':
         cmd = "tasklist /FI \"PID eq %s\" /FO CSV /NH" % os.getpid()
         out = os.popen(cmd).read()

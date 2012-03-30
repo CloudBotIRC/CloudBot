@@ -25,13 +25,13 @@ Unzip the resulting file, and continue to read this document.
 
 ## Install
 
-Before you can run the bot, you need to install a few Python modules. These are `lXML`, `BeautifulSoup`, `MyGengo`, and `HTTPlib2`.  These can be installed with PIP (The Python package manager):
+Before you can run the bot, you need to install a few Python modules. These are `lXML`, `BeautifulSoup`, `psutil`, and `HTTPlib2`.  These can be installed with PIP (The Python package manager):
 
 `sudo pip install lxml`
 
 `sudo pip install beautifulsoup`
 
-`sudo pip install mygengo`
+`sudo pip install psutil`
 
 `sudo pip install httplib2`
 
@@ -93,7 +93,7 @@ They can both be found in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via 
 
 CloudBot runs on **Python** *2.7.x*. It is developed on **Debian** *Wheezy/Testing* and **Ubuntu** *11.10* with **Python** *2.7.2*.
 
-It **requires Python modules** `lXML`, `BeautifulSoup`, `Enchant`, `MyGengo`, and `HTTPlib2`.
+It **requires Python modules** `lXML`, `BeautifulSoup`, `Enchant`, `psutil`, and `HTTPlib2`.
 
 The programs `screen` or `daemon` are recomended for the wrapper to run optimaly.
 

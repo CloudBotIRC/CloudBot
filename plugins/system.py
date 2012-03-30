@@ -1,8 +1,9 @@
 import os
 import re
+import time
+import psutil
 import platform
 from util import hook
-
 
 def replace(text, wordDic):
     rc = re.compile('|'.join(map(re.escape, wordDic)))
@@ -24,9 +25,9 @@ def checkProc(checked_stats):
 def mem(inp):
     ".mem -- Displays the bot's current memory usage."
     if os.name == 'posix':
-        checked_stats = 'Threads VmRSS VmSize VmPeak VmStk'
+        checked_stats = 'Threads VmRSS VmSize VmPeak VmStk VmData'
         stats = checkProc(checked_stats)
-        pretty_names = {'Threads': 'Active Threads', 'VmRSS': 'Real Memory', 'VmSize': 'Allocated Memory', 'VmPeak': 'Peak Allocated Memory', 'VmStk': 'Stack Size'}
+        pretty_names = {'Threads': 'Active Threads', 'VmRSS': 'Real Memory', 'VmSize': 'Allocated Memory', 'VmPeak': 'Peak Allocated Memory', 'VmStk': 'Stack Size', 'VmData': 'Heap Size'}
         stats = replace(stats, pretty_names)
         return stats
 
@@ -38,6 +39,18 @@ def mem(inp):
             total += int(amount.replace(',', ''))
         return 'Memory Usage: \x02%s kB\x02' % total
     return 'error: operating system not currently supported'
+
+
+@hook.command("up", autohelp=False)
+@hook.command(autohelp=False)
+def uptime(inp):
+    proc = psutil.Process(os.getpid())
+    up_time = proc.create_time
+    up_time = time.time() - up_time
+    up_time = time.localtime(up_time)
+    up_time = time.strftime("Uptime: %M:%S", up_time)
+    return up_time
+
 
 
 @hook.command("system", autohelp=False)

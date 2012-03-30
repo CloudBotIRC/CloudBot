@@ -28,7 +28,7 @@ def stop(inp, nick=None, conn=None):
     else:
         conn.cmd("QUIT", ["Killed by %s." % nick])
     time.sleep(5)
-    subprocess.call(["./cloudbot", "stop"])
+    os.execl(["./cloudbot", "stop"])
 
 @hook.command(autohelp=False, adminonly=True)
 def restart(inp, nick=None, conn=None):

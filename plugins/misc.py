@@ -61,12 +61,3 @@ def onjoin(paraml, conn=None, bot=None):
         while True:
             time.sleep(delay)
             conn.cmd('PING', [conn.nick])
-            
-# system info command
-@hook.command(autohelp=False)
-def system(inp):
-    ".system -- Retrieves information about the host system."
-    python_version = platform.python_version()
-    os = platform.platform(aliased=True)
-    cpu = platform.machine()
-    return "Platform: %s, Python Version: %s, CPU: %s" % (os, python_version, cpu)

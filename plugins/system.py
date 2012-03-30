@@ -1,6 +1,6 @@
 import os
 import re
-
+import platform
 from util import hook
 
 
@@ -26,3 +26,11 @@ def mem(inp):
         return 'Memory usage: \x02%d kB\x02' % total
 
     return mem.__doc__
+
+@hook.command(autohelp=False)
+def sys(inp):
+    ".sys -- Retrieves information about the host system."
+    python_version = platform.python_version()
+    os = platform.platform(aliased=True)
+    cpu = platform.machine()
+    return "Platform: %s, Python Version: %s, CPU: %s" % (os, python_version, cpu)

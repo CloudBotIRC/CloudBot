@@ -20,6 +20,17 @@ def checkProc(checked_stats):
         stats = '\x02, '.join(key + ': \x02' + status[key] for key in checked_stats)
         return stats
 
+
+@hook.command("system", autohelp=False)
+@hook.command(autohelp=False)
+def sys(inp):
+    ".sys -- Retrieves information about the host system."
+    python_version = platform.python_version()
+    os = platform.platform(aliased=True)
+    cpu = platform.machine()
+    return "Platform: \x02%s\x02, Python Version: \x02%s\x02, CPU: \x02%s\x02" % (os, python_version, cpu)
+
+
 @hook.command("memory", autohelp=False)
 @hook.command(autohelp=False)
 def mem(inp):
@@ -51,13 +62,6 @@ def uptime(inp):
     up_time = time.strftime("Uptime: \x02%M:%S\x02", up_time)
     return up_time
 
-
-
-@hook.command("system", autohelp=False)
 @hook.command(autohelp=False)
-def sys(inp):
-    ".sys -- Retrieves information about the host system."
-    python_version = platform.python_version()
-    os = platform.platform(aliased=True)
-    cpu = platform.machine()
-    return "Platform: \x02%s\x02, Python Version: \x02%s\x02, CPU: \x02%s\x02" % (os, python_version, cpu)
+def pid(inp):
+    return 'PID: \x02%s\x02' % os.getpid()

@@ -1,6 +1,7 @@
 import os
 import re
 import time
+import string
 import psutil
 import platform
 from util import hook
@@ -36,11 +37,22 @@ def sys(inp):
 def mem(inp):
     ".mem -- Displays the bot's current memory usage."
     if os.name == 'posix':
-        checked_stats = 'Threads VmRSS VmSize VmPeak VmStk VmData'
-        stats = checkProc(checked_stats)
-        pretty_names = {'Threads': 'Active Threads', 'VmRSS': 'Real Memory', 'VmSize': 'Allocated Memory', 'VmPeak': 'Peak Allocated Memory', 'VmStk': 'Stack Size', 'VmData': 'Heap Size'}
-        stats = replace(stats, pretty_names)
-        return stats
+        checked_stats = 'VmRSS VmSize VmPeak VmStk VmData'
+        memory = checkProc(checked_stats)
+        pretty_names = {'VmRSS': 'Real Memory', 'VmSize': 'Allocated Memory', 'VmPeak': 'Peak Allocated Memory', 'VmStk': 'Stack Size', 'VmData': 'Heap Size'}
+        memory = replace(memory, pretty_names)
+        memory = string.replace(memory, ' kB', '')
+        memory = memory.split('\x02')
+        numbers = [memory[i] for i in range(len(memory)) if i % 2 == 1]
+        memory = [i for i in memory if i not in numbers]
+        numbers = [float(x) for x in numbers]
+        numbers = [x / 1024 for x in numbers]
+        numbers = [str(x) for x in numbers]
+        numbers = [x + ' MB' for x in numbers]
+        memory = [list(l) for l in zip(memory, numbers)]
+        memory = sum(memory, [])
+        memory = '\x02'.join(memory)
+        return memory
 
     elif os.name == 'nt':
         cmd = "tasklist /FI \"PID eq %s\" /FO CSV /NH" % os.getpid()

@@ -45,23 +45,28 @@ def mem(inp):
         memory = memory.split('\x02')
         numbers = [memory[i] for i in range(len(memory)) if i % 2 == 1]
         memory = [i for i in memory if i not in numbers]
-        numbers = [float(x) for x in numbers]
-        numbers = [x / 1024 for x in numbers]
-        numbers = [str(x) for x in numbers]
-        numbers = [x + ' MB' for x in numbers]
-        memory = [list(l) for l in zip(memory, numbers)]
+        numbers = [float(i) for i in numbers]
+        numbers = [i / 1024 for i in numbers]
+        numbers = [round(i, 2) for i in numbers]
+        numbers = [str(i) for i in numbers]
+        numbers = [i + ' MB' for i in numbers]
+        memory = [list(i) for i in zip(memory, numbers)]
         memory = sum(memory, [])
         memory = '\x02'.join(memory)
-        return memory
 
     elif os.name == 'nt':
         cmd = "tasklist /FI \"PID eq %s\" /FO CSV /NH" % os.getpid()
         out = os.popen(cmd).read()
-        total = 0
+        memory = 0
         for amount in re.findall(r'([,0-9]+) K', out):
-            total += int(amount.replace(',', ''))
-        return 'Memory Usage: \x02%s kB\x02' % total
-    return 'error: operating system not currently supported'
+            memory += int(amount.replace(',', ''))
+        memory = float(memory)
+        memory = memory / 1024
+        memory = round(memory, 2)
+        memory = 'Memory Usage: \x02%s MB\x02' % memory
+    else:
+        memory = 'error: operating system not currently supported'
+    return memory
 
 
 @hook.command("uptime", autohelp=False)

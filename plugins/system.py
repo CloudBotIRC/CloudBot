@@ -48,7 +48,7 @@ def uptime(inp):
     up_time = proc.create_time
     up_time = time.time() - up_time
     up_time = time.localtime(up_time)
-    up_time = time.strftime("Uptime: %M:%S", up_time)
+    up_time = time.strftime("Uptime: \x02%M:%S\x02", up_time)
     return up_time
 
 
@@ -60,4 +60,4 @@ def sys(inp):
     python_version = platform.python_version()
     os = platform.platform(aliased=True)
     cpu = platform.machine()
-    return "Platform: %s, Python Version: %s, CPU: %s" % (os, python_version, cpu)
+    return "Platform: \x02%s\x02, Python Version: \x02%s\x02, CPU: \x02%s\x02" % (os, python_version, cpu)

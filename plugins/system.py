@@ -2,8 +2,8 @@ import os
 import re
 import time
 import string
-import psutil
 import platform
+import subprocess
 from util import hook
 
 def replace(text, wordDic):
@@ -69,11 +69,8 @@ def mem(inp):
 @hook.command(autohelp=False)
 def up(inp):
     ".up -- Shows the bot's uptime."
-    proc = psutil.Process(os.getpid())
-    up_time = proc.create_time
-    up_time = time.time() - up_time
-    up_time = time.localtime(up_time)
-    up_time = time.strftime("Uptime: \x02%M:%S\x02", up_time)
+    up_time = subprocess.check_output("ps -eo pid,etime | grep %s | awk '{print $2}'" % os.getpid(), shell=True)
+    up_time = "Uptime: " + up_time
     return up_time
 
 @hook.command("proc", autohelp=False)

@@ -14,8 +14,8 @@ def replace(text, wordDic):
     return rc.sub(translate, text)
 
 def checkProc(checked_stats):
-        status_file = open("/proc/%d/status" % os.getpid()).read()
-        line_pairs = re.findall(r"^(\w+):\s*(.*)\s*$", status_file, re.M)
+        status_file = open('/proc/self/status').read()
+        line_pairs = re.findall(r'^(\w+):\s*(.*)\s*$', status_file, re.M)
         status = dict(line_pairs)
         checked_stats = checked_stats.split()
         stats = '\x02, '.join(key + ': \x02' + status[key] for key in checked_stats)
@@ -26,10 +26,12 @@ def checkProc(checked_stats):
 @hook.command(autohelp=False)
 def sys(inp):
     ".sys -- Retrieves information about the host system."
-    python_version = platform.python_version()
-    os = platform.platform(aliased=True)
+    name = platform.node()
+    os = platform.platform()
+    python_version = platform.python_implementation() + ' ' + platform.python_version()
+    arch = '-'.join(platform.architecture())
     cpu = platform.machine()
-    return "Platform: \x02%s\x02, Python Version: \x02%s\x02, CPU: \x02%s\x02" % (os, python_version, cpu)
+    return 'Name: \x02%s\x02, Operating System: \x02%s\x02, Python Version: \x02%s\x02, Architecture: \x02%s\x02, CPU: \x02%s\x02' % (name, os, python_version, arch, cpu)
 
 
 @hook.command("memory", autohelp=False)
@@ -51,14 +53,12 @@ def mem(inp):
         memory = '\x02'.join(memory)
 
     elif os.name == 'nt':
-        cmd = "tasklist /FI \"PID eq %s\" /FO CSV /NH" % os.getpid()
+        cmd = 'tasklist /FI \"PID eq %s\" /FO CSV /NH' % os.getpid()
         out = os.popen(cmd).read()
         memory = 0
         for amount in re.findall(r'([,0-9]+) K', out):
             memory += int(amount.replace(',', ''))
-        memory = float(memory)
-        memory = memory / 1024
-        memory = round(memory, 2)
+        memory = str(round(float(memory) / 1024, 2))
         memory = 'Memory Usage: \x02%s MB\x02' % memory
     else:
         memory = 'error: operating system not currently supported'
@@ -69,8 +69,8 @@ def mem(inp):
 @hook.command(autohelp=False)
 def up(inp):
     ".up -- Shows the bot's uptime."
-    up_time = subprocess.check_output("ps -eo pid,etime | grep %s | awk '{print $2}'" % os.getpid(), shell=True)
-    up_time = "Uptime: " + up_time
+    up_time = subprocess.check_output('ps -eo pid,etime | grep %s | awk \'{print $2}\'' % os.getpid(), shell=True)
+    up_time = 'Uptime: \x02' + up_time + '\x02'
     return up_time
 
 @hook.command("proc", autohelp=False)

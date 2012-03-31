@@ -87,7 +87,7 @@ def tell(inp, nick='', chan='', db=None, input=None, notice=None):
         chan = 'a pm'
 
     if user_to == user_from.lower():
-        notice("Nope.")
+        notice("Have you looked in a mirror lately?")
         return
 
     if user_to.lower() == input.conn.nick.lower():

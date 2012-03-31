@@ -166,5 +166,5 @@ def topic(inp, conn=None, chan=None, notice=None):
     if split[0][0] == "#":
         out = "PRIVMSG %s :%s" % (split[0], message)
     else:
-        out = "TOPIC %s :%s" % (input.chan, message)
-    input.conn.send(out)
+        out = "TOPIC %s :%s" % (chan, message)
+    conn.send(out)

@@ -111,8 +111,7 @@ processargs() {
             status
         ;;
         *)  
-            echo "Please enter a command:"
-            usage="./cloudbot {start|stop|restart|clear|status}"
+            usage="usage: ./cloudbot {start|stop|restart|clear|status}"
             echo $usage
         ;;
     esac

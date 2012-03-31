@@ -155,7 +155,7 @@ def me(inp, conn=None, chan=None, notice=None):
         for x in split[0:]:
             message = message + x + " "
         message = message[:-1]
-        out = "PRIVMSG %s :\x01ACTION %s\x01" % (input.chan, message)
+        out = "PRIVMSG %s :\x01ACTION %s\x01" % (chan, message)
     conn.send(out)
 
 

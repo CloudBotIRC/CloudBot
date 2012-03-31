@@ -49,7 +49,7 @@ def ignored(inp, bot=None):
 
 @hook.command(adminonly=True)
 def ignore(inp, input=None, notice=None):
-    ".ignore <channel/user/host> -- Makes the bot ignore <channel/user/host>."
+    ".ignore <channel|user|host> -- Makes the bot ignore <channel|user|host>."
     target = inp
 
     if is_ignored(target):
@@ -61,7 +61,7 @@ def ignore(inp, input=None, notice=None):
 
 @hook.command(adminonly=True)
 def unignore(inp, input=None, notice=None):
-    ".unignore <channel/user/host> -- Makes the bot listen to <channel/user/host>."
+    ".unignore <channel|user|host> -- Makes the bot listen to <channel|user|host>."
     target = inp
 
     if is_ignored(target):

@@ -137,10 +137,10 @@ def say(inp, conn=None, chan=None, notice=None):
     conn.send(out)
 
 
-@hook.command("me", adminonly=True)
+@hook.command("act", adminonly=True)
 @hook.command(adminonly=True)
-def act(inp, conn=None, chan=None, notice=None):
-    ".act [channel] <action> -- Makes the bot act out <action> in [channel] "\
+def me(inp, conn=None, chan=None, notice=None):
+    ".me [channel] <action> -- Makes the bot act out <action> in [channel] "\
     "If [channel] is blank the bot will act the <action> in "\
     "the channel the command was used in."
     split = inp.split(" ")

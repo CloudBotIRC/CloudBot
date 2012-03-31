@@ -1,3 +1,4 @@
+# Plugin by Lukeroge, and neersighted
 import os
 import re
 import time

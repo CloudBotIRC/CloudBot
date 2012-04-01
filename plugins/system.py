@@ -1,8 +1,10 @@
 import os
 import re
 import time
+import datetime
 import platform
 from util import hook
+from datetime import timedelta
 
 
 @hook.command(autohelp=False)
@@ -54,8 +56,8 @@ def memory(inp):
 @hook.command(autohelp=False)
 def uptime(inp, bot=None):
     ".uptime -- Shows the bot's uptime."
-    uptime_raw = time.time() - bot.start_time
-    uptime = time.strftime('%H:%M:%S', time.gmtime(uptime_raw))
+    uptime_raw = round(time.time() - bot.start_time)
+    uptime = timedelta(seconds=uptime_raw)
     return "Uptime: \x02%s\x02" % uptime
 
 

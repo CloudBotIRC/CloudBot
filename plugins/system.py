@@ -1,5 +1,6 @@
 import os
 import re
+import time
 import platform
 import subprocess
 from util import hook
@@ -52,13 +53,11 @@ def memory(inp):
 
 
 @hook.command(autohelp=False)
-def uptime(inp):
+def uptime(inp, bot=None):
     ".uptime -- Shows the bot's uptime."
-    if os.name != "posix":
-        return "Sorry, this command is not supported on your OS."
-    up = subprocess.check_output("ps -eo pid,etime | grep %s | awk " \
-                                 "'{print $2}'" % os.getpid(), shell=True)
-    return "Uptime: \x02%s\x02" % up
+    uptime_raw = time.time() - bot.start_time
+    uptime = time.strftime('%H:%M:%S', time.gmtime(uptime_raw))
+    return "Uptime: \x02%s\x02" % uptime
 
 
 @hook.command(autohelp=False)

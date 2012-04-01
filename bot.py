@@ -16,6 +16,7 @@ class Bot(object):
 print 'Welcome to Cloudbot - Version DEV - http://git.io/cloudbotirc'
 
 bot = Bot()
+bot.start_time = time.time()
 
 print 'Loading plugins...'
 

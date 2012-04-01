@@ -54,7 +54,7 @@ def memory(inp):
 @hook.command(autohelp=False)
 def uptime(inp):
     ".uptime -- Shows the bot's uptime."
-    if os.name not "posix":
+    if os.name != "posix":
         return "Sorry, this command is not supported on your OS."
     up = subprocess.check_output("ps -eo pid,etime | grep %s | awk " \
                                  "'{print $2}'" % os.getpid(), shell=True)

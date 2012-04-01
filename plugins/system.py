@@ -2,7 +2,6 @@ import os
 import re
 import time
 import platform
-import subprocess
 from util import hook
 
 

@@ -29,8 +29,8 @@ def memory(inp):
         s = dict(re.findall(r'^(\w+):\s*(.*)\s*$', status_file, re.M))
         # get the data we need and process it
         data = s['VmRSS'], s['VmSize'], s['VmPeak'], s['VmStk'], s['VmData']
-        data = [int(i.replace(' kB', '')) for i in data]
-        strings = [str(round(float(i) / 1024, 2)) + ' MB' for i in data]
+        data = [float(i.replace(' kB', '')) for i in data]
+        strings = [str(round(i / 1024, 2)) + ' MB' for i in data]
         # prepare the output
         out = "Real Memory: \x02%s\x02, Allocated Memory: \x02%s\x02, Peak " \
               "Allocated Memory: \x02%s\x02, Stack Size: \x02%s\x02, Heap " \

@@ -48,12 +48,14 @@ def memory(inp):
         return "Memory Usage: \x02%s MB\x02" % memory
 
     else:
-        return "Operating system not currently supported."
+        return "Sorry, this command is not supported on your OS."
 
 
 @hook.command(autohelp=False)
 def uptime(inp):
     ".uptime -- Shows the bot's uptime."
+    if os.name not "posix":
+        return "Sorry, this command is not supported on your OS."
     up = subprocess.check_output("ps -eo pid,etime | grep %s | awk " \
                                  "'{print $2}'" % os.getpid(), shell=True)
     return "Uptime: \x02%s\x02" % up

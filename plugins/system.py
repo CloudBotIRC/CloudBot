@@ -1,7 +1,6 @@
 import os
 import re
 import time
-import datetime
 import platform
 from util import hook
 from datetime import timedelta

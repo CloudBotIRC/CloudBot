@@ -1,4 +1,5 @@
 # Plugin by Lukeroge, and neersighted
+# Yeah, the code in this sucks. Meh.
 import os
 import re
 import time
@@ -26,12 +27,15 @@ def checkProc(checked_stats):
 @hook.command(autohelp=False)
 def system(inp):
     ".system -- Retrieves information about the host system."
-    name = platform.node()
+    hostname = platform.node()
     os = platform.platform()
-    python_version = platform.python_implementation() + ' ' + platform.python_version()
-    arch = '-'.join(platform.architecture())
+    python_imp = platform.python_implementation()
+    python_ver = platform.python_version()
+    architecture = '-'.join(platform.architecture())
     cpu = platform.machine()
-    return 'Name: \x02%s\x02, Operating System: \x02%s\x02, Python Version: \x02%s\x02, Architecture: \x02%s\x02, CPU: \x02%s\x02' % (name, os, python_version, arch, cpu)
+    return 'Hostname: \x02%s\x02, Operating System: \x02%s\x02, Python Version:' \
+           ' \x02%s %s\x02, Architecture: \x02%s\x02, CPU: \x02%s\x02' % (hostname,
+           os, python_imp, python_ver, architecture, cpu)
 
 
 @hook.command(autohelp=False)

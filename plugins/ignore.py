@@ -30,7 +30,7 @@ def ignoresieve(bot, input, func, type, args):
     # don't block input to event hooks
     if type == "event":
         return input
-    if is_ignored(input.chan) or is_ignored(input.nick) or is_ignored(input.host):
+    if is_ignored(input.chan) or is_ignored(input.nick) or is_ignored(input.host) or is_ignored(input.mask):
         if input.command == "PRIVMSG" and input.lastparam[1:] == "unignore":
             return input
         else:
@@ -39,12 +39,13 @@ def ignoresieve(bot, input, func, type, args):
 
 
 @hook.command(autohelp=False)
-def ignored(inp, bot=None):
+def ignored(inp, notice=None, bot=None):
     ".ignored -- Lists ignored channels/users/hosts."
     if ignorelist:
-        return "Ignored channels/users/hosts are: %s" % ", ".join(ignorelist)
+        notice("Ignored channels/users/hosts are: %s" % ", ".join(ignorelist))
     else:
-        return "No channels/users/hosts are currently ignored."
+        notice("No channels/users/hosts are currently ignored.")
+    return
 
 
 @hook.command(adminonly=True)

@@ -5,16 +5,12 @@ from util import hook
 
 @hook.sieve
 def sieve_suite(bot, input, func, kind, args):
-    if input.command == 'PRIVMSG' and \
-       input.nick.lower()[-3:] == 'bot' and args.get('ignorebots', True):
+    if input.command == 'PRIVMSG' and\
+       input.nick.endswith('bot') and args.get('ignorebots', True):
             return None
 
     if kind == "command":
         if input.trigger in bot.config.get('disabled_commands', []):
-            return None
-
-        ignored = bot.config.get('ignored', [])
-        if input.host in ignored or input.nick in ignored:
             return None
 
     fn = re.match(r'^plugins.(.+).py$', func._filename)
@@ -36,7 +32,8 @@ def sieve_suite(bot, input, func, kind, args):
     if args.get('adminonly', False):
         admins = bot.config.get('admins', [])
 
-        if input.host not in admins and input.nick not in admins:
+        if input.nick not in admins and input.mask not in admins:
+            input.notice("Sorry, you are not allowed to use this command.")
             return None
 
     return input

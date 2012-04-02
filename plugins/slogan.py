@@ -2,9 +2,11 @@ from util import hook, http, misc
 import re
 import string
 
+
 def sloganize(word):
     bytes = http.get('http://www.sloganizer.net/en/outbound.php', slogan=word)
     return bytes
+
 
 @hook.command("slogan")
 def sloganizr(inp, nick=None, say=None, input=None):

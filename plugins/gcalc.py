@@ -3,8 +3,9 @@ import re
 from util import hook, http, misc
 from BeautifulSoup import BeautifulSoup
 
-@hook.command("calc")
+
 @hook.command("math")
+@hook.command
 def calc(inp):
     ".calc <term> -- Calculate <term> with Google Calc."
 
@@ -14,7 +15,7 @@ def calc(inp):
 
     soup = BeautifulSoup(page)
 
-    response = soup.find('h2', {'class' : 'r'})
+    response = soup.find('h2', {'class': 'r'})
 
     if response is None:
         return "Could not calculate " + inp

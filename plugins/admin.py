@@ -1,195 +1,166 @@
-#  Shitty plugin made by iloveportalz0r
-#  Broken by The Noodle
-#  Improved by Lukeroge
-#  Further improved by neersighted
+# Plugin made by iloveportalz0r, TheNoodle, Lukeroge and neersighted
 from util import hook
 import os
+import re
 import sys
-import subprocess
+import json
 import time
+import subprocess
 
-@hook.command("quit", autohelp=False)
-@hook.command("exit", autohelp=False)
+
 @hook.command(autohelp=False)
-def stop(inp, input=None, db=None, notice=None):
-    ".stop [reason] -- Kills the bot, with [reason] as its quit message."
-    if not input.nick in input.bot.config["admins"]:
-        notice("Only bot admins can use this command!")
-        return
-    if inp:
-        input.conn.send("QUIT :Killed by " + input.nick + " (" + inp + ")")
+def admins(inp, notice=None, bot=None):
+    ".admins -- Lists bot's admins."
+    adminlist = bot.config["admins"]
+    if adminlist:
+        notice("Admins are: %s." % ", ".join(adminlist))
     else:
-        input.conn.send("QUIT :Killed by " + input.nick + " (no reason)")
+        notice("No users are admins!")
+    return
+
+
+@hook.command(adminonly=True)
+def admin(inp, notice=None, bot=None, config=None):
+    ".admin <nick|host> -- Make <nick|host> an admin."
+    target = inp.lower()
+    adminlist = bot.config["admins"]
+    if target in adminlist:
+        notice("%s is already an admin." % target)
+    else:
+        notice("%s is now an admin." % target)
+        adminlist.append(target)
+        adminlist.sort()
+        json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
+    return
+
+
+@hook.command(adminonly=True)
+def unadmin(inp, notice=None, bot=None, config=None):
+    ".unadmin <nick|host> -- Make <nick|host> a non-admin."
+    target = inp.lower()
+    adminlist = bot.config["admins"]
+    if target in adminlist:
+        notice("%s is no longer an admin." % target)
+        adminlist.remove(target)
+        adminlist.sort()
+        json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
+    else:
+        notice("%s is not an admin." % target)
+    return
+
+
+@hook.command(autohelp=False)
+def channels(inp, conn=None):
+    ".channels -- Lists the channels that the bot is in."
+    return "I am in these channels: %s" % ", ".join(conn.channels)
+
+
+@hook.command("quit", autohelp=False, adminonly=True)
+@hook.command(autohelp=False, adminonly=True)
+def stop(inp, nick=None, conn=None):
+    ".stop [reason] -- Kills the bot with [reason] as its quit message."
+    if inp:
+        conn.cmd("QUIT", ["Killed by %s (%s)" % (nick, inp)])
+    else:
+        conn.cmd("QUIT", ["Killed by %s." % nick])
     time.sleep(5)
-    subprocess.call("./cloudbot stop", shell=True)
+    os.execl("./cloudbot", "stop")
 
 
-@hook.command("reboot", autohelp=False)
-@hook.command(autohelp=False)
-def restart(inp, input=None, db=None, notice=None):
-    ".restart [reason] -- Restarts the bot, with [reason] as its quit message."
-    if not input.nick in input.bot.config["admins"]:
-        notice("Only bot admins can use this command!")
-        return
+@hook.command(autohelp=False, adminonly=True)
+def restart(inp, nick=None, conn=None):
+    ".restart [reason] -- Restarts the bot with [reason] as its quit message."
     if inp:
-        input.conn.send("QUIT :Restarted by " + input.nick + " (" + inp + ")")
+        conn.cmd("QUIT", ["Restarted by %s (%s)" % (nick, inp)])
     else:
-        input.conn.send("QUIT :Restarted by " + input.nick + " (no reason)")
+        conn.cmd("QUIT", ["Restarted by %s." % nick])
     time.sleep(5)
     os.execl("./cloudbot", "restart")
 
-@hook.command("clearlogs", autohelp=False)
-@hook.command(autohelp=False)
-def clear(inp, input=None, db=None, notice=None):
-    ".clear -- Clears the bot's log(s)."
-    if not input.nick in input.bot.config["admins"]:
-        notice("Only bot admins can use this command!")
-        return
-    time.sleep(5)
-    subprocess.call("./cloudbot clear", shell=True)
+
+@hook.command(autohelp=False, adminonly=True)
+def clearlogs(inp, input=None):
+    ".clearlogs -- Clears the bots log(s)."
+    subprocess.call(["./cloudbot", "clear"])
 
 
-@hook.command
-def join(inp, input=None, db=None, notice=None):
+@hook.command(adminonly=True)
+def join(inp, conn=None, notice=None):
     ".join <channel> -- Joins <channel>."
-    if not input.nick in input.bot.config["admins"]:
-        notice("Only bot admins can use this command!")
-        return
-    notice("Attempting to join " + inp + "...")
-    input.conn.send("JOIN " + inp)
+    notice("Attempting to join %s..." % inp)
+    conn.join(inp)
 
 
-@hook.command
-def cycle(inp, input=None, db=None, notice=None):
+@hook.command(adminonly=True)
+def part(inp, conn=None, notice=None):
+    ".part <channel> -- Leaves <channel>."
+    notice("Attempting to part from %s..." % inp)
+    conn.part(inp)
+
+
+@hook.command(adminonly=True)
+def cycle(inp, conn=None, notice=None):
     ".cycle <channel> -- Cycles <channel>."
-    if not input.nick in input.bot.config["admins"]:
-        notice("Only bot admins can use this command!")
-        return
-    notice("Attempting to cycle " + inp + "...")
-    input.conn.send("PART " + inp)
-    input.conn.send("JOIN " + inp)
+    notice("Attempting to cycle %s..." % inp)
+    conn.part(inp)
+    conn.join(inp)
 
 
-@hook.command
-def part(inp, input=None, notice=None):
-    ".part <channel> -- Parts from <channel>."
-    if not input.nick in input.bot.config["admins"]:
-        notice("Only bot admins can use this command!")
-        return
-    notice("Attempting to part from " + inp + "...")
-    input.conn.send("PART " + inp)
-
-
-@hook.command
-def nick(inp, input=None, notice=None):
+@hook.command(adminonly=True)
+def nick(inp, input=None, notice=None, conn=None):
     ".nick <nick> -- Changes the bots nickname to <nick>."
-    if not input.nick in input.bot.config["admins"]:
-        notice("Only bot admins can use this command!")
+    if not re.match("^[A-Za-z0-9_|.-\]\[]*$", inp.lower()):
+        notice("Invalid username!")
         return
-    notice("Changing nick to " + inp + ".")
-    input.conn.send("NICK " + inp)
+    notice("Attempting to change nick to \"%s\"..." % inp)
+    conn.set_nick(inp)
 
 
-@hook.command
-def raw(inp, input=None, notice=None):
+@hook.command(adminonly=True)
+def raw(inp, conn=None, notice=None):
     ".raw <command> -- Sends a RAW IRC command."
-    if not input.nick in input.bot.config["admins"]:
-        notice("Only bot admins can use this command!")
-        return
     notice("Raw command sent.")
-    input.conn.send(inp)
+    conn.send(inp)
 
 
-@hook.command
-def kick(inp, input=None, notice=None):
-    ".kick [channel] <user> [reason] -- kicks a user."
-    if not input.nick in input.bot.config["admins"]:
-        notice("Only bot admins can use this command!")
-        return
-    split = inp.split(" ")
-    if split[0][0] == "#":
-        chan = split[0]
-        user = split[1]
-        out = "KICK %s %s" % (chan, user)
-        if len(split) > 2:
-            reason = ""
-            for x in split[2:]:
-                reason = reason + x + " "
-            reason = reason[:-1]
-            out = out + " :" + reason
-    else:
-        chan = input.chan
-        user = split[0]
-        out = "KICK %s %s" % (input.chan, split[0])
-        if len(split) > 1:
-            reason = ""
-            for x in split[1:]:
-                reason = reason + x + " "
-            reason = reason[:-1]
-            out = out + " :" + reason
-
-    notice("Attempting to kick %s from %s..." % (user, chan))
-    input.conn.send(out)
-
-
-@hook.command
-def say(inp, input=None, notice=None):
+@hook.command(adminonly=True)
+def say(inp, conn=None, chan=None, notice=None):
     ".say [channel] <message> -- Makes the bot say <message> in [channel]. "\
     "If [channel] is blank the bot will say the <message> in "\
     "the channel the command was used in."
-    if not input.nick in input.bot.config["admins"]:
-        notice("Only bot admins can use this command!")
-        return
-    split = inp.split(" ")
-    if split[0][0] == "#":
+    inp = inp.split(" ")
+    if inp[0][0] == "#":
         message = ""
-        for x in split[1:]:
+        for x in inp[1:]:
             message = message + x + " "
         message = message[:-1]
-        out = "PRIVMSG %s :%s" % (split[0], message)
+        out = "PRIVMSG %s :%s" % (inp[0], message)
     else:
         message = ""
-        for x in split[0:]:
+        for x in inp[0:]:
             message = message + x + " "
         message = message[:-1]
-        out = "PRIVMSG %s :%s" % (input.chan, message)
-    input.conn.send(out)
+        out = "PRIVMSG %s :%s" % (chan, message)
+    conn.send(out)
 
 
-@hook.command("me")
-@hook.command
-def act(inp, input=None, notice=None):
-    ".act [channel] <action> -- Makes the bot act out <action> in [channel] "\
+@hook.command("act", adminonly=True)
+@hook.command(adminonly=True)
+def me(inp, conn=None, chan=None, notice=None):
+    ".me [channel] <action> -- Makes the bot act out <action> in [channel] "\
     "If [channel] is blank the bot will act the <action> in "\
     "the channel the command was used in."
-    if not input.nick in input.bot.config["admins"]:
-        notice("Only bot admins can use this command!")
-        return
-    split = inp.split(" ")
-    if split[0][0] == "#":
+    inp = inp.split(" ")
+    if inp[0][0] == "#":
         message = ""
-        for x in split[1:]:
+        for x in inp[1:]:
             message = message + x + " "
         message = message[:-1]
-        out = "PRIVMSG %s :\x01ACTION %s\x01" % (split[0], message)
+        out = "PRIVMSG %s :\x01ACTION %s\x01" % (inp[0], message)
     else:
         message = ""
-        for x in split[0:]:
+        for x in inp[0:]:
             message = message + x + " "
         message = message[:-1]
-        out = "PRIVMSG %s :\x01ACTION %s\x01" % (input.chan, message)
-    input.conn.send(out)
-
-
-@hook.command
-def topic(inp, input=None, notice=None):
-    ".topic [channel] <topic> -- Change the topic of a channel."
-    if not input.nick in input.bot.config["admins"]:
-        notice("Only bot admins can use this command!")
-        return
-    split = inp.split(" ")
-    if split[0][0] == "#":
-        out = "PRIVMSG %s :%s" % (split[0], message)
-    else:
-        out = "TOPIC %s :%s" % (input.chan, message)
-    input.conn.send(out)
+        out = "PRIVMSG %s :\x01ACTION %s\x01" % (chan, message)
+    conn.send(out)

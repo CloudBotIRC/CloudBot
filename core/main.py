@@ -7,7 +7,7 @@ thread.stack_size(1024 * 512)  # reduce vm size
 
 class Input(dict):
     def __init__(self, conn, raw, prefix, command, params,
-                    nick, user, host, paraml, msg):
+                    nick, user, host, mask, paraml, msg):
 
         chan = paraml[0].lower()
         if chan == conn.nick.lower():  # is a PM
@@ -25,9 +25,6 @@ class Input(dict):
             else:
                 conn.msg(chan, '(' + nick + ') ' + msg)
 
-        def set_nick(nick):
-            conn.set_nick(nick)
-
         def me(msg):
             conn.msg(chan, "\x01%s %s\x01" % ("ACTION", msg))
 
@@ -35,10 +32,10 @@ class Input(dict):
             conn.cmd('NOTICE', [nick, msg])
 
         dict.__init__(self, conn=conn, raw=raw, prefix=prefix, command=command,
-                    params=params, nick=nick, user=user, host=host,
+                    params=params, nick=nick, user=user, host=host, mask=mask,
                     paraml=paraml, msg=msg, server=conn.server, chan=chan,
                     notice=notice, say=say, reply=reply, pm=pm, bot=bot,
-                    me=me, set_nick=set_nick, lastparam=paraml[-1])
+                    me=me, lastparam=paraml[-1])
 
     # make dict keys accessible as attributes
     def __getattr__(self, key):

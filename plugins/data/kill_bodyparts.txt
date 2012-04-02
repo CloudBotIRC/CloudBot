@@ -1,0 +1,9 @@
+head
+arms
+legs
+arm
+leg
+toes
+fingers
+"special parts"
+"man bits"

@@ -20,7 +20,7 @@ def stock(inp):
 
     # if we dont get a company name back, the symbol doesn't match a company
     if results['company'] == '':
-        return "unknown ticker symbol %s" % inp
+        return "error: unknown ticker symbol (%s)" % inp
 
     if results['change'][0] == '-':
         results['color'] = "5"

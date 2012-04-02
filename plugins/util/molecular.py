@@ -33,6 +33,8 @@
 
 """molecular.py -- molecular (ngenoid) name generator
 
+Modified for CloudBot by Lukeroge.
+
 This module knows how to generate "random" names for RPG characters.
 It uses the same method as the "ngen" name generator by Kimmo Kulovesi,
 and in fact it can use the same name files.  molecular.py knows how
@@ -201,26 +203,3 @@ class Molecule:
         if len(self.nametbl["final"]) > 0:
             n.append(random.choice(self.nametbl["final"]))
         return string.join(n, "")
-
-if __name__ == "__main__":
-
-    if len(sys.argv) <= 1:
-        sys.stderr.write( \
-            "Usage: molecular.py [ -r file ] [ nn ]\n")
-        sys.exit(0)
-
-    name = Molecule()
-
-    i = 1
-
-    while i < len(sys.argv):
-        arg = sys.argv[i]
-        if arg == "-r":
-            i += 1
-            name.load(sys.argv[i])
-        else:
-            n = int(sys.argv[i])
-            lst = []
-            for i in range(n):
-                print name.name()
-        i += 1

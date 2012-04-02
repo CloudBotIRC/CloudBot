@@ -5,7 +5,7 @@ echo "  / ____/ /___  __  ______/ / __ )____  / /_"
 echo " / /   / / __ \/ / / / __  / __  / __ \/ __/"
 echo "/ /___/ / /_/ / /_/ / /_/ / /_/ / /_/ / /_  "
 echo "\____/_/\____/\__,_/\__,_/_____/\____/\__/  "                                          
-echo " http://git.io/cloudbot         by lukeroge "
+echo " http://git.io/cloudbotirc       by ClouDev "
 echo ""
 locatefiles() {
     botfile="/bot.py"
@@ -23,10 +23,10 @@ running() {
 }
 
 checkbackend() {
-        if dpkg -l| grep ^ii|grep daemon|grep 'turns other' > /dev/null; then
-            backend="daemon"
-        elif dpkg -l| grep ^ii|grep screen|grep 'terminal multi' > /dev/null; then
+        if dpkg -l| grep ^ii|grep screen|grep 'terminal multi' > /dev/null; then
             backend="screen"
+        elif dpkg -l| grep ^ii|grep daemon|grep 'turns other' > /dev/null; then
+            backend="daemon"
         else
             backend="manual"
         fi
@@ -77,6 +77,7 @@ processargs() {
         start)
             if running; then
                 echo "Cannot start! Bot is already running!"
+                exit 1
             else
                 echo "Starting CloudBot... ($backend)"
                 start
@@ -88,15 +89,18 @@ processargs() {
                 stop
             else
                 echo "Cannot stop! Bot is not already running!"
+                exit 1
             fi
         ;;
         restart)
             if running; then
                 echo "Restarting CloudBot... ($backend)"
                 stop
+                sleep 3
                 start
             else
                 echo "Cannot restart! Bot is not already running!"
+                exit 1
             fi
         ;;
         clear)
@@ -107,8 +111,7 @@ processargs() {
             status
         ;;
         *)  
-            echo "Please enter a command:"
-            usage="./cloudbot {start|stop|restart|clear|status}"
+            usage="usage: ./cloudbot {start|stop|restart|clear|status}"
             echo $usage
         ;;
     esac
@@ -122,3 +125,4 @@ main() {
 }
 
 main $*
+exit 0

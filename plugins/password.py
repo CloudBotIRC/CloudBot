@@ -40,7 +40,7 @@ def gen_password(types):
             okay.append(x)
     else:
         needs_def = 1
-    #defualts to lowercase alpha password if no arguments are found
+    #defaults to lowercase alpha password if no arguments are found
     if needs_def == 1:
         for x in string.ascii_lowercase:
             okay.append(x)
@@ -53,10 +53,6 @@ def gen_password(types):
 
 @hook.command
 def password(inp, notice=None):
-    ".password <legenth> [types] -- Generates a password of <legenth> (default 10). [types] can include 'alpha', 'no caps', 'numeric', 'symbols' or any combination of the types, eg. 'numbers symbols'"
+    ".password <length> [types] -- Generates a password of <length> (default 10). [types] can include 'alpha', 'no caps', 'numeric', 'symbols' or any combination of the types, eg. 'numbers symbols'"
     password = gen_password(inp)
-    short = "error: input too short"
-    penis = ["penis", "mypenis", "dick", "mydick"]
-    if inp in penis:
-        return short
     notice(password)

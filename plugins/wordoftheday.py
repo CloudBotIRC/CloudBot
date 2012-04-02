@@ -10,8 +10,8 @@ def word(inp, say=False, nick=False):
 
     soup = BeautifulSoup(page)
 
-    word = soup.find('strong', {'class' : 'main_entry_word'}).renderContents()
-    function = soup.find('p', {'class' : 'word_function'}).renderContents()
+    word = soup.find('strong', {'class': 'main_entry_word'}).renderContents()
+    function = soup.find('p', {'class': 'word_function'}).renderContents()
 
     #definitions = re.findall(r'<span class="ssens"><strong>:</strong>'
     #                        r' *([^<]+)</span>', content)

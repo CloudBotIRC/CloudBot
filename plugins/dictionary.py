@@ -1,21 +1,41 @@
+# Plugin by GhettoWizard and Scaevolus
 import re
-
-from util import hook, http
+from util import hook
+from util import http
 
 
 @hook.command('u')
 @hook.command
 def urban(inp):
-    ".urban <phrase> -- Looks up <phrase> on urbandictionary.com."
+    ".urban <phrase> [id] -- Looks up <phrase> on urbandictionary.com."
+
+    # set a default definition number
+    id = 1
+
+    # clean and split the input
+    input = inp.lower().strip()
+    parts = input.split()
+
+    # if the last word is a number, set the ID to that number
+    if parts[-1].isdigit():
+        id = int(parts[-1])
+        del parts[-1]
+        input = " ".join(parts)
 
     url = 'http://www.urbandictionary.com/iphone/search/define'
-    page = http.get_json(url, term=inp)
+    page = http.get_json(url, term=input)
     defs = page['list']
 
     if page['result_type'] == 'no_results':
         return 'Not found.'
 
-    out = defs[0]['word'] + ': ' + defs[0]['definition']
+    # try getting the requested definition
+    try:
+        out = "[%s/%s] %s: %s" % \
+              (str(id), str(len(defs)), defs[id - 1]['word'],
+              defs[id - 1]['definition'])
+    except IndexError:
+        return 'Not found.'
 
     if len(out) > 400:
         out = out[:out.rfind(' ', 0, 400)] + '...'
@@ -23,7 +43,6 @@ def urban(inp):
     return out
 
 
-# define plugin by GhettoWizard & Scaevolus
 @hook.command('dictionary')
 @hook.command
 def define(inp):

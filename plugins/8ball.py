@@ -4,7 +4,7 @@ import re
 
 r = "\x02\x0305"  # red
 g = "\x02\x0303"  # green
-y = "\x02\x0308"  # yellow
+y = "\x02"  # yellow (not really)
 
 answers = [g + "As I see it, yes",
         g + "It is certain",
@@ -36,7 +36,7 @@ answers = [g + "As I see it, yes",
 
 @hook.command('8ball')
 def eightball(inp, me=None):
-    ".8ball <question> -- The all knowing magic eight ball, "\
+    ".8ball <question> -- The all knowing magic eight ball, " \
     "in electronic form. Ask and it shall be answered!"
     global nextresponsenumber
     inp = inp.strip()

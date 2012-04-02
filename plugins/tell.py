@@ -25,13 +25,13 @@ def get_tells(db, user_to):
 
 @hook.singlethread
 @hook.event('PRIVMSG')
-def tellinput(paraml, input=None, db=None, bot=None):
+def tellinput(paraml, input=None, notice=None, db=None, bot=None, nick=None):
     if 'showtells' in input.msg.lower():
         return
 
     db_init(db)
 
-    tells = get_tells(db, input.nick)
+    tells = get_tells(db, nick)
 
     if tells:
         user_from, message, time, chan = tells[0]
@@ -43,9 +43,9 @@ def tellinput(paraml, input=None, db=None, bot=None):
             reply += " (+%d more, .showtells to view)" % (len(tells) - 1)
 
         db.execute("delete from tell where user_to=lower(?) and message=?",
-                     (input.nick, message))
+                     (nick, message))
         db.commit()
-        input.notice(reply)
+        notice(reply)
 
 
 @hook.command(autohelp=False)
@@ -87,7 +87,7 @@ def tell(inp, nick='', chan='', db=None, input=None, notice=None):
         chan = 'a pm'
 
     if user_to == user_from.lower():
-        notice("Nope.")
+        notice("Have you looked in a mirror lately?")
         return
 
     if user_to.lower() == input.conn.nick.lower():

@@ -10,11 +10,12 @@ import re
 from util import hook
 
 
-log_fds = {}  # '%(net)s %(chan)s' : (filename, fd)
+log_fds = {}  # '%(net)s %(chan)s': (filename, fd)
 
 timestamp_format = '%H:%M:%S'
 
-formats = {'PRIVMSG': '<%(nick)s> %(msg)s',
+formats = {
+    'PRIVMSG': '<%(nick)s> %(msg)s',
     'PART': '-!- %(nick)s [%(user)s@%(host)s] has left %(chan)s',
     'JOIN': '-!- %(nick)s [%(user)s@%(host)s] has joined %(param0)s',
     'MODE': '-!- mode/%(chan)s [%(param_tail)s] by %(nick)s',
@@ -22,16 +23,22 @@ formats = {'PRIVMSG': '<%(nick)s> %(msg)s',
     'TOPIC': '-!- %(nick)s changed the topic of %(chan)s to: %(msg)s',
     'QUIT': '-!- %(nick)s has quit [%(msg)s]',
     'PING': '',
-    'NOTICE': ''
+    'NOTICE': '-%(nick)s- %(msg)s'
 }
 
-ctcp_formats = {'ACTION': '* %(nick)s %(ctcpmsg)s'}
+ctcp_formats = {
+'ACTION': '* %(nick)s %(ctcpmsg)s',
+'VERSION': '%(nick)s has requested CTCP %(ctcpcmd)s from %(chan)s: %(ctcpmsg)s',
+'PING': '%(nick)s has requested CTCP %(ctcpcmd)s from %(chan)s: %(ctcpmsg)s',
+'TIME': '%(nick)s has requested CTCP %(ctcpcmd)s from %(chan)s: %(ctcpmsg)s',
+'FINGER': '%(nick)s has requested CTCP %(ctcpcmd)s from %(chan)s: %(ctcpmsg)s'
+}
 
 irc_color_re = re.compile(r'(\x03(\d+,\d+|\d)|[\x0f\x02\x16\x1f])')
 
 
 def get_log_filename(dir, server, chan):
-    return os.path.join(dir, 'log', gmtime('%Y'), server, chan, 
+    return os.path.join(dir, 'log', gmtime('%Y'), server, chan,
             (gmtime('%%s.%m-%d.log') % chan).lower())
 
 

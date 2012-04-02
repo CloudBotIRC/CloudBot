@@ -13,9 +13,10 @@ os.chdir(sys.path[0] or '.')  # do stuff relative to the install directory
 class Bot(object):
     pass
 
-print 'Welcome to Cloudbot - Version 1.1c - http://git.io/cloudbot'
+print 'Welcome to Cloudbot - Version 1.2 - http://git.io/cloudbotirc'
 
 bot = Bot()
+bot.start_time = time.time()
 
 print 'Loading plugins...'
 
@@ -28,7 +29,7 @@ config()
 if not hasattr(bot, 'config'):
     exit()
 
-print 'Connecting to IRC'
+print 'Connecting to IRC...'
 
 bot.conns = {}
 
@@ -49,7 +50,7 @@ bot.persist_dir = os.path.abspath('persist')
 if not os.path.exists(bot.persist_dir):
     os.mkdir(bot.persist_dir)
 
-print 'Running main loop'
+print 'Connection(s) made, bot online...'
 
 while True:
     reload()  # these functions only do things

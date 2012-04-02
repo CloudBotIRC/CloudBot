@@ -17,7 +17,7 @@ if not os.path.exists('config'):
               "server": "irc.esper.net",
               "nick": "MyNewCloudBot",
               "user": "cloudbot",
-              "realname": "CloudBot - http://git.io/cloudbot",
+              "realname": "CloudBot - http://git.io/cloudbotirc",
               "nickserv_password": "",
               "channels": ["#cloudbot"],
               "invitejoin": true,
@@ -38,14 +38,18 @@ if not os.path.exists('config'):
             "bitly_api": "INSERT API KEY FROM bitly.com HERE",
             "wolframalpha": "INSERT API KEY FROM wolframalpha.com HERE",
             "lastfm": "INSERT API KEY FROM lastfm HERE",
-            "mc_user": "INSERT MINECRAFT USERNAME HERE",
-            "mc_pass": "INSERT MINECRAFT PASSWORD HERE"
+            "mc_user": "INSERT minecraft USERNAME HERE",
+            "mc_pass": "INSERT minecraft PASSWORD HERE"
           },
           "plugins":
           {
             "factoids":
             {
               "prefix": false
+            },
+            "ignore":
+            {
+              "ignored": []
             }
           },
           "censored_strings":
@@ -53,11 +57,11 @@ if not os.path.exists('config'):
             "mypass",
             "mysecret"
           ],
-          "admins": ["myname"]
+          "admins": ["myname@myhost"]
         }''') + '\n')
     print "Config generated!"
     print "Please edit the config now!"
-    print "For help, see http://git.io/cloudbotwiki"
+    print "For help, see http://git.io/cloudbotircwiki"
     print "Thank you for using CloudBot!"
     sys.exit()
 

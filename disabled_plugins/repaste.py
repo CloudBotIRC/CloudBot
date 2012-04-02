@@ -51,21 +51,21 @@ autorepastes = {}
 
 #@hook.regex('(pastebin\.com)(/[^ ]+)')
 @hook.regex('(mibpaste\.com)(/[^ ]+)')
-def autorepaste(inp, input=None, db=None, chan=None):
+def autorepaste(inp, input=None, notice=None, db=None, chan=None, nick=None):
     db_init(db)
-    manual = input.db.execute("select manual from repaste where chan=?", (chan, )).fetchone()
+    manual = db.execute("select manual from repaste where chan=?", (chan, )).fetchone()
     if manual and len(manual) and manual[0]:
         return
     url = inp.group(1) + inp.group(2)
     urllib.unquote(url)
     if url in autorepastes:
         out = autorepastes[url]
-        input.notice("In the future, please use a less awful pastebin (e.g. pastebin.com)")
+        notice("In the future, please use a less awful pastebin (e.g. pastebin.com)")
     else:
         out = repaste("http://" + url, input, db, False)
         autorepastes[url] = out
-        input.notice("In the future, please use a less awful pastebin (e.g. pastebin.com) instead of %s." % inp.group(1))
-    input.say("%s (repasted for %s)" % (out, input.nick))
+        notice("In the future, please use a less awful pastebin (e.g. pastebin.com) instead of %s." % inp.group(1))
+    input.say("%s (repasted for %s)" % (out, nick))
 
 
 scrapers = {

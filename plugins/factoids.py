@@ -6,7 +6,7 @@ from util import hook
 import re
 
 
-# the dictionary has target_word : replacement_word pairs
+# some simple "shortcodes" for formatting purposes
 shortcodes = {
 '<b>': '\x02',
 '</b>': '\x02',
@@ -24,7 +24,8 @@ def db_init(db):
 
 def get_memory(db, word):
 
-    row = db.execute("select data from mem where word=lower(?)", [word]).fetchone()
+    row = db.execute("select data from mem where word=lower(?)",
+                     [word]).fetchone()
     if row:
         return row[0]
     else:
@@ -43,12 +44,11 @@ def multiwordReplace(text, wordDic):
     return rc.sub(translate, text)
 
 
-@hook.command("r")
+@hook.command("r", adminonly=True)
+@hook.command(adminonly=True)
 def remember(inp, nick='', db=None, say=None, input=None, notice=None):
-    ".remember <word> [+]<data> -- Remembers <data> with <word>. Add + to <data> to append."
-    if input.nick not in input.bot.config["admins"]:
-        notice("Only bot admins can use this command!")
-        return
+    ".remember <word> [+]<data> -- Remembers <data> with <word>. Add +"
+    " to <data> to append."
     db_init(db)
 
     append = False
@@ -80,20 +80,18 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
         if append:
             notice("Appending %s to %s" % (new, data.replace('"', "''")))
         else:
-            notice('Forgetting existing data (%s), remembering this instead!' % \
-                    data.replace('"', "''"))
+            notice('Forgetting existing data (%s), remembering this instead!'
+                    % data.replace('"', "''"))
             return
     else:
         notice('Remembered!')
         return
 
 
-@hook.command("f")
+@hook.command("f", adminonly=True)
+@hook.command(adminonly=True)
 def forget(inp, db=None, input=None, notice=None):
     ".forget <word> -- Forgets a remembered <word>."
-    if input.nick not in input.bot.config["admins"]:
-        notice("Only bot admins can use this command!")
-        return
 
     db_init(db)
     data = get_memory(db, inp)
@@ -102,7 +100,7 @@ def forget(inp, db=None, input=None, notice=None):
         db.execute("delete from mem where word=lower(?)",
                    [inp])
         db.commit()
-        notice('`%s` has been forgotten.' % data.replace('`', "'"))
+        notice('"%s" has been forgotten.' % data.replace('`', "'"))
         return
     else:
         notice("I don't know about that.")
@@ -111,10 +109,10 @@ def forget(inp, db=None, input=None, notice=None):
 
 @hook.command("info")
 @hook.regex(r'^\? ?(.+)')
-def question(inp, say=None, db=None, bot=None):
+def factoid(inp, say=None, db=None, bot=None):
     "?<word> -- Shows what data is associated with <word>."
     try:
-        prefix_on = bot.config["plugins"]["factoids"]["prefix"]
+        prefix_on = bot.config["plugins"]["factoids"].get("prefix", False)
     except KeyError:
         prefix_on = False
 

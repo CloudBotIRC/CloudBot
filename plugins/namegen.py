@@ -1,8 +1,8 @@
 # Plugin by Lukeroge
-# <lukeroge@gmail.com> <https://github.com/lukeroge/CloudBot/>
-
-from util import hook, molecular
+from util import hook
+from util import molecular
 import unicodedata
+
 
 @hook.command()
 def namegen(inp, say=None, nick=None, input=None, notice=None):

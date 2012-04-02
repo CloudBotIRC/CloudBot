@@ -1,7 +1,11 @@
 persist
 config
+gitflow
 *.db
 *.log
 .*.swp
 *.pyc
 *.orig
+.project
+.pydevproject
+.geany

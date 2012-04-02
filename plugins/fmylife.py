@@ -1,41 +1,38 @@
 # Plugin by Lukeroge
-# <lukeroge@gmail.com> <https://github.com/lukeroge/CloudBot/>
 
-import re
-
-from util import hook, http, misc
-from urllib2 import HTTPError
+from util import hook, http
 from urlparse import urljoin
 from BeautifulSoup import BeautifulSoup
+from collections import defaultdict
 
 base_url = 'http://www.fmylife.com/'
 
-@hook.command(autohelp=False)
-def fml(inp):
-    ".fml [id] -- Gets a random quote from fmyfife.com. Optionally gets [id]."
+fml_cache = defaultdict()
 
-    inp = inp.replace("#", "")
 
-    if inp:
-        if not inp.isdigit():
-            return "Invalid ID!"
-        try:
-            page = http.get(urljoin(base_url, inp))
-        except (HTTPError, IOError):
-            return "Could not fetch #%s. FML" % inp
-    else:
-        try:
-            page = http.get(urljoin(base_url, 'random'))
-        except (HTTPError, IOError):
-            return "I tried to use .fml, but it was broken. FML"
-
+def refresh_cache():
+    """Gets a page of random FMLs and puts them into a dictionary"""
+    page = http.get(urljoin(base_url, 'random'))
     soup = BeautifulSoup(page)
 
-    soup.find('div', id='submit').extract()
-    post = soup.body.find('div', 'post')
-    try:
-        id = int(post.find('a', 'fmllink')['href'].split('/')[-1])
-    except TypeError:
-        return "Could not fetch #%s. FML" % inp
-    body = misc.strip_html(' '.join(link.renderContents() for link in post('a', 'fmllink')))
-    return '(#%d) %s' % (id, body)
+    for e in soup.findAll('div', {'class': 'post article'}):
+        id = int(e['id'])
+        text = ''.join(e.find('p').findAll(text=True))
+        text = http.unescape(text)
+        fml_cache[id] = text
+
+# do an initial refresh of the cache
+refresh_cache()
+
+
+@hook.command(autohelp=False)
+def fml(inp, reply=None):
+    ".fml -- Gets a random quote from fmyfife.com."
+
+    # grab the last item in the fml cache and remove it
+    id, text = fml_cache.popitem()
+    # reply with the fml we grabbed
+    reply('(#%d) %s' % (id, text))
+    # refresh fml cache if its getting empty
+    if len(fml_cache) < 3:
+        refresh_cache()

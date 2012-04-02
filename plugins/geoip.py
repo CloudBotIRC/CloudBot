@@ -1,9 +1,11 @@
 from util import hook
 
+
 def find_location(ip, api):
     import string
     import urllib
-    response = urllib.urlopen("http://api.ipinfodb.com/v3/ip-city/?key="+api+"&ip="+ip).read()
+    response = urllib.urlopen("http://api.ipinfodb.com/v3/ip-city/?key=" \
+                              + api + "&ip=" + ip).read()
     response = response.split(";")
     give = {}
     give["country"] = response[4].title()
@@ -12,6 +14,7 @@ def find_location(ip, api):
     give["city"] = response[6].title()
     give["timezone"] = response[10].title()
     return give
+
 
 def timezone(ip):
     time = find_location(ip)["timezone"]
@@ -33,8 +36,10 @@ def geoip(inp, say=None, bot=None):
             localstring = give["city"]
         else:
             localstring = give["city"] + ", " + give["state"]
-        say("That IP comes from " + give["country"] + " (" + give["country_short"] + ")")
-        say("I think it's in " + localstring + " with a timezone of " + give["timezone"] + "GMT")
+        say("That IP comes from " + give["country"] +
+        " (" + give["country_short"] + ")")
+        say("I think it's in " + localstring +
+        " with a timezone of " + give["timezone"] + "GMT")
     else:
-        say("Either that wasn't an IP or I cannot locate it in my database. :(")
+        say("Either that wasn't an IP or I cannot locate it in my database.")
     return

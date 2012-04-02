@@ -124,9 +124,9 @@ def raw(inp, conn=None, notice=None):
 
 @hook.command(adminonly=True)
 def say(inp, conn=None, chan=None, notice=None):
-    ".say [channel] <message> -- Makes the bot say <message> in [channel]. "\
-    "If [channel] is blank the bot will say the <message> in "\
-    "the channel the command was used in."
+    ".say [channel] <message> -- Makes the bot say <message> in [channel]. " \
+    "If [channel] is blank the bot will say the <message> in the channel " \
+    "the command was used in."
     inp = inp.split(" ")
     if inp[0][0] == "#":
         message = ""
@@ -146,9 +146,9 @@ def say(inp, conn=None, chan=None, notice=None):
 @hook.command("act", adminonly=True)
 @hook.command(adminonly=True)
 def me(inp, conn=None, chan=None, notice=None):
-    ".me [channel] <action> -- Makes the bot act out <action> in [channel] "\
-    "If [channel] is blank the bot will act the <action> in "\
-    "the channel the command was used in."
+    ".me [channel] <action> -- Makes the bot act out <action> in [channel]. " \
+    "If [channel] is blank the bot will act the <action> in the channel the" \
+    " command was used in."
     inp = inp.split(" ")
     if inp[0][0] == "#":
         message = ""

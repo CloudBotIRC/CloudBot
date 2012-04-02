@@ -64,8 +64,7 @@ def stop(inp, nick=None, conn=None):
     else:
         conn.cmd("QUIT", ["Killed by %s." % nick])
     time.sleep(5)
-    os.execl("./cloudbot", "stop")
-
+    os.execl("./cloudbot", "cloudbot", "stop")
 
 @hook.command(autohelp=False, adminonly=True)
 def restart(inp, nick=None, conn=None):
@@ -75,7 +74,7 @@ def restart(inp, nick=None, conn=None):
     else:
         conn.cmd("QUIT", ["Restarted by %s." % nick])
     time.sleep(5)
-    os.execl("./cloudbot", "restart")
+    os.execl("./cloudbot", "cloudbot", "restart")
 
 
 @hook.command(autohelp=False, adminonly=True)

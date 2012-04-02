@@ -66,6 +66,7 @@ def stop(inp, nick=None, conn=None):
     time.sleep(5)
     os.execl("./cloudbot", "cloudbot", "stop")
 
+
 @hook.command(autohelp=False, adminonly=True)
 def restart(inp, nick=None, conn=None):
     ".restart [reason] -- Restarts the bot with [reason] as its quit message."

@@ -91,16 +91,16 @@ def say(inp, conn=None, chan=None, notice=None):
     ".say [channel] <message> -- Makes the bot say <message> in [channel]. "\
     "If [channel] is blank the bot will say the <message> in "\
     "the channel the command was used in."
-    split = inp.split(" ")
-    if split[0][0] == "#":
+    inp = inp.split(" ")
+    if inp[0][0] == "#":
         message = ""
-        for x in split[1:]:
+        for x in inp[1:]:
             message = message + x + " "
         message = message[:-1]
-        out = "PRIVMSG %s :%s" % (split[0], message)
+        out = "PRIVMSG %s :%s" % (inp[0], message)
     else:
         message = ""
-        for x in split[0:]:
+        for x in inp[0:]:
             message = message + x + " "
         message = message[:-1]
         out = "PRIVMSG %s :%s" % (chan, message)
@@ -113,16 +113,16 @@ def me(inp, conn=None, chan=None, notice=None):
     ".me [channel] <action> -- Makes the bot act out <action> in [channel] "\
     "If [channel] is blank the bot will act the <action> in "\
     "the channel the command was used in."
-    split = inp.split(" ")
-    if split[0][0] == "#":
+    inp = inp.split(" ")
+    if inp[0][0] == "#":
         message = ""
-        for x in split[1:]:
+        for x in inp[1:]:
             message = message + x + " "
         message = message[:-1]
-        out = "PRIVMSG %s :\x01ACTION %s\x01" % (split[0], message)
+        out = "PRIVMSG %s :\x01ACTION %s\x01" % (inp[0], message)
     else:
         message = ""
-        for x in split[0:]:
+        for x in inp[0:]:
             message = message + x + " "
         message = message[:-1]
         out = "PRIVMSG %s :\x01ACTION %s\x01" % (chan, message)

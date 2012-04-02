@@ -1,13 +1,14 @@
+# Plugin by GhettoWizard and Scaevolus
 import re
-
-from util import hook, http
+from util import hook
+from util import http
 
 
 @hook.command('u')
 @hook.command
 def urban(inp):
     ".urban <phrase> [id] -- Looks up <phrase> on urbandictionary.com."
-    
+
     # set a default definition number
     id = 1
 
@@ -27,11 +28,12 @@ def urban(inp):
 
     if page['result_type'] == 'no_results':
         return 'Not found.'
-        
+
     # try getting the requested definition
     try:
         out = "[%s/%s] %s: %s" % \
-              (str(id), str(len(defs)), defs[id-1]['word'], defs[id-1]['definition'])
+              (str(id), str(len(defs)), defs[id - 1]['word'],
+              defs[id - 1]['definition'])
     except IndexError:
         return 'Not found.'
 
@@ -41,7 +43,6 @@ def urban(inp):
     return out
 
 
-# define plugin by GhettoWizard & Scaevolus
 @hook.command('dictionary')
 @hook.command
 def define(inp):

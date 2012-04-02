@@ -1,5 +1,4 @@
 # Plugin by Lukeroge
-# <lukeroge@gmail.com> <https://github.com/lukeroge/CloudBot/>
 
 from util import hook, http
 from urlparse import urljoin
@@ -12,7 +11,7 @@ fml_cache = defaultdict()
 
 
 def refresh_cache():
-    """ gets a page of random fmls and puts them into a dictionary """
+    """Gets a page of random FMLs and puts them into a dictionary"""
     page = http.get(urljoin(base_url, 'random'))
     soup = BeautifulSoup(page)
 

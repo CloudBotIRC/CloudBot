@@ -1,7 +1,5 @@
-"""
-dice.py: written by Scaevolus 2008, updated 2009
-simulates dicerolls
-"""
+# Written by Scaevolus, updated by Lukeroge
+
 import re
 import random
 
@@ -30,7 +28,8 @@ def nrolls(count, n):
             return [random.randint(1, n) for x in xrange(count)]
         else:  # fake it
             return [int(random.normalvariate(.5 * (1 + n) * count,
-                (((n+1)*(2*n+1)/6.-(.5*(1+n))**2)*count)**.5))]
+                (((n + 1) * (2 * n + 1) / 6. -
+                (.5 * (1 + n)) ** 2) * count) ** .5))]
 
 
 @hook.command('roll')

@@ -1,4 +1,4 @@
-# plugin created by neersighted and lukeroge
+# Plugin by neersighted and Lukeroge
 from util import hook
 import urllib2
 

@@ -1,5 +1,4 @@
 # Plugin by Lukeroge
-# <lukeroge@gmail.com> <https://github.com/lukeroge/CloudBot/>
 
 from util import hook, http
 from re import match

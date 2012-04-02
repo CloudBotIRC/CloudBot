@@ -46,7 +46,7 @@ with open("plugins/data/kill_bodyparts.txt") as f:
 def slap(inp, me=None, nick=None, conn=None, notice=None):
     ".slap <user> -- Makes the bot slap <user>."
     target = inp.lower()
-    
+
     if not re.match(nick_re, target):
         notice("Invalid username!")
         return
@@ -56,11 +56,11 @@ def slap(inp, me=None, nick=None, conn=None, notice=None):
         target = nick
     else:
         target = inp
-        
+
     out = random.choice(slaps)
     out = out.replace('<who>', target)
     out = out.replace('<item>', random.choice(slap_items))
-    
+
     # act out the message
     me(out)
 
@@ -78,7 +78,7 @@ def lart(inp, me=None, nick=None, conn=None, notice=None):
         target = nick
     else:
         target = inp
-        
+
     out = random.choice(larts)
     out = out.replace('<who>', target)
     out = out.replace('<item>', random.choice(slap_items))
@@ -98,7 +98,7 @@ def kill(inp, me=None, nick=None, conn=None, notice=None):
         target = nick
     else:
         target = inp
-        
+
     out = random.choice(kills)
     out = out.replace('<who>', target)
     out = out.replace('<body>', random.choice(kill_bodyparts))

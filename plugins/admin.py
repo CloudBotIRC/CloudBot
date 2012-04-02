@@ -33,6 +33,7 @@ def admin(inp, notice=None, bot=None, config=None):
         json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
     return
 
+
 @hook.command(adminonly=True)
 def unadmin(inp, notice=None, bot=None, config=None):
     ".unadmin <nick|host> -- Make <nick|host> a non-admin."
@@ -46,6 +47,7 @@ def unadmin(inp, notice=None, bot=None, config=None):
     else:
         notice("%s is not an admin." % target)
     return
+
 
 @hook.command(autohelp=False)
 def channels(inp, conn=None):
@@ -63,6 +65,7 @@ def stop(inp, nick=None, conn=None):
         conn.cmd("QUIT", ["Killed by %s." % nick])
     time.sleep(5)
     os.execl("./cloudbot", "stop")
+
 
 @hook.command(autohelp=False, adminonly=True)
 def restart(inp, nick=None, conn=None):

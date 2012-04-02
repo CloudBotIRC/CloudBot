@@ -1,9 +1,10 @@
 import random
-
-from util import hook, http
+from util import hook
+from util import http
 
 
 def api_get(kind, query):
+    """Use the RESTful Google Search API"""
     url = 'http://ajax.googleapis.com/ajax/services/search/%s?' \
           'v=1.0&safe=off'
     return http.get_json(url % kind, q=query)
@@ -21,8 +22,9 @@ def googleimage(inp):
                       parsed['responseStatus'], ''))
     if not parsed['responseData']['results']:
         return 'no images found'
-    return random.choice(parsed['responseData']['results'][:10]) \
-                         ['unescapedUrl']  # squares is dumb
+    return random.choice(parsed['responseData']['results'][:10])\
+                        + ['unescapedUrl']
+
 
 @hook.command('search')
 @hook.command('g')

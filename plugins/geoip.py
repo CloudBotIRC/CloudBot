@@ -36,8 +36,10 @@ def geoip(inp, say=None, bot=None):
             localstring = give["city"]
         else:
             localstring = give["city"] + ", " + give["state"]
-        say("That IP comes from " + give["country"] + " (" + give["country_short"] + ")")
-        say("I think it's in " + localstring + " with a timezone of " + give["timezone"] + "GMT")
+        say("That IP comes from " + give["country"] +
+        " (" + give["country_short"] + ")")
+        say("I think it's in " + localstring +
+        " with a timezone of " + give["timezone"] + "GMT")
     else:
-        say("Either that wasn't an IP or I cannot locate it in my database. :(")
+        say("Either that wasn't an IP or I cannot locate it in my database.")
     return

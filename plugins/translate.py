@@ -1,4 +1,4 @@
-# BING translation plugin by lukeroge and neersighted
+# BING translation plugin by Lukeroge and neersighted
 from util import hook
 from util import http
 import re 

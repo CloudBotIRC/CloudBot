@@ -1,6 +1,7 @@
 from util import hook
 import random
 
+
 @hook.command
 def flip(inp, flip_count=0, say=None):
     ".flip <text> -- Flips <text> over."

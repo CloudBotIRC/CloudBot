@@ -112,11 +112,10 @@ def forget(inp, db=None, input=None, notice=None):
 def factoid(inp, say=None, db=None, bot=None):
     "?<word> -- Shows what data is associated with <word>."
     try:
-        prefix_on = bot.config["plugins"]["factoids"].get("prefix", False)	
+        prefix_on = bot.config["plugins"]["factoids"].get("prefix", False)
     except KeyError:
         prefix_on = False
 
-    
     db_init(db)
 
     data = get_memory(db, inp.group(1).strip())

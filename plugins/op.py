@@ -3,6 +3,17 @@ from util import hook
 
 
 @hook.command(adminonly=True)
+def topic(inp, conn=None, chan=None, notice=None):
+    ".topic [channel] <topic> -- Change the topic of a channel."
+    inp = inp.split(" ")
+    if inp[0][0] == "#":
+        out = "PRIVMSG %s :%s" % (inp[0], message)
+    else:
+        out = "TOPIC %s :%s" % (chan, message)
+    conn.send(out)
+
+
+@hook.command(adminonly=True)
 def kick(inp, chan=None, conn=None, notice=None):
     ".kick [channel] <user> [reason] -- Makes the bot kick <user> in [channel] "\
     "If [channel] is blank the bot will kick the <user> in "\
@@ -65,6 +76,7 @@ def unban(inp, conn=None, chan=None, notice=None):
     notice("Attempting to unban %s from %s..." % (user, chan))
     conn.send(out)
 
+
 @hook.command(adminonly=True)
 def kickban(inp, chan=None, conn=None, notice=None):
     ".kickban [channel] <user> [reason] -- Makes the bot kickban <user> in [channel] "\
@@ -96,13 +108,3 @@ def kickban(inp, chan=None, conn=None, notice=None):
     notice("Attempting to kickban %s from %s..." % (user, chan))
     conn.send(out1)
     conn.send(out2)
-
-@hook.command(adminonly=True)
-def topic(inp, conn=None, chan=None, notice=None):
-    ".topic [channel] <topic> -- Change the topic of a channel."
-    inp = inp.split(" ")
-    if inp[0][0] == "#":
-        out = "PRIVMSG %s :%s" % (inp[0], message)
-    else:
-        out = "TOPIC %s :%s" % (chan, message)
-    conn.send(out)

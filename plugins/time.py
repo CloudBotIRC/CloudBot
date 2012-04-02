@@ -1,5 +1,4 @@
 # Plugin by Lukeroge with some code from Phenny
-# <lukeroge@gmail.com> <http://www.dempltr.com/>
 
 from util import hook
 from util import http

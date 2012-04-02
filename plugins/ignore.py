@@ -1,6 +1,7 @@
 import json
 from util import hook
 
+
 @hook.sieve
 def ignoresieve(bot, input, func, type, args):
     """ blocks input from ignored channels/nicks """
@@ -8,7 +9,10 @@ def ignoresieve(bot, input, func, type, args):
     # don't block input to event hooks
     if type == "event":
         return input
-    if input.chan in ignorelist or input.nick in ignorelist or input.host in ignorelist or input.mask in ignorelist:
+    if input.chan in ignorelist or\
+        input.nick in ignorelist or\
+        input.host in ignorelist or\
+        input.mask in ignorelist:
         if input.command == "PRIVMSG" and input.lastparam[1:] == "unignore":
             return input
         else:
@@ -41,9 +45,11 @@ def ignore(inp, notice=None, bot=None, config=None):
         json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
     return
 
+
 @hook.command(adminonly=True)
 def unignore(inp, notice=None, bot=None, config=None):
-    ".unignore <channel|nick|host> -- Makes the bot listen to <channel|nick|host>."
+    ".unignore <channel|nick|host> -- Makes the bot listen to"\
+    " <channel|nick|host>."
     target = inp.lower()
     ignorelist = bot.config["plugins"]["ignore"]["ignored"]
     if target in ignorelist:
@@ -54,4 +60,3 @@ def unignore(inp, notice=None, bot=None, config=None):
     else:
         notice("%s is not ignored." % target)
     return
-

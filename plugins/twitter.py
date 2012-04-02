@@ -1,17 +1,17 @@
-"""
-twitter.py: written by Scaevolus 2009, modified by Lukeroge 2012
-retrieves most recent tweets
-"""
+# written by Scaevolus, modified by Lukeroge
 
 import random
 import re
-from time import strptime, strftime
+from time import strftime
+from time import strptime
 from datetime import datetime
-
-from util import hook, http, timesince
+from util import hook
+from util import http
+from util import timesince
 
 
 def unescape_xml(string):
+    """Unescapes XML"""
     return string.replace('&gt;', '>').replace('&lt;', '<').replace('&apos;',
                     "'").replace('&quote;', '"').replace('&amp;', '&')
 
@@ -20,6 +20,7 @@ history_max_size = 250
 
 
 def parseDateTime(s):
+    """Parses the date from a string"""
     if s is None:
         return None
     m = re.match(r'(.*?)(?:\.(\d+))?(([-+]\d{1,2}):(\d{2}))?$',

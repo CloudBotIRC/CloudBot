@@ -33,7 +33,7 @@ def insult(inp, nick=None, me=None, conn=None):
         target = nick
     else:
         target = inp
-        
+
     out = 'insults %s... "%s"' % (target, random.choice(insults))
     me(out)
 
@@ -51,6 +51,6 @@ def flirt(inp, nick=None, me=None, conn=None):
         target = 'itself'
     else:
         target = inp
-        
+
     out = 'insults %s... "%s"' % (target, random.choice(flirts))
     me(out)

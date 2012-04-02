@@ -5,7 +5,7 @@ from util import hook
 
 @hook.sieve
 def sieve_suite(bot, input, func, kind, args):
-    if input.command == 'PRIVMSG' and \
+    if input.command == 'PRIVMSG' and\
        input.nick.endswith('bot') and args.get('ignorebots', True):
             return None
 
@@ -32,7 +32,7 @@ def sieve_suite(bot, input, func, kind, args):
     if args.get('adminonly', False):
         admins = bot.config.get('admins', [])
 
-        if input.mask not in admins and input.nick not in admins:
+        if input.nick not in admins and input.mask not in admins:
             input.notice("Sorry, you are not allowed to use this command.")
             return None
 

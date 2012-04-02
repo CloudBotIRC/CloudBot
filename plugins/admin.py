@@ -90,19 +90,31 @@ def join(inp, conn=None, notice=None):
     conn.join(inp)
 
 
-@hook.command(adminonly=True)
-def part(inp, conn=None, notice=None):
-    ".part <channel> -- Leaves <channel>."
-    notice("Attempting to part from %s..." % inp)
-    conn.part(inp)
+@hook.command(autohelp=False, adminonly=True)
+def part(inp, conn=None, chan=None, notice=None):
+    ".part <channel> -- Leaves <channel>." \
+    "If [channel] is blank the bot will leave the " \
+    "channel the command was used in."
+    if inp:
+        target = inp
+    else:
+        target = chan
+    notice("Attempting to leave %s..." % target)
+    conn.part(target)
 
 
-@hook.command(adminonly=True)
-def cycle(inp, conn=None, notice=None):
-    ".cycle <channel> -- Cycles <channel>."
-    notice("Attempting to cycle %s..." % inp)
-    conn.part(inp)
-    conn.join(inp)
+@hook.command(autohelp=False, adminonly=True)
+def cycle(inp, conn=None, chan=None, notice=None):
+    ".cycle <channel> -- Cycles <channel>." \
+    "If [channel] is blank the bot will cycle the " \
+    "channel the command was used in."
+    if inp:
+        target = inp
+    else:
+        target = chan
+    notice("Attempting to cycle %s..." % target)
+    conn.part(target)
+    conn.join(target)
 
 
 @hook.command(adminonly=True)

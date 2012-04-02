@@ -58,7 +58,7 @@ def ignore(inp, input=None, notice=None):
     else:
         ignore_target(target)
         notice("%s has been ignored." % target)
-
+    return
 
 @hook.command(adminonly=True)
 def unignore(inp, input=None, notice=None):
@@ -68,8 +68,7 @@ def unignore(inp, input=None, notice=None):
     if is_ignored(target):
         unignore_target(target)
         notice("%s has been unignored." % target)
-        return
     else:
         notice("%s is not ignored." % target)
-        return
+    return
 

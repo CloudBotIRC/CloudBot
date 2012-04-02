@@ -32,9 +32,9 @@ def memory(inp):
         data = [float(i.replace(' kB', '')) for i in data]
         strings = [str(round(i / 1024, 2)) + ' MB' for i in data]
         # prepare the output
-        out = "Real Memory: \x02%s\x02, Allocated Memory: \x02%s\x02, Peak " \
+        out = "Threads: \x02%s\x02, Real Memory: \x02%s\x02, Allocated Memory: \x02%s\x02, Peak " \
               "Allocated Memory: \x02%s\x02, Stack Size: \x02%s\x02, Heap " \
-              "Size: \x02%s\x02" % (strings[0], strings[1], strings[2],
+              "Size: \x02%s\x02" % (s['Threads'], strings[0], strings[1], strings[2],
               strings[3], strings[4])
         # return output
         return out

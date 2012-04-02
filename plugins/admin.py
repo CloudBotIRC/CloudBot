@@ -92,18 +92,18 @@ def join(inp, conn=None, notice=None):
 
 
 @hook.command(adminonly=True)
+def part(inp, conn=None, notice=None):
+    ".part <channel> -- Leaves <channel>."
+    notice("Attempting to part from %s..." % inp)
+    conn.part(inp)
+
+
+@hook.command(adminonly=True)
 def cycle(inp, conn=None, notice=None):
     ".cycle <channel> -- Cycles <channel>."
     notice("Attempting to cycle %s..." % inp)
     conn.part(inp)
     conn.join(inp)
-
-
-@hook.command(adminonly=True)
-def part(inp, conn=None, notice=None):
-    ".part <channel> -- Leaves <channel>."
-    notice("Attempting to part from %s..." % inp)
-    conn.part(inp)
 
 
 @hook.command(adminonly=True)

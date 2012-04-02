@@ -1,4 +1,4 @@
-# CloudBot/DEV
+# CloudBot/1.2
 
 ## About
 
@@ -102,7 +102,7 @@ The programs `screen` or `daemon` are recomended for the wrapper to run optimaly
 ## License
 CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
     
-    CloudBot/DEV
+    CloudBot/1.2
 
     Copyright © 2011 ClouDev - <[cloudev.github.com](http://cloudev.github.com)>
 

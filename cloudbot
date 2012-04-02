@@ -23,10 +23,10 @@ running() {
 }
 
 checkbackend() {
-        if dpkg -l| grep ^ii|grep daemon|grep 'turns other' > /dev/null; then
-            backend="daemon"
-        elif dpkg -l| grep ^ii|grep screen|grep 'terminal multi' > /dev/null; then
+        if dpkg -l| grep ^ii|grep screen|grep 'terminal multi' > /dev/null; then
             backend="screen"
+        elif dpkg -l| grep ^ii|grep daemon|grep 'turns other' > /dev/null; then
+            backend="daemon"
         else
             backend="manual"
         fi

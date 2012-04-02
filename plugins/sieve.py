@@ -33,6 +33,7 @@ def sieve_suite(bot, input, func, kind, args):
         admins = bot.config.get('admins', [])
 
         if input.mask not in admins and input.nick not in admins:
+            input.notice("Sorry, you are not allowed to use this command.")
             return None
 
     return input

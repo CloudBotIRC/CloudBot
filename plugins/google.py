@@ -9,8 +9,10 @@ def api_get(kind, query):
     return http.get_json(url % kind, q=query)
 
 
+@hook.command('image')
+@hook.command('gis')
 @hook.command
-def gis(inp):
+def googleimage(inp):
     ".gis <term> -- Returns first Google Image result (Safesearch off)."
 
     parsed = api_get('images', inp)

@@ -1,18 +1,51 @@
 # Plugin made by iloveportalz0r, TheNoodle, Lukeroge and neersighted
 from util import hook
 import os
-import sys
-import subprocess
-import time
 import re
+import sys
+import json
+import time
+import subprocess
 
 
 @hook.command(autohelp=False)
-def admins(inp, bot=None):
-    ".admins -- Lists the bot's admins."
-    admins = bot.config["admins"]
-    return ", ".join(admins)
+def admins(inp, notice=None, bot=None):
+    ".admins -- Lists bot's admins."
+    adminlist = bot.config["admins"]
+    if adminlist:
+        notice("Admins are: %s." % ", ".join(adminlist))
+    else:
+        notice("No users are admins!")
+    return
 
+
+@hook.command(adminonly=True)
+def admin(inp, notice=None, bot=None, config=None):
+    ".admin <nick|host> -- Make <nick|host> an admin."
+    target = inp.lower()
+    adminlist = bot.config["admins"]
+    if target in adminlist:
+        notice("%s is already an admin." % target)
+    else:
+        notice("%s is now an admin." % target)
+        adminlist.append(target)
+        adminlist.sort()
+        json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
+    return
+
+@hook.command(adminonly=True)
+def unadmin(inp, notice=None, bot=None, config=None):
+    ".unadmin <nick|host> -- Make <nick|host> a non-admin."
+    target = inp.lower()
+    adminlist = bot.config["admins"]
+    if target in adminlist:
+        notice("%s is no longer an admin." % target)
+        adminlist.remove(target)
+        adminlist.sort()
+        json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
+    else:
+        notice("%s is not an admin." % target)
+    return
 
 @hook.command(autohelp=False)
 def channels(inp, conn=None):
@@ -20,6 +53,7 @@ def channels(inp, conn=None):
     return "I am in these channels: %s" % ", ".join(conn.channels)
 
 
+@hook.command("quit", autohelp=False, adminonly=True)
 @hook.command(autohelp=False, adminonly=True)
 def stop(inp, nick=None, conn=None):
     ".stop [reason] -- Kills the bot with [reason] as its quit message."
@@ -28,7 +62,7 @@ def stop(inp, nick=None, conn=None):
     else:
         conn.cmd("QUIT", ["Killed by %s." % nick])
     time.sleep(5)
-    os.execl(["./cloudbot", "stop"])
+    os.execl("./cloudbot", "stop")
 
 @hook.command(autohelp=False, adminonly=True)
 def restart(inp, nick=None, conn=None):

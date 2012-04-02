@@ -34,7 +34,7 @@ def ignored(inp, notice=None, bot=None):
 @hook.command(adminonly=True)
 def ignore(inp, notice=None, bot=None, config=None):
     ".ignore <channel|nick|host> -- Makes the bot ignore <channel|nick|host>."
-    target = inp.lower()
+    target = inp
     ignorelist = bot.config["plugins"]["ignore"]["ignored"]
     if target in ignorelist:
         notice("%s is already ignored." % target)
@@ -50,7 +50,7 @@ def ignore(inp, notice=None, bot=None, config=None):
 def unignore(inp, notice=None, bot=None, config=None):
     ".unignore <channel|nick|host> -- Makes the bot listen to"\
     " <channel|nick|host>."
-    target = inp.lower()
+    target = inp
     ignorelist = bot.config["plugins"]["ignore"]["ignored"]
     if target in ignorelist:
         notice("%s has been unignored." % target)

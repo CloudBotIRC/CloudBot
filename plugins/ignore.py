@@ -4,7 +4,7 @@ from util import hook
 
 @hook.sieve
 def ignoresieve(bot, input, func, type, args):
-    """ blocks input from ignored channels/nicks """
+    """ blocks input from ignored channels/nicks/hosts """
     ignorelist = bot.config["plugins"]["ignore"]["ignored"]
     # don't block input to event hooks
     if type == "event":

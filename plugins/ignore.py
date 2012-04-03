@@ -9,10 +9,9 @@ def ignoresieve(bot, input, func, type, args):
     # don't block input to event hooks
     if type == "event":
         return input
-    if input.chan in ignorelist or\
-        input.nick in ignorelist or\
-        input.host in ignorelist or\
-        input.mask in ignorelist:
+    if input.chan.lower() in ignorelist or\
+        input.nick.lower() in ignorelist or\
+        input.mask.lower() in ignorelist:
         if input.command == "PRIVMSG" and input.lastparam[1:] == "unignore":
             return input
         else:
@@ -34,7 +33,7 @@ def ignored(inp, notice=None, bot=None):
 @hook.command(adminonly=True)
 def ignore(inp, notice=None, bot=None, config=None):
     ".ignore <channel|nick|host> -- Makes the bot ignore <channel|nick|host>."
-    target = inp
+    target = inp.lower()
     ignorelist = bot.config["plugins"]["ignore"]["ignored"]
     if target in ignorelist:
         notice("%s is already ignored." % target)
@@ -50,7 +49,7 @@ def ignore(inp, notice=None, bot=None, config=None):
 def unignore(inp, notice=None, bot=None, config=None):
     ".unignore <channel|nick|host> -- Makes the bot listen to"\
     " <channel|nick|host>."
-    target = inp
+    target = inp.lower()
     ignorelist = bot.config["plugins"]["ignore"]["ignored"]
     if target in ignorelist:
         notice("%s has been unignored." % target)

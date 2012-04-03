@@ -22,7 +22,7 @@ def admins(inp, notice=None, bot=None):
 @hook.command(adminonly=True)
 def addadmin(inp, notice=None, bot=None, config=None):
     ".addadmin <nick|host> -- Make <nick|host> an admin."
-    target = inp.lower()
+    target = inp.lower().split()[0]
     adminlist = bot.config["admins"]
     if target in adminlist:
         notice("%s is already an admin." % target)
@@ -37,7 +37,7 @@ def addadmin(inp, notice=None, bot=None, config=None):
 @hook.command(adminonly=True)
 def deladmin(inp, notice=None, bot=None, config=None):
     ".deladmin <nick|host> -- Make <nick|host> a non-admin."
-    target = inp.lower()
+    target = inp.lower().split()[0]
     adminlist = bot.config["admins"]
     if target in adminlist:
         notice("%s is no longer an admin." % target)

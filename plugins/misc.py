@@ -4,7 +4,7 @@ import subprocess
 import platform
 import time
 
-from util import hook, http
+from util import hook
 
 socket.setdefaulttimeout(10)
 
@@ -50,9 +50,6 @@ def onjoin(paraml, conn=None, bot=None):
     for channel in conn.channels:
         conn.join(channel)
         time.sleep(1)
-
-# HTTP Useragent
-    http.ua_cloudbot = 'CloudBot - http://git.io/cloudbotirc'
 
 # Stay-alive code
     stayalive = conn.conf.get('stayalive')

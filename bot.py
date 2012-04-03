@@ -1,5 +1,15 @@
 #!/usr/bin/env python
 
+__author__ = "ClouDev"
+__authors__ = ["Lukeroge", "neersighted"]
+__copyright__ = "Copyright 2012, ClouDev"
+__credits__ = ["thenoodle", "_frozen", "rmmh"]
+__license__ = "GPL v3"
+__version__ = "DEV"
+__maintainer__ = "ClouDev"
+__email__ = "cloudev@neersighted.com"
+__status__ = "Development"
+
 import os
 import Queue
 import sys

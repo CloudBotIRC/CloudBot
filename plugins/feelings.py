@@ -52,5 +52,5 @@ def flirt(inp, nick=None, me=None, conn=None):
     else:
         target = inp
 
-    out = 'insults %s... "%s"' % (target, random.choice(flirts))
+    out = 'flirts with %s... "%s"' % (target, random.choice(flirts))
     me(out)

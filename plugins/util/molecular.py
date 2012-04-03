@@ -76,7 +76,7 @@ __version__ = "1.0"
 
 import string, re, sys, random, os
 
-NAMEDIR = os.path.dirname(__file__) + "/namefiles"
+NAMEDIR = os.path.dirname(__file__) + "/../data/namefiles"
 NAMESECTIONS = [ "inf", "first", "mid", "final", "notes", "end" ]
 
 class NameFile:

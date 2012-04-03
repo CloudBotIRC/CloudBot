@@ -11,7 +11,7 @@ fml_cache = defaultdict()
 
 
 def refresh_cache():
-    """Gets a page of random FMLs and puts them into a dictionary"""
+    """ gets a page of random FMLs and puts them into a dictionary """
     page = http.get(urljoin(base_url, 'random'))
     soup = BeautifulSoup(page)
 

@@ -11,9 +11,8 @@ import subprocess
 @hook.command(autohelp=False)
 def admins(inp, notice=None, bot=None):
     ".admins -- Lists bot's admins."
-    adminlist = bot.config["admins"]
-    if adminlist:
-        notice("Admins are: %s." % ", ".join(adminlist))
+    if bot.config["admins"]:
+        notice("Admins are: %s." % ", ".join(bot.config["admins"]))
     else:
         notice("No users are admins!")
     return
@@ -21,31 +20,33 @@ def admins(inp, notice=None, bot=None):
 
 @hook.command(adminonly=True)
 def addadmin(inp, notice=None, bot=None, config=None):
-    ".addadmin <nick|host> -- Make <nick|host> an admin."
-    target = inp.lower().split()[0]
-    adminlist = bot.config["admins"]
-    if target in adminlist:
-        notice("%s is already an admin." % target)
-    else:
-        notice("%s is now an admin." % target)
-        adminlist.append(target)
-        adminlist.sort()
-        json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
+    ".addadmin <nick|host> -- Make <nick|host> an admin. " \
+    "(you can add multiple admins at once)"
+    targets = inp.lower().split()
+    for target in targets:
+        if target in bot.config["admins"]:
+            notice("%s is already an admin." % target)
+        else:
+            notice("%s is now an admin." % target)
+            bot.config["admins"].append(target)
+            bot.config["admins"].sort()
+            json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
     return
 
 
 @hook.command(adminonly=True)
 def deladmin(inp, notice=None, bot=None, config=None):
-    ".deladmin <nick|host> -- Make <nick|host> a non-admin."
-    target = inp.lower().split()[0]
-    adminlist = bot.config["admins"]
-    if target in adminlist:
-        notice("%s is no longer an admin." % target)
-        adminlist.remove(target)
-        adminlist.sort()
-        json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
-    else:
-        notice("%s is not an admin." % target)
+    ".deladmin <nick|host> -- Make <nick|host> a non-admin." \
+    "(you can delete multiple admins at once)"
+    targets = inp.lower().split()
+    for target in targets:
+        if target in bot.config["admins"]:
+            notice("%s is no longer an admin." % target)
+            bot.config["admins"].remove(target)
+            bot.config["admins"].sort()
+            json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
+        else:
+            notice("%s is not an admin." % target)
     return
 
 

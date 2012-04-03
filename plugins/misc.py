@@ -52,7 +52,7 @@ def onjoin(paraml, conn=None, bot=None):
         time.sleep(1)
 
 # Stay-alive code
-    stayalive = conn.conf.get('stayalive')
+    stayalive = conn.conf.get('stayalive', False)
     if stayalive:
         delay = conn.conf.get('stayalive_delay', 20)
         while True:

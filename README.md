@@ -75,7 +75,7 @@ More at the [Wiki Main Page](http://git.io/cloudbotircwiki).
 
 ## Support
 
-The developers reside in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via IRC to #CloudBot on irc.esper.net) on [EsperNet](http://esper.net) and would be glad to help you.
+The developers reside in [#CloudBot](irc://irc.esper.net/cloudbot) on [EsperNet](http://esper.net) and would be glad to help you.
 
 If you think you have found a bug/have a idea/suggestion, please **open a issue** here on Github.
 

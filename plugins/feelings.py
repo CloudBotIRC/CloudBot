@@ -2,7 +2,7 @@ from util import hook
 import re
 import random
 
-nick_re = re.compile(r"^[A-Za-z0-9_|.-\]\[]*$")
+nick_re = re.compile(r"^[A-Za-z0-9_|\.\-\]\[]*$")
 
 insults = []
 flirts = []

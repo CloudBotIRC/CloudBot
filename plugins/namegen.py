@@ -32,7 +32,7 @@ def namegen(inp, say=None, nick=None, input=None, notice=None):
 
     # time to generate some names and put them in a list
     name_list = []
-    for i in range(8):
+    for i in xrange(8):
         name_list.append(gen.name())
 
     # and finally render the final message :D

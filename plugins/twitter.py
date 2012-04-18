@@ -67,13 +67,15 @@ def twitter(inp):
             return 'No replies to %s found.' % inp
         inp = reply_inp
 
-    url = 'http://twitter.com'
+    url = 'http://api.twitter.com'
     getting_nth = False
     getting_id = False
     searching_hashtag = False
 
     time = 'status/created_at'
     text = 'status/text'
+    retweeted_text = 'status/retweeted_status/text'
+    retweeted_screen_name = 'status/retweeted_status/user/screen_name'
     reply_name = 'status/in_reply_to_screen_name'
     reply_id = 'status/in_reply_to_status_id'
     reply_user = 'status/in_reply_to_user_id'
@@ -87,15 +89,17 @@ def twitter(inp):
         reply_name = 'in_reply_to_screen_name'
         reply_id = 'in_reply_to_status_id'
         reply_user = 'in_reply_to_user_id'
-    elif re.match(r'^\w{1,15}$', inp):
-        url += '/users/show/%s.xml' % inp
-        screen_name = 'screen_name'
-    elif re.match(r'^\w{1,15}\s+\d+$', inp):
+    elif re.match(r'^\w{1,15}$', inp) or re.match(r'^\w{1,15}\s+\d+$', inp):
         getting_nth = True
-        name, num = inp.split()
+        if inp.find(' ') == -1:
+            name = inp
+            num = 1
+        else:
+            name, num = inp.split()
         if int(num) > 3200:
             return 'error: only supports up to the 3200th tweet'
-        url += '/statuses/user_timeline/%s.xml?count=1&page=%s' % (name, num)
+        url += ('/1/statuses/user_timeline.xml?include_rts=true&'
+                'screen_name=%s&count=1&page=%s' % (name, num))
         screen_name = 'status/user/screen_name'
     elif re.match(r'^#\w+$', inp):
         url = 'http://search.twitter.com/search.atom?q=%23' + inp[1:]
@@ -118,7 +122,7 @@ def twitter(inp):
         if e.code in errors:
             return 'error: ' + errors[e.code]
         return 'error: unknown %s' % e.code
-    except http.URLerror, e:
+    except http.URLError, e:
         return 'error: timeout'
 
     if searching_hashtag:
@@ -132,11 +136,11 @@ def twitter(inp):
 
     if getting_nth:
         if tweet.find('status') is None:
-            return 'User doesn\'t have that many tweets!'
+            return "User doesn't have that many tweets!"
 
     time = tweet.find(time)
     if time is None:
-        return 'User has no tweets!'
+        return "User has no tweets!"
 
     reply_name = tweet.find(reply_name).text
     reply_id = tweet.find(reply_id).text
@@ -151,7 +155,12 @@ def twitter(inp):
 
     time_nice = timesince.timesince(parseDateTime(time_raw), datetime.utcnow())
 
-    text = unescape_xml(tweet.find(text).text.replace('\n', ''))
+    if tweet.find(retweeted_text) is not None:
+        text = 'RT @%s:' % tweet.find(retweeted_screen_name).text
+        text += unescape_xml(tweet.find(retweeted_text).text.replace('\n', ''))
+    else:
+        text = unescape_xml(tweet.find(text).text.replace('\n', ''))
+        
     screen_name = tweet.find(screen_name).text
 
     return "\x02@%s\x02: %s (%s ago)" % (screen_name, text, time_nice)

@@ -49,4 +49,4 @@ def seen(inp, nick='', chan='', db=None, input=None):
         return '%s was last seen %s ago saying: %s' % \
                     (inp, reltime, last_seen[2])
     else:
-        return "I've never seen %s" % inp
+        return "I've never seen %s talking." % inp

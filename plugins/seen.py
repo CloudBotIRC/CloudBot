@@ -15,12 +15,14 @@ def db_init(db):
 
 @hook.singlethread
 @hook.event('PRIVMSG', ignorebots=False)
-def seeninput(paraml, input=None, db=None, bot=None):
+def seen_sieve(paraml, input=None, db=None, bot=None):
     db_init(db)
-    db.execute("insert or replace into seen_user(name, time, quote, chan, host)"
-        "values(?,?,?,?,?)", (input.nick.lower(), time.time(), input.msg,
-            input.chan, input.host))
-    db.commit()
+    # keep private messages private
+    if input.chan[:1] == "#":
+        db.execute("insert or replace into seen_user(name, time, quote, chan, host)"
+            "values(?,?,?,?,?)", (input.nick.lower(), time.time(), input.msg,
+            input.chan, input.mask))
+        db.commit()
 
 
 @hook.command
@@ -28,7 +30,6 @@ def seen(inp, nick='', chan='', db=None, input=None):
     ".seen <nick> -- Tell when a nickname was last in active in one of this bot's channels."
 
     if input.conn.nick.lower() == inp.lower():
-        # user is looking for us, being a smartass
         return "You need to get your eyes checked."
 
     if inp.lower() == nick.lower():

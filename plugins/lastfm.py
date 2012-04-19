@@ -3,8 +3,8 @@ from util import hook, http
 @hook.command('l', autohelp=False)
 @hook.command(autohelp=False)
 def lastfm(inp, nick='', say=None, db=None, bot=None):
-    ".lastfm [user] -- Displays the now playing (or last played) " \
-    "track of LastFM user [user]."
+    ".lastfm [user] [dontsave] -- Displays the now playing (or last played)" \
+    " track of LastFM user [user]."
     api_key = bot.config.get("api_keys", {}).get("lastfm")
     if not api_key:
         return "error: no api key set"

@@ -1,6 +1,4 @@
-# Upgraded with tables/caching by ChauffeR of #freebnc on irc.esper.net
 from util import hook, http
-
 
 @hook.command('l', autohelp=False)
 @hook.command(autohelp=False)
@@ -15,23 +13,22 @@ def lastfm(inp, nick='', say=None, db=None, bot=None):
         user = inp
     else:
         user = nick
-    db.execute("create table if not exists lastfm(nick primary key, acc)")
-    sql = db.execute("select acc from lastfm where nick=lower(?)", (nick,)).fetchone();
+	
     api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
 
+    dontsave = user.endswith(" dontsave")
+    if dontsave:
+        user = user[:-9].strip().lower()
 
-    if sql:
-        if not inp: user = sql[0]
-        else:
-            user = inp
-            db.execute("insert or replace into lastfm(nick,acc) values(?,?)", (nick.lower(), user))
-            db.commit()
-    else:
-        if not inp: user = nick
-        else:
-            user = inp
-            db.execute("insert or replace into lastfm(nick,acc) values(?,?)", (nick.lower(), user))
-            db.commit()
+    db.execute("create table if not exists lastfm(nick primary key, acc)")
+
+    if not user:
+        user = db.execute("select acc from lastfm where nick=lower(?)",
+                          (nick,)).fetchone()
+        if not user:
+            notice(lastfm.__doc__)
+            return
+        user = user[0]
 
     response = http.get_json(api_url, method="user.getrecenttracks",
                              api_key=api_key, user=user, limit=1)
@@ -69,5 +66,10 @@ def lastfm(inp, nick='', say=None, db=None, bot=None):
         out += ' by "\x02%s\x0f"' % artist
     if album:
         out += ' from the album "\x02%s\x0f"' % album
+		
+    if inp and not dontsave:
+        db.execute("insert or replace into lastfm(nick, acc) values (?,?)",
+                     (nick.lower(), user))
+        db.commit()
 
     return out

@@ -25,15 +25,12 @@ Unzip the resulting file, and continue to read this document.
 
 ## Install
 
-Before you can run the bot, you need to install a few Python modules. These are `lXML`, `BeautifulSoup`, `psutil`, and `HTTPlib2`.  These can be installed with PIP (The Python package manager):
+Before you can run the bot, you need to install a few Python modules. These are `lXML` and `BeautifulSoup`.  These can be installed with PIP (The Python package manager):
 
 `sudo pip install lxml`
 
 `sudo pip install beautifulsoup`
 
-`sudo pip install psutil`
-
-`sudo pip install httplib2`
 
 On Debian based systems, you can get pip with
 

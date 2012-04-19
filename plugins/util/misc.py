@@ -1,5 +1,5 @@
-from htmlentitydefs import name2codepoint
 from HTMLParser import HTMLParser
+import htmlentitydefs
 import errno
 import re
 
@@ -26,7 +26,7 @@ class HTMLStripper(HTMLParser):
 
     def handle_entityref(self, name):
         try:
-            char = unichr(name2codepoint[name])
+            char = unichr(htmlentitydefs.name2codepoint[name])
         except Exception, error:
             char = u'&%s;' % name
         self._stripped.append(char)

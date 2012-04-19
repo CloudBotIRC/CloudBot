@@ -42,10 +42,10 @@ def lastfm(inp, nick='', say=None, db=None, bot=None):
         else:
             return "Your nick is not a LastFM account. Try '.lastfm [user]'"
 
-	if not "track" in response["recenttracks"] or len(response["recenttracks"]["track"]) == 0:
+    if not "track" in response["recenttracks"] or len(response["recenttracks"]["track"]) == 0:
         return "No recent tracks for user \x02%s\x0F found" % user
 		
-	tracks = response["recenttracks"]["track"]
+    tracks = response["recenttracks"]["track"]
 
     if type(tracks) == list:
         # if the user is listening to something, the tracks entry is a list

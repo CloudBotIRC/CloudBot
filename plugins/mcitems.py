@@ -51,7 +51,7 @@ with open("plugins/data/itemids.txt") as f:
 @hook.command("id")
 @hook.command
 def itemid(input, reply=None):
-    ".itemid <item/id> -- gets the id from an item or vice versa"
+    ".itemid/.id <item/id> -- gets the id from an item or vice versa"
     input = input.lower().strip()
 
     if input == "":
@@ -72,7 +72,7 @@ def itemid(input, reply=None):
         return
 
     if len(results) > 12:
-        reply("There are too many options, please narrow your search."
+        reply("There are too many options, please narrow your search. " \
               "(%s)" % len(results))
         return
 
@@ -98,7 +98,7 @@ def recipe(input, reply=None):
         return
 
     if len(results) > 3:
-        reply("There are too many options, please narrow your search."
+        reply("There are too many options, please narrow your search. " \
               "(%s)" % len(results))
         return
 

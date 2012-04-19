@@ -77,7 +77,7 @@
 52 Monster Spawner
 53 Wooden Stairs
 54 Chest
-55 Redstone Dust
+//55 Redstone Wire
 56 Diamond Ore
 57 Block of Diamond
 58 Crafting Table

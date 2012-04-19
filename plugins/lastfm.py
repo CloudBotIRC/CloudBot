@@ -51,12 +51,12 @@ def lastfm(inp, nick='', say=None, db=None, bot=None):
         # if the user is listening to something, the tracks entry is a list
         # the first item is the current track
         track = tracks[0]
-        status = 'current track'
+        status = 'is listening to'
     elif type(tracks) == dict:
         # otherwise, they aren't listening to anything right now, and
         # the tracks entry is a dict representing the most recent track
         track = tracks
-        status = 'last track'
+        status = 'last listened to'
     else:
         return "error: could not parse track listing"
 
@@ -64,7 +64,7 @@ def lastfm(inp, nick='', say=None, db=None, bot=None):
     album = track["album"]["#text"]
     artist = track["artist"]["#text"]
 
-    out = "\x02%s\x0F's %s - \x02%s\x0f" % (user, status, title)
+    out = "%s %s \x02%s\x0f" % (user, status, title)
     if artist:
         out += ' by "\x02%s\x0f"' % artist
     if album:

@@ -11,7 +11,7 @@ with open("plugins/data/fortunes.txt") as f:
         fortunes.append(line.strip())
 
 
-@hook.command
+@hook.command(autohelp=False)
 def fortune(inp):
     ".fortune -- Fortune cookies on demand."
     return random.choice(fortunes)

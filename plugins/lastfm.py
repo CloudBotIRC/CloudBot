@@ -9,10 +9,7 @@ def lastfm(inp, nick='', say=None, db=None, bot=None):
     if not api_key:
         return "error: no api key set"
 
-    if inp:
-        user = inp
-    else:
-        user = nick
+    user = inp		
 	
     api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
 
@@ -34,10 +31,7 @@ def lastfm(inp, nick='', say=None, db=None, bot=None):
                              api_key=api_key, user=user, limit=1)
 
     if 'error' in response:
-        if inp:  # specified a user name
-            return "Error: %s." % response["message"]
-        else:
-            return "Your nick is not a LastFM account. Try '.lastfm [user]'"
+        return "Error: %s." % response["message"]
 
     if not "track" in response["recenttracks"] or len(response["recenttracks"]["track"]) == 0:
         return 'No recent tracks for user "%s" found.' % user

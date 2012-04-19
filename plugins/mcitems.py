@@ -48,6 +48,7 @@ with open("plugins/data/itemids.txt") as f:
         ids.append((id, name))
 
 
+@hook.command("id")
 @hook.command
 def itemid(input, reply=None):
     ".itemid <item/id> -- gets the id from an item or vice versa"

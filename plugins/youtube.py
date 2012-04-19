@@ -1,11 +1,8 @@
-import locale
 import re
 import time
 
 from util import hook, http
 
-
-locale.setlocale(locale.LC_ALL, '')
 
 youtube_re = (r'(?:youtube.*?(?:v=|/v/)|youtu\.be/|yooouuutuuube.*?id=)'
               '([-_a-zA-Z0-9]+)', re.I)
@@ -42,8 +39,7 @@ def get_video_description(vid_id):
                 j['ratingCount'])
 
     if 'viewCount' in j:
-        out += ' - \x02%s\x02 views' % locale.format('%d',
-                                                     j['viewCount'], 1)
+        out += ' - \x02%s\x02 views' % format(j['viewCount'], ",d")
 
     upload_time = time.strptime(j['uploaded'], "%Y-%m-%dT%H:%M:%S.000Z")
     out += ' - \x02%s\x02 on \x02%s\x02' % (j['uploader'],

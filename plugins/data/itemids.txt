@@ -6,18 +6,24 @@
 3 Dirt
 4 Cobblestone
 5 Wooden Planks
+5:1 Pine Wood Planks
+5:2 Birch Wood Planks
+5:3 Jungle Wood Planks
 6 Sapling
 7 Bedrock
 8 Water
-9 Water
+9 Stationary Water
 10 Lava
-11 Lava
+11 Stationary Lava
 12 Sand
 13 Gravel
 14 Gold Ore
 15 Iron Ore
 16 Coal Ore
 17 Wood
+17:1 Pine Wood
+17:2 Birch Wood
+17:3 Jungle Wood
 18 Leaves
 19 Sponge
 20 Glass
@@ -34,7 +40,7 @@
 31 Grass
 32 Dead Bush
 33 Piston
-34 Piston Extended
+//34 Piston Extended
 35 Wool
 35:1 Orange Wool
 35:2 Magenta Wool
@@ -52,7 +58,7 @@
 35:14 Red Wool
 35:15 Black Wool
 35:0 White Wool
-36 Block Moved by Piston
+//36 Block Moved by Piston
 37 Flower
 38 Rose
 39 Brown Mushroom
@@ -78,7 +84,7 @@
 59 Crops
 60 Farmland
 61 Furnace
-62 Furnace
+62 Lit Furnace
 63 Sign
 64 Wooden Door
 65 Ladder
@@ -90,9 +96,9 @@
 71 Iron Door
 72 Pressure Plate
 73 Redstone Ore
-74 Redstone Ore
+74 Glowing Redstone Ore
 75 Redstone Torch
-76 Redstone Torch
+76 Lit Redstone Torch
 77 Button
 78 Snow
 79 Ice
@@ -108,9 +114,9 @@
 89 Glowstone
 90 Portal
 91 Jack 'o' Lantern
-92 Cake
-93 Redstone Repeater (off)
-94 Redstone Repeater (on)
+92 Cake Block
+93 Redstone Repeater
+94 Redstone Repeater (On)
 95 Locked chest
 96 Trapdoor
 97 Hidden Silverfish
@@ -139,8 +145,8 @@
 120 End Portal Frame
 121 End Stone
 122 Dragon Egg
-123 Redstone Lamp (Off)
-124 Redstone Lamp (On)
+123 Redstone Lamp
+124 Lit Redstone Lamp
 // Items Ids
 256 Iron Shovel
 257 Iron Pickaxe

@@ -7,6 +7,10 @@ from util import hook, http
 def lastfm(inp, nick='', say=None, db=None, bot=None):
     ".lastfm [user] -- Displays the now playing (or last played) "\
     "track of LastFM user [user]."
+	api_key = bot.config.get("api_keys", {}).get("lastfm")
+    if not api_key:
+        return "error: no api key set"
+	
     if inp:
         user = inp
     else:
@@ -14,9 +18,7 @@ def lastfm(inp, nick='', say=None, db=None, bot=None):
     db.execute("create table if not exists lastfm(nick primary key, acc)")
     sql = db.execute("select acc from lastfm where nick=lower(?)", (nick,)).fetchone();
     api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
-    api_key = bot.config.get("api_keys", {}).get("lastfm")
-    if api_key is None:
-        return "error: no api key set"
+
 
     if sql:
         if not inp: user = sql[0]
@@ -38,12 +40,12 @@ def lastfm(inp, nick='', say=None, db=None, bot=None):
         if inp:  # specified a user name
             return "error: %s" % response["message"]
         else:
-            return "your nick is not a LastFM account. try '.lastfm [user]'"
+            return "Your nick is not a LastFM account. Try '.lastfm [user]'"
 
-    tracks = response["recenttracks"]["track"]
-
-    if len(tracks) == 0:
-        return "no recent tracks for user %r found" % user
+	if not "track" in response["recenttracks"] or len(response["recenttracks"]["track"]) == 0:
+        return "No recent tracks for user \x02%s\x0F found" % user
+		
+	tracks = response["recenttracks"]["track"]
 
     if type(tracks) == list:
         # if the user is listening to something, the tracks entry is a list
@@ -62,10 +64,10 @@ def lastfm(inp, nick='', say=None, db=None, bot=None):
     album = track["album"]["#text"]
     artist = track["artist"]["#text"]
 
-    ret = "\x02%s\x0F's %s - \x02%s\x0f" % (user, status, title)
+    out = "\x02%s\x0F's %s - \x02%s\x0f" % (user, status, title)
     if artist:
-        ret += " by \x02%s\x0f" % artist
+        out += ' by "\x02%s\x0f"' % artist
     if album:
-        ret += " on \x02%s\x0f" % album
+        out += ' from the album "\x02%s\x0f"' % album
 
-    say(ret)
+    return out

@@ -1,7 +1,7 @@
 import re
+import urllib
 
 from util import hook, http
-
 
 @hook.command('wa')
 @hook.command
@@ -9,15 +9,20 @@ def wolframalpha(inp, bot=None):
     ".wa <query> -- Computes <query> using Wolfram Alpha."
 
     api_key = bot.config.get("api_keys", {}).get("wolframalpha", None)
-    if api_key is None:
-        return "error: no api key set"
+    
+    if not api_key:
+        return "error: missing api key"
 
     url = 'http://api.wolframalpha.com/v2/query?format=plaintext'
 
     result = http.get_xml(url, input=inp, appid=api_key)
+    
+    # get the URL for a user to view this query in a browser
+    query_url = "http://www.wolframalpha.com/input/?i=" + \
+                urllib.quote(inp.encode('utf-8'))
 
     pod_texts = []
-    for pod in result.xpath("//pod"):
+    for pod in result.xpath("//pod[@primary='true']"):
         title = pod.attrib['title']
         if pod.attrib['id'] == 'Input':
             continue
@@ -29,9 +34,9 @@ def wolframalpha(inp, bot=None):
             if subpod:
                 results.append(subpod)
         if results:
-            pod_texts.append(title + ': ' + '|'.join(results))
+            pod_texts.append(title + ': ' + ','.join(results))
 
-    ret = '. '.join(pod_texts)
+    ret = ' | '.join(pod_texts)
 
     if not pod_texts:
         return 'No results.'
@@ -43,11 +48,11 @@ def wolframalpha(inp, bot=None):
 
     ret = re.sub(r'\\:([0-9a-z]{4})', unicode_sub, ret)
 
-    if len(ret) > 430:
-        ret = ret[:ret.rfind(' ', 0, 430)]
+    if len(ret) > 380:
+        ret = ret[:ret.rfind(' ', 0, 380)]
         ret = re.sub(r'\W+$', '', ret) + '...'
 
     if not ret:
         return 'No results.'
 
-    return ret
+    return "%s - %s" % (ret, query_url)

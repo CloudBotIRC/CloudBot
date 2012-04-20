@@ -20,8 +20,13 @@ def time_command(inp, bot=None):
     time = " ".join(request.xpath("//pod[@title='Result']/subpod/plain" \
                     "text/text()"))
     time = time.replace("  |  ", ", ")
-    place = " ".join(request.xpath("//pod[@title='Input interpretation']/" \
-                     "subpod/plaintext/text()"))[16:].title()
+    
+    # nice place name for UNIX time
+    if inp.lower() == "unix":
+        place = "Unix Epoch"
+    else:
+        place = " ".join(request.xpath("//pod[@title='Input interpretation']/" \
+                                       "subpod/plaintext/text()"))[16:].title()
 
     if time:
 	    # if wolfram alpha had to guess a place, then show the place it chose

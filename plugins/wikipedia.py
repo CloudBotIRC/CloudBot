@@ -4,6 +4,7 @@ Scaevolus 2009'''
 import re
 
 from util import hook, http
+from util.formatting import truncate_words
 
 
 api_prefix = "http://en.wikipedia.org/w/api.php"
@@ -43,8 +44,7 @@ def wiki(inp):
         desc = title + desc
 
     desc = re.sub('\s+', ' ', desc).strip()  # remove excess spaces
-
-    if len(desc) > 300:
-        desc = desc[:300] + '...'
+    
+    desc = truncate_words(desc, 300)
 
     return '%s -- %s' % (desc, http.quote(url, ':/'))

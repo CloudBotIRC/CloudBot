@@ -1,6 +1,7 @@
 import random
-from util import hook
-from util import http
+from util import hook, http
+
+from util.formatting import truncate_words
 
 
 def api_get(kind, query):
@@ -22,7 +23,7 @@ def googleimage(inp):
                       parsed['responseStatus'], ''))
     if not parsed['responseData']['results']:
         return 'no images found'
-    return random.choice(parsed['responseData']['results'][:10])\
+    return random.choice(parsed['responseData']['results'][:10]) \
                         ['unescapedUrl']
 
 
@@ -53,7 +54,6 @@ def google(inp):
 
     out = ' '.join(out.split())
 
-    if len(out) > 300:
-        out = out[:out.rfind(' ')] + '...'
+    out = truncate_words(out, 300)
 
     return out

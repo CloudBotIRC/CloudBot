@@ -60,7 +60,7 @@ bot.persist_dir = os.path.abspath('persist')
 if not os.path.exists(bot.persist_dir):
     os.mkdir(bot.persist_dir)
 
-print 'Connection(s) made, bot online...'
+print 'Connection(s) made.'
 
 while True:
     reload()  # these functions only do things

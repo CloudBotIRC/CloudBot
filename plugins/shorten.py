@@ -12,8 +12,8 @@ def shorten(inp, bot=None):
     api_key = bot.config.get("api_keys", {}).get("bitly_api", None)
     if api_key is None:
         return "error: no api key set"
-        
+
     try:
         return bitly(inp, api_user, api_key)
     except (HTTPError, ShortenError):
-        return "Could not shorten %s!" % inp
+        return "Could not shorten '%s'!" % inp

@@ -17,11 +17,10 @@ def ctcp_ping(inp, notice=None):
 
 @hook.regex(r'^\x01TIME\x01$')
 def ctcp_time(inp, notice=None):
-    the_time = time.strftime("%r", time.localtime())
-    notice('\x01TIME: The time is: ' + the_time)
+    notice('\x01TIME: The time is: %s' % time.strftime("%r", time.localtime()))
 
 
 @hook.regex(r'^\x01FINGER\x01$')
 def ctcp_finger(inp, notice=None):
     user = getpass.getuser()
-    notice('\x01FINGER: Username is: ' + user)
+    notice('\x01FINGER: Username is: $s' % getpass.getuser())

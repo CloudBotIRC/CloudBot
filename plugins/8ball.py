@@ -38,8 +38,4 @@ answers = [g + "As I see it, yes",
 def eightball(inp, me=None):
     ".8ball <question> -- The all knowing magic eight ball, " \
     "in electronic form. Ask and it shall be answered!"
-    global nextresponsenumber
-    inp = inp.strip()
-    if re.match("[a-zA-Z0-9]", inp[-1]):
-        inp += "?"
     me("shakes the magic 8 ball... %s" % (random.choice(answers)))

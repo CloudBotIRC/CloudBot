@@ -1,24 +1,23 @@
 # Plugin by Lukeroge
 
 from util import hook, http
-from urlparse import urljoin
 from BeautifulSoup import BeautifulSoup
 from collections import defaultdict
-
-base_url = 'http://www.fmylife.com/'
 
 fml_cache = defaultdict()
 
 
 def refresh_cache():
     """ gets a page of random FMLs and puts them into a dictionary """
-    page = http.get(urljoin(base_url, 'random'))
+    page = http.get('http://www.fmylife.com/random/')
     soup = BeautifulSoup(page)
 
     for e in soup.findAll('div', {'class': 'post article'}):
         id = int(e['id'])
+        # get the text of the FML
         text = ''.join(e.find('p').findAll(text=True))
         text = http.unescape(text)
+        # append to the dictionary
         fml_cache[id] = text
 
 # do an initial refresh of the cache

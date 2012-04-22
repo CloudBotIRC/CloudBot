@@ -8,7 +8,7 @@ def get_title(url):
     url = urlnorm.normalize(url.encode('utf-8'))
     url = url.decode('utf-8')
     # add http if its missing
-    if not url.startswith("http"):
+    if not "://" in url:
         url = "http://" + url
     try:
         # get the title

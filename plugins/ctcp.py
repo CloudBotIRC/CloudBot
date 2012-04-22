@@ -22,5 +22,4 @@ def ctcp_time(inp, notice=None):
 
 @hook.regex(r'^\x01FINGER\x01$')
 def ctcp_finger(inp, notice=None):
-    user = getpass.getuser()
     notice('\x01FINGER: Username is: $s' % getpass.getuser())

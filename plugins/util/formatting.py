@@ -12,7 +12,7 @@ def capitalize_first(line):
     (keeps other letters intact)
     """
     return ' '.join([s[0].upper() + s[1:] for s in line.split(' ')])
-    
+
 # ALL CODE BELOW THIS LINE IS COVERED BY THE FOLLOWING AGREEMENT:
 
 # Copyright (c) Django Software Foundation and individual contributors.
@@ -77,3 +77,24 @@ def smart_split(text):
     """
     for bit in split_re.finditer(text):
         yield bit.group(0)
+
+
+def get_text_list(list_, last_word='or'):
+    """
+    >>> get_text_list(['a', 'b', 'c', 'd'])
+    u'a, b, c or d'
+    >>> get_text_list(['a', 'b', 'c'], 'and')
+    u'a, b and c'
+    >>> get_text_list(['a', 'b'], 'and')
+    u'a and b'
+    >>> get_text_list(['a'])
+    u'a'
+    >>> get_text_list([])
+    u''
+    """
+    if len(list_) == 0: return ''
+    if len(list_) == 1: return list_[0]
+    return '%s %s %s' % (
+        # Translators: This string is used as a separator between list elements
+        (', ').join([i for i in list_][:-1]),
+        last_word, list_[-1])

@@ -45,7 +45,7 @@ def wolframalpha(inp, bot=None):
             if subpod:
                 results.append(subpod)
         if results:
-            pod_texts.append(title + ': ' + ','.join(results))
+            pod_texts.append(title + ': ' + ', '.join(results))
 
     ret = ' - '.join(pod_texts)
 

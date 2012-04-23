@@ -3,12 +3,11 @@ from util import hook
 from random import getrandbits
 
 
-# used for tails: x heads: y
+# yay for cryptic but fast code
 def flip_simple(count):
     heads, tails = 0, 0
     for x in xrange(count):
-        c = getrandbits(1)
-        if c == 0:
+        if not getrandbits(1):
             heads += 1
         else:
             tails += 1

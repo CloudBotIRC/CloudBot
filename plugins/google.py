@@ -1,7 +1,7 @@
 import random
 from util import hook, http
 
-from util.formatting import truncate_words
+from util.text import truncate_words
 
 
 def api_get(kind, query):

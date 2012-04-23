@@ -4,7 +4,7 @@ Scaevolus 2009'''
 import re
 
 from util import hook, http
-from util.formatting import truncate_words
+from util.text import truncate_words
 
 
 api_prefix = "http://en.wikipedia.org/w/api.php"

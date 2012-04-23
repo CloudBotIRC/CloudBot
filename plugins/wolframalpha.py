@@ -5,7 +5,7 @@ from util import hook, http
 
 from urllib2 import HTTPError
 from util.web import bitly, ShortenError
-from util.formatting import truncate_words
+from util.text import truncate_words
 
 
 @hook.command('wa')

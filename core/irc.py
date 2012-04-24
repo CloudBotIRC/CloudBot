@@ -184,9 +184,13 @@ class IRC(object):
 
     def join(self, channel):
         self.cmd("JOIN", [channel])
-        
+        if channel not in self.channels:
+            self.channels.append(channel)
+
     def part(self, channel):
         self.cmd("PART", [channel])
+        if channel in self.channels:
+            self.channels.remove(channel)
 
     def msg(self, target, text):
         self.cmd("PRIVMSG", [target, text])

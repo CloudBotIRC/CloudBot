@@ -1,7 +1,7 @@
 # Plugin by Lukeroge
 from util import hook
 from util import molecular
-from util.formatting import get_text_list
+from util.text import get_text_list
 
 
 @hook.command(autohelp=False)

@@ -206,49 +206,6 @@ class IRC(object):
         self.conn.oqueue.put(str)
 
 
-class FakeIRC(IRC):
-    def __init__(self, server, nick, port=6667, channels=[], conf={}, fn=""):
-        self.channels = channels
-        self.conf = conf
-        self.server = server
-        self.port = port
-        self.nick = nick
-
-        self.out = Queue.Queue()  # responses from the server are placed here
-
-        self.f = open(fn, 'rb')
-
-        thread.start_new_thread(self.parse_loop, ())
-
-    def parse_loop(self):
-        while True:
-            msg = decode(self.f.readline()[9:])
-
-            if msg == '':
-                print "!!!!DONE READING FILE!!!!"
-                return
-
-            if msg.startswith(":"):  # has a prefix
-                prefix, command, params = irc_prefix_rem(msg).groups()
-            else:
-                prefix, command, params = irc_noprefix_rem(msg).groups()
-            nick, user, host = irc_netmask_rem(prefix).groups()
-            mask = user + "@" + host
-            paramlist = irc_param_ref(params)
-            lastparam = ""
-            if paramlist:
-                if paramlist[-1].startswith(':'):
-                    paramlist[-1] = paramlist[-1][1:]
-                lastparam = paramlist[-1]
-            self.out.put([msg, prefix, command, params, nick, user, host,
-                    mask, paramlist, lastparam])
-            if command == "PING":
-                self.cmd("PONG", [params])
-
-    def cmd(self, command, params=None):
-        pass
-
-
 class SSLIRC(IRC):
     def __init__(self, server, nick, port=6667, channels=[], conf={},
                  ignore_certificate_errors=True):

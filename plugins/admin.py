@@ -22,7 +22,7 @@ def admins(inp, notice=None, bot=None):
 def addadmin(inp, notice=None, bot=None, config=None):
     ".addadmin <nick|host> -- Make <nick|host> an admin. " \
     "(you can add multiple admins at once)"
-    targets = inp.lower().split()
+    targets = inp.split()
     for target in targets:
         if target in bot.config["admins"]:
             notice("%s is already an admin." % target)
@@ -38,7 +38,7 @@ def addadmin(inp, notice=None, bot=None, config=None):
 def deladmin(inp, notice=None, bot=None, config=None):
     ".deladmin <nick|host> -- Make <nick|host> a non-admin." \
     "(you can delete multiple admins at once)"
-    targets = inp.lower().split()
+    targets = inp.split()
     for target in targets:
         if target in bot.config["admins"]:
             notice("%s is no longer an admin." % target)

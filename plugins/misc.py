@@ -1,9 +1,7 @@
 import re
 import socket
-import subprocess
-import platform
-import time
 
+from time import sleep
 from util import hook
 
 socket.setdefaulttimeout(10)
@@ -41,6 +39,7 @@ def onjoin(paraml, conn=None, bot=None):
         conn.msg(nickserv_name, nickserv_command % nickserv_password)
         bot.config['censored_strings'].append(nickserv_password)
         time.sleep(1)
+
 # Set bot modes
     mode = conn.conf.get('mode')
     if mode:
@@ -51,10 +50,13 @@ def onjoin(paraml, conn=None, bot=None):
         conn.join(channel)
         time.sleep(1)
 
-# Stay-alive code
-    stayalive = conn.conf.get('stayalive', False)
-    if stayalive:
-        delay = conn.conf.get('stayalive_delay', 20)
+    print "onjoin() sucessfully completed."
+
+
+@hook.event('004')
+def keep_alive(paraml, conn=None):
+    keepalive = conn.conf.get('keep_alive', False)
+    if keepalive:
         while True:
-            time.sleep(delay)
             conn.cmd('PING', [conn.nick])
+            time.sleep(120)

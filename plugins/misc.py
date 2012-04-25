@@ -1,7 +1,7 @@
 import re
 import socket
+import time
 
-from time import sleep
 from util import hook
 
 socket.setdefaulttimeout(10)
@@ -53,10 +53,11 @@ def onjoin(paraml, conn=None, bot=None):
     print "onjoin() sucessfully completed."
 
 
+@hook.singlethread
 @hook.event('004')
 def keep_alive(paraml, conn=None):
     keepalive = conn.conf.get('keep_alive', False)
     if keepalive:
         while True:
             conn.cmd('PING', [conn.nick])
-            time.sleep(120)
+            time.sleep(60)

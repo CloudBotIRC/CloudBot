@@ -55,11 +55,11 @@ def lastfm(inp, nick='', say=None, db=None, bot=None):
     album = track["album"]["#text"]
     artist = track["artist"]["#text"]
 
-    out = "%s %s \x02%s\x0f" % (user, status, title)
+    out = '%s %s "%s"' % (user, status, title)
     if artist:
-        out += ' by "\x02%s\x0f"' % artist
+        out += " by \x02%s\x0f" % artist
     if album:
-        out += ' from the album "\x02%s\x0f"' % album
+        out += " from the album \x02%s\x0f" % album
 		
     if inp and not dontsave:
         db.execute("insert or replace into lastfm(nick, acc) values (?,?)",

@@ -7,7 +7,7 @@ from util.text import truncate_words
 def api_get(kind, query):
     """Use the RESTful Google Search API"""
     url = 'http://ajax.googleapis.com/ajax/services/search/%s?' \
-          'v=1.0&safe=off'
+          'v=1.0&safe=moderate'
     return http.get_json(url % kind, q=query)
 
 
@@ -15,7 +15,7 @@ def api_get(kind, query):
 @hook.command('gis')
 @hook.command
 def googleimage(inp):
-    ".gis <term> -- Returns first Google Image result (Safesearch off)."
+    ".gis <query> -- Returns first Google Image result for <query>."
 
     parsed = api_get('images', inp)
     if not 200 <= parsed['responseStatus'] < 300:
@@ -51,8 +51,6 @@ def google(inp):
         content = http.html.fromstring(content).text_content()
 
     out = '%s -- \x02%s\x02: "%s"' % (result['unescapedUrl'], title, content)
-
-    out = ' '.join(out.split())
 
     out = truncate_words(out, 300)
 

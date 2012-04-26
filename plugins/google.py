@@ -45,13 +45,11 @@ def google(inp):
     title = http.unescape(result['titleNoFormatting'])
     content = http.unescape(result['content'])
 
-    if len(content) == 0:
+    if not content:
         content = "No description available."
     else:
         content = http.html.fromstring(content).text_content()
 
     out = '%s -- \x02%s\x02: "%s"' % (result['unescapedUrl'], title, content)
 
-    out = truncate_words(out, 300)
-
-    return out
+    return truncate_words(out, 300)

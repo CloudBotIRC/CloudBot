@@ -1,4 +1,5 @@
-from util import hook, http
+from util import hook, http, timesince
+from datetime import datetime
 
 @hook.command('l', autohelp=False)
 @hook.command(autohelp=False)
@@ -43,11 +44,17 @@ def lastfm(inp, nick='', say=None, db=None, bot=None):
         # the first item is the current track
         track = tracks[0]
         status = 'is listening to'
+        ending = '.'
     elif type(tracks) == dict:
         # otherwise, they aren't listening to anything right now, and
         # the tracks entry is a dict representing the most recent track
         track = tracks
         status = 'last listened to'
+        # lets see how long ago they listened to it
+        time_listened = datetime.fromtimestamp(int(track["date"]["uts"]))
+        time_since = timesince.timesince(time_listened)
+        ending = ' (%s ago)' % time_since
+        
     else:
         return "error: could not parse track listing"
 
@@ -60,6 +67,9 @@ def lastfm(inp, nick='', say=None, db=None, bot=None):
         out += " by \x02%s\x0f" % artist
     if album:
         out += " from the album \x02%s\x0f" % album
+        
+    # append ending based on what type it was
+    out += ending
 		
     if inp and not dontsave:
         db.execute("insert or replace into lastfm(nick, acc) values (?,?)",

@@ -1,6 +1,8 @@
 "weather, thanks to google"
 from util import hook, http
 
+def fahrenheit_to_celcius(f):
+    return (int(f) - 32) / 1.8
 
 @hook.command(autohelp=False)
 def forecast(inp, nick='', server='',
@@ -76,9 +78,12 @@ def weather(inp, nick='', server='', reply=None, db=None, notice=None):
     info['city'] = w.find('forecast_information/city').get('data')
     info['high'] = w.find('forecast_conditions/high').get('data')
     info['low'] = w.find('forecast_conditions/low').get('data')
+    info['high_c'] = fahrenheit_to_celcius(info['high'])
+    info['low_c'] = fahrenheit_to_celcius(info['low'])
 
-    reply('%(city)s: %(condition)s, %(temp_f)sF/%(temp_c)sC (H:%(high)sF'\
-            ', L:%(low)sF), %(humidity)s, %(wind_condition)s.' % info)
+    reply('%(city)s: %(condition)s, %(temp_f)sF/%(temp_c)sC (H:%(high)sF' \
+          ' %(high_c)sC, L:%(low)sF, %(low_c)sC), %(humidity)s, ' \
+          '%(wind_condition)s.' % info)
 
     if inp and not dontsave:
         db.execute("insert or replace into weather(nick, loc) values (?,?)",

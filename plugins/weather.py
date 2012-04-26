@@ -81,8 +81,8 @@ def weather(inp, nick='', server='', reply=None, db=None, notice=None):
     info['high_c'] = fahrenheit_to_celcius(info['high'])
     info['low_c'] = fahrenheit_to_celcius(info['low'])
 
-    reply('%(city)s: %(condition)s, %(temp_f)sF/%(temp_c)sC, (H:%(high)sF' \
-          ', %(high_c)sC), (L:%(low)sF, %(low_c)sC), %(humidity)s, ' \
+    reply('%(city)s: %(condition)s, %(temp_f)sF/%(temp_c)sC (High: %(high)sF' \
+          '/%(high_c)sC) (Low: %(low)sF/%(low_c)sC), %(humidity)s, ' \
           '%(wind_condition)s.' % info)
 
     if inp and not dontsave:

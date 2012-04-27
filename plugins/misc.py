@@ -17,16 +17,6 @@ def invite(paraml, conn=None):
         return None
 
 
-# Rejoin on kick (Configurable, defaults to False)
-@hook.event('KICK')
-def rejoin(paraml, conn=None):
-    auto_rejoin = conn.conf.get('auto_rejoin', False)
-    if autorejoin:
-        conn.join(paraml[0])
-    else:
-        return None
-
-
 # Identify to NickServ (or other service)
 @hook.event('004')
 def onjoin(paraml, conn=None, bot=None):
@@ -58,6 +48,11 @@ def onkick(paraml, conn=None, chan=None):
     # if the bot has been kicked, remove from the channel list
     if paraml[1] == conn.nick:
         conn.channels.remove(chan)
+        auto_rejoin = conn.conf.get('auto_rejoin', False)
+        if auto_rejoin:
+            conn.join(paraml[0])
+        else:
+            return None
 
 @hook.singlethread
 @hook.event('004')

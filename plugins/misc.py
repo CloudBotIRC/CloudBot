@@ -10,8 +10,8 @@ socket.setdefaulttimeout(10)
 # Auto-join on Invite (Configurable, defaults to True)
 @hook.event('INVITE')
 def invite(paraml, conn=None):
-    invitejoin = conn.conf.get('invitejoin', True)
-    if invitejoin:
+    invite_join = conn.conf.get('invite_join', True)
+    if invite_join:
         conn.join(paraml[-1])
     else:
         return None
@@ -20,7 +20,7 @@ def invite(paraml, conn=None):
 # Rejoin on kick (Configurable, defaults to False)
 @hook.event('KICK')
 def rejoin(paraml, conn=None):
-    autorejoin = conn.conf.get('autorejoin', False)
+    auto_rejoin = conn.conf.get('auto_rejoin', False)
     if autorejoin:
         conn.join(paraml[0])
     else:
@@ -52,6 +52,12 @@ def onjoin(paraml, conn=None, bot=None):
 
     print "onjoin() sucessfully completed."
 
+
+@hook.event("KICK")
+def onkick(paraml, conn=None, chan=None):
+    # if the bot has been kicked, remove from the channel list
+    if paraml[1] == conn.nick:
+        conn.channels.remove(chan)
 
 @hook.singlethread
 @hook.event('004')

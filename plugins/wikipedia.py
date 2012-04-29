@@ -44,7 +44,7 @@ def wiki(inp):
         desc = title + desc
 
     desc = re.sub('\s+', ' ', desc).strip()  # remove excess spaces
-    
+
     desc = truncate_words(desc, 300)
 
     return '%s -- %s' % (desc, http.quote(url, ':/'))

@@ -20,9 +20,9 @@ if not os.path.exists('config'):
               "realname": "CloudBot - http://git.io/cloudbotirc",
               "nickserv_password": "",
               "channels": ["#cloudbot"],
-              "invite_join": True,
-              "auto_rejoin": False,
-              "command_prefix": ".",
+              "invite_join": true,
+              "auto_rejoin": false,
+              "command_prefix": "."
             }
           },
           "disabled_plugins": [],

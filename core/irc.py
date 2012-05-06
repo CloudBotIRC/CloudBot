@@ -123,8 +123,8 @@ irc_param_ref = re.compile(r'(?:^|(?<= ))(:.*|[^ ]+)').findall
 
 class IRC(object):
     "handles the IRC protocol"
-    #see the docs/ folder for more information on the protocol
-    def __init__(self, server, nick, port=6667, channels=[], conf={}):
+    def __init__(self, name, server, nick, port=6667, channels=[], conf={}):
+        self.name = name
         self.channels = channels
         self.conf = conf
         self.server = server
@@ -152,12 +152,14 @@ class IRC(object):
 
     def parse_loop(self):
         while True:
+            # get a message from the input queue
             msg = self.conn.iqueue.get()
 
             if msg == StopIteration:
                 self.connect()
                 continue
 
+            # parse the message
             if msg.startswith(":"):  # has a prefix
                 prefix, command, params = irc_prefix_rem(msg).groups()
             else:
@@ -170,8 +172,10 @@ class IRC(object):
                 if paramlist[-1].startswith(':'):
                     paramlist[-1] = paramlist[-1][1:]
                 lastparam = paramlist[-1]
+            # put the parsed message in the response queue 
             self.out.put([msg, prefix, command, params, nick, user, host,
                     mask, paramlist, lastparam])
+            # if the server pings us, pong them back
             if command == "PING":
                 self.cmd("PONG", paramlist)
 
@@ -183,16 +187,19 @@ class IRC(object):
         self.cmd("NICK", [nick])
 
     def join(self, channel):
+        """ makes the bot join a channel """
         self.cmd("JOIN", [channel])
         if channel not in self.channels:
             self.channels.append(channel)
 
     def part(self, channel):
+        """ makes the bot leave a channel """
         self.cmd("PART", [channel])
         if channel in self.channels:
             self.channels.remove(channel)
 
     def msg(self, target, text):
+        """ makes the bot send a message to a user """
         self.cmd("PRIVMSG", [target, text])
 
     def cmd(self, command, params=None):
@@ -207,10 +214,10 @@ class IRC(object):
 
 
 class SSLIRC(IRC):
-    def __init__(self, server, nick, port=6667, channels=[], conf={},
+    def __init__(self, name, server, nick, port=6667, channels=[], conf={},
                  ignore_certificate_errors=True):
         self.ignore_cert_errors = ignore_certificate_errors
-        IRC.__init__(self, server, nick, port, channels, conf)
+        IRC.__init__(self, name, server, nick, port, channels, conf)
 
     def create_connection(self):
         return crlf_ssl_tcp(self.server, self.port, self.ignore_cert_errors)

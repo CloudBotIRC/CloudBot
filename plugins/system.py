@@ -6,6 +6,15 @@ from util import hook
 from datetime import timedelta
 
 
+def convert_kilobytes(kilobytes):
+    if kilobytes >= 1024:
+        megabytes = kilobytes / 1024
+        size = '%.2f MB' % megabytes
+    else:
+        size = '%.2f KB' % kilobytes
+    return size
+
+
 @hook.command(autohelp=False)
 def system(inp):
     ".system -- Retrieves information about the host system."
@@ -30,7 +39,7 @@ def memory(inp):
         # get the data we need and process it
         data = s['VmRSS'], s['VmSize'], s['VmPeak'], s['VmStk'], s['VmData']
         data = [float(i.replace(' kB', '')) for i in data]
-        strings = [str(round(i / 1024, 2)) + ' MB' for i in data]
+        strings = [convert_kilobytes(i) for i in data]
         # prepare the output
         out = "Threads: \x02%s\x02, Real Memory: \x02%s\x02, Allocated Memory: \x02%s\x02, Peak " \
               "Allocated Memory: \x02%s\x02, Stack Size: \x02%s\x02, Heap " \
@@ -44,9 +53,9 @@ def memory(inp):
         out = os.popen(cmd).read()
         memory = 0
         for amount in re.findall(r'([,0-9]+) K', out):
-            memory += int(amount.replace(',', ''))
-        memory = str(round(float(memory) / 1024, 2))
-        return "Memory Usage: \x02%s MB\x02" % memory
+            memory += float(amount.replace(',', ''))
+        memory = convert_kilobytes(memory)
+        return "Memory Usage: \x02%s\x02" % memory
 
     else:
         return "Sorry, this command is not supported on your OS."

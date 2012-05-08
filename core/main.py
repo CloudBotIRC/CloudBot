@@ -140,7 +140,7 @@ def match_command(command):
 
 def main(conn, out):
     inp = Input(conn, *out)
-    commandprefix = conn.conf.get('command_prefix', '.')
+    command_prefix = conn.conf.get('command_prefix', '.')
 
     # EVENTS
     for func, args in bot.events[inp.command] + bot.events['*']:

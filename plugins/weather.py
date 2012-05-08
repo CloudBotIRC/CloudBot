@@ -1,8 +1,10 @@
 "weather, thanks to google"
 from util import hook, http
 
+
 def fahrenheit_to_celcius(f):
     return int(round((int(f) - 32) / 1.8, 0))
+
 
 @hook.command(autohelp=False)
 def forecast(inp, nick='', server='',
@@ -38,10 +40,10 @@ def forecast(inp, nick='', server='',
 
     for elem in w.findall('forecast_conditions'):
         info = dict((e.tag, e.get('data')) for e in elem)
-        info['high'] = elem.find('high').get('data')
-        info['low'] = elem.find('low').get('data')
-        out += '[%(day_of_week)s]: %(condition)s (H:%(high)sF'\
-            ', L:%(low)sF). ' % info
+        info['high'] = fahrenheit_to_celcius(elem.find('high').get('data'))
+        info['low'] = fahrenheit_to_celcius(elem.find('low').get('data'))
+        out += '[%(day_of_week)s]: %(condition)s (H:%(high)sC'\
+            ', L:%(low)sC). ' % info
 
     return out
 

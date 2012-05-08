@@ -23,7 +23,7 @@ os.chdir(sys.path[0] or '.')  # do stuff relative to the install directory
 class Bot(object):
     pass
 
-print 'Welcome to Cloudbot - Version DEV - http://git.io/cloudbotirc'
+print 'CloudBot 1.x (DEVELOPMENT) <https://github.com/ClouDev/CloudBot/>'
 
 bot = Bot()
 bot.start_time = time.time()
@@ -45,6 +45,7 @@ bot.conns = {}
 
 try:
     for name, conf in bot.config['connections'].iteritems():
+        print 'Connecting to server: %s' % conf['server']
         if conf.get('ssl'):
             bot.conns[name] = SSLIRC(name, conf['server'], conf['nick'], conf=conf,
                     port=conf.get('port', 6667), channels=conf['channels'],
@@ -52,7 +53,7 @@ try:
         else:
             bot.conns[name] = IRC(name, conf['server'], conf['nick'], conf=conf,
                     port=conf.get('port', 6667), channels=conf['channels'])
-except Exception, e:
+except Exception as e:
     print 'ERROR: malformed config file', e
     sys.exit()
 
@@ -60,7 +61,7 @@ bot.persist_dir = os.path.abspath('persist')
 if not os.path.exists(bot.persist_dir):
     os.mkdir(bot.persist_dir)
 
-print 'Connection(s) made.'
+print 'Connection(s) made, starting main loop.'
 
 while True:
     reload()  # these functions only do things

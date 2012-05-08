@@ -140,7 +140,7 @@ def match_command(command):
 
 def main(conn, out):
     inp = Input(conn, *out)
-    commandprefix = conn.conf.get('command_prefix')
+    commandprefix = conn.conf.get('command_prefix', '.')
 
     # EVENTS
     for func, args in bot.events[inp.command] + bot.events['*']:
@@ -149,9 +149,9 @@ def main(conn, out):
     if inp.command == 'PRIVMSG':
         # COMMANDS
         if inp.chan == inp.nick:  # private message, no command prefix
-            prefix = r'^(?:[' + commandprefix + ']?|'
+            prefix = '^(?:[%s]?|' % command_prefix
         else:
-            prefix = r'^(?:[' + commandprefix + ']|'
+            prefix = '^(?:[%s]|' % command_prefix
 
         command_re = prefix + inp.conn.nick
         command_re += r'[,;:]+\s+)(\w+)(?:$|\s+)(.*)'

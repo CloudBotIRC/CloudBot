@@ -6,19 +6,24 @@ nick_re = re.compile(r"^[A-Za-z0-9_|\.\-\]\[]*$")
 
 
 with open("plugins/data/larts.txt") as f:
-    larts = [line.strip() for line in f.readlines() if not line.startswith("//")]
+    larts = [line.strip() for line in f.readlines()
+             if not line.startswith("//")]
 
 with open("plugins/data/slaps.txt") as f:
-    slaps = [line.strip() for line in f.readlines() if not line.startswith("//")]
+    slaps = [line.strip() for line in f.readlines()
+            if not line.startswith("//")]
 
 with open("plugins/data/slap_items.txt") as f:
-    slap_items = [line.strip() for line in f.readlines() if not line.startswith("//")]
+    slap_items = [line.strip() for line in f.readlines()
+                  if not line.startswith("//")]
 
 with open("plugins/data/kills.txt") as f:
-    kills = [line.strip() for line in f.readlines() if not line.startswith("//")]
+    kills = [line.strip() for line in f.readlines()
+             if not line.startswith("//")]
 
 with open("plugins/data/kill_bodyparts.txt") as f:
-    kill_bodyparts = [line.strip() for line in f.readlines() if not line.startswith("//")]
+    kill_bodyparts = [line.strip() for line in f.readlines()
+                      if not line.startswith("//")]
 
 
 @hook.command

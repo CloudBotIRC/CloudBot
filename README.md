@@ -25,7 +25,7 @@ Unzip the resulting file, and continue to read this document.
 
 ## Install
 
-Before you can run the bot, you need to install a few Python modules. These are `lXML` and `BeautifulSoup`.  These can be installed with PIP (The Python package manager):
+Before you can run the bot, you need to install a few Python modules. These are `lXML` and `BeautifulSoup`.  These can be installed with PIP (The Python package manager). If you use Windows and dont want to set up pip, you can also find `exe` installers on the internet:
 
 `pip install lxml`
 

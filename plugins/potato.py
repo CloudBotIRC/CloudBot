@@ -16,6 +16,7 @@ def potato(inp, me=None, input=None):
     potato_type = random.choice(potatoes)
     size = random.choice(['small', 'little', 'mid-sized', 'medium-sized', 'large', 'gigantic'])
     flavor = random.choice(['tasty', 'delectable', 'delicious', 'yummy', 'toothsome', 'scrumptious', 'luscious'])
-    method = random.choice(['bakes', 'fries', 'boils', 'microwaves'])
+    method = random.choice(['bakes', 'fries', 'boils', 'roasts'])
+    side_dish = random.choice(['side salad', 'dollop of sour cream', 'piece of chicken', 'bowl of shredded bacon'])
 
-    me("%s a %s %s %s potato for %s!" % (method, flavor, size, potato_type, inp))
+    me("%s a %s %s %s potato for %s and serves it with a small %s!" % (method, flavor, size, potato_type, inp, side_dish))

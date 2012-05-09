@@ -25,7 +25,7 @@ Unzip the resulting file, and continue to read this document.
 
 ## Install
 
-Before you can run the bot, you need to install a few Python modules. These are `lXML` and `BeautifulSoup`.  These can be installed with PIP (The Python package manager):
+Before you can run the bot, you need to install a few Python modules. These are `lXML` and `BeautifulSoup`.  These can be installed with PIP (The Python package manager)n unix-like systems, or from .exe installers (find them on the net) on Windows systems. :
 
 `sudo pip install lxml`
 
@@ -44,23 +44,39 @@ In addition, for `.whois` to work optimally, you must have `whois` installed. Ag
 
 `sudo apt-get install whois`
 
-For the wrapper to work best, install `screen`, or `daemon`:
+
+If you are a user of another Linux disto, use your package manager to install the dependencies, or, for other operating systems,  use **Google** to locate source packages you can install.
+
+Once you have installed the required dependencies, there are two ways you can run the bot:
+### Using the launcher:
+
+The launcher will start the bot as a background process, and allow the bot to close and restart itself. This is only supported on unix-like machines (not Windows).
+
+For the launcher to work properly, install `screen`, or `daemon` (daemon is recommended) :
 
 `sudo apt-get install screen`
 
 `sudo apt-get install daemon`
 
-If you are a user of another Linux disto, use your package manager to install the dependencies, or, for other operating systems,  use **Google** to locate source packages you can install.
-
-Once you have installed the required dependencies, run the bot¹:
+Once you have installed either `screen` or `daemon`, run the start command:
 
 `./cloudbot start`
 
-It will generate a default config for you.  Once you have edited the config, run it again with:
+It will generate a default config for you.  Once you have edited the config, run it again with the same command:
 
 `./cloudbot start`
 
-and it will connect to any server(s) you have added to the config. (Config docs at the [wiki](http://git.io/cloudbotircconfig))
+This will start up your bot as a background process. To stop it, use `./cloudbot stop`. (Config docs at the [wiki](http://git.io/cloudbotircconfig))
+
+### Manually running the bot:
+
+To manually run the bot and get debug output, run it with:
+
+`python bot.py`
+
+On Windows you can usually just double-click the `bot.py` file to start the bot, as long as you have Python installed correctly.
+
+(note that running it like this will break the restart and stop commands)
 
 ## Documentation
 

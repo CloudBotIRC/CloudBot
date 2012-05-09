@@ -29,13 +29,14 @@ def coin(inp):
 
     if count > 9001:
         return "Too many coins! Maximum is 9001."
-    # depending on the count, we use two different methods to get the output
-    if count == 1:
+    elif count == 1:
         flip = getrandbits(1)
         if flip == 1:
             return "You flip a coin and get heads."
         else:
             return "You flip a coin and get tails."
+    elif count == 0:
+        return "You make a coin flipping motion with your hands."    
     else:
         flips = flip_simple(count)
         return "You flip %i coins and get " \

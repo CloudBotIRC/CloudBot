@@ -25,24 +25,24 @@ Unzip the resulting file, and continue to read this document.
 
 ## Install
 
-Before you can run the bot, you need to install a few Python modules. These are `lXML` and `BeautifulSoup`.  These can be installed with PIP (The Python package manager), or from .exe installers (find them on the net) on Windows systems:
+Before you can run the bot, you need to install a few Python modules. These are `lXML` and `BeautifulSoup`.  These can be installed with PIP (The Python package manager):
 
-`sudo pip install lxml`
+`pip install lxml`
 
-`sudo pip install beautifulsoup`
+`pip install beautifulsoup`
 
 
 On Debian based systems, you can get pip with
 
-`sudo apt-get install pip`
+`apt-get install pip`
 
 For `.spell` to work, we also need a library called `Enchant`.  On Debian based systems, install it with:
 
-`sudo apt-get install python-enchant`
+`apt-get install python-enchant`
 
 In addition, for `.whois` to work optimally, you must have `whois` installed. Again, on Debian based systems, install it with:
 
-`sudo apt-get install whois`
+`apt-get install whois`
 
 
 If you are a user of another Linux disto, use your package manager to install the dependencies, or, for other operating systems,  use **Google** to locate source packages you can install.
@@ -54,9 +54,9 @@ The launcher will start the bot as a background process, and allow the bot to cl
 
 For the launcher to work properly, install `screen`, or `daemon` (daemon is recommended) :
 
-`sudo apt-get install screen`
+`apt-get install screen`
 
-`sudo apt-get install daemon`
+`apt-get install daemon`
 
 Once you have installed either `screen` or `daemon`, run the start command:
 

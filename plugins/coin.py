@@ -11,7 +11,7 @@ def flip_simple(count):
             heads += 1
         else:
             tails += 1
-    return [heads, tails]
+    return heads, tails
 
 
 @hook.command(autohelp=False)

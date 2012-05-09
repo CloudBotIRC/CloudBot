@@ -1,7 +1,4 @@
-"""
-remember.py: written by Scaevolus 20101
-"""
-
+# Written by Scaevolus 2010
 from util import hook
 import string
 import re

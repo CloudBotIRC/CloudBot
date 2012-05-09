@@ -8,16 +8,12 @@ insults = []
 flirts = []
 
 with open("plugins/data/insults.txt") as f:
-    for line in f.readlines():
-        if line.startswith("//"):
-            continue
-        insults.append(line.strip())
+    insults = [line.strip() for line in f.readlines()
+        if not line.startswith("//")]
 
 with open("plugins/data/flirts.txt") as f:
-    for line in f.readlines():
-        if line.startswith("//"):
-            continue
-        flirts.append(line.strip())
+    flirts = [line.strip() for line in f.readlines()
+        if not line.startswith("//")]
 
 
 @hook.command

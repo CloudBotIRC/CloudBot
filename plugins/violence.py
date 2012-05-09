@@ -4,42 +4,21 @@ import random
 
 nick_re = re.compile(r"^[A-Za-z0-9_|\.\-\]\[]*$")
 
-# define lists for messages
-larts = []
-kills = []
-kill_bodyparts = []
-slaps = []
-slap_items = []
 
 with open("plugins/data/larts.txt") as f:
-    for line in f.readlines():
-        if line.startswith("//"):
-            continue
-        larts.append(line.strip())
+    larts = [line.strip() for line in f.readlines() if not line.startswith("//")]
 
 with open("plugins/data/slaps.txt") as f:
-    for line in f.readlines():
-        if line.startswith("//"):
-            continue
-        slaps.append(line.strip())
+    slaps = [line.strip() for line in f.readlines() if not line.startswith("//")]
 
 with open("plugins/data/slap_items.txt") as f:
-    for line in f.readlines():
-        if line.startswith("//"):
-            continue
-        slap_items.append(line.strip())
+    slap_items = [line.strip() for line in f.readlines() if not line.startswith("//")]
 
 with open("plugins/data/kills.txt") as f:
-    for line in f.readlines():
-        if line.startswith("//"):
-            continue
-        kills.append(line.strip())
+    kills = [line.strip() for line in f.readlines() if not line.startswith("//")]
 
 with open("plugins/data/kill_bodyparts.txt") as f:
-    for line in f.readlines():
-        if line.startswith("//"):
-            continue
-        kill_bodyparts.append(line.strip())
+    kill_bodyparts = [line.strip() for line in f.readlines() if not line.startswith("//")]
 
 
 @hook.command

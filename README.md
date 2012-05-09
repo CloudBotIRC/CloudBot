@@ -25,7 +25,7 @@ Unzip the resulting file, and continue to read this document.
 
 ## Install
 
-Before you can run the bot, you need to install a few Python modules. These are `lXML` and `BeautifulSoup`.  These can be installed with PIP (The Python package manager)n unix-like systems, or from .exe installers (find them on the net) on Windows systems. :
+Before you can run the bot, you need to install a few Python modules. These are `lXML` and `BeautifulSoup`.  These can be installed with PIP (The Python package manager), or from .exe installers (find them on the net) on Windows systems:
 
 `sudo pip install lxml`
 
@@ -76,7 +76,7 @@ To manually run the bot and get debug output, run it with:
 
 On Windows you can usually just double-click the `bot.py` file to start the bot, as long as you have Python installed correctly.
 
-(note that running it like this will break the restart and stop commands)
+(note that running it without the launcher will break the restart and stop commands)
 
 ## Documentation
 

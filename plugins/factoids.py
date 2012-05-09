@@ -3,6 +3,7 @@ remember.py: written by Scaevolus 20101
 """
 
 from util import hook
+import string
 import re
 
 
@@ -66,7 +67,6 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
         new = tail[1:]
         _head, _tail = data.split(None, 1)
         # data is stored with the input so ignore it when re-adding it
-        import string
         if len(tail) > 1 and tail[1] in (string.punctuation + ' '):
             tail = _tail + new
         else:

@@ -11,19 +11,19 @@ with open("plugins/data/larts.txt") as f:
 
 with open("plugins/data/slaps.txt") as f:
     slaps = [line.strip() for line in f.readlines()
-            if not line.startswith("//")]
+             if not line.startswith("//")]
 
 with open("plugins/data/slap_items.txt") as f:
-    slap_items = [line.strip() for line in f.readlines()
-                  if not line.startswith("//")]
+    items = [line.strip() for line in f.readlines()
+             if not line.startswith("//")]
 
 with open("plugins/data/kills.txt") as f:
     kills = [line.strip() for line in f.readlines()
              if not line.startswith("//")]
 
 with open("plugins/data/kill_bodyparts.txt") as f:
-    kill_bodyparts = [line.strip() for line in f.readlines()
-                      if not line.startswith("//")]
+    parts = [line.strip() for line in f.readlines()
+             if not line.startswith("//")]
 
 
 @hook.command
@@ -43,7 +43,7 @@ def slap(inp, me=None, nick=None, conn=None, notice=None):
 
     out = random.choice(slaps)
     out = out.replace('<who>', target)
-    out = out.replace('<item>', random.choice(slap_items))
+    out = out.replace('<item>', random.choice(items))
 
     # act out the message
     me(out)
@@ -65,7 +65,7 @@ def lart(inp, me=None, nick=None, conn=None, notice=None):
 
     out = random.choice(larts)
     out = out.replace('<who>', target)
-    out = out.replace('<item>', random.choice(slap_items))
+    out = out.replace('<item>', random.choice(items))
     me(out)
 
 
@@ -85,5 +85,5 @@ def kill(inp, me=None, nick=None, conn=None, notice=None):
 
     out = random.choice(kills)
     out = out.replace('<who>', target)
-    out = out.replace('<body>', random.choice(kill_bodyparts))
+    out = out.replace('<body>', random.choice(parts))
     me(out)

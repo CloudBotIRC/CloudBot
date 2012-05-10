@@ -4,8 +4,6 @@ import random
 
 nick_re = re.compile(r"^[A-Za-z0-9_|\.\-\]\[]*$")
 
-insults = []
-flirts = []
 
 with open("plugins/data/insults.txt") as f:
     insults = [line.strip() for line in f.readlines()

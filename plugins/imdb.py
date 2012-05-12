@@ -12,13 +12,14 @@ def imdb(inp):
     if content['Response'] == 'Movie Not Found':
         return 'movie not found'
     elif content['Response'] == 'True':
-        content['URL'] = 'http://www.imdb.com/title/%(ID)s' % content
+        content['URL'] = 'http://www.imdb.com/title/%(imdbID)s' % content
 
         out = '\x02%(Title)s\x02 (%(Year)s) (%(Genre)s): %(Plot)s'
         if content['Runtime'] != 'N/A':
             out += ' \x02%(Runtime)s\x02.'
-        if content['Rating'] != 'N/A' and content['Votes'] != 'N/A':
-            out += ' \x02%(Rating)s/10\x02 with \x02%(Votes)s\x02 votes.'
+        if content['imdbRating'] != 'N/A' and content['imdbVotes'] != 'N/A':
+            out += ' \x02%(imdbRating)s/10\x02 with \x02%(imdbVotes)s\x02' \
+                   ' votes.'
         out += ' %(URL)s'
         return out % content
     else:

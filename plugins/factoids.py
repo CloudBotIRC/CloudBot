@@ -148,9 +148,13 @@ def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
         data = data.replace("$chan", input.chan)
         data = data.replace("$botnick", conn.nick)
         
-        # if factoid had arguments, replace $inp with that
-        if arguments:
-            data = data.replace("$inp", arguments)
+        # if factoid needs input, do that
+        if "$inp" in data:
+            if arguments:
+                data = data.replace("$inp", arguments)
+            else:
+                return "This factoid requires input. You can provide this" \
+                       " with ?%s <input>" % factoid_id
         
         # if <py>, execute python code
         if data.startswith("<py>"):

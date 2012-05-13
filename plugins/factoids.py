@@ -104,8 +104,21 @@ def forget(inp, db=None, input=None, notice=None):
         notice("I don't know about that.")
         return
 
+@hook.command()
+def info(inp, notice=None, db=None):
+    ".info <factoid> -- Shows the source of a factoid."
 
-@hook.command("info")
+    db_init(db)
+
+    # attempt to get the factoid from the database
+    data = get_memory(db, inp.strip())
+
+    if data:
+        notice(data)
+    else:
+        notice("Unknown Factoid")
+
+
 @hook.regex(r'^\? ?(.+)')
 def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
     "?<word> -- Shows what data is associated with <word>."

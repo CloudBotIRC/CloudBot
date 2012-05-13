@@ -151,8 +151,6 @@ def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
         # if factoid had arguments, replace $inp with that
         if arguments:
             data = data.replace("$inp", arguments)
-        else
-            data = data.replace("$inp", "null")
         
         # if <py>, execute python code
         if data.startswith("<py>"):

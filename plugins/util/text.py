@@ -13,6 +13,16 @@ def capitalize_first(line):
     """
     return ' '.join([s[0].upper() + s[1:] for s in line.split(' ')])
 
+
+# from <http://stackoverflow.com/questions/250357/smart-truncate-in-python>
+def truncate_words(content, length=100, suffix='...'):
+    "Truncates a string after a certain number of chars."
+    if len(content) <= length:
+        return content
+    else:
+        return content[:length].rsplit(' ', 1)[0] + suffix
+
+
 # ALL CODE BELOW THIS LINE IS COVERED BY THE FOLLOWING AGREEMENT:
 
 # Copyright (c) Django Software Foundation and individual contributors.
@@ -43,19 +53,9 @@ def capitalize_first(line):
 #(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 #SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
-def truncate_words(s, num):
-    "Truncates a string after a certain number of words."
-    length = int(num)
-    words = s.split()
-    if len(words) > length:
-        words = words[:length]
-        if not words[-1].endswith('...'):
-            words.append('...')
-    return ' '.join(words)
-
 # Expression to match some_token and some_token="with spaces" (and similarly
 # for single-quoted strings).
+
 split_re = re.compile(r"""((?:[^\s'"]*(?:(?:"(?:[^"\\]|\\.)*" | '(?:[""" \
                       r"""^'\\]|\\.)*')[^\s'"]*)+) | \S+)""", re.VERBOSE)
 

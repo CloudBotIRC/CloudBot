@@ -6,12 +6,12 @@ import re
 
 # some simple "shortcodes" for formatting purposes
 shortcodes = {
-'<b>': '\x02',
-'</b>': '\x02',
-'<u>': '\x1F',
-'</u>': '\x1F',
-'<i>': '\x16',
-'</i>': '\x16'}
+'[b]': '\x02',
+'[/b]': '\x02',
+'[u]': '\x1F',
+'[/u]': '\x1F',
+'[i]': '\x16',
+'[/i]': '\x16'}
 
 
 def db_init(db):
@@ -115,7 +115,9 @@ def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
 
     db_init(db)
 
+    # attempt to get the factoid from the database
     data = get_memory(db, inp.group(1).strip())
+
     if data:
         out = multiwordReplace(data, shortcodes)
 

@@ -1,19 +1,16 @@
-from util import hook
+from util import hook, http
 
 
 def find_location(ip, api):
-    import string
-    import urllib
-    response = urllib.urlopen("http://api.ipinfodb.com/v3/ip-city/?key=" \
-                              + api + "&ip=" + ip).read()
+    response = http.get("http://api.ipinfodb.com/v3/ip-city/", key=api, ip=ip)
     response = response.split(";")
-    give = {}
-    give["country"] = response[4].title()
-    give["country_short"] = response[3].upper()
-    give["state"] = response[5].title()
-    give["city"] = response[6].title()
-    give["timezone"] = response[10].title()
-    return give
+    results = {}
+    results["country"] = response[4].title()
+    results["country_short"] = response[3].upper()
+    results["state"] = response[5].title()
+    results["city"] = response[6].title()
+    results["timezone"] = response[10].title()
+    return results
 
 
 def timezone(ip):

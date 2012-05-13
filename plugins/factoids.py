@@ -106,7 +106,7 @@ def forget(inp, db=None, input=None, notice=None):
 
 @hook.command("info")
 @hook.regex(r'^\? ?(.+)')
-def factoid(inp, say=None, db=None, bot=None):
+def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
     "?<word> -- Shows what data is associated with <word>."
     try:
         prefix_on = bot.config["plugins"]["factoids"].get("prefix", False)
@@ -118,7 +118,17 @@ def factoid(inp, say=None, db=None, bot=None):
     data = get_memory(db, inp.group(1).strip())
     if data:
         out = multiwordReplace(data, shortcodes)
-        if prefix_on:
-            say("\x02[%s]:\x02 %s" % (inp.group(1).strip(), out))
+        
+        # dynamic variables for factoids
+        out = out.replace("$nick", input.nick)
+        out = out.replace("$chan", input.chan)
+        out = out.replace("$botnick", conn.nick)
+        
+        if out.startswith("<act>"):
+            out = out[5:].strip()
+            me(out)
         else:
-            say(out)
+            if prefix_on:
+                say("\x02[%s]:\x02 %s" % (inp.group(1).strip(), out))
+            else:
+                say(out)

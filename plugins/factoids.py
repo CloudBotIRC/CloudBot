@@ -118,12 +118,12 @@ def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
     data = get_memory(db, inp.group(1).strip())
     if data:
         out = multiwordReplace(data, shortcodes)
-        
+
         # dynamic variables for factoids
         out = out.replace("$nick", input.nick)
         out = out.replace("$chan", input.chan)
         out = out.replace("$botnick", conn.nick)
-        
+
         if out.startswith("<act>"):
             out = out[5:].strip()
             me(out)

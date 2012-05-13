@@ -40,10 +40,12 @@ def forecast(inp, nick='', server='',
 
     for elem in w.findall('forecast_conditions'):
         info = dict((e.tag, e.get('data')) for e in elem)
-        info['high'] = fahrenheit_to_celcius(elem.find('high').get('data'))
-        info['low'] = fahrenheit_to_celcius(elem.find('low').get('data'))
-        out += '[%(day_of_week)s]: %(condition)s (H:%(high)sC'\
-            ', L:%(low)sC). ' % info
+        info['high'] = elem.find('high').get('data')
+        info['low'] = elem.find('low').get('data')
+        info['high_c'] = fahrenheit_to_celcius(elem.find('high').get('data'))
+        info['low_c'] = fahrenheit_to_celcius(elem.find('low').get('data'))
+        out += '\x02%(day_of_week)s\x02: %(condition)s (High: %(high)sF' \
+          '/%(high_c)sC) (Low: %(low)sF/%(low_c)sC) ' % info
 
     return out
 

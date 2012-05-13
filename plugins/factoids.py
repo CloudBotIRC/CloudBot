@@ -128,9 +128,18 @@ def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
         prefix_on = False
 
     db_init(db)
+    
+    # split up the input
+    split = inp.group(1).strip().split(" ")
+    factoid_id = split[0]
+    
+    if len(split) >= 1:
+        arguments = " ".join(split[1:])
+    else:
+        arguments = None
 
     # attempt to get the factoid from the database
-    data = get_memory(db, inp.group(1).strip())
+    data = get_memory(db, factoid_id)
 
     if data:
 
@@ -138,6 +147,12 @@ def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
         data = data.replace("$nick", input.nick)
         data = data.replace("$chan", input.chan)
         data = data.replace("$botnick", conn.nick)
+        
+        # if factoid had arguments, replace $inp with that
+        if arguments:
+            data = data.replace("$inp", arguments)
+        else
+            data = data.replace("$inp", "null")
         
         # if <py>, execute python code
         if data.startswith("<py>"):
@@ -162,6 +177,6 @@ def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
             me(result)
         else:
             if prefix_on:
-                say("\x02[%s]:\x02 %s" % (inp.group(1).strip(), result))
+                say("\x02[%s]:\x02 %s" % (factoid_id, result))
             else:
                 say(result)

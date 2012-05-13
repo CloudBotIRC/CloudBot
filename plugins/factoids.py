@@ -1,8 +1,9 @@
 # Written by Scaevolus 2010
-from util import hook
+from util import hook, http
 import string
 import re
 
+re_lineends = re.compile(r'[\r\n]*')
 
 # some simple "shortcodes" for formatting purposes
 shortcodes = {
@@ -119,18 +120,35 @@ def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
     data = get_memory(db, inp.group(1).strip())
 
     if data:
-        out = multiwordReplace(data, shortcodes)
 
         # dynamic variables for factoids
-        out = out.replace("$nick", input.nick)
-        out = out.replace("$chan", input.chan)
-        out = out.replace("$botnick", conn.nick)
+        data = data.replace("$nick", input.nick)
+        data = data.replace("$chan", input.chan)
+        data = data.replace("$botnick", conn.nick)
+        
+        # if <py>, execute python code
+        if data.startswith("<py>"):
+            data = data[4:].strip()
+            res = http.get("http://eval.appspot.com/eval", statement=data).splitlines()
+            if len(res) == 0:
+                return
+            res[0] = re_lineends.split(res[0])[0]
+            if not res[0] == 'Traceback (most recent call last):':
+                result = res[0].decode('utf8', 'ignore')
+            else:
+                result = res[-1].decode('utf8', 'ignore')
+        else:
+            result = data
+            
+        # process formatting "shortcodes"
+        result = multiwordReplace(result, shortcodes)
 
-        if out.startswith("<act>"):
-            out = out[5:].strip()
-            me(out)
+        # return final dataput
+        if result.startswith("<act>"):
+            result = result[5:].strip()
+            me(result)
         else:
             if prefix_on:
-                say("\x02[%s]:\x02 %s" % (inp.group(1).strip(), out))
+                say("\x02[%s]:\x02 %s" % (inp.group(1).strip(), result))
             else:
-                say(out)
+                say(result)

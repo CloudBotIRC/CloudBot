@@ -31,8 +31,9 @@ def mcstatus(inp, bot=None):
     if password is None:
         return "error: no login set"
 
-    login = http.get("https://login.minecraft.net/?user="\
-    + username + "&password=" + password + "&version=13")
+    login = http.get("https://login.minecraft.net/", user=username,
+                     password=password, version=13)
+
     if username.lower() in login.lower():
         return "Minecraft login servers appear to be online!"
     else:
@@ -41,34 +42,33 @@ def mcstatus(inp, bot=None):
 
 @hook.command
 def mclogin(inp, say=None):
-    ".mclogin <username> <password> -- Attempts to log in to Minecraft with "\
+    ".mclogin <username> <password> -- Attempts to log in to Minecraft with" \
     " <username> and <password> (This is NOT logged)."
     inp = inp.split(" ")
     username = inp[0]
     password = inp[1]
-    say("Attempting to log in using " + username)
-    login = http.get("https://login.minecraft.net/?user="\
-    + username + "&password=" + password + "&version=13")
+    say("Attempting to log in using %s." % username)
+
+    login = http.get("https://login.minecraft.net/", user=username,
+                     password=password, version=13)
+
     if username.lower() in login.lower():
-        return "I logged in with " + username
+        return "I logged in with %s" % username
     else:
-        return "I couldn't log in using " + username + ", either"\
-        " the password is wrong or Minecraft login servers are down!"
+        return "I couldn't log in using %s, either the password is wrong or " \
+               "Minecraft login servers are down!"
 
 
 @hook.command
 def mcpaid(inp):
-    ".mcpaid <username> -- Checks if <username> has a "\
-    "premium Minecraft account."
-    login = http.get("http://www.minecraft.net/haspaid.jsp?user=" + inp)
-    if "true" in login:
-        return "The account \'" + inp + "\' is a "\
-        "premium Minecraft account!"
-    else:
-        return "The account \'" + inp + "\' is not a "\
-        "premium Minecraft account!"
+    ".mcpaid <username> -- Checks if <username> has a" \
+    " premium Minecraft account."
+    login = http.get("http://www.minecraft.net/haspaid.jsp", user=inp)
 
-from util import hook
+    if "true" in login:
+        return 'The account "%s" is a premium Minecraft account!' % inp
+    else:
+        return 'The account "%s" is not a premium Minecraft account!' % inp
 
 
 @hook.command

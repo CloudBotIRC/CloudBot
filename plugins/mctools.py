@@ -56,7 +56,7 @@ def mclogin(inp, say=None):
         return "I logged in with %s" % username
     else:
         return "I couldn't log in using %s, either the password is wrong or " \
-               "Minecraft login servers are down!"
+               "Minecraft login servers are down!" % username
 
 
 @hook.command

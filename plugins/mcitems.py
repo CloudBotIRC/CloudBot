@@ -67,9 +67,8 @@ def mcitem(input, reply=None):
         elif input in name.lower():
             results.append("\x02[%s]\x02 %s" % (id, name))
 
-    if not len(results):
-        reply("No matches found.")
-        return
+    if not results:
+        return "No matches found."
 
     if len(results) > 12:
         reply("There are too many options, please narrow your search. " \
@@ -87,15 +86,11 @@ def mcrecipe(input, reply=None):
     "mcrecipe <item> -- gets the crafting recipe for an item"
     input = input.lower().strip()
 
-    results = []
+    results = [recipe.line for recipe in recipelist
+               if input in recipe.output]
 
-    for recipe in recipelist:
-        if input in recipe.output:
-            results.append(recipe.line)
-
-    if not len(results):
-        reply("No matches found.")
-        return
+    if not results:
+        return "No matches found."
 
     if len(results) > 3:
         reply("There are too many options, please narrow your search. " \

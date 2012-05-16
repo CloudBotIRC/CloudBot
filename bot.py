@@ -23,7 +23,7 @@ os.chdir(sys.path[0] or '.')  # do stuff relative to the install directory
 class Bot(object):
     pass
 
-print 'CloudBot 1.x (DEVELOPMENT) <https://github.com/ClouDev/CloudBot/>'
+print 'CloudBot %s (%s) <http://git.io/cloudbotirc>' % (__version__, __status__)
 
 bot = Bot()
 bot.start_time = time.time()

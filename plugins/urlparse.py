@@ -1,4 +1,4 @@
-rom util import hook, http, urlnorm
+from util import hook, http, urlnorm
 import re
 
 titler = re.compile(r'(?si)<title>(.+?)</title>')

@@ -2,13 +2,9 @@ from util import hook
 import re
 import random
 
-fortunes = []
-
 with open("plugins/data/fortunes.txt") as f:
-    for line in f.readlines():
-        if line.startswith("//"):
-            continue
-        fortunes.append(line.strip())
+    fortunes = [line.strip() for line in f.readlines()
+                if not line.startswith("//")]
 
 
 @hook.command(autohelp=False)

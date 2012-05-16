@@ -106,11 +106,11 @@ They can both be found in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via 
 
 CloudBot runs on **Python** *2.7.x*. It is developed on **Debian** *Wheezy/Testing* and **Ubuntu** *11.10* with **Python** *2.7.2*.
 
-It **requires Python modules** `lXML`, `BeautifulSoup`, `Enchant`, `psutil`, and `HTTPlib2`.
+It **requires Python modules** `lXML`, `BeautifulSoup` and `Enchant`, `psutil`, and `HTTPlib2`.
 
-The programs `screen` or `daemon` are recomended for the wrapper to run optimaly.
+The programs `daemon` or `screen` are recomended for the wrapper to run optimaly.
 
-**Windows** users: Windows compatibility with the wrapper and some plugins is **broken** (such as the ping), but we do intend to add it.³
+**Windows** users: Windows compatibility with the wrapper and some plugins is **broken** (such as ping), but we do intend to add it.³
 
 ## License
 CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.

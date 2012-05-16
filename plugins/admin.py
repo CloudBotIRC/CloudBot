@@ -41,9 +41,13 @@ def deladmin(inp, notice=None, bot=None, config=None):
 
 
 @hook.command(autohelp=False)
-def channels(inp, conn=None):
-    "channels -- Lists the channels that the bot is in."
-    return "I am in these channels: %s" % ", ".join(conn.channels)
+def admins(inp, notice=None, bot=None):
+    "admins -- Lists bot's admins."
+    if bot.config["admins"]:
+        notice("Admins are: %s." % ", ".join(bot.config["admins"]))
+    else:
+        notice("There are no users with admin powers.")
+    return
 
 
 @hook.command("quit", autohelp=False, adminonly=True)

@@ -1,16 +1,13 @@
 from util import hook
 
+
 @hook.command(autohelp=False)
-def admins(inp, notice=None, bot=None):
-    "admins -- Lists bot's admins."
-    if bot.config["admins"]:
-        notice("Admins are: %s." % ", ".join(bot.config["admins"]))
-    else:
-        notice("No users are admins!")
-    return
+def channels(inp, conn=None):
+    "channels -- Lists the channels that the bot is in."
+    return "I am in these channels: %s" % ", ".join(conn.channels)
 
 
 @hook.command(autohelp=False)
 def prefix(inp, notice=False, conn=False):
     "prefix -- Shows the bot's command prefix"
-    notice("The prefix is: \"%s\"" % conn.conf["command_prefix"])
+    notice('The command prefix is "%s"' % conn.conf["command_prefix"])

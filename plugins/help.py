@@ -3,7 +3,7 @@ from util import hook
 
 
 @hook.command(autohelp=False)
-def help(inp, input=None, bot=None, say=None, notice=None):
+def help(inp, say=None, notice=None, input=None, conn=None, bot=None):
     ".help  -- Gives a list of commands/help for a command."
 
     funcs = {}
@@ -46,4 +46,4 @@ def help(inp, input=None, bot=None, say=None, notice=None):
 
     else:
         if inp in commands:
-            notice(commands[inp].__doc__)
+            notice(conn.conf["command_prefix"] + commands[inp].__doc__)

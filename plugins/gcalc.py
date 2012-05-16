@@ -7,7 +7,7 @@ from BeautifulSoup import BeautifulSoup
 @hook.command("math")
 @hook.command
 def calc(inp):
-    ".calc <term> -- Calculate <term> with Google Calc."
+    "calc <term> -- Calculate <term> with Google Calc."
 
     white_re = re.compile(r'\s+')
 

@@ -8,7 +8,7 @@ re_lineends = re.compile(r'[\r\n]*')
 
 @hook.command
 def python(inp):
-    ".python <prog> -- Executes <prog> as Python code."
+    "python <prog> -- Executes <prog> as Python code."
 
     inp = inp.replace("~n", "\n")
 

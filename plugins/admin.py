@@ -10,7 +10,7 @@ import subprocess
 
 @hook.command(adminonly=True)
 def addadmin(inp, notice=None, bot=None, config=None):
-    ".addadmin <nick|host> -- Make <nick|host> an admin. " \
+    "addadmin <nick|host> -- Make <nick|host> an admin. " \
     "(you can add multiple admins at once)"
     targets = inp.split()
     for target in targets:
@@ -26,7 +26,7 @@ def addadmin(inp, notice=None, bot=None, config=None):
 
 @hook.command(adminonly=True)
 def deladmin(inp, notice=None, bot=None, config=None):
-    ".deladmin <nick|host> -- Make <nick|host> a non-admin." \
+    "deladmin <nick|host> -- Make <nick|host> a non-admin." \
     "(you can delete multiple admins at once)"
     targets = inp.split()
     for target in targets:
@@ -42,14 +42,14 @@ def deladmin(inp, notice=None, bot=None, config=None):
 
 @hook.command(autohelp=False)
 def channels(inp, conn=None):
-    ".channels -- Lists the channels that the bot is in."
+    "channels -- Lists the channels that the bot is in."
     return "I am in these channels: %s" % ", ".join(conn.channels)
 
 
 @hook.command("quit", autohelp=False, adminonly=True)
 @hook.command(autohelp=False, adminonly=True)
 def stop(inp, nick=None, conn=None):
-    ".stop [reason] -- Kills the bot with [reason] as its quit message."
+    "stop [reason] -- Kills the bot with [reason] as its quit message."
     if inp:
         conn.cmd("QUIT", ["Killed by %s (%s)" % (nick, inp)])
     else:
@@ -60,7 +60,7 @@ def stop(inp, nick=None, conn=None):
 
 @hook.command(autohelp=False, adminonly=True)
 def restart(inp, nick=None, conn=None):
-    ".restart [reason] -- Restarts the bot with [reason] as its quit message."
+    "restart [reason] -- Restarts the bot with [reason] as its quit message."
     if inp:
         conn.cmd("QUIT", ["Restarted by %s (%s)" % (nick, inp)])
     else:
@@ -71,20 +71,20 @@ def restart(inp, nick=None, conn=None):
 
 @hook.command(autohelp=False, adminonly=True)
 def clearlogs(inp, input=None):
-    ".clearlogs -- Clears the bots log(s)."
+    "clearlogs -- Clears the bots log(s)."
     subprocess.call(["./cloudbot", "clear"])
 
 
 @hook.command(adminonly=True)
 def join(inp, conn=None, notice=None):
-    ".join <channel> -- Joins <channel>."
+    "join <channel> -- Joins <channel>."
     notice("Attempting to join %s..." % inp)
     conn.join(inp)
 
 
 @hook.command(autohelp=False, adminonly=True)
 def part(inp, conn=None, chan=None, notice=None):
-    ".part <channel> -- Leaves <channel>." \
+    "part <channel> -- Leaves <channel>." \
     "If [channel] is blank the bot will leave the " \
     "channel the command was used in."
     if inp:
@@ -97,7 +97,7 @@ def part(inp, conn=None, chan=None, notice=None):
 
 @hook.command(autohelp=False, adminonly=True)
 def cycle(inp, conn=None, chan=None, notice=None):
-    ".cycle <channel> -- Cycles <channel>." \
+    "cycle <channel> -- Cycles <channel>." \
     "If [channel] is blank the bot will cycle the " \
     "channel the command was used in."
     if inp:
@@ -111,7 +111,7 @@ def cycle(inp, conn=None, chan=None, notice=None):
 
 @hook.command(adminonly=True)
 def nick(inp, input=None, notice=None, conn=None):
-    ".nick <nick> -- Changes the bots nickname to <nick>."
+    "nick <nick> -- Changes the bots nickname to <nick>."
     if not re.match("^[A-Za-z0-9_|.-\]\[]*$", inp.lower()):
         notice("Invalid username!")
         return
@@ -121,14 +121,14 @@ def nick(inp, input=None, notice=None, conn=None):
 
 @hook.command(adminonly=True)
 def raw(inp, conn=None, notice=None):
-    ".raw <command> -- Sends a RAW IRC command."
+    "raw <command> -- Sends a RAW IRC command."
     notice("Raw command sent.")
     conn.send(inp)
 
 
 @hook.command(adminonly=True)
 def say(inp, conn=None, chan=None, notice=None):
-    ".say [channel] <message> -- Makes the bot say <message> in [channel]. " \
+    "say [channel] <message> -- Makes the bot say <message> in [channel]. " \
     "If [channel] is blank the bot will say the <message> in the channel " \
     "the command was used in."
     inp = inp.split(" ")
@@ -150,7 +150,7 @@ def say(inp, conn=None, chan=None, notice=None):
 @hook.command("act", adminonly=True)
 @hook.command(adminonly=True)
 def me(inp, conn=None, chan=None, notice=None):
-    ".me [channel] <action> -- Makes the bot act out <action> in [channel]. " \
+    "me [channel] <action> -- Makes the bot act out <action> in [channel]. " \
     "If [channel] is blank the bot will act the <action> in the channel the " \
     "command was used in."
     inp = inp.split(" ")

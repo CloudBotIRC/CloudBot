@@ -4,7 +4,7 @@ from util import hook
 
 @hook.command(autohelp=False)
 def help(inp, say=None, notice=None, input=None, conn=None, bot=None):
-    ".help  -- Gives a list of commands/help for a command."
+    "help  -- Gives a list of commands/help for a command."
 
     funcs = {}
     disabled = bot.config.get('disabled_plugins', [])

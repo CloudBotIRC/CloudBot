@@ -5,7 +5,7 @@ from util import hook, http
 @hook.command('u')
 @hook.command
 def urban(inp):
-    ".urban <phrase> [id] -- Looks up <phrase> on urbandictionary.com."
+    "urban <phrase> [id] -- Looks up <phrase> on urbandictionary.com."
 
     # set a default definition number
     id = 1

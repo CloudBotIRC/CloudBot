@@ -51,7 +51,7 @@ with open("plugins/data/itemids.txt") as f:
 @hook.command("id")
 @hook.command
 def itemid(input, reply=None):
-    ".itemid/.id <item/id> -- gets the id from an item or vice versa"
+    "itemid <item/id> -- gets the id from an item or vice versa"
     input = input.lower().strip()
 
     if input == "":
@@ -84,7 +84,7 @@ def itemid(input, reply=None):
 @hook.command("craft")
 @hook.command
 def recipe(input, reply=None):
-    ".recipe/.craft <item> -- gets the crafting recipe for an item"
+    "recipe <item> -- gets the crafting recipe for an item"
     input = input.lower().strip()
 
     results = []

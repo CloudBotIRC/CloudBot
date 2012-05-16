@@ -16,7 +16,7 @@ with open("plugins/data/flirts.txt") as f:
 
 @hook.command
 def insult(inp, nick=None, me=None, conn=None):
-    ".insult <user> -- Makes the bot insult <user>."
+    "insult <user> -- Makes the bot insult <user>."
     target = inp.strip()
 
     if not re.match(nick_re, target):
@@ -34,7 +34,7 @@ def insult(inp, nick=None, me=None, conn=None):
 
 @hook.command
 def flirt(inp, nick=None, me=None, conn=None):
-    ".flirt <user> -- Make the bot flirt with <user>."
+    "flirt <user> -- Make the bot flirt with <user>."
     target = inp.strip()
 
     if not re.match(nick_re, target):

@@ -28,7 +28,7 @@ with open("plugins/data/kill_bodyparts.txt") as f:
 
 @hook.command
 def slap(inp, me=None, nick=None, conn=None, notice=None):
-    ".slap <user> -- Makes the bot slap <user>."
+    "slap <user> -- Makes the bot slap <user>."
     target = inp.lower()
 
     if not re.match(nick_re, target):
@@ -51,7 +51,7 @@ def slap(inp, me=None, nick=None, conn=None, notice=None):
 
 @hook.command
 def lart(inp, me=None, nick=None, conn=None, notice=None):
-    ".lart <user> -- LARTs <user>."
+    "lart <user> -- LARTs <user>."
     target = inp.lower()
 
     if not re.match(nick_re, target):
@@ -71,7 +71,7 @@ def lart(inp, me=None, nick=None, conn=None, notice=None):
 
 @hook.command
 def kill(inp, me=None, nick=None, conn=None, notice=None):
-    ".kill <user> -- Makes the bot kill <user>."
+    "kill <user> -- Makes the bot kill <user>."
     target = inp.lower()
 
     if not re.match(nick_re, target):

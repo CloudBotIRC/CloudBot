@@ -2,7 +2,7 @@ from util import hook
 
 @hook.command(autohelp=False)
 def admins(inp, notice=None, bot=None):
-    ".admins -- Lists bot's admins."
+    "admins -- Lists bot's admins."
     if bot.config["admins"]:
         notice("Admins are: %s." % ", ".join(bot.config["admins"]))
     else:
@@ -12,5 +12,5 @@ def admins(inp, notice=None, bot=None):
 
 @hook.command(autohelp=False)
 def prefix(inp, notice=False, conn=False):
-    ".prefix -- Shows the bot's command prefix"
+    "prefix -- Shows the bot's command prefix"
     notice("The prefix is: \"%s\"" % conn.conf["command_prefix"])

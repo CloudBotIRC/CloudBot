@@ -9,7 +9,7 @@ def fahrenheit_to_celcius(f):
 @hook.command(autohelp=False)
 def forecast(inp, nick='', server='',
     reply=None, db=None, notice=None, say=None):
-    ".forecast <location> [dontsave] -- Gets a weather forecast" \
+    "forecast <location> [dontsave] -- Gets a weather forecast" \
     " for <location> from Google."
     loc = inp
 
@@ -52,7 +52,7 @@ def forecast(inp, nick='', server='',
 
 @hook.command(autohelp=False)
 def weather(inp, nick='', server='', reply=None, db=None, notice=None):
-    ".weather <location> [dontsave] -- Gets weather data"\
+    "weather <location> [dontsave] -- Gets weather data"\
     " for <location> from Google."
     loc = inp
 

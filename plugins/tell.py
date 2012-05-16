@@ -50,7 +50,7 @@ def tellinput(paraml, input=None, notice=None, db=None, bot=None, nick=None):
 
 @hook.command(autohelp=False)
 def showtells(inp, nick='', chan='', notice=None, db=None):
-    ".showtells -- View all pending tell messages (sent in a notice)."
+    "showtells -- View all pending tell messages (sent in a notice)."
 
     db_init(db)
 
@@ -72,7 +72,7 @@ def showtells(inp, nick='', chan='', notice=None, db=None):
 
 @hook.command
 def tell(inp, nick='', chan='', db=None, input=None, notice=None):
-    ".tell <nick> <message> -- Relay <message> to <nick> when <nick> is around."
+    "tell <nick> <message> -- Relay <message> to <nick> when <nick> is around."
     query = inp.split(' ', 1)
 
     if len(query) != 2:

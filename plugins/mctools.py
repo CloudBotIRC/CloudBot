@@ -25,7 +25,7 @@ def mcping_connect(host, port):
 
 @hook.command(autohelp=False)
 def mcstatus(inp, bot=None):
-    ".mcstatus -- Checks the status of Minecraft's login servers."
+    "mcstatus -- Checks the status of Minecraft's login servers."
     username = bot.config.get("api_keys", {}).get("mc_user", None)
     password = bot.config.get("api_keys", {}).get("mc_pass", None)
     if password is None:
@@ -42,7 +42,7 @@ def mcstatus(inp, bot=None):
 
 @hook.command
 def mclogin(inp, say=None):
-    ".mclogin <username> <password> -- Attempts to log in to Minecraft with" \
+    "mclogin <username> <password> -- Attempts to log in to Minecraft with" \
     " <username> and <password> (This is NOT logged)."
     inp = inp.split(" ")
     username = inp[0]
@@ -61,7 +61,7 @@ def mclogin(inp, say=None):
 
 @hook.command
 def mcpaid(inp):
-    ".mcpaid <username> -- Checks if <username> has a" \
+    "mcpaid <username> -- Checks if <username> has a" \
     " premium Minecraft account."
     login = http.get("http://www.minecraft.net/haspaid.jsp", user=inp)
 
@@ -73,7 +73,7 @@ def mcpaid(inp):
 
 @hook.command
 def mcping(inp):
-    ".mcping <server>[:port] - Ping a Minecraft server to check status."
+    "mcping <server>[:port] - Ping a Minecraft server to check status."
     inp = inp.strip().split(" ")[0]
 
     if ":" in inp:

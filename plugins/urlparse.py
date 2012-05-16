@@ -1,4 +1,4 @@
-from util import hook, http, urlnorm
+rom util import hook, http, urlnorm
 import re
 
 titler = re.compile(r'(?si)<title>(.+?)</title>')
@@ -32,5 +32,5 @@ def get_title(url):
 
 @hook.command
 def title(inp):
-    ".title <url> -- gets the title of a web page"
+    "title <url> -- gets the title of a web page"
     return get_title(inp)

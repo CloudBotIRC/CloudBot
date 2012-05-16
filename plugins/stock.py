@@ -5,7 +5,7 @@ from util import hook, http
 
 @hook.command
 def stock(inp):
-    ".stock <symbol> -- Gets information about stock symbol <symbol>."
+    "stock <symbol> -- Gets information about stock symbol <symbol>."
 
     url = 'http://www.google.com/ig/api?stock=%s'
 

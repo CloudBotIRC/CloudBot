@@ -26,7 +26,7 @@ refresh_cache()
 
 @hook.command(autohelp=False)
 def fml(inp, reply=None):
-    ".fml -- Gets a random quote from fmyfife.com."
+    "fml -- Gets a random quote from fmyfife.com."
 
     # grab the last item in the fml cache and remove it
     id, text = fml_cache.popitem()

@@ -7,7 +7,7 @@ from util import http
 @hook.command('dictionary')
 @hook.command
 def define(inp):
-    ".define <word> -- Fetches definition of <word>."
+    "define <word> -- Fetches definition of <word>."
 
     url = 'http://ninjawords.com/'
 
@@ -67,7 +67,7 @@ def define(inp):
 @hook.command('e')
 @hook.command
 def etymology(inp):
-    ".etymology <word> -- Retrieves the etymology of <word>."
+    "etymology <word> -- Retrieves the etymology of <word>."
 
     url = 'http://www.etymonline.com/index.php'
 

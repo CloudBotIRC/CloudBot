@@ -90,7 +90,7 @@ def db_search(db, nick, query):
 
 @hook.command
 def todo(inp, nick='', chan='', db=None, notice=None, bot=None):
-    ".todo (add|del|list|search) args -- Manipulates your list of todos."
+    "todo (add|del|list|search) args -- Manipulates your list of todos."
 
     db_init(db)
 

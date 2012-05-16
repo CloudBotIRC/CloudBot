@@ -46,7 +46,7 @@ def multiwordReplace(text, wordDic):
 @hook.command("r", adminonly=True)
 @hook.command(adminonly=True)
 def remember(inp, nick='', db=None, say=None, input=None, notice=None):
-    ".remember <word> [+]<data> -- Remembers <data> with <word>. Add +"
+    "remember <word> [+]<data> -- Remembers <data> with <word>. Add +"
     " to <data> to append."
     db_init(db)
 
@@ -89,7 +89,7 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
 @hook.command("f", adminonly=True)
 @hook.command(adminonly=True)
 def forget(inp, db=None, input=None, notice=None):
-    ".forget <word> -- Forgets a remembered <word>."
+    "forget <word> -- Forgets a remembered <word>."
 
     db_init(db)
     data = get_memory(db, inp)
@@ -106,7 +106,7 @@ def forget(inp, db=None, input=None, notice=None):
 
 @hook.command()
 def info(inp, notice=None, db=None):
-    ".info <factoid> -- Shows the source of a factoid."
+    "info <factoid> -- Shows the source of a factoid."
 
     db_init(db)
 

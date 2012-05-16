@@ -47,7 +47,7 @@ def parseDateTime(s):
 
 @hook.command
 def twitter(inp):
-    ".twitter <user>/<user> <n>/<id>/#<hashtag>/@<user> -- Gets last/<n>th "\
+    "twitter <user>/<user> <n>/<id>/#<hashtag>/@<user> -- Gets last/<n>th "\
     "tweet from <user>/gets tweet <id>/Gets random tweet with #<hashtag>/"\
     "gets replied tweet from @<user>."
 

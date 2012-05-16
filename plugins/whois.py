@@ -3,7 +3,7 @@ from util import pywhois, hook
 
 @hook.command
 def whois(inp, say=None):
-    ".whois <domain> -- Look up ownership infomation for <domain>"
+    "whois <domain> -- Look up ownership infomation for <domain>"
     try:
         w = pywhois.whois(inp)
     except:

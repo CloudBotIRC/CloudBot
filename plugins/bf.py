@@ -14,7 +14,7 @@ MAX_STEPS = 1000000
 @hook.command('brainfuck')
 @hook.command
 def bf(inp):
-    ".bf <prog> -- Executes <prog> as Brainfuck code."
+    "bf <prog> -- Executes <prog> as Brainfuck code."
 
     program = re.sub('[^][<>+-.,]', '', inp)
 

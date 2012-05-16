@@ -7,7 +7,7 @@ locale = "en_US"
 
 @hook.command("spellcheck")
 def spell(inp):
-    ".spell <word> -- Check spelling of <word>."
+    "spell <word> -- Check spelling of <word>."
     word = inp
 	
     if ' ' in word:

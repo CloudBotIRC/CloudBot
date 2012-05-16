@@ -9,7 +9,7 @@ ping_regex = re.compile(r"(\d+.\d+)/(\d+.\d+)/(\d+.\d+)/(\d+.\d+)")
 
 @hook.command
 def ping(inp, reply=None):
-    ".ping <host> [count] -- Pings <host> [count] times."
+    "ping <host> [count] -- Pings <host> [count] times."
 
     if os.name == "nt":
         return "Sorry, this command is not supported on Windows systems."

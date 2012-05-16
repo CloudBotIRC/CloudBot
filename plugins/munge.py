@@ -6,7 +6,7 @@ from util import hook
 
 @hook.command
 def munge(inp, munge_count=0):
-    ".munge <text> -- Munges up <text>."
+    "munge <text> -- Munges up <text>."
     reps = 0
     for n in xrange(len(inp)):
         rep = character_replacements.get(inp[n])

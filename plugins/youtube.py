@@ -70,7 +70,7 @@ def youtube_url(match):
 @hook.command('y')
 @hook.command
 def youtube(inp):
-    ".youtube <query> -- Returns the first YouTube search result for <query>."
+    "youtube <query> -- Returns the first YouTube search result for <query>."
 
     j = http.get_json(search_api_url, q=inp)
 

@@ -6,8 +6,8 @@ from util.text import get_text_list
 
 @hook.command(autohelp=False)
 def namegen(inp, notice=None):
-    ".namegen [modules] -- Generates some names using the chosen modules. " \
-    "'.namegen list' will display a list of all modules."
+    "namegen [modules] -- Generates some names using the chosen modules. " \
+    "'namegen list' will display a list of all modules."
 
     gen = molecular.Molecule()
 

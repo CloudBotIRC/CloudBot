@@ -7,7 +7,7 @@ potatoes = ['AC Belmont', 'AC Blue Pride', 'AC Brador', 'AC Chaleur', 'AC Domino
 
 @hook.command
 def potato(inp, me=None, input=None):
-    ".potato <user> - Makes <user> a tasty little potato."
+    "potato <user> - Makes <user> a tasty little potato."
     inp = inp.strip()
 
     if not re.match("^[A-Za-z0-9_|.-\]\[]*$", inp.lower()):

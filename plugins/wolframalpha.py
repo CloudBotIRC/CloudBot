@@ -11,7 +11,7 @@ from util.text import truncate_words
 @hook.command('wa')
 @hook.command
 def wolframalpha(inp, bot=None):
-    ".wa <query> -- Computes <query> using Wolfram Alpha."
+    "wa <query> -- Computes <query> using Wolfram Alpha."
 
     api_key = bot.config.get("api_keys", {}).get("wolframalpha", None)
     bitly_user = bot.config.get("api_keys", {}).get("bitly_user", None)

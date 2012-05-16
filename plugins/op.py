@@ -4,7 +4,7 @@ from util import hook
 
 @hook.command(adminonly=True)
 def topic(inp, conn=None, chan=None, notice=None):
-    ".topic [channel] <topic> -- Change the topic of a channel."
+    "topic [channel] <topic> -- Change the topic of a channel."
     inp = inp.split(" ")
     if inp[0][0] == "#":
         out = "PRIVMSG %s :%s" % (inp[0], message)
@@ -15,7 +15,7 @@ def topic(inp, conn=None, chan=None, notice=None):
 
 @hook.command(adminonly=True)
 def kick(inp, chan=None, conn=None, notice=None):
-    ".kick [channel] <user> [reason] -- Makes the bot kick <user> in [channel] "\
+    "kick [channel] <user> [reason] -- Makes the bot kick <user> in [channel] "\
     "If [channel] is blank the bot will kick the <user> in "\
     "the channel the command was used in."
     inp = inp.split(" ")
@@ -45,7 +45,7 @@ def kick(inp, chan=None, conn=None, notice=None):
 
 @hook.command(adminonly=True)
 def ban(inp, conn=None, chan=None, notice=None):
-    ".ban [channel] <user> -- Makes the bot ban <user> in [channel]. "\
+    "ban [channel] <user> -- Makes the bot ban <user> in [channel]. "\
     "If [channel] is blank the bot will ban <user> in "\
     "the channel the command was used in."
     inp = inp.split(" ")
@@ -62,7 +62,7 @@ def ban(inp, conn=None, chan=None, notice=None):
 
 @hook.command(adminonly=True)
 def unban(inp, conn=None, chan=None, notice=None):
-    ".unban [channel] <user> -- Makes the bot unban <user> in [channel]. "\
+    "unban [channel] <user> -- Makes the bot unban <user> in [channel]. "\
     "If [channel] is blank the bot will unban <user> in "\
     "the channel the command was used in."
     inp = inp.split(" ")
@@ -79,7 +79,7 @@ def unban(inp, conn=None, chan=None, notice=None):
 
 @hook.command(adminonly=True)
 def kickban(inp, chan=None, conn=None, notice=None):
-    ".kickban [channel] <user> [reason] -- Makes the bot kickban <user> in [channel] "\
+    "kickban [channel] <user> [reason] -- Makes the bot kickban <user> in [channel] "\
     "If [channel] is blank the bot will kickban the <user> in "\
     "the channel the command was used in."
     inp = inp.split(" ")

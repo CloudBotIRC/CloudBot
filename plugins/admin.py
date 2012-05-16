@@ -8,16 +8,6 @@ import time
 import subprocess
 
 
-@hook.command(autohelp=False)
-def admins(inp, notice=None, bot=None):
-    ".admins -- Lists bot's admins."
-    if bot.config["admins"]:
-        notice("Admins are: %s." % ", ".join(bot.config["admins"]))
-    else:
-        notice("No users are admins!")
-    return
-
-
 @hook.command(adminonly=True)
 def addadmin(inp, notice=None, bot=None, config=None):
     ".addadmin <nick|host> -- Make <nick|host> an admin. " \

@@ -1,13 +1,12 @@
 # written by Scaevolus, modified by Lukeroge
 
+from util import hook, http
+
 import random
 import re
-from time import strftime
-from time import strptime
+from time import strftime, strptime
 from datetime import datetime
-from util import hook
-from util import http
-from util import timesince
+from util.timesince import timesince
 
 
 def unescape_xml(string):
@@ -109,20 +108,20 @@ def twitter(inp):
 
     try:
         tweet = http.get_xml(url)
-    except http.HTTPError, e:
+    except http.HTTPError as e:
         errors = {400: 'bad request (ratelimited?)',
-                401: 'tweet is private',
-                403: 'tweet is private',
-                404: 'invalid user/id',
-                500: 'twitter is broken',
-                502: 'twitter is down ("getting upgraded")',
-                503: 'twitter is overloaded (lol, RoR)'}
+                  401: 'tweet is private',
+                  403: 'tweet is private',
+                  404: 'invalid user/id',
+                  500: 'twitter is broken',
+                  502: 'twitter is down ("getting upgraded")',
+                  503: 'twitter is overloaded (lol, RoR)'}
         if e.code == 404:
             return 'error: invalid ' + ['username', 'tweet id'][getting_id]
         if e.code in errors:
             return 'error: ' + errors[e.code]
         return 'error: unknown %s' % e.code
-    except http.URLError, e:
+    except http.URLError as e:
         return 'error: timeout'
 
     if searching_hashtag:
@@ -153,7 +152,7 @@ def twitter(inp):
              strptime(time.text,
              '%a %b %d %H:%M:%S +0000 %Y'))
 
-    time_nice = timesince.timesince(parseDateTime(time_raw), datetime.utcnow())
+    time_nice = timesince(parseDateTime(time_raw), datetime.utcnow())
 
     if tweet.find(retweeted_text) is not None:
         text = 'RT @%s:' % tweet.find(retweeted_screen_name).text

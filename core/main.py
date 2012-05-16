@@ -116,7 +116,7 @@ def dispatch(input, kind, func, args, autohelp=False):
 
     if autohelp and args.get('autohelp', True) and not input.inp \
       and func.__doc__ is not None:
-        input.notice(func.__doc__)
+        input.notice(input.conn.conf["command_prefix"] + func.__doc__)
         return
 
     if func._thread:

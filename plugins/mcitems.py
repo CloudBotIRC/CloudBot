@@ -48,10 +48,10 @@ with open("plugins/data/itemids.txt") as f:
         ids.append((id, name))
 
 
-@hook.command("id")
+@hook.command("mcid")
 @hook.command
-def itemid(input, reply=None):
-    "itemid <item/id> -- gets the id from an item or vice versa"
+def mcitem(input, reply=None):
+    "mcitem <item/id> -- gets the id from an item or vice versa"
     input = input.lower().strip()
 
     if input == "":
@@ -81,10 +81,10 @@ def itemid(input, reply=None):
     return out
 
 
-@hook.command("craft")
+@hook.command("mccraft")
 @hook.command
-def recipe(input, reply=None):
-    "recipe <item> -- gets the crafting recipe for an item"
+def mcrecipe(input, reply=None):
+    "mcrecipe <item> -- gets the crafting recipe for an item"
     input = input.lower().strip()
 
     results = []

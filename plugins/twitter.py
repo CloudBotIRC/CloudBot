@@ -1,13 +1,13 @@
 # written by Scaevolus, modified by Lukeroge
 
+from util import hook, http
+
 import random
 import re
-from time import strftime
-from time import strptime
+from time import strftime, strptime
 from datetime import datetime
-from util import hook
-from util import http
-from util import timesince
+
+from util.timesince import timesince
 
 
 def unescape_xml(string):
@@ -47,8 +47,8 @@ def parseDateTime(s):
 
 @hook.command
 def twitter(inp):
-    "twitter <user>/<user> <n>/<id>/#<hashtag>/@<user> -- Gets last/<n>th "\
-    "tweet from <user>/gets tweet <id>/Gets random tweet with #<hashtag>/"\
+    "twitter <user>/<user> <n>/<id>/#<hashtag>/@<user> -- Gets last/<n>th " \
+    "tweet from <user>/gets tweet <id>/Gets random tweet with #<hashtag>/" \
     "gets replied tweet from @<user>."
 
     def add_reply(reply_name, reply_id):
@@ -105,25 +105,25 @@ def twitter(inp):
         url = 'http://search.twitter.com/search.atom?q=%23' + inp[1:]
         searching_hashtag = True
     else:
-        return 'error: invalid request'
+        return 'Error: Invalid request.'
 
     try:
         tweet = http.get_xml(url)
-    except http.HTTPError, e:
-        errors = {400: 'bad request (ratelimited?)',
-                401: 'tweet is private',
-                403: 'tweet is private',
-                404: 'invalid user/id',
-                500: 'twitter is broken',
-                502: 'twitter is down ("getting upgraded")',
-                503: 'twitter is overloaded (lol, RoR)'}
+    except http.HTTPError as e:
+        errors = {400: 'Bad request (ratelimited?)',
+                  401: 'Tweet is private',
+                  403: 'Tweet is private',
+                  404: 'Invalid user/id',
+                  500: 'Twitter is broken',
+                  502: 'Twitter is down ("getting upgraded")',
+                  503: 'Twitter is overloaded'}
         if e.code == 404:
             return 'error: invalid ' + ['username', 'tweet id'][getting_id]
         if e.code in errors:
-            return 'error: ' + errors[e.code]
-        return 'error: unknown %s' % e.code
-    except http.URLError, e:
-        return 'error: timeout'
+            return 'Error: %s.' % errors[e.code]
+        return 'Unknown Error: %s' % e.code
+    except http.URLError as e:
+        return 'Error: Request timed out.'
 
     if searching_hashtag:
         ns = '{http://www.w3.org/2005/Atom}'
@@ -153,7 +153,7 @@ def twitter(inp):
              strptime(time.text,
              '%a %b %d %H:%M:%S +0000 %Y'))
 
-    time_nice = timesince.timesince(parseDateTime(time_raw), datetime.utcnow())
+    time_nice = timesince(parseDateTime(time_raw), datetime.utcnow())
 
     if tweet.find(retweeted_text) is not None:
         text = 'RT @%s:' % tweet.find(retweeted_screen_name).text

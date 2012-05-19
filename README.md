@@ -98,26 +98,26 @@ The developers of CloudBot run two CloudBots on [Espernet](http://esper.net).
 
 They can both be found in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via IRC to #CloudBot on irc.esper.net).
 
-**mau5bot** is the stable bot, and runs on the latest release version of CloudBot. (mau5bot is running on **Ubuntu Server** *Oneric Ocelot/11.10* with **Python** *2.7.2*)
+**mau5bot** is the semi-stable bot, and runs on the latest stable development version of CloudBot. (mau5bot is running on **Ubuntu Server** *Oneric Ocelot/11.10* with **Python** *2.7.2*)
 
-**neerbot** is the unstable bot, and runs on the latest development² version of CloudBot. (neerbot is running on **Debian** *Wheezy/Testing* with **Python** *2.7.2*)
+**neerbot** is the unstable bot, and runs on the latest(ish) development version of CloudBot. (neerbot is running on **Debian** *Wheezy/Testing* with **Python** *2.7.2*)
 
 ## Requirements
 
 CloudBot runs on **Python** *2.7.x*. It is developed on **Debian** *Wheezy/Testing* and **Ubuntu** *11.10* with **Python** *2.7.2*.
 
-It **requires Python modules** `lXML`, `BeautifulSoup`, `Enchant`, `psutil`, and `HTTPlib2`.
+It **requires Python modules** `lXML`, `BeautifulSoup` and `Enchant`, `psutil`, and `HTTPlib2`.
 
-The programs `screen` or `daemon` are recomended for the wrapper to run optimaly.
+The programs `daemon` or `screen` are recomended for the wrapper to run optimaly.
 
-**Windows** users: Windows compatibility with the wrapper and some plugins is **broken** (such as the ping), but we do intend to add it.³
+**Windows** users: Windows compatibility with the wrapper and some plugins is **broken** (such as ping), but we do intend to add it.³
 
 ## License
 CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
     
     CloudBot/DEV
 
-    Copyright © 2011 ClouDev - <[cloudev.github.com](http://cloudev.github.com)>
+    Copyright © 2011-2012 Luke Rogers / ClouDev - <[cloudev.github.com](http://cloudev.github.com)>
 
     CloudBot is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -133,9 +133,5 @@ CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
     along with CloudBot.  If not, see <http://www.gnu.org/licenses/>.
 
 ## Notes
-
-¹ if you prefer to run the bot with a custom backend/run it manually, or are on **Windows**, run the bot with `./bot.py`
-
-² or whatever version [neersighted](http://git.io/neersighted) is currently hacking on
 
 ³ eventually

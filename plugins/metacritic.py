@@ -9,13 +9,15 @@ from util import hook, http
 @hook.command('mc')
 @hook.command
 def metacritic(inp):
-    "mc [all|movie|tv|album|x360|ps3|pc|ds|wii] <title> -- Gets rating for <title> from metacritic on the specified medium."
+    "mc [all|movie|tv|album|x360|ps3|wii|pc|ds|3ds|vita] <title> -- Gets rating for <title> from metacritic on the specified medium."
 
     # if the results suck, it's metacritic's fault
 
     args = inp.strip()
 
-    game_platforms = ('x360', 'ps3', 'pc', 'ds', 'wii', '3ds', 'gba')
+    game_platforms = ('x360', 'ps3', 'pc', 'ds', 'wii', '3ds', 'gba',
+                      'psp', 'vita')
+
     all_platforms = game_platforms + ('all', 'movie', 'tv', 'album')
 
     try:
@@ -75,11 +77,11 @@ def metacritic(inp):
     result = None
 
     if not doc.find_class('query_results'):
-        return 'no results found'
+        return 'No results found.'
 
     # if they specified an invalid search term, the input box will be empty
     if doc.get_element_by_id('search_term').value == '':
-        return 'invalid search term'
+        return 'Invalid search term.'
 
     if plat not in game_platforms:
         # for [all] results, or non-game platforms, get the first result
@@ -108,7 +110,7 @@ def metacritic(inp):
                 break
 
     if not result:
-        return 'no results found'
+        return 'No results found.'
 
     # get the name, release date, and score from the result
     product_title = result.find_class('product_title')[0]
@@ -129,7 +131,7 @@ def metacritic(inp):
     except IndexError:
         score = None
 
-    return '[%s] %s - %s, %s -- %s' % (plat.upper(), name,
+    return '[%s] %s - \x02%s/100\x02, %s -- %s' % (plat.upper(), name,
             score or 'no score',
-            'release: %s' % release if release else 'unreleased',
+            'release: \x02%s\x02' % release if release else 'unreleased',
             link)

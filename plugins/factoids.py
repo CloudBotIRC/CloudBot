@@ -15,6 +15,22 @@ shortcodes = {
 '[/i]': '\x16'}
 
 
+def python(data, args, input):
+    variables = "input='%s'; nick='%s'; chan='%s'; bot_nick='%s';" % (args,
+                input.nick, input.chan, input.conn.nick)
+    statement = variables + data
+    data = data[4:].strip()
+    req = http.get("http://eval.appspot.com/eval", statement=statement).splitlines()
+    if len(req) == 0:
+        return "Unknown Error."
+    req[0] = re_lineends.split(req[0])[0]
+    if not req[0] == 'Traceback (most recent call last):':
+        result = req[0].decode('utf8', 'ignore')
+    else:
+        result = req[-1].decode('utf8', 'ignore')
+    return result
+
+
 def db_init(db):
     db.execute("create table if not exists mem(word, data, nick,"
                " primary key(word))")
@@ -136,44 +152,20 @@ def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
     if len(split) >= 1:
         arguments = " ".join(split[1:])
     else:
-        arguments = None
+        arguments = ""
 
-    # attempt to get the factoid from the database
     data = get_memory(db, factoid_id)
 
     if data:
-
-        # dynamic variables for factoids
-        data = data.replace("$nick", input.nick)
-        data = data.replace("$chan", input.chan)
-        data = data.replace("$botnick", conn.nick)
         
-        # if factoid needs input, do that
-        if "$inp" in data:
-            if arguments:
-                data = data.replace("$inp", arguments)
-            else:
-                return "This factoid requires input. You can provide this" \
-                       " with ?%s <input>" % factoid_id
-        
-        # if <py>, execute python code
+        # if the factoid starts with <py>, its a dynamic one
         if data.startswith("<py>"):
-            data = data[4:].strip()
-            res = http.get("http://eval.appspot.com/eval", statement=data).splitlines()
-            if len(res) == 0:
-                return
-            res[0] = re_lineends.split(res[0])[0]
-            if not res[0] == 'Traceback (most recent call last):':
-                result = res[0].decode('utf8', 'ignore')
-            else:
-                result = res[-1].decode('utf8', 'ignore')
+            result = python(data[4:].strip(), arguments, input)
         else:
             result = data
             
-        # process formatting "shortcodes"
         result = multiwordReplace(result, shortcodes)
 
-        # return final dataput
         if result.startswith("<act>"):
             result = result[5:].strip()
             me(result)

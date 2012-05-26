@@ -44,6 +44,7 @@ In addition, for `.whois` to work optimally, you must have `whois` installed. Ag
 
 `apt-get install whois`
 
+(*These commands may need to be prefixed with `sudo`*)
 
 If you are a user of another Linux disto, use your package manager to install the dependencies, or, for other operating systems,  use **Google** to locate source packages you can install.
 

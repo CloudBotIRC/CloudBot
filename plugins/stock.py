@@ -22,7 +22,8 @@ def stock(inp):
         return "error: unknown ticker symbol (%s)" % inp
         
     if results['last'] == '0.00':
-        return "%s - last known stock value was 0.00 %s" % (results['company'], results['currency'])
+        return "%(company)s - last known stock value was 0.00 %(currency)s" \
+               " as of %(trade_timestamp)s" % (results)
 
     if results['change'][0] == '-':
         results['color'] = "5"

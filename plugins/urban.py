@@ -23,7 +23,7 @@ def urban(inp):
 
     # fetch the definitions
     url = 'http://www.urbandictionary.com/iphone/search/define'
-    page = http.get_json(url, term=input)
+    page = http.get_json(url, term=input, referer="http://m.urbandictionary.com")
     defs = page['list']
 
     if page['result_type'] == 'no_results':

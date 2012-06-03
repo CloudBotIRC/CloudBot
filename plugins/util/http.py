@@ -42,7 +42,7 @@ def get_json(*args, **kwargs):
 
 
 def open(url, query_params=None, user_agent=None, post_data=None,
-         get_method=None, cookies=False, **kwargs):
+         referer=None, get_method=None, cookies=False, **kwargs):
 
     if query_params is None:
         query_params = {}
@@ -60,6 +60,9 @@ def open(url, query_params=None, user_agent=None, post_data=None,
         request.get_method = lambda: get_method
 
     request.add_header('User-Agent', user_agent)
+    
+    if referer is not None:
+        request.add_header('Referer', referer)
 
     if cookies:
         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(jar))

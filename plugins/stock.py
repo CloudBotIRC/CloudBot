@@ -28,7 +28,7 @@ def stock(inp):
         results['color'] = "3"
 
     ret = "%(company)s - %(last)s %(currency)s "                   \
-          "\x03%(color)s%(change)s (%(perc_change)s)\x03 "        \
+          "\x03%(color)s%(change)s (%(perc_change)s%%)\x03 "       \
           "as of %(trade_timestamp)s" % results
 
     if results['delay'] != '0':

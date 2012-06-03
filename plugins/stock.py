@@ -2,12 +2,11 @@ import random
 
 from util import hook, http
 
+url = 'http://www.google.com/ig/api'
 
 @hook.command
 def stock(inp):
     "stock <symbol> -- Gets information about stock symbol <symbol>."
-
-    url = 'http://www.google.com/ig/api?stock=%s'
 
     parsed = http.get_xml(url, stock=inp)
 
@@ -21,6 +20,9 @@ def stock(inp):
     # if we dont get a company name back, the symbol doesn't match a company
     if results['company'] == '':
         return "error: unknown ticker symbol (%s)" % inp
+        
+    if results['last'] == '0.00':
+        return "%s - last known stock value was 0.00 %s" % (results['company'], results['currency'])
 
     if results['change'][0] == '-':
         results['color'] = "5"

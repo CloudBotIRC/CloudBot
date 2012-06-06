@@ -1,5 +1,5 @@
 // obtained from <https://github.com/blha303/skybot/commit/d4ba73d6e3f21cc60a01342f3de9d0d4abd14b3d>
-// edited by Lukeroge and _frozen
+// edited by Lukeroge, _frozen, and MufinMcFlufin
 // Block id
 1 Stone
 2 Grass Block
@@ -147,6 +147,13 @@
 122 Dragon Egg
 123 Redstone Lamp
 124 Lit Redstone Lamp
+127 Cocoa
+128 Sandstone Stairs
+129 Emerald Ore
+130 Ender Chest
+131 Tripwire Hook
+132 Tripwire
+133 Block of Emerald
 // Items Ids
 256 Iron Shovel
 257 Iron Pickaxe
@@ -338,7 +345,7 @@
 380 Cauldron
 381 Eye of Ender
 382 Glistering Melon
-383 Spawn Egg
+// 383 Spawn Egg
 383:50 Creeper Egg
 383:51 Skeleton Egg
 383:52 Spider Egg
@@ -362,6 +369,9 @@
 383:120 Villager Egg
 384 Bottle Of Enchanting
 385 Fire Charge
+386 Book and Quill
+387 Written Book
+388 Emerald
 // Records
 2256 Music Disc 13
 2257 Music Disc Cat

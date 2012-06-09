@@ -53,7 +53,7 @@ Once you have installed the required dependencies, there are two ways you can ru
 
 The launcher will start the bot as a background process, and allow the bot to close and restart itself. This is only supported on unix-like machines (not Windows).
 
-For the launcher to work properly, install `screen`, or `daemon` (daemon is recommended) :
+For the launcher to work properly, install `screen`, or `daemon` (daemon is recommended):
 
 `apt-get install screen`
 
@@ -97,9 +97,9 @@ If you think you have found a bug/have a idea/suggestion, please **open a issue*
 
 ### Requirements
 
-CloudBot runs on **Python** *2.7.x*. It is developed on **Debian** *Wheezy/Testing* and **Ubuntu** *11.10* with **Python** *2.7.2*.
+CloudBot runs on **Python** *2.7.x*. It is developed on **Ubuntu** *12.04* with **Python** *2.7.2+*.
 
-It **requires Python modules** `lXML`, `BeautifulSoup` and `Enchant`, `psutil`, and `HTTPlib2`.
+It **requires Python modules** `lXML`, `Enchant`, `urllib3`, and `BeautifulSoup`.
 
 The programs `daemon` or `screen` are recomended for the wrapper to run optimaly.
 

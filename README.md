@@ -25,31 +25,28 @@ Unzip the resulting file, and continue to read this document.
 
 ## Install
 
-Before you can run the bot, you need to install a few Python modules. These are `lXML` and `BeautifulSoup`.  These can be installed with PIP (The Python package manager). If you use Windows and dont want to set up pip, you can also find `exe` installers on the internet:
+Before you can run the bot, you need to install a few Python modules. These are `lXML`, `Enchant`, `urllib3`, and `BeautifulSoup`.  These can be installed with `pip` (The Python package manager), or `easy_install` (A more basic version of `pip`):
 
-`pip install lxml`
+`[sudo] pip install lxml pyenchant urllib3 beautifulsoup`
 
-`pip install beautifulsoup`
+or
 
+`[sudo] easy_install lxml pyenchant urllib3 beautifulsoup`
 
-On Debian based systems, you can get pip with
+### Installing `pip`
 
-`apt-get install pip`
+```shell
+curl -O http://python-distribute.org/distribute_setup.py
+python distribute_setup.py
+easy_install pip
+```
 
-For `.spell` to work, we also need a library called `Enchant`.  On Debian based systems, install it with:
+(If you use Windows and don't want to set up pip, you can also find `exe` installers on the internet.)
 
-`apt-get install python-enchant`
-
-In addition, for `.whois` to work optimally, you must have `whois` installed. Again, on Debian based systems, install it with:
-
-`apt-get install whois`
-
-(*These commands may need to be prefixed with `sudo`*)
-
-If you are a user of another Linux disto, use your package manager to install the dependencies, or, for other operating systems,  use **Google** to locate source packages you can install.
+## Running
 
 Once you have installed the required dependencies, there are two ways you can run the bot:
-### Using the launcher:
+### Launcher
 
 The launcher will start the bot as a background process, and allow the bot to close and restart itself. This is only supported on unix-like machines (not Windows).
 
@@ -69,7 +66,7 @@ It will generate a default config for you.  Once you have edited the config, run
 
 This will start up your bot as a background process. To stop it, use `./cloudbot stop`. (Config docs at the [wiki](http://git.io/cloudbotircconfig))
 
-### Manually running the bot:
+### Manually
 
 To manually run the bot and get debug output, run it with:
 

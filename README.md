@@ -17,13 +17,15 @@ CloudBot is a Python IRC bot very heavily based on [Skybot](http://git.io/skybot
   * Automatic reloading
   * Little boilerplate
 
-## Download
+## Getting and using CloudBot
+
+### Download
 
 Get CloudBot at [git.io/getcloudbotirc](http://git.io/getcloudbotirc "Get CloudBot from Github!").
 
 Unzip the resulting file, and continue to read this document.
 
-## Install
+### Install
 
 Before you can run the bot, you need to install a few Python modules. These are `lXML`, `Enchant`, `urllib3`, and `BeautifulSoup`.  These can be installed with `pip` (The Python package manager), or `easy_install` (A more basic version of `pip`):
 
@@ -33,7 +35,7 @@ or
 
 `[sudo] easy_install lxml pyenchant urllib3 beautifulsoup`
 
-### Installing `pip`
+#### Install `pip`
 
 ```shell
 curl -O http://python-distribute.org/distribute_setup.py
@@ -43,10 +45,11 @@ easy_install pip
 
 (If you use Windows and don't want to set up pip, you can also find `exe` installers on the internet.)
 
-## Running
+### Run
 
 Once you have installed the required dependencies, there are two ways you can run the bot:
-### Launcher
+
+#### Launcher
 
 The launcher will start the bot as a background process, and allow the bot to close and restart itself. This is only supported on unix-like machines (not Windows).
 
@@ -66,7 +69,7 @@ It will generate a default config for you.  Once you have edited the config, run
 
 This will start up your bot as a background process. To stop it, use `./cloudbot stop`. (Config docs at the [wiki](http://git.io/cloudbotircconfig))
 
-### Manually
+#### Manually
 
 To manually run the bot and get debug output, run it with:
 
@@ -74,9 +77,11 @@ To manually run the bot and get debug output, run it with:
 
 On Windows you can usually just double-click the `bot.py` file to start the bot, as long as you have Python installed correctly.
 
-(note that running it without the launcher will break the restart and stop commands)
+(note: running the bot without the launcher breaks the start and restart commands)
 
-## Documentation
+## Getting help with CloudBot
+
+### Documentation
 
 To configure your CloudBot, visit the [Config Wiki Page](http://git.io/cloudbotircconfig).
 
@@ -84,11 +89,21 @@ To write your own plugins, visit the [Plugin Wiki Page](http://git.io/cloudbotir
 
 More at the [Wiki Main Page](http://git.io/cloudbotircwiki).
 
-## Support
+### Support
 
 The developers reside in [#CloudBot](irc://irc.esper.net/cloudbot) on [EsperNet](http://esper.net) and would be glad to help you.
 
 If you think you have found a bug/have a idea/suggestion, please **open a issue** here on Github.
+
+### Requirements
+
+CloudBot runs on **Python** *2.7.x*. It is developed on **Debian** *Wheezy/Testing* and **Ubuntu** *11.10* with **Python** *2.7.2*.
+
+It **requires Python modules** `lXML`, `BeautifulSoup` and `Enchant`, `psutil`, and `HTTPlib2`.
+
+The programs `daemon` or `screen` are recomended for the wrapper to run optimaly.
+
+**Windows** users: Windows compatibility with the wrapper and some plugins is **broken** (such as ping), but we do intend to add it.³
 
 ## Example CloudBots
 
@@ -100,17 +115,8 @@ They can both be found in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via 
 
 **neerbot** is the unstable bot, and runs on the latest(ish) development version of CloudBot. (neerbot is running on **Debian** *Wheezy/Testing* with **Python** *2.7.2*)
 
-## Requirements
-
-CloudBot runs on **Python** *2.7.x*. It is developed on **Debian** *Wheezy/Testing* and **Ubuntu** *11.10* with **Python** *2.7.2*.
-
-It **requires Python modules** `lXML`, `BeautifulSoup` and `Enchant`, `psutil`, and `HTTPlib2`.
-
-The programs `daemon` or `screen` are recomended for the wrapper to run optimaly.
-
-**Windows** users: Windows compatibility with the wrapper and some plugins is **broken** (such as ping), but we do intend to add it.³
-
 ## License
+
 CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
     
     CloudBot/DEV

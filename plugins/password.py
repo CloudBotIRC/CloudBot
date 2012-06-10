@@ -38,7 +38,7 @@ def gen_password(types):
         needs_def = 1
     #defaults to lowercase alpha password if no arguments are found
     if needs_def == 1:
-        okay = okay + [str(x) for x in xrange(0, 10)]
+        okay = okay + string.ascii_lowercase
     password = ""
     #generates password
     for x in range(length):

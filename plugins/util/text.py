@@ -14,6 +14,18 @@ def capitalize_first(line):
     return ' '.join([s[0].upper() + s[1:] for s in line.split(' ')])
 
 
+def multiword_replace(text, wordDic):
+    """
+    take a text and replace words that match a key in a dictionary with
+    the associated value, return the changed text
+    """
+    rc = re.compile('|'.join(map(re.escape, wordDic)))
+
+    def translate(match):
+        return wordDic[match.group(0)]
+    return rc.sub(translate, text)
+
+
 # from <http://stackoverflow.com/questions/250357/smart-truncate-in-python>
 def truncate_words(content, length=100, suffix='...'):
     "Truncates a string after a certain number of chars."

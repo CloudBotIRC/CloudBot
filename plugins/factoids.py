@@ -1,5 +1,6 @@
 # Written by Scaevolus 2010
 from util import hook, http
+from util.text import multiword_replace
 import string
 import re
 
@@ -45,18 +46,6 @@ def get_memory(db, word):
         return row[0]
     else:
         return None
-
-
-def multiwordReplace(text, wordDic):
-    """
-    take a text and replace words that match a key in a dictionary with
-    the associated value, return the changed text
-    """
-    rc = re.compile('|'.join(map(re.escape, wordDic)))
-
-    def translate(match):
-        return wordDic[match.group(0)]
-    return rc.sub(translate, text)
 
 
 @hook.command("r", adminonly=True)
@@ -164,7 +153,7 @@ def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
         else:
             result = data
             
-        result = multiwordReplace(result, shortcodes)
+        result = multiword_replace(result, shortcodes)
 
         if result.startswith("<act>"):
             result = result[5:].strip()

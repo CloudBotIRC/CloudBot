@@ -22,7 +22,7 @@ def python(data, args, input):
     data = data[4:].strip()
     req = http.get("http://eval.appspot.com/eval", statement=statement).splitlines()
     if len(req) == 0:
-        return "Unknown Error."
+        return "Failed to recieve response from remote Python API.."
     req[0] = re_lineends.split(req[0])[0]
     if not req[0] == 'Traceback (most recent call last):':
         result = req[0].decode('utf8', 'ignore')

@@ -87,7 +87,7 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
                     % data.replace('"', "''"))
             return
     else:
-        notice('Remembered!')
+        notice('Factoid created!')
         return
 
 

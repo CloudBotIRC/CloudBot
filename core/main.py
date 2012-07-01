@@ -99,7 +99,11 @@ class Handler(object):
                     db_conns[input.conn] = db
                 input.db = db
 
-            run(self.func, input)
+            try:
+                run(self.func, input)
+            except:
+                import traceback
+                traceback.print_exc()
 
     def stop(self):
         self.input_queue.put(StopIteration)

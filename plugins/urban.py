@@ -33,7 +33,7 @@ def urban(inp):
     try:
         out = "[%i/%i] %s: %s" % \
               (id, len(defs), defs[id - 1]['word'],
-              defs[id - 1]['definition'])
+              defs[id - 1]['definition'].replace('\r\n',' '))
     except IndexError:
         return 'Not found.'
 

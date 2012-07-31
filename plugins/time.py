@@ -2,7 +2,7 @@
 
 from util import hook
 from util import http
-from util.formatting import capitalize_first
+from util.text import capitalize_first
 
 api_url = 'http://api.wolframalpha.com/v2/query?format=plaintext'
 

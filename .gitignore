@@ -9,3 +9,5 @@ gitflow
 .project
 .pydevproject
 .geany
+*.sublime-project
+*.sublime-workspace

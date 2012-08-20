@@ -1,14 +1,13 @@
-# Plugin by Lukeroge
 from util import hook, http
+from util.text import truncate_words
+
+base_url = 'http://www.urbandictionary.com/iphone/search/define'
 
 
 @hook.command('u')
 @hook.command
 def urban(inp):
     "urban <phrase> [id] -- Looks up <phrase> on urbandictionary.com."
-
-    # set a default definition number
-    id = 1
 
     # clean and split the input
     input = inp.lower().strip()
@@ -20,10 +19,11 @@ def urban(inp):
         # remove the ID from the input string
         del parts[-1]
         input = " ".join(parts)
+    else:
+        id = 1
 
     # fetch the definitions
-    url = 'http://www.urbandictionary.com/iphone/search/define'
-    page = http.get_json(url, term=input, referer="http://m.urbandictionary.com")
+    page = http.get_json(base_url, term=input, referer="http://m.urbandictionary.com")
     defs = page['list']
 
     if page['result_type'] == 'no_results':
@@ -31,13 +31,10 @@ def urban(inp):
 
     # try getting the requested definition
     try:
-        out = "[%i/%i] %s: %s" % \
+        output = "[%i/%i] %s: %s" % \
               (id, len(defs), defs[id - 1]['word'],
-              defs[id - 1]['definition'].replace('\r\n',' '))
+              defs[id - 1]['definition'].replace('\r\n', ' '))
     except IndexError:
         return 'Not found.'
 
-    if len(out) > 400:
-        out = out[:out.rfind(' ', 0, 400)] + '...'
-
-    return out
+    return truncate_words(output, 400)

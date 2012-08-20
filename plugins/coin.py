@@ -3,7 +3,7 @@ from util import hook
 from random import getrandbits
 
 
-# yay for cryptic but fast code
+# yay for wtfcode
 def flip_simple(count):
     heads, tails = 0, 0
     for x in xrange(count):
@@ -15,29 +15,25 @@ def flip_simple(count):
 
 
 @hook.command(autohelp=False)
-def coin(inp):
+def coin(inp, me=None):
     "coin [amount] -- Flips [amount] of coins."
-    # checking for valid input. if valid input [count=inp],
-    # if invalid [return error], if no input [count=1]
-    if inp.isdigit():
-        count = int(inp)
-    else:
-        if inp:
-            return "Invalid input."
-        else:
-            count = 1
 
-    if count > 9001:
+    if inp.isdigit():
+        amount = int(inp)
+    else:
+        amount = 1
+
+    if amount > 9001:
         return "Too many coins! Maximum is 9001."
-    elif count == 1:
+    elif amount == 1:
         flip = getrandbits(1)
         if flip == 1:
-            return "You flip a coin and get heads."
+            me("flips a coin and gets heads.")
         else:
-            return "You flip a coin and get tails."
-    elif count == 0:
-        return "You make a coin flipping motion with your hands."    
+            me("flips a coin and gets tails.")
+    elif amount == 0:
+        me("makes a coin flipping motion with its hands.")
     else:
-        flips = flip_simple(count)
-        return "You flip %i coins and get " \
-        "%i heads and %i tails." % (count, flips[0], flips[1])
+        flips = flip_simple(amount)
+        me("flips %i coins and gets " \
+        "%i heads and %i tails." % (amount, flips[0], flips[1]))

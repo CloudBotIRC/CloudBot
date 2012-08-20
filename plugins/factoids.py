@@ -2,6 +2,7 @@
 from util import hook, http
 from util.text import multiword_replace
 import string
+import sqlite3
 import re
 
 re_lineends = re.compile(r'[\r\n]*')
@@ -17,6 +18,7 @@ shortcodes = {
 
 
 def python(data, args, input):
+    # this is all shit, replacement code is in the works
     variables = "input='%s'; nick='%s'; chan='%s'; bot_nick='%s';" % (args,
                 input.nick, input.chan, input.conn.nick)
     statement = variables + data
@@ -81,14 +83,14 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
 
     if data:
         if append:
-            notice("Appending %s to %s" % (new, data.replace('"', "''")))
+            notice("Appending \x02%s\x02 to \x02%s\x02" % (new, data))
         else:
-            notice('Forgetting existing data (%s), remembering this instead!'
-                    % data.replace('"', "''"))
-            return
+            notice('Remembering \x02%s\x02 for \x02%s\x02. Type ?%s to see it.'
+                % (tail, head, head))
+            notice('Previous data was \x02%s\x02' % data)
     else:
-        notice('Factoid created!')
-        return
+        notice('Remembering \x02%s\x02 for \x02%s\x02. Type ?%s to see it.'
+                % (tail, head, head))
 
 
 @hook.command("f", adminonly=True)
@@ -109,7 +111,8 @@ def forget(inp, db=None, input=None, notice=None):
         notice("I don't know about that.")
         return
 
-@hook.command()
+
+@hook.command
 def info(inp, notice=None, db=None):
     "info <factoid> -- Shows the source of a factoid."
 
@@ -121,7 +124,7 @@ def info(inp, notice=None, db=None):
     if data:
         notice(data)
     else:
-        notice("Unknown Factoid")
+        notice("Unknown Factoid.")
 
 
 @hook.regex(r'^\? ?(.+)')
@@ -133,11 +136,11 @@ def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
         prefix_on = False
 
     db_init(db)
-    
+
     # split up the input
     split = inp.group(1).strip().split(" ")
     factoid_id = split[0]
-    
+
     if len(split) >= 1:
         arguments = " ".join(split[1:])
     else:
@@ -146,13 +149,12 @@ def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
     data = get_memory(db, factoid_id)
 
     if data:
-        
         # if the factoid starts with <py>, its a dynamic one
         if data.startswith("<py>"):
             result = python(data[4:].strip(), arguments, input)
         else:
             result = data
-            
+
         result = multiword_replace(result, shortcodes)
 
         if result.startswith("<act>"):

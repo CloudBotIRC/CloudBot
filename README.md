@@ -71,7 +71,7 @@ This will start up your bot as a background process. To stop it, use `./cloudbot
 
 #### Manually
 
-To manually run the bot and get debug output, run it with:
+To manually run the bot and get console output, run it with:
 
 `python bot.py`
 
@@ -97,13 +97,13 @@ If you think you have found a bug/have a idea/suggestion, please **open a issue*
 
 ### Requirements
 
-CloudBot runs on **Python** *2.7.x*. It is developed on **Ubuntu** *12.04* with **Python** *2.7.2+*.
+CloudBot runs on **Python** *2.7.x*. It is developed on **Ubuntu** *12.04* with **Python** *2.7.3*.
 
 It **requires Python modules** `lXML`, `Enchant`, `urllib3`, and `BeautifulSoup`.
 
-The programs `daemon` or `screen` are recomended for the wrapper to run optimaly.
+The programs `daemon` or `screen` are recomended for the launcher to run optimaly.
 
-**Windows** users: Windows compatibility with the wrapper and some plugins is **broken** (such as ping), but we do intend to add it.³
+**Windows** users: Windows compatibility with the launcher and some plugins is **broken** (such as ping), but we do intend to add it.³
 
 ## Example CloudBots
 
@@ -111,9 +111,9 @@ The developers of CloudBot run two CloudBots on [Espernet](http://esper.net).
 
 They can both be found in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via IRC to #CloudBot on irc.esper.net).
 
-**mau5bot** is the semi-stable bot, and runs on the latest stable development version of CloudBot. (mau5bot is running on **Ubuntu Server** *Oneric Ocelot/11.10* with **Python** *2.7.2*)
+**mau5bot** is the semi-stable bot, and runs on the latest stable development version of CloudBot. (mau5bot is running on **Ubuntu Server** *12.04* with **Python** *2.7.3*)
 
-**neerbot** is the unstable bot, and runs on the latest(ish) development version of CloudBot. (neerbot is running on **Debian** *Wheezy/Testing* with **Python** *2.7.2*)
+**neerbot** is currently running an outdated version of the develop branch. (neerbot is running on **Debian** *Wheezy/Testing* with **Python** *2.7.2*)
 
 ## License
 

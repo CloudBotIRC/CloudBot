@@ -1,23 +1,17 @@
-from util import hook, http, misc
-import re
-import string
+from util import hook, text
+import random
 
 
-def sloganize(word):
-    bytes = http.get('http://www.sloganizer.net/en/outbound.php', slogan=word)
-    return bytes
+with open("plugins/data/slogans.txt") as f:
+    slogans = [line.strip() for line in f.readlines()
+               if not line.startswith("//")]
 
 
-@hook.command("slogan")
-def sloganizr(inp, nick=None, say=None, input=None):
+@hook.command
+def slogan(inp):
     "slogan <word> -- Makes a slogan for <word>."
-    slogan = sloganize(inp)
+    out = random.choice(slogans)
+    if inp.lower() and out.startswith("<text>"):
+        inp = text.capitalize_first(inp)
 
-    slogan = misc.strip_html(slogan)
-
-    if inp.islower():
-        slogan = slogan.split()
-        slogan[0] = slogan[0].capitalize()
-        slogan = " ".join(slogan)
-
-    return slogan
+    return out.replace('<text>', inp)

@@ -2,7 +2,7 @@ from util import hook, http
 from urllib import quote_plus
 import json
 
-api_url = "http://www.fishbans.com/api/stats/%s/"
+api_url = "http://www.fishbans.com/api/stats/%s/force/"
 
 
 @hook.command("bans")

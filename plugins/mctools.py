@@ -1,11 +1,19 @@
 from util import hook
 from util import http
+from util.text import get_text_list
+import dns.resolver
 import string
 import socket
+import json
 import struct
 
 
-def mcping_connect(host, port):
+def mcping_connect(host, port=None):
+    try:
+        answers = dns.resolver.query('_minecraft._tcp.' + host, 'SRV')
+    except dns.resolver.NoAnswer:
+        if not port:
+            port = 25565
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         sock.connect((host, port))
@@ -24,8 +32,8 @@ def mcping_connect(host, port):
 
 
 @hook.command(autohelp=False)
-def mcstatus(inp, bot=None):
-    "mcstatus -- Checks the status of Minecraft's login servers."
+def mclogin(inp, bot=None):
+    "mclogin -- Checks the status of Minecraft's login servers."
     username = bot.config.get("api_keys", {}).get("mc_user", None)
     password = bot.config.get("api_keys", {}).get("mc_pass", None)
     if password is None:
@@ -40,23 +48,23 @@ def mcstatus(inp, bot=None):
         return "Minecraft login servers appear to be offline!"
 
 
-@hook.command
-def mclogin(inp, say=None):
-    "mclogin <username> <password> -- Attempts to log in to Minecraft with" \
-    " <username> and <password> (This is NOT logged)."
-    inp = inp.split(" ")
-    username = inp[0]
-    password = inp[1]
-    say("Attempting to log in using %s." % username)
+@hook.command(autohelp=False)
+def mcstatus(inp, say=None):
+    "mcstatus -- Checks the status various Mojang servers."
+    request = http.get("http://status.mojang.com/check")
 
-    login = http.get("https://login.minecraft.net/", user=username,
-                     password=password, version=13)
+    # make the shitty json less shitty, cbf parsing it normally
+    data = json.loads(request.replace("}", "").replace("{", "").replace("]", "}").replace("[", "{"))
 
-    if username.lower() in login.lower():
-        return "I logged in with %s" % username
-    else:
-        return "I couldn't log in using %s, either the password is wrong or " \
-               "Minecraft login servers are down!" % username
+    out = []
+    # use a loop so we don't have to update it if they add more servers
+    for server, status in data.items():
+        if status == "green":
+            out.append("%s is \x02online\x02" % server)
+        else:
+            out.append("%s is \x02offline\x02" % server)
+
+    return ", ".join(out) + "."
 
 
 @hook.command
@@ -82,7 +90,8 @@ def mcping(inp):
             port = int(port)
         except:
             return "error: invalid port!"
+        return mcping_connect(host, port)
     else:
         host = inp
-        port = 25565
-    return mcping_connect(host, port)
+        return mcping_connect(host)
+

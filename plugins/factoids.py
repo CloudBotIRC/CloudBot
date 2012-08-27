@@ -1,6 +1,7 @@
 # Written by Scaevolus 2010
 from util import hook, http
 from util.text import multiword_replace
+from util.eval import execute_eval
 import string
 import sqlite3
 import re
@@ -15,23 +16,6 @@ shortcodes = {
 '[/u]': '\x1F',
 '[i]': '\x16',
 '[/i]': '\x16'}
-
-
-def python(data, args, input):
-    # this is all shit, replacement code is in the works
-    variables = "input='%s'; nick='%s'; chan='%s'; bot_nick='%s';" % (args,
-                input.nick, input.chan, input.conn.nick)
-    statement = variables + data
-    data = data[4:].strip()
-    req = http.get("http://eval.appspot.com/eval", statement=statement).splitlines()
-    if len(req) == 0:
-        return "Failed to recieve response from remote Python API.."
-    req[0] = re_lineends.split(req[0])[0]
-    if not req[0] == 'Traceback (most recent call last):':
-        result = req[0].decode('utf8', 'ignore')
-    else:
-        result = req[-1].decode('utf8', 'ignore')
-    return result
 
 
 def db_init(db):
@@ -151,7 +135,11 @@ def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
     if data:
         # if the factoid starts with <py>, its a dynamic one
         if data.startswith("<py>"):
-            result = python(data[4:].strip(), arguments, input)
+            data = data[4:].strip()
+            variables = "input='%s'; nick='%s'; chan='%s'; bot_nick='%s';" % (args,
+                         input.nick, input.chan, input.conn.nick)
+            result = execute_eval(variables + data)
+
         else:
             result = data
 

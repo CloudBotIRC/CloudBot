@@ -1,19 +1,13 @@
 from util import hook
 from util import http
 from util.text import get_text_list
-import dns.resolver
 import string
 import socket
 import json
 import struct
 
 
-def mcping_connect(host, port=None):
-    try:
-        answers = dns.resolver.query('_minecraft._tcp.' + host, 'SRV')
-    except dns.resolver.NoAnswer:
-        if not port:
-            port = 25565
+def mcping_connect(host, port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         sock.connect((host, port))
@@ -67,6 +61,7 @@ def mcstatus(inp, say=None):
     return ", ".join(out) + "."
 
 
+@hook.command("haspaid")
 @hook.command
 def mcpaid(inp):
     "mcpaid <username> -- Checks if <username> has a" \
@@ -90,8 +85,7 @@ def mcping(inp):
             port = int(port)
         except:
             return "error: invalid port!"
-        return mcping_connect(host, port)
     else:
         host = inp
-        return mcping_connect(host)
-
+        port = 25565
+    return mcping_connect(host, port)

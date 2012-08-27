@@ -14,20 +14,20 @@ video_url = "http://youtu.be/%s"
 
 
 def get_video_description(vid_id):
-    j = http.get_json(url % vid_id)
+    request = http.get_json(url % vid_id)
 
-    if j.get('error'):
+    if request.get('error'):
         return
 
-    j = j['data']
+    data = request['data']
 
-    out = '\x02%s\x02' % j['title']
+    out = '\x02%s\x02' % data['title']
 
-    if not j.get('duration'):
+    if not data.get('duration'):
         return out
 
     out += ' - length \x02'
-    length = j['duration']
+    length = data['duration']
     if length / 3600:  # > 1 hour
         out += '%dh ' % (length / 3600)
     if length / 60:
@@ -35,17 +35,17 @@ def get_video_description(vid_id):
     out += "%ds\x02" % (length % 60)
 
     if 'rating' in j:
-        out += ' - rated \x02%.2f/5.0\x02 (%d)' % (j['rating'],
-                j['ratingCount'])
+        out += ' - rated \x02%.2f/5.0\x02 (%d)' % (data['rating'],
+                data['ratingCount'])
 
     if 'viewCount' in j:
-        out += ' - \x02%s\x02 views' % format(j['viewCount'], ",d")
+        out += ' - \x02%s\x02 views' % format(data['viewCount'], ",d")
 
-    upload_time = time.strptime(j['uploaded'], "%Y-%m-%dT%H:%M:%S.000Z")
-    out += ' - \x02%s\x02 on \x02%s\x02' % (j['uploader'],
+    upload_time = time.strptime(data['uploaded'], "%Y-%m-%dT%H:%M:%S.000Z")
+    out += ' - \x02%s\x02 on \x02%s\x02' % (data['uploader'],
                 time.strftime("%Y.%m.%d", upload_time))
 
-    if 'contentRating' in j:
+    if 'contentRating' in data:
         out += ' - \x034NSFW\x02'
 
     return out
@@ -72,14 +72,14 @@ def youtube_url(match):
 def youtube(inp):
     "youtube <query> -- Returns the first YouTube search result for <query>."
 
-    j = http.get_json(search_api_url, q=inp)
+    request = http.get_json(search_api_url, q=inp)
 
-    if 'error' in j:
+    if 'error' in request:
         return 'error performing search'
 
-    if j['data']['totalItems'] == 0:
+    if request['data']['totalItems'] == 0:
         return 'no results found'
 
-    vid_id = j['data']['items'][0]['id']
+    video_id = request['data']['items'][0]['id']
 
-    return get_video_description(vid_id) + " - " + video_url % vid_id
+    return get_video_description(video_id) + " - " + video_url % video_id

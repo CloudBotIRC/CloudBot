@@ -1,7 +1,7 @@
 # Written by Scaevolus 2010
 from util import hook, http
 from util.text import multiword_replace
-from util.eval import execute_eval
+from util.execute import eval_py
 import string
 import sqlite3
 import re
@@ -136,9 +136,9 @@ def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
         # if the factoid starts with <py>, its a dynamic one
         if data.startswith("<py>"):
             data = data[4:].strip()
-            variables = "input='%s'; nick='%s'; chan='%s'; bot_nick='%s';" % (args,
+            variables = "input='%s'; nick='%s'; chan='%s'; bot_nick='%s';" % (arguments,
                          input.nick, input.chan, input.conn.nick)
-            result = execute_eval(variables + data)
+            result = eval_py(variables + data)
 
         else:
             result = data

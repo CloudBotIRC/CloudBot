@@ -136,7 +136,7 @@ def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
         # if the factoid starts with <py>, its a dynamic one
         if data.startswith("<py>"):
             data = data[4:].strip()
-            variables = "input='%s'; nick='%s'; chan='%s'; bot_nick='%s';" % (arguments,
+            variables = 'input="""%s"""; nick="%s"; chan="%s"; bot_nick="%s";' % (arguments,
                          input.nick, input.chan, input.conn.nick)
             result = eval_py(variables + data)
 

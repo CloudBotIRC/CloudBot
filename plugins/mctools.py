@@ -54,9 +54,9 @@ def mcstatus(inp, say=None):
     # use a loop so we don't have to update it if they add more servers
     for server, status in data.items():
         if status == "green":
-            out.append("%s is \x02online\x02" % server)
+            out.append("%s is \x033\x02online\x02\x03" % server)
         else:
-            out.append("%s is \x02offline\x02" % server)
+            out.append("%s is \x034\x02offline\x02\x03" % server)
 
     return ", ".join(out) + "."
 

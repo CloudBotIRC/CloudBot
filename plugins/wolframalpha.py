@@ -1,10 +1,10 @@
 import re
-import urllib
 
 from util import hook, http
 
+from urllib import quote_plus
 from urllib2 import HTTPError
-from util.web import bitly, ShortenError
+from util.web import isgd
 from util.text import truncate_words
 
 
@@ -14,8 +14,6 @@ def wolframalpha(inp, bot=None):
     "wa <query> -- Computes <query> using Wolfram Alpha."
 
     api_key = bot.config.get("api_keys", {}).get("wolframalpha", None)
-    bitly_user = bot.config.get("api_keys", {}).get("bitly_user", None)
-    bitly_key = bot.config.get("api_keys", {}).get("bitly_api", None)
 
     if not api_key:
         return "error: missing api key"
@@ -26,10 +24,10 @@ def wolframalpha(inp, bot=None):
 
     # get the URL for a user to view this query in a browser
     query_url = "http://www.wolframalpha.com/input/?i=" + \
-                urllib.quote(inp.encode('utf-8'))
+                quote_plus(inp.encode('utf-8'))
     try:
-        short_url = bitly(query_url, bitly_user, bitly_key)
-    except (HTTPError, ShortenError):
+        short_url = isgd(query_url)
+    except (HTTPError):
         short_url = query_url
 
     pod_texts = []

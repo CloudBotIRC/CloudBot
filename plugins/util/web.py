@@ -1,6 +1,6 @@
 """ web.py - handy functions for web services """
 
-import http
+import http, urlnorm
 from urllib import urlencode
 
 
@@ -12,13 +12,20 @@ class ShortenError(Exception):
         return repr(self.value)
 
 
+# this is not used in any plugins right now
 def bitly(url, user, api_key):
     """ shortens a URL with the bit.ly API """
-    if not "://" in url:
-        url = "http://" + url
+    url = urlnorm.normalise(url)
     params = urlencode({'longUrl': url, 'login': user, 'apiKey': api_key,
                         'format': 'json'})
     j = http.get_json("http://api.bit.ly/v3/shorten?%s" % params)
     if j['status_code'] == 200:
         return j['data']['url']
     raise ShortenError('%s' % j['status_txt'])
+
+
+def isgd(url):
+    """ shortens a URL with the is.gd PAI """
+    url = urlnorm.normalize(url.encode('utf-8'))
+    params = urlencode({'format': 'simple', 'url': url})
+    return http.get("http://is.gd/create.php?%s" % params)

@@ -18,7 +18,7 @@ def fishbans(inp):
     user_url = "http://fishbans.com/u/%s" % user
     ban_count = request["stats"]["totalbans"]
 
-    return "The user \x02%s\x02 has \x02%s\x02 bans. See detailed info " \
+    return "The user \x02%s\x02 has \x02%s\x02 ban(s). See detailed info " \
            "at %s" % (user, ban_count, user_url)
 
 

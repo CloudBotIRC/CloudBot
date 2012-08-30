@@ -34,11 +34,11 @@ def get_video_description(vid_id):
         out += '%dm ' % (length / 60 % 60)
     out += "%ds\x02" % (length % 60)
 
-    if 'rating' in j:
+    if 'rating' in data:
         out += ' - rated \x02%.2f/5.0\x02 (%d)' % (data['rating'],
                 data['ratingCount'])
 
-    if 'viewCount' in j:
+    if 'viewCount' in data:
         out += ' - \x02%s\x02 views' % format(data['viewCount'], ",d")
 
     upload_time = time.strptime(data['uploaded'], "%Y-%m-%dT%H:%M:%S.000Z")

@@ -1,6 +1,7 @@
 """ web.py - handy functions for web services """
 
 import http, urlnorm
+import json, urllib2
 from urllib import urlencode
 
 
@@ -29,3 +30,10 @@ def isgd(url):
     url = urlnorm.normalize(url.encode('utf-8'))
     params = urlencode({'format': 'simple', 'url': url})
     return http.get("http://is.gd/create.php?%s" % params)
+
+
+def haste(data):
+    URL = "http://paste.dmptr.com"
+    request = urllib2.Request(URL + "/documents", data)
+    response = urllib2.urlopen(request)
+    return("%s/%s" % (URL, json.loads(response.read())['key']))

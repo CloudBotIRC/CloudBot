@@ -1,12 +1,5 @@
-import http
+import http, web
 import json, urllib2, sys
-
-
-def haste(data):
-    URL = "http://paste.dmptr.com"
-    request = urllib2.Request(URL + "/documents", data)
-    response = urllib2.urlopen(request)
-    return("%s/%s" % (URL, json.loads(response.read())['key']))
 
 
 def eval_py(code, paste_multiline=True):
@@ -23,6 +16,6 @@ def eval_py(code, paste_multiline=True):
         status = "Code executed sucessfully: "
         
     if "\n" in output and paste_multiline:
-        return status + haste(output)
+        return status + web.haste(output)
     else:
         return output

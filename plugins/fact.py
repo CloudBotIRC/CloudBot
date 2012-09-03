@@ -1,8 +1,6 @@
 import re
-from util import hook
-from util import http
-from util import misc
-from BeautifulSoup import BeautifulSoup
+from util import hook, http
+from bs4 import BeautifulSoup
 
 
 @hook.command(autohelp=False)
@@ -22,10 +20,10 @@ def fact(inp, say=False, nick=False):
 def get_fact():
     page = http.get('http://www.omg-facts.com/random')
     soup = BeautifulSoup(page)
-    container = soup.find('a', {'class': 'surprise'})
-    link = container['href']
+    response = soup.find('a', {'class': 'surprise'})
+    link = response['href']
 
-    fact = misc.strip_html(container.renderContents())
+    fact = response.contents[0]
 
     if fact:
         return (fact, link)

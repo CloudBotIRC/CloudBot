@@ -21,21 +21,21 @@ CloudBot is a Python IRC bot very heavily based on [Skybot](http://git.io/skybot
 
 ### Download
 
-Get CloudBot at [git.io/getcloudbotirc](http://git.io/getcloudbotirc "Get CloudBot from Github!").
+Get CloudBot at [https://github.com/ClouDev/CloudBot/zipball/develop](https://github.com/ClouDev/CloudBot/zipball/develop "Get CloudBot from Github!").
 
 Unzip the resulting file, and continue to read this document.
 
 ### Install
 
-Before you can run the bot, you need to install a few Python modules. These are `lXML`, `Enchant`, `urllib3`, and `BeautifulSoup`.  These can be installed with `pip` (The Python package manager), or `easy_install` (A more basic version of `pip`):
+Before you can run the bot, you need to install a few Python modules. These are `lXML` and `Enchant`.  These can be installed with `pip` (The Python package manager), or `easy_install` (A more basic version of `pip`):
 
-`[sudo] pip install lxml pyenchant urllib3 beautifulsoup`
+`[sudo] pip install lxml pyenchant`
 
 or
 
-`[sudo] easy_install lxml pyenchant urllib3 beautifulsoup`
+`[sudo] easy_install lxml pyenchant`
 
-#### Install `pip`
+#### How to install `pip`
 
 ```shell
 curl -O http://python-distribute.org/distribute_setup.py
@@ -50,6 +50,8 @@ easy_install pip
 Once you have installed the required dependencies, there are two ways you can run the bot:
 
 #### Launcher
+
+**Note:** Due to some issues with the launcher we recommend you run he bot manually as detailed below.
 
 The launcher will start the bot as a background process, and allow the bot to close and restart itself. This is only supported on unix-like machines (not Windows).
 
@@ -99,7 +101,7 @@ If you think you have found a bug/have a idea/suggestion, please **open a issue*
 
 CloudBot runs on **Python** *2.7.x*. It is developed on **Ubuntu** *12.04* with **Python** *2.7.3*.
 
-It **requires Python modules** `lXML`, `Enchant`, `urllib3`, and `BeautifulSoup`.
+It **requires the Python module** `lXML`, and `Enchant` is needed for the spellcheck plugin.
 
 The programs `daemon` or `screen` are recomended for the launcher to run optimaly.
 

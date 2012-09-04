@@ -14,7 +14,7 @@ def eval_py(code, paste_multiline=True):
         status = "Python error: "
     else:
         status = "Code executed sucessfully: "
-        
+
     if "\n" in output and paste_multiline:
         return status + web.haste(output)
     else:

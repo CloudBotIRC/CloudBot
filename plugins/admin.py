@@ -1,8 +1,6 @@
-# Plugin made by iloveportalz0r, TheNoodle, Lukeroge and neersighted
 from util import hook
 import os
 import re
-import sys
 import json
 import time
 import subprocess

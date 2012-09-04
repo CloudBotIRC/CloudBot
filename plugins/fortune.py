@@ -1,5 +1,4 @@
 from util import hook
-import re
 import random
 
 with open("plugins/data/fortunes.txt") as f:

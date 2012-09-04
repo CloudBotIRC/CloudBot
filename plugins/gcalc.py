@@ -1,6 +1,4 @@
-import re
-
-from util import hook, http, misc
+from util import hook, http
 from bs4 import BeautifulSoup
 
 

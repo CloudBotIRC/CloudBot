@@ -104,8 +104,10 @@ def get_text_list(list_, last_word='or'):
     >>> get_text_list([])
     u''
     """
-    if len(list_) == 0: return ''
-    if len(list_) == 1: return list_[0]
+    if len(list_) == 0:
+        return ''
+    if len(list_) == 1:
+        return list_[0]
     return '%s %s %s' % (
         # Translators: This string is used as a separator between list elements
         (', ').join([i for i in list_][:-1]),

@@ -1,7 +1,4 @@
-
-from util import hook
-from util.web import isgd
-from urllib import quote_plus
+from util import hook, web, http
 
 
 @hook.command('gfy')
@@ -9,5 +6,5 @@ from urllib import quote_plus
 def lmgtfy(inp, bot=None):
     "lmgtfy [phrase] - Posts a google link for the specified phrase"
 
-    url = "http://lmgtfy.com/?q=%s" % quote_plus(inp)
-    return isgd(url, api_user, api_key)
+    url = "http://lmgtfy.com/?q=%s" % http.quote_plus(inp)
+    return web.isgd(url)

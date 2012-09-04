@@ -26,7 +26,6 @@ def help(inp, say=None, notice=None, input=None, conn=None, bot=None):
     commands = dict((value, key) for key, value in funcs.iteritems())
 
     if not inp:
-        length = 0
         out = ["", ""]
         well = []
         for x in commands:
@@ -41,8 +40,8 @@ def help(inp, say=None, notice=None, input=None, conn=None, bot=None):
         notice("Commands I recognise: " + out[0][1:])
         if out[1]:
             notice(out[1][1:])
-        notice("For detailed help, do '.help <example>' where <example> "\
-               "is the name of the command you want help for.")
+        notice("For detailed help, do '%shelp <example>' where <example> "\
+               "is the name of the command you want help for." % conn.conf["command_prefix"])
 
     else:
         if inp in commands:

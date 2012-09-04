@@ -1,22 +1,24 @@
 from util import hook, http, timesince
 from datetime import datetime
 
+api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
+
+
 @hook.command('l', autohelp=False)
 @hook.command(autohelp=False)
-def lastfm(inp, nick='', say=None, db=None, bot=None):
+def lastfm(inp, nick='', say=None, db=None, bot=None, notice=None):
     "lastfm [user] [dontsave] -- Displays the now playing (or last played)" \
     " track of LastFM user [user]."
     api_key = bot.config.get("api_keys", {}).get("lastfm")
     if not api_key:
         return "error: no api key set"
 
-    user = inp		
-	
-    api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
-
-    dontsave = user.endswith(" dontsave")
+    # check if the user asked us not to save his details
+    dontsave = inp.endswith(" dontsave")
     if dontsave:
-        user = user[:-9].strip().lower()
+        user = inp[:-9].strip().lower()
+    else:
+        user = inp
 
     db.execute("create table if not exists lastfm(nick primary key, acc)")
 
@@ -36,7 +38,7 @@ def lastfm(inp, nick='', say=None, db=None, bot=None):
 
     if not "track" in response["recenttracks"] or len(response["recenttracks"]["track"]) == 0:
         return 'No recent tracks for user "%s" found.' % user
-		
+
     tracks = response["recenttracks"]["track"]
 
     if type(tracks) == list:
@@ -54,7 +56,7 @@ def lastfm(inp, nick='', say=None, db=None, bot=None):
         time_listened = datetime.fromtimestamp(int(track["date"]["uts"]))
         time_since = timesince.timesince(time_listened)
         ending = ' (%s ago)' % time_since
-        
+
     else:
         return "error: could not parse track listing"
 
@@ -67,10 +69,10 @@ def lastfm(inp, nick='', say=None, db=None, bot=None):
         out += " by \x02%s\x0f" % artist
     if album:
         out += " from the album \x02%s\x0f" % album
-        
+
     # append ending based on what type it was
     out += ending
-		
+
     if inp and not dontsave:
         db.execute("insert or replace into lastfm(nick, acc) values (?,?)",
                      (nick.lower(), user))

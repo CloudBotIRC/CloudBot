@@ -10,7 +10,7 @@ paste_url = "http://paste.dmptr.com"
 def isgd(url):
     """ shortens a URL with the is.gd PAI """
     url = urlnorm.normalize(url.encode('utf-8'))
-    params = urllib.urlencode({'format': 'simple', 'url': url}) 
+    params = urllib.urlencode({'format': 'simple', 'url': url})
     return http.get("http://is.gd/create.php?%s" % params)
 
 

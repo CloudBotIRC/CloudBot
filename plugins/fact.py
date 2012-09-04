@@ -1,31 +1,36 @@
-import re
-from util import hook, http
-from bs4 import BeautifulSoup
+from util import hook, http, web
 
 
 @hook.command(autohelp=False)
 def fact(inp, say=False, nick=False):
     "fact -- Gets a random fact from OMGFACTS."
 
-    fact = None
-    while fact is None:
+    attempts = 0
+
+    while True:
         try:
-            fact, link = get_fact()
+            soup = http.get_soup('http://www.omg-facts.com/random')
         except:
-            pass
+            if attempts > 2:
+                return "Could not find a fact!"
+            else:
+                attempts += 1
+                continue
 
-    return u"%s [ %s ]" % (fact, link)
+        response = soup.find('a', {'class': 'surprise'})
+        link = response['href']
+        #fact = response.contents[0]
+        fact = ''.join(response.find(text=True))
 
+        if fact:
+            print fact
+            fact = http.unescape(fact.decode("utf-8")).strip()
+            break
+        else:
+            if attempts > 2:
+                return "Could not find a fact!"
+            else:
+                attempts += 1
+                continue
 
-def get_fact():
-    page = http.get('http://www.omg-facts.com/random')
-    soup = BeautifulSoup(page)
-    response = soup.find('a', {'class': 'surprise'})
-    link = response['href']
-
-    fact = response.contents[0]
-
-    if fact:
-        return (fact, link)
-    else:
-        raise nofact
+    return "%s - %s" % (fact, web.isgd(link))

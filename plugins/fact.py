@@ -19,11 +19,9 @@ def fact(inp, say=False, nick=False):
 
         response = soup.find('a', {'class': 'surprise'})
         link = response['href']
-        #fact = response.contents[0]
         fact = ''.join(response.find(text=True))
 
         if fact:
-            print fact
             fact = http.unescape(fact.decode("utf-8")).strip()
             break
         else:

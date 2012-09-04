@@ -6,10 +6,7 @@ import urllib
 import urllib2
 import urlparse
 
-from urllib import quote, quote_plus as _quote_plus
-from urllib2 import HTTPError, URLError
-
-
+from urllib import quote as _quote, quote_plus as _quote_plus
 
 from lxml import etree, html
 
@@ -30,8 +27,10 @@ def get(*args, **kwargs):
 def get_url(*args, **kwargs):
     return open(*args, **kwargs).geturl()
 
+
 def get_html(*args, **kwargs):
     return html.fromstring(get(*args, **kwargs))
+
 
 def get_xml(*args, **kwargs):
     return etree.fromstring(get(*args, **kwargs))
@@ -60,7 +59,7 @@ def open(url, query_params=None, user_agent=None, post_data=None,
         request.get_method = lambda: get_method
 
     request.add_header('User-Agent', user_agent)
-    
+
     if referer is not None:
         request.add_header('Referer', referer)
 
@@ -95,6 +94,10 @@ def to_utf8(s):
 
 def quote_plus(s):
     return _quote_plus(to_utf8(s))
+
+
+def quote(s):
+    return _quote(to_utf8(s))
 
 
 def unescape(s):

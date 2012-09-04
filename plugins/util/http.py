@@ -10,6 +10,9 @@ from urllib import quote as _quote, quote_plus as _quote_plus
 
 from lxml import etree, html
 
+# used in plugins that import this
+from urllib2 import URLError, HTTPError
+
 
 ua_cloudbot = 'Cloudbot/DEV http://github.com/lukeroge/cloudbot'
 

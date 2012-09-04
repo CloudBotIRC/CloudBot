@@ -1,7 +1,7 @@
 """ web.py - handy functions for web services """
 
 import http, urlnorm
-import json, urllib, urllib2
+import json, urllib
 
 short_url = "http://is.gd/create.php"
 paste_url = "http://paste.dmptr.com"
@@ -16,7 +16,6 @@ def isgd(url):
 
 def haste(text):
     """ pastes text to a hastebin server """
-    request = urllib2.Request(paste_url + "/documents", text)
-    response = urllib2.urlopen(request)
-    data = json.loads(response.read())
+    page = http.get(paste_url + "/documents", post_data=text)
+    data = json.loads(page)
     return("%s/%s.txt" % (paste_url, data['key']))

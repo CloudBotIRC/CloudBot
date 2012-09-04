@@ -6,7 +6,7 @@ import urllib
 import urllib2
 import urlparse
 
-from urllib import quote as _quote, quote_plus as _quote_plus
+from urllib import quote, quote_plus as _quote_plus
 
 from lxml import etree, html
 
@@ -97,10 +97,6 @@ def to_utf8(s):
 
 def quote_plus(s):
     return _quote_plus(to_utf8(s))
-
-
-def quote(s):
-    return _quote(to_utf8(s))
 
 
 def unescape(s):

@@ -44,37 +44,36 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
     append = False
 
     try:
-        head, tail = inp.split(None, 1)
+        word, data = inp.split(None, 1)
     except ValueError:
         return remember.__doc__
 
-    data = get_memory(db, head)
+    old_data = get_memory(db, word)
 
-    if tail[0] == '+':
+    if data.startswith('+') and old_data:
         append = True
-        # ignore + symbol
-        new = tail[1:]
-        _head, _tail = data.split(None, 1)
-        # data is stored with the input so ignore it when re-adding it
-        if len(tail) > 1 and tail[1] in (string.punctuation + ' '):
-            tail = _tail + new
+        # remove + symbol
+        new_data = data[1:]
+        # append new_data to the old_data
+        if len(new_data) > 1 and new_data[1] in (string.punctuation + ' '):
+            data = old_data + new_data
         else:
-            tail = _tail + ' ' + new
+            data = old_data + ' ' + new_data
 
     db.execute("replace into mem(word, data, nick) values"
-               " (lower(?),?,?)", (head, tail, nick))
+               " (lower(?),?,?)", (word, data, nick))
     db.commit()
 
-    if data:
+    if old_data:
         if append:
-            notice("Appending \x02%s\x02 to \x02%s\x02" % (new, data))
+            notice("Appending \x02%s\x02 to \x02%s\x02" % (new_data, old_data))
         else:
             notice('Remembering \x02%s\x02 for \x02%s\x02. Type ?%s to see it.'
-                % (tail, head, head))
-            notice('Previous data was \x02%s\x02' % data)
+                % (data, word, word))
+            notice('Previous data was \x02%s\x02' % old_data)
     else:
         notice('Remembering \x02%s\x02 for \x02%s\x02. Type ?%s to see it.'
-                % (tail, head, head))
+                % (data, word, word))
 
 
 @hook.command("f", adminonly=True)

@@ -25,7 +25,7 @@ def get_tells(db, user_to):
 
 @hook.singlethread
 @hook.event('PRIVMSG')
-def tellinput(paraml, input=None, notice=None, db=None, bot=None, nick=None):
+def tellinput(paraml, input=None, notice=None, db=None, bot=None, nick=None, conn=None):
     if 'showtells' in input.msg.lower():
         return
 
@@ -40,7 +40,7 @@ def tellinput(paraml, input=None, notice=None, db=None, bot=None, nick=None):
         reply = "%s sent you a message %s ago from %s: %s" % (user_from, reltime, chan,
                                               message)
         if len(tells) > 1:
-            reply += " (+%d more, .showtells to view)" % (len(tells) - 1)
+            reply += " (+%d more, %sshowtells to view)" % (len(tells) - 1, conn.conf["command_prefix"])
 
         db.execute("delete from tell where user_to=lower(?) and message=?",
                      (nick, message))

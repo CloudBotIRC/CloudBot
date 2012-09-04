@@ -1,14 +1,11 @@
 from util import hook, http
 
-from bs4 import BeautifulSoup
-
 fml_cache = []
 
 
 def refresh_cache():
     """ gets a page of random FMLs and puts them into a dictionary """
-    page = http.get('http://www.fmylife.com/random/')
-    soup = BeautifulSoup(page, 'lxml')
+    soup = http.get_soup('http://www.fmylife.com/random/')
 
     for e in soup.find_all('div', {'class': 'post article'}):
         id = int(e['id'])

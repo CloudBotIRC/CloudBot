@@ -1,5 +1,4 @@
 from util import hook, http
-from bs4 import BeautifulSoup
 
 
 @hook.command("math")
@@ -7,8 +6,7 @@ from bs4 import BeautifulSoup
 def calc(inp):
     "calc <term> -- Calculate <term> with Google Calc."
 
-    page = http.get('http://www.google.com/search', q=inp)
-    soup = BeautifulSoup(page, 'lxml')
+    soup = http.get_soup('http://www.google.com/search', q=inp)
 
     response = soup.find('h2', {'class': 'r'})
     if response is None:

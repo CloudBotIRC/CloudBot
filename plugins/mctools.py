@@ -45,9 +45,13 @@ def mclogin(inp, bot=None):
 @hook.command(autohelp=False)
 def mcstatus(inp, say=None):
     "mcstatus -- Checks the status various Mojang servers."
-    request = http.get("http://status.mojang.com/check")
 
-    # make the shitty json less shitty, cbf parsing it normally
+    try:
+        request = http.get("http://status.mojang.com/check")
+    except (http.URLError, http.HTTPError) as e:
+        return "Unable to get minecraft server status: %s" % e
+
+    # change the json from a list of dictionaies to a dictionary
     data = json.loads(request.replace("}", "").replace("{", "").replace("]", "}").replace("[", "{"))
 
     out = []

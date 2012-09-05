@@ -1,21 +1,15 @@
 from util import hook
 import os.path
-import csv
 import pygeoip
+import json
 
 # initalise geolocation database
 geo = pygeoip.GeoIP(os.path.abspath("./plugins/data/geoip.dat"))
 
 
-regions = {}
-# read region database
-with open("./plugins/data/geoip_regions.csv", "rb") as f:
-    reader = csv.reader(f)
-    for row in reader:
-        country, region, region_name = row
-        if not regions.has_key(country):
-            regions[country] = {}
-        regions[country][region] = region_name
+# load region database
+with open("./plugins/data/geoip_regions.json", "rb") as f:
+    regions = json.loads(f.read())
 
 
 @hook.command

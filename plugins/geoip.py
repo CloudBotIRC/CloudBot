@@ -14,4 +14,7 @@ def geoip(inp):
     except:
         return "Sorry, I can't locate that in my database."
 
-    return "Country: %(country_name)s (%(country_code)s), City: %(city)s" % record
+    record["_cc"] = record["country_code"] or "N/A"
+    record["_country"] = record["country_name"] or "Unknown"
+    record["_city"] = record["metro_code"] or record["city"] or "Unknown"
+    return "Country: %(_country)s (%(_cc)s), City: %(_city)s" % record

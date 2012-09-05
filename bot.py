@@ -14,6 +14,7 @@ import os
 import Queue
 import sys
 import time
+import platform
 
 sys.path += ['plugins']  # so 'import hook' works without duplication
 sys.path += ['lib']
@@ -24,6 +25,16 @@ class Bot(object):
     pass
 
 print 'CloudBot %s (%s) <http://git.io/cloudbotirc>' % (__version__, __status__)
+
+# print debug info
+opsys = platform.platform()
+python_imp = platform.python_implementation()
+python_ver = platform.python_version()
+architecture = ' '.join(platform.architecture())
+
+print "Operating System: %s, Python " \
+        "Version: %s %s, Architecture: %s" \
+        "" % (opsys, python_imp, python_ver, architecture)
 
 bot = Bot()
 bot.start_time = time.time()

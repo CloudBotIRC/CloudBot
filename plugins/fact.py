@@ -7,6 +7,7 @@ def fact(inp, say=False, nick=False):
 
     attempts = 0
 
+    # all of this is because omgfacts is fail
     while True:
         try:
             soup = http.get_soup('http://www.omg-facts.com/random')
@@ -22,7 +23,7 @@ def fact(inp, say=False, nick=False):
         fact = ''.join(response.find(text=True))
 
         if fact:
-            fact = http.unescape(fact.decode("utf-8")).strip()
+            fact = http.unescape(unicode(fact)).strip()
             break
         else:
             if attempts > 2:

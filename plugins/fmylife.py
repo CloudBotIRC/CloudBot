@@ -10,7 +10,6 @@ def refresh_cache():
     for e in soup.find_all('div', {'class': 'post article'}):
         id = int(e['id'])
         text = ''.join(e.find('p').find_all(text=True))
-        text = http.unescape(text)
         fml_cache.append((id, text))
 
 # do an initial refresh of the cache

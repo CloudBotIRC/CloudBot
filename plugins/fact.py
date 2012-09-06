@@ -23,7 +23,7 @@ def fact(inp, say=False, nick=False):
         fact = ''.join(response.find(text=True))
 
         if fact:
-            fact = http.unescape(unicode(fact)).strip()
+            fact = fact.strip()
             break
         else:
             if attempts > 2:

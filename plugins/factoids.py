@@ -132,16 +132,22 @@ def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
     data = get_memory(db, factoid_id)
 
     if data:
-        # if the factoid starts with <py>, its a dynamic one
+        # factoid preprocessors
         if data.startswith("<py>"):
-            data = data[4:].strip()
+            code = data[4:].strip()
             variables = 'input="""%s"""; nick="%s"; chan="%s"; bot_nick="%s";' % (arguments.replace('"', '\\"'),
                          input.nick, input.chan, input.conn.nick)
-            result = eval_py(variables + data)
-
+            result = eval_py(variables + code)
+        elif data.startswith("<url>"):
+            url = data[5:].strip()
+            try:
+                result = http.get(url)
+            except http.HttpError:
+                result = "Could not fetch URL."
         else:
             result = data
 
+        # factoid postprocessors
         result = multiword_replace(result, shortcodes)
 
         if result.startswith("<act>"):

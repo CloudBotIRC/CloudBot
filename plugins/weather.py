@@ -1,94 +1,66 @@
-from util import hook, http
-
-api_url = "http://weather.yahooapis.com/forecastrss"
+from util import hook
+import yql
 
 
 def get_weather(location_id):
     """uses the yahoo weather API to get weather information for a location"""
 
-    xml = http.get_xml(api_url, p=location_id)
-    data = xml.xpath('//y:location', \
-        namespaces={'y': 'http://xml.weather.yahoo.com/ns/rss/1.0'})[0]
+    y = yql.Public()
+    query = 'select * from weather.forecast where woeid = "{}"'.format(location_id)
+    data = y.execute(query).one()
 
-    # create a dictionary for weather data
-    weather = {}
-
-    weather['city'] = data.get('city')
-    weather['region'] = data.get('region')
-    weather['country'] = data.get('country')
-
-    # get wind information
-    wind = xml.xpath('//y:wind', \
-        namespaces={'y': 'http://xml.weather.yahoo.com/ns/rss/1.0'})[0]
-
-    # wind chill
-    weather['chill_f'] = wind.get('chill')
-    weather['chill_c'] = int(round((int(wind.get('chill')) - 32) / 1.8, 0))
-
-    # wind speed
-    weather['wind_speed_kph'] = int(round(float(wind.get('speed')) * 1.609344))
-    weather['wind_speed_mph'] = wind.get('speed')
-
-    # wind_direction
-    weather['wind_direction'] = wind.get('direction')
+    # wind conversions
+    data['wind']['chill_c'] = int(round((int(data['wind']['chill']) - 32) / 1.8, 0))
+    data['wind']['speed_kph'] = int(round(float(data['wind']['speed']) * 1.609344))
 
     # textual wind direction
-    direction = weather['wind_direction']
+    direction = data['wind']['direction']
     if direction >= 0 and direction < 45:
-        weather['wind_direction_text'] = 'N'
+        data['wind']['text'] = 'N'
     elif direction >= 45 and direction < 90:
-        weather['wind_direction_text'] = 'NE'
+        data['wind']['text'] = 'NE'
     elif direction >= 90 and direction < 135:
-        weather['wind_direction_text'] = 'E'
+        data['wind']['text'] = 'E'
     elif direction >= 135 and direction < 180:
-        weather['wind_direction_text'] = 'SE'
+        data['wind']['text'] = 'SE'
     elif direction >= 180 and direction < 225:
-        weather['wind_direction_text'] = 'S'
+        data['wind']['text'] = 'S'
     elif direction >= 225 and direction < 270:
-        weather['wind_direction_text'] = 'SW'
+        data['wind']['text'] = 'SW'
     elif direction >= 270 and direction < 315:
-        weather['wind_direction_text'] = 'W'
+        data['wind']['text'] = 'W'
     elif direction >= 315 and direction < 360:
-        weather['wind_direction_text'] = 'NW'
+        data['wind']['text'] = 'NW'
     else:
-        weather['wind_direction_text'] = 'N'
+        data['wind']['text'] = 'N'
 
-    # humidity, visibility and pressure
-    atmosphere = xml.xpath('//y:atmosphere', \
-        namespaces={'y': 'http://xml.weather.yahoo.com/ns/rss/1.0'})[0]
-    weather['humidity'] = atmosphere.get('humidity') + "%"
-    weather['visibility_mi'] = atmosphere.get('visibility')
-    weather['visibility_km'] = \
-        int(round(float(atmosphere.get('visibility')) * 1.609344))
-    weather['pressure_in'] = atmosphere.get('pressure')
-    weather['pressure_mb'] = \
-        str(round((float(atmosphere.get('pressure')) * 33.8637526), 2))
+    # visibility and pressure conversions
+    data['atmosphere']['visibility_km'] = \
+        int(round(float(data['atmosphere']['visibility']) * 1.609344))
+    data['atmosphere']['visibility_km'] = \
+        str(round((float(data['atmosphere']['visibility']) * 33.8637526), 2))
 
     # textual value for air pressure
-    rising = int(atmosphere.get('rising'))
+    rising = data['atmosphere']['rising']
     if rising == 0:
-        weather['pressure_tendancy'] = 'steady'
+        data['atmosphere']['tendancy'] = 'steady'
     elif rising == 1:
-        weather['pressure_tendancy'] = 'rising'
+        data['atmosphere']['tendancy'] = 'rising'
     elif rising == 2:
-        weather['pressure_tendancy'] = 'falling'
+        data['atmosphere']['tendancy'] = 'falling'
 
-    # weather condition code, temperature, summary text
-    condition = xml.xpath('//y:condition', \
-        namespaces={'y': 'http://xml.weather.yahoo.com/ns/rss/1.0'})[0]
-    weather['code'] = condition.get('code')
-    weather['temp_f'] = condition.get('temp')
-    weather['temp_c'] = \
-        int(round(((float(condition.get('temp')) - 32) / 9) * 5))
-    weather['conditions'] = condition.get('text')
+    # current conditions
+    data['item']['condition']['temp_c'] = \
+        int(round(((float(data['item']['condition']['temp']) - 32) / 9) * 5))
 
-    # sunset and sunrise
-    sun = xml.xpath('//y:astronomy', \
-        namespaces={'y': 'http://xml.weather.yahoo.com/ns/rss/1.0'})[0]
-    weather['sunrise'] = sun.get('sunrise')
-    weather['sunset'] = sun.get('sunset')
+    # forecasts
+    for i in data['item']['forecast']:
+        i['high_c'] = \
+        int(round(((float(i['high']) - 32) / 9) * 5))
+        i['low_c'] = \
+        int(round(((float(i['high']) - 32) / 9) * 5))
 
-    return weather
+    return data
 
 
 @hook.command(autohelp=False)
@@ -97,11 +69,11 @@ def weather(inp, nick='', server='', reply=None, db=None, notice=None):
     " for <location> from Google."
 
     # initalise weather DB
-    db.execute("create table if not exists yahoo_weather(nick primary key, location_id)")
+    db.execute("create table if not exists y_weather(nick primary key, location_id)")
 
     # if there is no input, try getting the users last location from the DB
     if not inp:
-        location_id = db.execute("select location_id from yahoo_weather where nick=lower(?)",
+        location_id = db.execute("select location_id from y_weather where nick=lower(?)",
                              [nick]).fetchone()
         if not location_id:
             # no location saved in the database, send the user help text
@@ -122,20 +94,22 @@ def weather(inp, nick='', server='', reply=None, db=None, notice=None):
             location = inp
 
         # get the weather.com location id from the location
-        w = http.get_xml('http://xoap.weather.com/search/search', where=location)
+        query = 'select * from geo.places where text = "{}" limit 1'.format(location)
 
-        try:
-            location_id = w.find('loc').get('id')
-        except AttributeError:
-            return "Unknown location."
+        y = yql.Public()
+        results = y.execute(query).one()
+        location_id = results.get("woeid")
 
     # now, to get the actual weather
-    data = get_weather(location_id)
+    d = get_weather(location_id)
 
-    reply('Current Conditions for \x02%(city)s\x02 - %(conditions)s, %(temp_f)sF/%(temp_c)sC, %(humidity)s, ' \
-          'Wind: %(wind_speed_kph)sKPH/%(wind_speed_mph)sMPH %(wind_direction_text)s.' % data)
+    reply("Current Conditions for \x02{}\x02 - {}, {}F/{}C, {}%, " \
+            "Wind: {}KPH/{}MPH {}.".format(d['location']['city'], \
+            d['item']['condition']['text'], d['item']['condition']['temp'], \
+            d['item']['condition']['temp_c'], d['atmosphere']['humidity'], \
+             d['wind']['speed_kph'], d['wind']['speed'], d['wind']['text']))
 
     if location_id and not dontsave:
-        db.execute("insert or replace into yahoo_weather(nick, location_id) values (?,?)",
+        db.execute("insert or replace into y_weather(nick, location_id) values (?,?)",
                      (nick.lower(), location_id))
         db.commit()

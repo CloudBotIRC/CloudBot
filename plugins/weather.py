@@ -121,7 +121,7 @@ def weather(inp, nick="", reply=None, db=None, notice=None):
 
     reply("\x02{place}\x02 - \x02Current Conditions:\x02 {conditions}, {temp_f}F/{temp_c}C, Humidity: {humidity}%, " \
             "Wind: {wind_kph}KPH/{wind_mph}MPH {wind_text}, \x02Todays Forecast:\x02 {forecast}, " \
-            "High: {high_f}F/{low_c}C, Low: {low_f}F/{low_c}C.".format(**weather))
+            "High: {high_f}F/{high_c}C, Low: {low_f}F/{low_c}C.".format(**weather))
 
     if location and not dontsave:
         db.execute("insert or replace into weather(nick, loc) values (?,?)",

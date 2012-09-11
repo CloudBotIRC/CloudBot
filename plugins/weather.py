@@ -61,7 +61,7 @@ def get_weather(location):
         i['high_c'] = \
         int(round(((float(i['high']) - 32) / 9) * 5))
         i['low_c'] = \
-        int(round(((float(i['high']) - 32) / 9) * 5))
+        int(round(((float(i['low']) - 32) / 9) * 5))
 
     return data
 

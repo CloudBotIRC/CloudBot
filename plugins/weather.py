@@ -103,7 +103,7 @@ def weather(inp, nick="", reply=None, db=None, notice=None):
         return "Could not get weather for that location."
 
     # put all the stuff we want to use in a dictionary for easy formatting of the output
-    weather = {
+    weather_data = {
         "place": data['location']['city'],
         "conditions": data['item']['condition']['text'],
         "temp_f": data['item']['condition']['temp'],
@@ -120,8 +120,8 @@ def weather(inp, nick="", reply=None, db=None, notice=None):
     }
 
     reply("\x02{place}\x02 - \x02Current Conditions:\x02 {conditions}, {temp_f}F/{temp_c}C, Humidity: {humidity}%, " \
-            "Wind: {wind_kph}KPH/{wind_mph}MPH {wind_text}, \x02Todays Forecast:\x02 {forecast}, " \
-            "High: {high_f}F/{high_c}C, Low: {low_f}F/{low_c}C.".format(**weather))
+            "Wind: {wind_kph}KPH/{wind_mph}MPH {wind_text}, \x02Today's Forecast:\x02 {forecast}, " \
+            "High: {high_f}F/{high_c}C, Low: {low_f}F/{low_c}C.".format(**weather_data))
 
     if location and not dontsave:
         db.execute("insert or replace into weather(nick, loc) values (?,?)",

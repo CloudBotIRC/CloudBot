@@ -6,9 +6,9 @@ def get_weather(location):
     """uses the yahoo weather API to get weather information for a location"""
 
     yql = YQL.Public()
-    query = "use 'http://github.com/yql/yql-tables/raw/master/weather/weather.bylocation.xml' as we;" \
-            "SELECT * FROM we WHERE location=@location LIMIT 1"
-    data = yql.execute(query, {"location": location}).one()
+    enviroment = "http://datatables.org/alltables.env"
+    query = "SELECT * FROM weather.bylocation WHERE location=@location LIMIT 1"
+    data = yql.execute(query, {"location": location}, env=enviroment).one()
 
     data = data["rss"]["channel"]
 

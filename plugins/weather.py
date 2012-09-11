@@ -102,8 +102,8 @@ def weather(inp, nick="", reply=None, db=None, notice=None):
     except KeyError:
         return "Could not get weather for that location."
 
-    reply("Current Conditions for \x02{}\x02 - {}, {}F/{}C, {}%, " \
-            "Wind: {}KPH/{}MPH {}.".format(d['location']['city'], \
+    reply("\x02{}\x02 - \x02Current Conditions:\x02 {}, {}F/{}C, {}%, " \
+            "Wind: {}KPH/{}MPH {}, \x02Todays Forecast:\x02 N/A".format(d['location']['city'], \
             d['item']['condition']['text'], d['item']['condition']['temp'], \
             d['item']['condition']['temp_c'], d['atmosphere']['humidity'], \
              d['wind']['speed_kph'], d['wind']['speed'], d['wind']['text']))

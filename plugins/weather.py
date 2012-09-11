@@ -98,15 +98,30 @@ def weather(inp, nick="", reply=None, db=None, notice=None):
 
     # now, to get the actual weather
     try:
-        d = get_weather(location)
+        data = get_weather(location)
     except KeyError:
         return "Could not get weather for that location."
 
-    reply("\x02{}\x02 - \x02Current Conditions:\x02 {}, {}F/{}C, {}%, " \
-            "Wind: {}KPH/{}MPH {}, \x02Todays Forecast:\x02 N/A".format(d['location']['city'], \
-            d['item']['condition']['text'], d['item']['condition']['temp'], \
-            d['item']['condition']['temp_c'], d['atmosphere']['humidity'], \
-             d['wind']['speed_kph'], d['wind']['speed'], d['wind']['text']))
+    # put all the stuff we want to use in a dictionary for easy formatting of the output
+    weather = {
+        "place": data['location']['city'],
+        "conditions": data['item']['condition']['text'],
+        "temp_f": data['item']['condition']['temp'],
+        "temp_c": data['item']['condition']['temp_c'],
+        "humidity": data['atmosphere']['humidity'],
+        "wind_kph": data['wind']['speed_kph'],
+        "wind_mph": data['wind']['speed'],
+        "wind_text": data['wind']['text'],
+        "forecast": data['item']['forecast'][0]['text'],
+        "high_f": data['item']['forecast'][0]['high'],
+        "high_c": data['item']['forecast'][0]['high_c'],
+        "low_f": data['item']['forecast'][0]['low'],
+        "low_c": data['item']['forecast'][0]['low_c']
+    }
+
+    reply("\x02{place}\x02 - \x02Current Conditions:\x02 {conditions}, {temp_f}F/{temp_c}C, Humidity: {humidity}%, " \
+            "Wind: {wind_kph}KPH/{wind_mph}MPH {wind_text}, \x02Todays Forecast:\x02 {forecast}, " \
+            "High: {high_f}F/{low_c}C, Low: {low_f}F/{low_c}C.".format(**weather))
 
     if location and not dontsave:
         db.execute("insert or replace into weather(nick, loc) values (?,?)",

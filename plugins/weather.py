@@ -1,13 +1,16 @@
 from util import hook
-import yql
+import yql as YQL
 
 
-def get_weather(location_id):
+def get_weather(location):
     """uses the yahoo weather API to get weather information for a location"""
 
-    y = yql.Public()
-    query = 'select * from weather.forecast where woeid = "{}"'.format(location_id)
-    data = y.execute(query).one()
+    yql = YQL.Public()
+    query = "use 'http://github.com/yql/yql-tables/raw/master/weather/weather.bylocation.xml' as we;" \
+            "SELECT * FROM we WHERE location=@location LIMIT 1"
+    data = yql.execute(query, {"location": location}).one()
+
+    data = data["rss"]["channel"]
 
     # wind conversions
     data['wind']['chill_c'] = int(round((int(data['wind']['chill']) - 32) / 1.8, 0))
@@ -64,22 +67,22 @@ def get_weather(location_id):
 
 
 @hook.command(autohelp=False)
-def weather(inp, nick='', server='', reply=None, db=None, notice=None):
+def weather(inp, nick="", reply=None, db=None, notice=None):
     "weather <location> [dontsave] -- Gets weather data"\
-    " for <location> from Google."
+    " for <location> from Yahoo."
 
     # initalise weather DB
-    db.execute("create table if not exists y_weather(nick primary key, location_id)")
+    db.execute("create table if not exists weather(nick primary key, loc)")
 
     # if there is no input, try getting the users last location from the DB
     if not inp:
-        location_id = db.execute("select location_id from y_weather where nick=lower(?)",
+        location = db.execute("select loc from weather where nick=lower(?)",
                              [nick]).fetchone()
-        if not location_id:
+        if not location:
             # no location saved in the database, send the user help text
             notice(weather.__doc__)
             return
-        location_id = location_id[0]
+        location = location[0]
 
         # no need to save a location, we already have it
         dontsave = True
@@ -93,15 +96,11 @@ def weather(inp, nick='', server='', reply=None, db=None, notice=None):
         else:
             location = inp
 
-        # get the weather.com location id from the location
-        query = 'select * from geo.places where text = "{}" limit 1'.format(location)
-
-        y = yql.Public()
-        results = y.execute(query).one()
-        location_id = results.get("woeid")
-
     # now, to get the actual weather
-    d = get_weather(location_id)
+    try:
+        d = get_weather(location)
+    except KeyError:
+        return "Could not get weather for that location."
 
     reply("Current Conditions for \x02{}\x02 - {}, {}F/{}C, {}%, " \
             "Wind: {}KPH/{}MPH {}.".format(d['location']['city'], \
@@ -109,7 +108,7 @@ def weather(inp, nick='', server='', reply=None, db=None, notice=None):
             d['item']['condition']['temp_c'], d['atmosphere']['humidity'], \
              d['wind']['speed_kph'], d['wind']['speed'], d['wind']['text']))
 
-    if location_id and not dontsave:
-        db.execute("insert or replace into y_weather(nick, location_id) values (?,?)",
-                     (nick.lower(), location_id))
+    if location and not dontsave:
+        db.execute("insert or replace into weather(nick, loc) values (?,?)",
+                     (nick.lower(), location))
         db.commit()

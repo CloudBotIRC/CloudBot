@@ -1,4 +1,3 @@
-import re
 import socket
 import time
 
@@ -13,8 +12,6 @@ def invite(paraml, conn=None):
     invite_join = conn.conf.get('invite_join', True)
     if invite_join:
         conn.join(paraml[-1])
-    else:
-        return None
 
 
 # Identify to NickServ (or other service)
@@ -40,7 +37,7 @@ def onjoin(paraml, conn=None, bot=None):
         conn.join(channel)
         time.sleep(1)
 
-    print "onjoin() sucessfully completed."
+    print "Bot ready."
 
 
 @hook.event("KICK")
@@ -51,8 +48,7 @@ def onkick(paraml, conn=None, chan=None):
         auto_rejoin = conn.conf.get('auto_rejoin', False)
         if auto_rejoin:
             conn.join(paraml[0])
-        else:
-            return None
+
 
 @hook.singlethread
 @hook.event('004')

@@ -15,7 +15,7 @@ def coin(inp, me=None):
         amount = 1
 
     if amount == 1:
-        if getrandbits(1):
+        if random.getrandbits(1):
             me("flips a coin and gets heads.")
         else:
             me("flips a coin and gets tails.")

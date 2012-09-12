@@ -6,9 +6,12 @@ import random
 def coin(inp, me=None):
     "coin [amount] -- Flips [amount] of coins."
 
-    try:
-        amount = int(inp)
-    except ValueError:
+    if inp:
+        try:
+            amount = int(inp)
+        except (ValueError, TypeError):
+            return "Invalid input!"
+    else:
         amount = 1
 
     if amount == 1:

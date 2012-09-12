@@ -9,7 +9,7 @@ def coin(inp, me=None):
     try:
         amount = int(inp)
     except ValueError:
-        return "Invalid input!"
+        amount = 1
 
     if amount == 1:
         if getrandbits(1):

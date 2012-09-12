@@ -15,10 +15,6 @@ def coin(inp, me=None):
         amount = 1
 
     if amount == 1:
-        if random.getrandbits(1):
-            me("flips a coin and gets heads.")
-        else:
-            me("flips a coin and gets tails.")
         me("flips a coin and gets %s." % random.choice(["heads", "tails"]))
     elif amount == 0:
         me("makes a coin flipping motion with its hands.")

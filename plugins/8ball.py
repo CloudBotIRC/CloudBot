@@ -9,7 +9,7 @@ color_codes = {
 }
 
 with open("plugins/data/8ball_responses.txt") as f:
-    responses = [multiword_replace(line.strip(), color_codes) for line in
+    responses = [line.strip() for line in
         f.readlines()if not line.startswith("//")]
 
 
@@ -19,5 +19,5 @@ def eightball(input, me=None):
     "in electronic form. Ask and it shall be answered!"
 
     # here we use voodoo magic to tell the future
-    magic = random.choice(responses)
+    magic = multiword_replace(random.choice(responses), color_codes)
     me("shakes the magic 8 ball... %s" % magic)

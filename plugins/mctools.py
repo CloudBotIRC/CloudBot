@@ -54,13 +54,6 @@ def mcstatus(inp, say=None):
     # change the json from a list of dictionaies to a dictionary
     data = json.loads(request.replace("}", "").replace("{", "").replace("]", "}").replace("[", "{"))
 
-    # check if skins are online
-    try:
-        request = http.get("http://s3.amazonaws.com/MinecraftSkins/Shnaw.png")
-        data["minecraft skin server"] = "green"
-    except (http.URLError, http.HTTPError) as e:
-        data["minecraft skin server"] = "red"
-
     out = []
     # use a loop so we don't have to update it if they add more servers
     for server, status in data.items():

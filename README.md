@@ -111,11 +111,11 @@ The programs `daemon` or `screen` are recomended for the launcher to run optimal
 
 The developers of CloudBot run two CloudBots on [Espernet](http://esper.net).
 
-They can both be found in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via IRC to #CloudBot on irc.esper.net).
+They can both be found in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via IRC to #CloudBot on irc.esper.net").
 
 **mau5bot** is the semi-stable bot, and runs on the latest stable development version of CloudBot. (mau5bot is running on **Ubuntu Server** *12.04* with **Python** *2.7.3*)
 
-**neerbot** is currently running an outdated version of the develop branch. (neerbot is running on **Debian** *Wheezy/Testing* with **Python** *2.7.2*)
+**neerbot** is unstable bot, and runs on the `HEAD` of the `develop` branch. (neerbot is running on **Debian** *Wheezy/Testing* with **Python** *2.7.2*)
 
 ## License
 

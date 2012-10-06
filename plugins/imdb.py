@@ -7,7 +7,7 @@ from util import hook, http
 def imdb(inp):
     "imdb <movie> -- Gets information about <movie> from IMDb."
 
-    content = http.get_json("http://www.imdbapi.com/", t=inp)
+    content = http.get_json("http://www.omdbapi.com/", t=inp)
 
     if content['Response'] == 'Movie Not Found':
         return 'movie not found'

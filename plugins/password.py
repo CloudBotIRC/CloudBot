@@ -11,7 +11,7 @@ def password(inp, notice=None):
 
     # find the length needed for the password
     numb = inp.split(" ")
-    
+
     try:
         length = int(numb[0])
     except ValueError:
@@ -38,7 +38,7 @@ def password(inp, notice=None):
         okay = okay + list(string.ascii_lowercase)
 
     password = ""
-    
+
     # generates password
     for x in range(length):
         password = password + random.choice(okay)

@@ -1,0 +1,81 @@
+{
+    "name": "Babylon 5 Narn names", 
+    "author": "Kevin G. Nunn",
+    "templates": {
+        "default": "{first}{mid}{final}"
+    }, 
+    "default_templates": [
+        "default"
+    ], 
+    "parts": {
+        "final": [
+            "ch", 
+            "k", 
+            "kk", 
+            "l", 
+            "n", 
+            "r", 
+            "th", 
+            "s"
+        ], 
+        "mid": [
+            "Ba", 
+            "Bo", 
+            "Da", 
+            "Do", 
+            "Ga", 
+            "Ge", 
+            "Go", 
+            "Ka", 
+            "Ko", 
+            "La", 
+            "Le", 
+            "Lo", 
+            "Ma", 
+            "Mo", 
+            "Na", 
+            "No", 
+            "Oo", 
+            "Pa", 
+            "Po", 
+            "Qua", 
+            "Quo", 
+            "Ra", 
+            "Rala", 
+            "Ro", 
+            "Sha", 
+            "Shali", 
+            "Ska", 
+            "Skali", 
+            "Sta", 
+            "Ste", 
+            "Sto", 
+            "Ta", 
+            "Te", 
+            "Tee", 
+            "To", 
+            "Tha", 
+            "Tho", 
+            "Va", 
+            "Vo", 
+            "Vy", 
+            "Wa"
+        ], 
+        "first": [
+            "Ch'", 
+            "Do'", 
+            "G'", 
+            "Gre'", 
+            "Mak'", 
+            "Na'", 
+            "Re'", 
+            "Sh'", 
+            "So'", 
+            "T'", 
+            "Ta'", 
+            "Th'", 
+            "Thu'", 
+            "Tu'"
+        ]
+    }
+}

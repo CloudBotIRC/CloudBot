@@ -53,6 +53,9 @@ def namegen(inp, notice=None):
     "namegen [generator] -- Generates some names using the chosen generator. " \
     "'namegen list' will display a list of all generators."
 
+    # clean and split up the input
+    args = inp.strip().lower().split()
+
     # get a list of available name generators
     files = os.listdir(GEN_DIR)
     all_modules = []
@@ -60,14 +63,14 @@ def namegen(inp, notice=None):
         all_modules.append(os.path.splitext(i)[0])
 
     # command to return a list of all available generators
-    if inp == "list":
+    if args[0] == "list":
         message = "Available generators: "
         message += get_text_list(all_modules, 'and')
         notice(message)
         return
 
     if inp:
-        selected_module = inp.split(' ')[0]
+        selected_module = args[0]
     else:
         # make some generic fantasy names
         selected_module = ["fantasy"]

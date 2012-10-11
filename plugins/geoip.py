@@ -20,7 +20,6 @@ def geoip(inp):
     except:
         return "Sorry, I can't locate that in my database."
 
-    print record
     data = {}
 
     if "region_name" in record:
@@ -36,4 +35,4 @@ def geoip(inp):
     data["cc"] = record["country_code"] or "N/A"
     data["country"] = record["country_name"] or "Unknown"
     data["city"] = record["city"] or "Unknown"
-    return "\x02Country:\x02 %(country)s (%(cc)s), \x02City:\x02 %(city)s%(region)s" % data
+    return "\x02Country:\x02 {country} ({cc}), \x02City:\x02 {city}{region}".format(**data)

@@ -1,0 +1,54 @@
+{
+    "name": "Dwarven names",
+    "author": "Johan Danforth",
+    "templates": {
+        "default": "{first}{mid}{final}"
+    }, 
+    "default_templates": [
+        "default"
+    ], 
+    "parts": {
+        "final": [
+            "bur", 
+            "fur", 
+            "gan", 
+            "gnus", 
+            "gnar", 
+            "li", 
+            "lin", 
+            "lir", 
+            "mli", 
+            "nar", 
+            "nus", 
+            "rin", 
+            "ran", 
+            "sin", 
+            "sil", 
+            "sur"
+        ], 
+        "mid": [
+            "a", 
+            "e", 
+            "i", 
+            "o", 
+            "oi", 
+            "u"
+        ], 
+        "first": [
+            "B", 
+            "D", 
+            "F", 
+            "G", 
+            "Gl", 
+            "H", 
+            "K", 
+            "L", 
+            "M", 
+            "N", 
+            "R", 
+            "S", 
+            "T", 
+            "V"
+        ]
+    }
+}

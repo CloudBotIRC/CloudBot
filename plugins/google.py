@@ -1,7 +1,5 @@
 import random
-from util import hook, http
-
-from util.text import truncate_words
+from util import hook, http, text
 
 
 def api_get(kind, query):
@@ -43,13 +41,15 @@ def google(inp):
     result = parsed['responseData']['results'][0]
 
     title = http.unescape(result['titleNoFormatting'])
+    title = text.truncate_str(title, 60)
     content = http.unescape(result['content'])
 
     if not content:
         content = "No description available."
     else:
         content = http.html.fromstring(content).text_content()
+        content = text.truncate_str(content, 150)
 
     out = '%s -- \x02%s\x02: "%s"' % (result['unescapedUrl'], title, content)
 
-    return truncate_words(out, 300)
+    return out

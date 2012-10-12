@@ -1,5 +1,4 @@
-from util import hook, http
-from util.text import truncate_words
+from util import hook, http, text
 
 base_url = 'http://www.urbandictionary.com/iphone/search/define'
 
@@ -31,10 +30,10 @@ def urban(inp):
 
     # try getting the requested definition
     try:
-        output = "[%i/%i] %s: %s" % \
+        output = u"[%i/%i] %s: %s" % \
               (id, len(defs), defs[id - 1]['word'],
               defs[id - 1]['definition'].replace('\r\n', ' '))
     except IndexError:
         return 'Not found.'
 
-    return truncate_words(output, 400)
+    return text.truncate_str(output, 250)

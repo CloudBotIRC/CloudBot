@@ -1,11 +1,6 @@
 import re
 
-from util import hook, http
-
-from urllib import quote_plus
-from urllib2 import HTTPError
-from util.web import isgd
-from util.text import truncate_words
+from util import hook, http, text, web
 
 
 @hook.command('wa')
@@ -24,10 +19,10 @@ def wolframalpha(inp, bot=None):
 
     # get the URL for a user to view this query in a browser
     query_url = "http://www.wolframalpha.com/input/?i=" + \
-                quote_plus(inp.encode('utf-8'))
+                http.quote_plus(inp.encode('utf-8'))
     try:
-        short_url = isgd(query_url)
-    except (HTTPError):
+        short_url = web.isgd(query_url)
+    except (http.HTTPError):
         short_url = query_url
 
     pod_texts = []
@@ -57,8 +52,8 @@ def wolframalpha(inp, bot=None):
 
     ret = re.sub(r'\\:([0-9a-z]{4})', unicode_sub, ret)
 
-    ret = truncate_words(ret, 410)
-    
+    ret = text.truncate_str(ret, 250)
+
     if not ret:
         return 'No results.'
 

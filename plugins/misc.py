@@ -1,9 +1,12 @@
 import socket
 import time
+import re
 
 from util import hook
 
 socket.setdefaulttimeout(10)
+
+nick_re = re.compile(":(.+?)!")
 
 
 # Auto-join on Invite (Configurable, defaults to True)
@@ -48,6 +51,15 @@ def onkick(paraml, conn=None, chan=None):
         auto_rejoin = conn.conf.get('auto_rejoin', False)
         if auto_rejoin:
             conn.join(paraml[0])
+
+
+@hook.event("NICK")
+def onnick(paraml, conn=None, raw=None):
+    old_nick = nick_re.search(raw).group(1)
+    new_nick = str(paraml[0])
+    if old_nick == conn.nick:
+        conn.nick = new_nick
+        print "Bot nick changed from '{}' to '{}'.".format(old_nick, new_nick)
 
 
 @hook.singlethread

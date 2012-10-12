@@ -22,7 +22,7 @@ def wolframalpha(inp, bot=None):
                 http.quote_plus(inp.encode('utf-8'))
     try:
         short_url = web.isgd(query_url)
-    except (http.HTTPError):
+    except (web.ShortenError, http.HTTPError):
         short_url = query_url
 
     pod_texts = []

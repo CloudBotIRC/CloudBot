@@ -42,12 +42,12 @@ normalizers = ( Normalizer( re.compile(r'(?:https?://)?(?:[a-zA-Z0-9\-]+\.)?(?:a
                             lambda m: r'http://amazon.%s/dp/%s' % (m.group('tld'), m.group('ASIN'))),
                 Normalizer( re.compile(r'.*waffleimages\.com.*/([0-9a-fA-F]{40})'),
                             lambda m: r'http://img.waffleimages.com/%s' % m.group(1) ),
-                Normalizer( re.compile(r'(?:youtube.*?(?:v=|/v/)|youtu\.be/|yooouuutuuube.*?id=)([-_a-z0-9]+)'),
+                Normalizer( re.compile(r'(?:youtube.*?(?:v=|/v/)|youtu\.be/|yooouuutuuube.*?id=)([-_a-zA-Z0-9]+)'),
                             lambda m: r'http://youtube.com/watch?v=%s' % m.group(1) ),
     )
 
 
-def normalize(url):
+def normalize(url, assume_scheme=False):
     """Normalize a URL."""
 
     scheme, auth, path, query, fragment = urlparse.urlsplit(url.strip())
@@ -68,6 +68,9 @@ def normalize(url):
         if not scheme:
             scheme = "http"
         path = path[4:]
+
+    if assume_scheme and not scheme:
+        scheme = assume_scheme.lower()
 
     # Only perform percent-encoding where it is essential.
     # Always use uppercase A-through-F characters when percent-encoding.

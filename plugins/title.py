@@ -4,18 +4,16 @@ from util import hook, http, urlnorm
 @hook.command
 def title(inp):
     "title <url> -- gets the title of a web page"
-    url = urlnorm.normalize(inp.encode('utf-8'))
+    url = urlnorm.normalize(inp.encode('utf-8'), assume_scheme="http")
 
     try:
         page = http.get_html(url)
-    except:
+    except (http.HTTPError, http.URLError):
         return "Could not fetch page."
 
     try:
         title = page.find(".//title").text
-    except:
+    except AttributeError:
         return "Could not find title."
 
-    title = http.unescape(title)
-
-    return title
+    return http.unescape(title)

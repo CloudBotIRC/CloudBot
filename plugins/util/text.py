@@ -27,7 +27,7 @@ def multiword_replace(text, wordDic):
 
 
 # from <http://stackoverflow.com/questions/250357/smart-truncate-in-python>
-def truncate_words(content, length=100, suffix='...'):
+def truncate_str(content, length=100, suffix='...'):
     "Truncates a string after a certain number of chars."
     if len(content) <= length:
         return content

@@ -14,12 +14,15 @@ from bs4 import BeautifulSoup
 # used in plugins that import this
 from urllib2 import URLError, HTTPError
 
+ua_cloudbot = 'Cloudbot/DEV http://github.com/CloudDev/CloudBot'
 
-ua_cloudbot = 'Cloudbot/DEV http://github.com/lukeroge/cloudbot'
-
-ua_firefox = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.6) ' \
-    'Gecko/20070725 Firefox/2.0.0.6'
+ua_firefox = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:17.0) Gecko/17.0' \
+             ' Firefox/17.0'
+ua_old_firefox = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; ' \
+    'rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6'
 ua_internetexplorer = 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
+ua_chrome = 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.4 (KHTML, ' \
+            'like Gecko) Chrome/22.0.1229.79 Safari/537.4'
 
 jar = cookielib.CookieJar()
 

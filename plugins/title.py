@@ -1,4 +1,5 @@
 from util import hook, http, urlnorm
+from bs4 import BeautifulSoup
 
 
 @hook.command
@@ -7,13 +8,15 @@ def title(inp):
     url = urlnorm.normalize(inp.encode('utf-8'), assume_scheme="http")
 
     try:
-        page = http.get_html(url)
+        page = http.open(url)
+        real_url = page.geturl()
+        soup = BeautifulSoup(page.read())
     except (http.HTTPError, http.URLError):
         return "Could not fetch page."
 
-    try:
-        title = page.find(".//title").text
-    except AttributeError:
+    title = soup.find('title').contents[0]
+
+    if not title:
         return "Could not find title."
 
-    return http.unescape(title)
+    return u"{} [{}]".format(title, real_url)

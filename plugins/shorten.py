@@ -1,5 +1,3 @@
-# Plugin by Lukeroge
-
 from util import hook, http, web
 
 

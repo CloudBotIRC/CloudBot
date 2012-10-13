@@ -1,16 +1,13 @@
-from util import hook
-import yql as YQL
+from util import hook, web
 
 
 def get_weather(location):
     """uses the yahoo weather API to get weather information for a location"""
 
-    yql = YQL.Public()
-    enviroment = "http://datatables.org/alltables.env"
     query = "SELECT * FROM weather.bylocation WHERE location=@location LIMIT 1"
-    data = yql.execute(query, {"location": location}, env=enviroment).one()
+    result = web.query(query, {"location": location})
 
-    data = data["rss"]["channel"]
+    data = result.rows[0]["rss"]["channel"]
 
     # wind conversions
     data['wind']['chill_c'] = int(round((int(data['wind']['chill']) - 32) / 1.8, 0))

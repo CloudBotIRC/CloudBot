@@ -1,7 +1,4 @@
-from util import hook
-from util import http
-from util.text import get_text_list
-import string
+from util import hook, http
 import socket
 import json
 import struct
@@ -44,12 +41,12 @@ def mclogin(inp, bot=None):
 
 @hook.command(autohelp=False)
 def mcstatus(inp, say=None):
-    "mcstatus -- Checks the status various Mojang servers."
+    "mcstatus -- Checks the status of various Mojang (the creators of Minecraft) servers."
 
     try:
         request = http.get("http://status.mojang.com/check")
     except (http.URLError, http.HTTPError) as e:
-        return "Unable to get minecraft server status: %s" % e
+        return "Unable to get Minecraft server status: {}".format(e)
 
     # change the json from a list of dictionaies to a dictionary
     data = json.loads(request.replace("}", "").replace("{", "").replace("]", "}").replace("[", "{"))
@@ -58,9 +55,9 @@ def mcstatus(inp, say=None):
     # use a loop so we don't have to update it if they add more servers
     for server, status in data.items():
         if status == "green":
-            out.append("%s is \x033\x02online\x02\x03" % server)
+            out.append("{} is \x033\x02online\x02\x03".format(server))
         else:
-            out.append("%s is \x034\x02offline\x02\x03" % server)
+            out.append("{} is \x034\x02offline\x02\x03".format(server))
 
     return ", ".join(out) + "."
 
@@ -69,12 +66,18 @@ def mcstatus(inp, say=None):
 @hook.command
 def mcpaid(inp):
     "mcpaid <username> -- Checks if <username> has a premium Minecraft account."
-    login = http.get("http://www.minecraft.net/haspaid.jsp", user=inp)
 
-    if "true" in login:
-        return 'The account "%s" is a premium Minecraft account!' % inp
+    user = inp.strip()
+
+    try:
+        status = http.get("http://www.minecraft.net/haspaid.jsp", user=user)
+    except (http.URLError, http.HTTPError) as e:
+        return "Unable to get user registration status: {}".format(e)
+
+    if "true" in status:
+        return 'The account "{}" is a premium Minecraft account!'.format(inp)
     else:
-        return 'The account "%s" is not a premium Minecraft account!' % inp
+        return 'The account "{}" is not a premium Minecraft account!'.format(inp)
 
 
 @hook.command

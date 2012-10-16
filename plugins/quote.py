@@ -134,7 +134,8 @@ def quote(inp, nick='', chan='', db=None, notice=None):
 
     if add:
         quoted_nick, msg = add.groups()
-        return add_quote(db, chan, quoted_nick, nick, msg)
+        notice(add_quote(db, chan, quoted_nick, nick, msg))
+        return
     elif retrieve:
         select, num = retrieve.groups()
         by_chan = True if select.startswith('#') else False

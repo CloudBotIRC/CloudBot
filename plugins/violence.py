@@ -29,24 +29,22 @@ with open("plugins/data/kill_bodyparts.txt") as f:
 @hook.command
 def slap(inp, me=None, nick=None, conn=None, notice=None):
     "slap <user> -- Makes the bot slap <user>."
-    target = inp.lower()
 
-    if not re.match(nick_re, target):
+    target = inp.strip()
+
+    if " " in target:
         notice("Invalid username!")
         return
 
     # if the user is trying to make the bot slap itself, slap them
-    if target == conn.nick.lower() or target == "itself":
+    if target.lower() == conn.nick.lower() or target.lower() == "itself":
         target = nick
-    else:
-        target = inp
 
-    out = random.choice(slaps)
-    out = out.replace('<who>', target)
-    out = out.replace('<item>', random.choice(items))
+    values = {"item": random.choice(items), "user": target}
+    phrase = random.choice(slaps)
 
     # act out the message
-    me(out)
+    me(phrase.format(**values))
 
 
 @hook.command

@@ -1,9 +1,11 @@
-from util import hook, web
+from util import hook, web, text
 
 
 @hook.command("feed")
 @hook.command
 def rss(inp, say=None):
+
+    limit = 3
 
     # preset news feeds
     strip = inp.lower().strip()
@@ -12,18 +14,20 @@ def rss(inp, say=None):
         limit = 1
     elif strip == "xkcd":
         feed = "http://xkcd.com/rss.xml"
-        limit = 2
+    elif strip == "ars":
+        feed = "http://feeds.arstechnica.com/arstechnica/index"
     else:
         feed = inp
-        limit = 3
 
     query = "SELECT title, link FROM rss WHERE url=@feed LIMIT @limit"
-    result = web.query(query, {"feed": feed, "limit": limit or 3})
+    result = web.query(query, {"feed": feed, "limit": limit})
     for row in result.rows:
+        title = text.truncate_str(row["title"], 100)
         link = web.isgd(row["link"])
-        say(u"{} - {}".format(row["title"], link))
+        say(u"{} - {}".format(title, link))
 
 
 @hook.command
 def rb(inp, say=None):
+    "rb -- Shows the latest Craftbukkit recommended build"
     rss("bukkit", say)

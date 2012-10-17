@@ -1,9 +1,5 @@
 from util import hook
-import re
 import random
-
-nick_re = re.compile(r"^[A-Za-z0-9_|\.\-\]\[]*$")
-
 
 with open("plugins/data/larts.txt") as f:
     larts = [line.strip() for line in f.readlines()
@@ -21,15 +17,10 @@ with open("plugins/data/kills.txt") as f:
     kills = [line.strip() for line in f.readlines()
              if not line.startswith("//")]
 
-with open("plugins/data/kill_bodyparts.txt") as f:
-    parts = [line.strip() for line in f.readlines()
-             if not line.startswith("//")]
-
 
 @hook.command
 def slap(inp, me=None, nick=None, conn=None, notice=None):
     "slap <user> -- Makes the bot slap <user>."
-
     target = inp.strip()
 
     if " " in target:
@@ -50,21 +41,21 @@ def slap(inp, me=None, nick=None, conn=None, notice=None):
 @hook.command
 def lart(inp, me=None, nick=None, conn=None, notice=None):
     "lart <user> -- LARTs <user>."
-    target = inp.lower()
+    target = inp.strip()
 
-    if not re.match(nick_re, target):
+    if " " in target:
         notice("Invalid username!")
         return
 
-    if target == conn.nick.lower() or target == "itself":
+    # if the user is trying to make the bot slap itself, slap them
+    if target.lower() == conn.nick.lower() or target.lower() == "itself":
         target = nick
-    else:
-        target = inp
 
-    out = random.choice(larts)
-    out = out.replace('<who>', target)
-    out = out.replace('<item>', random.choice(items))
-    me(out)
+    values = {"user": target}
+    phrase = random.choice(larts)
+
+    # act out the message
+    me(phrase.format(**values))
 
 
 @hook.command

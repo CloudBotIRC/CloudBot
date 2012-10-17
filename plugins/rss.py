@@ -1,4 +1,4 @@
-from util import hook, web, text
+from util import hook, http, web, text
 
 
 @hook.command("feed")
@@ -21,9 +21,16 @@ def rss(inp, say=None):
 
     query = "SELECT title, link FROM rss WHERE url=@feed LIMIT @limit"
     result = web.query(query, {"feed": feed, "limit": limit})
+
+    if not result.rows:
+        return "Could not find/read RSS feed."
+
     for row in result.rows:
         title = text.truncate_str(row["title"], 100)
-        link = web.isgd(row["link"])
+        try:
+            link = web.isgd(row["link"])
+        except (web.ShortenError, http.HTTPError, http.URLError):
+            link = row["link"]
         say(u"{} - {}".format(title, link))
 
 

@@ -4,7 +4,7 @@ from util import hook, http, web, text
 @hook.command("feed")
 @hook.command
 def rss(inp, say=None):
-
+    "rss <feed> -- Gets the first three items from the RSS feed <feed>."
     limit = 3
 
     # preset news feeds

@@ -70,18 +70,18 @@ def lart(inp, me=None, nick=None, conn=None, notice=None):
 @hook.command
 def kill(inp, me=None, nick=None, conn=None, notice=None):
     "kill <user> -- Makes the bot kill <user>."
-    target = inp.lower()
+    target = inp.strip()
 
-    if not re.match(nick_re, target):
+    if " " in target:
         notice("Invalid username!")
         return
 
-    if target == conn.nick.lower() or target == "itself":
+    # if the user is trying to make the bot slap itself, slap them
+    if target.lower() == conn.nick.lower() or target.lower() == "itself":
         target = nick
-    else:
-        target = inp
 
-    out = random.choice(kills)
-    out = out.replace('<who>', target)
-    out = out.replace('<body>', random.choice(parts))
-    me(out)
+    values = {"user": target}
+    phrase = random.choice(kills)
+
+    # act out the message
+    me(phrase.format(**values))

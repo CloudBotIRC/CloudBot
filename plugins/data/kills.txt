@@ -1,22 +1,22 @@
-rips off <who>'s <body> and leaves them to die.
-grabs <who>'s head and rips it clean off their body.
-grabs a machine gun and riddles <who>'s body with bullets.
-gags and ties <who> then throws them off a bridge.
-crushes <who> with a huge spiked boulder.
-glares at <who> until they die of boredom.
-shivs <who> in the <body> a few times.
-rams a rocket launcher up <who>'s ass and lets off a few rounds.
-crushes <who>'s skull in with a spiked mace.
-unleashes the armies of Isengard on <who>.
-gags and ties <who> then throws them off a building to their death.
-reaches out and punches right through <who>'s chest.
-slices <who>'s <body> off with a sharpened Katana.
-throws <who> to Cthulu and watches them get ripped to shreds.
-feeds <who> to an owlbear who then proceeds to maul them violently.
-turns <who> into a snail and salts them.
-snacks on <who>'s dismembered <body>.
-stuffs some TNT up <who>'s ass and waits for it to go off.
-puts <who> into a sack, throws the sack in the river, and hurls the river into space.
-goes bowling with <who>'s bloody disembodied head.
-sends <who> to /dev/null!
-feeds <who> coke and mentos till they violently explode.
+rips off {user}'s legs and leaves them to die.
+grabs {user}'s head and rips it clean off their body.
+grabs a machine gun and riddles {user}'s body with bullets.
+gags and ties {user} then throws them off a bridge.
+crushes {user} with a huge spiked boulder.
+glares at {user} until they die of boredom.
+shivs {user} in the heart a few times.
+rams a rocket launcher up {user}'s ass and lets off a few rounds.
+crushes {user}'s skull in with a spiked mace.
+unleashes the armies of Isengard on {user}.
+gags and ties {user} then throws them off a building to their death.
+reaches out and punches right through {user}'s chest.
+slices {user}'s limbs off with a sharpened Katana.
+throws {user} to Cthulu and watches them get ripped to shreds.
+feeds {user} to an owlbear who then proceeds to maul them violently.
+turns {user} into a snail and salts them.
+snacks on {user}'s dismembered body.
+stuffs some TNT up {user}'s ass and waits for it to go off.
+puts {user} into a sack, throws the sack in the river, and hurls the river into space.
+goes bowling with {user}'s bloody disembodied head.
+sends {user} to /dev/null!
+feeds {user} coke and mentos till they violently explode.

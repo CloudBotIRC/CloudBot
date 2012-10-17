@@ -1,6 +1,5 @@
 from util import hook, http
 from urllib import quote_plus
-import json
 
 api_url = "http://www.fishbans.com/api/stats/%s/force/"
 
@@ -10,7 +9,11 @@ api_url = "http://www.fishbans.com/api/stats/%s/force/"
 def fishbans(inp):
     "fishbans <user> -- Gets information on <user>s minecraft bans from fishbans"
     user = inp
-    request = http.get_json(api_url % quote_plus(user))
+
+    try:
+        request = http.get_json(api_url % quote_plus(user))
+    except (http.HTTPError, http.URLError) as e:
+        return "Could not fetch ban data from the Fishbans API: {}".format(e)
 
     if request["success"] == False:
         return "Could not fetch ban data for %s." % user
@@ -26,7 +29,11 @@ def fishbans(inp):
 def bancount(inp):
     "bancount <user> -- Gets a count of <user>s minecraft bans from fishbans"
     user = inp
-    request = http.get_json(api_url % quote_plus(user))
+
+    try:
+        request = http.get_json(api_url % quote_plus(user))
+    except (http.HTTPError, http.URLError) as e:
+        return "Could not fetch ban data from the Fishbans API: {}".format(e)
 
     if request["success"] == False:
         return "Could not fetch ban data for %s." % user

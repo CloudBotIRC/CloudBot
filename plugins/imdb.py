@@ -1,16 +1,24 @@
 # IMDb lookup plugin by Ghetto Wizard (2011).
 
 from util import hook, http
+import re
+
+id_re = re.compile("tt\d+")
 
 
 @hook.command
 def imdb(inp):
     "imdb <movie> -- Gets information about <movie> from IMDb."
 
-    content = http.get_json("http://www.omdbapi.com/", t=inp)
+    strip = inp.strip()
 
-    if content['Response'] == 'Movie Not Found':
-        return 'movie not found'
+    if id_re.match(strip):
+        content = http.get_json("http://www.omdbapi.com/", i=strip)
+    else:
+        content = http.get_json("http://www.omdbapi.com/", t=strip)
+
+    if content['Error'] == 'Movie not found!':
+        return 'Movie not found!'
     elif content['Response'] == 'True':
         content['URL'] = 'http://www.imdb.com/title/%(imdbID)s' % content
 
@@ -23,4 +31,4 @@ def imdb(inp):
         out += ' %(URL)s'
         return out % content
     else:
-        return 'unknown error'
+        return 'Unknown error.'

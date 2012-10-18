@@ -34,7 +34,7 @@ def rss(inp, say=None):
         say(u"{} - {}".format(title, link))
 
 
-@hook.command
+@hook.command(autohelp=False)
 def rb(inp, say=None):
     "rb -- Shows the latest Craftbukkit recommended build"
     rss("bukkit", say)

@@ -17,7 +17,7 @@ def imdb(inp):
     else:
         content = http.get_json("http://www.omdbapi.com/", t=strip)
 
-    if content['Error'] == 'Movie not found!':
+    if content.get('Error', None) == 'Movie not found!':
         return 'Movie not found!'
     elif content['Response'] == 'True':
         content['URL'] = 'http://www.imdb.com/title/%(imdbID)s' % content

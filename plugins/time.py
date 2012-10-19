@@ -55,4 +55,4 @@ def beats(inp):
     if beat > 1000:
         beat -= 1000
 
-    return "\x02Swatch Internet Time:\x02 @%06.2f" % beat
+    return "Swatch Internet Time: @%06.2f" % beat

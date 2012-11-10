@@ -56,7 +56,7 @@ def steamcalc(inp, db=None):
     return u"Found {} games with a total value of ${} USD! - {}".format(count, value, short_url)
 
 
-@hook.command
+@hook.command(autohelp=False)
 def steamtop(inp, db=None):
     "steamtop -- Shows the top five users from steamcalc."
     rows = []

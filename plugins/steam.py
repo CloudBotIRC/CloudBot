@@ -53,7 +53,7 @@ def steamcalc(inp, db=None):
     except web.ShortenError as e:
         short_url = url
 
-    return u"Found {} games with a total value of ${} USD! - {}".format(count, value, short_url)
+    return u"Found {} games with a total value of ${:.2f} USD! - {}".format(count, value, short_url)
 
 
 @hook.command(autohelp=False)
@@ -61,6 +61,6 @@ def steamtop(inp, db=None):
     "steamtop -- Shows the top five users from steamcalc."
     rows = []
     for row in db.execute("SELECT id, value, count FROM steam_rankings ORDER BY value DESC LIMIT 5"):
-        rows.append(u"{} - \x02${}\x02 ({} games)".format(text.munge(row[0], 1), row[1], row[2]))
+        rows.append(u"{} - \x02${:.2f}\x02 ({} games)".format(text.munge(row[0], 1), row[1], row[2]))
 
     return u"Top Steam Users: {}".format(", ".join(rows))

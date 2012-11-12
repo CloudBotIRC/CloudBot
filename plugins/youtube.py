@@ -8,13 +8,13 @@ youtube_re = (r'(?:youtube.*?(?:v=|/v/)|youtu\.be/|yooouuutuuube.*?id=)'
               '([-_a-zA-Z0-9]+)', re.I)
 
 base_url = 'http://gdata.youtube.com/feeds/api/'
-url = base_url + 'videos/%s?v=2&alt=jsonc'
+api_url = base_url + 'videos/{}?v=2&alt=jsonc'
 search_api_url = base_url + 'videos?v=2&alt=jsonc&max-results=1'
 video_url = "http://youtu.be/%s"
 
 
-def get_video_description(vid_id):
-    request = http.get_json(url % vid_id)
+def get_video_description(video_id):
+    request = http.get_json(api_url.format(video_id))
 
     if request.get('error'):
         return

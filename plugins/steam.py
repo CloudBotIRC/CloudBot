@@ -3,9 +3,10 @@ import re
 
 # this is still beta code. some things will be improved later.
 
-steamcalc_url = "http://steamcalculator.com/id/{}/{}"
+# vari
+steamcalc_url = "http://steamcalculator.com/id/{}"
 count_re = re.compile(r"Found (.*?) Games with a value of ")
-region = "us"  # if you change this shit breaks
+value_re = re.compile(r'\$(\d+\.\d{2})')
 
 
 def db_init(db):
@@ -24,7 +25,7 @@ def steamcalc(inp, db=None):
         return "Invalid Steam ID"
 
     uid = inp.strip().lower()
-    url = steamcalc_url.format(http.quote_plus(uid), region)
+    url = steamcalc_url.format(http.quote_plus(uid))
 
     # get the web page
     try:
@@ -38,7 +39,7 @@ def steamcalc(inp, db=None):
         count = int(count_re.findall(count_textual)[0])
 
         value_textual = page.xpath("//div[@id='rightdetail']/h1/text()")[0]
-        value = float(value_textual[1:][:-4])  # todo: make this less shit
+        value = float(value_re.findall(value_textual)[0])
     except IndexError:
         return "Could not get Steam game listing."
 
@@ -53,7 +54,7 @@ def steamcalc(inp, db=None):
     except web.ShortenError as e:
         short_url = url
 
-    return u"Found {} games with a total value of ${:.2f} USD! - {}".format(count, value, short_url)
+    return u"\x02Games:\x02 {}, \x02Total Value:\x02 ${:.2f} USD - {}".format(count, value, short_url)
 
 
 @hook.command(autohelp=False)

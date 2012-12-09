@@ -25,12 +25,10 @@ class NameGenerator(object):
         Generates one name using the specified templates.
         If no templates are specified, use a random template from the default_templates list.
         """
-        template = self.templates[template or random.choice(self.default_templates)]
+        name = self.templates[template or random.choice(self.default_templates)]
 
         # get a list of all name parts we need
-        name_parts = TEMPLATE_RE.findall(template)
-
-        name = template
+        name_parts = TEMPLATE_RE.findall(name)
 
         for name_part in name_parts:
             part = random.choice(self.parts[name_part])

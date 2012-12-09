@@ -8,8 +8,8 @@ def calc(inp):
 
     soup = http.get_soup('http://www.google.com/search', q=inp)
 
-    response = soup.find('h2', {'class': 'r'})
-    if response is None:
+    result = soup.find('h2', {'class': 'r'})
+    if not result:
         return "Could not calculate '%s'" % inp
 
-    return http.unescape(response.contents[0])
+    return result.contents[0]

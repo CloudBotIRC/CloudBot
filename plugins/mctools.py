@@ -10,14 +10,26 @@ def mcping_connect(host, port):
         sock.connect((host, port))
         sock.send('\xfe\x01')
         response = sock.recv(1)
+        print response
 
         if response[0] != '\xff':
             return "Server gave invalid response: " + repr(response)
         length = struct.unpack('!h', sock.recv(2))[0]
-        values = sock.recv(length * 2).decode('utf-16be').split(u'\x00')
+
+        values = sock.recv(length * 2).decode('utf-16be')
+
+        data = values.split(u'\x00')  # try to decode data using new format
+        if len(data) == 1:
+            # failed to decode data, server is using old format
+            data = values.split(u'\xa7')
+            message = u"{} - {}/{} players".format(data[0], data[1], data[2])
+        else:
+            # decoded data, server is using new format
+            message = u"{} - {} - {}/{} players".format(data[3], data[2], data[4], data[5])
 
         sock.close()
-        return u"{} - Minecraft {} - {}/{} players".format(values[3], values[2], values[4], values[5])
+        return message
+
     except:
         return "Error pinging " + host + ":" + str(port) +\
         ", is it up? Double-check your address!"

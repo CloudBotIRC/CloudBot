@@ -37,7 +37,7 @@ def get_episodes_for_series(seriesname, api_key):
     series_id = query.xpath('//seriesid/text()')
 
     if not series_id:
-        res["error"] = "unknown tv series (using www.thetvdb.com)"
+        res["error"] = "Unknown TV series. (using www.thetvdb.com)"
         return res
 
     series_id = series_id[0]
@@ -46,7 +46,7 @@ def get_episodes_for_series(seriesname, api_key):
         series = get_zipped_xml(base_url + '%s/series/%s/all/en.zip' %
                                     (api_key, series_id), path="en.xml")
     except URLError:
-        res["error"] = "error contacting thetvdb.com"
+        res["error"] = "Error contacting thetvdb.com."
         return res
 
     series_name = series.xpath('//SeriesName/text()')[0]
@@ -123,13 +123,13 @@ def tv_next(inp, bot=None):
             break
 
     if not next_eps:
-        return "there are no new episodes scheduled for %s" % series_name
+        return "There are no new episodes scheduled for %s." % series_name
 
     if len(next_eps) == 1:
-        return "the next episode of %s airs %s" % (series_name, next_eps[0])
+        return "The next episode of %s airs %s" % (series_name, next_eps[0])
     else:
         next_eps = ', '.join(next_eps)
-        return "the next episodes of %s: %s" % (series_name, next_eps)
+        return "The next episodes of %s: %s" % (series_name, next_eps)
 
 
 @hook.command
@@ -167,7 +167,7 @@ def tv_last(inp, bot=None):
             break
 
     if not prev_ep:
-        return "there are no previously aired episodes for %s" % series_name
+        return "There are no previously aired episodes for %s." % series_name
     if ended:
-        return '%s ended. The last episode aired %s' % (series_name, prev_ep)
-    return "the last episode of %s aired %s" % (series_name, prev_ep)
+        return '%s ended. The last episode aired %s.' % (series_name, prev_ep)
+    return "The last episode of %s aired %s." % (series_name, prev_ep)

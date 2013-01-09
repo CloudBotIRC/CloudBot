@@ -29,7 +29,7 @@ Unzip the resulting file, and continue to read this document.
 
 Before you can run the bot, you need to install a few Python dependencies. These can be installed with `pip` (The Python package manager):
 
-    [sudo] pip install -r requreiments.txt
+    [sudo] pip install -r requirements.txt
 
 #### How to install `pip`
 

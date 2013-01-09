@@ -2,7 +2,7 @@
 
 ## About
 
-CloudBot is a Python IRC bot very heavily based on [Skybot](http://git.io/skybot) by [rmmh](http://git.io/rmmh).  
+CloudBot is a Python IRC bot very heavily based on [Skybot](http://git.io/skybot) by [rmmh](http://git.io/rmmh).
 
 ### Goals
 
@@ -27,23 +27,15 @@ Unzip the resulting file, and continue to read this document.
 
 ### Install
 
-Before you can run the bot, you need to install a few Python modules. These are `lXML` and `Enchant`.  These can be installed with `pip` (The Python package manager), or `easy_install` (A more basic version of `pip`):
+Before you can run the bot, you need to install a few Python dependencies. These can be installed with `pip` (The Python package manager):
 
-`[sudo] pip install lxml pyenchant`
-
-or
-
-`[sudo] easy_install lxml pyenchant`
+    [sudo] pip install -r requreiments.txt
 
 #### How to install `pip`
 
-```shell
-curl -O http://python-distribute.org/distribute_setup.py
-python distribute_setup.py
-easy_install pip
-```
-
-(If you use Windows and don't want to set up pip, you can also find `exe` installers on the internet.)
+    curl -O http://python-distribute.org/distribute_setup.py # or download with your browser on windows
+    python distribute_setup.py
+    easy_install pip
 
 ### Run
 
@@ -51,7 +43,7 @@ Once you have installed the required dependencies, there are two ways you can ru
 
 #### Launcher
 
-**Note:** Due to some issues with the launcher we recommend you run he bot manually as detailed below.
+**Note:** Due to some issues with the launcher we recommend you run the bot manually as detailed below.
 
 The launcher will start the bot as a background process, and allow the bot to close and restart itself. This is only supported on unix-like machines (not Windows).
 
@@ -120,7 +112,7 @@ They can both be found in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via 
 ## License
 
 CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
-    
+
     CloudBot/DEV
 
     Copyright © 2011-2012 Luke Rogers / ClouDev - <[cloudev.github.com](http://cloudev.github.com)>

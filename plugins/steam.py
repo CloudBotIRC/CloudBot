@@ -3,8 +3,6 @@ import re
 
 # this is still beta code. some things will be improved later.
 
-# vari
-steamcalc_url = "http://steamcalculator.com/id/{}"
 count_re = re.compile(r"Found (.*?) Games with a value of ")
 value_re = re.compile(r'\$(\d+\.\d{2})')
 
@@ -25,7 +23,7 @@ def steamcalc(inp, db=None):
         return "Invalid Steam ID"
 
     uid = inp.strip().lower()
-    url = steamcalc_url.format(http.quote_plus(uid))
+    url = "http://steamcalculator.com/id/{}".format(http.quote_plus(uid))
 
     # get the web page
     try:
@@ -35,11 +33,11 @@ def steamcalc(inp, db=None):
 
     # extract the info we need
     try:
-        count_textual = page.xpath("//div[@id='rightdetail']/text()")[0]
-        count = int(count_re.findall(count_textual)[0])
+        count_text = page.xpath("//div[@id='rightdetail']/text()")[0]
+        count = int(count_re.findall(count_text)[0])
 
-        value_textual = page.xpath("//div[@id='rightdetail']/h1/text()")[0]
-        value = float(value_re.findall(value_textual)[0])
+        value_text = page.xpath("//div[@id='rightdetail']/h1/text()")[0]
+        value = float(value_re.findall(value_text)[0])
     except IndexError:
         return "Could not get Steam game listing."
 
@@ -51,7 +49,7 @@ def steamcalc(inp, db=None):
     # shorten the URL
     try:
         short_url = web.isgd(url)
-    except web.ShortenError as e:
+    except web.ShortenError:
         short_url = url
 
     return u"\x02Games:\x02 {}, \x02Total Value:\x02 ${:.2f} USD - {}".format(count, value, short_url)

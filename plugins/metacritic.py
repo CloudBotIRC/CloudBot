@@ -131,7 +131,7 @@ def metacritic(inp):
     except IndexError:
         score = None
 
-    return '[%s] %s - \x02%s/100\x02, %s -- %s' % (plat.upper(), name,
+    return '[%s] %s - \x02%s/100\x02, %s - %s' % (plat.upper(), name,
             score or 'no score',
             'release: \x02%s\x02' % release if release else 'unreleased',
             link)

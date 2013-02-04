@@ -36,6 +36,7 @@ if not os.path.exists('config'):
             "bitly_api": "INSERT API KEY FROM bitly.com HERE",
             "wolframalpha": "INSERT API KEY FROM wolframalpha.com HERE",
             "lastfm": "INSERT API KEY FROM lastfm HERE",
+            "rottentomatoes": "INSERT API KEY FROM rottentomatoes HERE",
             "mc_user": "INSERT minecraft USERNAME HERE",
             "mc_pass": "INSERT minecraft PASSWORD HERE"
           },

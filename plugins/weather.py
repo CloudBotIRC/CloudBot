@@ -113,62 +113,6 @@ def weather(inp, nick="", reply=None, db=None, notice=None):
         "high_f": data['item']['forecast'][0]['high'],
         "high_c": data['item']['forecast'][0]['high_c'],
         "low_f": data['item']['forecast'][0]['low'],
-        "low_c": data['item']['forecast'][0]['low_c']
-    }
-
-    reply("\x02{place}\x02 - \x02Current Conditions:\x02 {conditions}, {temp_f}F/{temp_c}C, Humidity: {humidity}%, " \
-            "Wind: {wind_kph}KPH/{wind_mph}MPH {wind_text}, \x02Today's Forecast:\x02 {forecast}, " \
-            "High: {high_f}F/{high_c}C, Low: {low_f}F/{low_c}C.".format(**weather_data))
-
-    if location and not dontsave:
-        db.execute("insert or replace into weather(nick, loc) values (?,?)",
-                     (nick.lower(), location))
-        db.commit()
-
-
-@hook.command(autohelp=False)
-def forecast(inp, nick="", reply=None, db=None, notice=None):
-    "forecast <location> [dontsave] -- Gets weather data"\
-    " for <location> from Yahoo."
-
-    # initalise weather DB
-    db.execute("create table if not exists weather(nick primary key, loc)")
-
-    # if there is no input, try getting the users last location from the DB
-    if not inp:
-        location = db.execute("select loc from weather where nick=lower(?)",
-                             [nick]).fetchone()
-        if not location:
-            # no location saved in the database, send the user help text
-            notice(forecast.__doc__)
-            return
-        location = location[0]
-
-        # no need to save a location, we already have it
-        dontsave = True
-    else:
-        # see if the input ends with "dontsave"
-        dontsave = inp.endswith(" dontsave")
-
-        # remove "dontsave" from the input string after checking for it
-        if dontsave:
-            location = inp[:-9].strip().lower()
-        else:
-            location = inp
-
-    # now, to get the actual weather (forecast)
-    try:
-        data = get_weather(location)
-    except KeyError:
-        return "Could not get weather for that location."
-
-    # put all the stuff we want to use in a dictionary for easy formatting of the output
-    weather_data = {
-        "place": data['location']['city'],
-        "forecast": data['item']['forecast'][0]['text'],
-        "high_f": data['item']['forecast'][0]['high'],
-        "high_c": data['item']['forecast'][0]['high_c'],
-        "low_f": data['item']['forecast'][0]['low'],
         "low_c": data['item']['forecast'][0]['low_c'],
         "_forecast": data['item']['forecast'][1]['text'],
         "_high_f": data['item']['forecast'][1]['high'],
@@ -177,9 +121,10 @@ def forecast(inp, nick="", reply=None, db=None, notice=None):
         "_low_c": data['item']['forecast'][1]['low_c']
     }
 
-    reply("\x02{place}\x02 - \x02Today's Forecast:\x02 {forecast}, " \
-            "High: {high_f}F/{high_c}C, Low: {low_f}F/{low_c}C, "
-            "\x02Tomorrow's Forecast:\x02 {_forecast}, High: {_high_f}F" \
+    reply("\x02{place}\x02 - \x02Current:\x02 {conditions}, {temp_f}F/{temp_c}C, Humidity: {humidity}%, " \
+            "Wind: {wind_kph}KPH/{wind_mph}MPH {wind_text}, \x02Today:\x02 {forecast}, " \
+            "High: {high_f}F/{high_c}C, Low: {low_f}F/{low_c}C." \
+            "\x02Tomorrow:\x02 {_forecast}, High: {_high_f}F" \
             "/{_high_c}C, Low: {_low_f}F/{_low_c}C.".format(**weather_data))
 
     if location and not dontsave:

@@ -2,21 +2,21 @@ from util import hook, http, text
 import re
 
 api_url = "http://minecraftwiki.net/api.php?action=opensearch"
-ed_url = "http://minecraftwiki.net/wiki/"
+mc_url = "http://minecraftwiki.net/wiki/"
 
 
 @hook.command
 def mcwiki(inp):
-    "drama <phrase> -- Gets the first paragraph of" \
+    "mcwiki <phrase> -- Gets the first paragraph of" \
     " the Minecraft Wiki article on <phrase>."
 
     j = http.get_json(api_url, search=inp)
-    print j
+
     if not j[1]:
         return "No results found."
     article_name = j[1][0].replace(' ', '_').encode('utf8')
 
-    url = ed_url + http.quote(article_name, '')
+    url = mc_url + http.quote(article_name, '')
     page = http.get_html(url)
 
     for p in page.xpath('//div[@class="mw-content-ltr"]/p'):

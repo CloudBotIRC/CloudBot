@@ -13,7 +13,10 @@ http_re = (r'(open\.spotify\.com\/(track|album|artist|user)\/'
 def spotify(inp):
     "spotify <song> -- Search Spotify for <song>"
     data = spotimeta.search_track(inp.strip())
-    type, id = data["result"][0]["href"].split(":")[1:]
+    try:
+        type, id = data["result"][0]["href"].split(":")[1:]
+    except IndexError:
+        return "Could not find track."
     url = gateway.format(type, id)
     return u"{} by {} - {}".format(data["result"][0]["name"], data["result"][0]["artist"]["name"], url)
 

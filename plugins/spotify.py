@@ -9,6 +9,15 @@ spotify_re = (r'(spotify:(track|album|artist|user):([a-zA-Z0-9]+))', re.I)
 http_re = (r'(open\.spotify\.com\/(track|album|artist|user)\/'
               '([a-zA-Z0-9]+))', re.I)
 
+@hook.command
+def spotify(inp):
+    "spotify <song> -- Search Spotify for <song>"
+    data = spotimeta.search_track(inp.strip())
+    type, id = data["result"][0]["href"].split(":")[1:]
+    url = gateway.format(type, id)
+    return u"{} by {} - {}".format(data["result"][0]["name"], data["result"][0]["artist"]["name"], url)
+
+
 @hook.regex(*http_re)
 @hook.regex(*spotify_re)
 def spotify_url(match):

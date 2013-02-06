@@ -53,11 +53,11 @@ puts sugar between {user}'s bedsheets.
 pours sand into {user}'s breakfast.
 mixes epoxy into {user}'s toothpaste.
 puts Icy-Hot in {user}'s lube container.
-straps {user} to a chair, and plays a endless low bitrate MP3 loop of \"the world's most annoying sound\" from \"Dumb and Dumber\".
+straps {user} to a chair, and plays a endless low bitrate MP3 loop of "the world's most annoying sound" from "Dumb and Dumber".
 tells Dr. Dre that {user} was talking smack.
 forces {user} to use a Commodore 64 for all their word processing.
 puts {user} in a room with several heavily armed manic depressives.
-makes {user} watch reruns of \"Blue's Clues\".
+makes {user} watch reruns of "Blue's Clues".
 puts lye in {user}'s coffee.
 introduces {user} to the clue-by-four.
 tattoos the Windows symbol on {user}'s ass.

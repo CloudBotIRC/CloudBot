@@ -11,4 +11,4 @@ def answer(inp):
     short_url = web.isgd(result["Link"])
     answer = text.truncate_str(result["ChosenAnswer"], 80)
 
-    return u"{} {} - {}".format(result["Subject"], answer, short_url)
+    return u"\x02{}\x02 {} - {}".format(result["Subject"], answer, short_url)

@@ -9,6 +9,8 @@ def answer(inp):
     result = web.query(query, {"query": inp.strip()}).one()
 
     short_url = web.isgd(result["Link"])
-    answer = text.truncate_str(result["ChosenAnswer"], 80)
 
-    return u"\x02{}\x02 {} - {}".format(result["Subject"], answer, short_url)
+    # we split the answer and .join() it to remove newlines/extra spaces
+    answer = text.truncate_str(' '.join(result["ChosenAnswer"].split()), 80)
+
+    return u'\x02{}\x02 "{}" - {}'.format(result["Subject"], answer, short_url)

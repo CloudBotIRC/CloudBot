@@ -26,7 +26,9 @@ Get CloudBot at [https://github.com/ClouDev/CloudBot/zipball/develop](https://gi
 Unzip the resulting file, and continue to read this document.
 
 ### Install
-
+    
+    Install required Linux packages (check buttom)
+    
 Before you can run the bot, you need to install a few Python dependencies. These can be installed with `pip` (The Python package manager):
 
     [sudo] pip install -r requirements.txt
@@ -90,6 +92,8 @@ The developers reside in [#CloudBot](irc://irc.esper.net/cloudbot) on [EsperNet]
 If you think you have found a bug/have a idea/suggestion, please **open a issue** here on Github.
 
 ### Requirements
+
+Linux packages needed for install: python, python-dev, libenchant-dev, libenchant1c2a, libxslt-dev, libxml2-dev.
 
 CloudBot runs on **Python** *2.7.x*. It is developed on **Ubuntu** *12.04* with **Python** *2.7.3*.
 

@@ -3,6 +3,11 @@ import socket
 import json
 import struct
 
+def mccolorconvert(motd):
+    colors = dict("\u00A70"="\x0300", "\u00A71"="\x0302", "\u00A72"="\x0303", "\u00A73"="\x0310", "\u00A74"="\x0305", "\u00A75"="\x0306", "\u00A76"="\x0307", "\u00A77"="\x0315", "\u00A78"="\x0314", "\u00A79"="\x0312", "\u00A7a"="\x0309", "\u00A7b"="\x0311", "\u00A7c"="\x0304", "\u00A7d"="\x0313", "\u00A7e"="\x0308", "\u00A7f"="\x0301");
+    for key in colors:
+        motd = motd.replace(key, colors[key])
+    return motd
 
 def mcping_connect(host, port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -22,10 +27,10 @@ def mcping_connect(host, port):
         if len(data) == 1:
             # failed to decode data, server is using old format
             data = values.split(u'\xa7')
-            message = u"{} - {}/{} players".format(data[0], data[1], data[2])
+            message = u"{} - {}/{} players".format(mccolorconvert(data[0]), data[1], data[2])
         else:
             # decoded data, server is using new format
-            message = u"{} - {} - {}/{} players".format(data[3], data[2], data[4], data[5])
+            message = u"{} - {} - {}/{} players".format(mccolorconvert(data[3]), data[2], data[4], data[5])
 
         sock.close()
         return message

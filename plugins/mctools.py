@@ -4,9 +4,12 @@ import json
 import struct
 
 def mccolorconvert(motd):
-    colors = dict("\u00A70"="\x0300", "\u00A71"="\x0302", "\u00A72"="\x0303", "\u00A73"="\x0310", "\u00A74"="\x0305", "\u00A75"="\x0306", "\u00A76"="\x0307", "\u00A77"="\x0315", "\u00A78"="\x0314", "\u00A79"="\x0312", "\u00A7a"="\x0309", "\u00A7b"="\x0311", "\u00A7c"="\x0304", "\u00A7d"="\x0313", "\u00A7e"="\x0308", "\u00A7f"="\x0301");
-    for key in colors:
-        motd = motd.replace(key, colors[key])
+    empty = ""
+    colors = [u"\x0f,\xa7f", u"\x0301,\xa70", u"\x0302,\xa71", u"\x0303,\xa72", u"\x0304,\xa7c", u"\x0305,\xa74", u"\x0306,\xa75", u"\x0307,\xa76", u"\x0308,\xa7e", u"\x0309,\xa7a", u"\x0310,\xa73", u"\x0311,\xa7b", u"\x0312,\xa71", u"\x0313,\xa7d", u"\x0314,\xa78", u"\x0315,\xa77", u"\x02,\xa7l", u"\x0310,\xa79"];
+    for s in colors:
+        lcol = s.split(",")
+        motd = motd.replace(lcol[1], lcol[0])
+    motd = motd.replace(u"\xa7k", empty)
     return motd
 
 def mcping_connect(host, port):
@@ -27,10 +30,10 @@ def mcping_connect(host, port):
         if len(data) == 1:
             # failed to decode data, server is using old format
             data = values.split(u'\xa7')
-            message = u"{} - {}/{} players".format(mccolorconvert(data[0]), data[1], data[2])
+            message = u"{} - {}/{} players".format(data[0], data[1], data[2])
         else:
             # decoded data, server is using new format
-            message = u"{} - {} - {}/{} players".format(mccolorconvert(data[3]), data[2], data[4], data[5])
+            message = u"{} \x0f- {} - {}/{} players".format(data[3], data[2], data[4], data[5])
 
         sock.close()
         return message
@@ -112,4 +115,5 @@ def mcping(inp):
     else:
         host = inp
         port = 25565
-    return mcping_connect(host, port)
+    return mccolorconvert(mcping_connect(host, port))
+

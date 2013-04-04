@@ -76,11 +76,11 @@ def mcstatus(inp, say=None):
     # use a loop so we don't have to update it if they add more servers
     for server, status in data.items():
         if status == "green":
-            out.append("{} is \x033\x02online\x02\x033".format(server))
+            out.append("{} is \x033\x02online\x02\x0f".format(server))
         else:
-            out.append("{} is \x034\x02offline\x02\x033".format(server))
+            out.append("{} is \x034\x02offline\x02\x0f".format(server))
 
-    return "\x033" + ", ".join(out) + "."
+    return "\x0f" + ", ".join(out) + "."
 
 
 @hook.command("haspaid")

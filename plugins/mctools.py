@@ -73,15 +73,14 @@ def mcstatus(inp, say=None):
     data = json.loads(request.replace("}", "").replace("{", "").replace("]", "}").replace("[", "{"))
 
     out = []
-    out.append("\x039")
     # use a loop so we don't have to update it if they add more servers
     for server, status in data.items():
         if status == "green":
-            out.append("{} is \x033\x02online\x02\x039".format(server))
+            out.append("{} is \x033\x02online\x02\x033".format(server))
         else:
-            out.append("{} is \x034\x02offline\x02\x039".format(server))
+            out.append("{} is \x034\x02offline\x02\x033".format(server))
 
-    return ", ".join(out) + "."
+    return "\x033" + ", ".join(out) + "."
 
 
 @hook.command("haspaid")

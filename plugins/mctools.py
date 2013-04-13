@@ -2,6 +2,7 @@ from util import hook, http
 import socket
 import json
 import struct
+import DNS ## Please remember to install the dependancy 'pydns'
 
 def mccolorconvert(motd):
     empty = ""
@@ -42,6 +43,15 @@ def mcping_connect(host, port):
         return "Error pinging " + host + ":" + str(port) +\
         ", is it up? Double-check your address!"
 
+def srvData(domain):
+    DNS.ParseResolvConf()
+    srv_req = DNS.Request(qtype = 'srv')
+    srv_result = srv_req.req('_minecraft._tcp.%s' % domain)
+
+    for getsrv in srv_result.answers:
+        if getsrv['typename'] == 'SRV':
+            data = [getsrv['data'][2],getsrv['data'][3]]
+            return data
 
 @hook.command(autohelp=False)
 def mclogin(inp, bot=None):
@@ -106,6 +116,7 @@ def mcping(inp):
     "mcping <server>[:port] - Ping a Minecraft server to check status."
     inp = inp.strip().split(" ")[0]
 
+
     if ":" in inp:
         host, port = inp.split(":", 1)
         try:
@@ -113,7 +124,12 @@ def mcping(inp):
         except:
             return "error: invalid port!"
     else:
-        host = inp
-        port = 25565
+        try:
+            getdata = srvData(inp)
+            host = inp
+            port = getdata[0]
+        except: 
+            host = inp
+            port = 25565
     return mccolorconvert(mcping_connect(host, port))
 

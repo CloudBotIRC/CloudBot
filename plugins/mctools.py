@@ -126,8 +126,8 @@ def mcping(inp):
     else:
         try:
             getdata = srvData(inp)
-            host = inp
-            port = getdata[0]
+            host = str(getdata[1])
+            port = int(getdata[0])
         except: 
             host = inp
             port = 25565

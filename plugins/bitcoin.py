@@ -3,7 +3,7 @@ from util import http, hook
 
 @hook.command(autohelp=False)
 def bitcoin(inp, say=None):
-    ".bitcoin -- gets current exchange rate for bitcoins from mtgox"
+    "bitcoin -- gets current exchange rate for bitcoins from mtgox"
     data = http.get_json("https://data.mtgox.com/api/2/BTCUSD/money/ticker")
     data = data['data']
     ticker = {

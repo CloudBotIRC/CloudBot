@@ -3,6 +3,7 @@ import socket
 import json
 import struct
 import DNS ## Please remember to install the dependancy 'pydns'
+import time
 
 def mccolorconvert(motd):
     empty = ""
@@ -44,9 +45,11 @@ def mcping_connect(host, port):
         ", is it up? Double-check your address!"
 
 def srvData(domain):
+    starttime = time.time()
     DNS.ParseResolvConf()
     srv_req = DNS.Request(qtype = 'srv')
     srv_result = srv_req.req('_minecraft._tcp.%s' % domain)
+    print time.time() - starttime
 
     for getsrv in srv_result.answers:
         if getsrv['typename'] == 'SRV':
@@ -116,20 +119,28 @@ def mcping(inp):
     "mcping <server>[:port] - Ping a Minecraft server to check status."
     inp = inp.strip().split(" ")[0]
 
-
     if ":" in inp:
         host, port = inp.split(":", 1)
         try:
             port = int(port)
         except:
             return "error: invalid port!"
-    else:
-        try:
-            getdata = srvData(inp)
-            host = str(getdata[1])
-            port = int(getdata[0])
-        except: 
-            host = inp
-            port = 25565
-    return mccolorconvert(mcping_connect(host, port))
+        return mccolorconvert(mcping_connect(host, port))
 
+    else:
+        host = inp
+        port = 25565
+        rdata = mccolorconvert(mcping_connect(host, port))
+
+        if 'is it up' in rdata:
+            print "Default Down, Checking SRV"
+            getdata = srvData(inp)
+            try:
+                host = str(getdata[1])
+                port = int(getdata[0])
+                return mccolorconvert(mcping_connect(host, port))
+            except: 
+                return "Error pinging %s, is it up? Double-check your address!" % inp
+
+        else:
+            return rdata

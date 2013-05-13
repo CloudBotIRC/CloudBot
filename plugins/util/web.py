@@ -5,7 +5,7 @@ import json, urllib
 import yql
 
 short_url = "http://is.gd/create.php"
-paste_url = "http://paste.dmptr.com"
+paste_url = "http://hastebin.com"
 yql_env = "http://datatables.org/alltables.env"
 
 YQL = yql.Public()

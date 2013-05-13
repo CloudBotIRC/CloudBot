@@ -98,7 +98,7 @@ Linux packages needed for install: python, python-dev, libenchant-dev, libenchan
 CloudBot runs on **Python** *2.7.x*. It is developed on **Ubuntu** *12.04* with **Python** *2.7.3*.
 
 It **requires the Python module** `lXML`, and `Enchant` is needed for the spellcheck plugin.
-It also **requires** `pydns` and is needed for SRV record lookup for the mctools plugin.
+It also **requires** `pydns` and `beautifulsoup4` and is needed for SRV record lookup for the mctools plugin.
 
 The programs `daemon` or `screen` are recomended for the launcher to run optimaly.
 

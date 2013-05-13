@@ -79,7 +79,7 @@ def mcstatus(inp, say=None):
     except (http.URLError, http.HTTPError) as e:
         return "Unable to get Minecraft server status: {}".format(e)
 
-    # change the json from a list of dictionaies to a dictionary
+    # lets just reformat this data to get in a nice format
     data = json.loads(request.replace("}", "").replace("{", "").replace("]", "}").replace("[", "{"))
 
     out = []

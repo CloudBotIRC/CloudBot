@@ -1,46 +1,53 @@
-// obtained from <https://github.com/blha303/skybot/commit/d4ba73d6e3f21cc60a01342f3de9d0d4abd14b3d>
-// edited by Lukeroge, _frozen, and MufinMcFlufin
-// Block id
 1 Stone
-2 Grass Block
+2 Grass
 3 Dirt
 4 Cobblestone
-5 Wooden Planks
-5:1 Pine Wood Planks
-5:2 Birch Wood Planks
-5:3 Jungle Wood Planks
-6 Sapling
+5 Wooden Plank (Oak)
+5:1 Wooden Plank (Spruce)
+5:2 Wooden Plank (Birch)
+5:3 Wooden Plank (Jungle)
+6 Sapling (Oak)
+6:1 Sapling (Spruce)
+6:2 Sapling (Birch)
+6:3 Sapling (Jungle)
 7 Bedrock
 8 Water
-9 Stationary Water
+9 Water (No Spread)
 10 Lava
-11 Stationary Lava
+11 Lava (No Spread)
 12 Sand
 13 Gravel
 14 Gold Ore
 15 Iron Ore
 16 Coal Ore
-17 Wood
-17:1 Pine Wood
-17:2 Birch Wood
-17:3 Jungle Wood
-18 Leaves
+17 Wood (Oak)
+17:1 Wood (Spruce)
+17:2 Wood (Birch)
+17:3 Wood (Jungle)
+18 Leaves (Oak)
+18:1 Leaves (Spruce)
+18:2 Leaves (Birch)
+18:3 Leaves (Jungle)
 19 Sponge
 20 Glass
 21 Lapis Lazuli Ore
 22 Lapis Lazuli Block
 23 Dispenser
 24 Sandstone
+24:1 Sandstone (Chiseled)
+24:2 Sandstone (Smooth)
 25 Note Block
-26 Bed
+26 Bed (Block)
 27 Powered Rail
 28 Detector Rail
 29 Sticky Piston
 30 Cobweb
-31 Grass
-32 Dead Bush
+31 Tall Grass (Dead Shrub)
+31:1 Tall Grass
+31:2 Tall Grass (Fern)
+32 Dead Shrub
 33 Piston
-//34 Piston Extended
+34 Piston (Head)
 35 Wool
 35:1 Orange Wool
 35:2 Magenta Wool
@@ -57,55 +64,70 @@
 35:13 Green Wool
 35:14 Red Wool
 35:15 Black Wool
-35:0 White Wool
-//36 Block Moved by Piston
-37 Flower
+36 Piston (Moving)
+37 Dandelion
 38 Rose
 39 Brown Mushroom
 40 Red Mushroom
 41 Block of Gold
 42 Block of Iron
-43 Double Slabs
-44 Slabs
-45 Bricks
+43 Stone Slab (Double)
+43:1 Sandstone Slab (Double)
+43:2 Wooden Slab (Double)
+43:3 Cobblestone Slab (Double)
+43:4 Brick Slab (Double)
+43:5 Stone Brick Slab (Double)
+43:6 Nether Brick Slab (Double)
+43:7 Quartz Slab (Double)
+43:8 Smooth Stone Slab (Double)
+43:9 Smooth Sandstone Slab (Double)
+44 Stone Slab
+44:1 Sandstone Slab
+44:2 Wooden Slab
+44:3 Cobblestone Slab
+44:4 Brick Slab
+44:5 Stone Brick Slab
+44:6 Nether Brick Slab
+44:7 Quartz Slab
+45 Brick
 46 TNT
-47 Bookshelf
+47 Bookcase
 48 Moss Stone
 49 Obsidian
 50 Torch
 51 Fire
-52 Monster Spawner
-53 Wooden Stairs
+52 Mob Spawner
+53 Wooden Stairs (Oak)
 54 Chest
-//55 Redstone Wire
+55 Redstone Wire
 56 Diamond Ore
 57 Block of Diamond
-58 Crafting Table
-59 Crops
+58 Workbench
+59 Wheat (Crop)
 60 Farmland
 61 Furnace
-62 Lit Furnace
-63 Sign
-64 Wooden Door
+62 Furnace (Smelting)
+63 Sign (Block)
+64 Wood Door (Block)
 65 Ladder
 66 Rail
-67 Stone Stairs
-68 Sign
+67 Cobblestone Stairs
+68 Sign (Wall Block)
 69 Lever
-70 Pressure Plate
-71 Iron Door
-72 Pressure Plate
+70 Stone Pressure Plate
+71 Iron Door (Block)
+72 Wooden Pressure Plate
 73 Redstone Ore
-74 Glowing Redstone Ore
-75 Redstone Torch
-76 Lit Redstone Torch
-77 Button
+74 Redstone Ore (Glowing)
+75 Redstone Torch (Off)
+76 Redstone Torch
+77 Button (Stone)
 78 Snow
 79 Ice
-80 Snow
+80 Snow Block
 81 Cactus
-82 Clay
-83 Sugar cane
+82 Clay Block
+83 Sugar Cane (Block)
 84 Jukebox
 85 Fence
 86 Pumpkin
@@ -113,21 +135,26 @@
 88 Soul Sand
 89 Glowstone
 90 Portal
-91 Jack 'o' Lantern
-92 Cake Block
-93 Redstone Repeater
-94 Redstone Repeater (On)
-95 Locked chest
+91 Jack-O-Lantern
+92 Cake (Block)
+93 Redstone Repeater (Block Off)
+94 Redstone Repeater (Block On)
+95 Locked Chest
 96 Trapdoor
-97 Hidden Silverfish
+97 Silverfish Stone
+97:1 Silverfish Cobblestone
+97:2 Silverfish Stone Brick
 98 Stone Bricks
-99 Mushroom
-100 Mushroom
+98:1 Mossy Stone Bricks
+98:2 Cracked Stone Bricks
+98:3 Chiseled Stone Brick
+99 Brown Mushroom (Block)
+100 Red Mushroom (Block)
 101 Iron Bars
 102 Glass Pane
-103 Melon
-104 Pumpkin Stem
-105 Melon Stem
+103 Melon (Block)
+104 Pumpkin Vine
+105 Melon Vine
 106 Vines
 107 Fence Gate
 108 Brick Stairs
@@ -139,22 +166,98 @@
 114 Nether Brick Stairs
 115 Nether Wart
 116 Enchantment Table
-117 Brewing stand
-118 Cauldron
+117 Brewing Stand (Block)
+118 Cauldron (Block)
 119 End Portal
 120 End Portal Frame
 121 End Stone
 122 Dragon Egg
 123 Redstone Lamp
-124 Lit Redstone Lamp
-127 Cocoa
+124 Redstone Lamp (On)
+125 Oak-Wood Slab (Double)
+125:1 Spruce-Wood Slab (Double)
+125:2 Birch-Wood Slab (Double)
+125:3 Jungle-Wood Slab (Double)
+126 Oak-Wood Slab
+126:1 Spruce-Wood Slab
+126:2 Birch-Wood Slab
+126:3 Jungle-Wood Slab
+127 Coca Plant
 128 Sandstone Stairs
 129 Emerald Ore
 130 Ender Chest
 131 Tripwire Hook
 132 Tripwire
 133 Block of Emerald
-// Items Ids
+134 Wooden Stairs (Spruce)
+135 Wooden Stairs (Birch)
+136 Wooden Stairs (Jungle)
+137 Command Block
+138 Beacon
+139 Cobblestone Wall
+139:1 Mossy Cobblestone Wall
+140 Flower Pot (Block)
+141 Carrot (Crop)
+142 Potatoes (Crop)
+143 Button (Wood)
+144 Head Block (Skeleton)
+144:1 Head Block (Wither)
+144:2 Head Block (Zombie)
+144:3 Head Block (Steve)
+144:4 Head Block (Creeper)
+145 Anvil
+145:1 Anvil (Slightly Damaged)
+145:2 Anvil (Very Damaged)
+146 Trapped Chest
+147 Weighted Pressure Plate (Light)
+148 Weighted Pressure Plate (Heavy)
+149 Redstone Comparator (Off)
+150 Redstone Comparator (On)
+151 Daylight Sensor
+152 Block of Redstone
+153 Nether Quartz Ore
+154 Hopper
+155 Quartz Block
+155:1 Chiseled Quartz Block
+155:2 Pillar Quartz Block
+156 Quartz Stairs
+157 Activator Rail
+158 Dropper
+159 Stained Clay (White)
+159:1 Stained Clay (Orange)
+159:2 Stained Clay (Magenta)
+159:3 Stained Clay (Light Blue)
+159:4 Stained Clay (Yellow)
+159:5 Stained Clay (Lime)
+159:6 Stained Clay (Pink)
+159:7 Stained Clay (Gray)
+159:8 Stained Clay (Light Gray)
+159:9 Stained Clay (Cyan)
+159:10 Stained Clay (Purple)
+159:11 Stained Clay (Blue)
+159:12 Stained Clay (Brown)
+159:13 Stained Clay (Green)
+159:14 Stained Clay (Red)
+159:15 Stained Clay (Black)
+170 Hay Bale
+171 Carpet (White)
+171:1 Carpet (Orange)
+171:2 Carpet (Magenta)
+171:3 Carpet (Light Blue)
+171:4 Carpet (Yellow)
+171:5 Carpet (Lime)
+171:6 Carpet (Pink)
+171:7 Carpet (Grey)
+171:8 Carpet (Light Gray)
+171:9 Carpet (Cyan)
+171:10 Carpet (Purple)
+171:11 Carpet (Blue)
+171:12 Carpet (Brown)
+171:13 Carpet (Green)
+171:14 Carpet (Red)
+171:15 Carpet (Black)
+172 Hardened Clay
+173 Block of Coal
 256 Iron Shovel
 257 Iron Pickaxe
 258 Iron Axe
@@ -163,7 +266,8 @@
 261 Bow
 262 Arrow
 263 Coal
-264 Diamond
+263:1 Charcoal
+264 Diamond Gem
 265 Iron Ingot
 266 Gold Ingot
 267 Iron Sword
@@ -182,10 +286,10 @@
 280 Stick
 281 Bowl
 282 Mushroom Stew
-283 Golden Sword
-284 Golden Shovel
-285 Golden Pickaxe
-286 Golden Axe
+283 Gold Sword
+284 Gold Shovel
+285 Gold Pickaxe
+286 Gold Axe
 287 String
 288 Feather
 289 Gunpowder
@@ -193,18 +297,18 @@
 291 Stone Hoe
 292 Iron Hoe
 293 Diamond Hoe
-294 Golden Hoe
-295 Seeds
+294 Gold Hoe
+295 Wheat Seeds
 296 Wheat
 297 Bread
-298 Leather Cap
-299 Leather Tunic
-300 Leather Pants
+298 Leather Helmet
+299 Leather Chestplate
+300 Leather Leggings
 301 Leather Boots
-302 Chain Helmet
-303 Chain Chestplate
-304 Chain Leggings
-305 Chain Boots
+302 Chainmail Helmet
+303 Chainmail Chestplate
+304 Chainmail Leggings
+305 Chainmail Boots
 306 Iron Helmet
 307 Iron Chestplate
 308 Iron Leggings
@@ -213,48 +317,48 @@
 311 Diamond Chestplate
 312 Diamond Leggings
 313 Diamond Boots
-314 Golden Helmet
-315 Golden Chestplate
-316 Golden Leggings
-317 Golden boots
+314 Gold Helmet
+315 Gold Chestplate
+316 Gold Leggings
+317 Gold Boots
 318 Flint
 319 Raw Porkchop
 320 Cooked Porkchop
 321 Painting
 322 Golden Apple
+322:1 Enchanted Golden Apple
 323 Sign
 324 Wooden Door
 325 Bucket
-326 Water Bucket
-327 Lava bucket
+326 Bucket (Water)
+327 Bucket (Lava)
 328 Minecart
 329 Saddle
 330 Iron Door
-331 Redstone
+331 Redstone Dust
 332 Snowball
 333 Boat
 334 Leather
-335 Milk
-336 Brick
+335 Bucket (Milk)
+336 Clay Brick
 337 Clay
-338 Sugar Canes
+338 Sugar Cane
 339 Paper
 340 Book
-341 Slimeball
-342 Minecart with Chest
-343 Minecart with Furnace
+341 Slime Ball
+342 Storage Minecart
+343 Powered Minecart
 344 Egg
 345 Compass
 346 Fishing Rod
-347 Clock
+347 Watch
 348 Glowstone Dust
 349 Raw Fish
 350 Cooked Fish
-351 Dye
-351:0 Ink Sac
-351:1 Rose Red
-351:2 Cactus Green
-351:3 Cocoa Beans
+351 Ink Sack
+351:1 Rose Red Dye
+351:2 Cactus Green Dye
+351:3 Coca Bean
 351:4 Lapis Lazuli
 351:5 Purple Dye
 351:6 Cyan Dye
@@ -262,7 +366,7 @@
 351:8 Gray Dye
 351:9 Pink Dye
 351:10 Lime Dye
-351:11 Dandelion Yellow
+351:11 Dandelion Yellow Dye
 351:12 Light Blue Dye
 351:13 Magenta Dye
 351:14 Orange Dye
@@ -275,7 +379,7 @@
 357 Cookie
 358 Map
 359 Shears
-360 Melon
+360 Melon (Slice)
 361 Pumpkin Seeds
 362 Melon Seeds
 363 Raw Beef
@@ -287,8 +391,8 @@
 369 Blaze Rod
 370 Ghast Tear
 371 Gold Nugget
-372 Nether Wart
-373 Potion
+372 Nether Wart Seeds
+373 Water Bottle
 373:16 Awkward Potion
 373:32 Thick Potion
 373:64 Mundane Potion
@@ -297,10 +401,12 @@
 373:8195 Fire Resistance Potion (3:00)
 373:8196 Poison Potion (0:45)
 373:8197 Healing Potion
+373:8198 Night Vision Potion (3:00)
 373:8200 Weakness Potion (1:30)
 373:8201 Strength Potion (3:00)
 373:8202 Slowness Potion (1:30)
 373:8204 Harming Potion
+373:8206 Invisibility Potion (3:00)
 373:8225 Regeneration Potion II (0:22)
 373:8226 Swiftness Potion II (1:30)
 373:8228 Poison Potion II (0:22)
@@ -311,18 +417,27 @@
 373:8258 Swiftness Potion (8:00)
 373:8259 Fire Resistance Potion (8:00)
 373:8260 Poison Potion (2:00)
+373:8262 Night Vision Potion (8:00)
 373:8264 Weakness Potion (4:00)
 373:8265 Strength Potion (8:00)
 373:8266 Slowness Potion (4:00)
-373:16378 Fire Resistance Splash (2:15)
+373:8270 Invisibility Potion (8:00)
+373:8289 Regeneration Potion II (1:00)
+373:8290 Swiftness Potion II (4:00)
+373:8292 Poison Potion II (1:00)
+373:8297 Strength Potion II (4:00)
 373:16385 Regeneration Splash (0:33)
 373:16386 Swiftness Splash (2:15)
+373:16387 Fire Resistance Splash (2:15)
 373:16388 Poison Splash (0:33)
 373:16389 Healing Splash
+373:16390 Night Vision Splash (2:15)
 373:16392 Weakness Splash (1:07)
 373:16393 Strength Splash (2:15)
 373:16394 Slowness Splash (1:07)
 373:16396 Harming Splash
+373:16398 Invisibility Splash (2:15)
+373:16417 Regeneration Splash II (0:16)
 373:16418 Swiftness Splash II (1:07)
 373:16420 Poison Splash II (0:16)
 373:16421 Healing Splash II
@@ -332,10 +447,15 @@
 373:16450 Swiftness Splash (6:00)
 373:16451 Fire Resistance Splash (6:00)
 373:16452 Poison Splash (1:30)
+373:16454 Night Vision Splash (6:00)
 373:16456 Weakness Splash (3:00)
 373:16457 Strength Splash (6:00)
 373:16458 Slowness Splash (3:00)
-373:16471 Regeneration Splash II (0:16)
+373:16462 Invisibility Splash (6:00)
+373:16481 Regeneration Splash II (0:45)
+373:16482 Swiftness Splash II (3:00)
+373:16484 Poison Splash II (0:45)
+373:16489 Strength Splash II (3:00)
 374 Glass Bottle
 375 Spider Eye
 376 Fermented Spider Eye
@@ -344,43 +464,74 @@
 379 Brewing Stand
 380 Cauldron
 381 Eye of Ender
-382 Glistering Melon
-// 383 Spawn Egg
-383:50 Creeper Egg
-383:51 Skeleton Egg
-383:52 Spider Egg
-383:54 Zombie Egg
-383:55 Slime Egg
-383:56 Ghast Egg
-383:57 Zombie Pigman Egg
-383:58 Enderman Egg
-383:59 Cave Spider Egg
-383:60 Silverfish Egg
-383:61 Blaze Egg
-383:62 Magma Cube Egg
-383:90 Pig Egg
-383:91 Sheep Egg
-383:92 Cow Egg
-383:93 Chicken Egg
-383:94 Squid Egg
-383:95 Wolf Egg
-383:96 Mooshroom Egg
-383:98 Ocelot Egg
-383:120 Villager Egg
-384 Bottle Of Enchanting
+382 Glistering Melon (Slice)
+383:50 Spawn Egg (Creeper)
+383:51 Spawn Egg (Skeleton)
+383:52 Spawn Egg (Spider)
+383:54 Spawn Egg (Zombie)
+383:55 Spawn Egg (Slime)
+383:56 Spawn Egg (Ghast)
+383:57 Spawn Egg (Zombie Pigmen)
+383:58 Spawn Egg (Endermen)
+383:59 Spawn Egg (Cave Spider)
+383:60 Spawn Egg (Silverfish)
+383:61 Spawn Egg (Blaze)
+383:62 Spawn Egg (Magma Cube)
+383:65 Spawn Egg (Bat)
+383:66 Spawn Egg (Witch)
+383:90 Spawn Egg (Pig)
+383:91 Spawn Egg (Sheep)
+383:92 Spawn Egg (Cow)
+383:93 Spawn Egg (Chicken)
+383:94 Spawn Egg (Squid)
+383:95 Spawn Egg (Wolf)
+383:96 Spawn Egg (Mooshroom)
+383:98 Spawn Egg (Ocelot)
+383:100 Spawn Egg (Horse)
+383:120 Spawn Egg (Villager)
+384 Bottle of Enchanting
 385 Fire Charge
 386 Book and Quill
 387 Written Book
 388 Emerald
-// Records
-2256 Music Disc 13
-2257 Music Disc Cat
-2258 Music Disc Blocks
-2259 Music Disc Chirp
-2260 Music Disc Far
-2261 Music Disc Mall
-2262 Music Disc Mellohi
-2263 Music Disc Stal
-2264 Music Disc Strad
-2265 Music Disc Ward
-2266 Music Disc 11
+389 Item Frame
+390 Flower Pot
+391 Carrot
+392 Potato
+393 Baked Potato
+394 Poisonous Potato
+395 Empty Map
+396 Golden Carrot
+397 Head (Skeleton)
+397:1 Head (Wither)
+397:2 Head (Zombie)
+397:3 Head (Steve)
+397:4 Head (Creeper)
+398 Carrot on a Stick
+399 Nether Star
+400 Pumpkin Pie
+401 Firework Rocket
+402 Firework Star
+403 Enchanted Book
+404 Redstone Comparator
+405 Nether Brick (Item)
+406 Nether Quartz
+407 TNT Minecart
+408 Hopper Minecart
+417 Iron Horse Armor
+418 Gold Horse Armor
+419 Diamond Horse Armor
+420 Lead
+421 Name Tag
+2256 Music Disk (13)
+2257 Music Disk (Cat)
+2258 Music Disk (Blocks)
+2259 Music Disk (Chirp)
+2260 Music Disk (Far)
+2261 Music Disk (Mall)
+2262 Music Disk (Mellohi)
+2263 Music Disk (Stal)
+2264 Music Disk (Strad)
+2265 Music Disk (Ward)
+2266 Music Disk (11)
+2267 Music Disk (Wait)

@@ -35,10 +35,13 @@ def get_weather(location):
         data['wind']['text'] = 'N'
 
     # visibility and pressure conversions
-    data['atmosphere']['visibility_km'] = \
-        int(round(float(data['atmosphere']['visibility']) * 1.609344))
-    data['atmosphere']['visibility_km'] = \
-        str(round((float(data['atmosphere']['visibility']) * 33.8637526), 2))
+    try:
+        data['atmosphere']['visibility_km'] = \
+            int(round(float(data['atmosphere']['visibility']) * 1.609344))
+        data['atmosphere']['visibility_km'] = \
+            str(round((float(data['atmosphere']['visibility']) * 33.8637526), 2))
+    except:
+        data['atmosphere']['visibility_km'] = "ERR"
 
     # textual value for air pressure
     rising = data['atmosphere']['rising']

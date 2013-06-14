@@ -54,7 +54,7 @@ def spotify_url(match):
         name = data["track"]["name"]
         artist = data["track"]["artists"][0]["name"]
         album = data["track"]["album"]["name"]
-        return u"Spotify Track: {} by {} from the album {}".format(name, artist, album) // shortened
+        return u"Spotify Track: {} by {} from the album {}".format(name, artist, album)
     elif type == "artist":
         return u"Spotify Artist: {}".format(data["artist"]["name"])
     elif type == "album":

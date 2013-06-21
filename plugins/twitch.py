@@ -13,7 +13,15 @@ def twitch_url(match):
     if not test(match.group(4).split("/")[1]):
       return "Not a valid username"
     soup = http.get_soup("http://twitch.tv/" + location)
-    title = soup.findAll('span', {'class': 'real_title js-title'})[0].text
+    try:
+      title = soup.findAll('span', {'class': 'real_title js-title'})[0].text
+    except IndexError:
+      return "That user has no stream or videos."
+    online = True
+    try:
+      isplaying = soup.findAll('a', {'data-content_type': 'live'})[0];
+    except IndexError:
+      online = False
     try:
       name = soup.findAll('a', {'class': 'channel_name'})[0].text
     except IndexError:
@@ -23,7 +31,13 @@ def twitch_url(match):
       np = False
     else:
       np = True
-    if np:
-      return "%s: %s playing %s" % (title, name, playing)
+    if online:
+      if np:
+        return u"%s: %s playing %s (\x033\x02Online now!\x02\x0f)" % (title, name, playing)
+      else:
+        return u"%s: %s (\x033\x02Online now!\x02\x0f)" % (title, name)
     else:
-      return "%s: %s" % (title, name)
+      if np:
+        return u"%s: %s playing %s (\x034\x02Offline\x02\x0f)" % (title, name, playing)
+      else:
+        return u"%s: %s (\x034\x02Offline\x02\x0f)" % (title, name)

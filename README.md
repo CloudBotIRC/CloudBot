@@ -2,7 +2,7 @@
 
 ## About
 
-CloudBot is a Python IRC bot very heavily based on [Skybot](http://git.io/skybot) by [rmmh](http://git.io/rmmh).
+CloudBot is a Python IRC bot based on [Skybot](http://git.io/skybot) by [rmmh](http://git.io/rmmh).
 
 ### Goals
 
@@ -27,7 +27,7 @@ Unzip the resulting file, and continue to read this document.
 
 ### Install
     
-    Install required Linux packages (check buttom)
+    Install required Linux packages (check bottom)
     
 Before you can run the bot, you need to install a few Python dependencies. These can be installed with `pip` (The Python package manager):
 
@@ -41,39 +41,11 @@ Before you can run the bot, you need to install a few Python dependencies. These
 
 ### Run
 
-Once you have installed the required dependencies, there are two ways you can run the bot:
-
-#### Launcher
-
-**Note:** Due to some issues with the launcher we recommend you run the bot manually as detailed below.
-
-The launcher will start the bot as a background process, and allow the bot to close and restart itself. This is only supported on unix-like machines (not Windows).
-
-For the launcher to work properly, install `screen`, or `daemon` (daemon is recommended):
-
-`apt-get install screen`
-
-`apt-get install daemon`
-
-Once you have installed either `screen` or `daemon`, run the start command:
-
-`./cloudbot start`
-
-It will generate a default config for you.  Once you have edited the config, run it again with the same command:
-
-`./cloudbot start`
-
-This will start up your bot as a background process. To stop it, use `./cloudbot stop`. (Config docs at the [wiki](http://git.io/cloudbotircconfig))
-
-#### Manually
-
-To manually run the bot and get console output, run it with:
+Once you have installed the required dependencies, you can run the bot!
 
 `python bot.py`
 
 On Windows you can usually just double-click the `bot.py` file to start the bot, as long as you have Python installed correctly.
-
-(note: running the bot without the launcher breaks the start and restart commands)
 
 ## Getting help with CloudBot
 
@@ -100,9 +72,7 @@ CloudBot runs on **Python** *2.7.x*. It is developed on **Ubuntu** *12.04* with 
 It **requires the Python module** `lXML`, and `Enchant` is needed for the spellcheck plugin.
 It also **requires** `pydns` and `beautifulsoup4` and is needed for SRV record lookup for the mctools plugin.
 
-The programs `daemon` or `screen` are recomended for the launcher to run optimaly.
-
-**Windows** users: Windows compatibility with the launcher and some plugins is **broken** (such as ping), but we do intend to add it.³
+**Windows** users: Windows compatibility some plugins is **broken** (such as ping), but we do intend to add it.³
 
 ## Example CloudBots
 
@@ -111,16 +81,13 @@ The developers of CloudBot run two CloudBots on [Espernet](http://esper.net).
 They can both be found in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via IRC to #CloudBot on irc.esper.net").
 
 **mau5bot** is the semi-stable bot, and runs on the latest stable development version of CloudBot. (mau5bot is running on **Ubuntu Server** *12.04* with **Python** *2.7.3*)
-
-**neerbot** is unstable bot, and runs on the `HEAD` of the `develop` branch. (neerbot is running on **Debian** *Wheezy/Testing* with **Python** *2.7.2*)
-
 ## License
 
 CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
 
     CloudBot/DEV
 
-    Copyright © 2011-2012 Luke Rogers / ClouDev - <[cloudev.github.com](http://cloudev.github.com)>
+    Copyright © 2011-2013 Luke Rogers / ClouDev - <[cloudev.github.com](http://cloudev.github.com)>
 
     CloudBot is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

@@ -1,5 +1,6 @@
 import re
 from util import hook, http
+import json
 
 twitch_re = (r'(.*:)//(twitch.tv|www.twitch.tv)(:[0-9]+)?(.*)', re.I)
 valid = set('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_/')
@@ -17,10 +18,11 @@ def twitch_url(match):
       title = soup.findAll('span', {'class': 'real_title js-title'})[0].text
     except IndexError:
       return "That user has no stream or videos."
-    online = True
-    try:
-      isplaying = soup.findAll('a', {'data-content_type': 'live'})[0];
-    except IndexError:
+    isplaying = http.get_json("http://api.justin.tv/api/stream/list.json?channel=%s" % location)
+    if isplaying:
+      online = True
+      watchers = isplaying[0]["channel_count"]
+    else:
       online = False
     try:
       name = soup.findAll('a', {'class': 'channel_name'})[0].text
@@ -33,9 +35,9 @@ def twitch_url(match):
       np = True
     if online:
       if np:
-        return u"%s: %s playing %s (\x033\x02Online now!\x02\x0f)" % (title, name, playing)
+        return u"%s: %s playing %s (\x033\x02Online now!\x02\x0f %s viewers)" % (title, name, playing, watchers)
       else:
-        return u"%s: %s (\x033\x02Online now!\x02\x0f)" % (title, name)
+        return u"%s: %s (\x033\x02Online now!\x02\x0f %s viewers)" % (title, name, watchers)
     else:
       if np:
         return u"%s: %s playing %s (\x034\x02Offline\x02\x0f)" % (title, name, playing)

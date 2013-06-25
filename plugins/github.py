@@ -58,5 +58,5 @@ def ghissues(inp):
     user = data["user"]["login"]
     title = data["title"]
     summary = truncate(data["body"])
-    gitiourl = gitio.gitio(data["url"])
+    gitiourl = gitio.gitio(data["html_url"])
     return fmt % (number, state, user, title, summary, gitiourl)

@@ -49,6 +49,7 @@ def ghissues(inp):
     except ValueError:
       return "Invalid data returned. Check arguments (.github issues username/repo [number]"
     fmt = "Issue: #%s (%s) by %s: %s | %s %s" # (number, state, user.login, title, truncate(body), gitio.gitio(data.url))
+    fmt1 = "Issue: #%s (%s) by %s: %s %s" # (number, state, user.login, title, gitio.gitio(data.url))
     number = data["number"]
     if data["state"] == "open":
       state = u"\x033\x02OPEN\x02\x0f"
@@ -59,4 +60,7 @@ def ghissues(inp):
     title = data["title"]
     summary = truncate(data["body"])
     gitiourl = gitio.gitio(data["html_url"])
-    return fmt % (number, state, user, title, summary, gitiourl)
+    if summary == "":
+      return fmt1 % (number, state, user, title, gitiourl)
+    else:
+      return fmt % (number, state, user, title, summary, gitiourl)

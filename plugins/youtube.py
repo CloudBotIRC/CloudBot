@@ -83,3 +83,20 @@ def youtube(inp):
     video_id = request['data']['items'][0]['id']
 
     return get_video_description(video_id) + " - " + video_url % video_id
+
+ytpl_re = (r'(.*:)//(www.youtube.com/playlist|youtube.com/playlist)(:[0-9]+)?(.*)', re.I)
+
+@hook.regex(*ytpl_re)
+def ytplaylist_url(match):
+    location = match.group(4).split("=")[-1]
+    try:
+      soup = http.get_soup("https://www.youtube.com/playlist?list=" + location)
+    except Exception:
+      return "\x034\x02Invalid response."
+    title = soup.find('title').text.split('-')[0].strip()
+    author = soup.find('img', {'class': 'channel-header-profile-image'})['title']
+    numofratings = int(soup.find('span', {'class': 'likes'}).text) + int(soup.find('span', {'class': 'dislikes'}).text)
+    rating = (int(soup.find('span', {'class': 'likes'}).text) / numofratings) * 100 / 20
+    numvideos = soup.find('ul', {'class': 'header-stats'}).findAll('li')[0].text.split(' ')[0]
+    views = soup.find('ul', {'class': 'header-stats'}).findAll('li')[1].text.split(' ')[0]
+    return u"\x02%s\x02 - \x02%s\x02 views - \x02%s\x02 videos - \x02%s\x02" % (title, views, numvideos, author)

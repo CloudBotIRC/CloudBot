@@ -1,10 +1,9 @@
-#!/usr/bin/env python
 from util import hook
 import oauth2 as oauth
 import urllib, json
 
-CONSUMER_KEY = "jk53y8a3fj93jf2wq78amemk"
-CONSUMER_SECRET = "BbEeBbQYFA"
+CONSUMER_KEY = "KEY"
+CONSUMER_SECRET = "SECRET"
 
 def getdata(inp, types):
   consumer = oauth.Consumer(CONSUMER_KEY, CONSUMER_SECRET)
@@ -13,9 +12,17 @@ def getdata(inp, types):
   data = json.loads(response[1])
   return data
 
+def checkkeys():
+  if CONSUMER_KEY == "KEY" or CONSUMER_SECRET == "SECRET":
+    return True
+  else:
+    return False
+
 @hook.command
 def rdio(inp):
   """ rdio <search term> - alternatives: .rdiot (track), .rdioar (artist), .rdioal (album) """
+  if checkkeys():
+    return "This command requires an API key, please enter one in the config"
   data = getdata(inp, "Track,Album,Artist")
   try:
     info = data['result']['results'][0]
@@ -41,6 +48,8 @@ def rdio(inp):
 @hook.command
 def rdiot(inp):
   """ rdiot <search term> - Search for tracks on rdio """
+  if checkkeys():
+    return "This command requires an API key, please enter one in the config"
   data = getdata(inp, "Track")
   try:
     info = data['result']['results'][0]
@@ -55,6 +64,8 @@ def rdiot(inp):
 @hook.command
 def rdioar(inp):
   """ rdioar <search term> - Search for artists on rdio """
+  if checkkeys():
+    return "This command requires an API key, please enter one in the config"
   data = getdata(inp, "Artist")
   try:
     info = data['result']['results'][0]
@@ -67,6 +78,8 @@ def rdioar(inp):
 @hook.command
 def rdioal(inp):
   """ rdioal <search term> - Search for albums on rdio """
+  if checkkeys():
+    return "This command requires an API key, please enter one in the config"
   data = getdata(inp, "Album")
   try:
     info = data['result']['results'][0]
@@ -84,6 +97,8 @@ rdio_re = (r'(.*:)//(rd.io|www.rdio.com|rdio.com)(:[0-9]+)?(.*)', re.I)
 
 @hook.regex(*rdio_re)
 def rdio_url(match):
+    if checkkeys():
+      return None
     url = match.group(1) + "//" + match.group(2) + match.group(4)
     consumer = oauth.Consumer(CONSUMER_KEY, CONSUMER_SECRET)
     client = oauth.Client(consumer)

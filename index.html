@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>CloudBot by ClouDev</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>CloudBot</h1>
+        <p>The easy to use, open source Python IRC Bot!</p>
+
+        <p class="view"><a href="https://github.com/ClouDev/CloudBot">View the Project on GitHub <small>ClouDev/CloudBot</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/ClouDev/CloudBot/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/ClouDev/CloudBot/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/ClouDev/CloudBot">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="cloudbotdev" class="anchor" href="#cloudbotdev"><span class="octicon octicon-link"></span></a>CloudBot/DEV</h1>
+
+<h2>
+<a name="about" class="anchor" href="#about"><span class="octicon octicon-link"></span></a>About</h2>
+
+<p>CloudBot is a Python IRC bot based on <a href="http://git.io/skybot">Skybot</a> by <a href="http://git.io/rmmh">rmmh</a>.</p>
+
+<h2>
+<a name="getting-and-using-cloudbot" class="anchor" href="#getting-and-using-cloudbot"><span class="octicon octicon-link"></span></a>Getting and using CloudBot</h2>
+
+<h3>
+<a name="download" class="anchor" href="#download"><span class="octicon octicon-link"></span></a>Download</h3>
+
+<p>Get CloudBot at <a href="https://github.com/ClouDev/CloudBot/zipball/develop" title="Get CloudBot from Github!">https://github.com/ClouDev/CloudBot/zipball/develop</a>.</p>
+
+<p>Unzip the resulting file, and continue to read this document.</p>
+
+<h3>
+<a name="install" class="anchor" href="#install"><span class="octicon octicon-link"></span></a>Install</h3>
+
+<p>Before you can run the bot, you need to install a few Python dependencies.
+You are <em>required</em> to install <code>lxml</code>, and <code>Enchant</code> and <code>PyDNS</code> are required for some plugins to function.</p>
+
+<p>These can be installed with <code>pip</code> (The Python package manager):</p>
+
+<pre><code>[sudo] pip install -r requirements.txt
+</code></pre>
+
+<h4>
+<a name="how-to-install-pip" class="anchor" href="#how-to-install-pip"><span class="octicon octicon-link"></span></a>How to install <code>pip</code>
+</h4>
+
+<pre><code>curl -O http://python-distribute.org/distribute_setup.py # or download with your browser on windows
+python distribute_setup.py
+easy_install pip
+</code></pre>
+
+<p>If you are unable to use pip, there are Windows installers for LXML available for <a href="https://pypi.python.org/packages/2.7/l/lxml/lxml-2.3.win-amd64-py2.7.exe">64 bit</a> and <a href="https://pypi.python.org/packages/2.7/l/lxml/lxml-2.3.win32-py2.7.exe">32 bit</a> versions of Python.</p>
+
+<h3>
+<a name="run" class="anchor" href="#run"><span class="octicon octicon-link"></span></a>Run</h3>
+
+<p>Once you have installed the required dependencies, you can run the bot! Make sure you are in the correct folder and run the following command:</p>
+
+<p><code>python bot.py</code></p>
+
+<p>The first time you run the bot it will generate the config file. The next time you run it, it will start normally.</p>
+
+<p>On Windows you can usually just double-click <code>bot.py</code> to start the bot, as long as you have Python installed correctly.</p>
+
+<h2>
+<a name="getting-help-with-cloudbot" class="anchor" href="#getting-help-with-cloudbot"><span class="octicon octicon-link"></span></a>Getting help with CloudBot</h2>
+
+<h3>
+<a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h3>
+
+<p>To configure your CloudBot, visit the <a href="http://git.io/cloudbotircconfig">Config Wiki Page</a>.</p>
+
+<p>To write your own plugins, visit the <a href="http://git.io/cloudbotircplugins">Plugin Wiki Page</a>.</p>
+
+<p>More at the <a href="http://git.io/cloudbotircwiki">Wiki Main Page</a>.</p>
+
+<h3>
+<a name="support" class="anchor" href="#support"><span class="octicon octicon-link"></span></a>Support</h3>
+
+<p>The developers reside in <a>#CloudBot</a> on <a href="http://esper.net">EsperNet</a> and would be glad to help you.</p>
+
+<p>If you think you have found a bug/have a idea/suggestion, please <strong>open a issue</strong> here on Github.</p>
+
+<h3>
+<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h3>
+
+<p>CloudBot runs on <strong>Python</strong> <em>2.7.x</em>. It is developed on <strong>Ubuntu</strong> <em>12.04</em> with <strong>Python</strong> <em>2.7.3</em>.</p>
+
+<p>It <strong>requires the Python module</strong> lXML.
+The module <code>Enchant</code> is needed for the spellcheck plugin.
+The module <code>PyDNS</code> is needed for SRV record lookup in the mctools plugin.</p>
+
+<p><strong>Windows</strong> users: Windows compatibility some plugins is <strong>broken</strong> (such as ping), but we do intend to add it. Eventually.</p>
+
+<h2>
+<a name="example-cloudbots" class="anchor" href="#example-cloudbots"><span class="octicon octicon-link"></span></a>Example CloudBots</h2>
+
+<p>You can find a number of example bots in <a title="Connect via IRC to #CloudBot on irc.esper.net">#CloudBot</a>.</p>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>CloudBot is <strong>licensed</strong> under the <strong>GPL v3</strong> license. The terms are as follows.</p>
+
+<pre><code>CloudBot/DEV
+
+Copyright © 2011-2013 Luke Rogers / ClouDev - &lt;[cloudev.github.com](http://cloudev.github.com)&gt;
+
+CloudBot is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+CloudBot is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with CloudBot.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+</code></pre>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/ClouDev">ClouDev</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>

@@ -1,20 +1,32 @@
-from util import hook
+from util import hook, http
 import os.path
 import pygeoip
 import json
-
-# initalise geolocation database
-geo = pygeoip.GeoIP(os.path.abspath("./plugins/data/geoip.dat"))
+import gzip
+from StringIO import StringIO
 
 
 # load region database
 with open("./plugins/data/geoip_regions.json", "rb") as f:
     regions = json.loads(f.read())
 
+if os.path.isfile(os.path.abspath("./plugins/data/GeoLiteCity.dat")):
+    # initalise geolocation database
+    geo = pygeoip.GeoIP(os.path.abspath("./plugins/data/GeoLiteCity.dat"))
+else:
+    download = http.get("http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz")
+    string_io = StringIO(download)
+    geoip_file = gzip.GzipFile(fileobj=string_io, mode='rb')
+
+    output = open(os.path.abspath("./plugins/data/GeoLiteCity.dat"),'wb')
+    output.write(geoip_file.read())
+    output.close()
+
 
 @hook.command
 def geoip(inp):
     "geoip <host/ip> -- Gets the location of <host/ip>"
+
     try:
         record = geo.record_by_name(inp)
     except:
@@ -36,3 +48,4 @@ def geoip(inp):
     data["country"] = record["country_name"] or "Unknown"
     data["city"] = record["city"] or "Unknown"
     return "\x02Country:\x02 {country} ({cc}), \x02City:\x02 {city}{region}".format(**data)
+

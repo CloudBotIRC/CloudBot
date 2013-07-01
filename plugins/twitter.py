@@ -1,10 +1,11 @@
 from util import hook, timesince
 import tweepy
 import re
+from datetime import datetime
 
 
 @hook.command
-def twitter(inp, bot=None):
+def twitter(inp, bot=None, say=None):
     "twitter <user> [n] -- Gets last/[n]th tweet from <user>"
 
     consumer_key = bot.config.get("api_keys", {}).get("twitter_consumer_key")
@@ -44,6 +45,11 @@ def twitter(inp, bot=None):
         else:
             return "Error {}: {}".format(e[0][0]['code'], e[0][0]['message'])
 
+    if user.verified:
+        prefix = "+"
+    else:
+        prefix = ""
+
     # get the users tweets
     user_timeline = api.user_timeline(id=user.id, count=tweet_number + 1)
 
@@ -58,9 +64,9 @@ def twitter(inp, bot=None):
         tweet_count = len(user_timeline)
         return "The user \x02{}\x02 only has \x02{}\x02 tweets.".format(user.screen_name, tweet_count)
 
-    time = timesince.timesince(tweet.created_at)
+    time = timesince.timesince(tweet.created_at, datetime.utcnow())
 
-    return u"@\x02{}\x02 ({}): {} ({} ago)".format(user.screen_name, user.name, tweet.text, time)
+    return u"{}@\x02{}\x02 ({}): {} ({} ago)".format(prefix, user.screen_name, user.name, tweet.text, time)
 
 
 @hook.command("twinfo")
@@ -91,5 +97,10 @@ def twuser(inp, bot=None):
         else:
             return "Unknown error"
 
-    return u"@\x02{}\x02 ({}) is located in \x02{}\x02 and has \x02{:,}\x02 tweets and \x02{:,}\x02 followers. The users description is \"{}\" " \
-           "".format(user.screen_name, user.name, user.location, user.statuses_count, user.followers_count, user.description)
+    if user.verified:
+        prefix = "+"
+    else:
+        prefix = ""
+
+    return u"{}@\x02{}\x02 ({}) is located in \x02{}\x02 and has \x02{:,}\x02 tweets and \x02{:,}\x02 followers. The users description is \"{}\" " \
+           "".format(prefix, user.screen_name, user.name, user.location, user.statuses_count, user.followers_count, user.description)

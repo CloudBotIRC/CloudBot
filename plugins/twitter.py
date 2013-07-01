@@ -63,6 +63,7 @@ def twitter(inp, bot=None):
     return u"@\x02{}\x02 ({}): {} ({} ago)".format(user.screen_name, user.name, tweet.text, time)
 
 
+@hook.command("twinfo")
 @hook.command
 def twuser(inp, bot=None):
     "twuser <user> -- Get info on the Twitter user <user>"
@@ -74,7 +75,7 @@ def twuser(inp, bot=None):
     oauth_secret = bot.config.get("api_keys", {}).get("twitter_access_secret")
 
     if not consumer_key:
-        return "Error: No Twitter API details."  
+        return "Error: No Twitter API details."
 
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(oauth_token, oauth_secret)
@@ -90,5 +91,5 @@ def twuser(inp, bot=None):
         else:
             return "Unknown error"
 
-    return u"@\x02{}\x02 ({}) is located in \x02{}\x02 and has \x02{}\x02 tweet(s). The users description is \"{}\" " \
-           "".format(user.screen_name, user.name, user.location, user.statuses_count, user.description)
+    return u"@\x02{}\x02 ({}) is located in \x02{}\x02 and has \x02{:,}\x02 tweets and \x02{:,}\x02 followers. The users description is \"{}\" " \
+           "".format(user.screen_name, user.name, user.location, user.statuses_count, user.followers_count, user.description)

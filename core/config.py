@@ -38,7 +38,11 @@ if not os.path.exists('config'):
             "lastfm": "INSERT API KEY FROM lastfm HERE",
             "rottentomatoes": "INSERT API KEY FROM rottentomatoes HERE",
             "mc_user": "INSERT minecraft USERNAME HERE",
-            "mc_pass": "INSERT minecraft PASSWORD HERE"
+            "mc_pass": "INSERT minecraft PASSWORD HERE",
+            "twitter_consumer_key": "",
+            "twitter_consumer_secret": "",
+            "twitter_access_token": "",
+            "twitter_access_secret": ""
           },
           "plugins":
           {

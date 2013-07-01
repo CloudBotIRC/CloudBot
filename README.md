@@ -4,19 +4,6 @@
 
 CloudBot is a Python IRC bot based on [Skybot](http://git.io/skybot) by [rmmh](http://git.io/rmmh).
 
-### Goals
-
-* Easy to use wrapper
-* Intuitive configuration
-* Fully controlled from IRC
-* Fully compatable with existing skybot plugins
-* Easily extendable
-  * Thorough documentation
-  * Cross-platform
-* Muti-threaded, efficient
-  * Automatic reloading
-  * Little boilerplate
-
 ## Getting and using CloudBot
 
 ### Download
@@ -27,9 +14,11 @@ Unzip the resulting file, and continue to read this document.
 
 ### Install
     
-    Install required Linux packages (check bottom)
-    
-Before you can run the bot, you need to install a few Python dependencies. These can be installed with `pip` (The Python package manager):
+Before you can run the bot, you need to install a few Python dependencies.
+You are *required* to install `lxml`, and `Enchant` and `PyDNS` are required for some plugins to function.
+
+
+These can be installed with `pip` (The Python package manager):
 
     [sudo] pip install -r requirements.txt
 
@@ -38,14 +27,18 @@ Before you can run the bot, you need to install a few Python dependencies. These
     curl -O http://python-distribute.org/distribute_setup.py # or download with your browser on windows
     python distribute_setup.py
     easy_install pip
+    
+If you are unable to use pip, there are Windows installers for LXML available for [64 bit](https://pypi.python.org/packages/2.7/l/lxml/lxml-2.3.win-amd64-py2.7.exe) and [32 bit](https://pypi.python.org/packages/2.7/l/lxml/lxml-2.3.win32-py2.7.exe) versions of Python.
 
 ### Run
 
-Once you have installed the required dependencies, you can run the bot!
+Once you have installed the required dependencies, you can run the bot! Make sure you are in the correct folder and run the following command:
 
 `python bot.py`
 
-On Windows you can usually just double-click the `bot.py` file to start the bot, as long as you have Python installed correctly.
+The first time you run the bot it will generate the config file. The next time you run it, it will start normally.
+
+On Windows you can usually just double-click `bot.py` to start the bot, as long as you have Python installed correctly.
 
 ## Getting help with CloudBot
 
@@ -65,22 +58,18 @@ If you think you have found a bug/have a idea/suggestion, please **open a issue*
 
 ### Requirements
 
-Linux packages needed for install: python, python-dev, libenchant-dev, libenchant1c2a, libxslt-dev, libxml2-dev.
-
 CloudBot runs on **Python** *2.7.x*. It is developed on **Ubuntu** *12.04* with **Python** *2.7.3*.
 
-It **requires the Python module** `lXML`, and `Enchant` is needed for the spellcheck plugin.
-It also **requires** `pydns` and `beautifulsoup4` and is needed for SRV record lookup for the mctools plugin.
+It **requires the Python module** lXML.
+The module `Enchant` is needed for the spellcheck plugin.
+The module `PyDNS` is needed for SRV record lookup in the mctools plugin.
 
-**Windows** users: Windows compatibility some plugins is **broken** (such as ping), but we do intend to add it.³
+**Windows** users: Windows compatibility some plugins is **broken** (such as ping), but we do intend to add it. Eventually.
 
 ## Example CloudBots
 
-The developers of CloudBot run two CloudBots on [Espernet](http://esper.net).
+You can find a number of example bots in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via IRC to #CloudBot on irc.esper.net").
 
-They can both be found in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via IRC to #CloudBot on irc.esper.net").
-
-**mau5bot** is the semi-stable bot, and runs on the latest stable development version of CloudBot. (mau5bot is running on **Ubuntu Server** *12.04* with **Python** *2.7.3*)
 ## License
 
 CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
@@ -101,7 +90,3 @@ CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
 
     You should have received a copy of the GNU General Public License
     along with CloudBot.  If not, see <http://www.gnu.org/licenses/>.
-
-## Notes
-
-³ eventually

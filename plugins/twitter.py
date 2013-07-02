@@ -85,6 +85,8 @@ def twitter(inp, bot=None, say=None):
         tweet = random.choice(search)
         user = tweet.user
 
+    text = " ".join(tweet.text.split())
+
     if user.verified:
         prefix = "+"
     else:
@@ -92,7 +94,7 @@ def twitter(inp, bot=None, say=None):
 
     time = timesince.timesince(tweet.created_at, datetime.utcnow())
 
-    return u"{}@\x02{}\x02 ({}): {} ({} ago)".format(prefix, user.screen_name, user.name, tweet.text, time)
+    return u"{}@\x02{}\x02 ({}): {} ({} ago)".format(prefix, user.screen_name, user.name, text, time)
 
 
 @hook.command("twinfo")

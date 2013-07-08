@@ -1,6 +1,6 @@
 from util import hook, http, web
 
-base_url = "http://api.wunderground.com/api/{}/geolookup/{}/q/{}.json"
+base_url = "http://api.wunderground.com/api/{}/{}/q/{}.json"
 
 
 @hook.command(autohelp=None)
@@ -40,48 +40,39 @@ def weather(inp, reply=None, db=None, nick=None, bot=None):
 
     location = http.quote_plus(loc)
 
-    conditions_url = base_url.format(api_key, "conditions", location)
-    conditions = http.get_json(conditions_url)
+    request_url = base_url.format(api_key, "geolookup/forecast/conditions", location)
+    response = http.get_json(request_url)
 
-    try:
-        conditions['location']['city']
-
-        # found result, lets get the rest of the data
-        forecast_url = base_url.format(api_key, "forecast", location)
-        forecast = http.get_json(forecast_url)
-    except KeyError:
+    if 'location' not in response:
         try:
-            # try and get the closest match
-            location_id = conditions['response']['results'][0]['zmw']
+            location_id = response['response']['results'][0]['zmw']
         except KeyError:
             return "Could not get weather for that location."
 
-        # get the conditions again, using the closest match
-        conditions_url = base_url.format(api_key, "conditions", "zmw:" + location_id)
-        conditions = http.get_json(conditions_url)
-        forecast_url = base_url.format(api_key, "forecast", "zmw:" + location_id)
-        forecast = http.get_json(forecast_url)
+        # get the weather again, using the closest match
+        request_url = base_url.format(api_key, "geolookup/forecast/conditions", "zmw:" + location_id)
+        response = http.get_json(request_url)
 
-    if conditions['location']['state']:
-        place_name = "\x02{}\x02, \x02{}\x02 (\x02{}\x02)".format(conditions['location']['city'],
-                                     conditions['location']['state'], conditions['location']['country'])
+    if response['location']['state']:
+        place_name = "\x02{}\x02, \x02{}\x02 (\x02{}\x02)".format(response['location']['city'],
+                                     response['location']['state'], response['location']['country'])
     else:
-        place_name = "\x02{}\x02 (\x02{}\x02)".format(conditions['location']['city'],
-                                      conditions['location']['country'])
+        place_name = "\x02{}\x02 (\x02{}\x02)".format(response['location']['city'],
+                                      response['location']['country'])
 
-    forecast_today = forecast["forecast"]["simpleforecast"]["forecastday"][0]
-    forecast_tomorrow = forecast["forecast"]["simpleforecast"]["forecastday"][1]
+    forecast_today = response["forecast"]["simpleforecast"]["forecastday"][0]
+    forecast_tomorrow = response["forecast"]["simpleforecast"]["forecastday"][1]
 
     # put all the stuff we want to use in a dictionary for easy formatting of the output
     weather_data = {
         "place": place_name,
-        "conditions": conditions['current_observation']['weather'],
-        "temp_f": conditions['current_observation']['temp_f'],
-        "temp_c": conditions['current_observation']['temp_c'],
-        "humidity": conditions['current_observation']['relative_humidity'],
-        "wind_kph": conditions['current_observation']['wind_kph'],
-        "wind_mph": conditions['current_observation']['wind_mph'],
-        "wind_direction": conditions['current_observation']['wind_dir'],
+        "conditions": response['current_observation']['weather'],
+        "temp_f": response['current_observation']['temp_f'],
+        "temp_c": response['current_observation']['temp_c'],
+        "humidity": response['current_observation']['relative_humidity'],
+        "wind_kph": response['current_observation']['wind_kph'],
+        "wind_mph": response['current_observation']['wind_mph'],
+        "wind_direction": response['current_observation']['wind_dir'],
         "today_conditions": forecast_today['conditions'],
         "today_high_f": forecast_today['high']['fahrenheit'],
         "today_high_c": forecast_today['high']['celsius'],
@@ -92,7 +83,7 @@ def weather(inp, reply=None, db=None, nick=None, bot=None):
         "tomorrow_high_c": forecast_tomorrow['high']['celsius'],
         "tomorrow_low_f": forecast_tomorrow['low']['fahrenheit'],
         "tomorrow_low_c": forecast_tomorrow['low']['celsius'],
-        "url": web.isgd(conditions["current_observation"]['forecast_url'] + "?apiref=e535207ff4757b18")
+        "url": web.isgd(response["current_observation"]['forecast_url'] + "?apiref=e535207ff4757b18")
     }
 
     reply("{place} - \x02Current:\x02 {conditions}, {temp_f}F/{temp_c}C, {humidity}, "

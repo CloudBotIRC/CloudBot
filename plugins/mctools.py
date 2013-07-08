@@ -61,22 +61,6 @@ def srvData(domain):
             data = [getsrv['data'][2],getsrv['data'][3]]
             return data
 
-@hook.command(autohelp=False)
-def mclogin(inp, bot=None):
-    "mclogin -- Checks the status of Minecraft's login servers."
-    username = bot.config.get("api_keys", {}).get("mc_user", None)
-    password = bot.config.get("api_keys", {}).get("mc_pass", None)
-    if password is None:
-        return "error: no login set"
-
-    login = http.get("https://login.minecraft.net/", user=username,
-                     password=password, version=13)
-
-    if username.lower() in login.lower():
-        return "Minecraft login servers appear to be online!"
-    else:
-        return "Minecraft login servers appear to be offline!"
-
 
 @hook.command(autohelp=False)
 def mcstatus(inp, say=None):

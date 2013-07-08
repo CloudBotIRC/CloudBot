@@ -30,19 +30,15 @@ if not os.path.exists('config'):
           "acls": {},
           "api_keys":
           {
-            "geoip": "INSERT API KEY FROM ipinfodb.com HERE",
-            "tvdb": "INSERT API KEY FROM thetvdb.com HERE",
-            "bitly_user": "INSERT USERNAME FROM bitly.com HERE",
-            "bitly_api": "INSERT API KEY FROM bitly.com HERE",
-            "wolframalpha": "INSERT API KEY FROM wolframalpha.com HERE",
-            "lastfm": "INSERT API KEY FROM lastfm HERE",
-            "rottentomatoes": "INSERT API KEY FROM rottentomatoes HERE",
-            "mc_user": "INSERT minecraft USERNAME HERE",
-            "mc_pass": "INSERT minecraft PASSWORD HERE",
+            "tvdb": "",
+            "wolframalpha": "",
+            "lastfm": "",
+            "rottentomatoes": "",
             "twitter_consumer_key": "",
             "twitter_consumer_secret": "",
             "twitter_access_token": "",
-            "twitter_access_secret": ""
+            "twitter_access_secret": "",
+            "wunderground": ""
           },
           "plugins":
           {

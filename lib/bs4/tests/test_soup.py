@@ -125,9 +125,14 @@ class TestEntitySubstitution(unittest.TestCase):
     def test_xml_quoting_handles_ampersands(self):
         self.assertEqual(self.sub.substitute_xml("AT&T"), "AT&amp;T")
 
-    def test_xml_quoting_ignores_ampersands_when_they_are_part_of_an_entity(self):
+    def test_xml_quoting_including_ampersands_when_they_are_part_of_an_entity(self):
         self.assertEqual(
             self.sub.substitute_xml("&Aacute;T&T"),
+            "&amp;Aacute;T&amp;T")
+
+    def test_xml_quoting_ignoring_ampersands_when_they_are_part_of_an_entity(self):
+        self.assertEqual(
+            self.sub.substitute_xml_containing_entities("&Aacute;T&T"),
             "&Aacute;T&amp;T")
 
     def test_quotes_not_html_substituted(self):

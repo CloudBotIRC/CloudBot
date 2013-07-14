@@ -58,6 +58,8 @@ class BeautifulSoupHTMLParser(HTMLParser):
         # it's fixed.
         if name.startswith('x'):
             real_name = int(name.lstrip('x'), 16)
+        elif name.startswith('X'):
+            real_name = int(name.lstrip('X'), 16)
         else:
             real_name = int(name)
 
@@ -85,6 +87,9 @@ class BeautifulSoupHTMLParser(HTMLParser):
         self.soup.endData()
         if data.startswith("DOCTYPE "):
             data = data[len("DOCTYPE "):]
+        elif data == 'DOCTYPE':
+            # i.e. "<!DOCTYPE>"
+            data = ''
         self.soup.handle_data(data)
         self.soup.endData(Doctype)
 

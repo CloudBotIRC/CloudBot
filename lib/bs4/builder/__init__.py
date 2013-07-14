@@ -152,7 +152,7 @@ class TreeBuilder(object):
             tag_specific = self.cdata_list_attributes.get(
                 tag_name.lower(), [])
             for cdata_list_attr in itertools.chain(universal, tag_specific):
-                if cdata_list_attr in dict(attrs):
+                if cdata_list_attr in attrs:
                     # Basically, we have a "class" attribute whose
                     # value is a whitespace-separated list of CSS
                     # classes. Split it into a list.

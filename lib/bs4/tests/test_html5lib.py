@@ -56,3 +56,17 @@ class HTML5LibBuilderSmokeTest(SoupTest, HTML5TreeBuilderSmokeTest):
             "<table><thead><tr><td>Foo</td></tr></thead>"
             "<tbody><tr><td>Bar</td></tr></tbody>"
             "<tfoot><tr><td>Baz</td></tr></tfoot></table>")
+
+    def test_xml_declaration_followed_by_doctype(self):
+        markup = '''<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+   <p>foo</p>
+  </body>
+</html>'''
+        soup = self.soup(markup)
+        # Verify that we can reach the <p> tag; this means the tree is connected.
+        self.assertEqual(b"<p>foo</p>", soup.p.encode())

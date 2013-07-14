@@ -81,6 +81,8 @@ class EntitySubstitution(object):
                                            "&(?!#\d+;|#x[0-9a-fA-F]+;|\w+;)"
                                            ")")
 
+    AMPERSAND_OR_BRACKET = re.compile("([<>&])")
+
     @classmethod
     def _substitute_html_entity(cls, matchobj):
         entity = cls.CHARACTER_TO_HTML_ENTITY.get(matchobj.group(0))
@@ -134,6 +136,28 @@ class EntitySubstitution(object):
     def substitute_xml(cls, value, make_quoted_attribute=False):
         """Substitute XML entities for special XML characters.
 
+        :param value: A string to be substituted. The less-than sign
+          will become &lt;, the greater-than sign will become &gt;,
+          and any ampersands will become &amp;. If you want ampersands
+          that appear to be part of an entity definition to be left
+          alone, use substitute_xml_containing_entities() instead.
+
+        :param make_quoted_attribute: If True, then the string will be
+         quoted, as befits an attribute value.
+        """
+        # Escape angle brackets and ampersands.
+        value = cls.AMPERSAND_OR_BRACKET.sub(
+            cls._substitute_xml_entity, value)
+
+        if make_quoted_attribute:
+            value = cls.quoted_attribute_value(value)
+        return value
+
+    @classmethod
+    def substitute_xml_containing_entities(
+        cls, value, make_quoted_attribute=False):
+        """Substitute XML entities for special XML characters.
+
         :param value: A string to be substituted. The less-than sign will
           become &lt;, the greater-than sign will become &gt;, and any
           ampersands that are not part of an entity defition will
@@ -150,6 +174,7 @@ class EntitySubstitution(object):
         if make_quoted_attribute:
             value = cls.quoted_attribute_value(value)
         return value
+
 
     @classmethod
     def substitute_html(cls, s):
@@ -273,7 +298,6 @@ class UnicodeDammit:
             return None
         self.tried_encodings.append((proposed, errors))
         markup = self.markup
-
         # Convert smart quotes to HTML if coming from an encoding
         # that might have them.
         if (self.smart_quotes_to is not None

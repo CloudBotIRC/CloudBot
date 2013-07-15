@@ -12,15 +12,16 @@ def api_get(kind, query):
 
 def get_info(url):
     try:
-        page = http.get(url)
+        soup = http.get_soup(url)
     except Exception as e:
         return "Could not get SCP information: Unable to fetch URL. ({})".format(e)
-    contents = re.sub('<[^<]+?>', '', page)
+    safe_html = unicode(soup)
+    contents = re.sub('<[^<]+?>', '', safe_html)
 
     try:
-        item_id = http.unescape(re.findall("Item #: (.+?)\n", contents, re.S)[0])
-        object_class = http.unescape(re.findall("Object Class: (.+?)\n", contents, re.S)[0])
-        description = http.unescape(re.findall("Description: (.+?)\n", contents, re.S)[0])
+        item_id = re.findall("Item #: (.+?)\n", contents, re.S)[0]
+        object_class = re.findall("Object Class: (.+?)\n", contents, re.S)[0]
+        description = re.findall("Description: (.+?)\n", contents, re.S)[0]
     except IndexError as e:
         return "Could not get SCP information: Page was not a valid SCP page."
 

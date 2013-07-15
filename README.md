@@ -1,4 +1,4 @@
-# CloudBot/DEV
+# CloudBot
 
 ## About
 
@@ -50,6 +50,8 @@ To write your own plugins, visit the [Plugin Wiki Page](http://git.io/cloudbotir
 
 More at the [Wiki Main Page](http://git.io/cloudbotircwiki).
 
+(some of the information on the wiki is outdated and needs to be rewritten)
+
 ### Support
 
 The developers reside in [#CloudBot](irc://irc.esper.net/cloudbot) on [EsperNet](http://esper.net) and would be glad to help you.
@@ -58,11 +60,11 @@ If you think you have found a bug/have a idea/suggestion, please **open a issue*
 
 ### Requirements
 
-CloudBot runs on **Python** *2.7.x*. It is developed on **Ubuntu** *12.04* with **Python** *2.7.3*.
+CloudBot runs on **Python** *2.7.x*. It is currently developed on **Windows** *8* with **Python** *2.7.5*.
 
 It **requires the Python module** lXML.
 The module `Enchant` is needed for the spellcheck plugin.
-The module `PyDNS` is needed for SRV record lookup in the mctools plugin.
+The module `PyDNS` is needed for SRV record lookup in the mcping plugin.
 
 **Windows** users: Windows compatibility some plugins is **broken** (such as ping), but we do intend to add it. Eventually.
 
@@ -74,9 +76,9 @@ You can find a number of example bots in [#CloudBot](irc://irc.esper.net/cloudbo
 
 CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
 
-    CloudBot/DEV
+    CloudBot
 
-    Copyright © 2011-2013 Luke Rogers / ClouDev - <[cloudev.github.com](http://cloudev.github.com)>
+    Copyright © 2011-2013 Luke Rogers
 
     CloudBot is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

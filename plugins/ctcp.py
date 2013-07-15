@@ -1,6 +1,4 @@
-# Plugin by neersighted
 import time
-import getpass
 from util import hook
 
 
@@ -18,8 +16,3 @@ def ctcp_ping(inp, notice=None):
 @hook.regex(r'^\x01TIME\x01$')
 def ctcp_time(inp, notice=None):
     notice('\x01TIME: The time is: %s' % time.strftime("%r", time.localtime()))
-
-
-@hook.regex(r'^\x01FINGER\x01$')
-def ctcp_finger(inp, notice=None):
-    notice('\x01FINGER: Username is: $s' % getpass.getuser())

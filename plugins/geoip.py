@@ -22,6 +22,8 @@ else:
     output.write(geoip_file.read())
     output.close()
 
+    geo = pygeoip.GeoIP(os.path.abspath("./plugins/data/GeoLiteCity.dat"))
+
 
 @hook.command
 def geoip(inp):
@@ -48,4 +50,3 @@ def geoip(inp):
     data["country"] = record["country_name"] or "Unknown"
     data["city"] = record["city"] or "Unknown"
     return "\x02Country:\x02 {country} ({cc}), \x02City:\x02 {city}{region}".format(**data)
-

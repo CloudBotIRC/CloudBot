@@ -34,6 +34,7 @@ if not os.path.exists('config'):
             "wolframalpha": "",
             "lastfm": "",
             "rottentomatoes": "",
+            "soundcloud": "",
             "twitter_consumer_key": "",
             "twitter_consumer_secret": "",
             "twitter_access_token": "",

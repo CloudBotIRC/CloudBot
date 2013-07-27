@@ -7,8 +7,16 @@ def topic(inp, conn=None, chan=None, notice=None):
     "topic [channel] <topic> -- Change the topic of a channel."
     inp = inp.split(" ")
     if inp[0][0] == "#":
-        out = "PRIVMSG %s :%s" % (inp[0], message)
+        message = ""
+        for x in inp[1:]:
+            message = message + x + " "
+        message = message[:-1]
+        out = "TOPIC %s :%s" % (inp[0], message)
     else:
+        message = ""
+        for x in inp[0:]:
+            message = message + x + " "
+        message = message[:-1]
         out = "TOPIC %s :%s" % (chan, message)
     conn.send(out)
 

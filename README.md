@@ -13,9 +13,8 @@ Get CloudBot at [https://github.com/ClouDev/CloudBot/zipball/develop](https://gi
 Unzip the resulting file, and continue to read this document.
 
 ### Install
-    
-Before you can run the bot, you need to install a few Python dependencies.
-You are *required* to install `lxml`, and `Enchant` and `PyDNS` are required for some plugins to function.
+
+Before you can run the bot, you need to install a few Python dependencies. LXML is required while Enchant and PyDNS are needed for several plugins.
 
 
 These can be installed with `pip` (The Python package manager):

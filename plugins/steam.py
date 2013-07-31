@@ -1,19 +1,24 @@
 from util import hook, http, web, text, timesince
-from urllib import urlencode
 from datetime import datetime
+from bs4 import BeautifulSoup
 import re
 
+db_ready = False
 
-def shorten(inp):
-    try:
-        url = web.isgd(inp)
-    except (web.ShortenError, http.HTTPError):
-        url = inp
-    return url
+steam_re = (r'(.*:)//(store.steampowered.com)(:[0-9]+)?(.*)', re.I)
+
+currencies = {'USD': 'us', 'euro1': "de", 'euro2': 'no',
+              'pound': 'uk', 'rubles': 'ru', 'real': 'br',
+              'yen': 'jp', 'dollars': 'us', 'german': 'de',
+              'pounds': 'uk', 'russian': 'ru', 'brazil': 'br',
+              'japan': 'jp', 'us': 'us', 'de': 'de', 'no': 'no',
+              'uk': 'uk', 'ru': 'ru', 'br': 'br', 'jp': 'jp'}
+
 
 def db_init(db):
     db.execute("create table if not exists steam(nick primary key, acc)")
     db.commit()
+    db_ready = True
 
 
 @hook.command('sc', autohelp=False)
@@ -22,13 +27,10 @@ def steamcalc(inp, nick='', db=None):
     """steamcalc <username> [currency] - Gets value of steam account and
        total hours played. Uses steamcommunity.com/id/<nickname>. Uses
        IRC nickname if none provided. """
-    currencies = {'USD': 'us', 'euro1': "de", 'euro2': 'no',
-                  'pound': 'uk', 'rubles': 'ru', 'real': 'br',
-                  'yen': 'jp', 'dollars': 'us', 'german': 'de',
-                  'pounds': 'uk', 'russian': 'ru', 'brazil': 'br',
-                  'japan': 'jp', 'us': 'us', 'de': 'de', 'no': 'no',
-                  'uk': 'uk', 'ru': 'ru', 'br': 'br', 'jp': 'jp'}
-    db_init(db)
+
+    if not db_ready:
+        db_init(db)
+
     currency = None
     dontsave = False
     if not inp:
@@ -51,15 +53,18 @@ def steamcalc(inp, nick='', db=None):
             if len(inp.split(" ")) > 2:
                 if inp.split(" ")[2] == "dontsave":
                     dontsave = True
-    urldata = urlencode({"player": inp, "currency": currency if currency else "us"})
-    soup = http.get_soup("http://steamdb.info/calculator/?" + urldata)
+
+    url = http.prepare_url("http://steamdb.info/calculator/", {"player": inp, "currency": currency if currency else "us"})
+    soup = http.get_soup(url)
+
     try:
         name = soup.findAll('h1', {'class': 'header-title'})[1].text
         status = soup.findAll('td')[7].text
     except Exception as e:
         print e
         return u"\x02Unable to retrieve info for %s!\x02 Is it a valid SteamCommunity profile username (%s)? " \
-               "Check if your profile is private, or go here to search: %s" % (inp, shorten("http://steamcommunity.com/id/%s" % inp), shorten("http://steamdb.info/calculator/?" + urldata))
+               "Check if your profile is private, or go here to search: %s" % (inp, web.try_isgd("http://steamcommunity.com/id/%s" % inp), web.try_isgd(url))
+
     if status == "Online":
         status = "\x033\x02Online\x02\x0f"
     elif status == "Offline":
@@ -70,6 +75,7 @@ def steamcalc(inp, nick='', db=None):
         status = "\x035\x02Busy\x02\x0f"
     elif "Looking to" in status:
         status = "\x036\x02%s\x02\x0f" % status
+
     try:
         twdata = soup.find('h1', {'class': 'header-title pull-right'}).find('a')['data-text'].split(", ")
         money = twdata[0].split("My #Steam account is worth ")[1]
@@ -77,6 +83,7 @@ def steamcalc(inp, nick='', db=None):
         worth = "This Steam account is worth \x02%s\x02, and they've spent \x02%s\x02 playing games! " % (money, time)
     except:
         worth = ""
+
     try:
         timeonsteam = soup.findAll('i')[1].text[1:-1].split(" ")
         timestamp = datetime.strptime(timeonsteam[0]+" "+timeonsteam[1]+" "+timeonsteam[2] + " - " + timeonsteam[4]+" "+timeonsteam[5], "%B %d, %Y - %H:%M:%S UTC")
@@ -84,6 +91,7 @@ def steamcalc(inp, nick='', db=None):
         timeonsteam = "Their Steam account was created %s ago! " % timeonsteam
     except:
         timeonsteam = ""
+
     try:
         totalgames = soup.find('b').text
         notplayed = soup.findAll('b')[1].text
@@ -91,9 +99,30 @@ def steamcalc(inp, nick='', db=None):
         gamesplayed = "They have \x02%s games in their Steam library\x02, but \x02%s of them haven't been touched\x02! That's \x02%s\x02! " % (totalgames, notplayed, nppercent)
     except:
         gamesplayed = ""
+
     if not dontsave:
         db.execute("insert or replace into steam(nick, acc) values (?,?)", (nick.lower(), inp))
         db.commit()
+
     if not worth and not timeonsteam and not gamesplayed:
-        return "I couldn't read the information for that user. %s" % shorten("http://steamdb.info/calculator/?" + urldata)
-    return u"%s (%s): %s%s%s%s" % (name, status, worth, timeonsteam, gamesplayed, shorten("http://steamdb.info/calculator/?" + urldata))
+        return "I couldn't read the information for that user. %s" % web.try_isgd(url)
+
+    return u"%s (%s): %s%s%s%s" % (name, status, worth, timeonsteam, gamesplayed, web.try_isgd(url))
+
+
+@hook.regex(*steam_re)
+def steam_url(match):
+    # we get the soup manually because the steam pages have some odd encoding troubles
+    page = http.get("http://store.steampowered.com" + match.group(4))
+    soup = BeautifulSoup(page, 'lxml', from_encoding="utf-8")
+
+    name = soup.find('div', {'class': 'apphub_AppName'}).text
+    desc = text.truncate_str(soup.find('div', {'class': 'game_description_snippet'}).text.strip())
+
+    # the page has a ton of returns and tabs
+    details = soup.find('div', {'class': 'glance_details'}).text.strip().split(u"\n\n\r\n\t\t\t\t\t\t\t\t\t")
+    genre = details[0].replace(u"Genre: ", u"")
+    date = details[1].replace(u"Release Date: ", u"")
+    price = soup.find('div', {'class': 'game_purchase_price price'}).text.strip()
+
+    return u"{}: {} | Genre: {} | Release date: {} | Price: {}".format(name, desc, genre, date, price)

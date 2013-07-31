@@ -16,29 +16,41 @@ def newgrounds_url(match):
         print "Not a valid Newgrounds portal ID. Example: http://www.newgrounds.com/portal/view/593993"
         return None
     soup = http.get_soup("http://www.newgrounds.com/portal/view/" + location)
+
     title = "\x02{}\x02".format(soup.find('title').text)
+
+    # get author
     try:
-        author = " - \x02{}\x02".format(soup.find('ul', {'class': 'authorlinks'}).find('img')['alt'])
+        author_info = soup.find('ul', {'class': 'authorlinks'}).find('img')['alt']
+        author = " - \x02{}\x02".format(author_info)
     except:
         author = ""
 
+    # get rating
     try:
-        rating = u" - rated \x02%s\x02/\x025.0\x02" % soup.find('dd', {'class': 'star-variable'})['title'].split("Stars &ndash;")[0].strip()
+        rating_info = soup.find('dd', {'class': 'star-variable'})['title'].split("Stars &ndash;")[0].strip()
+        rating = u" - rated \x02{}\x02/\x025.0\x02".format(rating_info) 
     except:
         rating = ""
 
+    # get amount of ratings
     try:
-        numofratings = " ({})".format(soup.find('dd', {'class': 'star-variable'})['title'].split("Stars &ndash;")[1].replace("Votes", "").strip())
+        ratings_info = soup.find('dd', {'class': 'star-variable'})['title'].split("Stars &ndash;")[1].replace("Votes", "").strip()
+        numofratings = " ({})".format(ratings_info)
     except:
         numofratings = ""
 
+    # get amount of views
     try:
-        views = " - \x02{}\x02 views".format(soup.find('dl', {'class': 'contentdata'}).findAll('dd')[1].find('strong').text)
+        views_info = soup.find('dl', {'class': 'contentdata'}).findAll('dd')[1].find('strong').text
+        views = " - \x02{}\x02 views".format(views_info)
     except:
         views = ""
 
+    # get upload data
     try:
         date = "on \x02{}\x02".format(soup.find('dl', {'class': 'sidestats'}).find('dd').text)
     except:
         date = ""
+
     return title + rating + numofratings + views + author + date

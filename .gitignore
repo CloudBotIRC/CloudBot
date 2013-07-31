@@ -7,7 +7,6 @@ gitflow
 *.pyc
 *.orig
 .project
-.pydevproject
 .geany
 *.sublime-project
 *.sublime-workspace

@@ -58,7 +58,7 @@ try:
     for name, conf in bot.config['connections'].iteritems():
         # strip all spaces and capitalization from the connection name
         name = name.replace(" ", "_")
-        name = re.sub('[^A-Za-z0-9_]+', '', name).lower()
+        name = re.sub('[^A-Za-z0-9_]+', '', name)
         print 'Connecting to server: %s' % conf['server']
         if conf.get('ssl'):
             bot.conns[name] = SSLIRC(name, conf['server'], conf['nick'], conf=conf,

@@ -12,6 +12,9 @@ frdmn
 puffrfish
 nasonfish
 
+We are using code from the following projects:
+./plugins/mlia.py - https://github.com/infinitylabs/UguuBot
+
 Special Thanks:
 Rmmh (created skybot!)
 lahwran (for his advice and stuff I stole from his skybot fork!)

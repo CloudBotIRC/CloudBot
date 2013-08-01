@@ -13,8 +13,8 @@ def help(inp, say=None, notice=None, input=None, conn=None, bot=None):
         fn = re.match(r'^plugins.(.+).py$', func._filename)
         if fn.group(1).lower() not in disabled:
             if not args.get('adminonly', False) or\
-            input.nick in bot.config["admins"] or\
-            input.mask in bot.config["admins"]:
+            input.nick in bot.config["permission_users"]["admins"] or\
+            input.mask in bot.config["permission_users"]["admins"]:
                 if command not in disabled_comm:
                     if func.__doc__ is not None:
                         if func in funcs:

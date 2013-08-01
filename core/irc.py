@@ -132,6 +132,7 @@ class IRC(object):
         self.server = server
         self.port = port
         self.nick = nick
+        self.vars = {}
 
         self.out = Queue.Queue()  # responses from the server are placed here
         # format: [rawline, prefix, command, params,

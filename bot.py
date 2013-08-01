@@ -37,6 +37,7 @@ print "Operating System: %s, Python " \
         "" % (opsys, python_imp, python_ver, architecture)
 
 bot = Bot()
+bot.vars = {}
 bot.start_time = time.time()
 
 print 'Loading plugins...'

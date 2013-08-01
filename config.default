@@ -35,8 +35,8 @@
     "moderators": ["addfactoid", "delfactoid", "ignore"]
   },
   "permission_users": {
-    "admins": ["example!user@example.com"],
-    "moderators": ["exampleb!user@example.com"]
+    "admins": ["examplea!user@example.com", "exampleb!user@example.com"],
+    "moderators": ["examplec!user@example.com"]
   },
   plugins":
   {

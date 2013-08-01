@@ -133,8 +133,8 @@ def steam_url(match):
 
 
 @hook.command
-def steamsearch(inp):
-    """steamsearch [search] - Search for specified game/trailer/DLC"""
+def steam(inp):
+    """steam [search] - Search for specified game/trailer/DLC"""
     page = http.get("http://store.steampowered.com/search/?term=" + inp)
     soup = BeautifulSoup(page, 'lxml', from_encoding="utf-8")
     result = soup.find('a', {'class': 'search_result_row'})

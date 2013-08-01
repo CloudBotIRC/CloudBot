@@ -1,14 +1,14 @@
 {
   "connections":
   {
-    "EsperNet":
+    "esper":
     {
       "server": "irc.esper.net",
-      "nick": "MyNewCloudBot",
+      "nick": "MyCloudBot",
       "user": "cloudbot",
       "realname": "CloudBot - http://git.io/cloudbotirc",
       "nickserv_password": "",
-      "channels": ["#cloudbot"],
+      "channels": ["#cloudbot", "#cloudbot2"],
       "invite_join": true,
       "auto_rejoin": false,
       "command_prefix": "."
@@ -35,8 +35,8 @@
     "moderators": ["addfactoid", "delfactoid", "ignore"]
   },
   "permission_users": {
-    "admins": ["example!user@example.com"],
-    "moderators": ["exampleb!user@example.com"]
+    "admins": ["examplea!user@example.com", "exampleb!user@example.com"],
+    "moderators": ["examplec!user@example.com"]
   },
   plugins":
   {

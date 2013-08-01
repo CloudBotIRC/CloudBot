@@ -31,11 +31,11 @@ If you are unable to use pip, there are Windows installers for LXML available fo
 
 ### Run
 
-Once you have installed the required dependencies, you can run the bot! Make sure you are in the correct folder and run the following command:
+Before you run the bot, rename `config.default` to `config` and edit it with your preferred settings.
+
+Once you have installed the required dependencies and renamed the config file, you can run the bot! Make sure you are in the correct folder and run the following command:
 
 `python bot.py`
-
-The first time you run the bot it will generate the config file. The next time you run it, it will start normally.
 
 On Windows you can usually just double-click `bot.py` to start the bot, as long as you have Python installed correctly.
 

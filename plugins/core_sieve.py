@@ -36,23 +36,23 @@ def sieve_suite(bot, input, func, kind, args):
 
 
     if args.get('permissions', False):
-        groups = bot.config.get("permission_groups", [])
-        group_users = bot.config.get("permission_users", [])
+        groups = bot.config.get("permissions", [])
 
         allowed_permissions = args.get('permissions', [])
-
-
         allowed_groups = []
 
         # loop over every group
-        for name, permissions in groups.iteritems():
+        for key, value in groups.iteritems():
             # loop over every permission the command allows
             for permission in allowed_permissions:
                 # see if the group has that permission
-                if permission in permissions:
+                print value
+                if permission in value["perms"]:
+                    print "%s in %s" % (permission, value["perms"])
                     # if so, add the group name to the allowed_groups list
-                    allowed_groups.append(name)
+                    allowed_groups.append(key)
 
+        print allowed_groups
 
         if not allowed_groups:
             print "Something is wrong. A hook requires {} but" \
@@ -60,12 +60,13 @@ def sieve_suite(bot, input, func, kind, args):
 
         mask = input.mask.lower()
 
-        # make all masks lowercase
-        for group, masks in group_users.iteritems():
-            group_users[group] = [_mask.lower() for _mask in masks]
-
         for group in allowed_groups:
-            for pattern in group_users[group]:
+            print group
+            group_users = bot.config.get("permissions", {}).get(group, [])["users"]
+            print group_users
+            group_users = [_mask.lower() for _mask in group_users]
+            for pattern in group_users:
+                print mask + pattern
                 if fnmatch(mask, pattern):
                     return input
 

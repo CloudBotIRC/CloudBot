@@ -30,13 +30,15 @@
     "twitter_access_secret": "",
     "wunderground": ""
   },
-  "permission_groups": {
-    "admins": ["addfactoid", "delfactoid", "ignore", "botcontrol"],
-    "moderators": ["addfactoid", "delfactoid", "ignore"]
-  },
-  "permission_users": {
-    "admins": ["examplea!user@example.com", "exampleb!user@example.com"],
-    "moderators": ["examplec!user@example.com"]
+  "permissions": {
+    "admins": {
+      "perms": ["addfactoid", "delfactoid", "ignore", "botcontrol"],
+      "users": ["examplea!user@example.com", "exampleb!user@example.com"]
+    },
+    "moderators": {
+      "perms": ["addfactoid", "delfactoid", "ignore"],
+      "users": ["examplec!user@example.com"]
+    }
   },
   plugins":
   {

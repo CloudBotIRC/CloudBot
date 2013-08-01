@@ -107,7 +107,7 @@ def steamcalc(inp, nick='', db=None):
     if not worth and not timeonsteam and not gamesplayed:
         return "I couldn't read the information for that user. %s" % web.try_isgd(url)
 
-    return u"%s (%s): %s%s%s%s" % (name, status, worth, timeonsteam, gamesplayed, web.try_isgd(url))
+    return u"%s (%s): %s%s%s%s" % (name.strip(), status, worth, timeonsteam, gamesplayed, web.try_isgd(url))
 
 
 def get_steam_info(url):

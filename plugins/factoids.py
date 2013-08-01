@@ -32,8 +32,8 @@ def get_memory(db, word):
         return None
 
 
-@hook.command("r", adminonly=True)
-@hook.command(adminonly=True)
+@hook.command("r", permissions=["addfactoid"])
+@hook.command(permissions=["addfactoid"])
 def remember(inp, nick='', db=None, say=None, input=None, notice=None):
     "remember <word> [+]<data> -- Remembers <data> with <word>. Add +"
     " to <data> to append."
@@ -74,8 +74,8 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
                 % (data, word, word))
 
 
-@hook.command("f", adminonly=True)
-@hook.command(adminonly=True)
+@hook.command("f", permissions=["delfactoid"])
+@hook.command(permissions=["delfactoid"])
 def forget(inp, db=None, input=None, notice=None):
     "forget <word> -- Forgets a remembered <word>."
 

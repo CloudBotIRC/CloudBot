@@ -3,7 +3,7 @@ from util import hook, web, text
 
 @hook.command
 def answer(inp):
-    ".answer <query> -- find the answer to a question on Yahoo! Answers"
+    "answer <query> -- find the answer to a question on Yahoo! Answers"
 
     query = "SELECT Subject, ChosenAnswer, Link FROM answers.search WHERE query=@query LIMIT 1"
     result = web.query(query, {"query": inp.strip()}).one()

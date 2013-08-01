@@ -41,7 +41,15 @@ if not os.path.exists('config'):
             "twitter_access_secret": "",
             "wunderground": ""
           },
-          "plugins":
+          "permission_groups": {
+            "admins": ["addfactoid", "delfactoid", "ignore", "botcontrol"],
+            "moderators": ["addfactoid", "delfactoid", "ignore"]
+          },
+          "permission_users": {
+           "admins": ["example!user@example.com"],
+           "moderators": ["exampleb!user@example.com"]
+          },
+          plugins":
           {
             "factoids":
             {
@@ -56,8 +64,7 @@ if not os.path.exists('config'):
           [
             "mypass",
             "mysecret"
-          ],
-          "admins": ["myname@myhost"]
+          ]
         }''') + '\n')
     print "Config generated!"
     print "Please edit the config now!"

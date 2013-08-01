@@ -166,7 +166,7 @@ class IRC(object):
             else:
                 prefix, command, params = irc_noprefix_rem(msg).groups()
             nick, user, host = irc_netmask_rem(prefix).groups()
-            mask = user + "@" + host
+            mask = nick + "!" + user + "@" + host
             paramlist = irc_param_ref(params)
             lastparam = ""
             if paramlist:

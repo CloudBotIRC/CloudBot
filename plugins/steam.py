@@ -110,10 +110,9 @@ def steamcalc(inp, nick='', db=None):
     return u"%s (%s): %s%s%s%s" % (name, status, worth, timeonsteam, gamesplayed, web.try_isgd(url))
 
 
-@hook.regex(*steam_re)
-def steam_url(match):
+def get_steam_info(url):
     # we get the soup manually because the steam pages have some odd encoding troubles
-    page = http.get("http://store.steampowered.com" + match.group(4))
+    page = http.get(url)
     soup = BeautifulSoup(page, 'lxml', from_encoding="utf-8")
 
     name = soup.find('div', {'class': 'apphub_AppName'}).text
@@ -125,4 +124,18 @@ def steam_url(match):
     date = details[1].replace(u"Release Date: ", u"")
     price = soup.find('div', {'class': 'game_purchase_price price'}).text.strip()
 
-    return u"{}: {} | Genre: {} | Release date: {} | Price: {}".format(name, desc, genre, date, price)
+    return u"{}: {} - Genre: {} - Release date: {} - Price: {}".format(name, desc, genre, date, price)
+
+
+@hook.regex(*steam_re)
+def steam_url(match):
+    return get_steam_info("http://store.steampowered.com" + match.group(4))
+
+
+@hook.command
+def steam(inp):
+    """steam [search] - Search for specified game/trailer/DLC"""
+    page = http.get("http://store.steampowered.com/search/?term=" + inp)
+    soup = BeautifulSoup(page, 'lxml', from_encoding="utf-8")
+    result = soup.find('a', {'class': 'search_result_row'})
+    return get_steam_info(result['href']) + " - " + web.isgd(result['href'])

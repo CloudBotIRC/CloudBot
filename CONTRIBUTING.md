@@ -4,6 +4,19 @@ I like to encourage you to contribute to the repository.
 This should be as easy as possible for you but there are a few things to consider when contributing.
 The following guidelines for contribution should be followed if you want to submit a pull request.
 
+## TL;DR
+
+* Read [Github documentation](http://help.github.com/) and [Pull Request documentation](http://help.github.com/send-pull-requests/)
+* Fork the repository
+* Edit the files, add new files
+* Check the files with [`pep8`](https://pypi.python.org/pypi/pep8), fix any reported errors
+* Check that the files work as expected in CloudBot
+* Create a new branch with a descriptive name for your feature (don't use `develop` for changes)
+* Commit changes to the branch, push to your fork on GitHub
+* Create a new pull request, provide a short summary of changes in the title line, with more information in the description field.
+* After submitting the pull request, join the IRC channel (irc.esper.net #cloudbot) and paste a link to the pull request so people are aware of it
+* After discussion, your pull request will be accepted or rejected.
+
 ## How to prepare
 
 * You need a [GitHub account](https://github.com/signup/free)
@@ -29,6 +42,7 @@ The following guidelines for contribution should be followed if you want to subm
 
 ## Submit Changes
 
+* Check your changes with [`pep8`](https://pypi.python.org/pypi/pep8). Ignore messages about line length, .
 * Push your changes to a topic branch in your fork of the repository.
 * Open a pull request to the original repository and choose the right original branch you want to patch.
 	_Advanced users may use [`hub`](https://github.com/defunkt/hub#git-pull-request) gem for that._

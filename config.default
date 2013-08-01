@@ -1,14 +1,14 @@
 {
   "connections":
   {
-    "EsperNet":
+    "esper":
     {
       "server": "irc.esper.net",
-      "nick": "MyNewCloudBot",
+      "nick": "MyCloudBot",
       "user": "cloudbot",
       "realname": "CloudBot - http://git.io/cloudbotirc",
       "nickserv_password": "",
-      "channels": ["#cloudbot"],
+      "channels": ["#cloudbot", "#cloudbot2"],
       "invite_join": true,
       "auto_rejoin": false,
       "command_prefix": "."

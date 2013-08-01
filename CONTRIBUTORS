@@ -14,6 +14,7 @@ nasonfish
 
 We are using code from the following projects:
 ./plugins/mlia.py - https://github.com/infinitylabs/UguuBot
+./plugins/horoscope.py - https://github.com/infinitylabs/UguuBot
 
 Special Thanks:
 Rmmh (created skybot!)

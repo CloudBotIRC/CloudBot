@@ -1,6 +1,7 @@
 import re
 
-from util import hook
+from util import hook, text
+from fnmatch import fnmatch
 
 
 @hook.sieve
@@ -29,11 +30,46 @@ def sieve_suite(bot, input, func, kind, args):
             if input.chan.lower() in denied_channels:
                 return None
 
+    # shim so plugins using the old "adminonly" permissions format still work
     if args.get('adminonly', False):
-        admins = bot.config.get('admins', [])
+        args['perms'] = ["adminonly"]
 
-        if input.nick not in admins and input.mask not in admins:
-            input.notice("Sorry, you are not allowed to use this command.")
-            return None
+
+    if args.get('permissions', False):
+        groups = bot.config.get("permission_groups", [])
+        group_users = bot.config.get("permission_users", [])
+
+        allowed_permissions = args.get('permissions', [])
+
+
+        allowed_groups = []
+
+        # loop over every group
+        for name, permissions in groups.iteritems():
+            # loop over every permission the command allows
+            for permission in allowed_permissions:
+                # see if the group has that permission
+                if permission in permissions:
+                    # if so, add the group name to the allowed_groups list
+                    allowed_groups.append(name)
+
+
+        if not allowed_groups:
+            print "Something is wrong. A hook requires {} but" \
+                  " there are no groups with that permission!".format(str(allowed_permissions))
+
+        mask = input.mask.lower()
+
+        # make all masks lowercase
+        for group, masks in group_users.iteritems():
+            group_users[group] = [_mask.lower() for _mask in masks]
+
+        for group in allowed_groups:
+            for pattern in group_users[group]:
+                if fnmatch(mask, pattern):
+                    return input
+
+        input.notice("Sorry, you are not allowed to use this command.")
+        return None
 
     return input

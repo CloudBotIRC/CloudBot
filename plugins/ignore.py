@@ -4,7 +4,7 @@ from fnmatch import fnmatch
 
 
 @hook.sieve
-def ignoresieve(bot, input, func, type, args):
+def ignore_sieve(bot, input, func, type, args):
     """ blocks input from ignored channels/hosts """
     ignorelist = bot.config["plugins"]["ignore"]["ignored"]
     mask = input.mask.lower()
@@ -15,12 +15,12 @@ def ignoresieve(bot, input, func, type, args):
 
     if ignorelist:
         for pattern in ignorelist:
-            if fnmatch(mask, pattern):
+            if pattern.startswith("#") and pattern in ignorelist:
                 if input.command == "PRIVMSG" and input.lastparam[1:] == "unignore":
                     return input
                 else:
                     return None
-            elif pattern.startswith("#") and pattern in ignorelist:
+            elif fnmatch(mask, pattern):
                 if input.command == "PRIVMSG" and input.lastparam[1:] == "unignore":
                     return input
                 else:

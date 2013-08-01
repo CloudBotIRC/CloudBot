@@ -27,7 +27,9 @@ def ping(inp, reply=None):
 
     count = str(count)
 
-    host = re.sub(r'([^\s\w\.])+', '', host)
+    # I suck at regex, but this is causing issues, and I'm just going to remove it
+    # I assume it's no longer needed with the way we run the process
+    # host = re.sub(r'([^\s\w\.])+', '', host)
 
     reply("Attempting to ping %s %s times..." % (host, count))
 

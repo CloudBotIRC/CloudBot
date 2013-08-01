@@ -1,38 +1,48 @@
 import json
 from util import hook
+from fnmatch import fnmatch
 
 
 @hook.sieve
 def ignoresieve(bot, input, func, type, args):
-    """ blocks input from ignored channels/nicks/hosts """
+    """ blocks input from ignored channels/hosts """
     ignorelist = bot.config["plugins"]["ignore"]["ignored"]
+    mask = input.mask.lower()
+
     # don't block input to event hooks
     if type == "event":
         return input
-    if input.chan.lower() in ignorelist or\
-        input.nick.lower() in ignorelist or\
-        input.mask.lower() in ignorelist:
-        if input.command == "PRIVMSG" and input.lastparam[1:] == "unignore":
-            return input
-        else:
-            return None
+
+    if ignorelist:
+        for pattern in ignorelist:
+            if fnmatch(mask, pattern):
+                if input.command == "PRIVMSG" and input.lastparam[1:] == "unignore":
+                    return input
+                else:
+                    return None
+            elif pattern.startswith("#") and pattern in ignorelist:
+                if input.command == "PRIVMSG" and input.lastparam[1:] == "unignore":
+                    return input
+                else:
+                    return None
+
     return input
 
 
 @hook.command(autohelp=False)
 def ignored(inp, notice=None, bot=None):
-    "ignored -- Lists ignored channels/nicks/hosts."
+    "ignored -- Lists ignored channels/users."
     ignorelist = bot.config["plugins"]["ignore"]["ignored"]
     if ignorelist:
-        notice("Ignored channels/nicks/hosts are: %s" % ", ".join(ignorelist))
+        notice("Ignored channels/users are: %s" % ", ".join(ignorelist))
     else:
-        notice("No channels/nicks/hosts are currently ignored.")
+        notice("No masks are currently ignored.")
     return
 
 
-@hook.command(adminonly=True)
+@hook.command(permissions=["ignore"])
 def ignore(inp, notice=None, bot=None, config=None):
-    "ignore <channel|nick|host> -- Makes the bot ignore <channel|nick|host>."
+    "ignore <channel|nick|host> -- Makes the bot ignore <channel|user>."
     target = inp.lower()
     ignorelist = bot.config["plugins"]["ignore"]["ignored"]
     if target in ignorelist:
@@ -45,10 +55,10 @@ def ignore(inp, notice=None, bot=None, config=None):
     return
 
 
-@hook.command(adminonly=True)
+@hook.command(permissions=["ignore"])
 def unignore(inp, notice=None, bot=None, config=None):
-    "unignore <channel|nick|host> -- Makes the bot listen to"\
-    " <channel|nick|host>."
+    "unignore <channel|user> -- Makes the bot listen to"\
+    " <channel|user>."
     target = inp.lower()
     ignorelist = bot.config["plugins"]["ignore"]["ignored"]
     if target in ignorelist:

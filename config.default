@@ -1,0 +1,57 @@
+{
+  "connections":
+  {
+    "EsperNet":
+    {
+      "server": "irc.esper.net",
+      "nick": "MyNewCloudBot",
+      "user": "cloudbot",
+      "realname": "CloudBot - http://git.io/cloudbotirc",
+      "nickserv_password": "",
+      "channels": ["#cloudbot"],
+      "invite_join": true,
+      "auto_rejoin": false,
+      "command_prefix": "."
+    }
+  },
+  "disabled_plugins": [],
+  "disabled_commands": [],
+  "acls": {},
+  "api_keys":
+  {
+    "tvdb": "",
+    "wolframalpha": "",
+    "lastfm": "",
+    "rottentomatoes": "",
+    "soundcloud": "",
+    "twitter_consumer_key": "",
+    "twitter_consumer_secret": "",
+    "twitter_access_token": "",
+    "twitter_access_secret": "",
+    "wunderground": ""
+  },
+  "permission_groups": {
+    "admins": ["addfactoid", "delfactoid", "ignore", "botcontrol"],
+    "moderators": ["addfactoid", "delfactoid", "ignore"]
+  },
+  "permission_users": {
+    "admins": ["example!user@example.com"],
+    "moderators": ["exampleb!user@example.com"]
+  },
+  plugins":
+  {
+    "factoids":
+    {
+      "prefix": false
+    },
+    "ignore":
+    {
+      "ignored": []
+    }
+  },
+  "censored_strings":
+  [
+    "mypass",
+    "mysecret"
+  ]
+}

@@ -7,68 +7,8 @@ def save(conf):
     json.dump(conf, open('config', 'w'), sort_keys=True, indent=2)
 
 if not os.path.exists('config'):
-    open('config', 'w').write(inspect.cleandoc(
-        r'''
-        {
-          "connections":
-          {
-            "EsperNet":
-            {
-              "server": "irc.esper.net",
-              "nick": "MyNewCloudBot",
-              "user": "cloudbot",
-              "realname": "CloudBot - http://git.io/cloudbotirc",
-              "nickserv_password": "",
-              "channels": ["#cloudbot"],
-              "invite_join": true,
-              "auto_rejoin": false,
-              "command_prefix": "."
-            }
-          },
-          "disabled_plugins": [],
-          "disabled_commands": [],
-          "acls": {},
-          "api_keys":
-          {
-            "tvdb": "",
-            "wolframalpha": "",
-            "lastfm": "",
-            "rottentomatoes": "",
-            "soundcloud": "",
-            "twitter_consumer_key": "",
-            "twitter_consumer_secret": "",
-            "twitter_access_token": "",
-            "twitter_access_secret": "",
-            "wunderground": ""
-          },
-          "permission_groups": {
-            "admins": ["addfactoid", "delfactoid", "ignore", "botcontrol"],
-            "moderators": ["addfactoid", "delfactoid", "ignore"]
-          },
-          "permission_users": {
-           "admins": ["example!user@example.com"],
-           "moderators": ["exampleb!user@example.com"]
-          },
-          plugins":
-          {
-            "factoids":
-            {
-              "prefix": false
-            },
-            "ignore":
-            {
-              "ignored": []
-            }
-          },
-          "censored_strings":
-          [
-            "mypass",
-            "mysecret"
-          ]
-        }''') + '\n')
-    print "Config generated!"
-    print "Please edit the config now!"
-    print "For help, see http://git.io/cloudbotircwiki"
+    print "Please rename 'config.default' to 'config' to set up your bot!"
+    print "For help, see http://git.io/cloudbotirc"
     print "Thank you for using CloudBot!"
     sys.exit()
 

@@ -1,5 +1,4 @@
-from util import hook
-from util.text import multiword_replace
+from util import hook, text
 import random
 
 color_codes = {
@@ -19,5 +18,5 @@ def eightball(input, me=None):
     "in electronic form. Ask and it shall be answered!"
 
     # here we use voodoo magic to tell the future
-    magic = multiword_replace(random.choice(responses), color_codes)
+    magic = text.multiword_replace(random.choice(responses), color_codes)
     me("shakes the magic 8 ball... %s" % magic)

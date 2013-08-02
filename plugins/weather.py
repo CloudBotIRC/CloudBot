@@ -4,7 +4,7 @@ base_url = "http://api.wunderground.com/api/{}/{}/q/{}.json"
 
 
 @hook.command(autohelp=None)
-def weather(inp, reply=None, db=None, nick=None, bot=None):
+def weather(inp, reply=None, db=None, nick=None, bot=None, notice=None):
     "weather <location> [dontsave] -- Gets weather data"\
     " for <location> from Wunderground."
 

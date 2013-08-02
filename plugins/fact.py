@@ -32,9 +32,6 @@ def fact(inp, say=False, nick=False):
                 attempts += 1
                 continue
 
-    try:
-        url = web.isgd(link)
-    except (web.ShortenError, http.HTTPError):
-        url = link
+    url = web.try_isgd(link)
 
     return "%s - %s" % (fact, url)

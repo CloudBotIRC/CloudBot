@@ -10,23 +10,23 @@ spotify_re = (r'(spotify:(track|album|artist|user):([a-zA-Z0-9]+))', re.I)
 http_re = (r'(open\.spotify\.com\/(track|album|artist|user)\/'
            '([a-zA-Z0-9]+))', re.I)
 
-def sptfy(inp):
-#  try:
-#    login = http.get("http://sptfy.com/login.php", post_data=urlencode({'loginUsername': 'xDCloudBot', 'loginPassword': 'rjgw67kf', 'submit': '', 'submitme': '1'}), cookies=True)
-#  except Exception as e:
-#    return inp
-  shortenurl = "http://sptfy.com/index.php"
-  data = urlencode({'longUrl': inp, 'shortUrlDomain': 1, 'submitted': 1, "shortUrlFolder": 6, "customUrl": "", "shortUrlPassword": "", "shortUrlExpiryDate": "", "shortUrlUses": 0, "shortUrlType": 0})
-  try:
-    soup = http.get_soup(shortenurl, post_data=data, cookies=True)
-  except:
-    return inp
-  try:
-    link = soup.find('div', {'class': 'resultLink'}).text.strip()
-    return link
-  except:
-    message = "Unable to shorten URL: %s" % soup.find('div', {'class': 'messagebox_text'}).find('p').text.split("<br/>")[0]
-    return message
+def sptfy(inp, sptfy=False):
+    if sptfy:
+        shortenurl = "http://sptfy.com/index.php"
+        data = urlencode({'longUrl': inp, 'shortUrlDomain': 1, 'submitted': 1, "shortUrlFolder": 6, "customUrl": "", "shortUrlPassword": "", "shortUrlExpiryDate": "", "shortUrlUses": 0, "shortUrlType": 0})
+        try:
+            soup = http.get_soup(shortenurl, post_data=data, cookies=True)
+        except:
+            return inp
+        try:
+            link = soup.find('div', {'class': 'resultLink'}).text.strip()
+            return link
+        except:
+            message = "Unable to shorten URL: %s" % soup.find('div', {'class': 'messagebox_text'}).find('p').text.split("<br/>")[0]
+            return message
+    else:
+        return web.try_isgd(inp)
+
 
 @hook.command('sptrack')
 @hook.command

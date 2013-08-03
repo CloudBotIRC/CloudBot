@@ -116,15 +116,17 @@ def get_steam_info(url):
     soup = BeautifulSoup(page, 'lxml', from_encoding="utf-8")
 
     name = soup.find('div', {'class': 'apphub_AppName'}).text
-    desc = text.truncate_str(soup.find('div', {'class': 'game_description_snippet'}).text.strip())
+    desc = ": " + text.truncate_str(soup.find('div', {'class': 'game_description_snippet'}).text.strip())
 
     # the page has a ton of returns and tabs
     details = soup.find('div', {'class': 'glance_details'}).text.strip().split(u"\n\n\r\n\t\t\t\t\t\t\t\t\t")
-    genre = details[0].replace(u"Genre: ", u"")
-    date = details[1].replace(u"Release Date: ", u"")
-    price = soup.find('div', {'class': 'game_purchase_price price'}).text.strip()
+    genre = " - Genre: " + details[0].replace(u"Genre: ", u"")
+    date = " - Release date: " + details[1].replace(u"Release Date: ", u"")
+    price = ""
+    if not "Free to Play" in genre:
+        price = " - Price: " + soup.find('div', {'class': 'game_purchase_price price'}).text.strip()
 
-    return u"{}: {} - Genre: {} - Release date: {} - Price: {}".format(name, desc, genre, date, price)
+    return name + desc + genre + date + price
 
 
 @hook.regex(*steam_re)

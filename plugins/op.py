@@ -2,7 +2,7 @@
 from util import hook
 
 
-@hook.command(adminonly=True)
+@hook.command(permissions=["botcontrol"])
 def topic(inp, conn=None, chan=None, notice=None):
     "topic [channel] <topic> -- Change the topic of a channel."
     inp = inp.split(" ")
@@ -21,7 +21,7 @@ def topic(inp, conn=None, chan=None, notice=None):
     conn.send(out)
 
 
-@hook.command(adminonly=True)
+@hook.command(permissions=["botcontrol"])
 def kick(inp, chan=None, conn=None, notice=None):
     "kick [channel] <user> [reason] -- Makes the bot kick <user> in [channel] "\
     "If [channel] is blank the bot will kick the <user> in "\
@@ -51,7 +51,7 @@ def kick(inp, chan=None, conn=None, notice=None):
     conn.send(out)
 
 
-@hook.command(adminonly=True)
+@hook.command(permissions=["botcontrol"])
 def ban(inp, conn=None, chan=None, notice=None):
     "ban [channel] <user> -- Makes the bot ban <user> in [channel]. "\
     "If [channel] is blank the bot will ban <user> in "\
@@ -68,7 +68,7 @@ def ban(inp, conn=None, chan=None, notice=None):
     conn.send(out)
 
 
-@hook.command(adminonly=True)
+@hook.command(permissions=["botcontrol"])
 def unban(inp, conn=None, chan=None, notice=None):
     "unban [channel] <user> -- Makes the bot unban <user> in [channel]. "\
     "If [channel] is blank the bot will unban <user> in "\
@@ -85,7 +85,7 @@ def unban(inp, conn=None, chan=None, notice=None):
     conn.send(out)
 
 
-@hook.command(adminonly=True)
+@hook.command(permissions=["botcontrol"])
 def kickban(inp, chan=None, conn=None, notice=None):
     "kickban [channel] <user> [reason] -- Makes the bot kickban <user> in [channel] "\
     "If [channel] is blank the bot will kickban the <user> in "\

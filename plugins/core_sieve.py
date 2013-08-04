@@ -32,7 +32,7 @@ def sieve_suite(bot, input, func, kind, args):
 
     # shim so plugins using the old "adminonly" permissions format still work
     if args.get('adminonly', False):
-        args['perms'] = ["adminonly"]
+        args["permissions"] = ["adminonly"]
 
 
     if args.get('permissions', False):

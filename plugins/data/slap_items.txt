@@ -8,6 +8,7 @@ shovel
 pair of trousers
 CRT monitor
 diamond sword
+baguette
 physics textbook
 television
 mau5head

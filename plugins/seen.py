@@ -39,7 +39,7 @@ def seen(inp, nick='', chan='', db=None, input=None):
     if inp.lower() == nick.lower():
         return "Have you looked in a mirror lately?"
 
-    if not re.match("^[A-Za-z0-9_|.-\]\[]*$", inp.lower()):
+    if not re.match("^[A-Za-z0-9_|.\-\]\[]*$", inp.lower()):
         return "I can't look up that name, its impossible to use!"
 
     if not db_ready:

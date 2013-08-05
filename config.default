@@ -40,7 +40,7 @@
       "users": ["examplec!user@example.com"]
     }
   },
-  plugins":
+  "plugins":
   {
     "factoids":
     {

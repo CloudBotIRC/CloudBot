@@ -8,7 +8,7 @@ def answer(inp):
     query = "SELECT Subject, ChosenAnswer, Link FROM answers.search WHERE query=@query LIMIT 1"
     result = web.query(query, {"query": inp.strip()}).one()
 
-    short_url = web.isgd(result["Link"])
+    short_url = web.try_isgd(result["Link"])
 
     # we split the answer and .join() it to remove newlines/extra spaces
     answer = text.truncate_str(' '.join(result["ChosenAnswer"].split()), 80)

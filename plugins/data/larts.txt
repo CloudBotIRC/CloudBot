@@ -1,6 +1,6 @@
 smacks {user} in the face with a burlap sack full of broken glass.
 swaps {user}'s shampoo with glue.
-installs Windows on {user}'s computer.
+installs Windows Vista on {user}'s computer.
 forces {user} to use perl for 3 weeks.
 registers {user}'s name with 50 known spammers.
 resizes {user}'s console to 40x24.
@@ -37,10 +37,8 @@ takes away {user}'s internet connection.
 pushes {user} past the Shoe Event Horizon.
 counts '1, 2, 5... er... 3!' and hurls the Holy Handgrenade Of Antioch at {user}.
 puts {user} in a nest of camel spiders.
-makes {user} read slashdot at -1.
 puts 'alias vim=emacs' in {user}'s /etc/profile.
 uninstalls every web browser from {user}'s system.
-locks {user} in the Chateau d'If.
 signs {user} up for getting hit on the head lessons.
 makes {user} try to set up a Lexmark printer.
 fills {user}'s eyedrop bottle with lime juice.
@@ -53,13 +51,10 @@ puts sugar between {user}'s bedsheets.
 pours sand into {user}'s breakfast.
 mixes epoxy into {user}'s toothpaste.
 puts Icy-Hot in {user}'s lube container.
-straps {user} to a chair, and plays a endless low bitrate MP3 loop of "the world's most annoying sound" from "Dumb and Dumber".
-tells Dr. Dre that {user} was talking smack.
 forces {user} to use a Commodore 64 for all their word processing.
 puts {user} in a room with several heavily armed manic depressives.
 makes {user} watch reruns of "Blue's Clues".
 puts lye in {user}'s coffee.
-introduces {user} to the clue-by-four.
 tattoos the Windows symbol on {user}'s ass.
 lets Borg have his way with {user}.
 signs {user} up for line dancing classes at the local senior center.
@@ -94,12 +89,11 @@ signs {user} up for the Iowa State Ferret Legging Championship.
 attempts to hotswap {user}'s RAM.
 dragon punches {user}.
 puts railroad spikes into {user}'s side.
-replaces {user}'s Astroglide with JB Weld.
+replaces {user}'s lubricant with liquid weld.
 replaces {user}'s stress pills with rat poison pellets.
-replaces {user}'s crotch itch cream with Nair.
+replaces {user}'s itch cream with hair removal cream.
 does the Australian Death Grip on {user}.
 dances upon the grave of {user}'s ancestors.
-farts in {user}'s general direction.
+farts loudly in {user}'s general direction.
 flogs {user} with stinging nettle.
-intoduces {user} to the Knights who say Ni.
 hands {user} a poison ivy joint.

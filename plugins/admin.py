@@ -24,10 +24,10 @@ def permissions(inp, bot=None, notice=None):
     for v in groups:
         members = ""
         for value in permissions[v]["users"]:
-            members = members + ", " + value
+            members = members + value + ", "
         if members:
             notice("the members in the %s group are.." % v)
-            notice(members)
+            notice(members[:-2])
         else:
             notice("there are no members in the %s group" % v)
 

@@ -61,7 +61,6 @@ def sieve_suite(bot, input, func, kind, args):
             group_users = bot.config.get("permissions", {}).get(group, [])["users"]
             group_users = [_mask.lower() for _mask in group_users]
             for pattern in group_users:
-                print mask + pattern
                 if fnmatch(mask, pattern):
                     return input
 

@@ -7,7 +7,7 @@ from util import hook, web, http
 def qrcode(inp, bot=None):
     "qrcode [link] returns a link for a QR code."
 
-    link = "http://blny.tk/qr.php?q=%s" % http.get_url(inp)
+    link = "http://blny.tk/qr.php?q=%s" % http.quote_plus(inp)
 
     try:
         return web.try_isgd(link)

@@ -32,7 +32,7 @@
   },
   "permissions": {
     "admins": {
-      "perms": ["addfactoid", "delfactoid", "ignore", "botcontrol", "permissions_users"],
+      "perms": ["addfactoid", "delfactoid", "ignore", "botcontrol", "permissions_users", "op"],
       "users": ["examplea!user@example.com", "exampleb!user@example.com"]
     },
     "moderators": {

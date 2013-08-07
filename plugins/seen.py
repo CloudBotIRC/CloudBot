@@ -22,7 +22,7 @@ def seen_sieve(paraml, input=None, db=None, bot=None):
     if not db_ready:
         db_init(db)
     # keep private messages private
-    if input.chan[:1] == "#":
+    if input.chan[:1] == "#" and not re.findall('^s/.*/.*/$', input.msg.lower()):
         db.execute("insert or replace into seen_user(name, time, quote, chan, host)"
             "values(?,?,?,?,?)", (input.nick.lower(), time.time(), input.msg,
             input.chan, input.mask))

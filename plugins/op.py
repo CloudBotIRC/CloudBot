@@ -119,3 +119,16 @@ def kick(inp, chan=None, conn=None, notice=None):
 
     notice("Attempting to kick {} from {}...".format(target, channel))
     conn.send(out)
+
+@hook.command(permissions=["op_rem", "op"])
+def remove(inp, chan=None, conn=None, notice=None):
+    "remove [channel] [user] -- Force a user to part from a channel."
+    split = inp.split(" ")
+    if split[0].startswith("#"):
+        message = " ".join(split[1:])
+        chan = split[0]
+        out = "REMOVE {} :{}".format(chan, message)
+    else:
+        message = " ".join(split)
+        out = "REMOVE {} :{}".format(chan, message)
+    conn.send(out)

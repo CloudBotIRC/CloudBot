@@ -21,7 +21,7 @@ def correction(inp, say=None, input=None, notice=None, db=None):
         else:
             notice("%s can't be found in your last message" % find)
     else:
-        if nick = input.nick:
+        if nick == input.nick:
             notice("I haven't seen you say anything here yet")
         else:
             notice("I haven't seen %s say anything here yet" % nick)

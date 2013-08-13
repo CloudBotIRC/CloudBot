@@ -17,7 +17,11 @@ def correction(inp, say=None, input=None, notice=None, db=None):
         find = splitinput[1]
         replace = splitinput[2]
         if find in last_message[1]:
-            say("%s meant to say: %s" % (nick, last_message[1].replace(find, "\x02" + replace + "\x02")))
+            if "\x01ACTION" in last_message[1]:
+                message = last_message[1].replace("\x01ACTION ", "/me ").replace("\x01", "")
+            else:
+                message = last_message[1]
+            say("%s meant to say: %s" % (nick, message.replace(find, "\x02" + replace + "\x02")))
         else:
             notice("%s can't be found in your last message" % find)
     else:

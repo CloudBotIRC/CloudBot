@@ -76,38 +76,40 @@ def steamcalc(inp, nick='', db=None):
     elif "Looking to" in status:
         status = "\x036\x02%s\x02\x0f" % status
 
+    out = ""
+
     try:
         twdata = soup.find('h1', {'class': 'header-title pull-right'}).find('a')['data-text'].split(", ")
         money = twdata[0].split("My #Steam account is worth ")[1]
         time = twdata[1].split("and I spent ")[1].split(" playing games!")[0]
-        worth = "This Steam account is worth \x02%s\x02, and they've spent \x02%s\x02 playing games! " % (money, time)
+        out += "This account is worth \x02%s\x02, and they've spent \x02%s\x02 playing games! " % (money, time)
     except:
-        worth = ""
+        pass
 
     try:
         timeonsteam = soup.findAll('i')[1].text[1:-1].split(" ")
         timestamp = datetime.strptime(timeonsteam[0]+" "+timeonsteam[1]+" "+timeonsteam[2] + " - " + timeonsteam[4]+" "+timeonsteam[5], "%B %d, %Y - %H:%M:%S UTC")
         timeonsteam = timesince.timesince(timestamp)
-        timeonsteam = "Their Steam account was created %s ago! " % timeonsteam
+        out += "Their account was created %s ago! " % timeonsteam
     except:
-        timeonsteam = ""
+        pass
 
     try:
         totalgames = soup.find('b').text
         notplayed = soup.findAll('b')[1].text
         nppercent = soup.findAll('i')[3].text[1:-1]
-        gamesplayed = "They have \x02%s games in their Steam library\x02, but \x02%s of them haven't been touched\x02! That's \x02%s\x02! " % (totalgames, notplayed, nppercent)
+        out += "They have \x02%s games\x02, but \x02%s of them haven't been played\x02! That's \x02%s\x02! " % (totalgames, notplayed, nppercent)
     except:
-        gamesplayed = ""
+        pass
 
     if not dontsave:
         db.execute("insert or replace into steam(nick, acc) values (?,?)", (nick.lower(), inp))
         db.commit()
 
-    if not worth and not timeonsteam and not gamesplayed:
+    if not out:
         return "I couldn't read the information for that user. %s" % web.try_isgd(url)
 
-    return u"%s (%s): %s%s%s%s" % (name.strip(), status, worth, timeonsteam, gamesplayed, web.try_isgd(url))
+    return u"%s (%s): %s%s" % (name.strip(), status, out, web.try_isgd(url))
 
 
 def get_steam_info(url):

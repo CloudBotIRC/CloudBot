@@ -1,4 +1,5 @@
-from util import hook, http, text
+from util import hook, http, text, web
+import re
 
 base_url = 'http://www.urbandictionary.com/iphone/search/define'
 
@@ -21,19 +22,26 @@ def urban(inp):
     else:
         id = 1
 
+
     # fetch the definitions
     page = http.get_json(base_url, term=input, referer="http://m.urbandictionary.com")
     defs = page['list']
+    print page
 
     if page['result_type'] == 'no_results':
         return 'Not found.'
 
     # try getting the requested definition
     try:
-        output = u"[%i/%i] %s: %s" % \
-              (id, len(defs), defs[id - 1]['word'],
-              defs[id - 1]['definition'].replace('\r\n', ' '))
+        definition = defs[id - 1]['definition'].replace('\r\n', ' ')
+        definition = re.sub('\s+', ' ', definition).strip()  # remove excess spaces
+        definition  = text.truncate_str(definition, 200)
     except IndexError:
         return 'Not found.'
 
-    return text.truncate_str(output, 250)
+    url = defs[id - 1]['permalink']
+
+    output = u"[%i/%i] %s :: %s" % \
+              (id, len(defs), definition, url)
+
+    return output

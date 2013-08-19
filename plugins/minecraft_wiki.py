@@ -23,7 +23,7 @@ def mcwiki(inp):
         if p.text_content():
             summary = " ".join(p.text_content().splitlines())
             summary = re.sub("\[\d+\]", "", summary)
-            summary = text.truncate_str(summary, 250)
-            return "%s :: \x02%s\x02" % (summary, url)
+            summary = text.truncate_str(summary, 200)
+            return "%s :: %s" % (summary, url)
 
     return "Unknown Error."

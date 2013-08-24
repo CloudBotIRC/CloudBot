@@ -1,16 +1,14 @@
 def timeformat(seconds):
-    if seconds < 60:
-        timestamp = str(seconds) + "s"
-    elif seconds >= 60 and seconds < 3600:
-        timestamp = "%s:%s" % (seconds/60, seconds%60)
-    elif seconds >= 3600 and seconds < 86400:
-        hours = seconds / 3600
-        seconds = 3600*hours
-        timestamp = "%s:%s:%s" % (hours, seconds/60, seconds%60)
-    elif seconds >= 86400:
-        days = seconds / 86400
-        seconds = 86400*days
-        hours = seconds / 3600
-        seconds = 3600*hours
-        timestamp = "%s days, %s:%s:%s" % (days, hours, seconds/60, seconds%60)
-    return timestamp
+    days = seconds / 86400
+    seconds -= 86400 * days
+    hours = seconds / 3600
+    seconds -= 3600 * hours
+    minutes = seconds / 60
+    seconds -= 60 * minutes
+    if days != 0:
+        return "%s, %02d:%02d:%02d" % (str(days) + " days" if days > 1 else str(days) + " day", hours, minutes, seconds)
+    elif hours == 0 and minutes != 0:
+        return "%02d:%02d" % (minutes, seconds)
+    elif hours == 0 and minutes == 0:
+        return "%02d" % seconds
+    return "%02d:%02d:%02d" % (hours, minutes, seconds)

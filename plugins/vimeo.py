@@ -4,18 +4,17 @@ from util import hook, http, timeformat
 @hook.regex(r'vimeo.com/([0-9]+)')
 def vimeo_url(match):
     "vimeo <url> -- returns information on the Vimeo video at <url>"
-    info = http.get_json('http://vimeo.com/api/v2/video/%s.json' % match.group(1))
+    info = http.get_json('http://vimeo.com/api/v2/video/%s.json'
+                         % match.group(1))
 
     if info:
-        info = info[0]
-        return ("\x02{title}\x02 - length \x02{duration}\x02 - "
-                "\x02{likes}\x02 likes - "
-                "\x02{plays}\x02 plays - "
-                "\x02{username}\x02 on \x02{uploaddate}\x02".format(
-                    title=info["title"],
-                    duration=timeformat.timeformat(info["duration"]),
-                    likes=info["stats_number_of_likes"],
-                    plays=info["stats_number_of_plays"],
-                    username=info["user_name"],
-                    uploaddate=info["upload_date"])
-               )
+        info[0]["duration"] = timeformat.timeformat(info[0]["duration"])
+        info[0]["stats_number_of_likes"] = format(
+                    info[0]["stats_number_of_likes"], ",d")
+        info[0]["stats_number_of_plays"] = format(
+                    info[0]["stats_number_of_plays"], ",d")
+        return ("\x02%(title)s\x02 - length \x02%(duration)s\x02 - "
+                "\x02%(stats_number_of_likes)s\x02 likes - "
+                "\x02%(stats_number_of_plays)s\x02 plays - "
+                "\x02%(user_name)s\x02 on \x02%(upload_date)s\x02"
+                % info[0])

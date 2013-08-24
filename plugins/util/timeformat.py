@@ -6,9 +6,9 @@ def timeformat(seconds):
     minutes = seconds / 60
     seconds -= 60 * minutes
     if days != 0:
-        return "%s, %02d:%02d:%02d" % (str(days) + " days" if days > 1 else str(days) + " day", hours, minutes, seconds)
+        return "%sd %sh %sm %ss" % (days, hours, minutes, seconds)
     elif hours == 0 and minutes != 0:
-        return "%02d:%02d" % (minutes, seconds)
+        return "%sm %ss" % (minutes, seconds)
     elif hours == 0 and minutes == 0:
-        return "%02d" % seconds
-    return "%02d:%02d:%02d" % (hours, minutes, seconds)
+        return "%ss" % seconds
+    return "%sh %sm %ss" % (hours, minutes, seconds)

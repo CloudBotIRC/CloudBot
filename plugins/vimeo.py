@@ -1,4 +1,4 @@
-from util import hook, http
+from util import hook, http, timeformat
 
 
 @hook.regex(r'vimeo.com/([0-9]+)')
@@ -8,7 +8,12 @@ def vimeo_url(match):
                          % match.group(1))
 
     if info:
-        return ("\x02%(title)s\x02 - length \x02%(duration)ss\x02 - "
+        info[0]["duration"] = timeformat.timeformat(info[0]["duration"])
+        info[0]["stats_number_of_likes"] = format(
+                    info[0]["stats_number_of_likes"], ",d")
+        info[0]["stats_number_of_plays"] = format(
+                    info[0]["stats_number_of_plays"], ",d")
+        return ("\x02%(title)s\x02 - length \x02%(duration)s\x02 - "
                 "\x02%(stats_number_of_likes)s\x02 likes - "
                 "\x02%(stats_number_of_plays)s\x02 plays - "
                 "\x02%(user_name)s\x02 on \x02%(upload_date)s\x02"

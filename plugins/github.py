@@ -60,6 +60,8 @@ def ghissues(inp):
     title = data["title"]
     summary = truncate(data["body"])
     gitiourl = gitio(data["html_url"])
+    if "Failed to get URL" in gitiourl:
+        gitiourl = gitio(data["html_url"] + " " + repo.split("/")[1] + number)
     if summary == "":
       return fmt1 % (number, state, user, title, gitiourl)
     else:

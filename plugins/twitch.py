@@ -61,12 +61,7 @@ def twviewers(inp):
         location = inp
     else:
         return "Not a valid channel name."
-    isplaying = http.get_json("http://api.justin.tv/api/"
-                              "stream/list.json?channel=%s" % location)
-    if isplaying:
-        return isplaying[0]["channel_count"]
-    else:
-        return "Not online"
+    return twitch_lookup(location).split("(")[-1].split(")")[0].replace("Online now! ", "")
 
 
 def twitch_lookup(location):
@@ -87,23 +82,24 @@ def twitch_lookup(location):
             title = soup.find('span', {'class': 'real_title js-title'}).text
             playing = soup.find('a', {'class': 'game js-game'}).text
             views = soup.find('span', {'id': 'views-count'}).text + " view"
-            views = views + "s" if views == "1 view" else views
+            views = views + "s" if not views[0:2] == "1 " else views
             return h.unescape(fmt.format(title, channel, playing, views))
         elif type == "c":
             data = http.get_json("https://api.twitch.tv/kraken/videos/" + type + id)
             title = data['title']
             playing = data['game']
             views = str(data['views']) + " view"
-            views = views + "s" if views == "1 view" else views
+            views = views + "s" if not views[0:2] == "1 " else views
             return h.unescape(fmt.format(title, channel, playing, views))
     else:
         data = http.get_json("http://api.justin.tv/api/stream/list.json?channel=" + channel)[0]
         if data:
-            title = data['status']
-            playing = data['game']
-            viewers = "\x033\x02Online now!\x02\x0f " + 
-                          str(data["channel_count"]) + " viewer"
-            viewers = viewers + "s" if viewers == "1 view" else viewers
+            title = data['title']
+            playing = data['meta_game']
+            viewers = "\x033\x02Online now!\x02\x0f " + str(data["channel_count"]) + " viewer"
+            print viewers
+            viewers = viewers + "s" if not " 1 view" in viewers else viewers
+            print viewers
             return h.unescape(fmt.format(title, channel, playing, viewers))
         else:
             data = http.get_json("https://api.twitch.tv/kraken/channels/" + channel)

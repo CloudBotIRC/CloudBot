@@ -136,12 +136,6 @@ def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
             variables = 'input="""%s"""; nick="%s"; chan="%s"; bot_nick="%s";' % (arguments.replace('"', '\\"'),
                          input.nick, input.chan, input.conn.nick)
             result = execute.eval_py(variables + code)
-        elif data.startswith("<url>"):
-            url = data[5:].strip()
-            try:
-                result = http.get(url)
-            except http.HttpError:
-                result = "Could not fetch URL."
         else:
             result = data
 
@@ -151,6 +145,12 @@ def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
         if result.startswith("<act>"):
             result = result[5:].strip()
             me(result)
+        elif result.startswith("<url>"):
+            url = result[5:].strip()
+            try:
+                say(http.get(url))
+            except http.HttpError:
+                say("Could not fetch URL.")
         else:
             if prefix_on:
                 say("\x02[%s]:\x02 %s" % (factoid_id, result))

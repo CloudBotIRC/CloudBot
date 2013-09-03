@@ -1,4 +1,5 @@
 import random
+import json
 
 from util import hook, http
 
@@ -18,8 +19,14 @@ def stock(inp):
                    for el in parsed.xpath('//finance/*'))
 
     # if we dont get a company name back, the symbol doesn't match a company
-    if results['company'] == '':
-        return "error: unknown ticker symbol (%s)" % inp
+    if not "company" in results:
+        guessd = json.loads(http.get("http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=%s&callback=YAHOO.Finance.SymbolSuggest.ssCallback" % inp)[39:-1])
+        guess = guessd['ResultSet']['Result']
+        if len(guess) > 0:
+            guess = guess[0]["symbol"]
+            return stock(guess)
+        else:
+            return "error: unable to get stock info for '%s'" % inp
         
     if results['last'] == '0.00':
         return "%(company)s - last known stock value was 0.00 %(currency)s" \

@@ -19,11 +19,11 @@ def drama(inp):
     url = ed_url + http.quote(article_name, '')
     page = http.get_html(url)
 
-    for p in page.xpath('//div[@class="mw-content-ltr"]/p'):
+    for p in page.xpath('//div[@id="bodyContent"]/p'):
         if p.text_content():
             summary = " ".join(p.text_content().splitlines())
             summary = re.sub("\[\d+\]", "", summary)
-            summary = text.truncate_str(summary, 200)
+            summary = text.truncate_str(summary, 220)
             return "%s :: %s" % (summary, url)
 
     return "Unknown Error."

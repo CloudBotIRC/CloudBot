@@ -7,7 +7,13 @@ from util import hook, web, http
 def qrcode(inp, bot=None):
     "qrcode [link] returns a link for a QR code."
 
-    link = "http://blny.tk/qr.php?q=%s" % http.quote_plus(inp)
+    args = {
+    	"cht": "qr", # chart type
+    	"chs": "200x200", # dimensions
+    	"chl": inp
+    }
+
+    link = http.prepare_url("http://chart.googleapis.com/chart", args)
     
     return web.try_isgd(link)
 

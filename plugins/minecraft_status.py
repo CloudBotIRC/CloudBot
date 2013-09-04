@@ -30,7 +30,9 @@ def mcstatus(inp):
             out += " "
     if no:
         out += "\x034\x02Offline\x02\x0f: " + ", ".join(no)
-    return "\x0f" + out.replace(".mojang.com", ".mj").replace(".minecraft.net", ".mc")
+
+    return "\x0f" + out.replace(".mojang.com", ".mj") \
+                       .replace(".minecraft.net", ".mc")
 
 
 @hook.command("haspaid")

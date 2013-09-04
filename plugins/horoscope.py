@@ -1,6 +1,6 @@
 # Plugin by Infinity - <https://github.com/infinitylabs/UguuBot>
 
-from util import hook, http
+from util import hook, http, text
 
 db_ready = False
 
@@ -42,7 +42,7 @@ def horoscope(inp, db=None, notice=None, nick=None):
     title = soup.find_all('h1', {'class': 'h1b'})[1]
     horoscope = soup.find('div', {'class': 'fontdef1'})
     result = "\x02%s\x02 %s" % (title, horoscope)
-    result = http.strip_html(result)
+    result = text.strip_html(result)
     #result = unicode(result, "utf8").replace('flight ','')
 
     if not title:

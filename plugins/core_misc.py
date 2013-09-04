@@ -19,7 +19,7 @@ def invite(paraml, conn=None):
 
 # Identify to NickServ (or other service)
 @hook.event('004')
-def onjoin(paraml, conn=None, bot=None):
+def onjoin(conn=None, bot=None):
     nickserv_password = conn.conf.get('nickserv_password', '')
     nickserv_name = conn.conf.get('nickserv_name', 'nickserv')
     nickserv_command = conn.conf.get('nickserv_command', 'IDENTIFY %s')

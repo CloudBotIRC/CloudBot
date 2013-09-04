@@ -1,7 +1,6 @@
-import random
-import json
-
 from util import hook, http
+
+import json
 
 url = 'http://www.google.com/ig/api'
 
@@ -20,8 +19,8 @@ def stock(inp):
 
     # if we dont get a company name back, the symbol doesn't match a company
     if not "company" in results:
-        guessd = json.loads(http.get("http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=%s&callback=YAHOO.Finance.SymbolSuggest.ssCallback" % inp)[39:-1])
-        guess = guessd['ResultSet']['Result']
+        guess_data = json.loads(http.get("http://d.yimg.com/autoc.finance.yahoo.com/autoc", query=inp, callback="YAHOO.Finance.SymbolSuggest.ssCallback")[39:-1])
+        guess = guess_data['ResultSet']['Result']
         if len(guess) > 0:
             guess = guess[0]["symbol"]
             return stock(guess)

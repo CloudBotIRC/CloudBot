@@ -6,7 +6,7 @@ locale = "en_US"
 
 @hook.command
 def spell(inp):
-    """spell <word> -- Check spelling of <word>."""
+    """spell <word/sentence> -- Check spelling of a word or sentence."""
     words = inp.split(" ")
     if words[0] == "":
         words = []
@@ -24,7 +24,7 @@ def spell(inp):
             if is_correct:
                 out.append(x)
             else:
-                out.append('\x02'+s_string+'\x02')
+                out.append('\x02' + s_string + '\x02')
         return " ".join(out)
     else:
         is_correct = dictionary.check(words[0])
@@ -32,8 +32,7 @@ def spell(inp):
         s_string = ', '.join(suggestions[:10])
         if is_correct:
             return '"{}" appears to be \x02valid\x02! ' \
-                    '(suggestions: {})'.format(inp, s_string)
+                   '(suggestions: {})'.format(inp, s_string)
         else:
             return '"{}" appears to be \x02invalid\x02! ' \
-                    '(suggestions: {})'.format(inp, s_string)
-
+                   '(suggestions: {})'.format(inp, s_string)

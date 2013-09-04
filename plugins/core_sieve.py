@@ -1,14 +1,14 @@
 import re
 
-from util import hook, text
+from util import hook
 from fnmatch import fnmatch
 
 
 @hook.sieve
 def sieve_suite(bot, input, func, kind, args):
-    if input.command == 'PRIVMSG' and\
-       input.nick.endswith('bot') and args.get('ignorebots', True):
-            return None
+    if input.command == 'PRIVMSG' and \
+            input.nick.endswith('bot') and args.get('ignorebots', True):
+        return None
 
     if kind == "command":
         if input.trigger in bot.config.get('disabled_commands', []):
@@ -33,7 +33,6 @@ def sieve_suite(bot, input, func, kind, args):
     # shim so plugins using the old "adminonly" permissions format still work
     if args.get('adminonly', False):
         args["permissions"] = ["adminonly"]
-
 
     if args.get('permissions', False):
         groups = bot.config.get("permissions", [])

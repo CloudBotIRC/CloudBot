@@ -1,16 +1,15 @@
 from util import hook
-import re
+
 
 @hook.regex(r'^(s|S)/.*/.*/\S*$')
-def correction(inp, say=None, input=None, notice=None, db=None):
-
+def correction(inp, say=None, notice=None, db=None):
     splitinput = input.msg.split("/")
     if splitinput[3]:
         nick = splitinput[3]
     else:
         nick = input.nick
     last_message = db.execute("select name, quote from seen_user where name"
-                           " like ? and chan = ?", (nick.lower(), input.chan.lower())).fetchone()
+                              " like ? and chan = ?", (nick.lower(), input.chan.lower())).fetchone()
 
     if last_message:
         splitinput = input.msg.split("/")

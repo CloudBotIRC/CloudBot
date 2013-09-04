@@ -165,17 +165,17 @@ def unmute(inp, conn=None, chan=None, notice=None):
     mode_cmd_no_target("-m", "unmute", inp, chan, conn, notice)
 
 
-@hook.command(permissions=["op_mute", "op"], autohelp=False)
-def mute(inp, conn=None, chan=None, notice=None):
-    """mute [channel] -- Makes the bot mute a channel..
+@hook.command(permissions=["op_lock", "op"], autohelp=False)
+def lock(inp, conn=None, chan=None, notice=None):
+    """lock [channel] -- Makes the bot lock a channel.
     If [channel] is blank the bot will mute
     the channel the command was used in."""
     mode_cmd_no_target("+i", "lock", inp, chan, conn, notice)
 
 
-@hook.command(permissions=["op_mute", "op"], autohelp=False)
-def unmute(inp, conn=None, chan=None, notice=None):
-    """mute [channel] -- Makes the bot mute a channel..
+@hook.command(permissions=["op_lock", "op"], autohelp=False)
+def unlock(inp, conn=None, chan=None, notice=None):
+    """unlock [channel] -- Makes the bot unlock a channel..
     If [channel] is blank the bot will mute
     the channel the command was used in."""
     mode_cmd_no_target("-i", "unlock", inp, chan, conn, notice)

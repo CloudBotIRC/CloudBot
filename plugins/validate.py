@@ -1,8 +1,8 @@
-'''
+"""
 Runs a given url through the w3c validator
 
 by Vladi
-'''
+"""
 
 from util import hook, http
 
@@ -10,7 +10,7 @@ from util import hook, http
 @hook.command('w3c')
 @hook.command
 def validate(inp):
-    "validate <url> -- Runs url through the w3c markup validator."
+    """validate <url> -- Runs url through the w3c markup validator."""
 
     if not inp.startswith('http://'):
         inp = 'http://' + inp

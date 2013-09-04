@@ -16,11 +16,13 @@ def hulu_url(match):
 @hook.command('hulu')
 def hulu_search(inp):
     """hulu <search> - Search Hulu"""
-    result = http.get_soup("http://m.hulu.com/search?dp_identifier=hulu&{}&items_per_page=1&page=1".format(urlencode({'query': inp})))
+    result = http.get_soup(
+        "http://m.hulu.com/search?dp_identifier=hulu&{}&items_per_page=1&page=1".format(urlencode({'query': inp})))
     data = result.find('results').find('videos').find('video')
     showname = data.find('show').find('name').text
     title = data.find('title').text
     duration = timeformat.timeformat(int(float(data.find('duration').text)))
     description = data.find('description').text
     rating = data.find('content-rating').text
-    return "{}: {} - {} - {} ({}) {}".format(showname, title, description, duration, rating, "http://www.hulu.com/watch/" + str(data.find('id').text))
+    return "{}: {} - {} - {} ({}) {}".format(showname, title, description, duration, rating,
+                                             "http://www.hulu.com/watch/" + str(data.find('id').text))

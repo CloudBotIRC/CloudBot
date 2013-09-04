@@ -4,7 +4,7 @@ from util import hook, http, web, text
 @hook.command("feed")
 @hook.command
 def rss(inp, say=None):
-    "rss <feed> -- Gets the first three items from the RSS feed <feed>."
+    """rss <feed> -- Gets the first three items from the RSS feed <feed>."""
     limit = 3
 
     # preset news feeds
@@ -36,5 +36,5 @@ def rss(inp, say=None):
 
 @hook.command(autohelp=False)
 def rb(inp, say=None):
-    "rb -- Shows the latest Craftbukkit recommended build"
+    """rb -- Shows the latest Craftbukkit recommended build"""
     rss("bukkit", say)

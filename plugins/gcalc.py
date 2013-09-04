@@ -1,9 +1,10 @@
 from util import hook, http
 
+
 @hook.command("math")
 @hook.command
 def calc(inp):
-    "calc <term> -- Calculate <term> with Google Calc."
+    """calc <term> -- Calculate <term> with Google Calc."""
 
     soup = http.get_soup('http://www.google.com/search', q=inp)
 

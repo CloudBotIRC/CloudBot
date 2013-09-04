@@ -10,3 +10,4 @@ gitflow
 .geany
 *.sublime-project
 *.sublime-workspace
+.idea/

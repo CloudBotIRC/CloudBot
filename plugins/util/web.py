@@ -1,7 +1,9 @@
 """ web.py - handy functions for web services """
 
-import http, urlnorm
-import json, urllib
+import http
+import urlnorm
+import json
+import urllib
 import yql
 
 short_url = "http://is.gd/create.php"
@@ -39,11 +41,12 @@ def try_isgd(url):
         out = url
     return out
 
+
 def haste(text, ext='txt'):
     """ pastes text to a hastebin server """
     page = http.get(paste_url + "/documents", post_data=text)
     data = json.loads(page)
-    return("%s/%s.%s" % (paste_url, data['key'], ext))
+    return ("%s/%s.%s" % (paste_url, data['key'], ext))
 
 
 def query(query, params={}):

@@ -17,7 +17,7 @@ def convert_kilobytes(kilobytes):
 
 @hook.command(autohelp=False)
 def system(inp):
-    "system -- Retrieves information about the host system."
+    """system -- Retrieves information about the host system."""
     hostname = platform.node()
     os = platform.platform()
     python_imp = platform.python_implementation()
@@ -31,7 +31,7 @@ def system(inp):
 
 @hook.command(autohelp=False)
 def memory(inp):
-    "memory -- Displays the bot's current memory usage."
+    """memory -- Displays the bot's current memory usage."""
     if os.name == "posix":
         # get process info
         status_file = open('/proc/self/status').read()
@@ -63,7 +63,7 @@ def memory(inp):
 
 @hook.command(autohelp=False)
 def uptime(inp, bot=None):
-    "uptime -- Shows the bot's uptime."
+    """uptime -- Shows the bot's uptime."""
     uptime_raw = round(time.time() - bot.start_time)
     uptime = timedelta(seconds=uptime_raw)
     return "Uptime: \x02%s\x02" % uptime
@@ -71,5 +71,5 @@ def uptime(inp, bot=None):
 
 @hook.command(autohelp=False)
 def pid(inp):
-    "pid -- Prints the bot's PID."
+    """pid -- Prints the bot's PID."""
     return "PID: \x02%s\x02" % os.getpid()

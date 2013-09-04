@@ -43,12 +43,12 @@ def timesince(d, now=None):
     Adapted from http://blog.natbat.co.uk/archive/2003/Jun/14/time_since
     """
     chunks = (
-      (60 * 60 * 24 * 365, ('year', 'years')),
-      (60 * 60 * 24 * 30, ('month', 'months')),
-      (60 * 60 * 24 * 7, ('week', 'weeks')),
-      (60 * 60 * 24, ('day', 'days')),
-      (60 * 60, ('hour', 'hours')),
-      (60, ('minute', 'minutes'))
+        (60 * 60 * 24 * 365, ('year', 'years')),
+        (60 * 60 * 24 * 30, ('month', 'months')),
+        (60 * 60 * 24 * 7, ('week', 'weeks')),
+        (60 * 60 * 24, ('day', 'days')),
+        (60 * 60, ('hour', 'hours')),
+        (60, ('minute', 'minutes'))
     )
 
     # Convert int or float (unix epoch) to datetime.datetime for comparison

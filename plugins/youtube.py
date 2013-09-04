@@ -36,14 +36,14 @@ def get_video_description(video_id):
 
     if 'rating' in data:
         out += ' - rated \x02%.2f/5.0\x02 (%d)' % (data['rating'],
-                data['ratingCount'])
+                                                   data['ratingCount'])
 
     if 'viewCount' in data:
         out += ' - \x02%s\x02 views' % format(data['viewCount'], ",d")
 
     upload_time = time.strptime(data['uploaded'], "%Y-%m-%dT%H:%M:%S.000Z")
     out += ' - \x02%s\x02 on \x02%s\x02' % (data['uploader'],
-                time.strftime("%Y.%m.%d", upload_time))
+                                            time.strftime("%Y.%m.%d", upload_time))
 
     if 'contentRating' in data:
         out += ' - \x034NSFW\x02'
@@ -70,7 +70,7 @@ def youtube_url(match):
 @hook.command('y')
 @hook.command
 def youtube(inp):
-    "youtube <query> -- Returns the first YouTube search result for <query>."
+    """youtube <query> -- Returns the first YouTube search result for <query>."""
 
     request = http.get_json(search_api_url, q=inp)
 
@@ -84,19 +84,19 @@ def youtube(inp):
 
     return get_video_description(video_id) + " - " + video_url % video_id
 
+
 ytpl_re = (r'(.*:)//(www.youtube.com/playlist|youtube.com/playlist)(:[0-9]+)?(.*)', re.I)
+
 
 @hook.regex(*ytpl_re)
 def ytplaylist_url(match):
     location = match.group(4).split("=")[-1]
     try:
-      soup = http.get_soup("https://www.youtube.com/playlist?list=" + location)
+        soup = http.get_soup("https://www.youtube.com/playlist?list=" + location)
     except Exception:
-      return "\x034\x02Invalid response."
+        return "\x034\x02Invalid response."
     title = soup.find('title').text.split('-')[0].strip()
     author = soup.find('img', {'class': 'channel-header-profile-image'})['title']
-    numofratings = int(soup.find('span', {'class': 'likes'}).text) + int(soup.find('span', {'class': 'dislikes'}).text)
-    rating = (int(soup.find('span', {'class': 'likes'}).text) / numofratings) * 100 / 20
     numvideos = soup.find('ul', {'class': 'header-stats'}).findAll('li')[0].text.split(' ')[0]
     views = soup.find('ul', {'class': 'header-stats'}).findAll('li')[1].text.split(' ')[0]
     return u"\x02%s\x02 - \x02%s\x02 views - \x02%s\x02 videos - \x02%s\x02" % (title, views, numvideos, author)

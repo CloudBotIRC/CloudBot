@@ -14,7 +14,7 @@ MAX_STEPS = 1000000
 @hook.command('brainfuck')
 @hook.command
 def bf(inp):
-    "bf <prog> -- Executes <prog> as Brainfuck code."
+    """bf <prog> -- Executes <prog> as Brainfuck code."""
 
     program = re.sub('[^][<>+-.,]', '', inp)
 
@@ -45,10 +45,10 @@ def bf(inp):
     # the main program loop:
     while ip < len(program):
         c = program[ip]
-        if   c == '+':
-            memory[mp] = memory[mp] + 1 % 256
+        if c == '+':
+            memory[mp] += 1 % 256
         elif c == '-':
-            memory[mp] = memory[mp] - 1 % 256
+            memory[mp] -= 1 % 256
         elif c == '>':
             mp += 1
             if mp > rightmost:
@@ -57,7 +57,7 @@ def bf(inp):
                     # no restriction on memory growth!
                     memory.extend([0] * BUFFER_SIZE)
         elif c == '<':
-            mp = mp - 1 % len(memory)
+            mp -= 1 % len(memory)
         elif c == '.':
             output += chr(memory[mp])
             if len(output) > 500:

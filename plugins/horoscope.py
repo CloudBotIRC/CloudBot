@@ -6,7 +6,7 @@ db_ready = False
 
 
 def db_init(db):
-    "check to see that our db has the horoscope table and return a connection."
+    """check to see that our db has the horoscope table and return a connection."""
     db.execute("create table if not exists horoscope(nick primary key, sign)")
     db.commit()
     db_ready = True
@@ -14,7 +14,7 @@ def db_init(db):
 
 @hook.command(autohelp=False)
 def horoscope(inp, db=None, notice=None, nick=None):
-    "horoscope <sign> -- Get your horoscope."
+    """horoscope <sign> -- Get your horoscope."""
 
     if not db_ready:
         db_init(db)

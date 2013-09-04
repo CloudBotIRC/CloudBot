@@ -28,7 +28,7 @@ def censor(text):
 
 
 class crlf_tcp(object):
-    "Handles tcp connections that consist of utf-8 lines ending with crlf"
+    """Handles tcp connections that consist of utf-8 lines ending with crlf"""
 
     def __init__(self, host, port, timeout=300):
         self.ibuffer = ""
@@ -95,15 +95,16 @@ class crlf_tcp(object):
 
 
 class crlf_ssl_tcp(crlf_tcp):
-    "Handles ssl tcp connetions that consist of utf-8 lines ending with crlf"
+    """Handles ssl tcp connetions that consist of utf-8 lines ending with crlf"""
+
     def __init__(self, host, port, ignore_cert_errors, timeout=300):
         self.ignore_cert_errors = ignore_cert_errors
         crlf_tcp.__init__(self, host, port, timeout)
 
     def create_socket(self):
         return wrap_socket(crlf_tcp.create_socket(self), server_side=False,
-                cert_reqs=CERT_NONE if self.ignore_cert_errors else
-                CERT_REQUIRED)
+                           cert_reqs=CERT_NONE if self.ignore_cert_errors else
+                           CERT_REQUIRED)
 
     def recv_from_socket(self, nbytes):
         return self.socket.read(nbytes)
@@ -117,6 +118,7 @@ class crlf_ssl_tcp(crlf_tcp):
             raise
         return crlf_tcp.handle_receive_exception(self, error, last_timestamp)
 
+
 irc_prefix_rem = re.compile(r'(.*?) (.*?) (.*)').match
 irc_noprefix_rem = re.compile(r'()(.*?) (.*)').match
 irc_netmask_rem = re.compile(r':?([^!@]*)!?([^@]*)@?(.*)').match
@@ -124,7 +126,8 @@ irc_param_ref = re.compile(r'(?:^|(?<= ))(:.*|[^ ]+)').findall
 
 
 class IRC(object):
-    "handles the IRC protocol"
+    """handles the IRC protocol"""
+
     def __init__(self, name, server, nick, port=6667, channels=[], conf={}):
         self.name = name
         self.channels = channels
@@ -150,8 +153,8 @@ class IRC(object):
         self.set_pass(self.conf.get('server_password'))
         self.set_nick(self.nick)
         self.cmd("USER",
-            [conf.get('user', 'cloudbot'), "3", "*", conf.get('realname',
-                'CloudBot - http://git.io/cloudbot')])
+                 [conf.get('user', 'cloudbot'), "3", "*", conf.get('realname',
+                                                                   'CloudBot - http://git.io/cloudbot')])
 
     def parse_loop(self):
         while True:
@@ -175,9 +178,9 @@ class IRC(object):
                 if paramlist[-1].startswith(':'):
                     paramlist[-1] = paramlist[-1][1:]
                 lastparam = paramlist[-1]
-            # put the parsed message in the response queue
+                # put the parsed message in the response queue
             self.out.put([msg, prefix, command, params, nick, user, host,
-                    mask, paramlist, lastparam])
+                          mask, paramlist, lastparam])
             # if the server pings us, pong them back
             if command == "PING":
                 self.cmd("PONG", paramlist)

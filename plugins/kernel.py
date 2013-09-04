@@ -1,6 +1,7 @@
 from util import hook, http
 import re
 
+
 @hook.command(autohelp=False)
 def kernel(inp, reply=None):
     contents = http.get("https://www.kernel.org/finger_banner")

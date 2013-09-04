@@ -29,13 +29,14 @@ def newgrounds_url(match):
     # get rating
     try:
         rating_info = soup.find('dd', {'class': 'star-variable'})['title'].split("Stars &ndash;")[0].strip()
-        rating = u" - rated \x02{}\x02/\x025.0\x02".format(rating_info) 
+        rating = u" - rated \x02{}\x02/\x025.0\x02".format(rating_info)
     except:
         rating = ""
 
     # get amount of ratings
     try:
-        ratings_info = soup.find('dd', {'class': 'star-variable'})['title'].split("Stars &ndash;")[1].replace("Votes", "").strip()
+        ratings_info = soup.find('dd', {'class': 'star-variable'})['title'].split("Stars &ndash;")[1].replace("Votes",
+                                                                                                              "").strip()
         numofratings = " ({})".format(ratings_info)
     except:
         numofratings = ""

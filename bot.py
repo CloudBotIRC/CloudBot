@@ -2,7 +2,7 @@
 
 __author__ = "ClouDev"
 __authors__ = ["Lukeroge", "neersighted"]
-__copyright__ = "Copyright 2012, ClouDev"
+__copyright__ = "Copyright 2012-2013, ClouDev"
 __credits__ = ["thenoodle", "_frozen", "rmmh"]
 __license__ = "GPL v3"
 __version__ = "DEV"
@@ -24,6 +24,7 @@ os.chdir(sys.path[0] or '.')  # do stuff relative to the install directory
 class Bot(object):
     pass
 
+
 print 'CloudBot %s (%s) <http://git.io/cloudbotirc>' % (__version__, __status__)
 
 # print debug info
@@ -33,8 +34,8 @@ python_ver = platform.python_version()
 architecture = ' '.join(platform.architecture())
 
 print "Operating System: %s, Python " \
-        "Version: %s %s, Architecture: %s" \
-        "" % (opsys, python_imp, python_ver, architecture)
+      "Version: %s %s, Architecture: %s" \
+      "" % (opsys, python_imp, python_ver, architecture)
 
 bot = Bot()
 bot.vars = {}
@@ -44,7 +45,7 @@ print 'Loading plugins...'
 
 # bootstrap the reloader
 eval(compile(open(os.path.join('core', 'reload.py'), 'U').read(),
-    os.path.join('core', 'reload.py'), 'exec'))
+             os.path.join('core', 'reload.py'), 'exec'))
 reload(init=True)
 
 config()
@@ -63,11 +64,11 @@ try:
         print 'Connecting to server: %s' % conf['server']
         if conf.get('ssl'):
             bot.conns[name] = SSLIRC(name, conf['server'], conf['nick'], conf=conf,
-                    port=conf.get('port', 6667), channels=conf['channels'],
-                    ignore_certificate_errors=conf.get('ignore_cert', True))
+                                     port=conf.get('port', 6667), channels=conf['channels'],
+                                     ignore_certificate_errors=conf.get('ignore_cert', True))
         else:
             bot.conns[name] = IRC(name, conf['server'], conf['nick'], conf=conf,
-                    port=conf.get('port', 6667), channels=conf['channels'])
+                                  port=conf.get('port', 6667), channels=conf['channels'])
 except Exception as e:
     print 'ERROR: malformed config file', e
     sys.exit()

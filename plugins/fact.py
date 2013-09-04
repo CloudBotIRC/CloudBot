@@ -3,7 +3,7 @@ from util import hook, http, web
 
 @hook.command(autohelp=False)
 def fact(inp, say=False, nick=False):
-    "fact -- Gets a random fact from OMGFACTS."
+    """fact -- Gets a random fact from OMGFACTS."""
 
     attempts = 0
 

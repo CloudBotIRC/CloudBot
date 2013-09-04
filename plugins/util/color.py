@@ -9,6 +9,7 @@ control = {'bold': '\x02', 'color': '\x03', 'italic': '\x09',
            'strikethrough': '\x13', 'reset': '\x0f', 'underline': '\x15',
            'underline2': '\x1f', 'reverse': '\x16'}
 
+
 def color(color):
     return control['color'] + colors[color]
 

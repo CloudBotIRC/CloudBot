@@ -8,7 +8,7 @@ import re
 
 
 def munge(text, munge_count=0):
-    "munges up text."
+    """munges up text."""
     reps = 0
     for n in xrange(len(text)):
         rep = character_replacements.get(text[n])
@@ -96,7 +96,7 @@ def multiword_replace(text, wordDic):
 
 
 def truncate_words(content, length=10, suffix='...'):
-    "Truncates a string after a certain number of words."
+    """Truncates a string after a certain number of words."""
     nmsg = content.split(" ")
     out = None
     x = 0
@@ -106,7 +106,7 @@ def truncate_words(content, length=10, suffix='...'):
                 out = out + " " + nmsg[x]
             else:
                 out = nmsg[x]
-        x = x + 1
+        x += 1
     if x <= length:
         return out
     else:
@@ -115,7 +115,7 @@ def truncate_words(content, length=10, suffix='...'):
 
 # from <http://stackoverflow.com/questions/250357/smart-truncate-in-python>
 def truncate_str(content, length=100, suffix='...'):
-    "Truncates a string after a certain number of chars."
+    """Truncates a string after a certain number of chars."""
     if len(content) <= length:
         return content
     else:
@@ -197,5 +197,5 @@ def get_text_list(list_, last_word='or'):
         return list_[0]
     return '%s %s %s' % (
         # Translators: This string is used as a separator between list elements
-        (', ').join([i for i in list_][:-1]),
+        ', '.join([i for i in list_][:-1]),
         last_word, list_[-1])

@@ -1,5 +1,4 @@
 from util import hook, http, web
-from urllib import urlencode
 from spotify import spotifyfunc as spotify
 
 url = "http://search.azlyrics.com/search.php?q="
@@ -43,6 +42,7 @@ def lyrics(inp):
             lyricsum = " / ".join(lyricsum.strip().split("\r\n")[0:4]) # truncate, format
         else:
             lyricsum = " / ".join(lyricsum.strip().split("\n")[0:4]) # truncate, format
-        return "\x02%s\x02 by \x02%s\x02 %s%s%s - %s" % (title, artist, web.try_isgd(link), spurl, pasteurl, lyricsum[:-3])
+        return "\x02%s\x02 by \x02%s\x02 %s%s%s - %s" % (
+            title, artist, web.try_isgd(link), spurl, pasteurl, lyricsum[:-3])
     else:
         return "No song results. " + url + inp.replace(" ", "+")

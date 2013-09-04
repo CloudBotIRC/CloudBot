@@ -1,7 +1,11 @@
 # Plugin by Lukeroge
+import json
+import random
+import re
+import os
 from util import hook
 from util.text import get_text_list
-import json, random, re, os
+
 
 TEMPLATE_RE = re.compile(r"\{(.+?)\}")
 GEN_DIR = "./plugins/data/name_files/"
@@ -10,7 +14,7 @@ GEN_DIR = "./plugins/data/name_files/"
 def get_generator(_json):
     data = json.loads(_json)
     return NameGenerator(data["name"], data["templates"],
-        data["default_templates"], data["parts"])
+                         data["default_templates"], data["parts"])
 
 
 class NameGenerator(object):
@@ -36,7 +40,7 @@ class NameGenerator(object):
 
         return name
 
-    def generate_names(self, amount, template=None):
+    def generate_names(self, amount):
         names = []
         for i in xrange(amount):
             names.append(self.generate_name())
@@ -48,8 +52,8 @@ class NameGenerator(object):
 
 @hook.command(autohelp=False)
 def namegen(inp, notice=None):
-    "namegen [generator] -- Generates some names using the chosen generator. " \
-    "'namegen list' will display a list of all generators."
+    """namegen [generator] -- Generates some names using the chosen generator.
+    'namegen list' will display a list of all generators."""
 
     # clean up the input
     inp = inp.strip().lower()

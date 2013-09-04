@@ -18,7 +18,7 @@ else:
     string_io = StringIO(download)
     geoip_file = gzip.GzipFile(fileobj=string_io, mode='rb')
 
-    output = open(os.path.abspath("./plugins/data/GeoLiteCity.dat"),'wb')
+    output = open(os.path.abspath("./plugins/data/GeoLiteCity.dat"), 'wb')
     output.write(geoip_file.read())
     output.close()
 
@@ -27,7 +27,7 @@ else:
 
 @hook.command
 def geoip(inp):
-    "geoip <host/ip> -- Gets the location of <host/ip>"
+    """geoip <host/ip> -- Gets the location of <host/ip>"""
 
     try:
         record = geo.record_by_name(inp)

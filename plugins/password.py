@@ -6,7 +6,8 @@ import random
 
 @hook.command
 def password(inp, notice=None):
-    "password <length> [types] -- Generates a password of <length> (default 10). [types] can include 'alpha', 'no caps', 'numeric', 'symbols' or any combination of the inp, eg. 'numbers symbols'"
+    """password <length> [types] -- Generates a password of <length> (default 10).
+    [types] can include 'alpha', 'no caps', 'numeric', 'symbols' or any combination of the inp, eg. 'numbers symbols'"""
     okay = []
 
     # find the length needed for the password
@@ -30,7 +31,8 @@ def password(inp, notice=None):
 
     # add symbols
     if "symbol" in inp:
-        sym = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', '_', '+', '[', ']', '{', '}', '\\', '|', ';', ':', "'", '.', '>', ',', '<', '/', '?', '`', '~', '"']
+        sym = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', '_', '+', '[', ']', '{', '}', '\\', '|', ';',
+               ':', "'", '.', '>', ',', '<', '/', '?', '`', '~', '"']
         okay += okay + sym
 
     # defaults to lowercase alpha password if the okay list is empty

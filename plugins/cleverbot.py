@@ -15,7 +15,7 @@ always_safe = ('ABCDEFGHIJKLMNOPQRSTUVWXYZ'
                'abcdefghijklmnopqrstuvwxyz'
                '0123456789' '_.-')
 
-headers = {'X-Moz': 'prefetch', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 
+headers = {'X-Moz': 'prefetch', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:7.0.1)Gecko/20100101 Firefox/7.0',
            'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7', 'Referer': 'http://www.cleverbot.com',
            'Pragma': 'no-cache', 'Cache-Control': 'no-cache, no-cache', 'Accept-Language': 'en-us;q=0.8,en;q=0.5'}
@@ -27,6 +27,7 @@ keylist = ['stimulus', 'start', 'sessionid', 'vText8', 'vText7', 'vText6',
            'islearning', 'cleanslate']
 
 MsgList = list()
+
 
 def quote(s, safe='/'):  # quote('abc def') -> 'abc%20def'
     s = s.encode('utf-8')
@@ -46,6 +47,7 @@ def quote(s, safe='/'):  # quote('abc def') -> 'abc%20def'
     print "res= " + ''.join(res)
     return ''.join(res)
 
+
 def encode(keylist, arglist):
     text = str()
     for i in range(len(keylist)):
@@ -54,6 +56,7 @@ def encode(keylist, arglist):
         text += '&' + k + '=' + v
     text = text[1:]
     return text
+
 
 def Send():
     data = encode(keylist, arglist)
@@ -66,6 +69,7 @@ def Send():
     f = urllib2.urlopen(req)
     reply = f.read()
     return reply
+
 
 def parseAnswers(text):
     d = dict()
@@ -80,6 +84,7 @@ def parseAnswers(text):
         d[key] = values[i]
         i += 1
     return d
+
 
 def ask(inp):
     arglist[keylist.index('stimulus')] = inp
@@ -99,9 +104,11 @@ def ask(inp):
     MsgList.append(text)
     return text
 
+
 @hook.command("cb")
 def cleverbot(inp, reply=None):
     reply(ask(inp))
+
 
 ''' # TODO: add in command to control extra verbose per channel
 @hook.event('PRIVMSG')

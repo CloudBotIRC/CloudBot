@@ -4,7 +4,7 @@ import json
 
 @hook.command(autohelp=False)
 def mcstatus(inp, say=None):
-    "mcstatus -- Checks the status of various Mojang (the creators of Minecraft) servers."
+    """mcstatus -- Checks the status of various Mojang (the creators of Minecraft) servers."""
 
     try:
         request = http.get("http://status.mojang.com/check")
@@ -28,7 +28,7 @@ def mcstatus(inp, say=None):
 @hook.command("haspaid")
 @hook.command
 def mcpaid(inp):
-    "mcpaid <username> -- Checks if <username> has a premium Minecraft account."
+    """mcpaid <username> -- Checks if <username> has a premium Minecraft account."""
 
     user = inp.strip()
 

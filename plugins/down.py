@@ -5,7 +5,7 @@ from util import hook, http
 
 @hook.command
 def down(inp):
-    "down <url> -- Checks if the site at <url> is up or down."
+    """down <url> -- Checks if the site at <url> is up or down."""
 
     if 'http://' not in inp:
         inp = 'http://' + inp

@@ -4,7 +4,7 @@ import random
 
 @hook.command(autohelp=False)
 def coin(inp, me=None):
-    "coin [amount] -- Flips [amount] of coins."
+    """coin [amount] -- Flips [amount] of coins."""
 
     if inp:
         try:
@@ -21,5 +21,5 @@ def coin(inp, me=None):
     else:
         heads = int(random.normalvariate(.5 * amount, (.75 * amount) ** .5))
         tails = amount - heads
-        me("flips %i coins and gets " \
-        "%i heads and %i tails." % (amount, heads, tails))
+        me("flips %i coins and gets "
+           "%i heads and %i tails." % (amount, heads, tails))

@@ -22,7 +22,7 @@ ua_cloudbot = 'Cloudbot/DEV http://github.com/CloudDev/CloudBot'
 ua_firefox = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:17.0) Gecko/17.0' \
              ' Firefox/17.0'
 ua_old_firefox = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; ' \
-    'rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6'
+                 'rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6'
 ua_internetexplorer = 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
 ua_chrome = 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.4 (KHTML, ' \
             'like Gecko) Chrome/22.0.1229.79 Safari/537.4'
@@ -33,7 +33,7 @@ jar = cookielib.CookieJar()
 class HTMLTextExtractor(HTMLParser):
     def __init__(self):
         HTMLParser.__init__(self)
-        self.result = [ ]
+        self.result = []
 
     def handle_data(self, d):
         self.result.append(d)
@@ -76,7 +76,6 @@ def get_json(*args, **kwargs):
 
 def open(url, query_params=None, user_agent=None, post_data=None,
          referer=None, get_method=None, cookies=False, **kwargs):
-
     if query_params is None:
         query_params = {}
 
@@ -112,7 +111,7 @@ def prepare_url(url, queries):
         query = dict(urlparse.parse_qsl(query))
         query.update(queries)
         query = urllib.urlencode(dict((to_utf8(key), to_utf8(value))
-                                  for key, value in query.iteritems()))
+                                      for key, value in query.iteritems()))
 
         url = urlparse.urlunsplit((scheme, netloc, path, query, fragment))
 

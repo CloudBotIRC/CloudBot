@@ -1,8 +1,8 @@
-'''
+"""
 Plugin which (de)cyphers a string
 Doesn't cypher non-alphanumeric strings yet.
 by instanceoftom
-'''
+"""
 
 from util import hook
 chars = "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ "
@@ -11,7 +11,7 @@ len_chars = len(chars)
 
 @hook.command
 def cypher(inp):
-    "cypher <pass> <string> -- Cyphers <string> with <password>."
+    """cypher <pass> <string> -- Cyphers <string> with <password>."""
 
     passwd = inp.split(" ")[0]
     len_passwd = len(passwd)
@@ -38,7 +38,7 @@ def cypher(inp):
 
 @hook.command
 def decypher(inp):
-    "decypher <pass> <string> -- Decyphers <string> with <password>."
+    """decypher <pass> <string> -- Decyphers <string> with <password>."""
 
     passwd = inp.split(" ")[0]
     len_passwd = len(passwd)
@@ -52,7 +52,7 @@ def decypher(inp):
         except ValueError:
             continue
 
-    passwd_index = passwd_index - 1
+    passwd_index -= 1
     reversed_message = inp[::-1]
 
     out = ""

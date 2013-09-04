@@ -28,7 +28,7 @@ with open("plugins/data/flirts.txt") as f:
 
 @hook.command
 def slap(inp, me=None, nick=None, conn=None, notice=None):
-    "slap <user> -- Makes the bot slap <user>."
+    """slap <user> -- Makes the bot slap <user>."""
     target = inp.strip()
 
     if " " in target:
@@ -48,7 +48,7 @@ def slap(inp, me=None, nick=None, conn=None, notice=None):
 
 @hook.command
 def lart(inp, me=None, nick=None, conn=None, notice=None):
-    "lart <user> -- LARTs <user>."
+    """lart <user> -- LARTs <user>."""
     target = inp.strip()
 
     if " " in target:
@@ -68,7 +68,7 @@ def lart(inp, me=None, nick=None, conn=None, notice=None):
 
 @hook.command
 def kill(inp, me=None, nick=None, conn=None, notice=None):
-    "kill <user> -- Makes the bot kill <user>."
+    """kill <user> -- Makes the bot kill <user>."""
     target = inp.strip()
 
     if " " in target:
@@ -88,7 +88,7 @@ def kill(inp, me=None, nick=None, conn=None, notice=None):
 
 @hook.command
 def insult(inp, nick=None, me=None, conn=None, notice=None):
-    "insult <user> -- Makes the bot insult <user>."
+    """insult <user> -- Makes the bot insult <user>."""
     target = inp.strip()
 
     if " " in target:
@@ -105,8 +105,8 @@ def insult(inp, nick=None, me=None, conn=None, notice=None):
 
 
 @hook.command
-def flirt(inp, nick=None, me=None, conn=None, notice=None):
-    "flirt <user> -- Make the bot flirt with <user>."
+def flirt(inp, me=None, conn=None, notice=None):
+    """flirt <user> -- Make the bot flirt with <user>."""
     target = inp.strip()
 
     if " " in target:

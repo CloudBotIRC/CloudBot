@@ -9,14 +9,14 @@ def format_quote(q, num, n_quotes):
     """Returns a formatted string of a quote"""
     ctime, nick, msg = q
     return "[%d/%d] <%s> %s" % (num, n_quotes,
-         nick, msg)
+                                nick, msg)
 
 
 def create_table_if_not_exists(db):
     """Creates an empty quote table if one does not already exist"""
     db.execute("create table if not exists quote"
-        "(chan, nick, add_nick, msg, time real, deleted default 0, "
-        "primary key (chan, nick, msg))")
+               "(chan, nick, add_nick, msg, time real, deleted default 0, "
+               "primary key (chan, nick, msg))")
     db.commit()
 
 
@@ -49,8 +49,8 @@ def get_quote_num(num, count, name):
     if num and num < 0:  # Count back if possible
         num = count + num + 1 if num + count > -1 else count + 1
     if num and num > count:  # If there are not enough quotes, raise an error
-        raise Exception("I only have %d quote%s for %s."\
-        % (count, ('s', '')[count == 1], name))
+        raise Exception("I only have %d quote%s for %s."
+                        % (count, ('s', '')[count == 1], name))
     if num and num == 0:  # If the number is zero, set it to one
         num = 1
     if not num:  # If a number is not given, select a random one
@@ -124,8 +124,8 @@ def get_quote_by_chan(db, chan, num=False):
 @hook.command('q')
 @hook.command
 def quote(inp, nick='', chan='', db=None, notice=None):
-    "quote [#chan] [nick] [#n]/.quote add <nick> <msg> -- Gets " \
-    "random or [#n]th quote by <nick> or from <#chan>/adds quote."
+    """quote [#chan] [nick] [#n]/.quote add <nick> <msg>
+    Gets random or [#n]th quote by <nick> or from <#chan>/adds quote."""
     create_table_if_not_exists(db)
 
     add = re.match(r"add[^\w@]+(\S+?)>?\s+(.*)", inp, re.I)

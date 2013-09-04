@@ -3,7 +3,6 @@
 
 from util import hook
 import re
-import itertools
 
 pattern = re.compile(r'^(?P<count>\d+)x (?P<name>.+?): (?P<ingredients>.*)$')
 
@@ -32,9 +31,9 @@ with open("plugins/data/recipes.txt") as f:
         if not match:
             continue
         recipelist.append(Recipe(line=line,
-                           output=match.group("name").lower(),
-                           ingredients=match.group("ingredients"),
-                           count=match.group("count")))
+                                 output=match.group("name").lower(),
+                                 ingredients=match.group("ingredients"),
+                                 count=match.group("count")))
 
 ids = []
 
@@ -51,7 +50,7 @@ with open("plugins/data/itemids.txt") as f:
 @hook.command("mcid")
 @hook.command
 def mcitem(input, reply=None):
-    "mcitem <item/id> -- gets the id from an item or vice versa"
+    """mcitem <item/id> -- gets the id from an item or vice versa"""
     input = input.lower().strip()
 
     if input == "":
@@ -71,8 +70,7 @@ def mcitem(input, reply=None):
         return "No matches found."
 
     if len(results) > 12:
-        reply("There are too many options, please narrow your search. " \
-              "(%s)" % len(results))
+        reply("There are too many options, please narrow your search. (%s)" % len(results))
         return
 
     out = ", ".join(results)
@@ -83,7 +81,7 @@ def mcitem(input, reply=None):
 @hook.command("mccraft")
 @hook.command
 def mcrecipe(input, reply=None):
-    "mcrecipe <item> -- gets the crafting recipe for an item"
+    """mcrecipe <item> -- gets the crafting recipe for an item"""
     input = input.lower().strip()
 
     results = [recipe.line for recipe in recipelist
@@ -93,8 +91,7 @@ def mcrecipe(input, reply=None):
         return "No matches found."
 
     if len(results) > 3:
-        reply("There are too many options, please narrow your search. " \
-              "(%s)" % len(results))
+        reply("There are too many options, please narrow your search. (%s)" % len(results))
         return
 
     for result in results:

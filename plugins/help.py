@@ -3,8 +3,8 @@ from util import hook
 
 
 @hook.command(autohelp=False)
-def help(inp, say=None, notice=None, input=None, conn=None, bot=None):
-    "help  -- Gives a list of commands/help for a command."
+def help(inp, notice=None, input=None, conn=None, bot=None):
+    """help  -- Gives a list of commands/help for a command."""
 
     funcs = {}
     disabled = bot.config.get('disabled_plugins', [])
@@ -37,7 +37,7 @@ def help(inp, say=None, notice=None, input=None, conn=None, bot=None):
         notice("Commands I recognise: " + out[0][1:])
         if out[1]:
             notice(out[1][1:])
-        notice("For detailed help, do '%shelp <example>' where <example> "\
+        notice("For detailed help, do '%shelp <example>' where <example> "
                "is the name of the command you want help for." % conn.conf["command_prefix"])
 
     else:

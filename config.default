@@ -8,6 +8,7 @@
       "user": "cloudbot",
       "realname": "CloudBot - http://git.io/cloudbotirc",
       "nickserv_password": "",
+      "nickserv_user": "",
       "channels": ["#cloudbot", "#cloudbot2"],
       "invite_join": true,
       "auto_rejoin": false,

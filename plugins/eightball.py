@@ -1,5 +1,5 @@
-from util import hook, text
 import random
+from util import hook, text
 
 color_codes = {
     "<r>": "\x02\x0305",
@@ -9,14 +9,13 @@ color_codes = {
 
 with open("plugins/data/8ball_responses.txt") as f:
     responses = [line.strip() for line in
-        f.readlines()if not line.startswith("//")]
+                 f.readlines() if not line.startswith("//")]
 
 
 @hook.command('8ball')
 def eightball(input, me=None):
-    "8ball <question> -- The all knowing magic eight ball, " \
-    "in electronic form. Ask and it shall be answered!"
+    """8ball <question> -- The all knowing magic eight ball,
+    in electronic form. Ask and it shall be answered!"""
 
-    # here we use voodoo magic to tell the future
     magic = text.multiword_replace(random.choice(responses), color_codes)
     me("shakes the magic 8 ball... %s" % magic)

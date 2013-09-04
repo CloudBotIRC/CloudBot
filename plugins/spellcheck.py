@@ -6,7 +6,7 @@ locale = "en_US"
 
 @hook.command
 def spell(inp):
-    "spell <word> -- Check spelling of <word>."
+    """spell <word> -- Check spelling of <word>."""
 
     if ' ' in inp:
         return "This command only supports one word at a time."

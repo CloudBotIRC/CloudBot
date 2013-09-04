@@ -31,7 +31,7 @@ def ignore_sieve(bot, input, func, type, args):
 
 @hook.command(autohelp=False)
 def ignored(inp, notice=None, bot=None):
-    "ignored -- Lists ignored channels/users."
+    """ignored -- Lists ignored channels/users."""
     ignorelist = bot.config["plugins"]["ignore"]["ignored"]
     if ignorelist:
         notice("Ignored channels/users are: %s" % ", ".join(ignorelist))
@@ -42,7 +42,7 @@ def ignored(inp, notice=None, bot=None):
 
 @hook.command(permissions=["ignore"])
 def ignore(inp, notice=None, bot=None, config=None):
-    "ignore <channel|nick|host> -- Makes the bot ignore <channel|user>."
+    """ignore <channel|nick|host> -- Makes the bot ignore <channel|user>."""
     target = inp.lower()
     ignorelist = bot.config["plugins"]["ignore"]["ignored"]
     if target in ignorelist:
@@ -57,8 +57,8 @@ def ignore(inp, notice=None, bot=None, config=None):
 
 @hook.command(permissions=["ignore"])
 def unignore(inp, notice=None, bot=None, config=None):
-    "unignore <channel|user> -- Makes the bot listen to"\
-    " <channel|user>."
+    """unignore <channel|user> -- Makes the bot listen to
+    <channel|user>."""
     target = inp.lower()
     ignorelist = bot.config["plugins"]["ignore"]["ignored"]
     if target in ignorelist:

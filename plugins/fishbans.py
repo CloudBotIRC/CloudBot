@@ -7,7 +7,7 @@ api_url = "http://api.fishbans.com/stats/{}/"
 @hook.command("bans")
 @hook.command
 def fishbans(inp):
-    "fishbans <user> -- Gets information on <user>s minecraft bans from fishbans"
+    """fishbans <user> -- Gets information on <user>s minecraft bans from fishbans"""
     user = inp.strip()
 
     try:
@@ -15,7 +15,7 @@ def fishbans(inp):
     except (http.HTTPError, http.URLError) as e:
         return "Could not fetch ban data from the Fishbans API: {}".format(e)
 
-    if request["success"] == False:
+    if not request["success"]:
         return "Could not fetch ban data for {}.".format(user)
 
     user_url = "http://fishbans.com/u/{}/".format(user)
@@ -27,7 +27,7 @@ def fishbans(inp):
 
 @hook.command
 def bancount(inp):
-    "bancount <user> -- Gets a count of <user>s minecraft bans from fishbans"
+    """bancount <user> -- Gets a count of <user>s minecraft bans from fishbans"""
     user = inp.strip()
 
     try:
@@ -35,7 +35,7 @@ def bancount(inp):
     except (http.HTTPError, http.URLError) as e:
         return "Could not fetch ban data from the Fishbans API: {}".format(e)
 
-    if request["success"] == False:
+    if not request["success"]:
         return "Could not fetch ban data for {}.".format(user)
 
     user_url = "http://fishbans.com/u/{}/".format(user)

@@ -1,7 +1,7 @@
-'''
+"""
 A Google API key is required and retrieved from the bot config file.
 Since December 1, 2011, the Google Translate API is a paid service only.
-'''
+"""
 
 import htmlentitydefs
 import re
@@ -50,12 +50,12 @@ def goog_trans(api_key, text, slang, tlang):
     else:
         parsed = http.get_json(url, key=api_key, q=text, target=tlang, format="text")
 
-    #if not 200 <= parsed['responseStatus'] < 300:
-     #   raise IOError('error with the translation server: %d: %s' % (
-     #           parsed['responseStatus'], parsed['responseDetails']))
+        #if not 200 <= parsed['responseStatus'] < 300:
+        #   raise IOError('error with the translation server: %d: %s' % (
+        #           parsed['responseStatus'], parsed['responseDetails']))
     if not slang:
         return unescape('(%(detectedSourceLanguage)s) %(translatedText)s' %
-                (parsed['data']['translations'][0]))
+                        (parsed['data']['translations'][0]))
     return unescape('%(translatedText)s' % parsed['data']['translations'][0])
 
 
@@ -73,10 +73,10 @@ def match_language(fragment):
 
 
 @hook.command
-def translate(inp, bot=None, say=None):
-    'translate [source language [target language]] <sentence> -- translates' \
-    ' <sentence> from source language (default autodetect) to target' \
-    ' language (default English) using Google Translate'
+def translate(inp, bot=None):
+    """translate [source language [target language]] <sentence> -- translates
+    <sentence> from source language (default autodetect) to target
+    language (default English) using Google Translate"""
 
     api_key = bot.config.get("api_keys", {}).get("googletranslate", None)
     if not api_key:
@@ -101,6 +101,7 @@ def translate(inp, bot=None, say=None):
         return goog_trans(api_key, inp, '', 'en')
     except IOError, e:
         return e
+
 
 lang_pairs = [
     ("no", "Norwegian"),

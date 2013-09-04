@@ -21,7 +21,7 @@ def truncate(msg):
                 out = out + " " + nmsg[x]
             else:
                 out = nmsg[x]
-        x = x + 1
+        x += 1
     if x <= 7:
         return out
     else:
@@ -44,7 +44,7 @@ def multitwitch_url(match):
 
 
 @hook.regex(*twitch_re)
-def twitch_url(match, chan=''):
+def twitch_url(match):
     bit = match.group(4).split("#")[0]
     location = "/".join(bit.split("/")[1:])
     if not test(location):
@@ -68,16 +68,16 @@ def twitch_lookup(location):
     locsplit = location.split("/")
     if len(locsplit) > 1 and len(locsplit) == 3:
         channel = locsplit[0]
-        type = locsplit[1] # should be b or c
+        type = locsplit[1]  # should be b or c
         id = locsplit[2]
     else:
         channel = locsplit[0]
         type = None
         id = None
     h = HTMLParser()
-    fmt = "{}: {} playing {} ({})" # Title: nickname playing Game (x views)
+    fmt = "{}: {} playing {} ({})"  # Title: nickname playing Game (x views)
     if type and id:
-        if type == "b": # I haven't found an API to retrieve broadcast info
+        if type == "b":  # I haven't found an API to retrieve broadcast info
             soup = http.get_soup("http://twitch.tv/" + location)
             title = soup.find('span', {'class': 'real_title js-title'}).text
             playing = soup.find('a', {'class': 'game js-game'}).text

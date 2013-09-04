@@ -6,8 +6,8 @@ ed_url = "http://encyclopediadramatica.se/"
 
 @hook.command
 def drama(inp):
-    "drama <phrase> -- Gets the first paragraph of" \
-    " the Encyclopedia Dramatica article on <phrase>."
+    """drama <phrase> -- Gets the first paragraph of
+    the Encyclopedia Dramatica article on <phrase>."""
 
     j = http.get_json(api_url, search=inp)
     if not j[1]:

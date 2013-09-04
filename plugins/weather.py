@@ -5,8 +5,8 @@ base_url = "http://api.wunderground.com/api/{}/{}/q/{}.json"
 
 @hook.command(autohelp=None)
 def weather(inp, reply=None, db=None, nick=None, bot=None, notice=None):
-    "weather <location> [dontsave] -- Gets weather data"\
-    " for <location> from Wunderground."
+    """weather <location> [dontsave] -- Gets weather data
+    for <location> from Wunderground."""
 
     api_key = bot.config.get("api_keys", {}).get("wunderground")
 
@@ -19,7 +19,7 @@ def weather(inp, reply=None, db=None, nick=None, bot=None, notice=None):
     # if there is no input, try getting the users last location from the DB
     if not inp:
         location = db.execute("select loc from weather where nick=lower(?)",
-                             [nick]).fetchone()
+                              [nick]).fetchone()
         if not location:
             # no location saved in the database, send the user help text
             notice(weather.__doc__)
@@ -55,10 +55,11 @@ def weather(inp, reply=None, db=None, nick=None, bot=None, notice=None):
 
     if response['location']['state']:
         place_name = "\x02{}\x02, \x02{}\x02 (\x02{}\x02)".format(response['location']['city'],
-                                     response['location']['state'], response['location']['country'])
+                                                                  response['location']['state'],
+                                                                  response['location']['country'])
     else:
         place_name = "\x02{}\x02 (\x02{}\x02)".format(response['location']['city'],
-                                      response['location']['country'])
+                                                      response['location']['country'])
 
     forecast_today = response["forecast"]["simpleforecast"]["forecastday"][0]
     forecast_tomorrow = response["forecast"]["simpleforecast"]["forecastday"][1]
@@ -94,5 +95,5 @@ def weather(inp, reply=None, db=None, nick=None, bot=None, notice=None):
 
     if location and not dontsave:
         db.execute("insert or replace into weather(nick, loc) values (?,?)",
-                    (nick.lower(), location))
+                   (nick.lower(), location))
         db.commit()

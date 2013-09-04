@@ -64,8 +64,8 @@ def db_del(db, nick, limit='all'):
           limit ?
           offset ?)
      """, (nick,
-          -1 if limit == 'all' else 1,
-          0 if limit == 'all' else limit))
+           -1 if limit == 'all' else 1,
+           0 if limit == 'all' else limit))
     db.commit()
     return row
 

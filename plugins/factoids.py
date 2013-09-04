@@ -1,19 +1,18 @@
 # Written by Scaevolus 2010
 from util import hook, http, text, execute
 import string
-import sqlite3
 import re
 
 re_lineends = re.compile(r'[\r\n]*')
 
 # some simple "shortcodes" for formatting purposes
 shortcodes = {
-'[b]': '\x02',
-'[/b]': '\x02',
-'[u]': '\x1F',
-'[/u]': '\x1F',
-'[i]': '\x16',
-'[/i]': '\x16'}
+    '[b]': '\x02',
+    '[/b]': '\x02',
+    '[u]': '\x1F',
+    '[/u]': '\x1F',
+    '[i]': '\x16',
+    '[/i]': '\x16'}
 
 
 def db_init(db):
@@ -23,7 +22,6 @@ def db_init(db):
 
 
 def get_memory(db, word):
-
     row = db.execute("select data from mem where word=lower(?)",
                      [word]).fetchone()
     if row:
@@ -34,9 +32,9 @@ def get_memory(db, word):
 
 @hook.command("r", permissions=["addfactoid"])
 @hook.command(permissions=["addfactoid"])
-def remember(inp, nick='', db=None, say=None, input=None, notice=None):
-    "remember <word> [+]<data> -- Remembers <data> with <word>. Add +"
-    " to <data> to append."
+def remember(inp, nick='', db=None, notice=None):
+    """remember <word> [+]<data> -- Remembers <data> with <word>. Add +
+    to <data> to append."""
     db_init(db)
 
     append = False
@@ -67,17 +65,17 @@ def remember(inp, nick='', db=None, say=None, input=None, notice=None):
             notice("Appending \x02%s\x02 to \x02%s\x02" % (new_data, old_data))
         else:
             notice('Remembering \x02%s\x02 for \x02%s\x02. Type ?%s to see it.'
-                % (data, word, word))
+                   % (data, word, word))
             notice('Previous data was \x02%s\x02' % old_data)
     else:
         notice('Remembering \x02%s\x02 for \x02%s\x02. Type ?%s to see it.'
-                % (data, word, word))
+               % (data, word, word))
 
 
 @hook.command("f", permissions=["delfactoid"])
 @hook.command(permissions=["delfactoid"])
-def forget(inp, db=None, input=None, notice=None):
-    "forget <word> -- Forgets a remembered <word>."
+def forget(inp, db=None, notice=None):
+    """forget <word> -- Forgets a remembered <word>."""
 
     db_init(db)
     data = get_memory(db, inp)
@@ -95,7 +93,7 @@ def forget(inp, db=None, input=None, notice=None):
 
 @hook.command
 def info(inp, notice=None, db=None):
-    "info <factoid> -- Shows the source of a factoid."
+    """info <factoid> -- Shows the source of a factoid."""
 
     db_init(db)
 
@@ -134,7 +132,8 @@ def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
         if data.startswith("<py>"):
             code = data[4:].strip()
             variables = 'input="""%s"""; nick="%s"; chan="%s"; bot_nick="%s";' % (arguments.replace('"', '\\"'),
-                         input.nick, input.chan, input.conn.nick)
+                                                                                  input.nick, input.chan,
+                                                                                  input.conn.nick)
             result = execute.eval_py(variables + code)
         else:
             result = data

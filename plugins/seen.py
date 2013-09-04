@@ -1,4 +1,4 @@
-" seen.py: written by sklnd in about two beers July 2009"
+"""seen.py: written by sklnd in about two beers July 2009"""
 
 import time
 import re
@@ -9,29 +9,29 @@ db_ready = False
 
 
 def db_init(db):
-    "check to see that our db has the the seen table and return a connection."
+    """check to see that our db has the the seen table and return a connection."""
     db.execute("create table if not exists seen_user(name, time, quote, chan, host, "
-                 "primary key(name, chan))")
+               "primary key(name, chan))")
     db.commit()
     db_ready = True
 
 
 @hook.singlethread
 @hook.event('PRIVMSG', ignorebots=False)
-def seen_sieve(paraml, input=None, db=None, bot=None):
+def seen_sieve(input=None, db=None):
     if not db_ready:
         db_init(db)
-    # keep private messages private
+        # keep private messages private
     if input.chan[:1] == "#" and not re.findall('^s/.*/.*/$', input.msg.lower()):
         db.execute("insert or replace into seen_user(name, time, quote, chan, host)"
-            "values(?,?,?,?,?)", (input.nick.lower(), time.time(), input.msg,
-            input.chan, input.mask))
+                   "values(?,?,?,?,?)", (input.nick.lower(), time.time(), input.msg,
+                                         input.chan, input.mask))
         db.commit()
 
 
 @hook.command
 def seen(inp, nick='', chan='', db=None, input=None):
-    "seen <nick> -- Tell when a nickname was last in active in one of this bot's channels."
+    """seen <nick> -- Tell when a nickname was last in active in one of this bot's channels."""
 
     if input.conn.nick.lower() == inp.lower():
         return "You need to get your eyes checked."
@@ -52,7 +52,7 @@ def seen(inp, nick='', chan='', db=None, input=None):
         reltime = timesince.timesince(last_seen[1])
         if last_seen[0] != inp.lower():  # for glob matching
             inp = last_seen[0]
-        if last_seen[2][0:1]=="\x01":
+        if last_seen[2][0:1] == "\x01":
             return '{} was last seen {} ago: * {} {}'.format(inp, reltime, inp,
                                                              last_seen[2][8:-1])
         else:

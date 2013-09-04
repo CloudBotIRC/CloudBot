@@ -7,7 +7,7 @@ thread.stack_size(1024 * 512)  # reduce vm size
 
 class Input(dict):
     def __init__(self, conn, raw, prefix, command, params,
-                    nick, user, host, mask, paraml, msg):
+                 nick, user, host, mask, paraml, msg):
 
         chan = paraml[0].lower()
         if chan == conn.nick.lower():  # is a PM
@@ -32,10 +32,10 @@ class Input(dict):
             conn.cmd('NOTICE', [nick, msg])
 
         dict.__init__(self, conn=conn, raw=raw, prefix=prefix, command=command,
-                    params=params, nick=nick, user=user, host=host, mask=mask,
-                    paraml=paraml, msg=msg, server=conn.server, chan=chan,
-                    notice=notice, say=say, reply=reply, pm=pm, bot=bot,
-                    me=me, lastparam=paraml[-1])
+                      params=params, nick=nick, user=user, host=host, mask=mask,
+                      paraml=paraml, msg=msg, server=conn.server, chan=chan,
+                      notice=notice, say=say, reply=reply, pm=pm, bot=bot,
+                      me=me, lastparam=paraml[-1])
 
     # make dict keys accessible as attributes
     def __getattr__(self, key):
@@ -77,7 +77,8 @@ def do_sieve(sieve, bot, input, func, type, args):
 
 
 class Handler(object):
-    '''Runs plugins in their own threads (ensures order)'''
+    """Runs plugins in their own threads (ensures order)"""
+
     def __init__(self, func):
         self.func = func
         self.input_queue = Queue.Queue()
@@ -103,6 +104,7 @@ class Handler(object):
                 run(self.func, input)
             except:
                 import traceback
+
                 traceback.print_exc()
 
     def stop(self):
@@ -115,11 +117,10 @@ class Handler(object):
 def dispatch(input, kind, func, args, autohelp=False):
     for sieve, in bot.plugs['sieve']:
         input = do_sieve(sieve, bot, input, func, kind, args)
-        if input == None:
+        if input is None:
             return
 
-    if autohelp and args.get('autohelp', True) and not input.inp \
-      and func.__doc__ is not None:
+    if not (not autohelp or not args.get('autohelp', True) or input.inp or not (func.__doc__ is not None)):
         input.notice(input.conn.conf["command_prefix"] + func.__doc__)
         return
 
@@ -169,7 +170,7 @@ def main(conn, out):
             if isinstance(command, list):  # multiple potential matches
                 input = Input(conn, *out)
                 input.notice("Did you mean %s or %s?" %
-                            (', '.join(command[:-1]), command[-1]))
+                             (', '.join(command[:-1]), command[-1]))
             elif command in bot.commands:
                 input = Input(conn, *out)
                 input.trigger = trigger

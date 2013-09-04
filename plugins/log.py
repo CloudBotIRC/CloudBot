@@ -27,11 +27,11 @@ formats = {
 }
 
 ctcp_formats = {
-'ACTION': '* %(nick)s %(ctcpmsg)s',
-'VERSION': '%(nick)s has requested CTCP %(ctcpcmd)s from %(chan)s: %(ctcpmsg)s',
-'PING': '%(nick)s has requested CTCP %(ctcpcmd)s from %(chan)s: %(ctcpmsg)s',
-'TIME': '%(nick)s has requested CTCP %(ctcpcmd)s from %(chan)s: %(ctcpmsg)s',
-'FINGER': '%(nick)s has requested CTCP %(ctcpcmd)s from %(chan)s: %(ctcpmsg)s'
+    'ACTION': '* %(nick)s %(ctcpmsg)s',
+    'VERSION': '%(nick)s has requested CTCP %(ctcpcmd)s from %(chan)s: %(ctcpmsg)s',
+    'PING': '%(nick)s has requested CTCP %(ctcpcmd)s from %(chan)s: %(ctcpmsg)s',
+    'TIME': '%(nick)s has requested CTCP %(ctcpcmd)s from %(chan)s: %(ctcpmsg)s',
+    'FINGER': '%(nick)s has requested CTCP %(ctcpcmd)s from %(chan)s: %(ctcpmsg)s'
 }
 
 irc_color_re = re.compile(r'(\x03(\d+,\d+|\d)|[\x0f\x02\x16\x1f])')
@@ -39,7 +39,7 @@ irc_color_re = re.compile(r'(\x03(\d+,\d+|\d)|[\x0f\x02\x16\x1f])')
 
 def get_log_filename(dir, server, chan):
     return os.path.join(dir, 'log', gmtime('%Y'), server, chan,
-            (gmtime('%%s.%m-%d.log') % chan).lower())
+                        (gmtime('%%s.%m-%d.log') % chan).lower())
 
 
 def gmtime(format):
@@ -64,8 +64,8 @@ def beautify(input):
             ctcp += ['']
         args['ctcpcmd'], args['ctcpmsg'] = ctcp
         format = ctcp_formats.get(args['ctcpcmd'],
-                '%(nick)s [%(user)s@%(host)s] requested unknown CTCP '
-                '%(ctcpcmd)s from %(chan)s: %(ctcpmsg)s')
+                                  '%(nick)s [%(user)s@%(host)s] requested unknown CTCP '
+                                  '%(ctcpcmd)s from %(chan)s: %(ctcpmsg)s')
 
     return format % args
 
@@ -90,7 +90,7 @@ def get_log_fd(dir, server, chan):
 
 @hook.singlethread
 @hook.event('*')
-def log(paraml, input=None, bot=None):
+def log(input=None, bot=None):
     timestamp = gmtime(timestamp_format)
 
     fd = get_log_fd(bot.persist_dir, input.server, 'raw')

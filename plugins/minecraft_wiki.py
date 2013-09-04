@@ -7,8 +7,8 @@ mc_url = "http://minecraftwiki.net/wiki/"
 
 @hook.command
 def mcwiki(inp):
-    "mcwiki <phrase> -- Gets the first paragraph of" \
-    " the Minecraft Wiki article on <phrase>."
+    """mcwiki <phrase> -- Gets the first paragraph of
+    the Minecraft Wiki article on <phrase>."""
 
     j = http.get_json(api_url, search=inp)
 

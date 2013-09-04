@@ -9,7 +9,8 @@ from util import hook, http
 @hook.command('mc')
 @hook.command
 def metacritic(inp):
-    "mc [all|movie|tv|album|x360|ps3|wii|pc|ds|3ds|vita] <title> -- Gets rating for <title> from metacritic on the specified medium."
+    """mc [all|movie|tv|album|x360|ps3|wii|pc|ds|3ds|vita] <title>
+    Gets rating for <title> from metacritic on the specified medium."""
 
     # if the results suck, it's metacritic's fault
 
@@ -118,7 +119,7 @@ def metacritic(inp):
     link = 'http://metacritic.com' + product_title.find('a').attrib['href']
 
     try:
-        release = result.find_class('release_date')[0].\
+        release = result.find_class('release_date')[0]. \
             find_class('data')[0].text_content()
 
         # strip extra spaces out of the release date
@@ -132,6 +133,6 @@ def metacritic(inp):
         score = None
 
     return '[%s] %s - \x02%s/100\x02, %s - %s' % (plat.upper(), name,
-            score or 'no score',
-            'release: \x02%s\x02' % release if release else 'unreleased',
-            link)
+                                                  score or 'no score',
+                                                  'release: \x02%s\x02' % release if release else 'unreleased',
+                                                  link)

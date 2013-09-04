@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 @hook.command
 def title(inp):
-    "title <url> -- gets the title of a web page"
+    """title <url> -- gets the title of a web page"""
     url = urlnorm.normalize(inp.encode('utf-8'), assume_scheme="http")
 
     try:

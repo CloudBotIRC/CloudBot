@@ -1,13 +1,14 @@
 # Plugin by Infinity - <https://github.com/infinitylabs/UguuBot>
 
-from util import hook, http
 import random
+from util import hook, http
+
 
 mlia_cache = []
 
 
 def refresh_cache():
-    "gets a page of random MLIAs and puts them into a dictionary "
+    """gets a page of random MLIAs and puts them into a dictionary """
     url = 'http://mylifeisaverage.com/%s' % random.randint(1, 11000)
     soup = http.get_soup(url)
 

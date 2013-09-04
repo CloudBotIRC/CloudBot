@@ -1,5 +1,5 @@
-'''Searches wikipedia and returns first sentence of article
-Scaevolus 2009'''
+"""Searches wikipedia and returns first sentence of article
+Scaevolus 2009"""
 
 import re
 
@@ -15,14 +15,14 @@ paren_re = re.compile('\s*\(.*\)$')
 @hook.command('w')
 @hook.command
 def wiki(inp):
-    "wiki <phrase> -- Gets first sentence of Wikipedia article on <phrase>."
+    """wiki <phrase> -- Gets first sentence of Wikipedia article on <phrase>."""
 
     x = http.get_xml(search_url, search=inp)
 
     ns = '{http://opensearch.org/searchsuggest2}'
     items = x.findall(ns + 'Section/' + ns + 'Item')
 
-    if items == []:
+    if not items:
         if x.find('error') is not None:
             return 'error: %(code)s: %(info)s' % x.find('error').attrib
         else:

@@ -21,7 +21,9 @@ def soundcloud(url, api_key):
 
     url = web.try_isgd(data['permalink_url'])
 
-    return u"SoundCloud track: \x02{}\x02 by \x02{}user\x02 {}{}- {} plays, {} downloads, {} comments - \x02{}\x02".format(data['title'], data['user']['username'], desc, genre, data['playback_count'], data['download_count'], data['comment_count'], url)
+    return u"SoundCloud track: \x02{}\x02 by \x02{}user\x02 {}{}- {} plays, {} downloads, {} comments - \x02{}\x02".format(
+        data['title'], data['user']['username'], desc, genre, data['playback_count'], data['download_count'],
+        data['comment_count'], url)
 
 
 @hook.regex(*sc_re)
@@ -30,7 +32,8 @@ def soundcloud_url(match, bot=None):
     if not api_key:
         print "Error: no api key set"
         return None
-    url = match.group(1).split(' ')[-1] + "//" + (match.group(2) if match.group(2) else "") + match.group(3) + match.group(4).split(' ')[0]
+    url = match.group(1).split(' ')[-1] + "//" + (match.group(2) if match.group(2) else "") + match.group(3) + \
+          match.group(4).split(' ')[0]
     return soundcloud(url, api_key)
 
 
@@ -40,5 +43,6 @@ def sndsc_url(match, bot=None):
     if not api_key:
         print "Error: no api key set"
         return None
-    url = match.group(1).split(' ')[-1] + "//" + (match.group(2) if match.group(2) else "") + match.group(3) + match.group(4).split(' ')[0]
+    url = match.group(1).split(' ')[-1] + "//" + (match.group(2) if match.group(2) else "") + match.group(3) + \
+          match.group(4).split(' ')[0]
     return soundcloud(http.open(url).url, api_key)

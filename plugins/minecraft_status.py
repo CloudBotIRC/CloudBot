@@ -15,9 +15,10 @@ def mcstatus(inp):
     data = json.loads(request.replace("}", "").replace("{", "").replace("]", "}").replace("[", "{"))
 
     out = []
+
     # use a loop so we don't have to update it if they add more servers
     yes = []
-    no = ['luke']
+    no = []
     for server, status in data.items():
         if status == "green":
             yes.append(server)

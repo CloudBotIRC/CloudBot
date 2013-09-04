@@ -28,7 +28,8 @@
     "twitter_consumer_secret": "",
     "twitter_access_token": "",
     "twitter_access_secret": "",
-    "wunderground": ""
+    "wunderground": "",
+    "googletranslate": ""
   },
   "permissions": {
     "admins": {

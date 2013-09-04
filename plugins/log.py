@@ -90,7 +90,7 @@ def get_log_fd(dir, server, chan):
 
 @hook.singlethread
 @hook.event('*')
-def log(input=None, bot=None):
+def log(paraml, input=None, bot=None):
     timestamp = gmtime(timestamp_format)
 
     fd = get_log_fd(bot.persist_dir, input.server, 'raw')

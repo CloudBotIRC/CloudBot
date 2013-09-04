@@ -2,11 +2,10 @@
 Plugin which (de)cyphers a string
 Doesn't cypher non-alphanumeric strings yet.
 by instanceoftom
+All character cyphering added - TheNoodle
 """
 
 from util import hook
-chars = "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ "
-len_chars = len(chars)
 
 
 @hook.command
@@ -20,19 +19,15 @@ def cypher(inp):
     out = ""
     passwd_index = 0
     for character in inp:
-        try:
-            chr_index = chars.index(character)
-            passwd_chr_index = chars.index(passwd[passwd_index])
+        chr_index = ord(character)
+        passwd_chr_index = ord(passwd[passwd_index])
 
-            out_chr_index = (chr_index + passwd_chr_index) % len_chars
-            out_chr = chars[out_chr_index]
+        out_chr_index = (chr_index + passwd_chr_index) % 255
+        out_chr = chr[out_chr_index]
 
-            out += out_chr
+        out += out_chr
 
-            passwd_index = (passwd_index + 1) % len_passwd
-        except ValueError:
-            out += character
-            continue
+        passwd_index = (passwd_index + 1) % len_passwd
     return out
 
 
@@ -46,11 +41,7 @@ def decypher(inp):
 
     passwd_index = 0
     for character in inp:
-        try:
-            chr_index = chars.index(character)
-            passwd_index = (passwd_index + 1) % len_passwd
-        except ValueError:
-            continue
+        passwd_index = (passwd_index + 1) % len_passwd
 
     passwd_index -= 1
     reversed_message = inp[::-1]
@@ -58,10 +49,10 @@ def decypher(inp):
     out = ""
     for character in reversed_message:
         try:
-            chr_index = chars.index(character)
-            passwd_chr_index = chars.index(passwd[passwd_index])
+            chr_index = ord(character)
+            passwd_chr_index = ord(passwd[passwd_index])
 
-            out_chr_index = (chr_index - passwd_chr_index) % len_chars
+            out_chr_index = (chr_index - passwd_chr_index) % 255
             out_chr = chars[out_chr_index]
 
             out += out_chr

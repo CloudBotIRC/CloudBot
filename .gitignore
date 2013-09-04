@@ -11,3 +11,4 @@ gitflow
 *.sublime-project
 *.sublime-workspace
 .idea/
+plugins/data/GeoLiteCity.dat

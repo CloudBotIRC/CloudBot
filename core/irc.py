@@ -178,7 +178,7 @@ class IRC(object):
                 if paramlist[-1].startswith(':'):
                     paramlist[-1] = paramlist[-1][1:]
                 lastparam = paramlist[-1]
-                # put the parsed message in the response queue
+            # put the parsed message in the response queue
             self.out.put([msg, prefix, command, params, nick, user, host,
                           mask, paramlist, lastparam])
             # if the server pings us, pong them back

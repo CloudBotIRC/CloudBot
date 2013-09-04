@@ -95,6 +95,24 @@ def multiword_replace(text, wordDic):
     return rc.sub(translate, text)
 
 
+def truncate_words(content, length=10, suffix='...'):
+    "Truncates a string after a certain number of words."
+    nmsg = content.split(" ")
+    out = None
+    x = 0
+    for i in nmsg:
+        if x <= length:
+            if out:
+                out = out + " " + nmsg[x]
+            else:
+                out = nmsg[x]
+        x = x + 1
+    if x <= length:
+        return out
+    else:
+        return out + suffix
+
+
 # from <http://stackoverflow.com/questions/250357/smart-truncate-in-python>
 def truncate_str(content, length=100, suffix='...'):
     "Truncates a string after a certain number of chars."

@@ -20,7 +20,7 @@ def spell(inp):
         for x in words:
             is_correct = dictionary.check(x)
             suggestions = dictionary.suggest(x)
-            s_string = '/'.join(suggestions[:2])
+            s_string = '/'.join(suggestions[:3])
             if is_correct:
                 out.append(x)
             else:

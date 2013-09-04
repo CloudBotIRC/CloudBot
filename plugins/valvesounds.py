@@ -52,7 +52,8 @@ def getSoundInfo(url, inp, jsondata=False):
 def portal2(inp):
     """portal2 [who - ]<quote> - Look up Portal 2 quote.
     Example: .portal2 cave johnson - demand to see life's manager,
-    .portal2 i own the place | If - is not included, no 'who' data will be sent."""
+    .portal2 i own the place
+    If - is not included, no 'who' data will be sent."""
     return getSoundInfo(portal2url, inp)
 
 

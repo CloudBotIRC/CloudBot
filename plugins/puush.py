@@ -25,7 +25,7 @@ def make_url(code):
 
 @hook.command(autohelp=False)
 def puush(inp):
-    """puush -- Returns a random puush entry."""
+    """puush [1-5] -- Returns a number of random puu.sh entries."""
     out = ""
     num = 0
     if not inp:

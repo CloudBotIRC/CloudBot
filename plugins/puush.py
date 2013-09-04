@@ -13,7 +13,7 @@ def make_string():
 
 def check_url(code):
     try:
-        x = urllib2.urlopen(make_url(code))
+        urllib2.urlopen(make_url(code))
         return True
     except:
         return False  # sorry <3
@@ -28,9 +28,10 @@ def puush(inp):
     """puush [1-5] -- Returns a number of random puu.sh entries."""
     out = ""
     num = 0
+
     if not inp:
         inp = "1"
-    if inp[0] not in "123456789":
+    if not inp.isdigit():
         out += "Defaulting to one: "
         num = 1
     elif int(inp[0]) > 5:
@@ -38,6 +39,7 @@ def puush(inp):
         num = 5
     else:
         num = int(inp[0])
+
     images = []
     for x in range(num):
         ran = make_string()

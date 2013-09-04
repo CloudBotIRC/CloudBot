@@ -5,21 +5,22 @@ import json
 import time
 import subprocess
 
+
 @hook.command(autohelp=False, permissions=["permissions_users"])
 def permissions(inp, bot=None, notice=None):
-    "permissions [group] -- lists the users and their permission level who have permissions."
+    """permissions [group] -- lists the users and their permission level who have permissions."""
     permissions = bot.config.get("permissions", [])
     groups = []
     if inp:
         for k in permissions:
-	    if inp == k:
-	        groups.append(k)
+            if inp == k:
+                groups.append(k)
     else:
-	for k in permissions:
-	    groups.append(k)
+        for k in permissions:
+            groups.append(k)
     if not groups:
-	notice("%s is not a group with permissions" % inp)
-	return None
+        notice("%s is not a group with permissions" % inp)
+        return None
 
     for v in groups:
         members = ""
@@ -34,64 +35,65 @@ def permissions(inp, bot=None, notice=None):
 
 @hook.command(permissions=["permissions_users"])
 def deluser(inp, bot=None, notice=None):
-    "deluser [user] [group] -- removes elevated permissions from [user]. " \
-    "If [group] is specified, they will only be removed from [group]."
+    """deluser [user] [group] -- removes elevated permissions from [user].
+    If [group] is specified, they will only be removed from [group]."""
     permissions = bot.config.get("permissions", [])
     inp = inp.split(" ")
     groups = []
     try:
-	specgroup = inp[1]
+        specgroup = inp[1]
     except IndexError:
-	specgroup = None
-	for k in permissions:
-	    groups.append(k)
+        specgroup = None
+        for k in permissions:
+            groups.append(k)
     else:
-	for k in permissions:
-	    if specgroup == k:
-		groups.append(k)
+        for k in permissions:
+            if specgroup == k:
+                groups.append(k)
     if not groups:
-	notice("%s is not a group with permissions" % inp[1])
-	return None
+        notice("%s is not a group with permissions" % inp[1])
+        return None
 
     removed = 0
     for v in groups:
-	users = permissions[v]["users"]
-	for value in users:
-	    if inp[0] == value:
-		users.remove(inp[0])
-		removed = 1
-		notice("%s has been removed from the group %s" % (inp[0], v))
-		json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
+        users = permissions[v]["users"]
+        for value in users:
+            if inp[0] == value:
+                users.remove(inp[0])
+                removed = 1
+                notice("%s has been removed from the group %s" % (inp[0], v))
+                json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
     if specgroup:
-	if removed == 0:
-	    notice("%s is not in the group %s" % (inp[0], specgroup))
+        if removed == 0:
+            notice("%s is not in the group %s" % (inp[0], specgroup))
     else:
-	if removed == 0:
-	    notice("%s is not in any groups" % inp[0])
+        if removed == 0:
+            notice("%s is not in any groups" % inp[0])
+
 
 @hook.command(permissions=["permissions_users"])
 def adduser(inp, bot=None, notice=None):
-    "adduser [user] [group] -- adds elevated permissions to [user]. " \
-    "[group] must be specified."
+    """adduser [user] [group] -- adds elevated permissions to [user].
+    [group] must be specified."""
     permissions = bot.config.get("permissions", [])
     inp = inp.split(" ")
     try:
-	user = inp[0]
-	targetgroup = inp[1]
+        user = inp[0]
+        targetgroup = inp[1]
     except IndexError:
-	notice("the group must be specified")
-	return None
+        notice("the group must be specified")
+        return None
     if not re.search('.+!.+@.+', user):
-	notice("the user must be in the form of \"nick!user@host\"")
-	return None
+        notice("the user must be in the form of \"nick!user@host\"")
+        return None
     try:
         users = permissions[targetgroup]["users"]
     except KeyError:
-	notice("no such group as %s" % targetgroup)
-	return None
+        notice("no such group as %s" % targetgroup)
+        return None
     if user in users:
-	notice("%s is already in %s" % (user, targetgroup))
-	return None
+        notice("%s is already in %s" % (user, targetgroup))
+        return None
 
     users.append(user)
     notice("%s has been added to the group %s" % (user, targetgroup))
@@ -102,7 +104,7 @@ def adduser(inp, bot=None, notice=None):
 @hook.command("quit", autohelp=False, permissions=["botcontrol"])
 @hook.command(autohelp=False, permissions=["botcontrol"])
 def stop(inp, nick=None, conn=None):
-    "stop [reason] -- Kills the bot with [reason] as its quit message."
+    """stop [reason] -- Kills the bot with [reason] as its quit message."""
     if inp:
         conn.cmd("QUIT", ["Killed by %s (%s)" % (nick, inp)])
     else:
@@ -113,7 +115,7 @@ def stop(inp, nick=None, conn=None):
 
 @hook.command(autohelp=False, permissions=["botcontrol"])
 def restart(inp, nick=None, conn=None):
-    "restart [reason] -- Restarts the bot with [reason] as its quit message."
+    """restart [reason] -- Restarts the bot with [reason] as its quit message."""
     if inp:
         conn.cmd("QUIT", ["Restarted by %s (%s)" % (nick, inp)])
     else:
@@ -124,22 +126,22 @@ def restart(inp, nick=None, conn=None):
 
 @hook.command(autohelp=False, permissions=["botcontrol"])
 def clearlogs(inp, input=None):
-    "clearlogs -- Clears the bots log(s)."
+    """clearlogs -- Clears the bots log(s)."""
     subprocess.call(["./cloudbot", "clear"])
 
 
 @hook.command(permissions=["botcontrol"])
 def join(inp, conn=None, notice=None):
-    "join <channel> -- Joins <channel>."
+    """join <channel> -- Joins <channel>."""
     notice("Attempting to join %s..." % inp)
     conn.join(inp)
 
 
 @hook.command(autohelp=False, permissions=["botcontrol"])
 def part(inp, conn=None, chan=None, notice=None):
-    "part <channel> -- Leaves <channel>." \
-    "If [channel] is blank the bot will leave the " \
-    "channel the command was used in."
+    """part <channel> -- Leaves <channel>.
+    If [channel] is blank the bot will leave the
+    channel the command was used in."""
     if inp:
         target = inp
     else:
@@ -150,9 +152,9 @@ def part(inp, conn=None, chan=None, notice=None):
 
 @hook.command(autohelp=False, permissions=["botcontrol"])
 def cycle(inp, conn=None, chan=None, notice=None):
-    "cycle <channel> -- Cycles <channel>." \
-    "If [channel] is blank the bot will cycle the " \
-    "channel the command was used in."
+    """cycle <channel> -- Cycles <channel>.
+    If [channel] is blank the bot will cycle the
+    channel the command was used in."""
     if inp:
         target = inp
     else:
@@ -163,8 +165,8 @@ def cycle(inp, conn=None, chan=None, notice=None):
 
 
 @hook.command(permissions=["botcontrol"])
-def nick(inp, input=None, notice=None, conn=None):
-    "nick <nick> -- Changes the bots nickname to <nick>."
+def nick(inp, notice=None, conn=None):
+    """nick <nick> -- Changes the bots nickname to <nick>."""
     if not re.match("^[A-Za-z0-9_|.-\]\[]*$", inp.lower()):
         notice("Invalid username!")
         return
@@ -174,38 +176,31 @@ def nick(inp, input=None, notice=None, conn=None):
 
 @hook.command(permissions=["botcontrol"])
 def raw(inp, conn=None, notice=None):
-    "raw <command> -- Sends a RAW IRC command."
+    """raw <command> -- Sends a RAW IRC command."""
     notice("Raw command sent.")
     conn.send(inp)
 
 
 @hook.command(permissions=["botcontrol"])
-def say(inp, conn=None, chan=None, notice=None):
-    "say [channel] <message> -- Makes the bot say <message> in [channel]. " \
-    "If [channel] is blank the bot will say the <message> in the channel " \
-    "the command was used in."
+def say(inp, conn=None, chan=None):
+    """say [channel] <message> -- Makes the bot say <message> in [channel].
+    If [channel] is blank the bot will say the <message> in the channel
+    the command was used in."""
     inp = inp.split(" ")
+    message = " ".join(inp[1:])
     if inp[0][0] == "#":
-        message = ""
-        for x in inp[1:]:
-            message = message + x + " "
-        message = message[:-1]
         out = "PRIVMSG %s :%s" % (inp[0], message)
     else:
-        message = ""
-        for x in inp[0:]:
-            message = message + x + " "
-        message = message[:-1]
         out = "PRIVMSG %s :%s" % (chan, message)
     conn.send(out)
 
 
 @hook.command("act", permissions=["botcontrol"])
 @hook.command(permissions=["botcontrol"])
-def me(inp, conn=None, chan=None, notice=None):
-    "me [channel] <action> -- Makes the bot act out <action> in [channel]. " \
-    "If [channel] is blank the bot will act the <action> in the channel the " \
-    "command was used in."
+def me(inp, conn=None, chan=None):
+    """me [channel] <action> -- Makes the bot act out <action> in [channel].
+    If [channel] is blank the bot will act the <action> in the channel the
+    command was used in."""
     inp = inp.split(" ")
     if inp[0][0] == "#":
         message = ""

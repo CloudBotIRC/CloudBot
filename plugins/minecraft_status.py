@@ -17,7 +17,7 @@ def mcstatus(inp):
     out = []
     # use a loop so we don't have to update it if they add more servers
     yes = []
-    no = []
+    no = ['luke']
     for server, status in data.items():
         if status == "green":
             yes.append(server)
@@ -25,6 +25,8 @@ def mcstatus(inp):
             no.append(server)
     if yes:
         out = "\x033\x02Online\x02\x0f: " + ", ".join(yes)
+        if no:
+            out += " "
     if no:
         out += "\x034\x02Offline\x02\x0f: " + ", ".join(no)
     return "\x0f" + out.replace(".mojang.com", ".mj").replace(".minecraft.net", ".mc")

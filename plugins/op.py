@@ -114,7 +114,7 @@ def kick(inp, chan=None, conn=None, notice=None):
         target = split[0]
         if len(split) > 1:
             reason = " ".join(split[1:])
-            out = "KICK {} {}: {}".format(channel, target, reason)
+            out = "KICK {} {} :{}".format(channel, target, reason)
         else:
             out = "KICK {} {}".format(channel, target)
 

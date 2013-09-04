@@ -16,6 +16,19 @@ def mode_cmd(mode, text, inp, chan, conn, notice):
         conn.send("MODE {} {} {}".format(channel, mode, target))
 
 
+def mode_cmd_no_target(mode, text, inp, chan, conn, notice):
+    """ generic mode setting function without a target"""
+    split = inp.split(" ")
+    if split[0].startswith("#"):
+        channel = split[0]
+        notice("Attempting to {} {}...".format(text, channel))
+        conn.send("MODE {} {}".format(channel, mode))
+    else:
+        channel = chan
+        notice("Attempting to {} {}...".format(text, channel))
+        conn.send("MODE {} {}".format(channel, mode))
+
+
 @hook.command(permissions=["op_ban", "op"])
 def ban(inp, conn=None, chan=None, notice=None):
     """ban [channel] <user> -- Makes the bot ban <user> in [channel].
@@ -134,3 +147,19 @@ def remove(inp, chan=None, conn=None):
         message = " ".join(split)
         out = "REMOVE {} :{}".format(chan, message)
     conn.send(out)
+
+
+@hook.command(permissions=["op_mute", "op"], autohelp=False)
+def mute(inp, conn=None, chan=None, notice=None):
+    """mute [channel] -- Makes the bot mute a channel..
+    If [channel] is blank the bot will mute
+    the channel the command was used in."""
+    mode_cmd_no_target("+m", "mute", inp, chan, conn, notice)
+
+
+@hook.command(permissions=["op_mute", "op"], autohelp=False)
+def unmute(inp, conn=None, chan=None, notice=None):
+    """mute [channel] -- Makes the bot mute a channel..
+    If [channel] is blank the bot will mute
+    the channel the command was used in."""
+    mode_cmd_no_target("-m", "mute", inp, chan, conn, notice)

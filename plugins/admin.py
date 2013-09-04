@@ -187,10 +187,11 @@ def say(inp, conn=None, chan=None):
     If [channel] is blank the bot will say the <message> in the channel
     the command was used in."""
     inp = inp.split(" ")
-    message = " ".join(inp[1:])
     if inp[0][0] == "#":
+        message = " ".join(inp[1:])
         out = "PRIVMSG %s :%s" % (inp[0], message)
     else:
+        message = " ".join(inp[0:])
         out = "PRIVMSG %s :%s" % (chan, message)
     conn.send(out)
 

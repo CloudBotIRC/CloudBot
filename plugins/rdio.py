@@ -4,9 +4,9 @@ import re
 from util import hook
 import oauth2 as oauth
 
-
-CONSUMER_KEY = "KEY"
-CONSUMER_SECRET = "SECRET"
+bot.config.get("api_keys")
+CONSUMER_KEY = conn.conf['api_keys'].get("rdio_key", "KEY")
+CONSUMER_SECRET = conn.conf['api_keys'].get("rdio_secret", "SECRET")
 
 
 def getdata(inp, types):

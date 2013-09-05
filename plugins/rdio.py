@@ -4,12 +4,9 @@ import re
 from util import hook
 import oauth2 as oauth
 
-CONSUMER_KEY = conn.conf['api_keys'].get("rdio_key", "KEY")
-CONSUMER_SECRET = conn.conf['api_keys'].get("rdio_secret", "SECRET")
 
-
-def getdata(inp, types):
-    consumer = oauth.Consumer(CONSUMER_KEY, CONSUMER_SECRET)
+def getdata(inp, types, api_key, api_secret):
+    consumer = oauth.Consumer(api_key, api_secret)
     client = oauth.Client(consumer)
     response = client.request('http://api.rdio.com/1/', 'POST',
                               urllib.urlencode({'method': 'search', 'query': inp, 'types': types, 'count': '1'}))
@@ -17,19 +14,14 @@ def getdata(inp, types):
     return data
 
 
-def checkkeys():
-    if CONSUMER_KEY == "KEY" or CONSUMER_SECRET == "SECRET":
-        return True
-    else:
-        return False
-
-
 @hook.command
-def rdio(inp):
+def rdio(inp, bot=None):
     """ rdio <search term> - alternatives: .rdiot (track), .rdioar (artist), .rdioal (album) """
-    if checkkeys():
-        return "This command requires an API key, please enter one in the config"
-    data = getdata(inp, "Track,Album,Artist")
+    api_key = bot.config.get("api_keys", {}).get("rdio_key")
+    api_secret = bot.config.get("api_keys", {}).get("rdio_secret")
+    if not api_key:
+        return "error: no api key set"
+    data = getdata(inp, "Track,Album,Artist", api_key, api_secret)
     try:
         info = data['result']['results'][0]
     except IndexError:
@@ -53,11 +45,13 @@ def rdio(inp):
 
 
 @hook.command
-def rdiot(inp):
+def rdiot(inp, bot=None):
     """ rdiot <search term> - Search for tracks on rdio """
-    if checkkeys():
-        return "This command requires an API key, please enter one in the config"
-    data = getdata(inp, "Track")
+    api_key = bot.config.get("api_keys", {}).get("rdio_key")
+    api_secret = bot.config.get("api_keys", {}).get("rdio_secret")
+    if not api_key:
+        return "error: no api key set"
+    data = getdata(inp, "Track", api_key, api_secret)
     try:
         info = data['result']['results'][0]
     except IndexError:
@@ -70,11 +64,13 @@ def rdiot(inp):
 
 
 @hook.command
-def rdioar(inp):
+def rdioar(inp, bot=None):
     """ rdioar <search term> - Search for artists on rdio """
-    if checkkeys():
-        return "This command requires an API key, please enter one in the config"
-    data = getdata(inp, "Artist")
+    api_key = bot.config.get("api_keys", {}).get("rdio_key")
+    api_secret = bot.config.get("api_keys", {}).get("rdio_secret")
+    if not api_key:
+        return "error: no api key set"
+    data = getdata(inp, "Artist", api_key, api_secret)
     try:
         info = data['result']['results'][0]
     except IndexError:
@@ -85,11 +81,13 @@ def rdioar(inp):
 
 
 @hook.command
-def rdioal(inp):
+def rdioal(inp, bot=None):
     """ rdioal <search term> - Search for albums on rdio """
-    if checkkeys():
-        return "This command requires an API key, please enter one in the config"
-    data = getdata(inp, "Album")
+    api_key = bot.config.get("api_keys", {}).get("rdio_key")
+    api_secret = bot.config.get("api_keys", {}).get("rdio_secret")
+    if not api_key:
+        return "error: no api key set"
+    data = getdata(inp, "Album", api_key, api_secret)
     try:
         info = data['result']['results'][0]
     except IndexError:
@@ -104,11 +102,13 @@ rdio_re = (r'(.*:)//(rd.io|www.rdio.com|rdio.com)(:[0-9]+)?(.*)', re.I)
 
 
 @hook.regex(*rdio_re)
-def rdio_url(match):
-    if checkkeys():
+def rdio_url(match, bot=None):
+    api_key = bot.config.get("api_keys", {}).get("rdio_key")
+    api_secret = bot.config.get("api_keys", {}).get("rdio_secret")
+    if not api_key:
         return None
     url = match.group(1) + "//" + match.group(2) + match.group(4)
-    consumer = oauth.Consumer(CONSUMER_KEY, CONSUMER_SECRET)
+    consumer = oauth.Consumer(api_key, api_secret)
     client = oauth.Client(consumer)
     response = client.request('http://api.rdio.com/1/', 'POST',
                               urllib.urlencode({'method': 'getObjectFromUrl', 'url': url}))

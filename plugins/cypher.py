@@ -8,16 +8,11 @@ def encode(key, clear):
         key_c = key[i % len(key)]
         enc_c = chr((ord(clear[i]) + ord(key_c)) % 256)
         enc.append(enc_c)
-    print "[debug]"
     return base64.urlsafe_b64encode("".join(enc))
 
 def decode(key, enc):
     dec = []
-    print "   [debug]   "
-    print "key: "+key
-    print "string: "+enc
     enc = base64.urlsafe_b64decode(enc.encode('ascii','ignore'))
-    print "de64: "+enc
     for i in range(len(enc)):
         key_c = key[i % len(key)]
         dec_c = chr((256 + ord(enc[i]) - ord(key_c)) % 256)

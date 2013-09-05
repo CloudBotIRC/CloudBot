@@ -21,7 +21,7 @@ def soundcloud(url, api_key):
 
     url = web.try_isgd(data['permalink_url'])
 
-    return u"SoundCloud track: \x02{}\x02 by \x02{}user\x02 {}{}- {} plays, {} downloads, {} comments - \x02{}\x02".format(
+    return u"SoundCloud track: \x02{}\x02 by \x02{}user\x02 {}{}- {} plays, {} downloads, {} comments - {}".format(
         data['title'], data['user']['username'], desc, genre, data['playback_count'], data['download_count'],
         data['comment_count'], url)
 

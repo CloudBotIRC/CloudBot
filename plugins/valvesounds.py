@@ -37,7 +37,7 @@ def getSoundInfo(url, inp, jsondata=False):
                     else:
                         text = textsplit[i]
         if not jsondata:
-            return "%s - %s %s" % (newdata[0]["who"],
+            return "{} - {} {}".format(newdata[0]["who"],
                                    text if len(text) < 325 else text[:325] + "...",
                                    web.try_isgd(
                                        url + newdata[0]["id"] if not dostream else url + "sound.php?id=" + newdata[0][

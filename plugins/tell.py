@@ -37,10 +37,10 @@ def tellinput(paraml, input=None, notice=None, db=None, bot=None, nick=None, con
         user_from, message, time, chan = tells[0]
         reltime = timesince.timesince(time)
 
-        reply = "%s sent you a message %s ago from %s: %s" % (user_from, reltime, chan,
+        reply = "{} sent you a message {} ago from {}: {}".format(user_from, reltime, chan,
                                                               message)
         if len(tells) > 1:
-            reply += " (+%d more, %sshowtells to view)" % (len(tells) - 1, conn.conf["command_prefix"])
+            reply += " (+{} more, {}showtells to view)".format(len(tells) - 1, conn.conf["command_prefix"])
 
         db.execute("delete from tell where user_to=lower(?) and message=?",
                    (nick, message))
@@ -63,7 +63,7 @@ def showtells(inp, nick='', chan='', notice=None, db=None):
     for tell in tells:
         user_from, message, time, chan = tell
         past = timesince.timesince(time)
-        notice("%s sent you a message %s ago from %s: %s" % (user_from, past, chan, message))
+        notice("{} sent you a message {} ago from {}: {}".format(user_from, past, chan, message))
 
     db.execute("delete from tell where user_to=lower(?)",
                (nick,))
@@ -92,7 +92,7 @@ def tell(inp, nick='', chan='', db=None, input=None, notice=None):
 
     if user_to.lower() == input.conn.nick.lower():
         # user is looking for us, being a smartass
-        notice("Thanks for the message, %s!" % user_from)
+        notice("Thanks for the message, {}!".format(user_from))
         return
 
     if not re.match("^[A-Za-z0-9_|.-\]\[]*$", user_to.lower()):

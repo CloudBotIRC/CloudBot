@@ -21,7 +21,7 @@ def imdb(inp):
     if content.get('Error', None) == 'Movie not found!':
         return 'Movie not found!'
     elif content['Response'] == 'True':
-        content['URL'] = 'http://www.imdb.com/title/%(imdbID)s' % content
+        content['URL'] = 'http://www.imdb.com/title/{}'.format(content['imdbID'])
 
         out = '\x02%(Title)s\x02 (%(Year)s) (%(Genre)s): %(Plot)s'
         if content['Runtime'] != 'N/A':

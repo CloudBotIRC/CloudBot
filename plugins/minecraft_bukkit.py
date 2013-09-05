@@ -27,13 +27,10 @@ def randombukkitplugin(inp, reply=None):
     bukkitver = ", ".join(data['versions'][0]['game_versions'])
     link = web.isgd(data['versions'][0]['link'])
     if description != "":
-        reply("\x02%s\x02, by \x02%s\x02 - %s - (%s) \x02%s"
-              % (name, authors, description, stage, url))
+        reply("\x02{}\x02, by \x02{}\x02 - {} - ({}) \x02{}".format(name, authors, description, stage, url))
     else:
-        reply("\x02%s\x02, by \x02%s\x02 (%s) \x02%s"
-              % (name, authors, stage, url))
-    reply("Last release: \x02v%s\x02 for \x02%s\x02 at %s \x02%s\x02"
-          % (lastVersion, bukkitver, lastUpdate, link))
+        reply("\x02{}\x02, by \x02{}\x02 ({}) \x02{}".format(name, authors, stage, url))
+    reply("Last release: \x02v{}\x02 for \x02{}\x02 at {} \x02{}\x02".format(lastVersion, bukkitver, lastUpdate, link))
 
 
 @hook.command('bplugin')
@@ -57,13 +54,10 @@ def bukkitplugin(inp, reply=None):
     bukkitver = ", ".join(data['versions'][0]['game_versions'])
     link = web.isgd(data['versions'][0]['link'])
     if description != "":
-        reply("\x02%s\x02, by \x02%s\x02 - %s - (%s) \x02%s"
-              % (name, authors, description, stage, url))
+        reply("\x02{}\x02, by \x02{}\x02 - {} - ({}) \x02{}".format(name, authors, description, stage, url))
     else:
-        reply("\x02%s\x02, by \x02%s\x02 (%s) \x02%s"
-              % (name, authors, stage, url))
-    reply("Last release: \x02v%s\x02 for \x02%s\x02 at %s \x02%s\x02"
-          % (lastVersion, bukkitver, lastUpdate, link))
+        reply("\x02{}\x02, by \x02{}\x02 ({}) \x02{}".format(name, authors, stage, url))
+    reply("Last release: \x02v{}\x02 for \x02{}\x02 at {} \x02{}\x02".format(lastVersion, bukkitver, lastUpdate, link))
 
 
 def getplugininfo(inp):
@@ -75,5 +69,5 @@ def getplugininfo(inp):
         data = http.get_json("http://api.bukget.org/3/plugins/bukkit/%s/"
                              % slug)
     except HTTPError as e:
-        return "Got error: %s" % e
+        return "Got error: {}".format(e)
     return data

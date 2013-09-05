@@ -26,7 +26,7 @@ class Input(dict):
                 conn.msg(chan, '(' + nick + ') ' + msg)
 
         def me(msg, chan=chan):
-            conn.msg(chan, "\x01%s %s\x01" % ("ACTION", msg))
+            conn.msg(chan, "\x01{} {}\x01".format("ACTION", msg))
 
         def notice(msg, nick=nick):
             conn.cmd('NOTICE', [nick, msg])
@@ -154,9 +154,9 @@ def main(conn, out):
     if inp.command == 'PRIVMSG':
         # COMMANDS
         if inp.chan == inp.nick:  # private message, no command prefix
-            prefix = '^(?:[%s]?|' % command_prefix
+            prefix = '^(?:[{}]?|'.format(command_prefix)
         else:
-            prefix = '^(?:[%s]|' % command_prefix
+            prefix = '^(?:[%s]|'.format(command_prefix)
 
         command_re = prefix + inp.conn.nick
         command_re += r'[,;:]+\s+)(\w+)(?:$|\s+)(.*)'
@@ -169,7 +169,7 @@ def main(conn, out):
 
             if isinstance(command, list):  # multiple potential matches
                 input = Input(conn, *out)
-                input.notice("Did you mean %s or %s?" %
+                input.notice("Did you mean {} or {}?".format
                              (', '.join(command[:-1]), command[-1]))
             elif command in bot.commands:
                 input = Input(conn, *out)

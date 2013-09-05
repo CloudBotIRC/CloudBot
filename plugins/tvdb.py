@@ -76,9 +76,9 @@ def get_episode_info(episode, api_key):
     if episode_name == "TBA":
         episode_name = None
 
-    episode_desc = '%s' % episode_num
+    episode_desc = '{}'.format(episode_num)
     if episode_name:
-        episode_desc += ' - %s' % episode_name
+        episode_desc += ' - {}'.format(episode_name)
     return first_aired, airdate, episode_desc
 
 
@@ -100,7 +100,7 @@ def tv_next(inp, bot=None):
     episodes = episodes["episodes"]
 
     if ended:
-        return "%s has ended." % series_name
+        return "{} has ended.".format(series_name)
 
     next_eps = []
     today = datetime.date.today()
@@ -114,22 +114,22 @@ def tv_next(inp, bot=None):
         (first_aired, airdate, episode_desc) = ep_info
 
         if airdate > today:
-            next_eps = ['%s (%s)' % (first_aired, episode_desc)]
+            next_eps = ['{} ({})'.format(first_aired, episode_desc)]
         elif airdate == today:
-            next_eps = ['Today (%s)' % episode_desc] + next_eps
+            next_eps = ['Today ({})'.format(episode_desc)] + next_eps
         else:
             #we're iterating in reverse order with newest episodes last
             #so, as soon as we're past today, break out of loop
             break
 
     if not next_eps:
-        return "There are no new episodes scheduled for %s." % series_name
+        return "There are no new episodes scheduled for {}.".format(series_name)
 
     if len(next_eps) == 1:
-        return "The next episode of %s airs %s" % (series_name, next_eps[0])
+        return "The next episode of {} airs {}".format(series_name, next_eps[0])
     else:
         next_eps = ', '.join(next_eps)
-        return "The next episodes of %s: %s" % (series_name, next_eps)
+        return "The next episodes of {}: {}".format(series_name, next_eps)
 
 
 @hook.command
@@ -163,11 +163,11 @@ def tv_last(inp, bot=None):
         if airdate < today:
             #iterating in reverse order, so the first episode encountered
             #before today was the most recently aired
-            prev_ep = '%s (%s)' % (first_aired, episode_desc)
+            prev_ep = '{} ({})'.format(first_aired, episode_desc)
             break
 
     if not prev_ep:
-        return "There are no previously aired episodes for %s." % series_name
+        return "There are no previously aired episodes for {}.".format(series_name)
     if ended:
-        return '%s ended. The last episode aired %s.' % (series_name, prev_ep)
-    return "The last episode of %s aired %s." % (series_name, prev_ep)
+        return '{} ended. The last episode aired {}.'.format(series_name, prev_ep)
+    return "The last episode of {} aired {}.".format(series_name, prev_ep)

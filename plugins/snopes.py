@@ -31,4 +31,4 @@ def snopes(inp):
     claim = re.sub(r"[\s\xa0]+", " ", claim)   # compress whitespace
     status = re.sub(r"[\s\xa0]+", " ", status)
 
-    return "%s %s %s" % (claim, status, result_urls[0])
+    return "{} {} {}".format(claim, status, result_urls[0])

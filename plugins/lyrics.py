@@ -29,7 +29,7 @@ def lyrics(inp):
                 lyrics = newsoup.find('div', {'style': 'margin-left:10px;margin-right:10px;'}).text.strip()
                 pasteurl = " " + web.haste(lyrics)
             except Exception as e:
-                pasteurl = " (\x02Unable to paste lyrics\x02 [%s])" % str(e)
+                pasteurl = " (\x02Unable to paste lyrics\x02 [{}])".format(str(e))
         else:
             pasteurl = ""
         artist = div.find('b').text.title()
@@ -39,10 +39,10 @@ def lyrics(inp):
             spurl = ""
         lyricsum = div.find('div').text
         if "\r\n" in lyricsum.strip():
-            lyricsum = " / ".join(lyricsum.strip().split("\r\n")[0:4]) # truncate, format
+            lyricsum = " / ".join(lyricsum.strip().split("\r\n")[0:4])  # truncate, format
         else:
-            lyricsum = " / ".join(lyricsum.strip().split("\n")[0:4]) # truncate, format
-        return "\x02%s\x02 by \x02%s\x02 %s%s%s - %s" % (
-            title, artist, web.try_isgd(link), spurl, pasteurl, lyricsum[:-3])
+            lyricsum = " / ".join(lyricsum.strip().split("\n")[0:4])  # truncate, format
+        return "\x02{}\x02 by \x02{}\x02 {}{}{} - {}".format(title, artist, web.try_isgd(link), spurl, pasteurl,
+                                                             lyricsum[:-3])
     else:
         return "No song results. " + url + inp.replace(" ", "+")

@@ -50,8 +50,7 @@ def mcping_connect(host, port):
         return message
 
     except:
-        return "Error pinging " + host + ":" + str(port) + \
-               ", is it up? Double-check your address!"
+        return "Error pinging {}:{}, is it up? Double-check your address!".format(host,str(port))
 
 
 def srvData(domain):
@@ -91,8 +90,8 @@ def mcping(inp):
                     port = int(getdata[0])
                     return format_motd(mcping_connect(host, port))
                 except:
-                    return "Error pinging %s, is it up? Double-check your address!" % inp
+                    return "Error pinging {}, is it up? Double-check your address!".format(inp)
             else:
-                return "Error pinging %s, is it up? Double-check your address!" % inp
+                return "Error pinging {}, is it up? Double-check your address!".format(inp)
         else:
             return rdata

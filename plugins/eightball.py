@@ -18,4 +18,4 @@ def eightball(input, me=None):
     in electronic form. Ask and it shall be answered!"""
 
     magic = text.multiword_replace(random.choice(responses), color_codes)
-    me("shakes the magic 8 ball... %s" % magic)
+    me("shakes the magic 8 ball... {}".format(magic))

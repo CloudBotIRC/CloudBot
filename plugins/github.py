@@ -31,7 +31,7 @@ def ghissues(inp):
             repo = shortcuts[args[0]]
         else:
             repo = args[0]
-        url = "https://api.github.com/repos/%s/issues" % repo
+        url = "https://api.github.com/repos/{}/issues".format(repo)
     except IndexError:
         return "Invalid syntax. .github issues username/repo [number]"
     try:
@@ -50,13 +50,13 @@ def ghissues(inp):
                 return "Repo has no open issues"
     except ValueError:
         return "Invalid data returned. Check arguments (.github issues username/repo [number]"
-    fmt = "Issue: #%s (%s) by %s: %s | %s %s"  # (number, state, user.login, title, truncate(body), gitio.gitio(data.url))
-    fmt1 = "Issue: #%s (%s) by %s: %s %s"  # (number, state, user.login, title, gitio.gitio(data.url))
+    fmt = "Issue: #{} ({}) by {}: {} | {} {}".format(number, state, user.login, title, truncate(body), gitio.gitio(data.url))
+    fmt1 = "Issue: #{} ({}) by {}: {} {}".format(number, state, user.login, title, gitio.gitio(data.url))
     number = data["number"]
     if data["state"] == "open":
         state = u"\x033\x02OPEN\x02\x0f"
     else:
-        state = u"\x034\x02CLOSED\x02\x0f by %s" % data["closed_by"]["login"]
+        state = u"\x034\x02CLOSED\x02\x0f by {}".format(data["closed_by"]["login"])
     user = data["user"]["login"]
     title = data["title"]
     summary = truncate(data["body"])

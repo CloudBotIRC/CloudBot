@@ -12,5 +12,5 @@ def bitcoin(inp, say=None):
         'low': data['low']['display_short'],
         'vol': data['vol']['display_short'],
     }
-    say("Current: \x0307%(buy)s\x0f - High: \x0307%(high)s\x0f"
-        " - Low: \x0307%(low)s\x0f - Volume: %(vol)s" % ticker)
+    say("Current: \x0307{}\x0f - High: \x0307{}\x0f"
+        " - Low: \x0307{}\x0f - Volume: {}".format(data['buy'],data['high'],data['low'],data['vol']))

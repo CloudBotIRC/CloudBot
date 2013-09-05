@@ -34,4 +34,4 @@ def fact(inp, say=False, nick=False):
 
     url = web.try_isgd(link)
 
-    return "%s - %s" % (fact, url)
+    return "{} - {}".format(fact, url)

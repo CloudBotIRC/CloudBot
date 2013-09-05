@@ -34,10 +34,10 @@ def lastfm(inp, nick='', db=None, bot=None, notice=None):
                              api_key=api_key, user=user, limit=1)
 
     if 'error' in response:
-        return "Error: %s." % response["message"]
+        return "Error: {}.".format(response["message"])
 
     if not "track" in response["recenttracks"] or len(response["recenttracks"]["track"]) == 0:
-        return 'No recent tracks for user "%s" found.' % user
+        return 'No recent tracks for user "{}" found.'.format(user)
 
     tracks = response["recenttracks"]["track"]
 
@@ -55,7 +55,7 @@ def lastfm(inp, nick='', db=None, bot=None, notice=None):
         # lets see how long ago they listened to it
         time_listened = datetime.fromtimestamp(int(track["date"]["uts"]))
         time_since = timesince.timesince(time_listened)
-        ending = ' (%s ago)' % time_since
+        ending = ' ({} ago)'.format(time_since)
 
     else:
         return "error: could not parse track listing"
@@ -64,11 +64,11 @@ def lastfm(inp, nick='', db=None, bot=None, notice=None):
     album = track["album"]["#text"]
     artist = track["artist"]["#text"]
 
-    out = '%s %s "%s"' % (user, status, title)
+    out = '{} {} "{}"'.format(user, status, title)
     if artist:
-        out += " by \x02%s\x0f" % artist
+        out += " by \x02{}\x0f".format(artist)
     if album:
-        out += " from the album \x02%s\x0f" % album
+        out += " from the album \x02{}\x0f".format(album)
 
     # append ending based on what type it was
     out += ending

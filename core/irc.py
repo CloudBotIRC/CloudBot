@@ -22,7 +22,7 @@ def censor(text):
     if 'censored_strings' in bot.config:
         if bot.config['censored_strings']:
             words = map(re.escape, bot.config['censored_strings'])
-            regex = re.compile('(%s)' % "|".join(words))
+            regex = re.compile('({})'.format("|".join(words)))
             text = regex.sub(replacement, text)
     return text
 
@@ -194,7 +194,7 @@ class IRC(object):
 
     def join(self, channel):
         """ makes the bot join a channel """
-        self.send("JOIN %s" % channel)
+        self.send("JOIN {}".format(channel))
         if channel not in self.channels:
             self.channels.append(channel)
 

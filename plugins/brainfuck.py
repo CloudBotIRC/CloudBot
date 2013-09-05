@@ -76,7 +76,7 @@ def bf(inp):
         if steps > MAX_STEPS:
             if output == '':
                 output = '(no output)'
-            output += '[exceeded %d iterations]' % MAX_STEPS
+            output += '[exceeded {} iterations]'.format(MAX_STEPS)
             break
 
     stripped_output = re.sub(r'[\x00-\x1F]', '', output)

@@ -34,7 +34,7 @@ def ignored(inp, notice=None, bot=None):
     """ignored -- Lists ignored channels/users."""
     ignorelist = bot.config["plugins"]["ignore"]["ignored"]
     if ignorelist:
-        notice("Ignored channels/users are: %s" % ", ".join(ignorelist))
+        notice("Ignored channels/users are: {}".format(", ".join(ignorelist)))
     else:
         notice("No masks are currently ignored.")
     return
@@ -46,9 +46,9 @@ def ignore(inp, notice=None, bot=None, config=None):
     target = inp.lower()
     ignorelist = bot.config["plugins"]["ignore"]["ignored"]
     if target in ignorelist:
-        notice("%s is already ignored." % target)
+        notice("{} is already ignored.".format(target))
     else:
-        notice("%s has been ignored." % target)
+        notice("{} has been ignored.".format(target))
         ignorelist.append(target)
         ignorelist.sort()
         json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
@@ -62,10 +62,10 @@ def unignore(inp, notice=None, bot=None, config=None):
     target = inp.lower()
     ignorelist = bot.config["plugins"]["ignore"]["ignored"]
     if target in ignorelist:
-        notice("%s has been unignored." % target)
+        notice("{} has been unignored.".format(target))
         ignorelist.remove(target)
         ignorelist.sort()
         json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
     else:
-        notice("%s is not ignored." % target)
+        notice("{} is not ignored.".format(target))
     return

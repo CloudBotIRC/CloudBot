@@ -17,8 +17,7 @@ def googleimage(inp):
 
     parsed = api_get('images', inp)
     if not 200 <= parsed['responseStatus'] < 300:
-        raise IOError('error searching for images: %d: %s' % (
-            parsed['responseStatus'], ''))
+        raise IOError('error searching for images: {}: {}'.format(parsed['responseStatus'], ''))
     if not parsed['responseData']['results']:
         return 'no images found'
     return random.choice(parsed['responseData']['results'][:10]) \
@@ -33,8 +32,7 @@ def google(inp):
 
     parsed = api_get('web', inp)
     if not 200 <= parsed['responseStatus'] < 300:
-        raise IOError('error searching for pages: %d: %s' % (
-            parsed['responseStatus'], ''))
+        raise IOError('error searching for pages: {}: {}'.format(parsed['responseStatus'], ''))
     if not parsed['responseData']['results']:
         return 'No results found.'
 
@@ -50,6 +48,6 @@ def google(inp):
         content = http.html.fromstring(content).text_content()
         content = text.truncate_str(content, 150)
 
-    out = '%s -- \x02%s\x02: "%s"' % (result['unescapedUrl'], title, content)
+    out = '{} -- \x02{}\x02: "{}"'.format(result['unescapedUrl'], title, content)
 
     return out

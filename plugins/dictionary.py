@@ -21,11 +21,11 @@ def define(inp):
         return 'No results for ' + inp + ' :('
 
     def format_output(show_examples):
-        result = '%s: ' % h.xpath('//dt[@class="title-word"]/a/text()')[0]
+        result = '{}: '.format(h.xpath('//dt[@class="title-word"]/a/text()')[0])
 
         correction = h.xpath('//span[@class="correct-word"]/text()')
         if correction:
-            result = 'Definition for "%s": ' % correction[0]
+            result = 'Definition for "{}": '.format(correction[0])
 
         sections = []
         for section in definition:
@@ -40,7 +40,7 @@ def define(inp):
         for article in sections:
             result += article[0]
             if len(article) > 2:
-                result += ' '.join('%d. %s' % (n + 1, section)
+                result += ' '.join('{}. {}'.format(n + 1, section)
                                     for n, section in enumerate(article[1:]))
             else:
                 result += article[1] + ' '
@@ -76,7 +76,7 @@ def etymology(inp):
     etym = h.xpath('//dl')
 
     if not etym:
-        return 'No etymology found for ' + inp + ' :('
+        return 'No etymology found for {} :('.format(inp)
 
     etym = etym[0].text_content()
 

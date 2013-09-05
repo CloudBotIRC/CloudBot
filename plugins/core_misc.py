@@ -25,16 +25,12 @@ def onjoin(paraml, conn=None, bot=None):
     nickserv_account_name = conn.conf.get('nickserv_user', '')
     nickserv_command = conn.conf.get('nickserv_command', 'IDENTIFY')
     if nickserv_password:
-        print "Found a password..."
         if nickserv_password in bot.config['censored_strings']:
             bot.config['censored_strings'].remove(nickserv_password)
         if nickserv_account_name:
-            print "Found an account name..."
-            print "Sending"," ".join([nickserv_command, nickserv_account_name, nickserv_password]),"to",nickserv_name
-            conn.msg(nickserv_name, " ".join([nickserv_command, nickserv_account_name, nickserv_password]))
+            conn.msg(nickserv_name, "{} {} {}".format([nickserv_command, nickserv_account_name, nickserv_password]))
         else:
-            print "Sending"," ".join([nickserv_command, nickserv_password]),"to",nickserv_name
-            conn.msg(nickserv_name, " ".join([nickserv_command, nickserv_password]))
+            conn.msg(nickserv_name, "{} {}".format([nickserv_command, nickserv_password]))
         bot.config['censored_strings'].append(nickserv_password)
         time.sleep(1)
 

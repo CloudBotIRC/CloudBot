@@ -54,4 +54,4 @@ def wolframalpha(inp, bot=None):
     if not ret:
         return 'No results.'
 
-    return "%s - %s" % (ret, short_url)
+    return "{} - {}".format(ret, short_url)

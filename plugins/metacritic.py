@@ -36,7 +36,7 @@ def metacritic(inp):
 
     title_safe = http.quote_plus(title)
 
-    url = 'http://www.metacritic.com/search/%s/%s/results' % (cat, title_safe)
+    url = 'http://www.metacritic.com/search/{}/{}/results'.format(cat, title_safe)
 
     try:
         doc = http.get_html(url)
@@ -132,7 +132,6 @@ def metacritic(inp):
     except IndexError:
         score = None
 
-    return '[%s] %s - \x02%s/100\x02, %s - %s' % (plat.upper(), name,
-                                                  score or 'no score',
-                                                  'release: \x02%s\x02' % release if release else 'unreleased',
-                                                  link)
+    return '[{}] {} - \x02{}/100\x02, {} - {}'.format(plat.upper(), name, score or 'no score',
+                                                      'release: \x02%s\x02' % release if release else 'unreleased',
+                                                      link)

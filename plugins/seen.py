@@ -18,7 +18,7 @@ def db_init(db):
 
 @hook.singlethread
 @hook.event('PRIVMSG', ignorebots=False)
-def seen_sieve(input=None, db=None):
+def seen_sieve(paraml, input=None, db=None):
     if not db_ready:
         db_init(db)
         # keep private messages private

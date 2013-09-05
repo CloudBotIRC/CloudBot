@@ -17,18 +17,20 @@ def spell(inp):
         chkr = SpellChecker(locale)
         chkr.set_text(inp)
 
+        offset = 0
+
         for err in chkr:
             # find the location of the incorrect word
-            start = err.wordpos
+            start = err.wordpos + offset
             finish = start + len(err.word)
             # get some suggestions for it
             suggestions = err.suggest()
             s_string = '/'.join(suggestions[:3])
             s_string = "\x02{}\x02".format(s_string)
+            # calculate the offset for the next word
+            offset = (offset + len(s_string)) - len(err.word)
             # replace the word with the suggestions
             inp = inp[:start] + s_string + inp[finish:]
-            # reset the text
-            chkr.set_text(inp)
 
         return inp
     else:

@@ -8,8 +8,8 @@ from util import hook
 def format_quote(q, num, n_quotes):
     """Returns a formatted string of a quote"""
     ctime, nick, msg = q
-    return "[%d/%d] <%s> %s" % (num, n_quotes,
-                                nick, msg)
+    return "[{}/{}] <{}> {}".format((num, n_quotes,
+                                nick, msg))
 
 
 def create_table_if_not_exists(db):
@@ -45,12 +45,11 @@ def get_quote_num(num, count, name):
     if num:  # Make sure num is a number if it isn't false
         num = int(num)
     if count == 0:  # Error on no quotes
-        raise Exception("No quotes found for %s." % name)
+        raise Exception("No quotes found for {}.".format(name))
     if num and num < 0:  # Count back if possible
         num = count + num + 1 if num + count > -1 else count + 1
     if num and num > count:  # If there are not enough quotes, raise an error
-        raise Exception("I only have %d quote%s for %s."
-                        % (count, ('s', '')[count == 1], name))
+        raise Exception("I only have {} quote{} for {}.".format(count, ('s', '')[count == 1], name))
     if num and num == 0:  # If the number is zero, set it to one
         num = 1
     if not num:  # If a number is not given, select a random one

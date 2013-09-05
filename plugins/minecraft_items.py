@@ -61,16 +61,16 @@ def mcitem(input, reply=None):
 
     for id, name in ids:
         if input == id:
-            results = ["\x02[%s]\x02 %s" % (id, name)]
+            results = ["\x02[{}]\x02 {}".format(id, name)]
             break
         elif input in name.lower():
-            results.append("\x02[%s]\x02 %s" % (id, name))
+            results.append("\x02[{}]\x02 {}".format(id, name))
 
     if not results:
         return "No matches found."
 
     if len(results) > 12:
-        reply("There are too many options, please narrow your search. (%s)" % len(results))
+        reply("There are too many options, please narrow your search. ({})".format(str(len(results))))
         return
 
     out = ", ".join(results)
@@ -91,7 +91,7 @@ def mcrecipe(input, reply=None):
         return "No matches found."
 
     if len(results) > 3:
-        reply("There are too many options, please narrow your search. (%s)" % len(results))
+        reply("There are too many options, please narrow your search. ({})".format(len(results)))
         return
 
     for result in results:

@@ -50,5 +50,5 @@ def potato(inp, me=None, input=None):
     method = random.choice(['bakes', 'fries', 'boils', 'roasts'])
     side_dish = random.choice(['side salad', 'dollop of sour cream', 'piece of chicken', 'bowl of shredded bacon'])
 
-    me("%s a %s %s %s potato for %s and serves it with a small %s!" % (
-        method, flavor, size, potato_type, inp, side_dish))
+    me("{} a {} {} {} potato for {} and serves it with a small {}!".format(method, flavor, size, potato_type, inp,
+                                                                           side_dish))

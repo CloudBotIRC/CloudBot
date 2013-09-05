@@ -20,7 +20,7 @@ def check_url(code):
 
 
 def make_url(code):
-    return "http://puu.sh/" + code
+    return "http://puu.sh/{}".format(code)
 
 
 @hook.command(autohelp=False)

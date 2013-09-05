@@ -1,5 +1,7 @@
-import enchant
 from util import hook
+from enchant.checker import SpellChecker
+
+import enchant
 
 locale = "en_US"
 
@@ -12,7 +14,7 @@ def spell(inp):
         return "Could not find dictionary: {}".format(locale)
 
     if len(inp.split(" ")) > 1:
-        chkr = enchant.checker.SpellChecker(locale)
+        chkr = SpellChecker(locale)
         chkr.set_text(inp)
 
         for err in chkr:

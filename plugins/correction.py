@@ -2,7 +2,7 @@ from util import hook
 
 
 @hook.regex(r'^(s|S)/.*/.*/\S*$')
-def correction(inp, say=None, notice=None, db=None):
+def correction(inp, say=None, input=None, notice=None, db=None):
     splitinput = input.msg.split("/")
     if splitinput[3]:
         nick = splitinput[3]

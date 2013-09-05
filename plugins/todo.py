@@ -130,7 +130,7 @@ def todo(inp, nick='', chan='', db=None, notice=None, bot=None):
         if not row:
             notice("No such entry.")
             return
-        notice("[%d]: %s: %s" % (index, row[0], row[1]))
+        notice("[{}]: {}: {}".format(index, row[0], row[1]))
     elif cmd == 'del' or cmd == 'delete' or cmd == 'remove':
         if not len(args):
             return "error"
@@ -146,7 +146,7 @@ def todo(inp, nick='', chan='', db=None, notice=None, bot=None):
 
         rows = db_del(db, nick, index)
 
-        notice("Deleted %d entries" % rows.rowcount)
+        notice("Deleted {} entries".format(rows.rowcount))
     elif cmd == 'list':
         limit = -1
 
@@ -163,11 +163,11 @@ def todo(inp, nick='', chan='', db=None, notice=None, bot=None):
         found = False
 
         for (index, row) in enumerate(rows):
-            notice("[%d]: %s: %s" % (index, row[0], row[1]))
+            notice("[{}]: {}: {}".format(index, row[0], row[1]))
             found = True
 
         if not found:
-            notice("%s has no entries." % nick)
+            notice("{} has no entries.".format(nick))
     elif cmd == 'search':
         if not len(args):
             notice("No search query given!")
@@ -178,11 +178,11 @@ def todo(inp, nick='', chan='', db=None, notice=None, bot=None):
         found = False
 
         for (index, row) in enumerate(rows):
-            notice("[%d]: %s: %s" % (index, row[0], row[1]))
+            notice("[{}]: {}: {}".format(index, row[0], row[1]))
             found = True
 
         if not found:
-            notice("%s has no matching entries for: %s" % (nick, query))
+            notice("{} has no matching entries for: {}".format(nick, query))
 
     else:
-        notice("Unknown command: %s" % cmd)
+        notice("Unknown command: {}".format(cmd))

@@ -63,8 +63,8 @@ def steamcalc(inp, nick='', db=None):
         out += soup.findAll('h1', {'class': 'header-title'})[1].text.strip()
     except Exception as e:
         print e
-        return u"\x02Unable to retrieve info for %s!\x02 Is it a valid SteamCommunity profile username (%s)? " \
-               "Check if your profile is private, or go here to search: %s" % (
+        return u"\x02Unable to retrieve info for {}!\x02 Is it a valid SteamCommunity profile username ({})? " \
+               "Check if your profile is private, or go here to search: {}".format(
                    inp, web.try_isgd("http://steamcommunity.com/id/%s" % inp), web.try_isgd(url))
 
     nextone = False
@@ -96,8 +96,8 @@ def steamcalc(inp, nick='', db=None):
     notplayed = data[2].text.split(" ")[-1]
     nppercent = data[3].text.split(" ")[-1]
     time = data[4].text.split(" ")[-1].replace("h", "hours")
-    out += " This account is worth \x02%s\x02, and they've spent \x02%s\x02 playing games! " % (money, time)
-    out += " They have \x02%s games\x02, but \x02%s of them haven't been touched\x02! That's \x02%s\x02! " % (
+    out += " This account is worth \x02{}\x02, and they've spent \x02{}\x02 playing games! ".format(money, time)
+    out += " They have \x02{} games\x02, but \x02{} of them haven't been touched\x02! That's \x02{}\x02! ".format(
         totalgames, notplayed, nppercent)
 
     if not dontsave:

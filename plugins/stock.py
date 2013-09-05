@@ -27,7 +27,7 @@ def stock(inp):
             guess = guess[0]["symbol"]
             return stock(guess)
         else:
-            return "error: unable to get stock info for '%s'" % inp
+            return "error: unable to get stock info for '{}'".format(inp)
 
     if results['last'] == '0.00':
         return "%(company)s - last known stock value was 0.00 %(currency)s" \

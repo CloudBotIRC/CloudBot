@@ -24,9 +24,9 @@ def system(inp):
     python_ver = platform.python_version()
     architecture = '-'.join(platform.architecture())
     cpu = platform.machine()
-    return "Hostname: \x02%s\x02, Operating System: \x02%s\x02, Python " \
-           "Version: \x02%s %s\x02, Architecture: \x02%s\x02, CPU: \x02%s" \
-           "\x02" % (hostname, os, python_imp, python_ver, architecture, cpu)
+    return "Hostname: \x02{}\x02, Operating System: \x02{}\x02, Python " \
+           "Version: \x02{} {}\x02, Architecture: \x02{}\x02, CPU: \x02{}" \
+           "\x02".format(hostname, os, python_imp, python_ver, architecture, cpu)
 
 
 @hook.command(autohelp=False)
@@ -41,9 +41,9 @@ def memory(inp):
         data = [float(i.replace(' kB', '')) for i in data]
         strings = [convert_kilobytes(i) for i in data]
         # prepare the output
-        out = "Threads: \x02%s\x02, Real Memory: \x02%s\x02, Allocated Memory: \x02%s\x02, Peak " \
-              "Allocated Memory: \x02%s\x02, Stack Size: \x02%s\x02, Heap " \
-              "Size: \x02%s\x02" % (s['Threads'], strings[0], strings[1], strings[2],
+        out = "Threads: \x02{}\x02, Real Memory: \x02{}\x02, Allocated Memory: \x02{}\x02, Peak " \
+              "Allocated Memory: \x02{}\x02, Stack Size: \x02{}\x02, Heap " \
+              "Size: \x02{}\x02".format(s['Threads'], strings[0], strings[1], strings[2],
               strings[3], strings[4])
         # return output
         return out
@@ -55,7 +55,7 @@ def memory(inp):
         for amount in re.findall(r'([,0-9]+) K', out):
             memory += float(amount.replace(',', ''))
         memory = convert_kilobytes(memory)
-        return "Memory Usage: \x02%s\x02" % memory
+        return "Memory Usage: \x02{}\x02".format(memory)
 
     else:
         return "Sorry, this command is not supported on your OS."
@@ -66,10 +66,10 @@ def uptime(inp, bot=None):
     """uptime -- Shows the bot's uptime."""
     uptime_raw = round(time.time() - bot.start_time)
     uptime = timedelta(seconds=uptime_raw)
-    return "Uptime: \x02%s\x02" % uptime
+    return "Uptime: \x02{}\x02".format(uptime)
 
 
 @hook.command(autohelp=False)
 def pid(inp):
     """pid -- Prints the bot's PID."""
-    return "PID: \x02%s\x02" % os.getpid()
+    return "PID: \x02{}\x02".format(os.getpid())

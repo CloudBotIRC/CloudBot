@@ -46,7 +46,7 @@ def horoscope(inp, db=None, notice=None, nick=None):
     #result = unicode(result, "utf8").replace('flight ','')
 
     if not title:
-        return "Could not get the horoscope for %s." % inp
+        return "Could not get the horoscope for {}.".format(inp)
 
     if inp and not dontsave:
         db.execute("insert or replace into horoscope(nick, sign) values (?,?)",

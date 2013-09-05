@@ -11,9 +11,9 @@ def calc(inp):
     result = soup.find('h2', {'class': 'r'})
     exponent = result.find('sup')
     if not result:
-        return "Could not calculate '%s'" % inp
+        return "Could not calculate '{}'".format(inp)
 
     if not exponent:
         return result.contents[0]
     if exponent:
-        return result.contents[0] + "^" + exponent.contents[0]
+        return "{}^{}".format(result.contents[0]*2)

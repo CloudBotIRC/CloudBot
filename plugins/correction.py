@@ -20,11 +20,11 @@ def correction(inp, say=None, notice=None, db=None):
                 message = last_message[1].replace("\x01ACTION ", "/me ").replace("\x01", "")
             else:
                 message = last_message[1]
-            say("%s meant to say: %s" % (nick, message.replace(find, "\x02" + replace + "\x02")))
+            say("{} meant to say: {}".format(nick, message.replace(find, "\x02" + replace + "\x02")))
         else:
-            notice("%s can't be found in your last message" % find)
+            notice("{} can't be found in your last message".format(find))
     else:
         if nick == input.nick:
             notice("I haven't seen you say anything here yet")
         else:
-            notice("I haven't seen %s say anything here yet" % nick)
+            notice("I haven't seen {} say anything here yet".format(nick))

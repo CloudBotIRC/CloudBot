@@ -100,7 +100,7 @@ def insult(inp, nick=None, me=None, conn=None, notice=None):
     else:
         target = inp
 
-    out = 'insults %s... "%s"' % (target, random.choice(insults))
+    out = 'insults {}... "{}"'.format(target, random.choice(insults))
     me(out)
 
 
@@ -118,5 +118,5 @@ def flirt(inp, me=None, conn=None, notice=None):
     else:
         target = inp
 
-    out = 'flirts with %s... "%s"' % (target, random.choice(flirts))
+    out = 'flirts with {}... "{}"'.format(target, random.choice(flirts))
     me(out)

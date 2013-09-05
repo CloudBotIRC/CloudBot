@@ -15,4 +15,4 @@ def ctcp_ping(inp, notice=None):
 
 @hook.regex(r'^\x01TIME\x01$')
 def ctcp_time(inp, notice=None):
-    notice('\x01TIME: The time is: %s' % time.strftime("%r", time.localtime()))
+    notice('\x01TIME: The time is: {}'.format(time.strftime("%r", time.localtime())))

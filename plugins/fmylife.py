@@ -23,7 +23,7 @@ def fml(inp, reply=None):
     # grab the last item in the fml cache and remove it
     id, text = fml_cache.pop()
     # reply with the fml we grabbed
-    reply('(#%d) %s' % (id, text))
+    reply('(#{}) {}'.format(id, text))
     # refresh fml cache if its getting empty
     if len(fml_cache) < 3:
         refresh_cache()

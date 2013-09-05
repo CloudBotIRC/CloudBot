@@ -62,14 +62,12 @@ def remember(inp, nick='', db=None, notice=None):
 
     if old_data:
         if append:
-            notice("Appending \x02%s\x02 to \x02%s\x02" % (new_data, old_data))
+            notice("Appending \x02{}\x02 to \x02{}\x02".format(new_data, old_data))
         else:
-            notice('Remembering \x02%s\x02 for \x02%s\x02. Type ?%s to see it.'
-                   % (data, word, word))
-            notice('Previous data was \x02%s\x02' % old_data)
+            notice('Remembering \x02{}\x02 for \x02{}\x02. Type ?{} to see it.'.format(data, word, word))
+            notice('Previous data was \x02{}\x02'.format(old_data))
     else:
-        notice('Remembering \x02%s\x02 for \x02%s\x02. Type ?%s to see it.'
-               % (data, word, word))
+        notice('Remembering \x02{}\x02 for \x02{}\x02. Type ?{} to see it.'.format(data, word, word))
 
 
 @hook.command("f", permissions=["delfactoid"])
@@ -131,7 +129,7 @@ def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
         # factoid preprocessors
         if data.startswith("<py>"):
             code = data[4:].strip()
-            variables = 'input="""%s"""; nick="%s"; chan="%s"; bot_nick="%s";' % (arguments.replace('"', '\\"'),
+            variables = 'input="""{}"""; nick="{}"; chan="{}"; bot_nick="{}";'.format(arguments.replace('"', '\\"'),
                                                                                   input.nick, input.chan,
                                                                                   input.conn.nick)
             result = execute.eval_py(variables + code)
@@ -152,6 +150,6 @@ def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
                 say("Could not fetch URL.")
         else:
             if prefix_on:
-                say("\x02[%s]:\x02 %s" % (factoid_id, result))
+                say("\x02[{}]:\x02 {}".format(factoid_id, result))
             else:
                 say(result)

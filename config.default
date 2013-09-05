@@ -32,7 +32,8 @@
     "wunderground": "",
     "googletranslate": "",
     "rdio_key": "",
-    "rdio_secret": ""
+    "rdio_secret": "",
+    "steam_key": ""
   },
   "permissions": {
     "admins": {

@@ -91,20 +91,19 @@ def steamcalc(inp, nick='', db=None):
         if str(i.find('div', {'class': 'panel-heading'})) == '<div class="panel-heading">Markdown</div>':
             data = i
     data = data.findAll('p')[1:]
+    print data
     money = data[0].text.split(" ")[-1]
     totalgames = data[1].text.split(" ")[-1]
-    notplayed = data[2].text.split(" ")[-1]
-    nppercent = data[3].text.split(" ")[-1]
-    time = data[4].text.split(" ")[-1].replace("h", "hours")
-    out += " This account is worth \x02{}\x02, and they've spent \x02{}\x02 playing games! ".format(money, time)
-    out += " They have \x02{} games\x02, but \x02{} of them haven't been touched\x02! That's \x02{}\x02! ".format(
-        totalgames, notplayed, nppercent)
+    time = data[2].text.split(" ")[-1].replace("h", "").replace(",", "")
+    time = str(int(round(float(time))))
+    out += " This account is worth \x02{}\x02, and they've spent \x02{}\x02 hour(s) playing games! ".format(money, time)
+    out += "They have \x02{} games\x02 - {}".format(totalgames, web.try_isgd(url))
 
     if not dontsave:
         db.execute("insert or replace into steam(nick, acc) values (?,?)", (nick.lower(), inp))
         db.commit()
 
-    return out + web.try_isgd(url)
+    return out
 
 
 def get_steam_info(url):

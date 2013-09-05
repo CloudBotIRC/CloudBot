@@ -30,7 +30,9 @@
     "twitter_access_token": "",
     "twitter_access_secret": "",
     "wunderground": "",
-    "googletranslate": ""
+    "googletranslate": "",
+    "rdio_key": "",
+    "rdio_secret": ""
   },
   "permissions": {
     "admins": {

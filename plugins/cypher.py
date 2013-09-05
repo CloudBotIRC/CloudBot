@@ -1,11 +1,23 @@
-"""
-Plugin which (de)cyphers a string
-Doesn't cypher non-alphanumeric strings yet.
-by instanceoftom
-All character cyphering added - TheNoodle
-"""
-
+import base64
 from util import hook
+
+
+def encode(key, clear):
+    enc = []
+    for i in range(len(clear)):
+        key_c = key[i % len(key)]
+        enc_c = chr((ord(clear[i]) + ord(key_c)) % 256)
+        enc.append(enc_c)
+    return base64.urlsafe_b64encode("".join(enc))
+
+def decode(key, enc):
+    dec = []
+    enc = base64.urlsafe_b64decode(enc.encode('ascii','ignore'))
+    for i in range(len(enc)):
+        key_c = key[i % len(key)]
+        dec_c = chr((256 + ord(enc[i]) - ord(key_c)) % 256)
+        dec.append(dec_c)
+    return "".join(dec)
 
 
 @hook.command
@@ -13,53 +25,13 @@ def cypher(inp):
     """cypher <pass> <string> -- Cyphers <string> with <password>."""
 
     passwd = inp.split(" ")[0]
-    len_passwd = len(passwd)
     inp = " ".join(inp.split(" ")[1:])
-
-    out = ""
-    passwd_index = 0
-    for character in inp:
-        chr_index = ord(character)
-        passwd_chr_index = ord(passwd[passwd_index])
-
-        out_chr_index = (chr_index + passwd_chr_index) % 255
-        out_chr = chr[out_chr_index]
-
-        out += out_chr
-
-        passwd_index = (passwd_index + 1) % len_passwd
-    return out
+    return encode(passwd,inp)
 
 
 @hook.command
 def decypher(inp):
     """decypher <pass> <string> -- Decyphers <string> with <password>."""
-
     passwd = inp.split(" ")[0]
-    len_passwd = len(passwd)
     inp = " ".join(inp.split(" ")[1:])
-
-    passwd_index = 0
-    for character in inp:
-        passwd_index = (passwd_index + 1) % len_passwd
-
-    passwd_index -= 1
-    reversed_message = inp[::-1]
-
-    out = ""
-    for character in reversed_message:
-        try:
-            chr_index = ord(character)
-            passwd_chr_index = ord(passwd[passwd_index])
-
-            out_chr_index = (chr_index - passwd_chr_index) % 255
-            out_chr = chars[out_chr_index]
-
-            out += out_chr
-
-            passwd_index = (passwd_index - 1) % len_passwd
-        except ValueError:
-            out += character
-            continue
-
-    return out[::-1]
+    return decode(passwd,inp)

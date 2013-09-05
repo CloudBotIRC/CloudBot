@@ -159,7 +159,7 @@ def cycle(inp, conn=None, chan=None, notice=None):
         target = inp
     else:
         target = chan
-    notice("Attempting to cycle {}...".format(target})
+    notice("Attempting to cycle {}...".format(target))
     conn.part(target)
     conn.join(target)
 

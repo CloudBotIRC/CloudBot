@@ -2,6 +2,7 @@ from util import hook, http, web
 from bs4 import BeautifulSoup
 
 api_url = "http://osrc.dfm.io/{}/stats"
+user_url = "http://osrc.dfm.io/{}"
 
 
 @hook.command
@@ -20,7 +21,7 @@ def osrc(inp):
     soup = BeautifulSoup(response["summary"])
     response["work_time"] = soup.find("a", {"href" : "#day"}).contents[0]
 
-    response["short_url"] = web.try_isgd(url)
+    response["short_url"] = web.try_isgd(user_url.format(user_nick))
 
     return "{nick} is a {lang_user}. {nick} is a {hacker_type} " \
            "who seems to {work_time} - {short_url}".format(**response)

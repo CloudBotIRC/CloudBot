@@ -95,7 +95,7 @@ def tell(inp, nick='', chan='', db=None, input=None, notice=None):
         notice("Thanks for the message, {}!".format(user_from))
         return
 
-    if not re.match("^[A-Za-z0-9_|.-\]\[]*$", user_to.lower()):
+    if not re.match("^[A-Za-z0-9_|.\-\]\[]*$", user_to.lower()):
         notice("I cant send a message to that user!")
         return
 

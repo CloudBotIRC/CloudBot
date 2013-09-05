@@ -156,7 +156,7 @@ def main(conn, out):
         if inp.chan == inp.nick:  # private message, no command prefix
             prefix = '^(?:[{}]?|'.format(command_prefix)
         else:
-            prefix = '^(?:[%s]|'.format(command_prefix)
+            prefix = '^(?:[{}]|'.format(command_prefix)
 
         command_re = prefix + inp.conn.nick
         command_re += r'[,;:]+\s+)(\w+)(?:$|\s+)(.*)'

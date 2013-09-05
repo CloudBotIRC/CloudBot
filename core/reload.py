@@ -18,7 +18,7 @@ def make_signature(f):
 
 
 def format_plug(plug, kind='', lpad=0):
-    out = ' ' * lpad + '{}:{}:{}'.format(make_signature(plug[0]))
+    out = ' ' * lpad + '{}:{}:{}'.format(*make_signature(plug[0]))
     if kind == 'command':
         out += ' ' * (50 - len(out)) + plug[1]['name']
 

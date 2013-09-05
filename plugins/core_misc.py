@@ -28,9 +28,9 @@ def onjoin(paraml, conn=None, bot=None):
         if nickserv_password in bot.config['censored_strings']:
             bot.config['censored_strings'].remove(nickserv_password)
         if nickserv_account_name:
-            conn.msg(nickserv_name, "{} {} {}".format([nickserv_command, nickserv_account_name, nickserv_password]))
+            conn.msg(nickserv_name, "{} {} {}".format(nickserv_command, nickserv_account_name, nickserv_password))
         else:
-            conn.msg(nickserv_name, "{} {}".format([nickserv_command, nickserv_password]))
+            conn.msg(nickserv_name, "{} {}".format(nickserv_command, nickserv_password))
         bot.config['censored_strings'].append(nickserv_password)
         time.sleep(1)
 

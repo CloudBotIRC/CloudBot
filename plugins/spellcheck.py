@@ -7,28 +7,32 @@ locale = "en_US"
 @hook.command
 def spell(inp):
     """spell <word/sentence> -- Check spelling of a word or sentence."""
-    words = inp.split(" ")
-    if words[0] == "":
-        words = []
+
     if not enchant.dict_exists(locale):
         return "Could not find dictionary: {}".format(locale)
 
-    dictionary = enchant.Dict(locale)
+    if len(inp.split(" ")) > 1:
+        chkr = enchant.checker.SpellChecker(locale)
+        chkr.set_text(inp)
 
-    if len(words) > 1:
-        out = []
-        for x in words:
-            is_correct = dictionary.check(x)
-            suggestions = dictionary.suggest(x)
+        for err in chkr:
+            # find the location of the incorrect word
+            start = err.wordpos
+            finish = start + len(err.word)
+            # get some suggestions for it
+            suggestions = err.suggest()
             s_string = '/'.join(suggestions[:3])
-            if is_correct:
-                out.append(x)
-            else:
-                out.append('\x02' + s_string + '\x02')
-        return " ".join(out)
+            s_string = "\x02{}\x02".format(s_string)
+            # replace the word with the suggestions
+            inp = inp[:start] + s_string + inp[finish:]
+            # reset the text
+            chkr.set_text(inp)
+
+        return inp
     else:
-        is_correct = dictionary.check(words[0])
-        suggestions = dictionary.suggest(words[0])
+        dictionary = enchant.Dict(locale)
+        is_correct = dictionary.check(inp)
+        suggestions = dictionary.suggest(inp)
         s_string = ', '.join(suggestions[:10])
         if is_correct:
             return '"{}" appears to be \x02valid\x02! ' \

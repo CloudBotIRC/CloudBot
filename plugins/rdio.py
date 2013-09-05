@@ -41,7 +41,7 @@ def rdio(inp, bot=None):
         else:  #Artist
             name = info['name']
             url = info['shortUrl']
-            return u"\x02{}\x02 {}".format(name, url)
+            return u"\x02{}\x02 - {}".format(name, url)
 
 
 @hook.command
@@ -60,7 +60,7 @@ def rdiot(inp, bot=None):
     artist = info['artist']
     album = info['album']
     url = info['shortUrl']
-    return u"\x02{}\x02 by \x02{}\x02 - {} {}".format(name, artist, album, url)
+    return u"\x02{}\x02 by \x02{}\x02 - {} - {}".format(name, artist, album, url)
 
 
 @hook.command
@@ -77,7 +77,7 @@ def rdioar(inp, bot=None):
         return "No results."
     name = info['name']
     url = info['shortUrl']
-    return u"\x02{}\x02 {}".format(name, url)
+    return u"\x02{}\x02 - {}".format(name, url)
 
 
 @hook.command

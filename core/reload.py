@@ -18,7 +18,7 @@ def make_signature(f):
 
 
 def format_plug(plug, kind='', lpad=0):
-    out = ' ' * lpad + '%s:%s:%s' % make_signature(plug[0])
+    out = ' ' * lpad + '{}:{}:{}'.format(make_signature(plug[0]))
     if kind == 'command':
         out += ' ' * (50 - len(out)) + plug[1]['name']
 
@@ -118,13 +118,12 @@ def reload(init=False):
         for plug in bot.plugs['command']:
             name = plug[1]['name'].lower()
             if not re.match(r'^\w+$', name):
-                print '### ERROR: invalid command name "%s" (%s)' % (name,
-                                                                     format_plug(plug))
+                print '### ERROR: invalid command name "{}" ({})'.format(name, format_plug(plug))
                 continue
             if name in bot.commands:
-                print "### ERROR: command '%s' already registered (%s, %s)" % \
-                      (name, format_plug(bot.commands[name]),
-                       format_plug(plug))
+                print "### ERROR: command '{}' already registered ({}, {})".format(name,
+                                                                                   format_plug(bot.commands[name]),
+                                                                                   format_plug(plug))
                 continue
             bot.commands[name] = plug
 
@@ -155,7 +154,7 @@ def reload(init=False):
         for kind, plugs in sorted(bot.plugs.iteritems()):
             if kind == 'command':
                 continue
-            print '    %s:' % kind
+            print '    {}:'.format(kind)
             for plug in plugs:
                 print format_plug(plug, kind=kind, lpad=6)
         print

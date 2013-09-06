@@ -1,6 +1,10 @@
+import urllib2
+import re
+import json
+from xml.dom import minidom
 from util import hook, http, web, text
 from bs4 import BeautifulSoup
-import re
+
 
 db_ready = False
 
@@ -18,6 +22,32 @@ def db_init(db):
     db.execute("create table if not exists steam(nick primary key, acc)")
     db.commit()
     db_ready = True
+
+
+def get_steam_info(name):
+    dom = minidom.parse(urllib2.urlopen(re.sub("{USER}", name, "http://steamcommunity.com/id/{USER}/?xml=1")))
+    ID = int(dom.getElementsByTagName("steamID64")[0].firstChild.data)
+    key = bot.config.get("api_keys", {}).get("steam_key")
+    url = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key={}&steamid={}&format=json".format(key,
+                                                                                                                 ID)
+    data = json.load(urllib2.urlopen(url))
+    useable = data['response']['games']
+    games = []
+    played = []
+    data = {}
+    playtime = 0
+    for x in useable:
+        games.append(x)
+        if x['playtime_forever'] > 0:
+            played.append(x)
+            playtime += x['playtime_forever']
+    played.sort(key=lambda x: x['playtime_forever'])
+    played.reverse()
+    data['playtime'] = int(playtime / 60.0)
+    data['played'] = played
+    data['games'] = games
+    data['%played'] = round(float(len(played)) / len(games) * 100, 2)
+    return data
 
 
 @hook.command('sc', autohelp=False)
@@ -65,7 +95,7 @@ def steamcalc(inp, nick='', db=None):
         print e
         return u"\x02Unable to retrieve info for {}!\x02 Is it a valid SteamCommunity profile username ({})? " \
                "Check if your profile is private, or go here to search: {}".format(
-                   inp, web.try_isgd("http://steamcommunity.com/id/%s" % inp), web.try_isgd(url))
+            inp, web.try_isgd("http://steamcommunity.com/id/%s" % inp), web.try_isgd(url))
 
     nextone = False
     status = "Unknown"

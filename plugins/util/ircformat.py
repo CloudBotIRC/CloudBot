@@ -18,6 +18,7 @@ def bb(format_string):
     '[lgray]':'\x0315',}
     stuff['style'] = {'[b]':'\x02'}
     stuff['sym'] = {'[point]':'\x07'}
+    stuff['text'] = {'[url]':'http://'}
     final = {}
     for x in stuff:
         final.update(x)

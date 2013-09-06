@@ -19,7 +19,8 @@ def raw(format_string):
     '[lgray]':'\x0315',
     '[err]':'\x034\x02'
     '[/err]':'\x030\x02'}
-    stuff['style'] = {'[b]':'\x02'}
+    stuff['style'] = {'[b]':'\x02',
+                      '[clear]':'\x0f'}
     stuff['sym'] = {'[point]':'\x07'}
     stuff['text'] = {'[url]':'http://'}
     final = {}
@@ -30,4 +31,4 @@ def raw(format_string):
     return format_string
 def err(format_string):
     """Format the string with standard error styling"""
-    return "\x034\x02{}\x030\x02".format(format_string)
+    return "\x034\x02{}\x0f".format(format_string)

@@ -16,7 +16,9 @@ def rep(format_string):
     '[blue]':'\x0312',
     '[pink]':'\x0313',
     '[gray]':'\x0314',
-    '[lgray]':'\x0315',}
+    '[lgray]':'\x0315',
+    '[err]':'\x034\x02'
+    '[/err]':'\x030\x02'}
     stuff['style'] = {'[b]':'\x02'}
     stuff['sym'] = {'[point]':'\x07'}
     stuff['text'] = {'[url]':'http://'}
@@ -26,3 +28,6 @@ def rep(format_string):
     for x in final:
         format_string = format_string.replace(x,final[x])
     return format_string
+def err(format_string):
+    """Format the string with standard error styling"""
+    return "\x034\x02{}\x030\x02".format(format_string)

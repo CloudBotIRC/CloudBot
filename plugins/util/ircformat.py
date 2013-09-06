@@ -1,4 +1,5 @@
 def rep(format_string):
+    """Replace based irc formatting"""
     stuff = {}
     stuff['col'] = {'[white]':'\x030',
     '[black]':'\x031',
@@ -23,5 +24,5 @@ def rep(format_string):
     for x in stuff:
         final.update(x)
     for x in final:
-        format_string = format_string.replace(x,rep[x])
+        format_string = format_string.replace(x,final[x])
     return format_string

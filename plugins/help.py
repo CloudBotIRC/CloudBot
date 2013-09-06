@@ -23,20 +23,23 @@ def help(inp, notice=None, input=None, conn=None, bot=None):
     commands = dict((value, key) for key, value in funcs.iteritems())
 
     if not inp:
-        out = ["", ""]
+        out = [""]
         well = []
         for x in commands:
             well.append(x)
         well.sort()
+        count = 0
         for x in well:
-            if len(out[0]) + len(str(x)) > 405:
-                out[1] += " " + str(x)
+            if len(out[count]) + len(str(x)) > 405:
+                count += 1
+                out.append(str(x))
             else:
-                out[0] += " " + str(x)
+                out[count] += " " + str(x)
 
         notice("Commands I recognise: " + out[0][1:])
-        if out[1]:
-            notice(out[1][1:])
+        if len(out) > 1:
+            for x in out[1:]:
+                notice(x)
         notice("For detailed help, do '%shelp <example>' where <example> "
                "is the name of the command you want help for." % conn.conf["command_prefix"])
 

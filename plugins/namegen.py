@@ -36,7 +36,7 @@ class NameGenerator(object):
 
         for name_part in name_parts:
             part = random.choice(self.parts[name_part])
-            name = name.replace("{{}}".format(name_part), part)
+            name = name.replace("\{{}\}".format(name_part), part)
 
         return name
 

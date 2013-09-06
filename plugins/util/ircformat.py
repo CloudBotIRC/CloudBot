@@ -1,21 +1,26 @@
 def bb(format_string):
-    rep = {'[b]':'\x02',
-    '[White]':'\x030',
-    '[Black]':'\x031',
-    '[dBlue]':'\x032',
-    '[dGreen]':'\x033',
-    '[dRed]':'\x034',
-    '[Brown]':'\x035',
-    '[Purple]':'\x036',
-    '[Gold]':'\x037',
-    'Yellow':'\x038',
-    '[Green]':'\x039',
-    '[Cyan]':'\x0310',
-    '[lBlue]':'\x0311',
-    '[Blue]':'\x0312',
-    '[Pink]':'\x0313',
-    '[Gray]':'\x0314',
-    '[lGray]':'\x0315',}
-    for x in rep:
+    stuff = {}
+    stuff['col'] = {'[white]':'\x030',
+    '[black]':'\x031',
+    '[dblue]':'\x032',
+    '[dgreen]':'\x033',
+    '[dred]':'\x034',
+    '[brown]':'\x035',
+    '[purple]':'\x036',
+    '[gold]':'\x037',
+    '[yellow]':'\x038',
+    '[green]':'\x039',
+    '[cyan]':'\x0310',
+    '[lblue]':'\x0311',
+    '[blue]':'\x0312',
+    '[pink]':'\x0313',
+    '[gray]':'\x0314',
+    '[lgray]':'\x0315',}
+    stuff['style'] = {'[b]':'\x02'}
+    stuff['sym'] = {'[point]':'\x07'}
+    final = {}
+    for x in stuff:
+        final.update(x)
+    for x in final:
         format_string = format_string.replace(x,rep[x])
     return format_string

@@ -24,7 +24,7 @@ def raw(format_string):
     stuff['text'] = {'[url]':'http://'}
     final = {}
     for x in stuff:
-        final.update(x)
+        final.update(stuff[x])
     for x in final:
         format_string = format_string.replace(x,final[x])
     return format_string

@@ -1,4 +1,4 @@
-def bb(format_string):
+def rep(format_string):
     stuff = {}
     stuff['col'] = {'[white]':'\x030',
     '[black]':'\x031',

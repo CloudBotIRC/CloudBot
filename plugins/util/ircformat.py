@@ -1,4 +1,4 @@
-def rep(format_string):
+def raw(format_string):
     """Replace based irc formatting"""
     stuff = {}
     stuff['col'] = {'[white]':'\x030',

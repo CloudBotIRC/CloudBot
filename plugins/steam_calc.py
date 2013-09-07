@@ -33,9 +33,10 @@ def steamcalc(inp):
     except (http.HTTPError, http.URLError):
         return "Could not get data for {}!".format(name)
 
-    csv_data = StringIO.StringIO(request)
+    csv_data = StringIO.StringIO(request) # we use StringIO because CSV can't read a string
     reader = unicode_dictreader(csv_data)
 
+    # put the games in a list
     games = []
     for row in reader:
         games.append(row)

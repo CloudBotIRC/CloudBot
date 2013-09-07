@@ -17,7 +17,7 @@ def is_number(s):
 def unicode_dictreader(utf8_data, **kwargs):
     csv_reader = csv.DictReader(utf8_data, **kwargs)
     for row in csv_reader:
-        yield dict([(key, unicode(value, 'utf-8')) for key, value in row.iteritems()])
+        yield dict([(key.lower(), unicode(value, 'utf-8')) for key, value in row.iteritems()])
 
 
 @hook.command('sc')
@@ -51,27 +51,27 @@ def steamcalc(inp):
     data["state"] = online_state # will make this pretty later
 
     # work out the average metascore for all games
-    ms = [float(game["Metascore"]) for game in games if is_number(game["Metascore"])]
+    ms = [float(game["metascore"]) for game in games if is_number(game["metascore"])]
     metascore = float(sum(ms))/len(ms) if len(ms) > 0 else float('nan')
     data["average_metascore"] = "{0:.1f}".format(metascore)
 
     # work out the totals
     data["games"] = len(games)
 
-    total_value = sum([float(game["Value"]) for game in games if is_number(game["Value"])])
+    total_value = sum([float(game["value"]) for game in games if is_number(game["value"])])
     data["value"] = str(int(round(total_value)))
 
     # work out the total size
     total_size = 0.0
 
     for game in games:
-        if not is_number(game["Size"]):
+        if not is_number(game["size"]):
             continue
 
-        if game["Unit"] == "GB":
-            total_size += float(game["Size"])
+        if game["unit"] == "GB":
+            total_size += float(game["size"])
         else:
-            total_size += float(game["Size"])/1024
+            total_size += float(game["size"])/1024
 
     data["size"] = "{0:.1f}".format(total_size)
 

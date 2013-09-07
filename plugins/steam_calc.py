@@ -25,14 +25,15 @@ def unicode_dictreader(utf8_data, **kwargs):
 
 @hook.command('sc')
 @hook.command
-def steamcalc(inp):
+def steamcalc(inp, reply=None):
     """steamcalc <username> [currency] - Gets value of steam account and
        total hours played. Uses steamcommunity.com/id/<nickname>. """
 
     name = inp.strip()
 
     try:
-        http.get(gauge_url.format(name))
+        reply("Collecting data, this may take a few seconds.")
+        http.get(gauge_url.format(name), timeout=15, get_method='HEAD')
         request = http.get(api_url.format(name))
     except (http.HTTPError, http.URLError):
         return "Could not get data for this user."

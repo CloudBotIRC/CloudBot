@@ -52,7 +52,7 @@ def get_json(*args, **kwargs):
 
 
 def open(url, query_params=None, user_agent=None, post_data=None,
-         referer=None, get_method=None, cookies=False, **kwargs):
+         referer=None, get_method=None, cookies=False, timeout=None, **kwargs):
     if query_params is None:
         query_params = {}
 
@@ -78,7 +78,10 @@ def open(url, query_params=None, user_agent=None, post_data=None,
     else:
         opener = urllib2.build_opener()
 
-    return opener.open(request)
+    if timeout:
+        return opener.open(request, timeout=timeout)
+    else:
+        return opener.open(request)
 
 
 def prepare_url(url, queries):

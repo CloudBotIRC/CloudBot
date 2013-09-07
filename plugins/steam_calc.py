@@ -1,6 +1,9 @@
 from util import hook, http
 import csv
+import time
 import StringIO
+
+gauge_url = "http://www.mysteamgauge.com/search?username={}"
 
 api_url = "http://mysteamgauge.com/user/{}.csv"
 steam_api_url = "http://steamcommunity.com/id/{}/?xml=1"
@@ -29,9 +32,10 @@ def steamcalc(inp):
     name = inp.strip()
 
     try:
+        http.get(gauge_url.format(name))
         request = http.get(api_url.format(name))
     except (http.HTTPError, http.URLError):
-        return "Could not get data for {}!".format(name)
+        return "Could not get data for this user."
 
     csv_data = StringIO.StringIO(request) # we use StringIO because CSV can't read a string
     reader = unicode_dictreader(csv_data)
@@ -47,8 +51,8 @@ def steamcalc(inp):
     steam_profile = http.get_xml(steam_api_url.format(name))
     data["name"] = steam_profile.find('steamID').text
 
-    online_state = steam_profile.find('onlineState').text
-    data["state"] = online_state # will make this pretty later
+    online_state = steam_profile.find('stateMessage').text
+    data["state"] = online_state.replace("<br/>", ": ") # will make this pretty later
 
     # work out the average metascore for all games
     ms = [float(game["metascore"]) for game in games if is_number(game["metascore"])]

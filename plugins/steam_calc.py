@@ -1,6 +1,5 @@
 from util import hook, http
 import csv
-import time
 import StringIO
 
 gauge_url = "http://www.mysteamgauge.com/search?username={}"
@@ -38,7 +37,7 @@ def steamcalc(inp, reply=None):
     except (http.HTTPError, http.URLError):
         return "Could not get data for this user."
 
-    csv_data = StringIO.StringIO(request) # we use StringIO because CSV can't read a string
+    csv_data = StringIO.StringIO(request)  # we use StringIO because CSV can't read a string
     reader = unicode_dictreader(csv_data)
 
     # put the games in a list
@@ -53,11 +52,11 @@ def steamcalc(inp, reply=None):
     data["name"] = steam_profile.find('steamID').text
 
     online_state = steam_profile.find('stateMessage').text
-    data["state"] = online_state.replace("<br/>", ": ") # will make this pretty later
+    data["state"] = online_state.replace("<br/>", ": ")  # will make this pretty later
 
     # work out the average metascore for all games
     ms = [float(game["metascore"]) for game in games if is_number(game["metascore"])]
-    metascore = float(sum(ms))/len(ms) if len(ms) > 0 else float('nan')
+    metascore = float(sum(ms)) / len(ms) if len(ms) > 0 else float('nan')
     data["average_metascore"] = "{0:.1f}".format(metascore)
 
     # work out the totals
@@ -76,10 +75,9 @@ def steamcalc(inp, reply=None):
         if game["unit"] == "GB":
             total_size += float(game["size"])
         else:
-            total_size += float(game["size"])/1024
+            total_size += float(game["size"]) / 1024
 
     data["size"] = "{0:.1f}".format(total_size)
-
 
     return "{name} ({state}) has {games} games with a total value of ${value}" \
            " and a total size of {size}GB! The average metascore for these" \

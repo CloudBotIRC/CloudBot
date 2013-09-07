@@ -7,6 +7,7 @@
       "nick": "MyCloudBot",
       "user": "cloudbot",
       "realname": "CloudBot - http://git.io/cloudbotirc",
+      "mode": "",
       "nickserv_password": "",
       "nickserv_user": "",
       "channels": ["#cloudbot", "#cloudbot2"],

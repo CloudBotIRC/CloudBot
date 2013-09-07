@@ -32,8 +32,8 @@ def steamcalc(inp, reply=None):
     name = inp.strip()
 
     try:
-        reply("Collecting data, this may take a few seconds.")
-        http.get(gauge_url.format(name), timeout=15, get_method='HEAD')
+        reply("Collecting data, this may take a while.")
+        http.get(gauge_url.format(name), timeout=25, get_method='HEAD')
         request = http.get(api_url.format(name))
     except (http.HTTPError, http.URLError):
         return "Could not get data for this user."

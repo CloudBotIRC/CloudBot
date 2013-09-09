@@ -10,10 +10,21 @@ def getSoundInfo(game, search):
     except HTTPError as e:
         return "Error: " + json.loads(e.read())["error"]
     items = []
-    for i in data:
-        items.append("{} - {} {}".format(i["who"],
-                                         i["text"] if len(i["text"]) < 325 else i["text"][:325] + "...",
-                                         i["listen"] ) )
+    for item in data:
+        if "music" in game:
+            textsplit = item["text"].split('"')
+            text = ""
+            for i in xrange(len(textsplit)):
+                if i % 2 != 0 and i < 6:
+                    if text:
+                        text += " / " + textsplit[i]
+                    else:
+                        text = textsplit[i]
+        else:
+            text = item["text"]
+        items.append("{} - {} {}".format(item["who"],
+                                         text if len(text) < 325 else text[:325] + "...",
+                                         item["listen"] ) )
     if len(items) == 1:
         return items[0]
     else:

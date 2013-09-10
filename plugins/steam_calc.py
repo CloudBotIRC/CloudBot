@@ -1,12 +1,14 @@
 from util import hook, http
 import csv
-import time
 import StringIO
 
 gauge_url = "http://www.mysteamgauge.com/search?username={}"
 
 api_url = "http://mysteamgauge.com/user/{}.csv"
 steam_api_url = "http://steamcommunity.com/id/{}/?xml=1"
+
+def refresh_data(name): http.get(gauge_url.format(name), timeout=25, get_method='HEAD')
+def get_data(name): return http.get(api_url.format(name))
 
 
 def is_number(s):
@@ -32,11 +34,16 @@ def steamcalc(inp, reply=None):
     name = inp.strip()
 
     try:
-        reply("Collecting data, this may take a while.")
-        http.get(gauge_url.format(name), timeout=25, get_method='HEAD')
-        request = http.get(api_url.format(name))
+        request = get_data(name)
+        do_refresh = True
     except (http.HTTPError, http.URLError):
-        return "Could not get data for this user."
+        try:
+            reply("Collecting data, this may take a while.")
+            refresh_data(name)
+            request = get_data(name)
+            do_refresh = False
+        except (http.HTTPError, http.URLError):
+            return "Could not get data for this user."
 
     csv_data = StringIO.StringIO(request) # we use StringIO because CSV can't read a string
     reader = unicode_dictreader(csv_data)
@@ -50,9 +57,12 @@ def steamcalc(inp, reply=None):
 
     # basic information
     steam_profile = http.get_xml(steam_api_url.format(name))
-    data["name"] = steam_profile.find('steamID').text
+    try:
+        data["name"] = steam_profile.find('steamID').text
+        online_state = steam_profile.find('stateMessage').text
+    except AttributeError:
+        return "Could not get data for this user."
 
-    online_state = steam_profile.find('stateMessage').text
     data["state"] = online_state.replace("<br/>", ": ") # will make this pretty later
 
     # work out the average metascore for all games
@@ -81,6 +91,9 @@ def steamcalc(inp, reply=None):
     data["size"] = "{0:.1f}".format(total_size)
 
 
-    return "{name} ({state}) has {games} games with a total value of ${value}" \
+    reply("{name} ({state}) has {games} games with a total value of ${value}" \
            " and a total size of {size}GB! The average metascore for these" \
-           " games is {average_metascore}.".format(**data)
+           " games is {average_metascore}.".format(**data))
+
+    if do_refresh:
+        refresh_data(name)

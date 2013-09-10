@@ -31,8 +31,11 @@ def seen_sieve(paraml, input=None, db=None):
 
 @hook.command
 def seen(inp, nick='', chan='', db=None, input=None):
-    """seen <nick> -- Tell when a nickname was last in active in one of this bot's channels."""
-
+    """seen <nick> <channel> -- Tell when a nickname was last in active in one of this bot's channels."""
+    if len(inp.split(' ')) > 1:
+        chan = inp.split(' ')[1]
+        inp = inp.split(' ')[0]
+    
     if input.conn.nick.lower() == inp.lower():
         return "You need to get your eyes checked."
 

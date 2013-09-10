@@ -3,7 +3,7 @@ import json
 from urllib2 import HTTPError
 
 
-def getSoundInfo(game, search):
+def get_sound_info(game, search):
     search = search.replace(" ", "+")
     try:
         data = http.get_json("http://p2sounds.blha303.com.au/search/%s/%s" % (game, search))
@@ -35,14 +35,14 @@ def getSoundInfo(game, search):
 def portal2(inp):
     """portal2 <quote> - Look up Portal 2 quote.
     Example: .portal2 demand to see life's manager"""
-    return getSoundInfo("portal2", inp)
+    return get_sound_info("portal2", inp)
 
 
 @hook.command
 def portal2dlc(inp):
     """portal2dlc <quote> - Look up Portal 2 DLC quote.
     Example: .portal2dlc1 these exhibits are interactive"""
-    return getSoundInfo("portal2dlc1", inp)
+    return get_sound_info("portal2dlc1", inp)
 
 
 @hook.command("portal2pti")
@@ -50,14 +50,14 @@ def portal2dlc(inp):
 def portal2dlc2(inp):
     """portal2dlc2 <quote> - Look up Portal 2 Perpetual Testing Inititive quote.
     Example: .portal2 Cave here."""
-    return getSoundInfo("portal2dlc2", inp)
+    return get_sound_info("portal2dlc2", inp)
 
 
 @hook.command
 def portal2music(inp):
     """portal2music <title> - Look up Portal 2 music.
     Example: .portal2music turret opera"""
-    return getSoundInfo("portal2music", inp)
+    return get_sound_info("portal2music", inp)
 
 
 @hook.command('portal1')
@@ -65,7 +65,7 @@ def portal2music(inp):
 def portal(inp):
     """portal <quote> - Look up Portal quote.
     Example: .portal The last thing you want to do is hurt me"""
-    return getSoundInfo("portal1", inp)
+    return get_sound_info("portal1", inp)
 
 
 @hook.command('portal1music')
@@ -73,7 +73,7 @@ def portal(inp):
 def portalmusic(inp):
     """portalmusic <title> - Look up Portal music.
     Example: .portalmusic still alive"""
-    return getSoundInfo("portal1music", inp)
+    return get_sound_info("portal1music", inp)
 
 
 @hook.command('tf2sound')
@@ -81,11 +81,11 @@ def portalmusic(inp):
 def tf2(inp):
     """tf2 [who - ]<quote> - Look up TF2 quote.
     Example: .tf2 may i borrow your earpiece"""
-    return getSoundInfo("tf2", inp)
+    return get_sound_info("tf2", inp)
 
 
 @hook.command
 def tf2music(inp):
     """tf2music title - Look up TF2 music lyrics.
     Example: .tf2music rocket jump waltz"""
-    return getSoundInfo("tf2music", inp)
+    return get_sound_info("tf2music", inp)

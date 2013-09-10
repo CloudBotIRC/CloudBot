@@ -130,6 +130,16 @@ def twuser(inp, bot=None):
     else:
         prefix = ""
 
-    return u"{}@\x02{}\x02 ({}) is located in \x02{}\x02 and has \x02{:,}\x02 tweets and \x02{:,}\x02 followers. The users description is \"{}\" " \
-           "".format(prefix, user.screen_name, user.name, user.location, user.statuses_count, user.followers_count,
-                     user.description)
+    if user.location:
+        loc_str =  " is located in \x02{}\x02 and".format(user.location)
+    else:
+        loc_str = ""
+
+    if user.description:
+        desc_str =  " The users description is \"{}\"".format(user.description)
+    else:
+        desc_str = ""
+
+    return u"{}@\x02{}\x02 ({}){} has \x02{:,}\x02 tweets and \x02{:,}\x02 followers.{}" \
+           "".format(prefix, user.screen_name, user.name, loc_str, user.statuses_count, user.followers_count,
+                     desc_str)

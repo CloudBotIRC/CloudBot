@@ -82,7 +82,6 @@ def karma_add(match, nick='', chan='', db=None, notice=None):
         return # ignore anything below 3 chars in length
 
     vote_allowed, when = allowed(db, nick, nick_vote)
-    print time
     if vote_allowed:
         if match.group(2) == '++':
             db.execute("""INSERT or IGNORE INTO karma(

@@ -67,7 +67,7 @@ def steamcalc(inp, reply=None):
 
     # work out the average metascore for all games
     ms = [float(game["metascore"]) for game in games if is_number(game["metascore"])]
-    metascore = float(sum(ms))/len(ms) if len(ms) > 0 else float('nan')
+    metascore = float(sum(ms)) / len(ms) if len(ms) > 0 else float('nan')
     data["average_metascore"] = "{0:.1f}".format(metascore)
 
     # work out the totals
@@ -86,7 +86,7 @@ def steamcalc(inp, reply=None):
         if game["unit"] == "GB":
             total_size += float(game["size"])
         else:
-            total_size += float(game["size"])/1024
+            total_size += float(game["size"]) / 1024
 
     data["size"] = "{0:.1f}".format(total_size)
 

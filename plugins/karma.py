@@ -76,6 +76,7 @@ def karma_add(match, nick='', chan='', db=None, notice=None):
 
     nick_vote = match.group(1).strip().replace("+", "")
     if nick.lower() == nick_vote.lower():
+        notice("You can't vote on yourself!")
         return
     if len(nick_vote) < 3:
         return # ignore anything below 3 chars in length
@@ -110,7 +111,7 @@ def karma_add(match, nick='', chan='', db=None, notice=None):
 @hook.command('k')
 @hook.command
 def karma(inp, nick='', chan='', db=None):
-    """.k/.karma <nick> -- returns karma stats for <nick>"""
+    """k/karma <nick> -- returns karma stats for <nick>"""
 
     if not db_ready:
         db_init(db)

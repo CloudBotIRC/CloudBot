@@ -1,4 +1,4 @@
-from util import hook, http
+from util import hook, http, text
 import csv
 import StringIO
 
@@ -63,7 +63,8 @@ def steamcalc(inp, reply=None):
     except AttributeError:
         return "Could not get data for this user."
 
-    data["state"] = online_state.replace("<br/>", ": ") # will make this pretty later
+    online_state = online_state.replace("<br/>", ": ") # will make this pretty later
+    data["state"] = text.strip_html(online_state)
 
     # work out the average metascore for all games
     ms = [float(game["metascore"]) for game in games if is_number(game["metascore"])]

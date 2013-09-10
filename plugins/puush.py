@@ -41,7 +41,7 @@ def puush(inp):
         num = int(inp[0])
 
     images = []
-    for x in range(num):
+    for x in xrange(num):
         ran = make_string()
         while not check_url(ran):
             ran = make_string()

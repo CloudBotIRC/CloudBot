@@ -1,3 +1,4 @@
+import re
 import random
 
 from util import hook
@@ -5,10 +6,13 @@ from util import hook
 
 @hook.command
 def choose(inp):
-    """choose <choice1>, [choice2], [choice3]
+    """choose <choice1>, [choice2], [choice3], [choice4], ... -- 
     Randomly picks one of the given choices."""
 
-    c = inp.split(" ")
+    c = re.findall(r'([^,]+)', inp)
     if len(c) == 1:
-        return 'banana'
+        c = re.findall(r'(\S+)', inp)
+        if len(c) == 1:
+            return 'The decision is up to you!'
+
     return random.choice(c).strip()

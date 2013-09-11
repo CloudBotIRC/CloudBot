@@ -78,8 +78,8 @@ def karma_add(match, nick='', chan='', db=None, notice=None):
     if nick.lower() == nick_vote.lower():
         notice("You can't vote on yourself!")
         return
-    if len(nick_vote) < 3:
-        return # ignore anything below 3 chars in length
+    if len(nick_vote) < 3 or " " in nick_vote:
+        return # ignore anything below 3 chars in length or with spaces
 
     vote_allowed, when = allowed(db, nick, nick_vote)
     if vote_allowed:

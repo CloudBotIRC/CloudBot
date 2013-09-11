@@ -30,8 +30,8 @@ def up(db, nick_vote):
 
 def down(db, nick_vote):
     db.execute("""UPDATE karma SET
-               down_karma = down_karma+1,
-               total_karma = total_karma+1 WHERE nick_vote=?""", (nick_vote.lower(),))
+               down_karma = down_karma + 1,
+               total_karma = total_karma + 1 WHERE nick_vote=?""", (nick_vote.lower(),))
     db.commit()
 
 
@@ -123,9 +123,9 @@ def karma(inp, nick='', chan='', db=None):
             (nick_vote.lower(),)).fetchall()
 
     if not out:
-        return "no karma"
+        return "That user has no karma."
     else:
         out = out[0]
-        return "'%s' has %s karma" % (nick_vote, out[1]-out[2])
+        return "%s has \x02%s\x02 karma." % (nick_vote, out[1]-out[2])
 
     return

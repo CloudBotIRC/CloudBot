@@ -38,10 +38,10 @@ def down(db, nick_vote):
 def allowed(db, nick, nick_vote):
     time_restriction = 3600
     db.execute("""DELETE FROM karma_voters WHERE ? - epoch >= 3600""",
-            (time.time(),))
+               (time.time(),))
     db.commit()
     check = db.execute("""SELECT epoch FROM karma_voters WHERE voter=? AND votee=?""",
-            (nick.lower(), nick_vote.lower())).fetchone()
+                       (nick.lower(), nick_vote.lower())).fetchone()
 
     if check:
         check = check[0]
@@ -53,7 +53,7 @@ def allowed(db, nick, nick_vote):
             db.commit()
             return True, 0
         else:
-            return False, timesince.timeuntil(check, now=time.time()-time_restriction)
+            return False, timesince.timeuntil(check, now=time.time() - time_restriction)
     else:
         db.execute("""INSERT OR REPLACE INTO karma_voters(
                    voter,
@@ -68,9 +68,9 @@ def allowed(db, nick, nick_vote):
 # karma_re = ('((\S+)(\+\+|\-\-))+', re.I)
 karma_re = ('(.+)(\+\+|\-\-)$', re.I)
 
+
 @hook.regex(*karma_re)
 def karma_add(match, nick='', chan='', db=None, notice=None):
-
     if not db_ready:
         db_init(db)
 
@@ -88,7 +88,7 @@ def karma_add(match, nick='', chan='', db=None, notice=None):
                        nick_vote,
                        up_karma,
                        down_karma,
-                       total_karma) values(?,?,?,?)""", (nick_vote.lower(),0,0,0))
+                       total_karma) values(?,?,?,?)""", (nick_vote.lower(), 0, 0, 0))
             up(db, nick_vote)
             notice("Gave {} +1 karma!".format(nick_vote))
         if match.group(2) == '--':
@@ -96,7 +96,7 @@ def karma_add(match, nick='', chan='', db=None, notice=None):
                        nick_vote,
                        up_karma,
                        down_karma,
-                       total_karma) values(?,?,?,?)""", (nick_vote.lower(),0,0,0))
+                       total_karma) values(?,?,?,?)""", (nick_vote.lower(), 0, 0, 0))
             down(db, nick_vote)
             notice("Took away 1 karma from {}.".format(nick_vote))
         else:
@@ -120,12 +120,32 @@ def karma(inp, nick='', chan='', db=None):
 
     nick_vote = inp
     out = db.execute("""SELECT * FROM karma WHERE nick_vote=?""",
-            (nick_vote.lower(),)).fetchall()
+                     (nick_vote.lower(),)).fetchall()
 
     if not out:
         return "That user has no karma."
     else:
         out = out[0]
-        return "%s has \x02%s\x02 karma." % (nick_vote, out[1]-out[2])
+        return "%s has \x02%s\x02 karma." % (nick_vote, out[1] - out[2])
 
-    return
+
+@hook.command('dk')
+@hook.command
+def dkarma(inp, nick='', chan='', db=None):
+    """k/karma <nick> -- returns karma stats for <nick> in epeen."""
+
+    if not db_ready:
+        db_init(db)
+
+    if not chan.startswith('#'):
+        return
+
+    nick_vote = inp
+    out = db.execute("""SELECT * FROM karma WHERE nick_vote=?""",
+                     (nick_vote.lower(),)).fetchall()
+
+    if not out:
+        return "Vaginal karma detected."
+    else:
+        out = out[0]
+        return "{}'s epnis is \x02{}\x02cm long.".format(nick_vote, out[1] - out[2])

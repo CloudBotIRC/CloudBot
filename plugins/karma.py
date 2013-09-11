@@ -126,6 +126,6 @@ def karma(inp, nick='', chan='', db=None):
         return "That user has no karma."
     else:
         out = out[0]
-        return "%s has %s karma points." % (nick_vote, out[1]-out[2])
+        return "{} has {} karma points.".format(nick_vote, out[1]-out[2])
 
     return

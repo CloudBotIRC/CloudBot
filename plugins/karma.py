@@ -90,7 +90,7 @@ def karma_add(match, nick='', chan='', db=None, notice=None):
                        down_karma,
                        total_karma) values(?,?,?,?)""", (nick_vote.lower(),0,0,0))
             up(db, nick_vote)
-            notice("Gave {} +1 karma!".format(nick_vote))
+            notice("Gave {} 1 karma!".format(nick_vote))
         if match.group(2) == '--':
             db.execute("""INSERT or IGNORE INTO karma(
                        nick_vote,
@@ -126,6 +126,6 @@ def karma(inp, nick='', chan='', db=None):
         return "That user has no karma."
     else:
         out = out[0]
-        return "%s has \x02%s\x02 karma." % (nick_vote, out[1]-out[2])
+        return "%s has %s karma points." % (nick_vote, out[1]-out[2])
 
     return

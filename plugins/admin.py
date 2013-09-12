@@ -1,5 +1,5 @@
 from util import hook
-import os
+import os, sys
 import re
 import json
 import time
@@ -114,15 +114,18 @@ def stop(inp, nick=None, conn=None):
 
 
 @hook.command(autohelp=False, permissions=["botcontrol"])
-def restart(inp, nick=None, conn=None):
+def restart(inp, nick=None, conn=None, bot=None):
     """restart [reason] -- Restarts the bot with [reason] as its quit message."""
-    if inp:
-        conn.cmd("QUIT", ["Restarted by {} ({})".format(nick, inp)])
-    else:
-        conn.cmd("QUIT", ["Restarted by {}.".format(nick)])
+    for botcon in bot.conns:
+        if inp:
+            bot.conns[botcon].cmd("QUIT", ["Restarted by {} ({})".format(nick, inp)])
+        else:
+            bot.conns[botcon].cmd("QUIT", ["Restarted by {}.".format(nick)])
     time.sleep(5)
-    os.execl("./cloudbot", "cloudbot", "restart")
-
+    #os.execl("./cloudbot", "cloudbot", "restart")
+    args = sys.argv[:]
+    args.insert(0, sys.executable)
+    os.execv(sys.executable, args)
 
 @hook.command(autohelp=False, permissions=["botcontrol"])
 def clearlogs(inp, input=None):

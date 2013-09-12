@@ -9,7 +9,7 @@ GEN_DIR = "./plugins/data/name_files/"
 def get_generator(_json):
     data = json.loads(_json)
     return textgen.TextGenerator(data["name"], data["templates"],
-        data["default_templates"], data["parts"])
+        data["parts"], data["default_templates"])
 
 
 @hook.command(autohelp=False)

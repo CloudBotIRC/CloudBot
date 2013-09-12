@@ -9,7 +9,7 @@
       "sits on {user}'s face while slamming a {item} into their crotch.",
       "starts slapping {user} silly with a {item}.",
       "holds {user} down and repeatedly {hits} them with a {item}.",
-      "prods {user} with a {mod} {item}.",
+      "prods {user} with a {item}.",
       "picks up a {item} and {hits} {user} with it.",
       "ties {user} to a chair and {throws} a {item} at them.",
       "{hits} {user} on the head with a {item}.",
@@ -57,11 +57,6 @@
         "whacks",
         "slaps",
         "smacks"
-      ],
-      "mod": [
-        "flaming",
-        "sticky",
-        "dripping"
       ]
    }
 }

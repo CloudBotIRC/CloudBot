@@ -9,7 +9,7 @@ def get_sound_info(game, search):
         request = urllib2.Request(url)
         request.add_header('User-Agent', http.ua_cloudbot)
         opener = urllib2.build_opener()
-        return json.loads(opener.open(request))
+        return json.loads(opener.open(request).read())
 
     search = search.replace(" ", "+")
     try:

@@ -10,7 +10,7 @@ def get_sound_info(game, search):
     except HTTPError as e:
         return "Error: " + json.loads(e.read())["error"]
     items = []
-    for item in data:
+    for item in data["items"]:
         if "music" in game:
             textsplit = item["text"].split('"')
             text = ""

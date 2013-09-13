@@ -4,16 +4,9 @@ import urllib2
 
 
 def get_sound_info(game, search):
-    # Currently, http.get_json doesn't support adding headers.
-    def get_json(url):
-        request = urllib2.Request(url)
-        request.add_header('User-Agent', http.ua_cloudbot)
-        opener = urllib2.build_opener()
-        return json.loads(opener.open(request).read())
-
     search = search.replace(" ", "+")
     try:
-        data = get_json("http://p2sounds.blha303.com.au/search/%s/%s" % (game, search))
+        data = http.get_json("http://p2sounds.blha303.com.au/search/%s/%s?format=json" % (game, search))
     except urllib2.HTTPError as e:
         return "Error: " + json.loads(e.read())["error"]
     items = []

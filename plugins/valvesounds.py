@@ -5,7 +5,7 @@ import urllib2
 
 def get_sound_info(game, search):
     # Currently, http.get_json doesn't support adding headers.
-    def get_json(url, headers):
+    def get_json(url):
         request = urllib2.Request(url)
         request.add_header('User-Agent', http.ua_cloudbot)
         opener = urllib2.build_opener()

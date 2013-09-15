@@ -20,6 +20,9 @@ Before you can run the bot, you need to install a few Python dependencies. LXML 
 These can be installed with `pip` (The Python package manager):
 
     [sudo] pip install -r requirements.txt
+    
+If you use `pip`, you will also need the following packages on linux or `pip` will fail to install the requirements.
+   ```python, python-dev, libenchant-dev, libenchant1c2a, libxslt-dev, libxml2-dev.```
 
 #### How to install `pip`
 

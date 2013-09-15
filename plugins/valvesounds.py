@@ -1,16 +1,16 @@
 from util import hook, http, web
 import json
-from urllib2 import HTTPError
+import urllib2
 
 
 def get_sound_info(game, search):
     search = search.replace(" ", "+")
     try:
-        data = http.get_json("http://p2sounds.blha303.com.au/search/%s/%s" % (game, search))
-    except HTTPError as e:
+        data = http.get_json("http://p2sounds.blha303.com.au/search/%s/%s?format=json" % (game, search))
+    except urllib2.HTTPError as e:
         return "Error: " + json.loads(e.read())["error"]
     items = []
-    for item in data:
+    for item in data["items"]:
         if "music" in game:
             textsplit = item["text"].split('"')
             text = ""

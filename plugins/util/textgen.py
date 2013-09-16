@@ -30,12 +30,12 @@ class TextGenerator(object):
         required_parts = TEMPLATE_RE.findall(text)
 
         for required_part in required_parts:
-            _part = self.parts[required_part]
+            ppart = self.parts[required_part]
             # check if the part is a single string or a list
-            if not isinstance(_part, basestring):
-                part = random.choice(self.parts[_part])
+            if not isinstance(ppart, basestring):
+                part = random.choice(self.parts[required_part])
             else:
-                part = _part
+                part = self.parts[required_part]
             text = text.replace("{%s}" % required_part, part)
 
         return text

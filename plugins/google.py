@@ -48,6 +48,4 @@ def google(inp):
         content = http.html.fromstring(content).text_content()
         content = text.truncate_str(content, 150)
 
-    out = '{} -- \x02{}\x02: "{}"'.format(result['unescapedUrl'], title, content)
-
-    return out
+    return u'{} -- \x02{}\x02: "{}"'.format(result['unescapedUrl'], title, content)

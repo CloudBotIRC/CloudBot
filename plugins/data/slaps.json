@@ -12,7 +12,7 @@
       "prods {user} with a {item}.",
       "picks up a {item} and {hits} {user} with it.",
       "ties {user} to a chair and {throws} a {item} at them.",
-      "{hits} {user} on the head with a {item}.",
+      "{hits} {user} {where} with a {item}.",
       "ties {user} to a pole and whips them with a {item}."
    ],
    "parts": {
@@ -57,6 +57,11 @@
         "whacks",
         "slaps",
         "smacks"
+      ],
+      "where": [
+        "in the chest",
+        "on the head",
+        "on the bum"
       ]
    }
 }

@@ -16,6 +16,7 @@ class TextGenerator(object):
         Generates one string using the specified templates.
         If no templates are specified, use a random template from the default_templates list.
         """
+        # this is bad
         if self.default_templates:
             text = self.templates[template or random.choice(self.default_templates)]
         else:

@@ -42,7 +42,7 @@ def get_video_description(video_id):
         out += ' - \x02%s\x02 views' % format(data['viewCount'], ",d")
 
     try:
-        uploader = http.get_json(base_url + "users/{}?alt=json".format(data["uploader"]))["entry"]["title"]["$t"]
+        uploader = http.get_json(base_url + "users/{}?alt=json".format(data["uploader"]))["entry"]["author"]["name"]["$t"]
     except:
         uploader = data["uploader"]
 

@@ -41,8 +41,13 @@ def get_video_description(video_id):
     if 'viewCount' in data:
         out += ' - \x02%s\x02 views' % format(data['viewCount'], ",d")
 
+    try:
+        uploader = http.get_json(base_url + "users/{}?alt=json".format(data["uploader"]))["entry"]["author"][0]["name"]["$t"]
+    except:
+        uploader = data["uploader"]
+
     upload_time = time.strptime(data['uploaded'], "%Y-%m-%dT%H:%M:%S.000Z")
-    out += ' - \x02%s\x02 on \x02%s\x02' % (data['uploader'],
+    out += ' - \x02%s\x02 on \x02%s\x02' % (uploader,
                                             time.strftime("%Y.%m.%d", upload_time))
 
     if 'contentRating' in data:

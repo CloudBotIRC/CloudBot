@@ -8,8 +8,8 @@ from util import hook
 def format_quote(q, num, n_quotes):
     """Returns a formatted string of a quote"""
     ctime, nick, msg = q
-    return "[{}/{}] <{}> {}".format((num, n_quotes,
-                                nick, msg))
+    return "[{}/{}] <{}> {}".format(num, n_quotes,
+                                nick, msg)
 
 
 def create_table_if_not_exists(db):

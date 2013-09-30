@@ -35,19 +35,18 @@ def reddit(inp):
 
         # find the requested post number (if any)
         if len(parts) > 1:
-            subreddit = parts[0]
+            url = base_url.format(parts[0].strip())
             try: 
                 id_num = int(parts[1]) - 1
             except ValueError:
                 return "Invalid post number."
         else:
-            subreddit = parts[0]
+            url = base_url.format(parts[0].strip())
     else:
-        subreddit = "all"
+        url  = "http://reddit.com/.json"
 
     try:
-        data = http.get_json(base_url.format(subreddit.strip()),
-                             user_agent=http.ua_chrome)
+        data = http.get_json(url, user_agent=http.ua_chrome)
     except Exception as e:
         return "Error: " + str(e)
     data = data["data"]["children"]
@@ -73,9 +72,6 @@ def reddit(inp):
         item["warning"] = " \x02NSFW\x02"
     else:
         item["warning"] = ""
-
-    if not item["subreddit"]:
-        item["subreddit"] = subreddit
 
     return u'\x02{title} : {subreddit}\x02 - posted by \x02{author}\x02' \
     ' {timesince} ago - {ups} upvotes, {downs} downvotes -' \

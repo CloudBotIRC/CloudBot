@@ -72,6 +72,8 @@ def reddit(inp):
     else:
         item["warning"] = ""
 
+    if not item["subreddit"]:
+        item["subreddit"] = subreddit
 
     return u'\x02{title} : {subreddit}\x02 - posted by \x02{author}\x02' \
     ' {timesince} ago - {ups} upvotes, {downs} downvotes -' \

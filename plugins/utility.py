@@ -63,14 +63,44 @@ def rot13(inp):
     return inp.encode('rot13')
 
 @hook.command
+def base64(inp):
+    """base64 <string> -- Encode <string> with base64."""
+    return inp.encode('base64')
+
+@hook.command
+def unbase64(inp):
+    """unbase64 <string> -- Decode <string> with base64."""
+    return inp.decode('base64')
+
+@hook.command
+def checkbase64(inp):
+    try:
+        decoded = inp.decode('base64')
+        recoded = decoded.encode('base64').strip()
+        is_base64 = recoded == inp
+    except:
+        is_base64 = False
+
+    if is_base64:
+        return '"{}" is base64 encoded'.format(recoded)
+    else:
+        return '"{}" is not base64 encoded'.format(inp)
+
+@hook.command
 def unescape(inp):
     """unescape <string> -- Unescapes <string>."""
-    return inp.decode('unicode-escape')
+    try:
+        return inp.decode('unicode-escape')
+    except Exception as e:
+        return "Error: {}".format(e)
 
 @hook.command
 def escape(inp):
-    """escape <string> -- escapes <string>."""
-    return inp.encode('unicode-escape')
+    """escape <string> -- Escapes <string>."""
+    try:
+        return inp.encode('unicode-escape')
+    except Exception as e:
+        return "Error: {}".format(e)
 
 # length
 

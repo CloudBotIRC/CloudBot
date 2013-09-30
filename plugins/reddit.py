@@ -24,28 +24,32 @@ def reddit_url(match):
         title, author, timeago, upvotes, downvotes, comments)
 
 
-@hook.command
+@hook.command(autohelp=False)
 def reddit(inp):
     """reddit <subreddit> [n] -- Gets a random post from <subreddit>, or gets the [n]th post in the subreddit."""
-
-    # clean and split the input
-    parts = inp.lower().strip().split()
     id_num = None
 
-    # find the requested post number (if any)
-    if len(parts) > 1:
-        inp = parts[0]
-        try: 
-            id_num = int(parts[1]) - 1
-        except ValueError:
-            return "Invalid post number."	
+    if inp:
+        # clean and split the input
+        parts = inp.lower().strip().split()
+
+        # find the requested post number (if any)
+        if len(parts) > 1:
+            subreddit = parts[0]
+            try: 
+                id_num = int(parts[1]) - 1
+            except ValueError:
+                return "Invalid post number."	
+    else:
+        subreddit = "all"
 
     try:
-        data = http.get_json(base_url.format(inp.strip()),
+        data = http.get_json(base_url.format(subreddit.strip()),
                              user_agent=http.ua_chrome)
     except Exception as e:
         return "Error: " + str(e)
     data = data["data"]["children"]
+
 
     # get the requested/random post
     if id_num:
@@ -68,6 +72,7 @@ def reddit(inp):
     else:
         item["warning"] = ""
 
-    return u'\x02{title}\x02 - posted by \x02{author}\x02' \
+
+    return u'\x02{title} : {subreddit}\x02 - posted by \x02{author}\x02' \
     ' {timesince} ago - {ups} upvotes, {downs} downvotes -' \
     ' {link}{warning}'.format(**item)

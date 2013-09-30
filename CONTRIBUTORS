@@ -22,6 +22,7 @@ frdmn
 We are using code from the following projects:
 ./plugins/mlia.py - https://github.com/infinitylabs/UguuBot
 ./plugins/horoscope.py - https://github.com/infinitylabs/UguuBot
+color section in ./plugins/utility.py - https://github.com/hitzler/homero
 
 Special Thanks:
 Rmmh (created skybot!)

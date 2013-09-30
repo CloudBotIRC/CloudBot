@@ -1,5 +1,30 @@
 from util import hook, text
 import hashlib
+import collections
+import re
+
+# variables
+
+colors = collections.OrderedDict([
+  ('red',    '\x0304'),
+  ('ornage', '\x0307'),
+  ('yellow', '\x0308'),
+  ('green',  '\x0309'),
+  ('cyan',   '\x0303'),
+  ('ltblue', '\x0310'),
+  ('rylblue','\x0312'),
+  ('blue',   '\x0302'),
+  ('magenta','\x0306'),
+  ('pink',   '\x0313'),
+  ('maroon', '\x0305')
+])
+
+# helper functions
+
+strip_re = re.compile("(\x03|\x02|\x1f)(?:,?\d{1,2}(?:,\d{1,2})?)?", re.UNICODE)
+
+def strip(text):
+  return strip_re.sub('', text)
 
 # basic text tools
 
@@ -68,4 +93,38 @@ def hash(inp):
 def munge(inp):
     """munge <text> -- Munges up <text>."""
     return text.munge(inp)
+
+# colors - based on code by Reece Selwood - <https://github.com/hitzler/homero>
+
+@hook.command
+def rainbow(inp):
+    inp = unicode(inp)
+    inp = strip(inp)
+    col = colors.items()
+    out = ""
+    l = len(colors)
+    for i, t in enumerate(inp):
+        out += col[i % l][1] + t
+    return out
+
+@hook.command
+def wrainbow(inp):
+    inp = unicode(inp)
+    col = colors.items()
+    inp = strip(inp).split(' ')
+    out = []
+    l = len(colors)
+    for i, t in enumerate(inp):
+        out.append(col[i % l][1] + t)
+    return ' '.join(out)
+
+@hook.command
+def usa(inp):
+    inp = strip(inp)
+    c = [colors['red'], '\x0300', colors['blue']]
+    l = len(c)
+    out = ''
+    for i, t in enumerate(inp):
+        out += c[i % l] + t
+    return out
 

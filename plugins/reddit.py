@@ -39,7 +39,9 @@ def reddit(inp):
             try: 
                 id_num = int(parts[1]) - 1
             except ValueError:
-                return "Invalid post number."	
+                return "Invalid post number."
+        else:
+            subreddit = parts[0]
     else:
         subreddit = "all"
 

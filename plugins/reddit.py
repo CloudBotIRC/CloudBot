@@ -63,6 +63,11 @@ def reddit(inp):
     rawtime = datetime.fromtimestamp(int(item["created_utc"]))
     item["timesince"] = timesince.timesince(rawtime)
 
+    if item["over_18"]:
+        item["warning"] = " \x02NSFW\x02"
+    else:
+        item["warning"] = ""
+
     return u'\x02{title}\x02 - posted by \x02{author}\x02' \
     ' {timesince} ago - {ups} upvotes, {downs} downvotes -' \
-    ' {link}'.format(**item)
+    ' {link}{warning}'.format(**item)

@@ -1,4 +1,4 @@
-from util import hook
+from util import hook, text
 import hashlib
 
 # basic text tools
@@ -61,3 +61,11 @@ def hash(inp):
     """hash <string> -- Returns hashes of <string>."""
     return ', '.join(x + ": " + getattr(hashlib, x)(inp).hexdigest()
                      for x in ['md5', 'sha1', 'sha256'])
+
+# novelty
+
+@hook.command
+def munge(inp):
+    """munge <text> -- Munges up <text>."""
+    return text.munge(inp)
+

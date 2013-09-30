@@ -3,6 +3,13 @@ import hashlib
 
 # basic text tools
 
+## TODO: make this capitalize sentences correctly
+@hook.command("capitalise")
+@hook.command
+def capitalize(inp):
+    """capitalize <string> -- Capitalizes <string>."""
+    return inp.capitalize()
+
 @hook.command
 def upper(inp):
     """upper <string> -- Convert string to uppercase."""
@@ -17,6 +24,11 @@ def lower(inp):
 def titlecase(inp):
     """title <string> -- Convert string to title case."""
     return inp.title()
+
+@hook.command
+def swapcase(inp):
+    """swapcase <string> -- Swaps the capitalization of <string>."""
+    return inp.swapcase()
 
 
 # encoding

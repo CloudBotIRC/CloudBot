@@ -30,7 +30,7 @@ def reddit(inp):
 
     # clean and split the input
     parts = inp.lower().strip().split()
-
+    id_num = None
 
     # find the requested post number (if any)
     if len(parts) > 1:

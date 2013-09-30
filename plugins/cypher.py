@@ -35,3 +35,9 @@ def decypher(inp):
     passwd = inp.split(" ")[0]
     inp = " ".join(inp.split(" ")[1:])
     return decode(passwd,inp)
+
+
+@hook.command
+def rot13(inp):
+    """rot13 <string> -- Encode <string> with rot13."""
+    return inp.encode('rot13')

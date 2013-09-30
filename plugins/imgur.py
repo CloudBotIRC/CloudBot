@@ -28,7 +28,7 @@ def imgur(inp):
     data = data["data"]["children"]
     random.shuffle(data)
 
-    # filter list to only have 10 imgur links
+    # filter list to only have imgur links
     filtered_posts = [i["data"] for i in data if is_valid(i["data"])]
 
     if not filtered_posts:
@@ -48,21 +48,12 @@ def imgur(inp):
             url = album_api.format(match.group(2))
             images = http.get_json(url, headers=headers)["data"]
 
-            # loop over the images in the gallery and add to the list
+            # loop over the images in the album and add to the list
             for image in images:
                 items.append(image["id"])
 
         elif match.group(2) is not None:
             # post is an image
             items.append(match.group(2))
-
-    #post_data = {
-    #    "ids": items,
-    #    "title": "images from /r/{}/".format(inp)
-    #}
-
-    #album = http.get("https://api.imgur.com/3/album/",  post_data=post_data, get_method="post", headers=headers)
-    #pprint(album)
-
 
     return web.isgd("http://imgur.com/" + ','.join(items))

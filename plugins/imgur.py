@@ -1,23 +1,12 @@
-
-from util import hook, http, text, timesince
+from util import hook, http, web
 import re
 import random
-from pprint import pprint
 
 
-reddit_url = "http://redd.it/{}"
 base_url = "http://reddit.com/r/{}/.json"
-imgur_re = re.compile(r'http://(?:i\.)?imgur\.com/(?:(a)(?:/(\w+))?|(\w+\b(?!/))\.?\w?)')
+imgur_re = re.compile(r'http://(?:i\.)?imgur\.com/(a/)?(\w+\b(?!/))\.?\w?')
 
-image_api = "https://api.imgur.com/3/image/{}.json"
-album_api = "https://api.imgur.com/3/album/{}.json"
-
-def imgur_query(image_id, is_album=False):
-    if is_album:
-        url = album_api.format(image_id)
-    else:
-        url = image_api.format(image_id)
-    return http.get_json(url)
+album_api = "https://api.imgur.com/3/album/{}/images.json"
 
 
 def is_valid(data):
@@ -29,6 +18,7 @@ def is_valid(data):
 
 @hook.command
 def imgur(inp):
+    "imgur <subreddit> -- Gets the first page of imgur images from <subreddit> and returns a link to them."
     try:
         data = http.get_json(base_url.format(inp.strip()),
                              user_agent=http.ua_chrome)
@@ -39,9 +29,9 @@ def imgur(inp):
     random.shuffle(data)
 
     # filter list to only have 10 imgur links
-    filtered_list = [i["data"] for i in data if is_valid(i["data"])][:10]
+    filtered_posts = [i["data"] for i in data if is_valid(i["data"])]
 
-    if not filtered_list:
+    if not filtered_posts:
         return "No images found."
 
     items = []
@@ -50,21 +40,21 @@ def imgur(inp):
     "Authorization": "Client-ID b5d127e6941b07a"
     }
 
-    for item in filtered_list:
-        match = imgur_re.search(item["url"])
-        if match.group(1) == 'a':
+    # loop over the list of posts
+    for post in filtered_posts:
+        match = imgur_re.search(post["url"])
+        if match.group(1) == 'a/':
+            # post is an album
             url = album_api.format(match.group(2))
-            is_album = True
-        elif match.group(3) is not None:
-            url = image_api.format(match.group(3))
-            is_album = False
+            images = http.get_json(url, headers=headers)["data"]
 
-        result = http.get_json(url, headers=headers)["data"]
+            # loop over the images in the gallery and add to the list
+            for image in images:
+                items.append(image["id"])
 
-        if is_album:
-            items.append(result["id"])
-        else:
-            items.append(result["id"])
+        elif match.group(2) is not None:
+            # post is an image
+            items.append(match.group(2))
 
     #post_data = {
     #    "ids": items,
@@ -75,6 +65,4 @@ def imgur(inp):
     #pprint(album)
 
 
-
-    return "http://imgur.com/" + ','.join(items)
-
+    return web.isgd("http://imgur.com/" + ','.join(items))

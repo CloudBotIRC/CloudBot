@@ -30,13 +30,22 @@ def swapcase(inp):
     """swapcase <string> -- Swaps the capitalization of <string>."""
     return inp.swapcase()
 
-
 # encoding
 
 @hook.command
 def rot13(inp):
     """rot13 <string> -- Encode <string> with rot13."""
     return inp.encode('rot13')
+
+@hook.command
+def unescape(inp):
+    """unescape <string> -- Unescapes <string>."""
+    return inp.decode('unicode-escape')
+
+@hook.command
+def escape(inp):
+    """escape <string> -- escapes <string>."""
+    return inp.encode('unicode-escape')
 
 # length
 

@@ -16,12 +16,24 @@ def is_valid(data):
         return False
 
 
-@hook.command
+@hook.command(autohelp=False)
 def imgur(inp):
-    "imgur <subreddit> -- Gets the first page of imgur images from <subreddit> and returns a link to them."
+    "imgur [subreddit] -- Gets the first page of imgur images from [subreddit] and returns a link to them. If [subreddit] is undefined, return any imgur images"
+    if inp:
+        # see if the input ends with "nsfw"
+        show_nsfw = inp.endswith(" nsfw")
+
+        # remove "nsfw" from the input string after checking for it
+        if show_nsfw:
+            inp = inp[:-5].strip().lower()
+
+        url = base_url.format(inp.strip())
+    else:
+        url = "http://www.reddit.com/domain/imgur.com/.json"
+        show_nsfw = False
+
     try:
-        data = http.get_json(base_url.format(inp.strip()),
-                             user_agent=http.ua_chrome)
+        data = http.get_json(url, user_agent=http.ua_chrome)
     except Exception as e:
         return "Error: " + str(e)
 
@@ -42,6 +54,9 @@ def imgur(inp):
 
     # loop over the list of posts
     for post in filtered_posts:
+        if post["over_18"] and not show_nsfw:
+            continue
+
         match = imgur_re.search(post["url"])
         if match.group(1) == 'a/':
             # post is an album
@@ -55,5 +70,8 @@ def imgur(inp):
         elif match.group(2) is not None:
             # post is an image
             items.append(match.group(2))
+
+    if not items:
+        return "No images found (use .imgur <subreddit> nsfw to show explicit content)"
 
     return web.isgd("http://imgur.com/" + ','.join(items))

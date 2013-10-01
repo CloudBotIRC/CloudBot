@@ -2,10 +2,8 @@ import time
 import logging
 import re
 import os
-import sys
 
-import config
-import irc
+from core import config, irc
 
 
 def clean_name(n):

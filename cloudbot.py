@@ -8,7 +8,7 @@ import sys
 import time
 
 # set up enviroment
-sys.path += ['plugins', 'lib', 'core']  # add stuff to the sys.path for easy imports
+sys.path += ['plugins', 'lib']  # add stuff to the sys.path for easy imports
 os.chdir(sys.path[0] or '.')  # do stuff relative to the install directory
 
 print 'CloudBot REFRESH <http://git.io/cloudbotirc>'

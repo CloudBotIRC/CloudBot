@@ -30,18 +30,25 @@ def get_salt(bot):
 
 
 @hook.command
-def encrypt(inp, bot=None, db=None):
+def encrypt(inp, bot=None, db=None, notice=None):
     """encrypt <pass> <string> -- Encrypts <string> with <pass>."""
-    db_init(db)
+    if not db_ready:
+    	db_init(db)
 
-    password = inp.split(" ")[0]
+    split = inp.split(" ")
+
+    if len(split) == 1:
+    	notice(encrypt.__doc__)
+    	return 
+
+    password = split[0]
     salt = get_salt(bot)
     key = PBKDF2(password, salt)
 
     iv = Random.new().read(AES.block_size);
     iv_encoded = base64.b64encode(iv)
 
-    text = " ".join(inp.split(" ")[1:])
+    text = " ".join(split[1:])
     cipher = AES.new(key, AES.MODE_CBC, iv)
     encrypted = cipher.encrypt(pad(text))
     encoded = base64.b64encode(encrypted)
@@ -54,15 +61,22 @@ def encrypt(inp, bot=None, db=None):
 
 
 @hook.command
-def decrypt(inp, bot=None, db=None):
+def decrypt(inp, bot=None, db=None, notice=None):
     """decrypt <pass> <string> -- Decrypts <string> with <pass>."""
-    db_init(db)
+    if not db_ready:
+    	db_init(db)
 
-    password = inp.split(" ")[0]
+    split = inp.split(" ")
+
+    if len(split) == 1:
+    	notice(decrypt.__doc__)
+    	return 
+
+    password = split[0]
     salt = get_salt(bot)
     key = PBKDF2(password, salt)
 
-    text = " ".join(inp.split(" ")[1:])
+    text = " ".join(split[1:])
 
     iv_encoded = db.execute("select iv from encryption where"
                            " encrypted=?", (text,)).fetchone()[0]

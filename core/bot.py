@@ -53,7 +53,8 @@ class Bot(object):
         self.data_dir = os.path.abspath('data/{}'.format(self.name))
         if not os.path.exists(self.data_dir):
             self.logger.debug("Data folder not found, creating.")
-            os.mkdir(os.path.abspath('data'))
+            if not os.path.exists(os.path.abspath('data')):
+                os.mkdir(os.path.abspath('data'))
             os.mkdir(self.data_dir)
             self.logger.debug("Created data folder.")
 

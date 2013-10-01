@@ -1,5 +1,5 @@
-persist
-config
+data
+config.json
 gitflow
 *.db
 *.log

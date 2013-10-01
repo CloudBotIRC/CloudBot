@@ -13,28 +13,33 @@ class Input(dict):
         if chan == conn.nick.lower():  # is a PM
             chan = nick
 
-        def say(msg, chan=chan):
+        def say(msg):
+            """sends a message to the current channel/user"""
             conn.msg(chan, msg)
 
-        def pm(msg, nick=nick):
+        def msg(msg, nick=nick):
+            """sends a message to a specific channel/user"""
             conn.msg(nick, msg)
 
         def reply(msg, chan=chan):
+            """sends a message to the current channel/user with a prefix"""
             if chan == nick:  # PMs don't need prefixes
                 conn.msg(chan, msg)
             else:
                 conn.msg(chan, u'(' + nick + u') ' + msg)
 
         def action(msg, chan=chan):
+            """sends an action to the current channel/user or a specific channel/user"""
             conn.msg(chan, u"\x01{} {}\x01".format("ACTION", msg))
 
-        def notice(msg, nick=nick):
-            conn.cmd('NOTICE', [nick, msg])
+        def notice(msg, chan=chan):
+            """sends a notice to the current channel/user or a specific channel/user"""
+            conn.cmd('NOTICE', [chan, msg])
 
         dict.__init__(self, conn=conn, raw=raw, prefix=prefix, command=command,
                       params=params, nick=nick, user=user, host=host, mask=mask,
                       paraml=paraml, msg=msg, server=conn.server, chan=chan,
-                      notice=notice, say=say, reply=reply, pm=pm, bot=bot,
+                      notice=notice, say=say, reply=reply, msg=msg, bot=bot,
                       action=action, lastparam=paraml[-1])
 
     # make dict keys accessible as attributes

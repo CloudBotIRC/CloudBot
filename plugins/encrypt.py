@@ -8,14 +8,21 @@ import base64
 import json
 import hashlib
 
-BS = 16
+# helper functions to pad and unpad a string to a specified block size
+# <http://stackoverflow.com/questions/12524994/encrypt-decrypt-using-pycrypto-aes-256> 
+BS = AES.block_size
 pad = lambda s: s + (BS - len(s) % BS) * chr(BS - len(s) % BS) 
 unpad = lambda s : s[0:-ord(s[-1])]
 
+# helper functions to encrypt and encode a string with AES and base64
+encode_aes = lambda c, s: base64.b64encode(c.encrypt(pad(s)))
+decode_aes = lambda c, s: unpad(c.decrypt(base64.b64decode(s)))
+
 db_ready = False
 
+
 def db_init(db):
-    """check to see that our db has the the encryption table and return a connection."""
+    """check to see that our db has the the encryption table."""
     db.execute("create table if not exists encryption(encrypted, iv, "
                "primary key(encrypted))")
     db.commit()
@@ -23,6 +30,7 @@ def db_init(db):
 
 
 def get_salt(bot):
+    """generate an encryption salt if none exists, then returns the salt"""
     if not bot.config.get("random_salt", False):
         bot.config["random_salt"] = hashlib.md5(os.urandom(16)).hexdigest()
         json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
@@ -54,8 +62,7 @@ def encrypt(inp, bot=None, db=None, notice=None):
     # create the AES cipher and encrypt/encode the text with it
     text = " ".join(split[1:])
     cipher = AES.new(key, AES.MODE_CBC, iv)
-    encrypted = cipher.encrypt(pad(text))
-    encoded = base64.b64encode(encrypted)
+    encoded = encode_aes(cipher, text)
 
     # store the encoded text and IV in the DB for decoding later
     db.execute("insert or replace into encryption(encrypted, iv)"
@@ -92,4 +99,4 @@ def decrypt(inp, bot=None, db=None, notice=None):
 
     # create AES cipher, decode text, decrypt text, and unpad it
     cipher = AES.new(key, AES.MODE_CBC, iv)
-    return unpad(cipher.decrypt(base64.b64decode(text)))
+    return decode_aes(cipher, text)

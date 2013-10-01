@@ -45,7 +45,7 @@ class Config(dict):
         self.observer = Observer()
         self.observer.schedule(event_handler,
                                path='.',
-                               recursive=True
+                               recursive=False
                                )
         self.observer.start()
 

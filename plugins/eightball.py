@@ -13,9 +13,9 @@ with open("plugins/data/8ball_responses.txt") as f:
 
 
 @hook.command('8ball')
-def eightball(input, me=None):
+def eightball(input, action=None):
     """8ball <question> -- The all knowing magic eight ball,
     in electronic form. Ask and it shall be answered!"""
 
     magic = text.multiword_replace(random.choice(responses), color_codes)
-    me("shakes the magic 8 ball... {}".format(magic))
+    action("shakes the magic 8 ball... {}".format(magic))

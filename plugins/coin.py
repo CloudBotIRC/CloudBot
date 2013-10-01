@@ -3,7 +3,7 @@ import random
 
 
 @hook.command(autohelp=False)
-def coin(inp, me=None):
+def coin(inp, action=None):
     """coin [amount] -- Flips [amount] of coins."""
 
     if inp:
@@ -15,10 +15,10 @@ def coin(inp, me=None):
         amount = 1
 
     if amount == 1:
-        me("flips a coin and gets {}.".format(random.choice(["heads", "tails"])))
+        action("flips a coin and gets {}.".format(random.choice(["heads", "tails"])))
     elif amount == 0:
-        me("makes a coin flipping motion with its hands.")
+        action("makes a coin flipping motion with its hands.")
     else:
         heads = int(random.normalvariate(.5 * amount, (.75 * amount) ** .5))
         tails = amount - heads
-        me("flips {} coins and gets {} heads and {} tails.".format(amount, heads, tails))
+        action("flips {} coins and gets {} heads and {} tails.".format(amount, heads, tails))

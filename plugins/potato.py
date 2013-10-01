@@ -37,7 +37,7 @@ potatoes = ['AC Belmont', 'AC Blue Pride', 'AC Brador', 'AC Chaleur', 'AC Domino
 
 
 @hook.command
-def potato(inp, me=None, input=None):
+def potato(inp, action=None, input=None):
     """potato <user> - Makes <user> a tasty little potato."""
     inp = inp.strip()
 
@@ -50,5 +50,5 @@ def potato(inp, me=None, input=None):
     method = random.choice(['bakes', 'fries', 'boils', 'roasts'])
     side_dish = random.choice(['side salad', 'dollop of sour cream', 'piece of chicken', 'bowl of shredded bacon'])
 
-    me("{} a {} {} {} potato for {} and serves it with a small {}!".format(method, flavor, size, potato_type, inp,
+    action("{} a {} {} {} potato for {} and serves it with a small {}!".format(method, flavor, size, potato_type, inp,
                                                                            side_dish))

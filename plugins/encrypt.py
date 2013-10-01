@@ -33,8 +33,8 @@ def get_salt(bot):
     """generate an encryption salt if none exists, then returns the salt"""
     if not bot.config.get("random_salt", False):
         bot.config["random_salt"] = hashlib.md5(os.urandom(16)).hexdigest()
-        json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
-    return bot.config["random_salt"]
+        bot.config.save_config()
+    return bot.config.get("random_salt")
 
 
 @hook.command

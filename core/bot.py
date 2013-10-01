@@ -5,8 +5,10 @@ import re
 import config
 import irc
 
-# strip all spaces and capitalization from the connection name
-def clean_name(n): return re.sub('[^A-Za-z0-9_]+', '', n.replace(" ", "_"))
+
+def clean_name(n):
+    """strip all spaces and capitalization"""
+    return re.sub('[^A-Za-z0-9_]+', '', n.replace(" ", "_"))
 
 
 class Bot(object):
@@ -23,7 +25,7 @@ class Bot(object):
         self.connect()
 
     def connect(self):
-
+        """connect to all the networks defined in the bot config"""
         for name, conf in self.config['connections'].iteritems():
             # strip all spaces and capitalization from the connection name
             name = clean_name(name)
@@ -39,6 +41,7 @@ class Bot(object):
                 self.logger.debug("({}) Created connection.".format(name))  
 
     def setup(self):
+        """create the logger and config objects"""
         # logging
         self.logger = self.get_logger()
         self.logger.debug("Logging engine started.")
@@ -49,9 +52,11 @@ class Bot(object):
         self.logger.debug("Config loaded.")
 
     def get_config(self):
+        """create and return the config object"""
         return config.Config(self.name)
 
     def get_logger(self):
+        """create and return the logger object"""
         # create logger
         logger = logging.getLogger(self.name)
         logger.setLevel(logging.DEBUG)

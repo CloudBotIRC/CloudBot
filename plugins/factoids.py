@@ -105,7 +105,7 @@ def info(inp, notice=None, db=None):
 
 
 @hook.regex(r'^\? ?(.+)')
-def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
+def factoid(inp, say=None, db=None, bot=None, action=None, conn=None, input=None):
     "?<word> -- Shows what data is associated with <word>."
     try:
         prefix_on = bot.config["plugins"]["factoids"].get("prefix", False)
@@ -141,7 +141,7 @@ def factoid(inp, say=None, db=None, bot=None, me=None, conn=None, input=None):
 
         if result.startswith("<act>"):
             result = result[5:].strip()
-            me(result)
+            action(result)
         elif result.startswith("<url>"):
             url = result[5:].strip()
             try:

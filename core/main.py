@@ -25,7 +25,7 @@ class Input(dict):
             else:
                 conn.msg(chan, u'(' + nick + u') ' + msg)
 
-        def me(msg, chan=chan):
+        def action(msg, chan=chan):
             conn.msg(chan, u"\x01{} {}\x01".format("ACTION", msg))
 
         def notice(msg, nick=nick):
@@ -35,7 +35,7 @@ class Input(dict):
                       params=params, nick=nick, user=user, host=host, mask=mask,
                       paraml=paraml, msg=msg, server=conn.server, chan=chan,
                       notice=notice, say=say, reply=reply, pm=pm, bot=bot,
-                      me=me, lastparam=paraml[-1])
+                      action=action, lastparam=paraml[-1])
 
     # make dict keys accessible as attributes
     def __getattr__(self, key):

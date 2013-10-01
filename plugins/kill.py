@@ -9,7 +9,7 @@ def get_generator(_json, variables):
 
 
 @hook.command
-def kill(inp, me=None, nick=None, conn=None, notice=None):
+def kill(inp, action=None, nick=None, conn=None, notice=None):
     """kill <user> -- Makes the bot kill <user>."""
     target = inp.strip()
 
@@ -29,4 +29,4 @@ def kill(inp, me=None, nick=None, conn=None, notice=None):
         generator = get_generator(f.read(), variables)
 
     # act out the message
-    me(generator.generate_string())
+    action(generator.generate_string())

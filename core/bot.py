@@ -66,17 +66,17 @@ class Bot(object):
 
     def get_config(self):
         """create and return the config object"""
-        return config.Config(self.name, self.logger)
+        return config.Config(self.logger)
 
 
     def get_logger(self):
         """create and return the logger object"""
         # create logger
-        logger = logging.getLogger(self.name)
+        logger = logging.getLogger("cloudbot")
         logger.setLevel(logging.DEBUG)
 
         # add a file handler
-        log_name = "{}.log".format(self.name)
+        log_name = "bot.log"
         fh = logging.FileHandler(log_name)
         fh.setLevel(logging.DEBUG)
 

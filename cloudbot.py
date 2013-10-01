@@ -1,41 +1,32 @@
 #!/usr/bin/env python
+# we import bot as _bot for now, for legacy reasons
+from core import bot as _bot
 
 import os
 import Queue
 import sys
-import time
 import re
 
-sys.path += ['plugins', 'lib']  # add stuff to the sys.path for easy imports
+sys.path += ['plugins', 'lib', 'core']  # add stuff to the sys.path for easy imports
 os.chdir(sys.path[0] or '.')  # do stuff relative to the install directory
-
-
-class Bot(object):
-    pass
 
 print 'CloudBot DEV <http://git.io/cloudbotirc>'
 
 # create new bot object
-bot = Bot()
-bot.vars = {}
-
-# record start time for the uptime command
-bot.start_time = time.time()
+bot = _bot.Bot("cloudbot")
 
 print 'Begin Plugin Loading.'
+print bot.config
 
 # bootstrap the reloader
 eval(compile(open(os.path.join('core', 'reload.py'), 'U').read(),
              os.path.join('core', 'reload.py'), 'exec'))
 reload(init=True)
 
-config()
-if not hasattr(bot, 'config'):
-    exit()
-
 print 'Connecting to IRC...'
 
 bot.conns = {}
+print bot.config
 
 try:
     for name, conf in bot.config['connections'].iteritems():

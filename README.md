@@ -30,7 +30,7 @@ If you use `pip`, you will also need the following packages on linux or `pip` wi
     python distribute_setup.py
     easy_install pip
     
-If you are unable to use pip, there are Windows installers for LXML available for [64 bit](https://pypi.python.org/packages/2.7/l/lxml/lxml-2.3.win-amd64-py2.7.exe) and [32 bit](https://pypi.python.org/packages/2.7/l/lxml/lxml-2.3.win32-py2.7.exe) versions of Python.
+If you need help installing pip on Windows, follow [this guide](http://simpledeveloper.com/how-to-install-easy_install/) and then run `easy_install pip`.
 
 ### Run
 

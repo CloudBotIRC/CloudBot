@@ -205,11 +205,11 @@ class IRC(object):
             self.channels.remove(channel)
 
     def msg(self, target, text):
-        """ makes the bot send a message to a user """
+        """ makes the bot send a PRIVMSG to a target  """
         self.cmd("PRIVMSG", [target, text])
 
     def ctcp(self, target, ctcp_type, text):
-        """ makes the bot send a message to a user """
+        """ makes the bot send a PRIVMSG CTCP to a target """
         text = u"\x01{} {}\x01".format(ctcp_type, target)
         self.cmd("PRIVMSG", [target, text])
 

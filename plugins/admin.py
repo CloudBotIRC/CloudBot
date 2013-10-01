@@ -62,7 +62,7 @@ def deluser(inp, bot=None, notice=None):
                 users.remove(inp[0])
                 removed = 1
                 notice("{} has been removed from the group {}".format(inp[0], v))
-                json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
+                bot.config.save_config()
     if specgroup:
         if removed == 0:
             notice("{} is not in the group {}".format(inp[0], specgroup))
@@ -98,7 +98,7 @@ def adduser(inp, bot=None, notice=None):
     users.append(user)
     notice("{} has been added to the group {}".format(user, targetgroup))
     users.sort()
-    json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
+    bot.config.save_config()
 
 
 @hook.command("quit", autohelp=False, permissions=["botcontrol"])

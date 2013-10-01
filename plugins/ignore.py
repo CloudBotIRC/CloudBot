@@ -51,7 +51,7 @@ def ignore(inp, notice=None, bot=None, config=None):
         notice("{} has been ignored.".format(target))
         ignorelist.append(target)
         ignorelist.sort()
-        json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
+        bot.config.save_config()
     return
 
 
@@ -65,7 +65,7 @@ def unignore(inp, notice=None, bot=None, config=None):
         notice("{} has been unignored.".format(target))
         ignorelist.remove(target)
         ignorelist.sort()
-        json.dump(bot.config, open('config', 'w'), sort_keys=True, indent=2)
+        bot.config.save_config()
     else:
         notice("{} is not ignored.".format(target))
     return

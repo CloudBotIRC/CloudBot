@@ -17,13 +17,13 @@ def decode(txt):
 
 
 def censor(text):
-    text = text.replace('\n', '').replace('\r', '')
-    replacement = '[censored]'
-    if 'censored_strings' in bot.config:
-        if bot.config['censored_strings']:
-            words = map(re.escape, bot.config['censored_strings'])
-            regex = re.compile('({})'.format("|".join(words)))
-            text = regex.sub(replacement, text)
+    #text = text.replace('\n', '').replace('\r', '')
+    #replacement = '[censored]'
+    #if 'censored_strings' in bot.config:
+     #   if bot.config['censored_strings']:
+     #       words = map(re.escape, bot.config['censored_strings'])
+      #      regex = re.compile('({})'.format("|".join(words)))
+       #     text = regex.sub(replacement, text)
     return text
 
 
@@ -153,7 +153,7 @@ class IRC(object):
         self.set_pass(self.conf.get('server_password'))
         self.set_nick(self.nick)
         self.cmd("USER",
-                 [conf.get('user', 'cloudbot'), "3", "*", conf.get('realname',
+                 [self.conf.get('user', 'cloudbot'), "3", "*", self.conf.get('realname',
                                                                    'CloudBot - http://git.io/cloudbot')])
 
     def parse_loop(self):

@@ -1,7 +1,13 @@
 import time
 import logging
+import re
 
 import config
+import irc
+
+
+def clean_name(n): return re.sub('[^A-Za-z0-9_]+', '', n.replace(" ", "_"))
+
 
 class Bot(object):
     def __init__(self, name):
@@ -11,8 +17,25 @@ class Bot(object):
 
         # set up config and logging
         self.setup()
-        print self.config
 
+        # start IRC connections
+        self.connections = {}
+        self.connect()
+
+    def connect(self):
+
+        for name, conf in self.config['connections'].iteritems():
+            # strip all spaces and capitalization from the connection name
+            name = clean_name(name)
+            self.logger.debug("({}) Creating connection.".format(name))
+            self.logger.debug("({}) Server: {}".format(name, conf['server']))
+            if conf.get('ssl'):
+                self.connections[name] = irc.SSLIRC(name, conf['server'], conf['nick'], conf=conf,
+                                     port=conf.get('port', 6667), channels=conf['channels'],
+                                     ignore_certificate_errors=conf.get('ignore_cert', True))
+            else:
+                self.connections[name] = irc.IRC(name, conf['server'], conf['nick'], conf=conf,
+                                    port=conf.get('port', 6667), channels=conf['channels'])
 
     def setup(self):
         # logging
@@ -21,7 +44,7 @@ class Bot(object):
 
         # logging
         self.config = self.get_config()
-        self.config.reload()
+        self.config.load_config()
         self.logger.debug("Config loaded.")
 
     def get_config(self):

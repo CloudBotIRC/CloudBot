@@ -6,6 +6,7 @@ import os
 import Queue
 import sys
 import re
+import time
 
 sys.path += ['plugins', 'lib', 'core']  # add stuff to the sys.path for easy imports
 os.chdir(sys.path[0] or '.')  # do stuff relative to the install directory
@@ -14,36 +15,13 @@ print 'CloudBot DEV <http://git.io/cloudbotirc>'
 
 # create new bot object
 bot = _bot.Bot("cloudbot")
-
-print 'Begin Plugin Loading.'
-print bot.config
+bot.logger.debug("Bot initalized.")
 
 # bootstrap the reloader
 eval(compile(open(os.path.join('core', 'reload.py'), 'U').read(),
              os.path.join('core', 'reload.py'), 'exec'))
 reload(init=True)
 
-print 'Connecting to IRC...'
-
-bot.conns = {}
-print bot.config
-
-try:
-    for name, conf in bot.config['connections'].iteritems():
-        # strip all spaces and capitalization from the connection name
-        name = name.replace(" ", "_")
-        name = re.sub('[^A-Za-z0-9_]+', '', name)
-        print 'Connecting to server: %s' % conf['server']
-        if conf.get('ssl'):
-            bot.conns[name] = SSLIRC(name, conf['server'], conf['nick'], conf=conf,
-                                     port=conf.get('port', 6667), channels=conf['channels'],
-                                     ignore_certificate_errors=conf.get('ignore_cert', True))
-        else:
-            bot.conns[name] = IRC(name, conf['server'], conf['nick'], conf=conf,
-                                  port=conf.get('port', 6667), channels=conf['channels'])
-except Exception as e:
-    print 'ERROR: malformed config file', e
-    sys.exit()
 
 bot.persist_dir = os.path.abspath('persist')
 if not os.path.exists(bot.persist_dir):
@@ -53,13 +31,13 @@ print 'Connection(s) made, starting main loop.'
 
 while True:
     reload()  # these functions only do things
-    config()  # if changes have occured
+      # if changes have occured
 
-    for conn in bot.conns.itervalues():
+    for connection in bot.connections.itervalues():
         try:
-            out = conn.out.get_nowait()
-            main(conn, out)
+            out = connection.out.get_nowait()
+            main(connection, out)
         except Queue.Empty:
             pass
-    while all(conn.out.empty() for conn in bot.conns.itervalues()):
+    while all(connection.out.empty() for connection in bot.connections.itervalues()):
         time.sleep(.1)

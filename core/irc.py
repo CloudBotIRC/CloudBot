@@ -210,8 +210,8 @@ class IRC(object):
 
     def ctcp(self, target, ctcp_type, text):
         """ makes the bot send a PRIVMSG CTCP to a target """
-        text = u"\x01{} {}\x01".format(ctcp_type, target)
-        self.cmd("PRIVMSG", [target, text])
+        out = u"\x01{} {}\x01".format(ctcp_type, text)
+        self.cmd("PRIVMSG", [target, out])
 
 
     def cmd(self, command, params=None):

@@ -87,8 +87,8 @@ class Bot(object):
         # create a formatter and set the formatter for the handler.
         frmt = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
         fh.setFormatter(frmt)
-        simplefrmt = logging.Formatter('[%(levelname)s] %(message)s')
-        sh.setFormatter(simplefrmt)
+        simple_frmt = logging.Formatter('[%(levelname)s] %(message)s')
+        sh.setFormatter(simple_frmt)
 
         # add the Handlers to the logger
         logger.addHandler(fh)

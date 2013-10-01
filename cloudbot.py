@@ -5,31 +5,27 @@ from core import bot as _bot
 import os
 import Queue
 import sys
-import re
 import time
 
-sys.path += ['plugins', 'lib', 'core']  # add stuff to the sys.path for easy imports
+# set up enviroment
+sys.path += ['plugins', 'lib']  # add stuff to the sys.path for easy imports
 os.chdir(sys.path[0] or '.')  # do stuff relative to the install directory
 
-print 'CloudBot DEV <http://git.io/cloudbotirc>'
+print 'CloudBot REFRESH <http://git.io/cloudbotirc>'
 
 # create new bot object
 bot = _bot.Bot("cloudbot")
 bot.logger.debug("Bot initalized.")
 
 # bootstrap the reloader
+bot.logger.debug("Bootstrapping reloader.")
 eval(compile(open(os.path.join('core', 'reload.py'), 'U').read(),
              os.path.join('core', 'reload.py'), 'exec'))
 reload(init=True)
 
-
-
-
-print 'Connection(s) made, starting main loop.'
-
+bot.logger.debug("Starting main loop.")
 while True:
     reload()  # these functions only do things
-      # if changes have occured
 
     for connection in bot.connections.itervalues():
         try:

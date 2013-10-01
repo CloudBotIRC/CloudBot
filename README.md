@@ -34,13 +34,13 @@ If you are unable to use pip, there are Windows installers for LXML available fo
 
 ### Run
 
-Before you run the bot, rename `config.default` to `config` and edit it with your preferred settings.
+Before you run the bot, rename `config.default` to `config.json` and edit it with your preferred settings.
 
 Once you have installed the required dependencies and renamed the config file, you can run the bot! Make sure you are in the correct folder and run the following command:
 
-`python bot.py`
+`python cloudbot.py`
 
-On Windows you can usually just double-click `bot.py` to start the bot, as long as you have Python installed correctly.
+On Windows you can usually just double-click `cloudbot.py` to start the bot, as long as you have Python installed correctly.
 
 ## Getting help with CloudBot
 
@@ -64,9 +64,11 @@ If you think you have found a bug/have a idea/suggestion, please **open a issue*
 
 CloudBot runs on **Python** *2.7.x*. It is currently developed on **Windows** *8* with **Python** *2.7.5*.
 
-It **requires the Python module** lXML.
+It **requires the Python modules** lXML, watchdog and BeautifulSoup4.
 The module `Enchant` is needed for the spellcheck plugin.
 The module `PyDNS` is needed for SRV record lookup in the mcping plugin.
+The module `PyGeoIP` is needed for location lookup in the geoip plugin.
+The module `TweePy` is needed for the twitter plugin.
 
 **Windows** users: Windows compatibility some plugins is **broken** (such as ping), but we do intend to add it. Eventually.
 

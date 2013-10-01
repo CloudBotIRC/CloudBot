@@ -1,47 +1,28 @@
 #!/usr/bin/env python
 
-__author__ = "ClouDev"
-__authors__ = ["Lukeroge", "neersighted"]
-__copyright__ = "Copyright 2012-2013, ClouDev"
-__credits__ = ["thenoodle", "_frozen", "rmmh"]
-__license__ = "GPL v3"
-__version__ = "DEV"
-__maintainer__ = "ClouDev"
-__email__ = "cloudev@neersighted.com"
-__status__ = "Development"
-
 import os
 import Queue
 import sys
 import time
-import platform
 import re
 
-sys.path += ['plugins', 'lib']  # so 'import hook' works without duplication
+sys.path += ['plugins', 'lib']  # add stuff to the sys.path for easy imports
 os.chdir(sys.path[0] or '.')  # do stuff relative to the install directory
 
 
 class Bot(object):
     pass
 
+print 'CloudBot DEV <http://git.io/cloudbotirc>'
 
-print 'CloudBot %s (%s) <http://git.io/cloudbotirc>' % (__version__, __status__)
-
-# print debug info
-opsys = platform.platform()
-python_imp = platform.python_implementation()
-python_ver = platform.python_version()
-architecture = ' '.join(platform.architecture())
-
-print "Operating System: %s, Python " \
-      "Version: %s %s, Architecture: %s" \
-      "" % (opsys, python_imp, python_ver, architecture)
-
+# create new bot object
 bot = Bot()
 bot.vars = {}
+
+# record start time for the uptime command
 bot.start_time = time.time()
 
-print 'Loading plugins...'
+print 'Begin Plugin Loading.'
 
 # bootstrap the reloader
 eval(compile(open(os.path.join('core', 'reload.py'), 'U').read(),

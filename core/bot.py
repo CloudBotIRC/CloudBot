@@ -29,18 +29,23 @@ class Bot(object):
 
     def connect(self):
         """connect to all the networks defined in the bot config"""
-        for name, conf in self.config['connections'].iteritems():
+        for conf in self.config['connections']:
             # strip all spaces and capitalization from the connection name
-            name = clean_name(name)
-            self.logger.debug("({}) Creating connection to {}.".format(name, conf['server']))
-            if conf.get('ssl'):
-                self.connections[name] = irc.SSLIRC(name, conf['server'], conf['nick'], conf=conf,
-                                     port=conf.get('port', 6667), channels=conf['channels'],
-                                     ignore_certificate_errors=conf.get('ignore_cert', True))
+            name = clean_name(conf['name'])
+            nick = conf['nick']
+            server = conf['connection']['server']
+            port = conf['connection'].get('port', 6667)
+
+            self.logger.debug("({}) Creating connection to {}.".format(name, server))
+
+            if conf['connection'].get('ssl'):
+                self.connections[name] = irc.SSLIRC(name, server, nick, conf = conf,
+                                     port = port, channels = conf['channels'],
+                                     ignore_certificate_errors=conf['connection'].get('ignore_cert', True))
                 self.logger.debug("({}) Created SSL connection.".format(name))   
             else:
-                self.connections[name] = irc.IRC(name, conf['server'], conf['nick'], conf=conf,
-                                    port=conf.get('port', 6667), channels=conf['channels'])
+                self.connections[name] = irc.IRC(name, server, nick, conf = conf,
+                                                 port = port, channels = conf['channels'])
                 self.logger.debug("({}) Created connection.".format(name))  
 
     def setup(self):

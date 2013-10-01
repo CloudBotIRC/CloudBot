@@ -3,7 +3,7 @@ from util import hook
 from fnmatch import fnmatch
 
 
-@hook.sieve
+#@hook.sieve
 def ignore_sieve(bot, input, func, type, args):
     """ blocks input from ignored channels/hosts """
     ignorelist = bot.config["plugins"]["ignore"]["ignored"]

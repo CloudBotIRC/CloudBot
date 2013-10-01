@@ -6,20 +6,22 @@ from fnmatch import fnmatch
 
 @hook.sieve
 def sieve_suite(bot, input, func, kind, args):
+    conn = input.conn
     if input.command == 'PRIVMSG' and \
             input.nick.endswith('bot') and args.get('ignorebots', True):
         return None
 
     if kind == "command":
-        if input.trigger in bot.config.get('disabled_commands', []):
+        disabled_commands = conn.conf.get('disabled_plugins', [])
+        if input.trigger in disabled_commands:
             return None
 
     fn = re.match(r'^plugins.(.+).py$', func._filename)
-    disabled = bot.config.get('disabled_plugins', [])
+    disabled = conn.conf.get('disabled_plugins', [])
     if fn and fn.group(1).lower() in disabled:
         return None
 
-    acl = bot.config.get('acls', {}).get(func.__name__)
+    acl = conn.conf.get('acls', {}).get(func.__name__)
     if acl:
         if 'deny-except' in acl:
             allowed_channels = map(unicode.lower, acl['deny-except'])
@@ -35,7 +37,7 @@ def sieve_suite(bot, input, func, kind, args):
         args["permissions"] = ["adminonly"]
 
     if args.get('permissions', False):
-        groups = bot.config.get("permissions", [])
+        groups = conn.conf.get("permissions", [])
 
         allowed_permissions = args.get('permissions', [])
         allowed_groups = []
@@ -57,7 +59,7 @@ def sieve_suite(bot, input, func, kind, args):
         mask = input.mask.lower()
 
         for group in allowed_groups:
-            group_users = bot.config.get("permissions", {}).get(group, [])["users"]
+            group_users = conn.conf.get("permissions", {}).get(group, [])["users"]
             group_users = [_mask.lower() for _mask in group_users]
             for pattern in group_users:
                 if fnmatch(mask, pattern):

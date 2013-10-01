@@ -107,10 +107,6 @@ def info(inp, notice=None, db=None):
 @hook.regex(r'^\? ?(.+)')
 def factoid(inp, message=None, db=None, bot=None, action=None, conn=None, input=None):
     "?<word> -- Shows what data is associated with <word>."
-    try:
-        prefix_on = bot.config["plugins"]["factoids"].get("prefix", False)
-    except KeyError:
-        prefix_on = False
 
     db_init(db)
 
@@ -149,7 +145,4 @@ def factoid(inp, message=None, db=None, bot=None, action=None, conn=None, input=
             except http.HttpError:
                 message("Could not fetch URL.")
         else:
-            if prefix_on:
-                message("\x02[{}]:\x02 {}".format(factoid_id, result))
-            else:
-                message(result)
+            message(result)

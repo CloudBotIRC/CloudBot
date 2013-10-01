@@ -80,10 +80,17 @@ class Bot(object):
         fh = logging.FileHandler(log_name)
         fh.setLevel(logging.DEBUG)
 
+        # stdout handler
+        sh = logging.StreamHandler()
+        sh.setLevel(logging.INFO)
+
         # create a formatter and set the formatter for the handler.
         frmt = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
         fh.setFormatter(frmt)
+        simplefrmt = logging.Formatter('[%(levelname)s] %(message)s')
+        sh.setFormatter(simplefrmt)
 
-        # add the Handler to the logger
+        # add the Handlers to the logger
         logger.addHandler(fh)
+        logger.addHandler(sh)
         return logger

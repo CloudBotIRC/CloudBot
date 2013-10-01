@@ -14,7 +14,7 @@ def get_db_connection(conn, name=''):
     threadid = thread.get_ident()
     if name in threaddbs and threadid in threaddbs[name]:
         return threaddbs[name][threadid]
-    filename = os.path.join(bot.persist_dir, name)
+    filename = os.path.join(bot.data_dir, name)
 
     db = sqlite3.connect(filename, timeout=10)
     if name in threaddbs:

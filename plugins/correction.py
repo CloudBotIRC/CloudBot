@@ -2,7 +2,7 @@ from util import hook
 
 
 @hook.regex(r'^(s|S)/.*/.*/\S*$')
-def correction(inp, say=None, input=None, notice=None, db=None):
+def correction(inp, message=None, input=None, notice=None, db=None):
     splitinput = input.msg.split("/")
     if splitinput[3]:
         nick = splitinput[3]
@@ -20,7 +20,7 @@ def correction(inp, say=None, input=None, notice=None, db=None):
                 message = last_message[1].replace("\x01ACTION ", "/me ").replace("\x01", "")
             else:
                 message = last_message[1]
-            say("{} meant to say: {}".format(nick, message.replace(find, "\x02" + replace + "\x02")))
+            message("{} meant to say: {}".format(nick, message.replace(find, "\x02" + replace + "\x02")))
         else:
             notice("{} can't be found in your last message".format(find))
     else:

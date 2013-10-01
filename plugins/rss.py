@@ -3,7 +3,7 @@ from util import hook, http, web, text
 
 @hook.command("feed")
 @hook.command
-def rss(inp, say=None):
+def rss(inp, message=None):
     """rss <feed> -- Gets the first three items from the RSS feed <feed>."""
     limit = 3
 
@@ -31,10 +31,10 @@ def rss(inp, say=None):
             link = web.isgd(row["link"])
         except (web.ShortenError, http.HTTPError, http.URLError):
             link = row["link"]
-        say(u"{} - {}".format(title, link))
+        message(u"{} - {}".format(title, link))
 
 
 @hook.command(autohelp=False)
-def rb(inp, say=None):
+def rb(inp, message=None):
     """rb -- Shows the latest Craftbukkit recommended build"""
-    rss("bukkit", say)
+    rss("bukkit", message)

@@ -23,9 +23,7 @@ eval(compile(open(os.path.join('core', 'reload.py'), 'U').read(),
 reload(init=True)
 
 
-bot.persist_dir = os.path.abspath('persist')
-if not os.path.exists(bot.persist_dir):
-    os.mkdir(bot.persist_dir)
+
 
 print 'Connection(s) made, starting main loop.'
 

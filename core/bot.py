@@ -1,6 +1,8 @@
 import time
 import logging
 import re
+import os
+import sys
 
 import config
 import irc
@@ -19,6 +21,7 @@ class Bot(object):
 
         # set up config and logging
         self.setup()
+        self.logger.debug("Bot setup completed.")
 
         # start IRC connections
         self.connections = {}
@@ -46,14 +49,25 @@ class Bot(object):
         self.logger = self.get_logger()
         self.logger.debug("Logging engine started.")
 
-        # logging
+        # data folder
+        self.data_dir = os.path.abspath('data/{}'.format(self.name))
+        if not os.path.exists(self.data_dir):
+            self.logger.debug("Data folder not found, creating.")
+            os.mkdir(os.path.abspath('data'))
+            os.mkdir(self.data_dir)
+            self.logger.debug("Created data folder.")
+
+        # config
         self.config = self.get_config()
+        self.logger.debug("Config object created.")
         self.config.load_config()
         self.logger.debug("Config loaded.")
 
+
     def get_config(self):
         """create and return the config object"""
-        return config.Config(self.name)
+        return config.Config(self.name, self.logger)
+
 
     def get_logger(self):
         """create and return the logger object"""

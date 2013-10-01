@@ -93,7 +93,7 @@ def get_log_fd(dir, server, chan):
 def log(paraml, input=None, bot=None):
     timestamp = gmtime(timestamp_format)
 
-    fd = get_log_fd(bot.persist_dir, input.server, 'raw')
+    fd = get_log_fd(bot.data_dir, input.server, 'raw')
     fd.write(timestamp + ' ' + input.raw + '\n')
 
     if input.command == 'QUIT':  # these are temporary fixes until proper
@@ -107,7 +107,7 @@ def log(paraml, input=None, bot=None):
         return
 
     if input.chan:
-        fd = get_log_fd(bot.persist_dir, input.server, input.chan)
+        fd = get_log_fd(bot.data_dir, input.server, input.chan)
         fd.write(timestamp + ' ' + beau + '\n')
 
     print timestamp, input.chan, beau.encode('utf8', 'ignore')

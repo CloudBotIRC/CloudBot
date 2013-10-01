@@ -64,8 +64,6 @@ class Bot(object):
         # config
         self.config = self.get_config()
         self.logger.debug("Config object created.")
-        self.config.load_config()
-        self.logger.debug("Config loaded.")
 
 
     def get_config(self):

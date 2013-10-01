@@ -32,15 +32,16 @@ class Config(dict):
 
         with open(self.path) as f:
             self.update(json.load(f))
-            self.logger.info("Config loaded.")
+            self.logger.info("Config loaded from file.")
 
     def save_config(self):
         json.dump(self, open(self.path, 'w'), sort_keys=True, indent=2)
-        self.logger.info("Config saved.")
+        self.logger.info("Config saved to file.")
 
 
     def watcher(self):
-        event_handler = ConfigReloader(self, patterns=[self.filename])
+        pattern = "*{}".format(self.filename)
+        event_handler = ConfigReloader(self, patterns=[pattern])
         self.observer = Observer()
         self.observer.schedule(event_handler,
                                path='.',
@@ -49,7 +50,6 @@ class Config(dict):
         self.observer.start()
 
  
- 
 class ConfigReloader(Trick):
     def __init__(self, config, *args, **kwargs):
         self.config = config
@@ -57,5 +57,5 @@ class ConfigReloader(Trick):
         Trick.__init__(self, *args, **kwargs)
 
     def on_any_event(self, event):
-        self.logger.info("Reloading config.")
+        self.logger.info("Config changed, triggering reload.")
         self.config.load_config()

@@ -8,8 +8,8 @@ from watchdog.tricks import Trick
 
 
 class Config(dict):
-    def __init__(self, name, logger, *args, **kwargs):
-        self.filename = "{}.config.json".format(name)
+    def __init__(self, logger, *args, **kwargs):
+        self.filename = "config.json"
         self.path = os.path.abspath(self.filename)
         self.logger = logger
         self.update(*args, **kwargs)

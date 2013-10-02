@@ -47,7 +47,6 @@ def sieve_suite(bot, input, func, kind, args):
             # loop over every permission the command allows
             for permission in allowed_permissions:
                 # see if the group has that permission
-                print value
                 if permission in value["perms"]:
                     # if so, add the group name to the allowed_groups list
                     allowed_groups.append(key)
@@ -65,6 +64,7 @@ def sieve_suite(bot, input, func, kind, args):
                 if fnmatch(mask, pattern):
                     return input
 
+        target = input.nick
         input.notice("Sorry, you are not allowed to use this command.")
         return None
 

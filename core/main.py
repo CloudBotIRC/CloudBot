@@ -34,7 +34,7 @@ class Input(dict):
             """sends an ctcp to the current channel/user or a specific channel/user"""
             conn.ctcp(target, ctcp_type, message)
 
-        def notice(message, target=chan):
+        def notice(message, target=user):
             """sends a notice to the current channel/user or a specific channel/user"""
             conn.cmd('NOTICE', [target, message])
 

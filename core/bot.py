@@ -13,6 +13,32 @@ def clean_name(n):
     """strip all spaces and capitalization"""
     return re.sub('[^A-Za-z0-9_]+', '', n.replace(" ", "_"))
 
+def get_logger(self):
+    """create and return a new logger object"""
+    # create logger
+    logger = logging.getLogger("cloudbot")
+    logger.setLevel(logging.DEBUG)
+
+    # add a file handler
+    log_name = "bot.log"
+    fh = logging.FileHandler(log_name)
+    fh.setLevel(logging.DEBUG)
+
+    # stdout handler
+    sh = logging.StreamHandler()
+    sh.setLevel(logging.INFO)
+
+    # create a formatter and set the formatter for the handler.
+    frmt = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
+    fh.setFormatter(frmt)
+    simple_frmt = logging.Formatter('[%(levelname)s] %(message)s')
+    sh.setFormatter(simple_frmt)
+
+    # add the Handlers to the logger
+    logger.addHandler(fh)
+    logger.addHandler(sh)
+    return logger
+
 
 class Bot(object):
     def __init__(self):
@@ -34,35 +60,6 @@ class Bot(object):
         self.loader = loader.PluginLoader(self)
 
 
-    def stop(self, reason=None):
-        """quits all networks and shuts the bot down"""
-        self.logger.info("Stopping bot.")
-        self.running = False
-
-        # wait for the bot loop to stop
-        time.sleep(1)
-        self.config.observer.stop()
-        self.logger.debug("Stopping config reloader.")
-
-        self.loader.stop()
-        self.logger.debug("Stopping plugin loader.")
-
-        for name, connection in self.connections.iteritems():
-            # TODO: end connections properly
-            self.logger.debug("({}) Closing connection.".format(name))
-
-            if reason:
-                connection.cmd("QUIT", [reason])
-            else:
-                connection.cmd("QUIT")
-
-            connection.stop()
-
-        self.logger.debug("Logging engine stopped")
-        logging.shutdown()
-        sys.exit()
-
-
     def loop(self):
         """recieves input from the IRC engine and processes it"""
 
@@ -76,6 +73,24 @@ class Bot(object):
         # if no messages are in the incoming queue, sleep
         while all(connection.parsed_queue.empty() for connection in self.connections.itervalues()):
             time.sleep(.1)
+
+
+    def setup(self):
+        """create the logger and config objects"""
+        # logging
+        self.logger = get_logger()
+        self.logger.debug("Logging engine started.")
+
+        # data folder
+        self.data_dir = os.path.abspath('data')
+        if not os.path.exists(self.data_dir):
+            self.logger.debug("Data folder not found, creating.")
+            os.mkdir(self.data_dir)
+            self.logger.debug("Created data folder.")
+
+        # config
+        self.config = config.Config(self.logger)
+        self.logger.debug("Config object created.")
 
 
     def connect(self):
@@ -97,49 +112,33 @@ class Bot(object):
             else:
                 self.connections[name] = irc.IRC(name, server, nick, conf = conf,
                                                  port = port, channels = conf['channels'])
-                self.logger.debug("({}) Created connection.".format(name))  
+                self.logger.debug("({}) Created connection.".format(name)) 
 
 
-    def setup(self):
-        """create the logger and config objects"""
-        # logging
-        self.logger = self.new_logger()
-        self.logger.debug("Logging engine started.")
+    def stop(self, reason=None):
+        """quits all networks and shuts the bot down"""
+        self.logger.info("Stopping bot.")
+        self.running = False
 
-        # data folder
-        self.data_dir = os.path.abspath('data')
-        if not os.path.exists(self.data_dir):
-            self.logger.debug("Data folder not found, creating.")
-            os.mkdir(self.data_dir)
-            self.logger.debug("Created data folder.")
+        # wait for the bot loop to stop
+        time.sleep(1)
+        self.config.observer.stop()
+        self.logger.debug("Stopping config reloader.")
 
-        # config
-        self.config = config.Config(self.logger)
-        self.logger.debug("Config object created.")
+        self.loader.stop()
+        self.logger.debug("Stopping plugin loader.")
 
+        for name, connection in self.connections.iteritems():
+            self.logger.debug("({}) Closing connection.".format(name))
 
-    def new_logger(self):
-        """create and return a new logger object"""
-        # create logger
-        logger = logging.getLogger("cloudbot")
-        logger.setLevel(logging.DEBUG)
+            if reason:
+                connection.cmd("QUIT", [reason])
+            else:
+                connection.cmd("QUIT")
 
-        # add a file handler
-        log_name = "bot.log"
-        fh = logging.FileHandler(log_name)
-        fh.setLevel(logging.DEBUG)
+            connection.stop()
 
-        # stdout handler
-        sh = logging.StreamHandler()
-        sh.setLevel(logging.INFO)
+        self.logger.debug("Logging engine stopped")
+        logging.shutdown()
+        sys.exit()
 
-        # create a formatter and set the formatter for the handler.
-        frmt = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
-        fh.setFormatter(frmt)
-        simple_frmt = logging.Formatter('[%(levelname)s] %(message)s')
-        sh.setFormatter(simple_frmt)
-
-        # add the Handlers to the logger
-        logger.addHandler(fh)
-        logger.addHandler(sh)
-        return logger

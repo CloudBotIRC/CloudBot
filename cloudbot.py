@@ -8,7 +8,7 @@ import signal
 # set up enviroment
 os.chdir(sys.path[0] or '.')  # do stuff relative to the install directory
 
-print 'CloudBot REFRESH <http://git.io/cloudbotirc>'
+print 'CloudBot2 <http://git.io/cloudbotirc>'
 
 def exit_gracefully(signum, frame):
     cloudbot.stop()
@@ -23,5 +23,3 @@ cloudbot.logger.debug("Bot initalized, starting main loop.")
 
 while cloudbot.running:
     cloudbot.loop()
-
-cloudbot.logger.debug("Stopped main loop.")

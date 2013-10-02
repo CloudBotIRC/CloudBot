@@ -2,8 +2,9 @@ import time
 import logging
 import re
 import os
+import Queue
 
-from core import config, irc, loader
+from core import config, irc, loader, main
 
 
 def clean_name(n):
@@ -26,8 +27,25 @@ class Bot(object):
         self.connect()
 
         # run plugin loader
-        self.logger.debug("Bootstrapping reloader.")
+        self.logger.debug("Starting plugin reloader.")
         loader.reload(self, init=True)
+        self.logger.debug("Plugin reloader started.")
+
+
+    def loop(self):
+        """reloads plugins, then recives input from the IRC engine and processes it"""
+        loader.reload(self)  # TODO: new plugin loader
+
+        for connection in self.connections.itervalues():
+            try:
+                incoming = connection.out.get_nowait()
+                main.main(self, connection, incoming)
+            except Queue.Empty:
+                pass
+
+        # if no messages are in the incoming queue, sleep
+        while all(connection.out.empty() for connection in self.connections.itervalues()):
+            time.sleep(.1)
 
 
     def connect(self):

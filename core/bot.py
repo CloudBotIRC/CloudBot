@@ -13,7 +13,7 @@ def clean_name(n):
     """strip all spaces and capitalization"""
     return re.sub('[^A-Za-z0-9_]+', '', n.replace(" ", "_"))
 
-def get_logger(self):
+def get_logger():
     """create and return a new logger object"""
     # create logger
     logger = logging.getLogger("cloudbot")
@@ -41,6 +41,7 @@ def get_logger(self):
 
 
 class Bot(object):
+
     def __init__(self):
         # basic variables
         self.start_time = time.time()

@@ -2,6 +2,7 @@ import re
 import socket
 import time
 import thread
+import threading
 import Queue
 
 from ssl import wrap_socket, CERT_NONE, CERT_REQUIRED, SSLError
@@ -17,61 +18,43 @@ def decode(txt):
 
 
 def censor(text):
-    #text = text.replace('\n', '').replace('\r', '')
-    #replacement = '[censored]'
-    #if 'censored_strings' in bot.config:
-     #   if bot.config['censored_strings']:
-     #       words = map(re.escape, bot.config['censored_strings'])
-      #      regex = re.compile('({})'.format("|".join(words)))
-       #     text = regex.sub(replacement, text)
     return text
 
 
-class crlf_tcp(object):
-    """Handles tcp connections that consist of utf-8 lines ending with crlf"""
-
-    def __init__(self, host, port, timeout=300):
-        self.ibuffer = ""
-        self.obuffer = ""
-        self.oqueue = Queue.Queue()  # lines to be sent out
-        self.iqueue = Queue.Queue()  # lines that were received
-        self.socket = self.create_socket()
-        self.host = host
-        self.port = port
+class RecieveThread(threading.Thread):
+    """recieves messages from IRC and puts them in the input_queue"""
+    def __init__(self, socket, input_queue, timeout):
+        self.input_buffer = ""
+        self.input_queue = input_queue
+        self.socket = socket
         self.timeout = timeout
-
-    def create_socket(self):
-        return socket.socket(socket.AF_INET, socket.TCP_NODELAY)
-
-    def run(self):
-        self.socket.connect((self.host, self.port))
-        thread.start_new_thread(self.recv_loop, ())
-        thread.start_new_thread(self.send_loop, ())
+        threading.Thread.__init__(self)
 
     def recv_from_socket(self, nbytes):
         return self.socket.recv(nbytes)
 
-    def get_timeout_exception_type(self):
-        return socket.timeout
-
     def handle_receive_exception(self, error, last_timestamp):
+        print error
         if time.time() - last_timestamp > self.timeout:
-            self.iqueue.put(StopIteration)
+            self.input_queue.put(StopIteration)
             self.socket.close()
             return True
         return False
 
-    def recv_loop(self):
+    def get_timeout_exception_type(self):
+        return socket.timeout
+
+    def run(self):
         last_timestamp = time.time()
         while True:
             try:
                 data = self.recv_from_socket(4096)
-                self.ibuffer += data
+                self.input_buffer += data
                 if data:
                     last_timestamp = time.time()
                 else:
                     if time.time() - last_timestamp > self.timeout:
-                        self.iqueue.put(StopIteration)
+                        self.input_queue.put(StopIteration)
                         self.socket.close()
                         return
                     time.sleep(1)
@@ -80,44 +63,123 @@ class crlf_tcp(object):
                     return
                 continue
 
-            while '\r\n' in self.ibuffer:
-                line, self.ibuffer = self.ibuffer.split('\r\n', 1)
-                self.iqueue.put(decode(line))
+            while '\r\n' in self.input_buffer:
+                line, self.input_buffer = self.input_buffer.split('\r\n', 1)
+                self.input_queue.put(decode(line))
 
-    def send_loop(self):
+
+class SendThread(threading.Thread):
+    """sends messages from output_queue to IRC"""
+    def __init__(self, socket, conn_name, output_queue):
+        self.output_buffer = ""
+        self.output_queue = output_queue
+        self.conn_name = conn_name
+        self.socket = socket
+        threading.Thread.__init__(self)
+
+    def run(self):
         while True:
-            line = self.oqueue.get().splitlines()[0][:500]
-            print ">>> %r" % line
-            self.obuffer += line.encode('utf-8', 'replace') + '\r\n'
-            while self.obuffer:
-                sent = self.socket.send(self.obuffer)
-                self.obuffer = self.obuffer[sent:]
+            line = self.output_queue.get().splitlines()[0][:500]
+            print u"sending {}> {}".format(self.conn_name, line)
+            self.output_buffer += line.encode('utf-8', 'replace') + '\r\n'
+            while self.output_buffer:
+                sent = self.socket.send(self.output_buffer)
+                self.output_buffer = self.output_buffer[sent:]
 
 
-class crlf_ssl_tcp(crlf_tcp):
-    """Handles ssl tcp connetions that consist of utf-8 lines ending with crlf"""
+class ParseThread(threading.Thread):
+    """parses messages from input_queue and puts them in parsed_queue"""
+    def __init__(self, input_queue, output_queue, parsed_queue):
+        self.input_queue = input_queue  # lines that were received
+        self.output_queue = output_queue  # lines to be sent out
+        self.parsed_queue = parsed_queue  # lines that have been parsed
+        threading.Thread.__init__(self)
 
-    def __init__(self, host, port, ignore_cert_errors, timeout=300):
-        self.ignore_cert_errors = ignore_cert_errors
-        crlf_tcp.__init__(self, host, port, timeout)
+    def run(self):
+        while True:
+            # get a message from the input queue
+            msg = self.input_queue.get()
+
+            #if msg == StopIteration:
+            #    self.irc.connect()
+            #    continue
+
+            # parse the message
+            if msg.startswith(":"):  # has a prefix
+                prefix, command, params = irc_prefix_rem(msg).groups()
+            else:
+                prefix, command, params = irc_noprefix_rem(msg).groups()
+            nick, user, host = irc_netmask_rem(prefix).groups()
+            mask = nick + "!" + user + "@" + host
+            paramlist = irc_param_ref(params)
+            lastparam = "" 
+            if paramlist:
+                if paramlist[-1].startswith(':'):
+                    paramlist[-1] = paramlist[-1][1:]
+                lastparam = paramlist[-1]
+            # put the parsed message in the response queue
+            self.parsed_queue.put([msg, prefix, command, params, nick, user, host,
+                          mask, paramlist, lastparam])
+            # if the server pings us, pong them back
+            if command == "PING":
+                print paramlist
+                str = "PONG " " ".join(paramlist)
+                self.output_queue.put(str)
+
+
+class Connection(object):
+    
+    def __init__(self, name, host, port, input_queue, output_queue):
+        self.output_queue = output_queue  # lines to be sent out
+        self.input_queue = input_queue  # lines that were received
+        self.socket = self.create_socket()
+        self.conn_name = name
+        self.host = host
+        self.port = port
+        self.timeout = 300
 
     def create_socket(self):
-        return wrap_socket(crlf_tcp.create_socket(self), server_side=False,
-                           cert_reqs=CERT_NONE if self.ignore_cert_errors else
-                           CERT_REQUIRED)
+        return socket.socket(socket.AF_INET, socket.TCP_NODELAY)
 
-    def recv_from_socket(self, nbytes):
-        return self.socket.read(nbytes)
+    def connect(self):
+        self.socket.connect((self.host, self.port))
 
-    def get_timeout_exception_type(self):
-        return SSLError
+        self.recieve_thread = RecieveThread(self.socket, self.input_queue, self.timeout)
+        self.recieve_thread.start()
 
-    def handle_receive_exception(self, error, last_timestamp):
-        # this is terrible
-        if not "timed out" in error.args[0]:
-            raise
-        return crlf_tcp.handle_receive_exception(self, error, last_timestamp)
+        self.send_thread = SendThread(self.socket, self.conn_name, self.output_queue)
+        self.send_thread.start()
 
+    def stop(self):
+        self.recv_thread.stop()
+        self.send_thread.stop()
+        self.socket.disconnect()
+
+
+##class crlf_ssl_tcp(crlf_tcp):
+ #   """Handles ssl tcp connetions that consist of utf-8 lines ending with crlf"""
+
+#    def __init__(self, host, port, ignore_cert_errors, timeout=300):
+ #       self.ignore_cert_errors = ignore_cert_errors
+   #     crlf_tcp.__init__(self, host, port, timeout)
+
+  #  def create_socket(self):
+   #     return wrap_socket(crlf_tcp.create_socket(self), server_side=False,
+      #                    cert_reqs=CERT_NONE if self.ignore_cert_errors else
+     #                      CERT_REQUIRED)
+
+   # def recv_from_socket(self, nbytes):
+    #    return self.socket.read(nbytes)
+
+  #  def get_timeout_exception_type(self):
+    #    return SSLError
+
+  #  def handle_receive_exception(self, error, last_timestamp):
+   #    # this is terrible
+   #     if not "timed out" in error.args[0]:
+    #        raise
+     #   return crlf_tcp.handle_receive_exception(self, error, last_timestamp)
+#
 
 irc_prefix_rem = re.compile(r'(.*?) (.*?) (.*)').match
 irc_noprefix_rem = re.compile(r'()(.*?) (.*)').match
@@ -137,53 +199,36 @@ class IRC(object):
         self.nick = nick
         self.vars = {}
 
-        self.out = Queue.Queue()  # responses from the server are placed here
+        self.parsed_queue = Queue.Queue()  # responses from the server are placed here
         # format: [rawline, prefix, command, params,
         # nick, user, host, paramlist, msg]
-        self.connect()
 
-        thread.start_new_thread(self.parse_loop, ())
+        self.parsed_queue = Queue.Queue()
+        self.input_queue = Queue.Queue()
+        self.output_queue = Queue.Queue()
 
-    def create_connection(self):
-        return crlf_tcp(self.server, self.port)
+        self.connection = Connection(self.name, self.server, self.port,
+                                      self.input_queue, self.output_queue)
+        self.connection.connect()
 
-    def connect(self):
-        self.conn = self.create_connection()
-        thread.start_new_thread(self.conn.run, ())
+        self.parse_thread = ParseThread(self.input_queue, self.output_queue,
+                                        self.parsed_queue)
+        self.parse_thread.start()
+
         self.set_pass(self.conf.get('server_password'))
         self.set_nick(self.nick)
         self.cmd("USER",
                  [self.conf.get('user', 'cloudbot'), "3", "*", self.conf.get('realname',
                                                                    'CloudBot - http://git.io/cloudbot')])
 
-    def parse_loop(self):
-        while True:
-            # get a message from the input queue
-            msg = self.conn.iqueue.get()
+    def stop(self):
+        self.parse_thread.stop()
+        self.parse_thread.stop()
 
-            if msg == StopIteration:
-                self.connect()
-                continue
-
-            # parse the message
-            if msg.startswith(":"):  # has a prefix
-                prefix, command, params = irc_prefix_rem(msg).groups()
-            else:
-                prefix, command, params = irc_noprefix_rem(msg).groups()
-            nick, user, host = irc_netmask_rem(prefix).groups()
-            mask = nick + "!" + user + "@" + host
-            paramlist = irc_param_ref(params)
-            lastparam = ""
-            if paramlist:
-                if paramlist[-1].startswith(':'):
-                    paramlist[-1] = paramlist[-1][1:]
-                lastparam = paramlist[-1]
-            # put the parsed message in the response queue
-            self.out.put([msg, prefix, command, params, nick, user, host,
-                          mask, paramlist, lastparam])
-            # if the server pings us, pong them back
-            if command == "PING":
-                self.cmd("PONG", paramlist)
+    def connect(self):
+        self.conn = self.create_connection()
+        self.conn_thread = thread.start_new_thread(self.conn.run, ())
+           
 
     def set_pass(self, password):
         if password:
@@ -222,7 +267,7 @@ class IRC(object):
             self.send(command)
 
     def send(self, str):
-        self.conn.oqueue.put(str)
+        self.output_queue.put(str)
 
 
 class SSLIRC(IRC):
@@ -232,4 +277,4 @@ class SSLIRC(IRC):
         IRC.__init__(self, name, server, nick, port, channels, conf)
 
     def create_connection(self):
-        return crlf_ssl_tcp(self.server, self.port, self.ignore_cert_errors)
+        return crlf_ssl_tcp(self.name, self.server, self.port, self.ignore_cert_errors)

@@ -2,8 +2,6 @@ import collections
 import glob
 import os
 import re
-import sys
-import Queue
 import traceback
 
 from core import main

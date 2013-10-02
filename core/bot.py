@@ -1,5 +1,6 @@
 import time
 import logging
+import sys
 import re
 import os
 import Queue
@@ -17,6 +18,7 @@ class Bot(object):
         # basic variables
         self.name = name
         self.start_time = time.time()
+        self.running = True
 
         # set up config and logging
         self.setup()
@@ -32,19 +34,44 @@ class Bot(object):
         self.logger.debug("Plugin reloader started.")
 
 
+    def stop(self, reason=None):
+        """quits all networks and shuts the bot down"""
+
+        self.logger.info("Stopping bot.")
+        self.running = False
+        # wait for the bot loop to stop
+        time.sleep(1)
+        self.config.observer.stop()
+        self.logger.debug("Config reloader stopped.")
+
+        for name, connection in self.connections.iteritems():
+            # TODO: end connections properly
+            self.logger.debug("({}) Closing connection.".format(name))
+
+            if reason:
+                connection.cmd("QUIT", [reason])
+            else:
+                connection.cmd("QUIT")
+
+            connection.stop()
+
+        self.logger.debug("Logging engine stopped")
+        logging.shutdown()
+        sys.exit()
+
     def loop(self):
         """reloads plugins, then recives input from the IRC engine and processes it"""
         loader.reload(self)  # TODO: new plugin loader
 
-        for connection in self.connections.itervalues():
+        for conn in self.connections.itervalues():
             try:
-                incoming = connection.out.get_nowait()
-                main.main(self, connection, incoming)
+                incoming = conn.parsed_queue.get_nowait()
+                main.main(self, conn, incoming)
             except Queue.Empty:
                 pass
 
         # if no messages are in the incoming queue, sleep
-        while all(connection.out.empty() for connection in self.connections.itervalues()):
+        while all(connection.parsed_queue.empty() for connection in self.connections.itervalues()):
             time.sleep(.1)
 
 

@@ -103,14 +103,12 @@ def adduser(inp, bot=None, notice=None):
 
 @hook.command("quit", autohelp=False, permissions=["botcontrol"])
 @hook.command(autohelp=False, permissions=["botcontrol"])
-def stop(inp, nick=None, conn=None):
+def stop(inp, bot=None):
     """stop [reason] -- Kills the bot with [reason] as its quit message."""
     if inp:
-        conn.cmd("QUIT", ["Killed by {} ({})".format(nick, inp)])
+        bot.stop(reason=inp)
     else:
-        conn.cmd("QUIT", ["Killed by {}.".format(nick)])
-    time.sleep(5)
-    os.execl("./cloudbot", "cloudbot", "stop")
+        bot.stop()
 
 
 @hook.command(autohelp=False, permissions=["botcontrol"])

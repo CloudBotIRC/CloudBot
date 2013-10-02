@@ -48,6 +48,7 @@ class Config(dict):
                                recursive=False
                                )
         self.observer.start()
+        self.logger.debug("Config reloader started.")
 
  
 class ConfigReloader(Trick):

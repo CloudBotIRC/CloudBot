@@ -7,6 +7,11 @@ import Queue
 
 from ssl import wrap_socket, CERT_NONE, CERT_REQUIRED, SSLError
 
+irc_prefix_rem = re.compile(r'(.*?) (.*?) (.*)').match
+irc_noprefix_rem = re.compile(r'()(.*?) (.*)').match
+irc_netmask_rem = re.compile(r':?([^!@]*)!?([^@]*)@?(.*)').match
+irc_param_ref = re.compile(r'(?:^|(?<= ))(:.*|[^ ]+)').findall
+
 
 def decode(txt):
     for codec in ('utf-8', 'iso-8859-1', 'shift_jis', 'cp1252'):
@@ -68,6 +73,23 @@ class RecieveThread(threading.Thread):
                 self.input_queue.put(decode(line))
 
 
+class SSLRecieveThread(RecieveThread):
+    def __init__(self, socket, input_queue, timeout):
+        RecieveThread.Thread.__init__(self, socket, input_queue, timeout)
+
+    def recv_from_socket(self, nbytes):
+        return self.socket.read(nbytes)
+
+    def get_timeout_exception_type(self):
+        return SSLError
+
+    def handle_receive_exception(self, error, last_timestamp):
+       # this is terrible
+        if not "timed out" in error.args[0]:
+            raise
+        return RecieveThread.handle_receive_exception(self, error, last_timestamp)
+
+
 class SendThread(threading.Thread):
     """sends messages from output_queue to IRC"""
     def __init__(self, socket, conn_name, output_queue):
@@ -80,7 +102,7 @@ class SendThread(threading.Thread):
     def run(self):
         while True:
             line = self.output_queue.get().splitlines()[0][:500]
-            print u"sending {}> {}".format(self.conn_name, line)
+            print u"{}> {}".format(self.conn_name, line)
             self.output_buffer += line.encode('utf-8', 'replace') + '\r\n'
             while self.output_buffer:
                 sent = self.socket.send(self.output_buffer)
@@ -122,13 +144,12 @@ class ParseThread(threading.Thread):
                           mask, paramlist, lastparam])
             # if the server pings us, pong them back
             if command == "PING":
-                print paramlist
-                str = "PONG " " ".join(paramlist)
+                str = "PONG :" + paramlist[0]
                 self.output_queue.put(str)
 
 
 class Connection(object):
-    
+    """handles an IRC connection"""
     def __init__(self, name, host, port, input_queue, output_queue):
         self.output_queue = output_queue  # lines to be sent out
         self.input_queue = input_queue  # lines that were received
@@ -151,40 +172,22 @@ class Connection(object):
         self.send_thread.start()
 
     def stop(self):
-        self.recv_thread.stop()
+        self.recieve_thread.stop()
         self.send_thread.stop()
         self.socket.disconnect()
 
 
-##class crlf_ssl_tcp(crlf_tcp):
- #   """Handles ssl tcp connetions that consist of utf-8 lines ending with crlf"""
+class SSLConnection(Connection):
+    """handles a SSL IRC connection"""
 
-#    def __init__(self, host, port, ignore_cert_errors, timeout=300):
- #       self.ignore_cert_errors = ignore_cert_errors
-   #     crlf_tcp.__init__(self, host, port, timeout)
+    def __init__(self, name, host, port, input_queue, output_queue, ignore_cert_errors):
+        self.ignore_cert_errors = ignore_cert_errors
+        Connection.__init__(self, name, host, port, input_queue, output_queue)
 
-  #  def create_socket(self):
-   #     return wrap_socket(crlf_tcp.create_socket(self), server_side=False,
-      #                    cert_reqs=CERT_NONE if self.ignore_cert_errors else
-     #                      CERT_REQUIRED)
-
-   # def recv_from_socket(self, nbytes):
-    #    return self.socket.read(nbytes)
-
-  #  def get_timeout_exception_type(self):
-    #    return SSLError
-
-  #  def handle_receive_exception(self, error, last_timestamp):
-   #    # this is terrible
-   #     if not "timed out" in error.args[0]:
-    #        raise
-     #   return crlf_tcp.handle_receive_exception(self, error, last_timestamp)
-#
-
-irc_prefix_rem = re.compile(r'(.*?) (.*?) (.*)').match
-irc_noprefix_rem = re.compile(r'()(.*?) (.*)').match
-irc_netmask_rem = re.compile(r':?([^!@]*)!?([^@]*)@?(.*)').match
-irc_param_ref = re.compile(r'(?:^|(?<= ))(:.*|[^ ]+)').findall
+    def create_socket(self):
+        return wrap_socket(Connection.create_socket(self), server_side=False,
+                          cert_reqs=CERT_NONE if self.ignore_cert_errors else
+                           CERT_REQUIRED)
 
 
 class IRC(object):
@@ -211,15 +214,16 @@ class IRC(object):
                                       self.input_queue, self.output_queue)
         self.connection.connect()
 
-        self.parse_thread = ParseThread(self.input_queue, self.output_queue,
-                                        self.parsed_queue)
-        self.parse_thread.start()
-
         self.set_pass(self.conf.get('server_password'))
         self.set_nick(self.nick)
         self.cmd("USER",
                  [self.conf.get('user', 'cloudbot'), "3", "*", self.conf.get('realname',
                                                                    'CloudBot - http://git.io/cloudbot')])
+
+        self.parse_thread = ParseThread(self.input_queue, self.output_queue,
+                                        self.parsed_queue)
+        self.parse_thread.start()
+
 
     def stop(self):
         self.parse_thread.stop()

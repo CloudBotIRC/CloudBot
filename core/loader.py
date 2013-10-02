@@ -34,7 +34,7 @@ class PluginLoader(object):
         self.path = os.path.abspath("plugins")
         self.bot = bot
 
-        self.event_handler = EventHandler(self, patterns=["*.py"])
+        self.event_handler = PluginEventHandler(self, patterns=["*.py"])
         self.observer.schedule(self.event_handler, self.path, recursive=False)
         self.observer.start()
 
@@ -80,7 +80,8 @@ class PluginLoader(object):
 
                 for type, data in obj._hook:
                     self.bot.plugins[type] += [data]
-                    self.bot.logger.info("Loaded plugin: {} ({})".format(format_plug(data), type))
+                    if not loaded_all:
+                        self.bot.logger.info("Loaded plugin: {} ({})".format(format_plug(data), type))
 
         if not loaded_all:
             self.rebuild()
@@ -119,7 +120,7 @@ class PluginLoader(object):
                 self.bot.events[event].append((func, args))
 
 
-class EventHandler(Trick):
+class PluginEventHandler(Trick):
     def __init__(self, loader, *args, **kwargs):
         self.loader = loader
         Trick.__init__(self, *args, **kwargs)

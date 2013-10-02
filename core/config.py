@@ -14,10 +14,10 @@ class Config(dict):
         self.logger = logger
         self.update(*args, **kwargs)
 
-        # load self
+        # populate self with config data
         self.load_config()
 
-        # start reloader
+        # start watcher
         self.watcher()
 
     def load_config(self):
@@ -40,6 +40,7 @@ class Config(dict):
 
 
     def watcher(self):
+        self.logger.debug("Starting config reloader.")
         pattern = "*{}".format(self.filename)
         event_handler = ConfigReloader(self, patterns=[pattern])
         self.observer = Observer()

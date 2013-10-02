@@ -4,8 +4,9 @@ import sys
 import re
 import os
 import Queue
+import collections
 
-from core import config, irc, loader, main
+from core import config, irc, main, loader
 
 
 def clean_name(n):
@@ -14,9 +15,8 @@ def clean_name(n):
 
 
 class Bot(object):
-    def __init__(self, name):
+    def __init__(self):
         # basic variables
-        self.name = name
         self.start_time = time.time()
         self.running = True
 
@@ -29,20 +29,23 @@ class Bot(object):
         self.connect()
 
         # run plugin loader
-        self.logger.debug("Starting plugin reloader.")
-        loader.reload(self, init=True)
-        self.logger.debug("Plugin reloader started.")
+        self.plugins = collections.defaultdict(list)
+        self.threads = {}
+        self.loader = loader.PluginLoader(self)
 
 
     def stop(self, reason=None):
         """quits all networks and shuts the bot down"""
-
         self.logger.info("Stopping bot.")
         self.running = False
+
         # wait for the bot loop to stop
         time.sleep(1)
         self.config.observer.stop()
-        self.logger.debug("Config reloader stopped.")
+        self.logger.debug("Stopping config reloader.")
+
+        self.loader.stop()
+        self.logger.debug("Stopping plugin loader.")
 
         for name, connection in self.connections.iteritems():
             # TODO: end connections properly
@@ -59,9 +62,9 @@ class Bot(object):
         logging.shutdown()
         sys.exit()
 
+
     def loop(self):
-        """reloads plugins, then recives input from the IRC engine and processes it"""
-        loader.reload(self)  # TODO: new plugin loader
+        """recieves input from the IRC engine and processes it"""
 
         for conn in self.connections.itervalues():
             try:
@@ -96,10 +99,11 @@ class Bot(object):
                                                  port = port, channels = conf['channels'])
                 self.logger.debug("({}) Created connection.".format(name))  
 
+
     def setup(self):
         """create the logger and config objects"""
         # logging
-        self.logger = self.get_logger()
+        self.logger = self.new_logger()
         self.logger.debug("Logging engine started.")
 
         # data folder
@@ -110,17 +114,12 @@ class Bot(object):
             self.logger.debug("Created data folder.")
 
         # config
-        self.config = self.get_config()
+        self.config = config.Config(self.logger)
         self.logger.debug("Config object created.")
 
 
-    def get_config(self):
-        """create and return the config object"""
-        return config.Config(self.logger)
-
-
-    def get_logger(self):
-        """create and return the logger object"""
+    def new_logger(self):
+        """create and return a new logger object"""
         # create logger
         logger = logging.getLogger("cloudbot")
         logger.setLevel(logging.DEBUG)

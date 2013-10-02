@@ -33,6 +33,7 @@ class RecieveThread(threading.Thread):
         self.input_queue = input_queue
         self.socket = socket
         self.timeout = timeout
+
         threading.Thread.__init__(self)
 
     def recv_from_socket(self, nbytes):
@@ -97,12 +98,14 @@ class SendThread(threading.Thread):
         self.output_queue = output_queue
         self.conn_name = conn_name
         self.socket = socket
+
+        self.shutdown = False
         threading.Thread.__init__(self)
 
     def run(self):
-        while True:
+        while not self.shutdown:
             line = self.output_queue.get().splitlines()[0][:500]
-            print u"{}> {}".format(self.conn_name, line)
+            print u"[{}]> {}".format(self.conn_name.upper(), line)
             self.output_buffer += line.encode('utf-8', 'replace') + '\r\n'
             while self.output_buffer:
                 sent = self.socket.send(self.output_buffer)
@@ -115,6 +118,7 @@ class ParseThread(threading.Thread):
         self.input_queue = input_queue  # lines that were received
         self.output_queue = output_queue  # lines to be sent out
         self.parsed_queue = parsed_queue  # lines that have been parsed
+
         threading.Thread.__init__(self)
 
     def run(self):
@@ -166,15 +170,17 @@ class Connection(object):
         self.socket.connect((self.host, self.port))
 
         self.recieve_thread = RecieveThread(self.socket, self.input_queue, self.timeout)
+        self.recieve_thread.daemon = True
         self.recieve_thread.start()
 
         self.send_thread = SendThread(self.socket, self.conn_name, self.output_queue)
+        self.send_thread.daemon = True
         self.send_thread.start()
 
     def stop(self):
-        self.recieve_thread.stop()
-        self.send_thread.stop()
-        self.socket.disconnect()
+        self.send_thread.shutdown = True
+        time.sleep(.1)
+        self.socket.close()
 
 
 class SSLConnection(Connection):
@@ -222,17 +228,12 @@ class IRC(object):
 
         self.parse_thread = ParseThread(self.input_queue, self.output_queue,
                                         self.parsed_queue)
+        self.parse_thread.daemon = True
         self.parse_thread.start()
 
 
     def stop(self):
-        self.parse_thread.stop()
-        self.parse_thread.stop()
-
-    def connect(self):
-        self.conn = self.create_connection()
-        self.conn_thread = thread.start_new_thread(self.conn.run, ())
-           
+        self.connection.stop()
 
     def set_pass(self, password):
         if password:

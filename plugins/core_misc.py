@@ -20,6 +20,7 @@ def invite(paraml, conn=None):
 # Identify to NickServ (or other service)
 @hook.event('004')
 def onjoin(paraml, conn=None, bot=None):
+    bot.logger.info("ONJOIN hook triggered.")
     nickserv = conn.conf.get('nickserv')
     if nickserv:
         nickserv_password = nickserv.get('nickserv_password', '')
@@ -36,17 +37,19 @@ def onjoin(paraml, conn=None, bot=None):
             bot.config['censored_strings'].append(nickserv_password)
             time.sleep(1)
 
-# Set bot modes
+    # Set bot modes
     mode = conn.conf.get('mode')
     if mode:
+        bot.logger.info('Setting bot mode: "{}"'.format(mode))
         conn.cmd('MODE', [conn.nick, mode])
 
-# Join config-defined channels
+    # Join config-defined channels
+    bot.logger.info('Joining channels.')
     for channel in conn.channels:
         conn.join(channel)
         time.sleep(1)
 
-    print "Bot ready."
+    bot.logger.info("ONJOIN hook completed. Bot ready.")
 
 
 @hook.event("KICK")
@@ -60,12 +63,12 @@ def onkick(paraml, conn=None, chan=None):
 
 
 @hook.event("NICK")
-def onnick(paraml, conn=None, raw=None):
+def onnick(paraml, bot=None, conn=None, raw=None):
     old_nick = nick_re.search(raw).group(1)
     new_nick = str(paraml[0])
     if old_nick == conn.nick:
         conn.nick = new_nick
-        print "Bot nick changed from '{}' to '{}'.".format(old_nick, new_nick)
+        bot.logger.info("Bot nick changed from '{}' to '{}'.".format(old_nick, new_nick))
 
 
 @hook.singlethread

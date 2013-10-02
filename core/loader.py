@@ -1,17 +1,13 @@
-import collections
-import glob
 import os
 import re
+import glob
+import collections
 import traceback
 
+from watchdog.observers import Observer
+from watchdog.tricks import Trick
+
 from core import main
-
-
-if 'mtimes' not in globals():
-    mtimes = {}
-
-if 'lastfiles' not in globals():
-    lastfiles = set()
 
 
 def make_signature(f):
@@ -32,108 +28,112 @@ def format_plug(plug, kind='', lpad=0):
     return out
 
 
-def reload(bot, init=False):
-    changed = False
+class PluginLoader(object):
+    def __init__(self, bot):
+        self.observer = Observer()
+        self.path = os.path.abspath("plugins")
+        self.bot = bot
 
-    if init:
-        bot.plugins = collections.defaultdict(list)
-        bot.threads = {}
+        self.event_handler = EventHandler(self, patterns=["*.py"])
+        self.observer.schedule(self.event_handler, self.path, recursive=False)
+        self.observer.start()
 
-    fileset = set(glob.glob(os.path.join('plugins', '*.py')))
+        self.load_all()
 
-    # remove deleted/moved plugins
-    for name, data in bot.plugins.iteritems():
-        bot.plugins[name] = [x for x in data if x[0]._filename in fileset]
 
-    for filename in list(mtimes):
-        if filename not in fileset and filename not in core_fileset:
-            mtimes.pop(filename)
+    def stop(self):
+        self.observer.stop()
 
-    for func, handler in list(bot.threads.iteritems()):
-        if func._filename not in fileset:
-            main.handler.stop()
-            del bot.threads[func]
 
-    # compile new plugins
-    for filename in fileset:
-        mtime = os.stat(filename).st_mtime
-        if mtime != mtimes.get(filename):
-            mtimes[filename] = mtime
+    def load_all(self):
+        files = set(glob.glob(os.path.join(self.path, '*.py')))
+        for f in files:
+            self.load_file(f, loaded_all=True)
+        self.rebuild()
 
-            changed = True
 
-            try:
-                code = compile(open(filename, 'U').read(), filename, 'exec')
-                namespace = {}
-                eval(code, namespace)
-            except Exception:
-                traceback.print_exc()
-                continue
+    def load_file(self, path, loaded_all=False):
+        filename = os.path.basename(path)
 
-            # remove plugins already loaded from this filename
-            for name, data in bot.plugins.iteritems():
-                bot.plugins[name] = [x for x in data
-                                   if x[0]._filename != filename]
+        try:
+            code = compile(open(path, 'U').read(), filename, 'exec')
+            namespace = {}
+            eval(code, namespace)
+        except Exception:
+            traceback.print_exc()
+            return
 
-            for func, handler in list(bot.threads.iteritems()):
-                if func._filename == filename:
-                    handler.stop()
-                    del bot.threads[func]
+        # remove plugins already loaded from this filename
+        for name, data in self.bot.plugins.iteritems():
+            self.bot.plugins[name] = [x for x in data
+                                if x[0]._filename != filename]
 
-            for obj in namespace.itervalues():
-                if hasattr(obj, '_hook'):  # check for magic
-                    if obj._thread:
-                        bot.threads[obj] = main.Handler(bot, obj)
+        for func, handler in list(self.bot.threads.iteritems()):
+            if func._filename == filename:
+                handler.stop()
+                del self.bot.threads[func]
 
-                    for type, data in obj._hook:
-                        bot.plugins[type] += [data]
+        for obj in namespace.itervalues():
+            if hasattr(obj, '_hook'):  # check for magic
+                if obj._thread:
+                    self.bot.threads[obj] = main.Handler(self.bot, obj)
 
-                        if not init:
-                            print '### new plugin (type: %s) loaded:' % \
-                                  type, format_plug(data)
+                for type, data in obj._hook:
+                    self.bot.plugins[type] += [data]
+                    self.bot.logger.info("Loaded plugin: {} ({})".format(format_plug(data), type))
 
-    if changed:
-        bot.commands = {}
-        for plug in bot.plugins['command']:
+        if not loaded_all:
+            self.rebuild()
+
+
+    def unload_file(self, path):
+        filename = os.path.basename(path)
+        self.bot.logger.info("Unloading plugins from: {}".format(filename))
+
+        for plugin_type, plugins in self.bot.plugins.iteritems():
+            self.bot.plugins[plugin_type] = [x for x in plugins if x[0]._filename != filename]
+
+        for func, handler in list(self.bot.threads.iteritems()):
+            if func._filename == filename:
+                main.handler.stop()
+                del self.bot.threads[func]
+
+
+    def rebuild(self):
+        self.bot.commands = {}
+        for plug in self.bot.plugins['command']:
             name = plug[1]['name'].lower()
             if not re.match(r'^\w+$', name):
                 print '### ERROR: invalid command name "{}" ({})'.format(name, format_plug(plug))
                 continue
-            if name in bot.commands:
+            if name in self.bot.commands:
                 print "### ERROR: command '{}' already registered ({}, {})".format(name,
-                                                                                   format_plug(bot.commands[name]),
+                                                                                   format_plug(self.bot.commands[name]),
                                                                                    format_plug(plug))
                 continue
-            bot.commands[name] = plug
+            self.bot.commands[name] = plug
 
-        bot.events = collections.defaultdict(list)
-        for func, args in bot.plugins['event']:
+        self.bot.events = collections.defaultdict(list)
+        for func, args in self.bot.plugins['event']:
             for event in args['events']:
-                bot.events[event].append((func, args))
+                self.bot.events[event].append((func, args))
 
-    if init:
-        print '  plugin listing:'
 
-        if bot.commands:
-            # hack to make commands with multiple aliases
-            # print nicely
+class EventHandler(Trick):
+    def __init__(self, loader, *args, **kwargs):
+        self.loader = loader
+        Trick.__init__(self, *args, **kwargs)
 
-            print '    command:'
-            commands = collections.defaultdict(list)
 
-            for name, (func, args) in bot.commands.iteritems():
-                commands[make_signature(func)].append(name)
+    def on_created(self, event):
+        self.loader.load_file(event.src_path)
 
-            for sig, names in sorted(commands.iteritems()):
-                names.sort(key=lambda x: (-len(x), x))  # long names first
-                out = ' ' * 6 + '%s:%s:%s' % sig
-                out += ' ' * (50 - len(out)) + ', '.join(names)
-                print out
+    def on_deleted(self, event):
+        self.loader.unload_file(event.src_path)
 
-        for kind, plugs in sorted(bot.plugins.iteritems()):
-            if kind == 'command':
-                continue
-            print '    {}:'.format(kind)
-            for plug in plugs:
-                print format_plug(plug, kind=kind, lpad=6)
-        print
+    def on_modified(self, event):
+        self.loader.load_file(event.src_path)
+
+    def on_moved(self, event):
+        self.loader.unload_file(event.src_path)
+        self.loader.load_file(event.dest_path)

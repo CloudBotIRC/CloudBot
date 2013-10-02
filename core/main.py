@@ -176,7 +176,7 @@ def main(bot, conn, out):
             command = match_command(bot, trigger)
 
             if isinstance(command, list):  # multiple potential matches
-                input = Input(conn, *out)
+                input = Input(bot, conn, *out)
                 input.notice("Did you mean {} or {}?".format
                              (', '.join(command[:-1]), command[-1]))
             elif command in bot.commands:
@@ -192,7 +192,7 @@ def main(bot, conn, out):
         for func, args in bot.plugins['regex']:
             m = args['re'].search(inp.lastparam)
             if m:
-                input = Input(conn, *out)
+                input = Input(bot, conn, *out)
                 input.inp = m
 
                 dispatch(input, "regex", func, args)

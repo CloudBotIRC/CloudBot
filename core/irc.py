@@ -1,7 +1,6 @@
 import re
 import socket
 import time
-import thread
 import threading
 import Queue
 

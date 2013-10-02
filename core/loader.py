@@ -3,7 +3,10 @@ import glob
 import os
 import re
 import sys
+import Queue
 import traceback
+
+from core import main
 
 
 if 'mtimes' not in globals():
@@ -31,40 +34,18 @@ def format_plug(plug, kind='', lpad=0):
     return out
 
 
-def reload(init=False):
+def reload(bot, init=False):
     changed = False
 
     if init:
-        bot.plugs = collections.defaultdict(list)
+        bot.plugins = collections.defaultdict(list)
         bot.threads = {}
-
-    core_fileset = set(glob.glob(os.path.join("core", "*.py")))
-
-    for filename in core_fileset:
-        mtime = os.stat(filename).st_mtime
-        if mtime != mtimes.get(filename):
-            mtimes[filename] = mtime
-
-            changed = True
-
-            try:
-                eval(compile(open(filename, 'U').read(), filename, 'exec'),
-                     globals())
-            except Exception:
-                traceback.print_exc()
-                if init:        # stop if there's an error (syntax?) in a core
-                    sys.exit()  # script on startup
-                continue
-
-            if filename == os.path.join('core', 'reload.py'):
-                reload(init=init)
-                return
 
     fileset = set(glob.glob(os.path.join('plugins', '*.py')))
 
     # remove deleted/moved plugins
-    for name, data in bot.plugs.iteritems():
-        bot.plugs[name] = [x for x in data if x[0]._filename in fileset]
+    for name, data in bot.plugins.iteritems():
+        bot.plugins[name] = [x for x in data if x[0]._filename in fileset]
 
     for filename in list(mtimes):
         if filename not in fileset and filename not in core_fileset:
@@ -72,7 +53,7 @@ def reload(init=False):
 
     for func, handler in list(bot.threads.iteritems()):
         if func._filename not in fileset:
-            handler.stop()
+            main.handler.stop()
             del bot.threads[func]
 
     # compile new plugins
@@ -92,8 +73,8 @@ def reload(init=False):
                 continue
 
             # remove plugins already loaded from this filename
-            for name, data in bot.plugs.iteritems():
-                bot.plugs[name] = [x for x in data
+            for name, data in bot.plugins.iteritems():
+                bot.plugins[name] = [x for x in data
                                    if x[0]._filename != filename]
 
             for func, handler in list(bot.threads.iteritems()):
@@ -104,10 +85,10 @@ def reload(init=False):
             for obj in namespace.itervalues():
                 if hasattr(obj, '_hook'):  # check for magic
                     if obj._thread:
-                        bot.threads[obj] = Handler(obj)
+                        bot.threads[obj] = main.Handler(bot, obj)
 
                     for type, data in obj._hook:
-                        bot.plugs[type] += [data]
+                        bot.plugins[type] += [data]
 
                         if not init:
                             print '### new plugin (type: %s) loaded:' % \
@@ -115,7 +96,7 @@ def reload(init=False):
 
     if changed:
         bot.commands = {}
-        for plug in bot.plugs['command']:
+        for plug in bot.plugins['command']:
             name = plug[1]['name'].lower()
             if not re.match(r'^\w+$', name):
                 print '### ERROR: invalid command name "{}" ({})'.format(name, format_plug(plug))
@@ -128,7 +109,7 @@ def reload(init=False):
             bot.commands[name] = plug
 
         bot.events = collections.defaultdict(list)
-        for func, args in bot.plugs['event']:
+        for func, args in bot.plugins['event']:
             for event in args['events']:
                 bot.events[event].append((func, args))
 
@@ -151,7 +132,7 @@ def reload(init=False):
                 out += ' ' * (50 - len(out)) + ', '.join(names)
                 print out
 
-        for kind, plugs in sorted(bot.plugs.iteritems()):
+        for kind, plugs in sorted(bot.plugins.iteritems()):
             if kind == 'command':
                 continue
             print '    {}:'.format(kind)

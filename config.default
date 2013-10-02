@@ -9,7 +9,7 @@
         "ssl": false,
         "ignore_cert": true
       },
-      "nick": "MyCloudBot",
+      "nick": "MyCloueqerdBot",
       "user": "cloudbot",
       "real_name": "CloudBot - http://git.io/cloudbotirc",
       "channels": ["#cloudbot", "#cloudbot2"],
@@ -52,5 +52,6 @@
     "rdio_key": "",
     "rdio_secret": "",
     "steam_key": ""
-  }
+  },
+  "disabled_plugins": []
 }

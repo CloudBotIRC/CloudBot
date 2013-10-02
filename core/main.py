@@ -1,12 +1,14 @@
 import thread
 import traceback
+import Queue
+import re
 
 
 thread.stack_size(1024 * 512)  # reduce vm size
 
 
 class Input(dict):
-    def __init__(self, conn, raw, prefix, command, params,
+    def __init__(self, bot, conn, raw, prefix, command, params,
                  nick, user, host, mask, paraml, msg):
 
         chan = paraml[0].lower()
@@ -84,8 +86,9 @@ def do_sieve(sieve, bot, input, func, type, args):
 class Handler(object):
     """Runs plugins in their own threads (ensures order)"""
 
-    def __init__(self, func):
+    def __init__(self, func, bot):
         self.func = func
+        self.bot = bot
         self.input_queue = Queue.Queue()
         thread.start_new_thread(self.start, ())
 
@@ -101,7 +104,7 @@ class Handler(object):
             if uses_db:
                 db = db_conns.get(input.conn)
                 if db is None:
-                    db = bot.get_db_connection(input.conn)
+                    db = self.bot.get_db_connection(input.conn)
                     db_conns[input.conn] = db
                 input.db = db
 
@@ -119,8 +122,8 @@ class Handler(object):
         self.input_queue.put(value)
 
 
-def dispatch(input, kind, func, args, autohelp=False):
-    for sieve, in bot.plugs['sieve']:
+def dispatch(bot, input, kind, func, args, autohelp=False):
+    for sieve, in bot.plugins['sieve']:
         input = do_sieve(sieve, bot, input, func, kind, args)
         if input is None:
             return
@@ -135,7 +138,7 @@ def dispatch(input, kind, func, args, autohelp=False):
         thread.start_new_thread(run, (func, input))
 
 
-def match_command(command):
+def match_command(bot, command):
     commands = list(bot.commands)
 
     # do some fuzzy matching
@@ -148,13 +151,13 @@ def match_command(command):
     return command
 
 
-def main(conn, out):
-    inp = Input(conn, *out)
+def main(bot, conn, out):
+    inp = Input(bot, conn, *out)
     command_prefix = conn.conf.get('command_prefix', '.')
 
     # EVENTS
     for func, args in bot.events[inp.command] + bot.events['*']:
-        dispatch(Input(conn, *out), "event", func, args)
+        dispatch(bot, Input(bot, conn, *out), "event", func, args)
 
     if inp.command == 'PRIVMSG':
         # COMMANDS
@@ -170,23 +173,23 @@ def main(conn, out):
 
         if m:
             trigger = m.group(1).lower()
-            command = match_command(trigger)
+            command = match_command(bot, trigger)
 
             if isinstance(command, list):  # multiple potential matches
                 input = Input(conn, *out)
                 input.notice("Did you mean {} or {}?".format
                              (', '.join(command[:-1]), command[-1]))
             elif command in bot.commands:
-                input = Input(conn, *out)
+                input = Input(bot, conn, *out)
                 input.trigger = trigger
                 input.inp_unstripped = m.group(2)
                 input.inp = input.inp_unstripped.strip()
 
                 func, args = bot.commands[command]
-                dispatch(input, "command", func, args, autohelp=True)
+                dispatch(bot, input, "command", func, args, autohelp=True)
 
         # REGEXES
-        for func, args in bot.plugs['regex']:
+        for func, args in bot.plugins['regex']:
             m = args['re'].search(inp.lastparam)
             if m:
                 input = Input(conn, *out)

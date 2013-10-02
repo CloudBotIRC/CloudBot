@@ -1,6 +1,6 @@
 from util import hook, http
+from lib import pygeoip
 import os.path
-import pygeoip
 import json
 import gzip
 from StringIO import StringIO

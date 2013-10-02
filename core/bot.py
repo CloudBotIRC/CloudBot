@@ -3,7 +3,7 @@ import logging
 import re
 import os
 
-from core import config, irc
+from core import config, irc, loader
 
 
 def clean_name(n):
@@ -24,6 +24,11 @@ class Bot(object):
         # start IRC connections
         self.connections = {}
         self.connect()
+
+        # run plugin loader
+        self.logger.debug("Bootstrapping reloader.")
+        loader.reload(self, init=True)
+
 
     def connect(self):
         """connect to all the networks defined in the bot config"""

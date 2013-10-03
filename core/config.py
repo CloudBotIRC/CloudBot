@@ -21,6 +21,7 @@ class Config(dict):
         self.watcher()
 
     def load_config(self):
+        """(re)loads the bot config from the config file"""
         if not os.path.exists(self.path):
             # if there is no config, show an error and die
             self.logger.critical("No config file found, bot shutting down!")
@@ -35,24 +36,26 @@ class Config(dict):
             self.logger.info("Config loaded from file.")
 
     def save_config(self):
+        """saves the contents of the config dict to the config file"""
         json.dump(self, open(self.path, 'w'), sort_keys=True, indent=2)
         self.logger.info("Config saved to file.")
 
 
     def watcher(self):
+        """starts the watchdog to automatically reload the config when it changes on disk"""
         self.logger.debug("Starting config reloader.")
-        pattern = "*{}".format(self.filename)
-        event_handler = ConfigReloader(self, patterns=[pattern])
         self.observer = Observer()
-        self.observer.schedule(event_handler,
-                               path='.',
-                               recursive=False
-                               )
+
+        pattern = "*{}".format(self.filename)
+
+        self.event_handler = ConfigEventHandler(self, patterns=[pattern])
+        self.observer.schedule(self.event_handler, path='.', recursive=False)
         self.observer.start()
+
         self.logger.debug("Config reloader started.")
 
  
-class ConfigReloader(Trick):
+class ConfigEventHandler(Trick):
     def __init__(self, config, *args, **kwargs):
         self.config = config
         self.logger = config.logger

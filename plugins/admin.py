@@ -101,8 +101,8 @@ def adduser(inp, bot=None, notice=None):
     bot.config.save_config()
 
 
-@hook.command("quit", autohelp=False, permissions=["botcontrol"])
-@hook.command(autohelp=False, permissions=["botcontrol"])
+@hook.command("quit", autohelp=False)
+@hook.command(autohelp=False)
 def stop(inp, bot=None):
     """stop [reason] -- Kills the bot with [reason] as its quit message."""
     if inp:
@@ -111,19 +111,14 @@ def stop(inp, bot=None):
         bot.stop()
 
 
-@hook.command(autohelp=False, permissions=["botcontrol"])
-def restart(inp, nick=None, conn=None, bot=None):
+@hook.command(autohelp=False)
+def restart(inp, bot=None):
     """restart [reason] -- Restarts the bot with [reason] as its quit message."""
-    for botcon in bot.conns:
-        if inp:
-            bot.conns[botcon].cmd("QUIT", ["Restarted by {} ({})".format(nick, inp)])
-        else:
-            bot.conns[botcon].cmd("QUIT", ["Restarted by {}.".format(nick)])
-    time.sleep(5)
-    #os.execl("./cloudbot", "cloudbot", "restart")
-    args = sys.argv[:]
-    args.insert(0, sys.executable)
-    os.execv(sys.executable, args)
+    if inp:
+        bot.restart(reason=inp)
+    else:
+        bot.restart()
+
 
 @hook.command(autohelp=False, permissions=["botcontrol"])
 def clearlogs(inp, input=None):

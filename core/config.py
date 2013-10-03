@@ -52,8 +52,6 @@ class Config(dict):
         self.observer.schedule(self.event_handler, path='.', recursive=False)
         self.observer.start()
 
-        self.logger.debug("Config reloader started.")
-
  
 class ConfigEventHandler(Trick):
     def __init__(self, config, *args, **kwargs):

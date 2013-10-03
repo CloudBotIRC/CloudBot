@@ -42,10 +42,12 @@ class PluginLoader(object):
 
 
     def stop(self):
+        """shuts down the plugin reloader"""
         self.observer.stop()
 
 
     def load_all(self):
+        """loads plugins from all files in the plugins folder"""
         files = set(glob.glob(os.path.join(self.path, '*.py')))
         for f in files:
             self.load_file(f, loaded_all=True)
@@ -53,6 +55,7 @@ class PluginLoader(object):
 
 
     def load_file(self, path, loaded_all=False):
+        """loads (or reloads) all valid plugins from a specified file"""
         filename = os.path.basename(path)
 
         try:
@@ -88,6 +91,7 @@ class PluginLoader(object):
 
 
     def unload_file(self, path):
+        """unloads all loaded plugins from a specified file"""
         filename = os.path.basename(path)
         self.bot.logger.info("Unloading plugins from: {}".format(filename))
 
@@ -99,20 +103,23 @@ class PluginLoader(object):
                 main.handler.stop()
                 del self.bot.threads[func]
 
+        self.rebuild()
+
 
     def rebuild(self):
+        """rebuilds the cloudbot command and event hook lists"""
         self.bot.commands = {}
-        for plug in self.bot.plugins['command']:
-            name = plug[1]['name'].lower()
+        for plugin in self.bot.plugins['command']:
+            name = plugin[1]['name'].lower()
             if not re.match(r'^\w+$', name):
-                print '### ERROR: invalid command name "{}" ({})'.format(name, format_plug(plug))
+                self.bot.logger.error('Invalid command name: "{}"" ({})'.format(name, format_plug(plugin)))
                 continue
             if name in self.bot.commands:
                 print "### ERROR: command '{}' already registered ({}, {})".format(name,
                                                                                    format_plug(self.bot.commands[name]),
-                                                                                   format_plug(plug))
+                                                                                   format_plug(plugin))
                 continue
-            self.bot.commands[name] = plug
+            self.bot.commands[name] = plugin
 
         self.bot.events = collections.defaultdict(list)
         for func, args in self.bot.plugins['event']:

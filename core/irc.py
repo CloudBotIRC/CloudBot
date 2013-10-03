@@ -118,7 +118,6 @@ class ParseThread(threading.Thread):
         self.output_queue = output_queue  # lines to be sent out
         self.parsed_queue = parsed_queue  # lines that have been parsed
 
-        self.daemon = True
         threading.Thread.__init__(self)
 
     def run(self):

@@ -25,8 +25,8 @@ def censor(text):
     return text
 
 
-class RecieveThread(threading.Thread):
-    """recieves messages from IRC and puts them in the input_queue"""
+class ReceiveThread(threading.Thread):
+    """receives messages from IRC and puts them in the input_queue"""
     def __init__(self, socket, input_queue, timeout):
         self.input_buffer = ""
         self.input_queue = input_queue
@@ -73,9 +73,9 @@ class RecieveThread(threading.Thread):
                 self.input_queue.put(decode(line))
 
 
-class SSLRecieveThread(RecieveThread):
+class SSLReceiveThread(ReceiveThread):
     def __init__(self, socket, input_queue, timeout):
-        RecieveThread.Thread.__init__(self, socket, input_queue, timeout)
+        ReceiveThread.Thread.__init__(self, socket, input_queue, timeout)
 
     def recv_from_socket(self, nbytes):
         return self.socket.read(nbytes)
@@ -87,7 +87,7 @@ class SSLRecieveThread(RecieveThread):
        # this is terrible
         if not "timed out" in error.args[0]:
             raise
-        return RecieveThread.handle_receive_exception(self, error, last_timestamp)
+        return ReceiveThread.handle_receive_exception(self, error, last_timestamp)
 
 
 class SendThread(threading.Thread):
@@ -126,7 +126,7 @@ class ParseThread(threading.Thread):
             msg = self.input_queue.get()
 
             if msg == StopIteration:
-                # got a StopIteration from the recieve thread, pass it on
+                # got a StopIteration from the receive thread, pass it on
                 # so the main thread can restart the connection
                 self.parsed_queue.put(StopIteration)
                 continue
@@ -170,9 +170,9 @@ class IRCConnection(object):
     def connect(self):
         self.socket.connect((self.host, self.port))
 
-        self.recieve_thread = RecieveThread(self.socket, self.input_queue, self.timeout)
-        self.recieve_thread.daemon = True
-        self.recieve_thread.start()
+        self.receive_thread = ReceiveThread(self.socket, self.input_queue, self.timeout)
+        self.receive_thread.daemon = True
+        self.receive_thread.start()
 
         self.send_thread = SendThread(self.socket, self.conn_name, self.output_queue)
         self.send_thread.daemon = True

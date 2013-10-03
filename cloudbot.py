@@ -3,7 +3,6 @@ from core import bot
 
 import os
 import sys
-import time
 import signal
 
 # check python version 

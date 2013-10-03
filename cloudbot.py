@@ -5,6 +5,12 @@ import os
 import sys
 import signal
 
+# check python version 
+if sys.version_info < (2, 7, 0):
+    print "CloudBot requires Python 2.7 or newer."
+    sys.stderr.write(os.linesep)
+    sys.exit(1)
+
 # set up enviroment
 os.chdir(sys.path[0] or '.')  # do stuff relative to the install directory
 

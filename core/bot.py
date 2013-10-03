@@ -124,8 +124,6 @@ class Bot(object):
         """quits all networks and shuts the bot down"""
         self.logger.info("Stopping bot.")
 
-        # wait for the bot loop to stop
-        time.sleep(1)
         self.config.observer.stop()
         self.logger.debug("Stopping config reloader.")
 
@@ -146,6 +144,9 @@ class Bot(object):
         logging.shutdown()
 
         self.running = False
+
+        # wait for the bot loop to stop
+        time.sleep(1)
 
 
     def restart(self, reason=None):

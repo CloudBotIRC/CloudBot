@@ -215,8 +215,8 @@ class IRC(object):
         self.input_queue = Queue.Queue()
         self.output_queue = Queue.Queue()
 
-        self.connection = Connection(self.name, self.server, self.port,
-                                      self.input_queue, self.output_queue)
+        # create the IRC connection and connect
+        self.connection = self.create_connection()
         self.connection.connect()
 
         self.set_pass(self.conf.get('server_password'))
@@ -230,6 +230,9 @@ class IRC(object):
         self.parse_thread.daemon = True
         self.parse_thread.start()
 
+    def create_connection(self):
+        return Connection(self.name, self.server, self.port,
+                          self.input_queue, self.output_queue)
 
     def stop(self):
         self.connection.stop()
@@ -281,4 +284,5 @@ class SSLIRC(IRC):
         IRC.__init__(self, name, server, nick, port, channels, conf)
 
     def create_connection(self):
-        return crlf_ssl_tcp(self.name, self.server, self.port, self.ignore_cert_errors)
+        return SSLConnection(self.name, self.server, self.port, self.input_queue,
+                             self.output_queue, self.ignore_cert_errors)

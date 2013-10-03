@@ -125,9 +125,11 @@ class ParseThread(threading.Thread):
             # get a message from the input queue
             msg = self.input_queue.get()
 
-            #if msg == StopIteration:
-            #    self.irc.connect()
-            #    continue
+            if msg == StopIteration:
+                # got a StopIteration from the recieve thread, pass it on
+                # so the main thread can restart the connection
+                self.parsed_queue.put(StopIteration)
+                continue
 
             # parse the message
             if msg.startswith(":"):  # has a prefix
@@ -151,7 +153,7 @@ class ParseThread(threading.Thread):
                 self.output_queue.put(str)
 
 
-class Connection(object):
+class IRCConnection(object):
     """handles an IRC connection"""
     def __init__(self, name, host, port, input_queue, output_queue):
         self.output_queue = output_queue  # lines to be sent out
@@ -160,7 +162,7 @@ class Connection(object):
         self.conn_name = name
         self.host = host
         self.port = port
-        self.timeout = 300
+        self.timeout = 1
 
     def create_socket(self):
         return socket.socket(socket.AF_INET, socket.TCP_NODELAY)
@@ -181,16 +183,20 @@ class Connection(object):
         time.sleep(.1)
         self.socket.close()
 
+    def reconnect(self):
+        self.stop()
+        self.connect()
 
-class SSLConnection(Connection):
+
+class SSLIRCConnection(IRCConnection):
     """handles a SSL IRC connection"""
 
     def __init__(self, name, host, port, input_queue, output_queue, ignore_cert_errors):
         self.ignore_cert_errors = ignore_cert_errors
-        Connection.__init__(self, name, host, port, input_queue, output_queue)
+        IRCConnection.__init__(self, name, host, port, input_queue, output_queue)
 
     def create_socket(self):
-        return wrap_socket(Connection.create_socket(self), server_side=False,
+        return wrap_socket(IRCConnection.create_socket(self), server_side=False,
                           cert_reqs=CERT_NONE if self.ignore_cert_errors else
                            CERT_REQUIRED)
 
@@ -231,7 +237,7 @@ class IRC(object):
         self.parse_thread.start()
 
     def create_connection(self):
-        return Connection(self.name, self.server, self.port,
+        return IRCConnection(self.name, self.server, self.port,
                           self.input_queue, self.output_queue)
 
     def stop(self):
@@ -284,5 +290,5 @@ class SSLIRC(IRC):
         IRC.__init__(self, name, server, nick, port, channels, conf)
 
     def create_connection(self):
-        return SSLConnection(self.name, self.server, self.port, self.input_queue,
+        return SSLIRCConnection(self.name, self.server, self.port, self.input_queue,
                              self.output_queue, self.ignore_cert_errors)

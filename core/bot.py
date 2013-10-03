@@ -61,19 +61,23 @@ class Bot(object):
         self.loader = loader.PluginLoader(self)
 
 
-    def loop(self):
+    def run(self):
         """recieves input from the IRC engine and processes it"""
+        self.logger.info("Starting main thread.")
+        while True:
+            for conn in self.connections.itervalues():
+                try:
+                    incoming = conn.parsed_queue.get_nowait()
+                    if incoming == StopIteration:
+                        # IRC engine has signalled timeout, so reconnect (ugly)
+                        conn.reconnect()
+                    main.main(self, conn, incoming)
+                except Queue.Empty:
+                    pass
 
-        for conn in self.connections.itervalues():
-            try:
-                incoming = conn.parsed_queue.get_nowait()
-                main.main(self, conn, incoming)
-            except Queue.Empty:
-                pass
-
-        # if no messages are in the incoming queue, sleep
-        while all(connection.parsed_queue.empty() for connection in self.connections.itervalues()):
-            time.sleep(.1)
+            # if no messages are in the incoming queue, sleep
+            while all(connection.parsed_queue.empty() for connection in self.connections.itervalues()):
+                time.sleep(.1)
 
 
     def setup(self):

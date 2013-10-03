@@ -19,7 +19,6 @@ signal.signal(signal.SIGINT, exit_gracefully)
 
 # create new bot object
 cloudbot = bot.Bot()
-cloudbot.logger.debug("Bot initalized, starting main loop.")
 
-while cloudbot.running:
-    cloudbot.loop()
+# start the main loop
+cloudbot.run()

@@ -13,6 +13,7 @@ def clean_name(n):
     """strip all spaces and capitalization"""
     return re.sub('[^A-Za-z0-9_]+', '', n.replace(" ", "_"))
 
+
 def get_logger():
     """create and return a new logger object"""
     # create logger
@@ -41,7 +42,6 @@ def get_logger():
 
 
 class Bot(object):
-
     def __init__(self):
         # basic variables
         self.start_time = time.time()
@@ -146,4 +146,3 @@ class Bot(object):
         self.logger.debug("Logging engine stopped")
         logging.shutdown()
         sys.exit()
-

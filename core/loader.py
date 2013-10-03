@@ -58,6 +58,7 @@ class PluginLoader(object):
         """loads (or reloads) all valid plugins from a specified file"""
         filename = os.path.basename(path)
 
+        # compile the file and eval it in a namespace
         try:
             code = compile(open(path, 'U').read(), filename, 'exec')
             namespace = {}
@@ -66,16 +67,19 @@ class PluginLoader(object):
             traceback.print_exc()
             return
 
-        # remove plugins already loaded from this filename
+        # remove plugins already loaded from this file
         for name, data in self.bot.plugins.iteritems():
             self.bot.plugins[name] = [x for x in data
                                 if x[0]._filename != filename]
 
+        # stop all currently running instances of the plugins from this file
         for func, handler in list(self.bot.threads.iteritems()):
             if func._filename == filename:
                 handler.stop()
                 del self.bot.threads[func]
 
+        # find objects with hooks in the plugin namespace
+        # TODO: kill it with fire, kill it all
         for obj in namespace.itervalues():
             if hasattr(obj, '_hook'):  # check for magic
                 if obj._thread:

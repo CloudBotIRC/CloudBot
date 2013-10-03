@@ -31,7 +31,7 @@ def get_logger():
     # create a formatter and set the formatter for the handler.
     frmt = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
     fh.setFormatter(frmt)
-    simple_frmt = logging.Formatter('[%(levelname)s] %(message)s')
+    simple_frmt = logging.Formatter('%(message)s')
     sh.setFormatter(simple_frmt)
 
     # add the Handlers to the logger

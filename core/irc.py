@@ -104,7 +104,7 @@ class SendThread(threading.Thread):
     def run(self):
         while not self.shutdown:
             line = self.output_queue.get().splitlines()[0][:500]
-            print u"{}>>> {}".format(self.conn_name, line)
+            print u"{}> {}".format(self.conn_name, line)
             self.output_buffer += line.encode('utf-8', 'replace') + '\r\n'
             while self.output_buffer:
                 sent = self.socket.send(self.output_buffer)

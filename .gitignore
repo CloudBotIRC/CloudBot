@@ -1,4 +1,4 @@
-data
+persist
 config.json
 gitflow
 *.db
@@ -11,4 +11,8 @@ gitflow
 *.sublime-project
 *.sublime-workspace
 .idea/
-plugins/data/GeoLiteCity.dat
+data/GeoLiteCity.dat
+plugins/New Text Document.txt
+plugins/srvv.py
+run.cmd
+config

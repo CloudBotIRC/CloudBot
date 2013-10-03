@@ -2,7 +2,7 @@ from util import hook, text
 import random
 
 
-with open("plugins/data/slogans.txt") as f:
+with open("./data/slogans.txt") as f:
     slogans = [line.strip() for line in f.readlines()
                if not line.startswith("//")]
 

@@ -25,7 +25,7 @@ def kill(inp, action=None, nick=None, conn=None, notice=None):
     	"user": target
     }
 
-    with open("plugins/data/kills.json") as f:
+    with open("./data/kills.json") as f:
         generator = get_generator(f.read(), variables)
 
     # act out the message

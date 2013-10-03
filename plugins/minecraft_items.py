@@ -22,7 +22,7 @@ class Recipe(object):
         return self.line
 
 
-with open("plugins/data/recipes.txt") as f:
+with open("./data/recipes.txt") as f:
     for line in f.readlines():
         if line.startswith("//"):
             continue
@@ -37,7 +37,7 @@ with open("plugins/data/recipes.txt") as f:
 
 ids = []
 
-with open("plugins/data/itemids.txt") as f:
+with open("./data/itemids.txt") as f:
     for line in f.readlines():
         if line.startswith("//"):
             continue

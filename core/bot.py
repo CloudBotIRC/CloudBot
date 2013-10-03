@@ -87,7 +87,7 @@ class Bot(object):
         self.logger.debug("Logging engine started.")
 
         # data folder
-        self.data_dir = os.path.abspath('data')
+        self.data_dir = os.path.abspath('persist')
         if not os.path.exists(self.data_dir):
             self.logger.debug("Data folder not found, creating.")
             os.mkdir(self.data_dir)

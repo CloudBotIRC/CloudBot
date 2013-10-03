@@ -1,15 +1,15 @@
 from util import hook
 import random
 
-with open("plugins/data/larts.txt") as f:
+with open("data/larts.txt") as f:
     larts = [line.strip() for line in f.readlines()
              if not line.startswith("//")]
 
-with open("plugins/data/insults.txt") as f:
+with open("data/insults.txt") as f:
     insults = [line.strip() for line in f.readlines()
                if not line.startswith("//")]
 
-with open("plugins/data/flirts.txt") as f:
+with open("data/flirts.txt") as f:
     flirts = [line.strip() for line in f.readlines()
               if not line.startswith("//")]
 

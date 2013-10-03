@@ -7,7 +7,7 @@ color_codes = {
     "<y>": "\x02"
 }
 
-with open("plugins/data/8ball_responses.txt") as f:
+with open("./data/8ball_responses.txt") as f:
     responses = [line.strip() for line in
                  f.readlines() if not line.startswith("//")]
 

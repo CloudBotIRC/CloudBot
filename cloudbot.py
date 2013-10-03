@@ -3,6 +3,7 @@ from core import bot
 
 import os
 import sys
+import time
 import signal
 
 # check python version 
@@ -27,8 +28,15 @@ def exit_gracefully(signum, frame):
 original_sigint = signal.getsignal(signal.SIGINT)
 signal.signal(signal.SIGINT, exit_gracefully)
 
-# create new bot object
-cloudbot = bot.Bot()
+# little restart loop
+while True:
+    # create new bot object
+    cloudbot = bot.Bot()
 
-# start the main loop
-cloudbot.run()
+    cloudbot.run()
+    if cloudbot.do_restart:
+        # this kills the bot
+        # TODO: make it not just kill the bot
+        sys.exit()
+    else:
+        sys.exit()

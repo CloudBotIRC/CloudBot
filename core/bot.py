@@ -1,6 +1,5 @@
 import time
 import logging
-import sys
 import re
 import os
 import Queue
@@ -46,6 +45,7 @@ class Bot(object):
         # basic variables
         self.start_time = time.time()
         self.running = True
+        self.do_restart = False
 
         # set up config and logging
         self.setup()
@@ -64,13 +64,13 @@ class Bot(object):
     def run(self):
         """recieves input from the IRC engine and processes it"""
         self.logger.info("Starting main thread.")
-        while True:
+        while self.running:
             for conn in self.connections.itervalues():
                 try:
                     incoming = conn.parsed_queue.get_nowait()
                     if incoming == StopIteration:
                         # IRC engine has signalled timeout, so reconnect (ugly)
-                        conn.reconnect()
+                        conn.connection.reconnect()
                     main.main(self, conn, incoming)
                 except Queue.Empty:
                     pass
@@ -123,7 +123,6 @@ class Bot(object):
     def stop(self, reason=None):
         """quits all networks and shuts the bot down"""
         self.logger.info("Stopping bot.")
-        self.running = False
 
         # wait for the bot loop to stop
         time.sleep(1)
@@ -145,4 +144,11 @@ class Bot(object):
 
         self.logger.debug("Logging engine stopped")
         logging.shutdown()
-        sys.exit()
+
+        self.running = False
+
+
+    def restart(self, reason=None):
+        """shuts the bot down and restarts it"""
+        self.do_restart = True
+        self.stop(reason)

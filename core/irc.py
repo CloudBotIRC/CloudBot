@@ -33,13 +33,13 @@ class ReceiveThread(threading.Thread):
         self.socket = socket
         self.timeout = timeout
 
+        self.shutdown = False
         threading.Thread.__init__(self)
 
     def recv_from_socket(self, nbytes):
         return self.socket.recv(nbytes)
 
     def handle_receive_exception(self, error, last_timestamp):
-        print error
         if time.time() - last_timestamp > self.timeout:
             self.input_queue.put(StopIteration)
             self.socket.close()
@@ -51,7 +51,7 @@ class ReceiveThread(threading.Thread):
 
     def run(self):
         last_timestamp = time.time()
-        while True:
+        while not self.shutdown:
             try:
                 data = self.recv_from_socket(4096)
                 self.input_buffer += data
@@ -180,7 +180,8 @@ class IRCConnection(object):
 
     def stop(self):
         self.send_thread.shutdown = True
-        time.sleep(.1)
+        self.receive_thread.shutdown = True
+        time.sleep(0.1)
         self.socket.close()
 
     def reconnect(self):

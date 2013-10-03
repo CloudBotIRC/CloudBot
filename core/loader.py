@@ -116,12 +116,12 @@ class PluginLoader(object):
         for plugin in self.bot.plugins['command']:
             name = plugin[1]['name'].lower()
             if not re.match(r'^\w+$', name):
-                self.bot.logger.error('Invalid command name: "{}"" ({})'.format(name, format_plug(plugin)))
+                self.bot.logger.error('Invalid command name: "{}" ({})'.format(name, format_plug(plugin)))
                 continue
             if name in self.bot.commands:
-                print "### ERROR: command '{}' already registered ({}, {})".format(name,
+                self.bot.logger.error('Command already registered: "{}" ({}, {})'.format(name,
                                                                                    format_plug(self.bot.commands[name]),
-                                                                                   format_plug(plugin))
+                                                                                   format_plug(plugin)))
                 continue
             self.bot.commands[name] = plugin
 

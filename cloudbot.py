@@ -8,7 +8,6 @@ import signal
 # check python version 
 if sys.version_info < (2, 7, 0):
     print "CloudBot requires Python 2.7 or newer."
-    sys.stderr.write(os.linesep)
     sys.exit(1)
 
 # set up enviroment
@@ -27,15 +26,13 @@ def exit_gracefully(signum, frame):
 original_sigint = signal.getsignal(signal.SIGINT)
 signal.signal(signal.SIGINT, exit_gracefully)
 
-# little restart loop
-while True:
-    # create new bot object
-    cloudbot = bot.Bot()
+# create new bot object
+cloudbot = bot.Bot()
 
-    cloudbot.run()
-    if cloudbot.do_restart:
-        # this kills the bot
-        # TODO: make it not just kill the bot
-        sys.exit()
-    else:
-        sys.exit()
+cloudbot.run()
+if cloudbot.do_restart:
+    # this kills the bot
+    # TODO: make it not just kill the bot
+    sys.exit()
+else:
+    sys.exit()

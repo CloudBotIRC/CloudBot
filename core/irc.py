@@ -118,6 +118,7 @@ class ParseThread(threading.Thread):
         self.output_queue = output_queue  # lines to be sent out
         self.parsed_queue = parsed_queue  # lines that have been parsed
 
+        self.daemon = True
         threading.Thread.__init__(self)
 
     def run(self):
@@ -171,11 +172,9 @@ class IRCConnection(object):
         self.socket.connect((self.host, self.port))
 
         self.receive_thread = ReceiveThread(self.socket, self.input_queue, self.timeout)
-        self.receive_thread.daemon = True
         self.receive_thread.start()
 
         self.send_thread = SendThread(self.socket, self.conn_name, self.output_queue)
-        self.send_thread.daemon = True
         self.send_thread.start()
 
     def stop(self):

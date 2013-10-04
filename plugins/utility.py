@@ -134,7 +134,10 @@ def rainbow(inp):
     out = ""
     l = len(colors)
     for i, t in enumerate(inp):
-        out += col[i % l][1] + t
+        if t == " ":
+            out += t
+        else:
+            out += col[i % l][1] + t
     return out
 
 @hook.command

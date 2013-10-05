@@ -114,7 +114,7 @@ def length(inp):
 @hook.command
 def reverse(inp):
     """Enter a string and the bot will reverse it and print it out."""
-    return "You message %s, I message %s" % (inp, inp[::-1])
+    return "You say %s, I say %s" % (inp, inp[::-1])
     
 # hashing
 

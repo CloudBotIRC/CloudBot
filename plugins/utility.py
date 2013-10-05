@@ -109,6 +109,13 @@ def length(inp):
     """length <string> -- gets the length of <string>"""
     return "The length of that string is {} characters.".format(len(inp))
 
+# reverse
+
+@hook.command
+def reverse(inp):
+    """Enter a string and the bot will reverse it and print it out."""
+    return "You message %s, I message %s" % (inp, inp[::-1])
+    
 # hashing
 
 @hook.command

@@ -3,6 +3,7 @@ log.py: written by Scaevolus 2009
 """
 
 import os
+import sys
 import codecs
 import time
 import re
@@ -88,7 +89,7 @@ def get_log_fd(dir, server, chan):
     return fd
 
 
-@hook.singlethread
+#@hook.singlethread
 @hook.event('*')
 def log(paraml, input=None, bot=None):
     timestamp = gmtime(timestamp_format)
@@ -110,4 +111,6 @@ def log(paraml, input=None, bot=None):
         fd = get_log_fd(bot.data_dir, input.server, input.chan)
         fd.write(timestamp + ' ' + beau + '\n')
 
-    print timestamp, input.chan, beau.encode('utf8', 'ignore')
+    out = "{} {} {}".format(timestamp, input.chan, beau.encode('utf8', 'ignore'))
+
+    sys.stdout.write(out + os.linesep)

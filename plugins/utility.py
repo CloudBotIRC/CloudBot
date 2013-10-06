@@ -109,6 +109,13 @@ def length(inp):
     """length <string> -- gets the length of <string>"""
     return "The length of that string is {} characters.".format(len(inp))
 
+# reverse
+
+@hook.command
+def reverse(inp):
+    """Enter a string and the bot will reverse it and print it out."""
+    return "You say %s, I say %s" % (inp, inp[::-1])
+    
 # hashing
 
 @hook.command
@@ -134,7 +141,10 @@ def rainbow(inp):
     out = ""
     l = len(colors)
     for i, t in enumerate(inp):
-        out += col[i % l][1] + t
+        if t == " ":
+            out += t
+        else:
+            out += col[i % l][1] + t
     return out
 
 @hook.command

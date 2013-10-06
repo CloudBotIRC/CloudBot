@@ -14,7 +14,7 @@ Unzip the resulting file, and continue to read this document.
 
 ### Install
 
-Before you can run the bot, you need to install a few Python dependencies. LXML is required while Enchant and PyDNS are needed for several plugins.
+Before you can run the bot, you need to install a few Python dependencies. LXML is required while Enchant, PyGeoIP, TweePy and PyDNS are needed for several plugins.
 
 
 These can be installed with `pip` (The Python package manager):

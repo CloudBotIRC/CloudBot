@@ -22,7 +22,7 @@ class Input(dict):
             if target == nick:
                 conn.msg(target, message)
             else:
-                conn.msg(target, "({}) {}".format(nick, message))
+                conn.msg(target, u"({}) {}".format(nick, message))
 
         def action(message, target=chan):
             """sends an action to the current channel/user or a specific channel/user"""

@@ -213,11 +213,10 @@ class IRC(object):
         out = u"\x01{} {}\x01".format(ctcp_type, text)
         self.cmd("PRIVMSG", [target, out])
 
-
     def cmd(self, command, params=None):
         if params:
-            params[-1] = ':' + params[-1]
-            self.send(command + ' ' + ' '.join(map(censor, params)))
+            params[-1] = u':' + params[-1]
+            self.send(u"{} {}".format(command, ' '.join(params)))
         else:
             self.send(command)
 

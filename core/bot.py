@@ -5,6 +5,9 @@ import os
 import Queue
 import collections
 
+from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy import create_engine
+
 from core import config, irc, main, loader
 
 
@@ -96,6 +99,11 @@ class Bot(object):
         # config
         self.config = config.Config(self.logger)
         self.logger.debug("Config object created.")
+
+        # db
+        engine = create_engine('sqlite:///cloudbot.db')
+        db_factory = sessionmaker(bind=engine)
+        self.db_session = scoped_session(db_factory)
 
 
     def connect(self):

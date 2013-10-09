@@ -3,6 +3,7 @@ import traceback
 import Queue
 import re
 
+from sqlalchemy.orm import scoped_session
 
 thread.stack_size(1024 * 512)  # reduce vm size
 
@@ -55,12 +56,15 @@ class Input(dict):
 def run(func, input):
     args = func._args
 
+    uses_db = 'db' in args and 'db' not in input
+
     if 'inp' not in input:
         input.inp = input.paraml
 
     if args:
-        if 'db' in args and 'db' not in input:
-            input.db = get_db_connection(input.conn)
+        if uses_db:
+            # create SQLAlchemy session
+            input.db = input.bot.db_session()
         if 'input' in args:
             input.input = input
         if 0 in args:
@@ -72,6 +76,10 @@ def run(func, input):
         out = func(input.inp)
     if out is not None:
         input.reply(unicode(out))
+
+    if uses_db:
+        # close SQLAlchemy session
+        input.db.close()
 
 
 def do_sieve(sieve, bot, input, func, type, args):
@@ -94,7 +102,6 @@ class Handler(object):
 
     def start(self):
         uses_db = 'db' in self.func._args
-        db_conns = {}
         while True:
             input = self.input_queue.get()
 
@@ -102,11 +109,7 @@ class Handler(object):
                 break
 
             if uses_db:
-                db = db_conns.get(input.conn)
-                if db is None:
-                    db = self.bot.get_db_connection(input.conn)
-                    db_conns[input.conn] = db
-                input.db = db
+                input.db = self.bot.db
 
             try:
                 run(self.func, input)
@@ -165,7 +168,6 @@ def main(bot, conn, out):
             prefix = '^(?:[{}]?|'.format(command_prefix)
         else:
             prefix = '^(?:[{}]|'.format(command_prefix)
-
         command_re = prefix + inp.conn.nick
         command_re += r'[,;:]+\s+)(\w+)(?:$|\s+)(.*)'
 

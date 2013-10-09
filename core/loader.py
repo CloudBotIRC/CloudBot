@@ -64,6 +64,7 @@ class PluginLoader(object):
             namespace = {}
             eval(code, namespace)
         except Exception:
+            # plugin has errors, print them!
             traceback.print_exc()
             return
 
@@ -83,13 +84,16 @@ class PluginLoader(object):
         for obj in namespace.itervalues():
             if hasattr(obj, '_hook'):  # check for magic
                 if obj._thread:
+                    # TODO: pretty sure this is broken
                     self.bot.threads[obj] = main.Handler(self.bot, obj)
 
                 for type, data in obj._hook:
+                    # add plugin to the plugin list
                     self.bot.plugins[type] += [data]
                     if not loaded_all:
                         self.bot.logger.info("Loaded plugin: {} ({})".format(format_plug(data), type))
 
+        # do a rebuild, unless the bot is loading all plugins (rebuild happens after load_all)
         if not loaded_all:
             self.rebuild()
 
@@ -99,9 +103,11 @@ class PluginLoader(object):
         filename = os.path.basename(path)
         self.bot.logger.info("Unloading plugins from: {}".format(filename))
 
+        # remove plugins from the plugin list if they are from this file
         for plugin_type, plugins in self.bot.plugins.iteritems():
             self.bot.plugins[plugin_type] = [x for x in plugins if x[0]._filename != filename]
 
+        # stop all currently running instances of the plugins from this file
         for func, handler in list(self.bot.threads.iteritems()):
             if func._filename == filename:
                 main.handler.stop()
@@ -135,7 +141,6 @@ class PluginEventHandler(Trick):
     def __init__(self, loader, *args, **kwargs):
         self.loader = loader
         Trick.__init__(self, *args, **kwargs)
-
 
     def on_created(self, event):
         self.loader.load_file(event.src_path)

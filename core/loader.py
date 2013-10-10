@@ -64,8 +64,8 @@ class PluginLoader(object):
             namespace = {}
             eval(code, namespace)
         except Exception:
-            # plugin has errors, print them!
-            traceback.print_exc()
+            self.bot.logger.error("Error compiling {}.".format(filename))
+            self.bot.logger.error(traceback.format_exc())
             return
 
         # remove plugins already loaded from this file
@@ -103,7 +103,7 @@ class PluginLoader(object):
         filename = os.path.basename(path)
         self.bot.logger.info("Unloading plugins from: {}".format(filename))
 
-        # remove plugins from the plugin list if they are from this file
+        # remove plugins loaded from this file
         for plugin_type, plugins in self.bot.plugins.iteritems():
             self.bot.plugins[plugin_type] = [x for x in plugins if x[0]._filename != filename]
 

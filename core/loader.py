@@ -64,7 +64,7 @@ class PluginLoader(object):
             namespace = {}
             eval(code, namespace)
         except Exception:
-            self.bot.logger.error("Error compiling {}.".format(filename))
+            self.bot.logger.error("Error compiling {}:".format(filename))
             self.bot.logger.error(traceback.format_exc())
             return
 

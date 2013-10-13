@@ -8,7 +8,9 @@ import collections
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy import create_engine
 
-from core import config, irc, main, loader
+from core import config, irc, main
+from core.permissions import PermissionManager
+from core.loader import PluginLoader
 
 
 def clean_name(n):
@@ -49,29 +51,36 @@ class Bot(object):
         self.start_time = time.time()
         self.running = True
         self.do_restart = False
+        self.connections = []
 
         # set up config and logging
         self.setup()
         self.logger.debug("Bot setup completed.")
 
         # start IRC connections
-        self.connections = {}
         self.connect()
+        print self.connections
+
+        for conn in self.connections:
+            conn.permissions = PermissionManager(self, conn)
+            print conn
 
         # run plugin loader
         self.plugins = collections.defaultdict(list)
         self.threads = {}
-        self.loader = loader.PluginLoader(self)
+
+        self.loader = PluginLoader(self)
 
 
     def run(self):
         """recieves input from the IRC engine and processes it"""
         self.logger.info("Starting main thread.")
         while self.running:
-            for conn in self.connections.itervalues():
+            for conn in self.connections:
                 try:
                     incoming = conn.parsed_queue.get_nowait()
                     if incoming == StopIteration:
+                        print "StopIteration"
                         # IRC engine has signalled timeout, so reconnect (ugly)
                         conn.connection.reconnect()
                     main.main(self, conn, incoming)
@@ -79,7 +88,7 @@ class Bot(object):
                     pass
 
             # if no messages are in the incoming queue, sleep
-            while all(connection.parsed_queue.empty() for connection in self.connections.itervalues()):
+            while self.running and all(c.parsed_queue.empty() for c in self.connections):
                 time.sleep(.1)
 
 
@@ -97,7 +106,7 @@ class Bot(object):
             self.logger.debug("Created data folder.")
 
         # config
-        self.config = config.Config(self.logger)
+        self.config = config.Config(self)
         self.logger.debug("Config object created.")
 
         # db
@@ -118,13 +127,13 @@ class Bot(object):
             self.logger.debug("({}) Creating connection to {}.".format(name, server))
 
             if conf['connection'].get('ssl'):
-                self.connections[name] = irc.SSLIRC(name, server, nick, conf = conf,
+                self.connections.append(irc.SSLIRC(name, server, nick, config = conf,
                                      port = port, channels = conf['channels'],
-                                     ignore_certificate_errors=conf['connection'].get('ignore_cert', True))
+                                     ignore_certificate_errors=conf['connection'].get('ignore_cert', True)))
                 self.logger.debug("({}) Created SSL connection.".format(name))   
             else:
-                self.connections[name] = irc.IRC(name, server, nick, conf = conf,
-                                                 port = port, channels = conf['channels'])
+                self.connections.append(irc.IRC(name, server, nick, config = conf,
+                                                 port = port, channels = conf['channels']))
                 self.logger.debug("({}) Created connection.".format(name)) 
 
 
@@ -152,9 +161,6 @@ class Bot(object):
         logging.shutdown()
 
         self.running = False
-
-        # wait for the bot loop to stop
-        time.sleep(1)
 
 
     def restart(self, reason=None):

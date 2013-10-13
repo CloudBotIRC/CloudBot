@@ -132,7 +132,7 @@ def dispatch(bot, input, kind, func, args, autohelp=False):
             return
 
     if not (not autohelp or not args.get('autohelp', True) or input.inp or not (func.__doc__ is not None)):
-        input.notice(input.conn.conf["command_prefix"] + func.__doc__)
+        input.notice(input.conn.config["command_prefix"] + func.__doc__)
         return
 
     if func._thread:
@@ -156,7 +156,7 @@ def match_command(bot, command):
 
 def main(bot, conn, out):
     inp = Input(bot, conn, *out)
-    command_prefix = conn.conf.get('command_prefix', '.')
+    command_prefix = conn.config.get('command_prefix', '.')
 
     # EVENTS
     for func, args in bot.events[inp.command] + bot.events['*']:

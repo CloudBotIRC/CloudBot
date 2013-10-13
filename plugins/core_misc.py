@@ -12,7 +12,7 @@ nick_re = re.compile(":(.+?)!")
 # Auto-join on Invite (Configurable, defaults to True)
 @hook.event('INVITE')
 def invite(paraml, conn=None):
-    invite_join = conn.conf.get('invite_join', True)
+    invite_join = conn.config.get('invite_join', True)
     if invite_join:
         conn.join(paraml[-1])
 
@@ -21,7 +21,7 @@ def invite(paraml, conn=None):
 @hook.event('004')
 def onjoin(paraml, conn=None, bot=None):
     bot.logger.info("ONJOIN hook triggered.")
-    nickserv = conn.conf.get('nickserv')
+    nickserv = conn.config.get('nickserv')
     if nickserv:
         nickserv_password = nickserv.get('nickserv_password', '')
         nickserv_name = nickserv.get('nickserv_name', 'nickserv')
@@ -38,7 +38,7 @@ def onjoin(paraml, conn=None, bot=None):
             time.sleep(1)
 
     # Set bot modes
-    mode = conn.conf.get('mode')
+    mode = conn.config.get('mode')
     if mode:
         bot.logger.info('Setting bot mode: "{}"'.format(mode))
         conn.cmd('MODE', [conn.nick, mode])
@@ -57,7 +57,7 @@ def onkick(paraml, conn=None, chan=None):
     # if the bot has been kicked, remove from the channel list
     if paraml[1] == conn.nick:
         conn.channels.remove(chan)
-        auto_rejoin = conn.conf.get('auto_rejoin', False)
+        auto_rejoin = conn.config.get('auto_rejoin', False)
         if auto_rejoin:
             conn.join(paraml[0])
 
@@ -74,7 +74,7 @@ def onnick(paraml, bot=None, conn=None, raw=None):
 @hook.singlethread
 @hook.event('004')
 def keep_alive(paraml, conn=None):
-    keepalive = conn.conf.get('keep_alive', False)
+    keepalive = conn.config.get('keep_alive', False)
     if keepalive:
         while True:
             conn.cmd('PING', [conn.nick])

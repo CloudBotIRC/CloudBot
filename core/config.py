@@ -8,10 +8,11 @@ from watchdog.tricks import Trick
 
 
 class Config(dict):
-    def __init__(self, logger, *args, **kwargs):
+    def __init__(self, bot, *args, **kwargs):
         self.filename = "config.json"
         self.path = os.path.abspath(self.filename)
-        self.logger = logger
+        self.bot = bot
+        self.logger = bot.logger
         self.update(*args, **kwargs)
 
         # populate self with config data
@@ -34,6 +35,12 @@ class Config(dict):
         with open(self.path) as f:
             self.update(json.load(f))
             self.logger.info("Config loaded from file.")
+
+        # reload permissions
+        if self.bot.connections:
+            for conn in self.bot.connections:
+                conn.permissions.reload()
+
 
     def save_config(self):
         """saves the contents of the config dict to the config file"""

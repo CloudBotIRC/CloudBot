@@ -3,6 +3,7 @@ from core import bot
 
 import os
 import sys
+import time
 import signal
 
 # check python version 
@@ -30,9 +31,15 @@ signal.signal(signal.SIGINT, exit_gracefully)
 cloudbot = bot.Bot()
 
 cloudbot.run()
+
+# wait for the bot loop to stop
+
 if cloudbot.do_restart:
     # this kills the bot
     # TODO: make it not just kill the bot
+    time.sleep(2)
     sys.exit()
 else:
+    print "wtf"
+    time.sleep(2)
     sys.exit()

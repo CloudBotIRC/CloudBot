@@ -4,6 +4,8 @@ import time
 import threading
 import Queue
 
+from core import permissions
+
 from ssl import wrap_socket, CERT_NONE, CERT_REQUIRED, SSLError
 
 irc_prefix_rem = re.compile(r'(.*?) (.*?) (.*)').match
@@ -203,10 +205,10 @@ class SSLIRCConnection(IRCConnection):
 class IRC(object):
     """handles the IRC protocol"""
 
-    def __init__(self, name, server, nick, port=6667, channels=[], conf={}):
+    def __init__(self, name, server, nick, port=6667, channels=[], config={}):
         self.name = name
         self.channels = channels
-        self.conf = conf
+        self.config = config
         self.server = server
         self.port = port
         self.nick = nick
@@ -224,16 +226,17 @@ class IRC(object):
         self.connection = self.create_connection()
         self.connection.connect()
 
-        self.set_pass(self.conf.get('server_password'))
+        self.set_pass(self.config.get('server_password'))
         self.set_nick(self.nick)
         self.cmd("USER",
-                 [self.conf.get('user', 'cloudbot'), "3", "*", self.conf.get('realname',
+                 [self.config.get('user', 'cloudbot'), "3", "*", self.config.get('realname',
                                                                    'CloudBot - http://git.io/cloudbot')])
 
         self.parse_thread = ParseThread(self.input_queue, self.output_queue,
                                         self.parsed_queue)
         self.parse_thread.daemon = True
         self.parse_thread.start()
+
 
     def create_connection(self):
         return IRCConnection(self.name, self.server, self.port,
@@ -282,10 +285,10 @@ class IRC(object):
 
 
 class SSLIRC(IRC):
-    def __init__(self, name, server, nick, port=6667, channels=[], conf={},
+    def __init__(self, name, server, nick, port=6667, channels=[], config={},
                  ignore_certificate_errors=True):
         self.ignore_cert_errors = ignore_certificate_errors
-        IRC.__init__(self, name, server, nick, port, channels, conf)
+        IRC.__init__(self, name, server, nick, port, channels, config)
 
     def create_connection(self):
         return SSLIRCConnection(self.name, self.server, self.port, self.input_queue,

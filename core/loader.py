@@ -57,6 +57,12 @@ class PluginLoader(object):
     def load_file(self, path, loaded_all=False):
         """loads (or reloads) all valid plugins from a specified file"""
         filename = os.path.basename(path)
+        title = os.path.splitext(filename)[0]
+
+        disabled = self.bot.config.get('disabled_plugins', [])
+        if title in disabled:
+            self.bot.logger.info("Did not load plugins from: {} (plugin disabled)".format(filename))
+            return None
 
         # compile the file and eval it in a namespace
         try:

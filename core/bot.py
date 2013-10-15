@@ -147,8 +147,8 @@ class Bot(object):
         self.loader.stop()
         self.logger.debug("Stopping plugin loader.")
 
-        for name, connection in self.connections.iteritems():
-            self.logger.debug("({}) Closing connection.".format(name))
+        for connection in self.connections:
+            self.logger.debug("({}) Closing connection.".format(connection.name))
 
             if reason:
                 connection.cmd("QUIT", [reason])

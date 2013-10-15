@@ -12,14 +12,10 @@ def sieve_suite(bot, input, func, kind, args):
         return None
 
     if kind == "command":
-        disabled_commands = conn.config.get('disabled_plugins', [])
+        disabled_commands = conn.config.get('disabled_commands', [])
         if input.trigger in disabled_commands:
             return None
 
-    fn = re.match(r'^plugins.(.+).py$', func._filename)
-    disabled = conn.config.get('disabled_plugins', [])
-    if fn and fn.group(1).lower() in disabled:
-        return None
 
     acl = conn.config.get('acls', {}).get(func.__name__)
     if acl:

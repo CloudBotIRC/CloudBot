@@ -17,20 +17,24 @@ Unzip the resulting file, and continue to read this document.
 Before you can run the bot, you need to install a few Python dependencies. LXML is required while Enchant, PyGeoIP, TweePy and PyDNS are needed for several plugins.
 
 
-These can be installed with `pip` (The Python package manager):
+These can be installed with `pip` (The Python package manager) by running the following command in the bot directory:
 
-    [sudo] pip install -r requirements.txt
+    pip install -r requirements.txt
     
-If you use `pip`, you will also need the following packages on linux or `pip` will fail to install the requirements.
+**Note:** If you use `pip`, you will also need the following packages on linux or `pip` will fail to install the requirements.
    ```python, python-dev, libenchant-dev, libenchant1c2a, libxslt-dev, libxml2-dev.```
+   
+(this can be done using your package manager (eg: *apt-get* or *yum*)
 
 #### How to install `pip`
+
+You can usually install pip on linux by installing the `python-pip` package using your package manager (eg. *apt-get install python-pip* or *yum install python-pip* as root), or you can try the below code to download and install it manually.
 
     curl -O http://python-distribute.org/distribute_setup.py # or download with your browser on windows
     python distribute_setup.py
     easy_install pip
     
-If you need help installing pip on Windows, follow [this guide](http://simpledeveloper.com/how-to-install-easy_install/) and then run `easy_install pip`.
+If you need help installing pip on Windows, follow [this guide](http://simpledeveloper.com/how-to-install-easy_install/) and then run `easy_install pip` on the command line.
 
 ### Run
 

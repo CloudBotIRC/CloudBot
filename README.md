@@ -38,7 +38,7 @@ If you need help installing pip on Windows, follow [this guide](http://simpledev
 
 ### Run
 
-Before you run the bot, rename `config.default` to `config.json` and edit it with your preferred settings.
+Before you run the bot, rename `config.default` to `config.json` and edit it with your preferred settings. You can check if your JSON is valid on [this site](http://jsonlint.com/)!
 
 Once you have installed the required dependencies and renamed the config file, you can run the bot! Make sure you are in the correct folder and run the following command:
 
@@ -62,7 +62,7 @@ More at the [Wiki Main Page](http://git.io/cloudbotircwiki).
 
 The developers reside in [#CloudBot](irc://irc.esper.net/cloudbot) on [EsperNet](http://esper.net) and would be glad to help you.
 
-If you think you have found a bug/have a idea/suggestion, please **open a issue** here on Github.
+If you think you have found a bug/have a idea/suggestion, please **open a issue** here on Github and contact us on IRC!
 
 ### Requirements
 

@@ -21,7 +21,11 @@ if os.path.exists(os.path.abspath('lib')):
 print 'CloudBot2 <http://git.io/cloudbotirc>'
 
 def exit_gracefully(signum, frame):
+    # this doesn't really work that well
     cloudbot.stop()
+
+    # restore the original handler so if they do it again it triggers
+    signal.signal(signal.SIGINT, original_sigint)
 
 # store the original SIGINT handler
 original_sigint = signal.getsignal(signal.SIGINT)

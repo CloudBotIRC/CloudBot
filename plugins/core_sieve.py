@@ -33,34 +33,15 @@ def sieve_suite(bot, input, func, kind, args):
         args["permissions"] = ["adminonly"]
 
     if args.get('permissions', False):
-        groups = conn.config.get("permissions", [])
 
-        allowed_permissions = args.get('permissions', [])
-        allowed_groups = []
-
-        # loop over every group
-        for key, value in groups.iteritems():
-            # loop over every permission the command allows
-            for permission in allowed_permissions:
-                # see if the group has that permission
-                if permission in value["perms"]:
-                    # if so, add the group name to the allowed_groups list
-                    allowed_groups.append(key)
-
-        if not allowed_groups:
-            print "Something is wrong. A hook requires {} but" \
-                  " there are no groups with that permission!".format(str(allowed_permissions))
 
         mask = input.mask.lower()
 
-        for group in allowed_groups:
-            group_users = conn.conig.get("permissions", {}).get(group, [])["users"]
-            group_users = [_mask.lower() for _mask in group_users]
-            for pattern in group_users:
-                if fnmatch(mask, pattern):
-                    return input
+        allowed_permissions = args.get('permissions', [])
+        for perm in allowed_permissions:
+            if conn.permissions.has_perm_legacy(mask, perm):
+                return input
 
-        target = input.nick
         input.notice("Sorry, you are not allowed to use this command.")
         return None
 

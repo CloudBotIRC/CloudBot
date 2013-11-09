@@ -31,19 +31,19 @@ def exit_gracefully(signum, frame):
 original_sigint = signal.getsignal(signal.SIGINT)
 signal.signal(signal.SIGINT, exit_gracefully)
 
-# create new bot object
+# create a bot thread and start it
 cloudbot = bot.Bot()
+cloudbot.start()
 
-cloudbot.run()
-
-# wait for the bot loop to stop
-
-if cloudbot.do_restart:
-    # this kills the bot
-    # TODO: make it not just kill the bot
-    time.sleep(2)
-    sys.exit()
-else:
-    print "wtf"
-    time.sleep(2)
-    sys.exit()
+# watch to see if the bot stops running or needs a restart
+while True:
+    if cloudbot.running:
+        time.sleep(.1)
+    else:
+        if cloudbot.do_restart:
+            # create a new bot thread and start it
+            cloudbot = bot.Bot()
+            cloudbot.start()
+            continue
+        else:
+            break

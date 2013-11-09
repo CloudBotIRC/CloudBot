@@ -4,6 +4,7 @@ import re
 import os
 import Queue
 import collections
+import threading
 
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy import create_engine
@@ -45,7 +46,7 @@ def get_logger():
     return logger
 
 
-class Bot(object):
+class Bot(threading.Thread):
     def __init__(self):
         # basic variables
         self.start_time = time.time()
@@ -70,6 +71,8 @@ class Bot(object):
         self.threads = {}
 
         self.loader = PluginLoader(self)
+
+        threading.Thread.__init__(self)
 
 
     def run(self):

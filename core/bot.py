@@ -32,12 +32,12 @@ def get_logger():
 
     # stdout handler
     sh = logging.StreamHandler()
-    sh.setLevel(logging.INFO)
+    sh.setLevel(logging.DEBUG)
 
     # create a formatter and set the formatter for the handler.
     frmt = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
     fh.setFormatter(frmt)
-    simple_frmt = logging.Formatter('%(message)s')
+    simple_frmt = logging.Formatter('[%(levelname)s] %(message)s')
     sh.setFormatter(simple_frmt)
 
     # add the Handlers to the logger
@@ -99,23 +99,23 @@ class Bot(threading.Thread):
         """create the logger and config objects"""
         # logging
         self.logger = get_logger()
-        self.logger.debug("Logging engine started.")
+        self.logger.debug("Logging system ready.")
 
         # data folder
         self.data_dir = os.path.abspath('persist')
         if not os.path.exists(self.data_dir):
             self.logger.debug("Data folder not found, creating.")
             os.mkdir(self.data_dir)
-            self.logger.debug("Created data folder.")
 
         # config
         self.config = config.Config(self)
-        self.logger.debug("Config object created.")
+        self.logger.debug("Config system ready.")
 
         # db
         engine = create_engine('sqlite:///cloudbot.db')
         db_factory = sessionmaker(bind=engine)
         self.db_session = scoped_session(db_factory)
+        self.logger.debug("Database system ready.")
 
 
     def connect(self):

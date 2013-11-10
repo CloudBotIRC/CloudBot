@@ -113,4 +113,4 @@ def log(paraml, input=None, bot=None):
 
     out = "{} {} {}".format(timestamp, input.chan, beau.encode('utf8', 'ignore'))
 
-    sys.stdout.write(out + os.linesep)
+    print out

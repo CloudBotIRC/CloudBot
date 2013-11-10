@@ -53,7 +53,7 @@ class Input(dict):
         self[key] = value
 
 
-def run(func, input):
+def run(func, input, bot):
     args = func._args
 
     uses_db = 'db' in args and 'db' not in input
@@ -68,12 +68,21 @@ def run(func, input):
         if 'input' in args:
             input.input = input
         if 0 in args:
-            out = func(input.inp, **input)
+            try:
+                out = func(input.inp, **input)
+            except:
+                bot.logger.exception("Error in plugin {}:".format(func._filename))
         else:
             kw = dict((key, input[key]) for key in args if key in input)
-            out = func(input.inp, **kw)
+            try:
+                out = func(input.inp, **kw)
+            except:
+                bot.logger.exception("Error in plugin {}:".format(func._filename))
     else:
-        out = func(input.inp)
+        try:
+            out = func(input.inp)
+        except:
+            bot.logger.exception("Error in plugin {}:".format(func._filename))
     if out is not None:
         input.reply(unicode(out))
 
@@ -114,9 +123,7 @@ class Handler(object):
             try:
                 run(self.func, input)
             except:
-                import traceback
-
-                traceback.print_exc()
+                self.bot.logger.exception("Error in plugin {}:".format(self.Sfunc._filename))
 
     def stop(self):
         self.input_queue.put(StopIteration)
@@ -138,7 +145,7 @@ def dispatch(bot, input, kind, func, args, autohelp=False):
     if func._thread:
         bot.threads[func].put(input)
     else:
-        thread.start_new_thread(run, (func, input))
+        thread.start_new_thread(run, (func, input, bot))
 
 
 def match_command(bot, command):

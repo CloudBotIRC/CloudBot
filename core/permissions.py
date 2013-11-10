@@ -19,9 +19,6 @@ class PermissionManager(object):
         self.perm_users = {}
 
         self.reload()
-        print self.group_perms
-        print self.group_users
-        print self.perm_users
 
     def reload(self):
         self.logger.info("Reloading permissions for {}.".format(self.conn.name))

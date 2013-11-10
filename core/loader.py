@@ -70,8 +70,8 @@ class PluginLoader(object):
             namespace = {}
             eval(code, namespace)
         except Exception:
-            self.bot.logger.error("Error compiling {}:".format(filename))
-            self.bot.logger.error(traceback.format_exc())
+            self.bot.logger.exception("Error compiling {}:".format(filename))
+            #self.bot.logger.error(traceback.format_exc())
             return
 
         # remove plugins already loaded from this file

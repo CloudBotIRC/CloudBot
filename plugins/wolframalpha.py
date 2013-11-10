@@ -3,6 +3,8 @@ import re
 from util import hook, http, text, web
 
 
+@hook.command('math')
+@hook.command('calc')
 @hook.command('wa')
 @hook.command
 def wolframalpha(inp, bot=None):

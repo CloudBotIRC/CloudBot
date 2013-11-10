@@ -1,19 +1,15 @@
 import random
 
-from util import hook, http
+from util import hook, http, web
 
 
 @hook.command
 def stock(inp):
-    """.stock <symbol> -- gets stock information"""
+    """stock <symbol> -- gets stock information"""
+    sym = inp.strip().lower()
 
-    url = ('http://query.yahooapis.com/v1/public/yql?format=json&'
-           'env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys')
-
-    parsed = http.get_json(url, q='select * from yahoo.finance.quote '
-                           'where symbol in ("%s")' % inp)  # heh, SQLI
-
-    quote = parsed['query']['results']['quote']
+    query = "SELECT * FROM yahoo.finance.quote WHERE symbol=@symbol LIMIT 1"
+    quote = web.query(query, {"symbol": sym}).one()
 
     # if we dont get a company name back, the symbol doesn't match a company
     if quote['Change'] is None:

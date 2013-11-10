@@ -90,7 +90,6 @@ class PluginLoader(object):
         for obj in namespace.itervalues():
             if hasattr(obj, '_hook'):  # check for magic
                 if obj._thread:
-                    # TODO: pretty sure this is broken
                     self.bot.threads[obj] = main.Handler(self.bot, obj)
 
                 for type, data in obj._hook:

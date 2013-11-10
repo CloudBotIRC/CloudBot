@@ -94,7 +94,7 @@ def do_sieve(sieve, bot, input, func, type, args):
 class Handler(object):
     """Runs plugins in their own threads (ensures order)"""
 
-    def __init__(self, func, bot):
+    def __init__(self, bot, func):
         self.func = func
         self.bot = bot
         self.input_queue = Queue.Queue()

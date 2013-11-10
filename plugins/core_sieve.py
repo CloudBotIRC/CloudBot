@@ -1,8 +1,10 @@
-import re
+from util import hook, bucket
 
-from util import hook
-from fnmatch import fnmatch
+TOKENS = 10
+RESTORE_RATE = 2
+MESSAGE_COST = 5
 
+buckets = {}
 
 @hook.sieve
 def sieve_suite(bot, input, func, kind, args):
@@ -12,6 +14,22 @@ def sieve_suite(bot, input, func, kind, args):
         return None
 
     if kind == "command":
+        uid = (input.nick, input.chan)
+
+        if not uid in buckets:
+            _bucket = bucket.TokenBucket(TOKENS, RESTORE_RATE)
+            _bucket.consume(MESSAGE_COST)
+            buckets[uid] = _bucket
+            return input
+
+        _bucket = buckets[uid]
+        if _bucket.consume(MESSAGE_COST):
+            return input
+        else:
+            print "pong!"
+            return None
+
+
         disabled_commands = conn.config.get('disabled_commands', [])
         if input.trigger in disabled_commands:
             return None
@@ -33,8 +51,6 @@ def sieve_suite(bot, input, func, kind, args):
         args["permissions"] = ["adminonly"]
 
     if args.get('permissions', False):
-
-
         mask = input.mask.lower()
 
         allowed_permissions = args.get('permissions', [])

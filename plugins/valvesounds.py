@@ -24,11 +24,11 @@ def get_sound_info(game, search):
             text = item["text"]
         items.append("{} - {} {}".format(item["who"],
                                          text if len(text) < 325 else text[:325] + "...",
-                                         item["listen"] ) )
+                                         item["listen"]))
     if len(items) == 1:
         return items[0]
     else:
-        return "{} (and {} others: {})".format(items[0], len(items) - 1, web.haste("\n".join(items)) )
+        return "{} (and {} others: {})".format(items[0], len(items) - 1, web.haste("\n".join(items)))
 
 
 @hook.command

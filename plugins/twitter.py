@@ -131,12 +131,12 @@ def twuser(inp, bot=None):
         prefix = ""
 
     if user.location:
-        loc_str =  " is located in \x02{}\x02 and".format(user.location)
+        loc_str = " is located in \x02{}\x02 and".format(user.location)
     else:
         loc_str = ""
 
     if user.description:
-        desc_str =  " The users description is \"{}\"".format(user.description)
+        desc_str = " The users description is \"{}\"".format(user.description)
     else:
         desc_str = ""
 

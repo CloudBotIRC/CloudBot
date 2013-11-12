@@ -7,8 +7,13 @@ gauge_url = "http://www.mysteamgauge.com/search?username={}"
 api_url = "http://mysteamgauge.com/user/{}.csv"
 steam_api_url = "http://steamcommunity.com/id/{}/?xml=1"
 
-def refresh_data(name): http.get(gauge_url.format(name), timeout=25, get_method='HEAD')
-def get_data(name): return http.get(api_url.format(name))
+
+def refresh_data(name):
+    http.get(gauge_url.format(name), timeout=25, get_method='HEAD')
+
+
+def get_data(name):
+    return http.get(api_url.format(name))
 
 
 def is_number(s):
@@ -45,7 +50,7 @@ def steamcalc(inp, reply=None):
         except (http.HTTPError, http.URLError):
             return "Could not get data for this user."
 
-    csv_data = StringIO.StringIO(request) # we use StringIO because CSV can't read a string
+    csv_data = StringIO.StringIO(request)  # we use StringIO because CSV can't read a string
     reader = unicode_dictreader(csv_data)
 
     # put the games in a list
@@ -63,7 +68,7 @@ def steamcalc(inp, reply=None):
     except AttributeError:
         return "Could not get data for this user."
 
-    online_state = online_state.replace("<br/>", ": ") # will make this pretty later
+    online_state = online_state.replace("<br/>", ": ")  # will make this pretty later
     data["state"] = text.strip_html(online_state)
 
     # work out the average metascore for all games
@@ -91,9 +96,8 @@ def steamcalc(inp, reply=None):
 
     data["size"] = "{0:.1f}".format(total_size)
 
-
-    reply("{name} ({state}) has {games} games with a total value of ${value}" \
-           " and a total size of {size}GB! The average metascore for these" \
+    reply("{name} ({state}) has {games} games with a total value of ${value}"
+           " and a total size of {size}GB! The average metascore for these"
            " games is {average_metascore}.".format(**data))
 
     if do_refresh:

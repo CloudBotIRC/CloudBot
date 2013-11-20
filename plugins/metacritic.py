@@ -9,15 +9,17 @@ from util import hook, http
 @hook.command('mc')
 @hook.command
 def metacritic(inp):
-    """mc [all|movie|tv|album|x360|ps3|wii|pc|ds|3ds|vita] <title>
+    """mc [all|movie|tv|album|x360|ps3|pc|gba|ds|3ds|wii|vita|wiiu|xone|ps4] <title>
     Gets rating for <title> from metacritic on the specified medium."""
+
 
     # if the results suck, it's metacritic's fault
 
     args = inp.strip()
 
-    game_platforms = ('x360', 'ps3', 'pc', 'ds', 'wii', '3ds', 'gba',
-                      'psp', 'vita')
+
+    game_platforms = ('x360', 'ps3', 'pc', 'gba', 'ds', '3ds', 'wii',
+                      'vita', 'wiiu', 'xone', 'ps4')
 
     all_platforms = game_platforms + ('all', 'movie', 'tv', 'album')
 
@@ -128,7 +130,7 @@ def metacritic(inp):
         release = None
 
     try:
-        score = result.find_class('metascore')[0].text_content()
+        score = result.find_class('metascore_w')[0].text_content()
     except IndexError:
         score = None
 

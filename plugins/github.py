@@ -6,7 +6,7 @@ shortcuts = {"cloudbot": "ClouDev/CloudBot"}
 
 
 def truncate(msg):
-    nmsg = msg.split(" ")
+    nmsg = msg.split()
     out = None
     x = 0
     for i in nmsg:

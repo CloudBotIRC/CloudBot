@@ -55,7 +55,7 @@ def sieve_suite(bot, input, func, kind, args):
 
         allowed_permissions = args.get('permissions', [])
         for perm in allowed_permissions:
-            if conn.permissions.has_perm_legacy(mask, perm):
+            if conn.permissions.has_perm_mask(mask, perm):
                 return input
 
         input.notice("Sorry, you are not allowed to use this command.")

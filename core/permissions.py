@@ -38,7 +38,7 @@ class PermissionManager(object):
                 self.perm_users[perm] = []
                 self.perm_users[perm] = users
 
-    def has_perm_simple(self, mask, perm):
+    def has_perm_mask(self, mask, perm):
 
         allowed_users = self.perm_users[perm]
 

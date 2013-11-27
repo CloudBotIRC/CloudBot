@@ -6,7 +6,7 @@ class PermissionManager(object):
         # this is all legacy code, needs to be redone with classes and whatnot
         self.logger = bot.logger
 
-        self.logger.info("Creating temporary legacy permission manager for {}.".format(conn.name))
+        self.logger.info("Creating simple permission manager for {}.".format(conn.name))
 
         # stuff
         self.bot = bot
@@ -38,7 +38,7 @@ class PermissionManager(object):
                 self.perm_users[perm] = []
                 self.perm_users[perm] = users
 
-    def has_perm_legacy(self, mask, perm):
+    def has_perm_simple(self, mask, perm):
 
         allowed_users = self.perm_users[perm]
 

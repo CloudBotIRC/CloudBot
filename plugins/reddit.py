@@ -52,7 +52,7 @@ def reddit(inp):
     data = data["data"]["children"]
 
     # get the requested/random post
-    if id_num:
+    if id_num != None:
         try:
             item = data[id_num]["data"]
         except IndexError:

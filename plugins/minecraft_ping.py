@@ -1,6 +1,8 @@
 from util import hook
 import socket
 import struct
+import json
+
 
 try:
     import DNS
@@ -9,48 +11,97 @@ try:
 except ImportError:
     pydns_installed = False
 
+mccolors = [u"\x0300,\xa7f", u"\x0301,\xa70", u"\x0302,\xa71", u"\x0303,\xa72", u"\x0304,\xa7c", u"\x0305,\xa74",
+          u"\x0306,\xa75", u"\x0307,\xa76", u"\x0308,\xa7e", u"\x0309,\xa7a", u"\x0310,\xa73", u"\x0311,\xa7b",
+          u"\x0312,\xa71", u"\x0313,\xa7d", u"\x0314,\xa78", u"\x0315,\xa77", u"\x02,\xa7l", u"\x0310,\xa79",
+          u"\x09,\xa7o", u"\x13,\xa7m", u"\x0f,\xa7r", u"\x15,\xa7n"]
 
-def format_motd(motd):
-    empty = ""
-    colors = [u"\x0300,\xa7f", u"\x0301,\xa70", u"\x0302,\xa71", u"\x0303,\xa72", u"\x0304,\xa7c", u"\x0305,\xa74",
-              u"\x0306,\xa75", u"\x0307,\xa76", u"\x0308,\xa7e", u"\x0309,\xa7a", u"\x0310,\xa73", u"\x0311,\xa7b",
-              u"\x0312,\xa71", u"\x0313,\xa7d", u"\x0314,\xa78", u"\x0315,\xa77", u"\x02,\xa7l", u"\x0310,\xa79",
-              u"\x09,\xa7o", u"\x13,\xa7m", u"\x0f,\xa7r", u"\x15,\xa7n"]
-    for s in colors:
-        lcol = s.split(",")
-        motd = motd.replace(lcol[1], lcol[0])
-    motd = motd.replace(u"\xa7k", empty)
+
+def mc_color_format(motd):
+    for colorcombo in mccolors:
+        colorarray = colorcombo.split(",")
+        motd = motd.replace(colorarray[1], colorarray[0])
+    motd = motd.replace(u"\xa7k", "")
     return motd
 
 
-def mcping_connect(host, port):
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+def unpack_varint(s):
+    d = 0
+    i = 0
+    while True:
+        b = ord(s.recv(1))
+        d |= (b & 0x7F) << 7 * i
+        i += 1
+        if not b & 0x80:
+            return d
+
+
+def pack_data(d):
+    return struct.pack('>b', len(d)) + d
+
+
+def pack_port(i):
+    return struct.pack('>H', i)
+
+
+def mc_17_ping_to_json(host, port):
+
+    # Connect
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((host, port))
+
+    # Send handshake + status request
+    s.send(pack_data("\x00\x00" + pack_data(host.encode('utf8')) + pack_port(port) + "\x01"))
+    s.send(pack_data("\x00"))
+
+    # Read response
+    unpack_varint(s)      # Packet length
+    unpack_varint(s)      # Packet ID
+    l = unpack_varint(s)  # String length
+
+    d = ""
+    while len(d) < l:
+        d += s.recv(1024)
+
+    # Close our socket
+    s.close()
+
+    # Load json and return
+    return json.loads(d.decode('utf8'))
+
+
+def mcping_17(host, port):
+    data = mc_17_ping_to_json(host, port)
     try:
-        sock.connect((host, port))
-        sock.send('\xfe\x01')
-        response = sock.recv(1)
-        print response
+        version = data["version"]["name"]
+        desc = data["description"]
+        max = data["players"]["max"]
+        online = data["players"]["online"]
+    except Exception as e:
+        return "Invalid data: {}; error: {}".format(data, e)
+    return mc_color_format(u"{}\x0f - {}\x0f - {}/{} players".format(desc, version, online, max)).replace("\n", u"\x0f - ")
 
-        if response[0] != '\xff':
-            return "Server gave invalid response: " + repr(response)
-        length = struct.unpack('!h', sock.recv(2))[0]
 
-        values = sock.recv(length * 2).decode('utf-16be')
-
-        data = values.split(u'\x00')  # try to decode data using new format
-        if len(data) == 1:
-            # failed to decode data, server is using old format
-            data = values.split(u'\xa7')
-            message = u"{} - {}/{} players".format(data[0], data[1], data[2])
-        else:
-            # decoded data, server is using new format
-            message = u"{} \x0f- {} - {}/{} players".format(data[3], data[2], data[4], data[5])
-
-        sock.close()
-        return message
-
-    except:
-        return "Error pinging {}:{}, is it up? Double-check your address!".format(host, str(port))
+def mcping_16(host, port):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect((host, port))
+    sock.send('\xfe\x01')
+    response = sock.recv(1)
+    print response
+    if response[0] != '\xff':
+        return "Server gave invalid response: " + repr(response)
+    length = struct.unpack('!h', sock.recv(2))[0]
+    values = sock.recv(length * 2).decode('utf-16be')
+    data = values.split(u'\x00')  # try to decode data using new format
+    if len(data) == 1:
+        # failed to decode data, server is using old format
+        data = values.split(u'\xa7')
+        message = u"{} - {}/{} players".format(mc_color_format(data[0]), data[1], data[2])
+    else:
+        # decoded data, server is using new format
+        message = u"{} \x0f- {} - {}/{} players".format(mc_color_format(data[3]), mc_color_format(data[2]), data[4], data[5])
+    sock.close()
+    return message
 
 
 def srvData(domain):
@@ -64,34 +115,62 @@ def srvData(domain):
             return data
 
 
-@hook.command
-def mcping(inp):
-    """mcping <server>[:port] - Ping a Minecraft server to check status."""
+def get_host_and_port(inp):
     inp = inp.strip().split(" ")[0]
-
     if ":" in inp:
         host, port = inp.split(":", 1)
         try:
             port = int(port)
         except:
-            return "error: invalid port!"
-        return format_motd(mcping_connect(host, port))
+            raise Exception("The port '{}' is invalid.".format(port))
+        return host, port
+    elif pydns_installed:
+        srv_data = srvData(inp)
+        if srv_data:
+            return str(srv_data[1]), int(srv_data[0])
+    return inp, 25565
 
-    else:
-        host = inp
-        port = 25565
-        rdata = format_motd(mcping_connect(host, port))
 
-        if 'is it up' in rdata:
-            if pydns_installed:
-                getdata = srvData(inp)
-                try:
-                    host = str(getdata[1])
-                    port = int(getdata[0])
-                    return format_motd(mcping_connect(host, port))
-                except:
-                    return "Error pinging {}, is it up? Double-check your address!".format(inp)
-            else:
-                return "Error pinging {}, is it up? Double-check your address!".format(inp)
-        else:
-            return rdata
+@hook.command
+@hook.command("mcp6")
+def mcping6(inp):
+    """mcping6 <server>[:port] - Ping a Minecraft server version 1.6 or smaller to check status."""
+    try:
+        host, port = get_host_and_port(inp)
+    except Exception as ex:
+        return ex.args[0]
+    try:
+        return mcping_16(host, port)
+    except Exception as e:
+        return "The 1.6 server {}:{} looks offline from here.".format(host, port)
+
+
+@hook.command
+@hook.command("mcp7")
+def mcping7(inp):
+    """mcping <server>[:port] - Ping a Minecraft server version 1.7 or greater to check status."""
+    try:
+        host, port = get_host_and_port(inp)
+    except Exception as ex:
+        return ex.args[0]
+    try:
+        return mcping_17(host, port)
+    except Exception as e:
+        return "The 1.7 server {}:{} looks offline from here.".format(host, port)
+
+
+@hook.command
+@hook.command("mcp")
+def mcping(inp):
+    """mcping <server>[:port] - Ping a Minecraft server to check status."""
+    try:
+        host, port = get_host_and_port(inp)
+    except Exception as ex:
+        return ex.args[0]
+    try:
+        return mcping_17(host, port)
+    except:
+        try:
+            return mcping_16(host, port)
+        except Exception as e:
+            return "The 1.6/1.7 server {}:{} looks offline from here.".format(host, port)

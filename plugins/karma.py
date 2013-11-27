@@ -53,7 +53,7 @@ def allowed(db, nick, nick_vote):
             db.commit()
             return True, 0
         else:
-            return False, timesince.timeuntil(check, now=time.time()-time_restriction)
+            return False, timesince.timeuntil(check, now=time.time() - time_restriction)
     else:
         db.execute("""INSERT OR REPLACE INTO karma_voters(
                    voter,
@@ -64,9 +64,10 @@ def allowed(db, nick, nick_vote):
 
 
 # TODO Make this work on multiple matches in a string, right now it'll only
-# work on one match. 
+# work on one match.
 # karma_re = ('((\S+)(\+\+|\-\-))+', re.I)
 karma_re = ('(.+)(\+\+|\-\-)$', re.I)
+
 
 @hook.regex(*karma_re)
 def karma_add(match, nick='', chan='', db=None, notice=None):
@@ -79,7 +80,7 @@ def karma_add(match, nick='', chan='', db=None, notice=None):
         notice("You can't vote on yourself!")
         return
     if len(nick_vote) < 3 or " " in nick_vote:
-        return # ignore anything below 3 chars in length or with spaces
+        return  # ignore anything below 3 chars in length or with spaces
 
     vote_allowed, when = allowed(db, nick, nick_vote)
     if vote_allowed:
@@ -88,7 +89,7 @@ def karma_add(match, nick='', chan='', db=None, notice=None):
                        nick_vote,
                        up_karma,
                        down_karma,
-                       total_karma) values(?,?,?,?)""", (nick_vote.lower(),0,0,0))
+                       total_karma) values(?,?,?,?)""", (nick_vote.lower(), 0, 0, 0))
             up(db, nick_vote)
             notice("Gave {} 1 karma!".format(nick_vote))
         if match.group(2) == '--':
@@ -96,7 +97,7 @@ def karma_add(match, nick='', chan='', db=None, notice=None):
                        nick_vote,
                        up_karma,
                        down_karma,
-                       total_karma) values(?,?,?,?)""", (nick_vote.lower(),0,0,0))
+                       total_karma) values(?,?,?,?)""", (nick_vote.lower(), 0, 0, 0))
             down(db, nick_vote)
             notice("Took away 1 karma from {}.".format(nick_vote))
         else:
@@ -126,6 +127,6 @@ def karma(inp, nick='', chan='', db=None):
         return "That user has no karma."
     else:
         out = out[0]
-        return "{} has {} karma points.".format(nick_vote, out[1]-out[2])
+        return "{} has {} karma points.".format(nick_vote, out[1] - out[2])
 
     return

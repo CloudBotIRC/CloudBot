@@ -6,7 +6,7 @@ shortcuts = {"cloudbot": "ClouDev/CloudBot"}
 
 
 def truncate(msg):
-    nmsg = msg.split(" ")
+    nmsg = msg.split()
     out = None
     x = 0
     for i in nmsg:
@@ -50,8 +50,8 @@ def ghissues(inp):
                 return "Repo has no open issues"
     except ValueError:
         return "Invalid data returned. Check arguments (.github issues username/repo [number]"
-    fmt = "Issue: #{} ({}) by {}: {} | {} {}"  # (number, state, user.login, title, truncate(body), gitio.gitio(data.url))
-    fmt1 = "Issue: #{} ({}) by {}: {} {}"  # (number, state, user.login, title, gitio.gitio(data.url))
+    fmt = "Issue: #%s (%s) by %s: %s | %s %s"  # (number, state, user.login, title, truncate(body), gitio.gitio(data.url))
+    fmt1 = "Issue: #%s (%s) by %s: %s %s"  # (number, state, user.login, title, gitio.gitio(data.url))
     number = data["number"]
     if data["state"] == "open":
         state = u"\x033\x02OPEN\x02\x0f"

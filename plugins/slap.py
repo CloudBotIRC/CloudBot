@@ -22,7 +22,7 @@ def slap(inp, action=None, nick=None, conn=None, notice=None):
         target = nick
 
     variables = {
-    	"user": target
+        "user": target
     }
 
     with open("./data/slaps.json") as f:

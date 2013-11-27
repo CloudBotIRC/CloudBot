@@ -19,7 +19,7 @@ def osrc(inp):
 
     response["nick"] = user_nick
     soup = BeautifulSoup(response["summary"])
-    response["work_time"] = soup.find("a", {"href" : "#day"}).contents[0]
+    response["work_time"] = soup.find("a", {"href": "#day"}).contents[0]
 
     response["short_url"] = web.try_isgd(user_url.format(user_nick))
 

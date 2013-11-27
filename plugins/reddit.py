@@ -36,14 +36,14 @@ def reddit(inp):
         # find the requested post number (if any)
         if len(parts) > 1:
             url = base_url.format(parts[0].strip())
-            try: 
+            try:
                 id_num = int(parts[1]) - 1
             except ValueError:
                 return "Invalid post number."
         else:
             url = base_url.format(parts[0].strip())
     else:
-        url  = "http://reddit.com/.json"
+        url = "http://reddit.com/.json"
 
     try:
         data = http.get_json(url, user_agent=http.ua_chrome)
@@ -51,9 +51,8 @@ def reddit(inp):
         return "Error: " + str(e)
     data = data["data"]["children"]
 
-
     # get the requested/random post
-    if id_num:
+    if id_num != None:
         try:
             item = data[id_num]["data"]
         except IndexError:

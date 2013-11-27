@@ -1,5 +1,6 @@
 from util import hook
-import os, sys
+import os
+import sys
 import re
 import json
 import time
@@ -118,6 +119,7 @@ def restart(inp, bot=None):
         bot.restart(reason=inp)
     else:
         bot.restart()
+
 
 
 @hook.command(autohelp=False, permissions=["botcontrol"])

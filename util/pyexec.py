@@ -1,4 +1,5 @@
-import http, web
+import http
+import web
 
 
 def eval_py(code, paste_multiline=True):

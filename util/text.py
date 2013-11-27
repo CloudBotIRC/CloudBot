@@ -184,7 +184,7 @@ def truncate_str(content, length=100, suffix='...'):
 # Expression to match some_token and some_token="with spaces" (and similarly
 # for single-quoted strings).
 
-split_re = re.compile(r"""((?:[^\s'"]*(?:(?:"(?:[^"\\]|\\.)*" | '(?:[""" \
+split_re = re.compile(r"""((?:[^\s'"]*(?:(?:"(?:[^"\\]|\\.)*" | '(?:["""
                       r"""^'\\]|\\.)*')[^\s'"]*)+) | \S+)""", re.VERBOSE)
 
 

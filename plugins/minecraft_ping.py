@@ -15,7 +15,7 @@ def format_motd(motd):
     colors = [u"\x0300,\xa7f", u"\x0301,\xa70", u"\x0302,\xa71", u"\x0303,\xa72", u"\x0304,\xa7c", u"\x0305,\xa74",
               u"\x0306,\xa75", u"\x0307,\xa76", u"\x0308,\xa7e", u"\x0309,\xa7a", u"\x0310,\xa73", u"\x0311,\xa7b",
               u"\x0312,\xa71", u"\x0313,\xa7d", u"\x0314,\xa78", u"\x0315,\xa77", u"\x02,\xa7l", u"\x0310,\xa79",
-              u"\x09,\xa7o", u"\x13,\xa7m", u"\x0f,\xa7r", u"\x15,\xa7n"];
+              u"\x09,\xa7o", u"\x13,\xa7m", u"\x0f,\xa7r", u"\x15,\xa7n"]
     for s in colors:
         lcol = s.split(",")
         motd = motd.replace(lcol[1], lcol[0])
@@ -50,7 +50,7 @@ def mcping_connect(host, port):
         return message
 
     except:
-        return "Error pinging {}:{}, is it up? Double-check your address!".format(host,str(port))
+        return "Error pinging {}:{}, is it up? Double-check your address!".format(host, str(port))
 
 
 def srvData(domain):

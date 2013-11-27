@@ -9,10 +9,10 @@ import json
 import hashlib
 
 # helper functions to pad and unpad a string to a specified block size
-# <http://stackoverflow.com/questions/12524994/encrypt-decrypt-using-pycrypto-aes-256> 
+# <http://stackoverflow.com/questions/12524994/encrypt-decrypt-using-pycrypto-aes-256>
 BS = AES.block_size
-pad = lambda s: s + (BS - len(s) % BS) * chr(BS - len(s) % BS) 
-unpad = lambda s : s[0:-ord(s[-1])]
+pad = lambda s: s + (BS - len(s) % BS) * chr(BS - len(s) % BS)
+unpad = lambda s: s[0:-ord(s[-1])]
 
 # helper functions to encrypt and encode a string with AES and base64
 encode_aes = lambda c, s: base64.b64encode(c.encrypt(pad(s)))
@@ -48,7 +48,7 @@ def encrypt(inp, bot=None, db=None, notice=None):
     # if there is only one argument, return the help message
     if len(split) == 1:
         notice(encrypt.__doc__)
-        return 
+        return
 
     # generate the key from the password and salt
     password = split[0]
@@ -56,7 +56,7 @@ def encrypt(inp, bot=None, db=None, notice=None):
     key = PBKDF2(password, salt)
 
     # generate the IV and encode it to store in the database
-    iv = Random.new().read(AES.block_size);
+    iv = Random.new().read(AES.block_size)
     iv_encoded = base64.b64encode(iv)
 
     # create the AES cipher and encrypt/encode the text with it
@@ -83,9 +83,9 @@ def decrypt(inp, bot=None, db=None, notice=None):
     # if there is only one argument, return the help message
     if len(split) == 1:
         notice(decrypt.__doc__)
-        return 
+        return
 
-    # generate the key from the password and salt	
+    # generate the key from the password and salt
     password = split[0]
     salt = get_salt(bot)
     key = PBKDF2(password, salt)

@@ -27,18 +27,18 @@ def rdio(inp, bot=None):
     except IndexError:
         return "No results."
     if 'name' in info:
-        if 'artist' in info and 'album' in info:  #Track
+        if 'artist' in info and 'album' in info:  # Track
             name = info['name']
             artist = info['artist']
             album = info['album']
             url = info['shortUrl']
             return u"\x02{}\x02 by \x02{}\x02 - {} {}".format(name, artist, album, url)
-        elif 'artist' in info and not 'album' in info:  #Album
+        elif 'artist' in info and not 'album' in info:  # Album
             name = info['name']
             artist = info['artist']
             url = info['shortUrl']
             return u"\x02{}\x02 by \x02{}\x02 - {}".format(name, artist, url)
-        else:  #Artist
+        else:  # Artist
             name = info['name']
             url = info['shortUrl']
             return u"\x02{}\x02 - {}".format(name, url)
@@ -115,15 +115,15 @@ def rdio_url(match, bot=None):
     data = json.loads(response[1])
     info = data['result']
     if 'name' in info:
-        if 'artist' in info and 'album' in info:  #Track
+        if 'artist' in info and 'album' in info:  # Track
             name = info['name']
             artist = info['artist']
             album = info['album']
             return u"Rdio track: \x02{}\x02 by \x02{}\x02 - {}".format(name, artist, album)
-        elif 'artist' in info and not 'album' in info:  #Album
+        elif 'artist' in info and not 'album' in info:  # Album
             name = info['name']
             artist = info['artist']
             return u"Rdio album: \x02{}\x02 by \x02{}\x02".format(name, artist)
-        else:  #Artist
+        else:  # Artist
             name = info['name']
             return u"Rdio artist: \x02{}\x02".format(name)

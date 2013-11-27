@@ -1,6 +1,7 @@
 # Plugin by Lukeroge
 from util import hook, text, textgen
-import json, os
+import json
+import os
 
 
 GEN_DIR = "./plugins/data/name_files/"
@@ -9,7 +10,7 @@ GEN_DIR = "./plugins/data/name_files/"
 def get_generator(_json):
     data = json.loads(_json)
     return textgen.TextGenerator(data["templates"],
-        data["parts"], default_templates = data["default_templates"])
+        data["parts"], default_templates=data["default_templates"])
 
 
 @hook.command(autohelp=False)

@@ -13,6 +13,7 @@ with open("plugins/data/flirts.txt") as f:
     flirts = [line.strip() for line in f.readlines()
               if not line.startswith("//")]
 
+
 @hook.command
 def lart(inp, action=None, nick=None, conn=None, notice=None):
     """lart <user> -- LARTs <user>."""

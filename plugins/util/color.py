@@ -13,23 +13,29 @@ control = {'bold': '\x02', 'color': '\x03', 'italic': '\x09',
 def color(color):
     return control['color'] + colors[color]
 
+
 def bold():
     return control['bold']
+
 
 def italic():
     return control['italic']
 
+
 def strike():
     return control['strikethrough']
 
+
 def reset():
     return control['reset']
+
 
 def underline(other=False):
     if other:
         return control['underline2']
     else:
         return control['underline']
+
 
 def reverse():
     return control['reverse']

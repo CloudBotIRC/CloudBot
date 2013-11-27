@@ -1,5 +1,6 @@
 from util import hook
-import os, sys
+import os
+import sys
 import re
 import json
 import time
@@ -126,6 +127,7 @@ def restart(inp, nick=None, conn=None, bot=None):
     args = sys.argv[:]
     args.insert(0, sys.executable)
     os.execv(sys.executable, args)
+
 
 @hook.command(autohelp=False, permissions=["botcontrol"])
 def clearlogs(inp, input=None):

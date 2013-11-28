@@ -8,7 +8,7 @@ def bitcoin(inp):
     exchanges = {
         "mtgox": {
             "api_url": "https://mtgox.com/api/1/BTCUSD/ticker",
-            "func": lambda data: u"MtGox // Current: \x0307{}\x0f - High: \x0307{}\x0f - Low: \x0307{}\x0f - Best Ask: \x0307{}\x0f - Volume: {}".format(data['return']['last']['display'], \
+            "func": lambda data: u"MtGox // Current: \x0307{}\x0f  High: \x0307{}\x0f  Low: \x0307{}\x0f  Best Ask: \x0307{}\x0f  Volume: {}".format(data['return']['last']['display'], \
                                    data['return']['high']['display'], data['return']['low']['display'], data['return']['buy']['display'], \
                                    data['return']['vol']['display'])
         },

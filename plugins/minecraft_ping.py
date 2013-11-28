@@ -166,11 +166,11 @@ def mcping(inp):
     try:
         host, port = parse_input(inp)
     except Exception as e:
-        return ex.args[0]
+        return e.args[0]
     try:
         return mcping_modern(host, port)
     except socket.error:
         try:
             return mcping_legacy(host, port)
         except:
-            return "The server {}:{} looks offline from here.".format(host, port)
+            return "The server {} ({}:{}) looks offline from here.".format(inp, host, port)

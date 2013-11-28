@@ -18,7 +18,9 @@
       "nickserv": {
         "enabled": false,
         "nickserv_password": "",
-        "nickserv_user": ""
+        "nickserv_user": "",
+        "nickserv_name": "nickserv",
+        "nickserv_command": "IDENTIFY"
       },
       "permissions": {
         "admins": {

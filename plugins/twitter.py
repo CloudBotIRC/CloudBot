@@ -88,7 +88,7 @@ def twitter(inp, bot=None):
     text = " ".join(tweet.text.split())
 
     if user.verified:
-        prefix = u"\u2713 "
+        prefix = u"\u2713"
     else:
         prefix = ""
 
@@ -126,7 +126,7 @@ def twuser(inp, bot=None):
             return "Unknown error"
 
     if user.verified:
-        prefix = u"\u2713 "
+        prefix = u"\u2713"
     else:
         prefix = ""
 

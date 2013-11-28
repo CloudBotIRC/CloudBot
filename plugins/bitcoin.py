@@ -8,17 +8,17 @@ def bitcoin(inp):
     exchanges = {
         "mtgox": {
             "api_url": "https://mtgox.com/api/1/BTCUSD/ticker",
-            "func": lambda data: u"\x02MtGox\x02 // Current: {}, High: {}, Low: {}, Best Ask: {}, Volume: {}".format(data['return']['last']['display'], \
+            "func": lambda data: u"\x02MtGox\x02 // Current: \x0307{}\x0f - High: \x0307{}\x0f - Low: \x0307{}\x0f - Best Ask: \x0307{}\x0f - Volume: {}".format(data['return']['last']['display'], \
                                    data['return']['high']['display'], data['return']['low']['display'], data['return']['buy']['display'], \
                                    data['return']['vol']['display'])
         },
         "bitpay": {
             "api_url": "https://bitpay.com/api/rates",
-            "func": lambda data: u"\x02Bitpay\x02 // Current: ${}".format(data[0]['rate'])
+            "func": lambda data: u"\x02Bitpay\x02 // Current: \x0307${}\x0f".format(data[0]['rate'])
         },
         "bitstamp": {
             "api_url": "https://www.bitstamp.net/api/ticker/",
-            "func": lambda data: u"\x02BitStamp\x02 // Current: ${}, High: ${}, Low: ${}, Volume: {:.2f} BTC".format(data['last'], data['high'], data['low'], \
+            "func": lambda data: u"\x02BitStamp\x02 // Current: \x0307${}\x0f - High: \x0307${}\x0f - Low: \x0307${}\x0f - Volume: {:.2f} BTC".format(data['last'], data['high'], data['low'], \
                                    float(data['volume']))
         }
     }

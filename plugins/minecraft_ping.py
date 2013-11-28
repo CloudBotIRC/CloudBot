@@ -44,20 +44,21 @@ def pack_port(i):
     return struct.pack('>H', i)
 
 
-def mc_17_ping_to_json(host, port):
-
-    # Connect
+def mcping_modern(host, port):
+    """ pings a server using the modern (1.7+) protocol and returns formatted output """
+    # connect to the server
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((host, port))
 
-    # Send handshake + status request
+    # send handshake + status request
     s.send(pack_data("\x00\x00" + pack_data(host.encode('utf8')) + pack_port(port) + "\x01"))
     s.send(pack_data("\x00"))
 
-    # Read response
+    # read response
     unpack_varint(s)      # Packet length
     unpack_varint(s)      # Packet ID
     l = unpack_varint(s)  # String length
+    print l
 
     d = ""
     while len(d) < l:
@@ -67,11 +68,7 @@ def mc_17_ping_to_json(host, port):
     s.close()
 
     # Load json and return
-    return json.loads(d.decode('utf8'))
-
-
-def mcping_17(host, port):
-    data = mc_17_ping_to_json(host, port)
+    data = json.loads(d.decode('utf8'))
     try:
         version = data["version"]["name"]
         desc = data["description"]
@@ -79,10 +76,11 @@ def mcping_17(host, port):
         online = data["players"]["online"]
     except Exception as e:
         return "Invalid data: {}; error: {}".format(data, e)
-    return mc_color_format(u"{}\x0f - {}\x0f - {}/{} players".format(desc, version, online, max)).replace("\n", u"\x0f - ")
+    return mc_color_format(u"{}\x0f - {}\x0f - {}/{} players *".format(desc, version, online, max)).replace("\n", u"\x0f - ")
 
 
-def mcping_16(host, port):
+def mcping_legacy(host, port):
+    """ pings a server using the legacy (1.6 and older) protocol and returns formatted output """
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((host, port))
     sock.send('\xfe\x01')
@@ -104,7 +102,8 @@ def mcping_16(host, port):
     return message
 
 
-def srvData(domain):
+def get_srv_data(domain):
+    """ takes a domain and finds minecraft SRV records """
     DNS.ParseResolvConf()
     srv_req = DNS.Request(qtype='srv')
     srv_result = srv_req.req('_minecraft._tcp.{}'.format(domain))
@@ -115,7 +114,8 @@ def srvData(domain):
             return data
 
 
-def get_host_and_port(inp):
+def parse_input(inp):
+    """ takes the input from the mcping command and returns the host and port """
     inp = inp.strip().split(" ")[0]
     if ":" in inp:
         host, port = inp.split(":", 1)
@@ -124,8 +124,8 @@ def get_host_and_port(inp):
         except:
             raise Exception("The port '{}' is invalid.".format(port))
         return host, port
-    elif pydns_installed:
-        srv_data = srvData(inp)
+    if pydns_installed:
+        srv_data = get_srv_data(inp)
         if srv_data:
             return str(srv_data[1]), int(srv_data[0])
     return inp, 25565
@@ -136,12 +136,12 @@ def get_host_and_port(inp):
 def mcping6(inp):
     """mcping6 <server>[:port] - Ping a Minecraft server version 1.6 or smaller to check status."""
     try:
-        host, port = get_host_and_port(inp)
+        host, port = parse_input(inp)
     except Exception as ex:
         return ex.args[0]
     try:
-        return mcping_16(host, port)
-    except Exception as e:
+        return mcping_legacy(host, port)
+    except:
         return "The 1.6 server {}:{} looks offline from here.".format(host, port)
 
 
@@ -150,12 +150,12 @@ def mcping6(inp):
 def mcping7(inp):
     """mcping <server>[:port] - Ping a Minecraft server version 1.7 or greater to check status."""
     try:
-        host, port = get_host_and_port(inp)
+        host, port = parse_input(inp)
     except Exception as ex:
         return ex.args[0]
     try:
-        return mcping_17(host, port)
-    except Exception as e:
+        return mcping_modern(host, port)
+    except:
         return "The 1.7 server {}:{} looks offline from here.".format(host, port)
 
 
@@ -164,13 +164,13 @@ def mcping7(inp):
 def mcping(inp):
     """mcping <server>[:port] - Ping a Minecraft server to check status."""
     try:
-        host, port = get_host_and_port(inp)
-    except Exception as ex:
+        host, port = parse_input(inp)
+    except Exception as e:
         return ex.args[0]
     try:
-        return mcping_17(host, port)
-    except:
+        return mcping_modern(host, port)
+    except socket.error:
         try:
-            return mcping_16(host, port)
-        except Exception as e:
-            return "The 1.6/1.7 server {}:{} looks offline from here.".format(host, port)
+            return mcping_legacy(host, port)
+        except:
+            return "The server {}:{} looks offline from here.".format(host, port)

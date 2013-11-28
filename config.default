@@ -16,6 +16,7 @@
       "disabled_commands": [],
       "acls": {},
       "nickserv": {
+        "enabled": false,
         "nickserv_password": "",
         "nickserv_user": ""
       },

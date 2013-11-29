@@ -1,25 +1,25 @@
 from util import hook, http, text, web
 import json
 
-
 ITEM_URL = "http://www.newegg.com/Product/Product.aspx?Item={}"
+
 
 @hook.command
 def newegg(inp):
-    """ newegg <item name> -- Searches newegg.com for <item name> """
+    """newegg <item name> -- Searches newegg.com for <item name>"""
 
     request = {
-    "PageNumber": 1,
-    "BrandId": -1,
-    "NValue": "",
-    "StoreDepaId": -1,
-    "NodeId": -1,
-    "Keyword": inp,
-    "IsSubCategorySearch": False,
-    "SubCategoryId": -1,
-    "Sort": "FEATURED",
-    "CategoryId": -1,
-    "IsUPCCodeSearch": False
+        "PageNumber": 1,
+        "BrandId": -1,
+        "NValue": "",
+        "StoreDepaId": -1,
+        "NodeId": -1,
+        "Keyword": inp,
+        "IsSubCategorySearch": False,
+        "SubCategoryId": -1,
+        "Sort": "FEATURED",
+        "CategoryId": -1,
+        "IsUPCCodeSearch": False
     }
 
     r = http.get_json(
@@ -29,17 +29,18 @@ def newegg(inp):
 
     item = r["ProductListItems"][0]
 
-    data = {
-        'title': text.truncate_str(item["Title"], 50),
-        'rating': item["ReviewSummary"]["Rating"],
-        'ratingcount': item["ReviewSummary"]["TotalReviews"][1:-1]
-    }
-    print item
+    title = text.truncate_str(item["Title"], 50)
+
+    if not item["ReviewSummary"]["TotalReviews"] == "[]":
+        rating = "Rated {}/5 ({} ratings)".format(item["ReviewSummary"]["Rating"],
+                                                          item["ReviewSummary"]["TotalReviews"][1:-1])
+    else:
+        rating = "No Ratings"
 
     if not item["FinalPrice"] ==  item["OriginalPrice"]:
-        data['price'] = "{FinalPrice}, was {OriginalPrice}".format(**item)
+        price = "{FinalPrice}, was {OriginalPrice}".format(**item)
     else:
-        data['price'] = item["FinalPrice"]
+        price = item["FinalPrice"]
 
     tags = []
 
@@ -54,8 +55,12 @@ def newegg(inp):
     if item["IsFeaturedItem"]:
         tags.append("\x02Featured\x02")
 
-    data["tags"] = ", ".join(tags)
+    if item["IsShellShockerItem"]:
+        tags.append("\x02SHELL SHOCKER®\x02")
 
-    data["url"] = web.try_isgd(ITEM_URL.format(item["NeweggItemNumber"]))
+    tag_text = u", ".join(tags)
 
-    return "\x02{title}\x02 ({price}) - Rated {rating}/5 ({ratingcount} ratings) - {tags} - {url}".format(**data)
+    url = web.try_isgd(ITEM_URL.format(item["NeweggItemNumber"]))
+
+    return u"\x02{}\x02 ({}) - {} - {} - {}".format(title, price, rating,
+                                                   tag_text, url)

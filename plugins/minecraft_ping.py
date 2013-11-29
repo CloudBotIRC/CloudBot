@@ -3,13 +3,13 @@ import socket
 import struct
 import json
 
-
 try:
     import DNS
     # Please remember to install the dependancy 'pydns'
     pydns_installed = True
 except ImportError:
     pydns_installed = False
+
 
 mccolors = [u"\x0300,\xa7f", u"\x0301,\xa70", u"\x0302,\xa71", u"\x0303,\xa72", u"\x0304,\xa7c", u"\x0305,\xa74",
           u"\x0306,\xa75", u"\x0307,\xa76", u"\x0308,\xa7e", u"\x0309,\xa7a", u"\x0310,\xa73", u"\x0311,\xa7b",
@@ -58,7 +58,9 @@ def mcping_modern(host, port):
     unpack_varint(s)      # Packet length
     unpack_varint(s)      # Packet ID
     l = unpack_varint(s)  # String length
-    print l
+
+    if not l > 1:
+        raise Exception
 
     d = ""
     while len(d) < l:
@@ -167,9 +169,10 @@ def mcping(inp):
         host, port = parse_input(inp)
     except Exception as e:
         return e.args[0]
+
     try:
         return mcping_modern(host, port)
-    except socket.error:
+    except:
         try:
             return mcping_legacy(host, port)
         except:

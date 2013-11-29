@@ -6,6 +6,11 @@ from util import http, hook
 def bitcoin(inp):
     "bitcoin <exchange> -- Gets current exchange rate for bitcoins from several exchanges, default is MtGox. Supports MtGox, Bitpay, and BitStamp."
     exchanges = {
+        "blockchain": {
+            "api_url": "https://blockchain.info/ticker",
+            "func": lambda data: u"Blockchain // Buy: \x0307${:,.2f}\x0f - Sell: \x0307${:,.2f}\x0f".format(data["USD"]["buy"], \
+                                   data["USD"]["sell"])
+        },
         "mtgox": {
             "api_url": "https://mtgox.com/api/1/BTCUSD/ticker",
             "func": lambda data: u"MtGox // Current: \x0307{}\x0f - High: \x0307{}\x0f - Low: \x0307{}\x0f - Best Ask: \x0307{}\x0f - Volume: {}".format(data['return']['last']['display'], \
@@ -31,7 +36,7 @@ def bitcoin(inp):
         else:
             return "Invalid Exchange"
     else:
-        exchange = exchanges["mtgox"]
+        exchange = exchanges["blockchain"]
 
     data = http.get_json(exchange["api_url"])
     func = exchange["func"]

@@ -1,10 +1,11 @@
 from util import http, hook
 
 
+@hook.command("butt", autohelp=False)
 @hook.command("btc", autohelp=False)
 @hook.command(autohelp=False)
 def bitcoin(inp):
-    "bitcoin <exchange> -- Gets current exchange rate for bitcoins from several exchanges, default is MtGox. Supports MtGox, Bitpay, and BitStamp."
+    "bitcoin <exchange> -- Gets current exchange rate for bitcoins from several exchanges, default is Blockchain. Supports MtGox, Bitpay, Coinbase and BitStamp."
     exchanges = {
         "blockchain": {
             "api_url": "https://blockchain.info/ticker",
@@ -16,6 +17,10 @@ def bitcoin(inp):
             "func": lambda data: u"MtGox // Current: \x0307{}\x0f - High: \x0307{}\x0f - Low: \x0307{}\x0f - Best Ask: \x0307{}\x0f - Volume: {}".format(data['return']['last']['display'], \
                                    data['return']['high']['display'], data['return']['low']['display'], data['return']['buy']['display'], \
                                    data['return']['vol']['display'])
+        },
+        "coinbase":{
+            "api_url": "https://coinbase.com/api/v1/prices/spot_rate",
+            "func": lambda data: u"Coinbase // Current: \x0307${:,.2f}\x0f".format(float(data['amount']))
         },
         "bitpay": {
             "api_url": "https://bitpay.com/api/rates",

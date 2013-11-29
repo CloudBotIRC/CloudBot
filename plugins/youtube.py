@@ -34,9 +34,14 @@ def get_video_description(video_id):
         out += '%dm ' % (length / 60 % 60)
     out += "%ds\x02" % (length % 60)
 
-    if 'rating' in data:
-        out += ' - rated \x02%.2f/5.0\x02 (%d)' % (data['rating'],
-                                                   data['ratingCount'])
+    if 'ratingCount' in data:
+        ratings = data['ratingCount']
+        likes = int(data['likeCount'])
+        dislikes = ratings - likes
+
+        percent = 100 * float(likes)/float(ratings)
+        out += ' - {} likes, {} dislikes (\x02{:.1f}\x02%)'.format(likes,
+                                                   dislikes, percent)
 
     if 'viewCount' in data:
         out += ' - \x02%s\x02 views' % format(data['viewCount'], ",d")

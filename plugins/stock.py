@@ -25,7 +25,7 @@ def stock(inp):
 
     quote['PercentChange'] = 100 * change / (price - change)
 
-    ret = "%(Name)s - %(LastTradePriceOnly)s "                   \
+    ret = "\x02%(Name)s\x02 (\x02%(symbol)s\x02) - %(LastTradePriceOnly)s "                   \
           "\x03%(color)s%(Change)s (%(PercentChange).2f%%)\x03 "        \
           "Day Range: %(DaysRange)s " \
           "MCAP: %(MarketCapitalization)s" % quote

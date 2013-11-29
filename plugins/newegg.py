@@ -8,6 +8,7 @@ ITEM_URL = "http://www.newegg.com/Product/Product.aspx?Item={}"
 def newegg(inp):
     """newegg <item name> -- Searches newegg.com for <item name>"""
 
+    # form the search request
     request = {
         "PageNumber": 1,
         "BrandId": -1,
@@ -22,15 +23,18 @@ def newegg(inp):
         "IsUPCCodeSearch": False
     }
 
+    # submit the search request
     r = http.get_json(
       'http://www.ows.newegg.com/Search.egg/Advanced', 
       post_data = json.dumps(request)
     )
 
+    # get the first result
     item = r["ProductListItems"][0]
 
     title = text.truncate_str(item["Title"], 50)
 
+    # format the rating nicely if it exists
     if not item["ReviewSummary"]["TotalReviews"] == "[]":
         rating = "Rated {}/5 ({} ratings)".format(item["ReviewSummary"]["Rating"],
                                                           item["ReviewSummary"]["TotalReviews"][1:-1])
@@ -58,8 +62,10 @@ def newegg(inp):
     if item["IsShellShockerItem"]:
         tags.append("\x02SHELL SHOCKER®\x02")
 
+    # join all the tags together in a comma seperated string ("tag1, tag2, tag3")
     tag_text = u", ".join(tags)
 
+    # create the item URL and shorten it
     url = web.try_isgd(ITEM_URL.format(item["NeweggItemNumber"]))
 
     return u"\x02{}\x02 ({}) - {} - {} - {}".format(title, price, rating,

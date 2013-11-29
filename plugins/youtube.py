@@ -13,6 +13,10 @@ search_api_url = base_url + 'videos?v=2&alt=jsonc&max-results=1'
 video_url = "http://youtu.be/%s"
 
 
+def plural(num=0, text=''):
+    return "%d %s%s" % (num, text, "s"[num==1:])
+
+
 def get_video_description(video_id):
     request = http.get_json(api_url.format(video_id))
 
@@ -35,12 +39,11 @@ def get_video_description(video_id):
     out += "%ds\x02" % (length % 60)
 
     if 'ratingCount' in data:
-        ratings = data['ratingCount']
-        likes = int(data['likeCount'])
-        dislikes = ratings - likes
+        likes = plural(int(data['likeCount']), "like")
+        dislikes = plural(data['ratingCount'] - int(data['likeCount']), "dislike")
 
-        percent = 100 * float(likes)/float(ratings)
-        out += ' - {} likes, {} dislikes (\x02{:.1f}\x02%)'.format(likes,
+        percent = 100 * float(data['likeCount'])/float(data['ratingCount'])
+        out += ' - {}, {} (\x02{:.1f}\x02%)'.format(likes,
                                                    dislikes, percent)
 
     if 'viewCount' in data:
@@ -59,16 +62,6 @@ def get_video_description(video_id):
         out += ' - \x034NSFW\x02'
 
     return out
-
-
-def GetInHMS(seconds):
-    hours = seconds / 3600
-    seconds -= 3600 * hours
-    minutes = seconds / 60
-    seconds -= 60 * minutes
-    if hours == 0:
-        return "%02d:%02d" % (minutes, seconds)
-    return "%02d:%02d:%02d" % (hours, minutes, seconds)
 
 
 @hook.regex(*youtube_re)

@@ -1,37 +1,17 @@
 from util import hook, http, text, web
 import json
+import re
 
 ITEM_URL = "http://www.newegg.com/Product/Product.aspx?Item={}"
 
+API_PRODUCT = "http://www.ows.newegg.com/Products.egg/{}/ProductDetails"
+API_SEARCH = "http://www.ows.newegg.com/Search.egg/Advanced"
 
-@hook.command
-def newegg(inp):
-    """newegg <item name> -- Searches newegg.com for <item name>"""
+NEWEGG_RE = (r"(?:(?:www.newegg.com|newegg.com)/Product/Product\.aspx\?Item=)([-_a-zA-Z0-9]+)", re.I)
 
-    # form the search request
-    request = {
-        "PageNumber": 1,
-        "BrandId": -1,
-        "NValue": "",
-        "StoreDepaId": -1,
-        "NodeId": -1,
-        "Keyword": inp,
-        "IsSubCategorySearch": False,
-        "SubCategoryId": -1,
-        "Sort": "FEATURED",
-        "CategoryId": -1,
-        "IsUPCCodeSearch": False
-    }
 
-    # submit the search request
-    r = http.get_json(
-      'http://www.ows.newegg.com/Search.egg/Advanced', 
-      post_data = json.dumps(request)
-    )
-
-    # get the first result
-    item = r["ProductListItems"][0]
-
+def format_item(item):
+    """ takes a newegg API item object and returns a description """
     title = text.truncate_str(item["Title"], 50)
 
     # format the rating nicely if it exists
@@ -70,3 +50,43 @@ def newegg(inp):
 
     return u"\x02{}\x02 ({}) - {} - {} - {}".format(title, price, rating,
                                                    tag_text, url)
+
+
+@hook.regex(*NEWEGG_RE)
+def newegg_url(match):
+    item_id = match.group(1)
+    item = http.get_json(API_PRODUCT.format(item_id))
+    return format_item(item)
+
+
+@hook.command
+def newegg(inp):
+    """newegg <item name> -- Searches newegg.com for <item name>"""
+
+    # form the search request
+    request = {
+        "PageNumber": 1,
+        "BrandId": -1,
+        "NValue": "",
+        "StoreDepaId": -1,
+        "NodeId": -1,
+        "Keyword": inp,
+        "IsSubCategorySearch": False,
+        "SubCategoryId": -1,
+        "Sort": "FEATURED",
+        "CategoryId": -1,
+        "IsUPCCodeSearch": False
+    }
+
+    # submit the search request
+    r = http.get_json(
+      'http://www.ows.newegg.com/Search.egg/Advanced', 
+      post_data = json.dumps(request)
+    )
+
+    # get the first result
+    item = r["ProductListItems"][0]
+
+    return format_item(item)
+
+

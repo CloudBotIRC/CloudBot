@@ -20,21 +20,21 @@ def plural(num=0, text=''):
 def format_time(seconds, accuracy=3, simple=False):
     if simple:
         periods = [
-                ('y',        60*60*24*365),
-                ('m',       60*60*24*30),
-                ('d',         60*60*24),
-                ('h',        60*60),
-                ('m',      60),
-                ('s',      1)
+                ('y', 60*60*24*365),
+                ('m', 60*60*24*30),
+                ('d', 60*60*24),
+                ('h', 60*60),
+                ('m', 60),
+                ('s', 1)
                 ]
     else:
         periods = [
-                (' year',        60*60*24*365),
-                (' month',       60*60*24*30),
-                (' day',         60*60*24),
-                (' hour',        60*60),
-                (' minute',      60),
-                (' second',      1)
+                (' year', 60*60*24*365),
+                (' month', 60*60*24*30),
+                (' day', 60*60*24),
+                (' hour', 60*60),
+                (' minute', 60),
+                (' second', 1)
                 ]
 
     strings = []
@@ -45,9 +45,9 @@ def format_time(seconds, accuracy=3, simple=False):
                     period_value, seconds = divmod(seconds,period_seconds)
                     i += 1
                     if period_value == 1 or simple:
-                            strings.append("%s%s" % (period_value, period_name))
+                            strings.append("{}{}".format(period_value, period_name))
                     else:
-                            strings.append("%s%ss" % (period_value, period_name))
+                            strings.append("{}{}s".format(period_value, period_name))
         else:
             break
 

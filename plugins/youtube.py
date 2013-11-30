@@ -17,7 +17,7 @@ def plural(num=0, text=''):
     return "{:,} {}{}".format(num, text, "s"[num==1:])
 
 
-def format_time(seconds, accuracy=3, simple=False):
+def format_time(seconds, count=3, simple=False):
     if simple:
         periods = [
                 ('c', 60 * 60 * 24 * 365 * 100),
@@ -44,7 +44,7 @@ def format_time(seconds, accuracy=3, simple=False):
     strings = []
     i = 0
     for period_name, period_seconds in periods:
-        if i < accuracy:
+        if i < count:
             if seconds > period_seconds:
                     period_value, seconds = divmod(seconds,period_seconds)
                     i += 1

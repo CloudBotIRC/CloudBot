@@ -1,7 +1,7 @@
 import re
 import time
 
-from util import hook, http
+from util import hook, http, text
 
 
 youtube_re = (r'(?:youtube.*?(?:v=|/v/)|youtu\.be/|yooouuutuuube.*?id=)'
@@ -17,6 +17,38 @@ def plural(num=0, text=''):
     return "{:,} {}{}".format(num, text, "s"[num==1:])
 
 
+def time_simple(seconds):
+    out = ""
+    if seconds / 3600:  # > 1 hour
+        out += '%dh ' % (seconds / 3600)
+    if seconds / 60:
+        out += '%dm ' % (seconds / 60 % 60)
+    out += "%ds" % (seconds % 60)
+    return out
+
+
+def time_complex(seconds):
+        periods = [
+                ('year',        60*60*24*365),
+                ('month',       60*60*24*30),
+                ('day',         60*60*24),
+                ('hour',        60*60),
+                ('minute',      60),
+                ('second',      1)
+                ]
+
+        strings = []
+        for period_name, period_seconds in periods:
+                if seconds > period_seconds:
+                        period_value, seconds = divmod(seconds,period_seconds)
+                        if period_value == 1:
+                                strings.append("%s %s" % (period_value, period_name))
+                        else:
+                                strings.append("%s %ss" % (period_value, period_name))
+
+        return text.get_text_list(strings, "and")
+
+
 def get_video_description(video_id):
     request = http.get_json(api_url.format(video_id))
 
@@ -30,13 +62,8 @@ def get_video_description(video_id):
     if not data.get('duration'):
         return out
 
-    out += ' - length \x02'
     length = data['duration']
-    if length / 3600:  # > 1 hour
-        out += '%dh ' % (length / 3600)
-    if length / 60:
-        out += '%dm ' % (length / 60 % 60)
-    out += "%ds\x02" % (length % 60)
+    out += ' - length \x02{}\x02'.format(time_simple(length))
 
     if 'ratingCount' in data:
         # format
@@ -88,6 +115,42 @@ def youtube(inp):
     video_id = request['data']['items'][0]['id']
 
     return get_video_description(video_id) + " - " + video_url % video_id
+
+
+
+@hook.command('ytime')
+@hook.command
+def youtime(inp):
+    """youtime <query> -- Gets the total run time of the first YouTube search result for <query>."""
+
+    request = http.get_json(search_api_url, q=inp)
+
+    if 'error' in request:
+        return 'error performing search'
+
+    if request['data']['totalItems'] == 0:
+        return 'no results found'
+
+    video_id = request['data']['items'][0]['id']
+    request = http.get_json(api_url.format(video_id))
+
+    if request.get('error'):
+        return
+    data = request['data']
+
+    if not data.get('duration'):
+        return
+
+    length = data['duration']
+    views = data['viewCount']
+    total = int(length * views)
+
+    length_text = time_simple(length)
+    total_text = time_complex(total)
+
+    return u'The video \x02{}\x02 has a length of {} and has been viewed {:,} times for ' \
+            'a total run time of {}!'.format(data['title'], length_text, views, \
+                                            total_text)
 
 
 ytpl_re = (r'(.*:)//(www.youtube.com/playlist|youtube.com/playlist)(:[0-9]+)?(.*)', re.I)

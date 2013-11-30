@@ -85,8 +85,10 @@ def newegg(inp):
     )
 
     # get the first result
-    item = r["ProductListItems"][0]
-
-    return format_item(item)
+    if r["ProductListItems"]:
+        item = r["ProductListItems"][0]
+        return format_item(item)
+    else:
+        return "No results found."
 
 

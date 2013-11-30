@@ -204,4 +204,4 @@ def main(bot, conn, out):
                 input = Input(bot, conn, *out)
                 input.inp = m
 
-                dispatch(input, "regex", func, args)
+                dispatch(bot, input, "regex", func, args)

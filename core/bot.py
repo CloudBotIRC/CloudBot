@@ -99,7 +99,7 @@ class Bot(threading.Thread):
         """create the logger and config objects"""
         # logging
         self.logger = get_logger()
-        self.logger.debug("Logging system ready.")
+        self.logger.debug("Logging system initalised.")
 
         # data folder
         self.data_dir = os.path.abspath('persist')
@@ -109,13 +109,13 @@ class Bot(threading.Thread):
 
         # config
         self.config = config.Config(self)
-        self.logger.debug("Config system ready.")
+        self.logger.debug("Config system initalised.")
 
         # db
         engine = create_engine('sqlite:///cloudbot.db')
         db_factory = sessionmaker(bind=engine)
         self.db_session = scoped_session(db_factory)
-        self.logger.debug("Database system ready.")
+        self.logger.debug("Database system initalised.")
 
 
     def connect(self):

@@ -95,8 +95,8 @@ class PluginLoader(object):
                 for type, data in obj._hook:
                     # add plugin to the plugin list
                     self.bot.plugins[type] += [data]
-                    if not loaded_all:
-                        self.bot.logger.info("Loaded plugin: {} ({})".format(format_plug(data), type))
+                    #if not loaded_all:
+                    self.bot.logger.info("Loaded plugin: {} ({})".format(format_plug(data), type))
 
         # do a rebuild, unless the bot is loading all plugins (rebuild happens after load_all)
         if not loaded_all:

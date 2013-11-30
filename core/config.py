@@ -50,7 +50,6 @@ class Config(dict):
 
     def watcher(self):
         """starts the watchdog to automatically reload the config when it changes on disk"""
-        self.logger.debug("Starting config reloader.")
         self.observer = Observer()
 
         pattern = "*{}".format(self.filename)

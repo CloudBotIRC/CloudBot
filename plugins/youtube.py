@@ -17,35 +17,43 @@ def plural(num=0, text=''):
     return "{:,} {}{}".format(num, text, "s"[num==1:])
 
 
-def time_simple(seconds):
-    out = ""
-    if seconds / 3600:  # > 1 hour
-        out += '%dh ' % (seconds / 3600)
-    if seconds / 60:
-        out += '%dm ' % (seconds / 60 % 60)
-    out += "%ds" % (seconds % 60)
-    return out
-
-
-def time_complex(seconds):
+def format_time(seconds, accuracy=3, simple=False):
+    if simple:
         periods = [
-                ('year',        60*60*24*365),
-                ('month',       60*60*24*30),
-                ('day',         60*60*24),
-                ('hour',        60*60),
-                ('minute',      60),
-                ('second',      1)
+                ('y',        60*60*24*365),
+                ('m',       60*60*24*30),
+                ('d',         60*60*24),
+                ('h',        60*60),
+                ('m',      60),
+                ('s',      1)
+                ]
+    else:
+        periods = [
+                (' year',        60*60*24*365),
+                (' month',       60*60*24*30),
+                (' day',         60*60*24),
+                (' hour',        60*60),
+                (' minute',      60),
+                (' second',      1)
                 ]
 
-        strings = []
-        for period_name, period_seconds in periods:
-                if seconds > period_seconds:
-                        period_value, seconds = divmod(seconds,period_seconds)
-                        if period_value == 1:
-                                strings.append("%s %s" % (period_value, period_name))
-                        else:
-                                strings.append("%s %ss" % (period_value, period_name))
+    strings = []
+    i = 0
+    for period_name, period_seconds in periods:
+        if i < accuracy:
+            if seconds > period_seconds:
+                    period_value, seconds = divmod(seconds,period_seconds)
+                    i += 1
+                    if period_value == 1 or simple:
+                            strings.append("%s%s" % (period_value, period_name))
+                    else:
+                            strings.append("%s%ss" % (period_value, period_name))
+        else:
+            break
 
+    if simple:
+        return " ".join(strings)
+    else:
         return text.get_text_list(strings, "and")
 
 
@@ -63,7 +71,7 @@ def get_video_description(video_id):
         return out
 
     length = data['duration']
-    out += ' - length \x02{}\x02'.format(time_simple(length))
+    out += ' - length \x02{}\x02'.format(format_time(length, simple=True))
 
     if 'ratingCount' in data:
         # format
@@ -145,8 +153,8 @@ def youtime(inp):
     views = data['viewCount']
     total = int(length * views)
 
-    length_text = time_simple(length)
-    total_text = time_complex(total)
+    length_text = format_time(length, simple=True)
+    total_text = format_time(total)
 
     return u'The video \x02{}\x02 has a length of {} and has been viewed {:,} times for ' \
             'a total run time of {}!'.format(data['title'], length_text, views, \

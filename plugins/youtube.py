@@ -20,6 +20,8 @@ def plural(num=0, text=''):
 def format_time(seconds, accuracy=3, simple=False):
     if simple:
         periods = [
+                ('c', 60*60*24*365*100),
+                ('de', 60*60*24*365*10),
                 ('y', 60*60*24*365),
                 ('m', 60*60*24*30),
                 ('d', 60*60*24),
@@ -29,6 +31,8 @@ def format_time(seconds, accuracy=3, simple=False):
                 ]
     else:
         periods = [
+                (' century', 60*60*24*365*100),
+                (' decade', 60*60*24*365*10),
                 (' year', 60*60*24*365),
                 (' month', 60*60*24*30),
                 (' day', 60*60*24),

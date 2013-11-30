@@ -14,7 +14,7 @@ video_url = "http://youtu.be/%s"
 
 
 def plural(num=0, text=''):
-    return "%d %s%s" % (num, text, "s"[num==1:])
+    return "{:,} {}{}".format(num, text, "s"[num==1:])
 
 
 def get_video_description(video_id):
@@ -25,7 +25,7 @@ def get_video_description(video_id):
 
     data = request['data']
 
-    out = '\x02%s\x02' % data['title']
+    out = '\x02{}\x02'.format(data['title'])
 
     if not data.get('duration'):
         return out
@@ -39,24 +39,26 @@ def get_video_description(video_id):
     out += "%ds\x02" % (length % 60)
 
     if 'ratingCount' in data:
+        # format
         likes = plural(int(data['likeCount']), "like")
         dislikes = plural(data['ratingCount'] - int(data['likeCount']), "dislike")
 
         percent = 100 * float(data['likeCount'])/float(data['ratingCount'])
         out += ' - {}, {} (\x02{:.1f}\x02%)'.format(likes,
-                                                   dislikes, percent)
+                                                    dislikes, percent)
 
     if 'viewCount' in data:
-        out += ' - \x02%s\x02 views' % format(data['viewCount'], ",d")
+        views = data['viewCount']
+        out += ' - \x02{:,}\x02 view{}'.format(views, "s"[views==1:])
 
     try:
         uploader = http.get_json(base_url + "users/{}?alt=json".format(data["uploader"]))["entry"]["author"][0]["name"]["$t"]
     except:
         uploader = data["uploader"]
-
+ 
     upload_time = time.strptime(data['uploaded'], "%Y-%m-%dT%H:%M:%S.000Z")
-    out += ' - \x02%s\x02 on \x02%s\x02' % (uploader,
-                                            time.strftime("%Y.%m.%d", upload_time))
+    out += ' - \x02{}\x02 on \x02{}\x02'.format(uploader,
+                                                time.strftime("%Y.%m.%d", upload_time))
 
     if 'contentRating' in data:
         out += ' - \x034NSFW\x02'

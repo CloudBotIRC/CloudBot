@@ -5,6 +5,8 @@ import re
 
 db_ready = False
 
+CAN_DOWNVOTE = False
+
 
 def db_init(db):
     db.execute("""CREATE TABLE if not exists karma(
@@ -92,7 +94,7 @@ def karma_add(match, nick='', chan='', db=None, notice=None):
                        total_karma) values(?,?,?,?)""", (nick_vote.lower(), 0, 0, 0))
             up(db, nick_vote)
             notice("Gave {} 1 karma!".format(nick_vote))
-        if match.group(2) == '--':
+        if match.group(2) == '--' and CAN_DOWNVOTE:
             db.execute("""INSERT or IGNORE INTO karma(
                        nick_vote,
                        up_karma,

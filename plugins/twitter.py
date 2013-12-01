@@ -4,22 +4,10 @@ import re
 import random
 from datetime import datetime
 
-
 TWITTER_RE = (r"(?:(?:www.twitter.com|twitter.com)/(?:[-_a-zA-Z0-9]+)/status/)([0-9]+)", re.I)
 
-@hook.regex(*TWITTER_RE)
-def twitter_url(match, bot=None):
-    tweet_id = match.group(1)
-    print tweet_id
-    return twitter(tweet_id, bot)
 
-
-@hook.command("tw")
-@hook.command("twatter")
-@hook.command
-def twitter(inp, bot=None):
-    "twitter <user> [n] -- Gets last/[n]th tweet from <user>"
-
+def get_api(bot):
     consumer_key = bot.config.get("api_keys", {}).get("twitter_consumer_key")
     consumer_secret = bot.config.get("api_keys", {}).get("twitter_consumer_secret")
 
@@ -27,12 +15,48 @@ def twitter(inp, bot=None):
     oauth_secret = bot.config.get("api_keys", {}).get("twitter_access_secret")
 
     if not consumer_key:
-        return "Error: No Twitter API details."
+        return False
 
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(oauth_token, oauth_secret)
 
-    api = tweepy.API(auth)
+    return tweepy.API(auth)
+
+
+@hook.regex(*TWITTER_RE)
+def twitter_url(match, bot=None):
+    tweet_id = match.group(1)
+    
+    api = get_api(bot)
+    if not api:
+        return
+    try:
+        tweet = api.get_status(tweet_id)
+        user = tweet.user
+    except tweepy.error.TweepError:
+        return
+
+    text = " ".join(tweet.text.split())
+
+    if user.verified:
+        prefix = u"\u2713"
+    else:
+        prefix = ""
+
+    time = timesince.timesince(tweet.created_at, datetime.utcnow())
+
+    return u"{}@\x02{}\x02 ({}): {} ({} ago)".format(prefix, user.screen_name, user.name, text, time)
+        
+
+@hook.command("tw")
+@hook.command("twatter")
+@hook.command
+def twitter(inp, bot=None):
+    "twitter <user> [n] -- Gets last/[n]th tweet from <user>"
+
+    api = get_api(bot)
+    if not api:
+        return "Error: No Twitter API details."
 
     if re.match(r'^\d+$', inp):
         # user is getting a tweet by id
@@ -111,19 +135,9 @@ def twitter(inp, bot=None):
 def twuser(inp, bot=None):
     """twuser <user> -- Get info on the Twitter user <user>"""
 
-    consumer_key = bot.config.get("api_keys", {}).get("twitter_consumer_key")
-    consumer_secret = bot.config.get("api_keys", {}).get("twitter_consumer_secret")
-
-    oauth_token = bot.config.get("api_keys", {}).get("twitter_access_token")
-    oauth_secret = bot.config.get("api_keys", {}).get("twitter_access_secret")
-
-    if not consumer_key:
+    api = get_api(bot)
+    if not api:
         return "Error: No Twitter API details."
-
-    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-    auth.set_access_token(oauth_token, oauth_secret)
-
-    api = tweepy.API(auth)
 
     try:
         # try to get user by username

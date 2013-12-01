@@ -17,7 +17,7 @@ def plural(num=0, text=''):
     return "{:,} {}{}".format(num, text, "s"[num==1:])
 
 
-def format_time(seconds, count=3, simple=False):
+def format_time(seconds, count=3, accuracy=6, simple=False):
     if simple:
         periods = [
                 ('c', 60 * 60 * 24 * 365 * 100),
@@ -41,12 +41,14 @@ def format_time(seconds, count=3, simple=False):
                 (('second', 'seconds'), 1)
                 ]
 
+    periods = periods[-accuracy:]
+
     strings = []
     i = 0
     for period_name, period_seconds in periods:
         if i < count:
             if seconds > period_seconds:
-                    period_value, seconds = divmod(seconds,period_seconds)
+                    period_value, seconds = divmod(seconds, period_seconds)
                     i += 1
                     if simple:
                         strings.append("{}{}".format(period_value, period_name))
@@ -118,7 +120,6 @@ def youtube_url(match):
 @hook.command
 def youtube(inp):
     """youtube <query> -- Returns the first YouTube search result for <query>."""
-
     request = http.get_json(search_api_url, q=inp)
 
     if 'error' in request:
@@ -137,7 +138,6 @@ def youtube(inp):
 @hook.command
 def youtime(inp):
     """youtime <query> -- Gets the total run time of the first YouTube search result for <query>."""
-
     request = http.get_json(search_api_url, q=inp)
 
     if 'error' in request:
@@ -161,7 +161,7 @@ def youtime(inp):
     total = int(length * views)
 
     length_text = format_time(length, simple=True)
-    total_text = format_time(total)
+    total_text = format_time(total, accuracy=8)
 
     return u'The video \x02{}\x02 has a length of {} and has been viewed {:,} times for ' \
             'a total run time of {}!'.format(data['title'], length_text, views, \

@@ -14,11 +14,11 @@ def spell(inp):
         return "Could not find dictionary: {}".format(locale)
 
     if len(inp.split(" ")) > 1:
+        # input is a sentence
         chkr = SpellChecker(locale)
         chkr.set_text(inp)
 
         offset = 0
-
         for err in chkr:
             # find the location of the incorrect word
             start = err.wordpos + offset
@@ -31,9 +31,9 @@ def spell(inp):
             offset = (offset + len(s_string)) - len(err.word)
             # replace the word with the suggestions
             inp = inp[:start] + s_string + inp[finish:]
-
         return inp
     else:
+        # input is a word
         dictionary = enchant.Dict(locale)
         is_correct = dictionary.check(inp)
         suggestions = dictionary.suggest(inp)

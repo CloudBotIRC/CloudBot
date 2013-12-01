@@ -1,6 +1,4 @@
-import random
-
-from util import hook, http, web
+from util import hook, web
 
 
 @hook.command
@@ -13,7 +11,7 @@ def stock(inp):
 
     # if we dont get a company name back, the symbol doesn't match a company
     if quote['Change'] is None:
-        return "unknown ticker symbol %s" % inp
+        return "Unknown ticker symbol: {}".format(sym)
 
     change = float(quote['Change'])
     price = float(quote['LastTradePriceOnly'])
@@ -24,10 +22,9 @@ def stock(inp):
         quote['color'] = "3"
 
     quote['PercentChange'] = 100 * change / (price - change)
+    print quote
 
-    ret = "\x02%(Name)s\x02 (\x02%(symbol)s\x02) - %(LastTradePriceOnly)s "                   \
-          "\x03%(color)s%(Change)s (%(PercentChange).2f%%)\x03 "        \
-          "Day Range: %(DaysRange)s " \
-          "MCAP: %(MarketCapitalization)s" % quote
-
-    return ret
+    return u"\x02{Name}\x02 (\x02{symbol}\x02) - {LastTradePriceOnly} " \
+           "\x03{color}{Change} ({PercentChange:.2f}%)\x03 " \
+           "Day Range: {DaysRange} " \
+           "MCAP: {MarketCapitalization}".format(**quote)

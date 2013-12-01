@@ -6,6 +6,9 @@ base_url = "http://api.bukget.org/3/"
 search_url = base_url + "search/plugin_name/like/{}"
 details_url = base_url + "plugins/bukkit/{}"
 
+categories = http.get_json("http://api.bukget.org/3/categories")
+total_plugins = sum([cat["count"] for cat in categories])
+
 
 class BukgetError(Exception):
     def __init__(self, code, text):
@@ -54,6 +57,7 @@ def plugin_details(slug):
 def bukkitplugin(inp, reply=None, message=None):
     """plugin <slug/name> - Look up a plugin on dev.bukkit.org"""
     # get the plugin slug using search
+    print total_plugins
     try:
         slug = plugin_search(inp)
     except BukgetError as e:
@@ -64,6 +68,7 @@ def bukkitplugin(inp, reply=None, message=None):
         data = plugin_details(slug)
     except BukgetError as e:
         return e
+
 
     name = data["plugin_name"]
     description = data['description']

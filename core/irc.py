@@ -164,7 +164,7 @@ class IRCConnection(object):
         self.conn_name = name
         self.host = host
         self.port = port
-        self.timeout = 1
+        self.timeout = 300
 
     def create_socket(self):
         return socket.socket(socket.AF_INET, socket.TCP_NODELAY)

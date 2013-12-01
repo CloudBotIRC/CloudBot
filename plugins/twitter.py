@@ -5,6 +5,15 @@ import random
 from datetime import datetime
 
 
+TWITTER_RE = (r"(?:(?:www.twitter.com|twitter.com)/(?:[-_a-zA-Z0-9]+)/status/)([0-9]+)", re.I)
+
+@hook.regex(*TWITTER_RE)
+def twitter_url(match, bot=None):
+    tweet_id = match.group(1)
+    print tweet_id
+    return twitter(tweet_id, bot)
+
+
 @hook.command("tw")
 @hook.command("twatter")
 @hook.command

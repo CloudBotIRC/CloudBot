@@ -51,7 +51,7 @@ def plugin_details(slug):
 
 @hook.command('plugin')
 @hook.command
-def bukkitplugin(inp, reply=None):
+def bukkitplugin(inp, reply=None, message=None):
     """plugin <slug/name> - Look up a plugin on dev.bukkit.org"""
     # get the plugin slug using search
     try:
@@ -86,4 +86,4 @@ def bukkitplugin(inp, reply=None):
     else:
         reply(u"\x02{}\x02, by \x02{}\x02 ({}) \x02{}".format(name, authors, stage, url))
 
-    reply(u"Last release: \x02v{}\x02 for \x02{}\x02 at {} \x02{}\x02".format(version_number, bukkit_versions, last_update, link))
+    message(u"Last release: \x02v{}\x02 for \x02{}\x02 at {} \x02{}\x02".format(version_number, bukkit_versions, last_update, link))

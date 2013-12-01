@@ -28,7 +28,7 @@ def get_logger():
     # add a file handler
     log_name = "bot.log"
     fh = logging.FileHandler(log_name)
-    fh.setLevel(logging.DEBUG)
+    fh.setLevel(logging.INFO)
 
     # stdout handler
     sh = logging.StreamHandler()

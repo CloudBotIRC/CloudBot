@@ -53,7 +53,7 @@ class Input(dict):
         self[key] = value
 
 
-def run(func, input, bot):
+def run(bot, func, input):
     args = func._args
 
     uses_db = 'db' in args and 'db' not in input
@@ -72,17 +72,20 @@ def run(func, input, bot):
                 out = func(input.inp, **input)
             except:
                 bot.logger.exception("Error in plugin {}:".format(func._filename))
+                return
         else:
             kw = dict((key, input[key]) for key in args if key in input)
             try:
                 out = func(input.inp, **kw)
             except:
                 bot.logger.exception("Error in plugin {}:".format(func._filename))
+                return
     else:
         try:
             out = func(input.inp)
         except:
             bot.logger.exception("Error in plugin {}:".format(func._filename))
+            return
     if out is not None:
         input.reply(unicode(out))
 
@@ -95,8 +98,7 @@ def do_sieve(sieve, bot, input, func, type, args):
     try:
         return sieve(bot, input, func, type, args)
     except Exception:
-        print 'sieve error',
-        traceback.print_exc()
+        bot.logger.exception("Error in sieve {}:".format(func._filename))
         return None
 
 
@@ -118,12 +120,12 @@ class Handler(object):
                 break
 
             if uses_db:
-                input.db = self.bot.db
+                input.db = None
 
             try:
-                run(self.func, input)
+                run(self.bot, self.func, input)
             except:
-                self.bot.logger.exception("Error in plugin {}:".format(self.Sfunc._filename))
+                self.bot.logger.exception("Error in plugin {}:".format(self.func._filename))
 
     def stop(self):
         self.input_queue.put(StopIteration)
@@ -145,7 +147,7 @@ def dispatch(bot, input, kind, func, args, autohelp=False):
     if func._thread:
         bot.threads[func].put(input)
     else:
-        thread.start_new_thread(run, (func, input, bot))
+        thread.start_new_thread(run, (bot, func, input))
 
 
 def match_command(bot, command):

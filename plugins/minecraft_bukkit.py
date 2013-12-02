@@ -2,6 +2,8 @@ from util import hook, http, web
 import time
 import random
 
+## CONSTANTS
+
 base_url = "http://api.bukget.org/3/"
 
 search_url = base_url + "search/plugin_name/like/{}"
@@ -23,7 +25,7 @@ class BukgetError(Exception):
         return self.text
 
 
-## API FUNCTIONS
+## DATA FUNCTIONS
 
 def plugin_search(term):
     """ searches for a plugin with the bukget API and returns the slug """
@@ -101,6 +103,8 @@ def format_output(data):
 
     return line_a, line_b
 
+
+## HOOK FUNCTIONS
 
 @hook.command('plugin')
 @hook.command

@@ -23,6 +23,8 @@ class BukgetError(Exception):
         return self.text
 
 
+## API FUNCTIONS
+
 def plugin_search(term):
     """ searches for a plugin with the bukget API and returns the slug """
     term = term.lower().strip()
@@ -59,7 +61,6 @@ def plugin_random():
     return results[0]["slug"]
 
 
-
 def plugin_details(slug):
     """ takes a plugin slug and returns details from the bukget API """
     slug = slug.lower().strip()
@@ -71,25 +72,10 @@ def plugin_details(slug):
     return details
 
 
+## OTHER FUNCTIONS
 
-@hook.command('plugin')
-@hook.command
-def bukkitplugin(inp, reply=None, message=None):
-    """plugin <slug/name> - Look up a plugin on dev.bukkit.org"""
-    # get the plugin slug using search
-    print count_categores
-    try:
-        slug = plugin_search(inp)
-    except BukgetError as e:
-        return e
-
-    # get the plugin info using the slug
-    try:
-        data = plugin_details(slug)
-    except BukgetError as e:
-        return e
-
-
+def format_output(data):
+    """ takes plugin data and returns two strings representing information about that plugin """
     name = data["plugin_name"]
     description = data['description']
     url = data['website']
@@ -107,11 +93,36 @@ def bukkitplugin(inp, reply=None, message=None):
     link = web.try_isgd(current_version['link'])
 
     if description:
-        reply(u"\x02{}\x02, by \x02{}\x02 - {} - ({}) \x02{}".format(name, authors, description, stage, url))
+        line_a = u"\x02{}\x02, by \x02{}\x02 - {} - ({}) \x02{}".format(name, authors, description, stage, url)
     else:
-        reply(u"\x02{}\x02, by \x02{}\x02 ({}) \x02{}".format(name, authors, stage, url))
+        line_a = u"\x02{}\x02, by \x02{}\x02 ({}) \x02{}".format(name, authors, stage, url)
 
-    message(u"Last release: \x02v{}\x02 for \x02{}\x02 at {} \x02{}\x02".format(version_number, bukkit_versions, last_update, link))
+    line_b = u"Last release: \x02v{}\x02 for \x02{}\x02 at {} \x02{}\x02".format(version_number, bukkit_versions, last_update, link)
+
+    return line_a, line_b
+
+
+@hook.command('plugin')
+@hook.command
+def bukkitplugin(inp, reply=None, message=None):
+    """plugin <slug/name> - Look up a plugin on dev.bukkit.org"""
+    # get the plugin slug using search
+    try:
+        slug = plugin_search(inp)
+    except BukgetError as e:
+        return e
+
+    # get the plugin info using the slug
+    try:
+        data = plugin_details(slug)
+    except BukgetError as e:
+        return e
+
+    # format the final message and send it to IRC
+    line_a, line_b = format_output(data)
+
+    reply(line_a)
+    message(line_b)
 
 
 
@@ -130,26 +141,8 @@ def randomplugin(inp, reply=None, message=None):
     except BukgetError as e:
         return e
 
+    # format the final message and send it to IRC
+    line_a, line_b = format_output(data)
 
-    name = data["plugin_name"]
-    description = data['description']
-    url = data['website']
-    authors = data['authors'][0]
-    authors = authors[0] + u"\u200b" + authors[1:]
-    stage = data['stage']
-
-    current_version = data['versions'][0]
-
-    last_update = time.strftime('%d %B %Y %H:%M',
-                               time.gmtime(current_version['date']))
-    version_number = data['versions'][0]['version']
-
-    bukkit_versions = ", ".join(current_version['game_versions'])
-    link = web.try_isgd(current_version['link'])
-
-    if description:
-        reply(u"\x02{}\x02, by \x02{}\x02 - {} - ({}) \x02{}".format(name, authors, description, stage, url))
-    else:
-        reply(u"\x02{}\x02, by \x02{}\x02 ({}) \x02{}".format(name, authors, stage, url))
-
-    message(u"Last release: \x02v{}\x02 for \x02{}\x02 at {} \x02{}\x02".format(version_number, bukkit_versions, last_update, link))
+    reply(line_a)
+    message(line_b)

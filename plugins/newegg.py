@@ -52,6 +52,8 @@ def format_item(item):
                                                    tag_text, url)
 
 
+## HOOK FUNCTIONS
+
 @hook.regex(*NEWEGG_RE)
 def newegg_url(match):
     item_id = match.group(1)
@@ -65,17 +67,8 @@ def newegg(inp):
 
     # form the search request
     request = {
-        "PageNumber": 1,
-        "BrandId": -1,
-        "NValue": "",
-        "StoreDepaId": -1,
-        "NodeId": -1,
         "Keyword": inp,
-        "IsSubCategorySearch": False,
-        "SubCategoryId": -1,
-        "Sort": "FEATURED",
-        "CategoryId": -1,
-        "IsUPCCodeSearch": False
+        "Sort": "FEATURED"
     }
 
     # submit the search request

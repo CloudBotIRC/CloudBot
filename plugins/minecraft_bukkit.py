@@ -1,4 +1,4 @@
-from util import hook, http, web
+from util import hook, http, web, text
 import time
 import random
 
@@ -79,7 +79,7 @@ def plugin_details(slug):
 def format_output(data):
     """ takes plugin data and returns two strings representing information about that plugin """
     name = data["plugin_name"]
-    description = data['description']
+    description = text.truncate_str(data['description'], 30)
     url = data['website']
     authors = data['authors'][0]
     authors = authors[0] + u"\u200b" + authors[1:]

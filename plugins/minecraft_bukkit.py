@@ -49,7 +49,7 @@ def plugin_search(term):
 
 
 def plugin_random():
-    """ returns the slug of a random plugin from the bukget API """
+    """ gets a random plugin from the bukget API and returns the slug """
     results = None
 
     while not results:

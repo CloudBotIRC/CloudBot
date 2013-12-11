@@ -2,6 +2,8 @@ from util import hook, http, text, web
 import json
 import re
 
+## CONSTANTS
+
 ITEM_URL = "http://www.newegg.com/Product/Product.aspx?Item={}"
 
 API_PRODUCT = "http://www.ows.newegg.com/Products.egg/{}/ProductDetails"
@@ -9,6 +11,8 @@ API_SEARCH = "http://www.ows.newegg.com/Search.egg/Advanced"
 
 NEWEGG_RE = (r"(?:(?:www.newegg.com|newegg.com)/Product/Product\.aspx\?Item=)([-_a-zA-Z0-9]+)", re.I)
 
+
+## OTHER FUNCTIONS
 
 def format_item(item, show_url=True):
     """ takes a newegg API item object and returns a description """

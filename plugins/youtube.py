@@ -74,13 +74,13 @@ def get_video_description(video_id):
 
     data = request['data']
 
-    out = '\x02{}\x02'.format(data['title'])
+    out = u'\x02{}\x02'.format(data['title'])
 
     if not data.get('duration'):
         return out
 
     length = data['duration']
-    out += ' - length \x02{}\x02'.format(format_time(length, simple=True))
+    out += u' - length \x02{}\x02'.format(format_time(length, simple=True))
 
     if 'ratingCount' in data:
         # format
@@ -88,12 +88,12 @@ def get_video_description(video_id):
         dislikes = plural(data['ratingCount'] - int(data['likeCount']), "dislike")
 
         percent = 100 * float(data['likeCount'])/float(data['ratingCount'])
-        out += ' - {}, {} (\x02{:.1f}\x02%)'.format(likes,
+        out += u' - {}, {} (\x02{:.1f}\x02%)'.format(likes,
                                                     dislikes, percent)
 
     if 'viewCount' in data:
         views = data['viewCount']
-        out += ' - \x02{:,}\x02 view{}'.format(views, "s"[views==1:])
+        out += u' - \x02{:,}\x02 view{}'.format(views, "s"[views==1:])
 
     try:
         uploader = http.get_json(base_url + "users/{}?alt=json".format(data["uploader"]))["entry"]["author"][0]["name"]["$t"]
@@ -101,11 +101,11 @@ def get_video_description(video_id):
         uploader = data["uploader"]
  
     upload_time = time.strptime(data['uploaded'], "%Y-%m-%dT%H:%M:%S.000Z")
-    out += ' - \x02{}\x02 on \x02{}\x02'.format(uploader,
+    out += u' - \x02{}\x02 on \x02{}\x02'.format(uploader,
                                                 time.strftime("%Y.%m.%d", upload_time))
 
     if 'contentRating' in data:
-        out += ' - \x034NSFW\x02'
+        out += u' - \x034NSFW\x02'
 
     return out
 
@@ -115,6 +115,7 @@ def youtube_url(match):
     return get_video_description(match.group(1))
 
 
+@hook.command('you')
 @hook.command('yt')
 @hook.command('y')
 @hook.command
@@ -130,7 +131,7 @@ def youtube(inp):
 
     video_id = request['data']['items'][0]['id']
 
-    return get_video_description(video_id) + " - " + video_url % video_id
+    return get_video_description(video_id) + u" - " + video_url % video_id
 
 
 

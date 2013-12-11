@@ -7,7 +7,7 @@ def format_time(seconds, count=3, accuracy=6, simple=False):
 
     SIMPLE: displays the time in a simple format
     >>> format_time(SECONDS)
-    1 hour, 2 minutes, and 34 seconds
+    1 hour, 2 minutes and 34 seconds
     >>> format_time(SECONDS, simple=True)
     1h 2m 34s
 

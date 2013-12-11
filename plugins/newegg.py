@@ -10,7 +10,7 @@ API_SEARCH = "http://www.ows.newegg.com/Search.egg/Advanced"
 NEWEGG_RE = (r"(?:(?:www.newegg.com|newegg.com)/Product/Product\.aspx\?Item=)([-_a-zA-Z0-9]+)", re.I)
 
 
-def format_item(item):
+def format_item(item, show_url=True):
     """ takes a newegg API item object and returns a description """
     title = text.truncate_str(item["Title"], 50)
 
@@ -45,11 +45,14 @@ def format_item(item):
     # join all the tags together in a comma seperated string ("tag1, tag2, tag3")
     tag_text = u", ".join(tags)
 
-    # create the item URL and shorten it
-    url = web.try_isgd(ITEM_URL.format(item["NeweggItemNumber"]))
-
-    return u"\x02{}\x02 ({}) - {} - {} - {}".format(title, price, rating,
-                                                   tag_text, url)
+    if show_url:
+        # create the item URL and shorten it
+        url = web.try_isgd(ITEM_URL.format(item["NeweggItemNumber"]))
+        return u"\x02{}\x02 ({}) - {} - {} - {}".format(title, price, rating,
+                                                    tag_text, url)
+    else:
+        return u"\x02{}\x02 ({}) - {} - {}".format(title, price, rating,
+                                                tag_text)
 
 
 ## HOOK FUNCTIONS
@@ -58,7 +61,7 @@ def format_item(item):
 def newegg_url(match):
     item_id = match.group(1)
     item = http.get_json(API_PRODUCT.format(item_id))
-    return format_item(item)
+    return format_item(item, show_url=False)
 
 
 @hook.command

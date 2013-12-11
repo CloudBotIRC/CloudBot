@@ -1,6 +1,23 @@
 from util import text
 
 def format_time(seconds, count=3, accuracy=6, simple=False):
+    """
+    Takes a length of time in seconds and returns a string describing that length of time.
+    This function has a number of optional arguments that can be combined:
+
+    SIMPLE: displays the time in a simple format
+    >>> format_time(SECONDS)
+    1 hour, 2 minutes, and 34 seconds
+    >>> format_time(SECONDS, simple=True)
+    1h 2m 34s
+
+    COUNT: how many periods should be shown (default 3)
+    >>> format_time(SECONDS)
+    147 years, 9 months and 8 weeks
+    >>> format_time(SECONDS, count=6)
+    147 years, 9 months, 7 weeks, 18 hours, 12 minutes and 34 seconds
+    """
+
     if simple:
         periods = [
                 ('c', 60 * 60 * 24 * 365 * 100),

@@ -107,7 +107,7 @@ def format_output(data):
 ## HOOK FUNCTIONS
 
 @hook.command('plugin')
-@hook.commands
+@hook.command
 def bukget(inp, reply=None, message=None):
     """bukget <slug/name> - Look up a plugin on dev.bukkit.org"""
     # get the plugin slug using search

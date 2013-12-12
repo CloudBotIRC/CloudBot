@@ -2,7 +2,6 @@ import os
 import re
 import glob
 import collections
-import traceback
 
 from watchdog.observers import Observer
 from watchdog.tricks import Trick

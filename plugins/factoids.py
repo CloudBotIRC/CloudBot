@@ -1,5 +1,5 @@
 # Written by Scaevolus 2010
-from util import hook, http, text, execute
+from util import hook, http, text, pyexec
 import string
 import re
 
@@ -132,7 +132,7 @@ def factoid(inp, message=None, db=None, bot=None, action=None, conn=None, input=
             variables = 'input="""{}"""; nick="{}"; chan="{}"; bot_nick="{}";'.format(arguments.replace('"', '\\"'),
                                                                                   input.nick, input.chan,
                                                                                   input.conn.nick)
-            result = execute.eval_py(variables + code)
+            result = pyexec.eval_py(variables + code)
         else:
             result = data
 

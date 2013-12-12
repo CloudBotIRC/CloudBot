@@ -1,5 +1,5 @@
 from util import hook
-from util.execute import eval_py
+from util.pyexec import eval_py
 
 
 @hook.command

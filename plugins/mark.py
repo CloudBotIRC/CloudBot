@@ -1,8 +1,8 @@
 import random
 from util import hook, text
 
-@hook.command('8ball')
-def eightball(input, action=None):
+@hook.command('mark')
+def mark(input):
     """mark -- Spreads the glory of Mark Harmon"""
     responses = [
     "Praise our lord Mark Harmon",

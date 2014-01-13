@@ -1,7 +1,8 @@
 import random
 from util import hook, text
 
-@hook.command('mark')
+@hook.command('harmon')
+@hook.command
 def mark(input):
     """mark -- Spreads the glory of Mark Harmon"""
     responses = [

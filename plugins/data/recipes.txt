@@ -1,7 +1,7 @@
 //Minecraft Recipes List
 //Created by _303
 //Obtained from https://github.com/ClouDev/CloudBot/blob/develop/plugins/data/recipes.txt
-//Edited by _frozen
+//Edited by CHCMATT for Minecraft version: 1.7.4
 //
 //Summary of Use: Each column is seperated by a comma (,) and rows by a vertical bar (|). Order of Recipes & Categories taken from
 //www.minecraftwiki.net/wiki/Crafting for easier updating in the future (The Future!)
@@ -21,7 +21,10 @@
 1x Block of Gold: Gold Ingot, Gold Ingot, Gold Ingot | Gold Ingot, Gold Ingot, Gold Ingot | Gold Ingot, Gold Ingot, Gold Ingot
 1x Block of Iron: Iron Ingot, Iron Ingot, Iron Ingot | Iron Ingot, Iron Ingot, Iron Ingot | Iron Ingot, Iron Ingot, Iron Ingot
 1x Block of Diamond: Diamond, Diamond, Diamond | Diamond, Diamond, Diamond | Diamond, Diamond, Diamond
+1x Block of Coal: Coal, Coal, Coal | Coal, Coal, Coal | Coal, Coal, Coal
+1x Block of Redstone: Redstone Dust, Redstone Dust, Redstone Dust | Redstone Dust, Redstone Dust, Redstone Dust | Redstone Dust, Redstone Dust, Redstone Dust
 1x Lapis Lazuli Block: Lapis Lazuli, Lapis Lazuli, Lapis Lazuli | Lapis Lazuli, Lapis Lazuli, Lapis Lazuli | Lapis Lazuli, Lapis Lazuli, Lapis Lazuli
+1x Emerald Block: Emerald, Emerald, Emerald | Emerald, Emerald, Emerald | Emerald, Emerald, Emerald
 1x Glowstone: Glowstone Dust, Glowstone Dust | Glowstone Dust, Glowstone Dust
 1x Wool: String, String | String, String
 1x TNT: Gunpowder, Sand, Gunpowder | Sand, Gunpowder, Sand | Gunpowder, Sand, Gunpowder
@@ -117,6 +120,7 @@
 6x Powered Rail: Gold Ingot, None, Gold Ingot | Gold Ingot, Stick, Gold Ingot | Gold Ingot, Redstone, Gold Ingot
 6x Detector Rail: Iron Ingot, None, Iron Ingot | Iron Ingot, Pressure Plate, Iron Ingot | Iron Ingot, Redstone, Iron Ingot
 1x Boat: Wooden Planks, None, Wooden Planks | Wooden Planks, Wooden Planks, Wooden Planks
+1x Carrot On A Stick: Fishing Rod | None, Carrot
 //
 //Mechanism Recipes
 //
@@ -125,7 +129,8 @@
 2x Trapdoor: Wooden Planks, Wooden Planks, Wooden Planks | Wooden Planks, Wooden Planks, Wooden Planks
 1x Stone Pressure Plate: Stone, Stone
 1x Wooden Pressure Plate: Wooden Planks, Wooden Planks
-1x Button: Stone | Stone
+1x Stone Button: Stone
+1x Wooden Button: Wooden Planks
 1x Redstone Torch: Redstone | Stick
 1x Lever: Stick | Cobblestone
 1x Note Block: Wooden Planks, Wooden Planks, Wooden Planks | Wooden Planks, Redstone, Wooden Planks | Wooden Planks, Wooden Planks, Wooden Planks
@@ -133,8 +138,13 @@
 1x Dispenser: Cobblestone, Cobblestone, Cobblestone | Cobblestone, Bow, Cobblestone | Cobblestone, Redstone, Cobblestone
 1x Redstone Repeater: Redstone Torch, Redstone, Redstone Torch | Stone, Stone, Stone
 1x Piston: Wooden Planks, Wooden Planks, Wooden Planks | Cobblestone, Iron Ingot, Cobblestone | Cobblestone, Redstone, Cobblestone
-1x Sticky Piston: none, slime ball, none | none, piston, none
-1x Redstone Lamp: none, redstone dust, none | redstone dust, glowstone block, redstone | none, redstone dust, none
+1x Sticky Piston: Slime Ball | Piston
+1x Redstone Lamp: None, Redstone Dust, None | Redstone Dust, Glowstone Block, Redstone Dust | None, Redstone Dust, None
+1x Trapped Chest: Chest, Tripwire Hook
+1x Dropper: Cobblestone, Cobblestone, Cobblestone | Cobblestone, None, Cobblestone | Cobblestone, Redstone Dust, Cobblestone
+1x Weighted Pressure Plate (Heavy): Iron Ingot, Iron Ingot
+1x Weighted Pressure Plate (Light): Gold Ingot, Gold Ingot
+2x Tripwire Hook: Iron Ingot | Stick | Wooden Planks
 //
 //Food Recipes
 //
@@ -169,6 +179,11 @@
 9x Gold Nugget: Gold Ingot
 1x Gold Ingot: Gold Nugget, Gold Nugget, Gold Nugget | Gold Nugget, Gold Nugget, Gold Nugget | Gold Nugget, Gold Nugget, Gold Nugget
 1x Eye of Ender: Ender Pearl | Blaze Powder
+1x Item Frame: Stick, Stick, Stick | Stick, Leather, Stick | Stick, Stick, Stick
+1x Anvil: Block of Iron, Block of Iron, Block of Iron | None, Iron Ingot, None | Iron Ingot, Iron Ingot, Iron Ingot
+1x Ender Chest: Obsidian, Obsidian, Obsidian | Osbidian, Eye of Ender, Obsidian | Obsidian, Obsidian, Obsidian
+1x Flower Pot: Brick, None, Brick | None, Brick, None
+2x Lead: None, String, String | None, Slime Ball, String | String, None, None
 //
 //Dye Recipes
 //
@@ -215,3 +230,40 @@
 1x Glistering Melon: Melon Slice, Gold Nugget
 9x Gold Nugget: Gold Ingot
 1x Enchantment Table: None, Book, None | Diamond, Obsidian, Diamond | Obsidian, Obsidian, Obsidian
+//
+//Stained Glass Recipes
+//
+8x White Stained Glass: Glass, Glass, Glass | Glass, Bone Meal, Glass | Glass, Glass, Glass
+8x Orange Stained Glass: Glass, Glass, Glass | Glass, Orange Dye, Glass | Glass, Glass, Glass
+8x Magenta Stained Glass: Glass, Glass, Glass | Glass, Magenta Dye, Glass | Glass, Glass, Glass
+8x Light Blue Stained Glass: Glass, Glass, Glass | Glass, Light Blue Dye, Glass | Glass, Glass, Glass
+8x Yellow Stained Glass: Glass, Glass, Glass | Glass, Dandelion Yellow, Glass | Glass, Glass, Glass
+8x Lime Stained Glass: Glass, Glass, Glass | Glass, Lime Dye, Glass | Glass, Glass, Glass
+8x Pink Stained Glass: Glass, Glass, Glass | Glass, Pink Dye, Glass | Glass, Glass, Glass
+8x Gray Stained Glass: Glass, Glass, Glass | Glass, Gray Dye, Glass | Glass, Glass, Glass
+8x Light Gray Stained Glass: Glass, Glass, Glass | Glass, Light Gray Dye, Glass | Glass, Glass, Glass
+8x Cyan Stained Glass: Glass, Glass, Glass | Glass, Cyan Dye, Glass | Glass, Glass, Glass
+8x Purple Stained Glass: Glass, Glass, Glass | Glass, Purple Dye, Glass | Glass, Glass, Glass
+8x Blue Stained Glass: Glass, Glass, Glass | Glass, Lapis Lazuli, Glass | Glass, Glass, Glass
+8x Brown Stained Glass: Glass, Glass, Glass | Glass, Cocoa Beans, Glass | Glass, Glass, Glass
+8x Green Stained Glass: Glass, Glass, Glass | Glass, Cactus Green, Glass | Glass, Glass, Glass
+8x Red Stained Glass: Glass, Glass, Glass | Glass, Rose Red, Glass | Glass, Glass, Glass
+8x Black Stained Glass: Glass, Glass, Glass | Glass, Inc Sac, Glass | Glass, Glass, Glass
+//
+//Stained Glass Panes
+//
+16x White Stained Glass Panes: White Stained Glass, White Stained Glass, White Stained Glass | White Stained Glass, White Stained Glass, White Stained Glass
+16x Orange Stained Glass Panes: Orange Stained Glass, Orange Stained Glass, Orange Stained Glass | Orange Stained Glass, Orange Stained Glass, Orange Stained Glass
+16x Magenta Stained Glass Panes: Magenta Stained Glass, Magenta Stained Glass, Magenta Stained Glass | Magenta Stained Glass, Magenta Stained Glass, Magenta Stained Glass
+16x Light Blue Stained Glass Panes: Light Blue Stained Glass, Light Blue Stained Glass, Light Blue Stained Glass | Light Blue Stained Glass, Light Blue Stained Glass, Light Blue Stained Glass
+16x Yellow Stained Glass Panes: Yellow Stained Glass, Yellow Stained Glass, Yellow Stained Glass | Yellow Stained Glass, Yellow Stained Glass, Yellow Stained Glass
+16x Lime Stained Glass Panes: Lime Stained Glass, Lime Stained Glass, Lime Stained Glass | Lime Stained Glass, Lime Stained Glass, Lime Stained Glass
+16x Pink Stained Glass Panes: Pink Stained Glass, Pink Stained Glass, Pink Stained Glass | Pink Stained Glass, Pink Stained Glass, Pink Stained Glass
+16x Gray Stained Glass Panes: Gray Stained Glass, Gray Stained Glass, Gray Stained Glass | Gray Stained Glass, Gray Stained Glass, Gray Stained Glass
+16x Light Gray Stained Glass Panes: Light Gray Stained Glass, Light Gray Stained Glass, Light Gray Stained Glass | Light Gray Stained Glass, Light Gray Stained Glass, Light Gray Stained Glass
+16x Cyan Stained Glass Panes: Cyan Stained Glass, Cyan Stained Glass, Cyan Stained Glass | Cyan Stained Glass, Cyan Stained Glass, Cyan Stained Glass
+16x Purple Stained Glass Panes: Purple Stained Glass, Purple Stained Glass, Purple Stained Glass | Purple Stained Glass, Purple Stained Glass, Purple Stained Glass
+16x Blue Stained Glass Panes: Blue Stained Glass, Blue Stained Glass, Blue Stained Glass | Blue Stained Glass, Blue Stained Glass, Blue Stained Glass
+16x Brown Stained Glass Panes: Brown Stained Glass, Brown Stained Glass, Brown Stained Glass | Brown Stained Glass, Brown Stained Glass, Brown Stained Glass
+16x Green Stained Glass Panes: Green Stained Glass, Green Stained Glass, Green Stained Glass | Green Stained Glass, Green Stained Glass, Green Stained Glass
+16x Black Stained Glass Panes: Black Stained Glass, Black Stained Glass, Black Stained Glass | Black Stained Glass, Black Stained Glass, Black Stained Glass

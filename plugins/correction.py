@@ -17,10 +17,10 @@ def correction(inp, message=None, input=None, notice=None, db=None):
         replace = splitinput[2]
         if find in last_message[1]:
             if "\x01ACTION" in last_message[1]:
-                message = last_message[1].replace("\x01ACTION ", "/me ").replace("\x01", "")
+                msg = last_message[1].replace("\x01ACTION ", "/me ").replace("\x01", "")
             else:
-                message = last_message[1]
-            message(u"{} meant to say: {}".format(message.replace(find, "\x02" + replace + "\x02"), nick))
+                msg = last_message[1]
+            message(u"Correction, <{}> {}".format(nick, msg.replace(find, "\x02" + replace + "\x02")))
         else:
             notice(u"{} can't be found in your last message".format(find))
     else:

@@ -46,3 +46,5 @@ def help(inp, notice=None, input=None, conn=None, bot=None):
     else:
         if inp in commands:
             notice(conn.conf["command_prefix"] + commands[inp].__doc__)
+        else:
+            notice("Command {}{} not found".format(conn.conf["command_prefix"], inp))

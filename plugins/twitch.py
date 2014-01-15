@@ -92,8 +92,9 @@ def twitch_lookup(location):
             views = views + "s" if not views[0:2] == "1 " else views
             return h.unescape(fmt.format(title, channel, playing, views))
     else:
-        data = http.get_json("http://api.justin.tv/api/stream/list.json?channel=" + channel)[0]
-        if data:
+        data = http.get_json("http://api.justin.tv/api/stream/list.json?channel=" + channel)
+        if data and len(data) >= 1:
+            data = data[0]
             title = data['title']
             playing = data['meta_game']
             viewers = "\x033\x02Online now!\x02\x0f " + str(data["channel_count"]) + " viewer"
@@ -102,7 +103,10 @@ def twitch_lookup(location):
             print viewers
             return h.unescape(fmt.format(title, channel, playing, viewers))
         else:
-            data = http.get_json("https://api.twitch.tv/kraken/channels/" + channel)
+            try:
+                data = http.get_json("https://api.twitch.tv/kraken/channels/" + channel)
+            except:
+                return
             title = data['status']
             playing = data['game']
             viewers = "\x034\x02Offline\x02\x0f"

@@ -16,10 +16,10 @@ def time_command(inp, bot=None):
         return "error: no wolfram alpha api key set"
 
     request = http.get_xml(api_url, input=query, appid=api_key)
-    time = " ".join(request.xpath("//pod[@title='Result']/subpod/plaintext/text()"))
-    time = time.replace("  |  ", ", ")
+    current_time = " ".join(request.xpath("//pod[@title='Result']/subpod/plaintext/text()"))
+    current_time = current_time.replace("  |  ", ", ")
 
-    if time:
+    if current_time:
         # nice place name for UNIX time
         if inp.lower() == "unix":
             place = "Unix Epoch"
@@ -27,7 +27,7 @@ def time_command(inp, bot=None):
             place = capitalize_first(" ".join(request.xpath("//pod[@"
                                                             "title='Input interpretation']/subpod/plaintext/text()"))[
                                      16:])
-        return "{} - \x02{}\x02".format(time, place)
+        return "{} - \x02{}\x02".format(current_time, place)
     else:
         return "Could not get the time for '{}'.".format(inp)
 

@@ -1,9 +1,9 @@
 import random
 from util import hook, text
 
-@hook.command('harmon')
-@hook.command
-def mark(input):
+@hook.command('harmon', autohelp=False)
+@hook.command(autohelp=False)
+def mark(inp):
     """mark -- Spreads the glory of Mark Harmon"""
     responses = [
     "Praise our lord Mark Harmon",

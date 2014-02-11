@@ -7,3 +7,4 @@ yql
 tweepy
 pygeoip
 BeautifulSoup4
+pycrypto

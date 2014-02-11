@@ -131,8 +131,11 @@ def clearlogs(inp, input=None):
 @hook.command(permissions=["botcontrol"])
 def join(inp, conn=None, notice=None):
     """join <channel> -- Joins <channel>."""
-    notice("Attempting to join {}...".format(inp))
-    conn.join(inp)
+    for target in inp.split(" "):
+        if not target.startswith("#"):
+            target = "#{}".format(target)
+        notice("Attempting to join {}...".format(target))
+        conn.join(target)
 
 
 @hook.command(autohelp=False, permissions=["botcontrol"])
@@ -141,11 +144,14 @@ def part(inp, conn=None, chan=None, notice=None):
     If [channel] is blank the bot will leave the
     channel the command was used in."""
     if inp:
-        target = inp
+        targets = inp
     else:
-        target = chan
-    notice("Attempting to leave {}...".format(target))
-    conn.part(target)
+        targets = chan
+    for target in targets.split(" "):
+        if not target.startswith("#"):
+            target = "#{}".format(target)
+        notice("Attempting to leave {}...".format(target))
+        conn.part(target)
 
 
 @hook.command(autohelp=False, permissions=["botcontrol"])

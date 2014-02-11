@@ -46,14 +46,14 @@ class PluginLoader(object):
 
 
     def load_all(self):
-        """loads plugins from all files in the plugins folder"""
+        """runs load_file() on all python files in the plugins folder"""
         files = set(glob.glob(os.path.join(self.path, '*.py')))
         for f in files:
-            self.load_file(f, loaded_all=True)
+            self.load_file(f, rebuild=True)
         self.rebuild()
 
 
-    def load_file(self, path, loaded_all=False):
+    def load_file(self, path, rebuild=False):
         """loads (or reloads) all valid plugins from a specified file"""
         filename = os.path.basename(path)
         title = os.path.splitext(filename)[0]
@@ -94,11 +94,10 @@ class PluginLoader(object):
                 for type, data in obj._hook:
                     # add plugin to the plugin list
                     self.bot.plugins[type] += [data]
-                    #if not loaded_all:
                     self.bot.logger.info("Loaded plugin: {} ({})".format(format_plug(data), type))
 
         # do a rebuild, unless the bot is loading all plugins (rebuild happens after load_all)
-        if not loaded_all:
+        if not rebuild:
             self.rebuild()
 
 

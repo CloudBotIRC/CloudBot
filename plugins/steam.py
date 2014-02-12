@@ -19,26 +19,37 @@ def get_steam_info(url):
     # get the element details_block
     details = soup.find('div', {'class': 'details_block'})
 
-    # MAGIC
+    # loop over every <b></b> tag in details_block
     for b in details.findAll('b'):
+        # get the contents of the <b></b> tag, which is our title
         title = b.text.lower().replace(":", "")
         if title == "languages":
             # we have all we need!
             break
 
+        # find the next element directly after the <b></b> tag
         next = b.nextSibling
         if next:
+            # if the element is some text
             if isinstance(next, NavigableString):
                 text = next.string.strip()
                 if text:
+                    # we found valid text, save it and continue the loop
                     data[title] = text
                     continue
-                else: 
+                else:
+                    # the text is blank - sometimes this means there are
+                    # useless spaces or tabs between the <b> and <a> tags.
+                    # so we find the next <a> tag and carry on to the next
+                    # bit of code below
                     next = next.find_next('a', href=True)
 
+            # if the element is an <a></a> tag
             if isinstance(next, Tag) and next.name == 'a':
                 text = next.string.strip()
                 if text:
+                    # we found valid text (in the <a></a> tag),
+                    # save it and continue the loop
                     data[title] = text
                     continue
 

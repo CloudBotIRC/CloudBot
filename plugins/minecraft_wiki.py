@@ -10,7 +10,12 @@ def mcwiki(inp):
     """mcwiki <phrase> -- Gets the first paragraph of
     the Minecraft Wiki article on <phrase>."""
 
-    j = http.get_json(api_url, search=inp)
+    try:
+        j = http.get_json(api_url, search=inp)
+    except (http.HTTPError, http.URLError) as e:
+        return "Error fetching search results: {}".format(e)
+    except ValueError as e:
+        return "Error reading search results: {}".format(e)
 
     if not j[1]:
         return "No results found."
@@ -27,7 +32,11 @@ def mcwiki(inp):
         article_name = j[1][0].replace(' ', '_').encode('utf8')
 
     url = mc_url + http.quote(article_name, '')
-    page = http.get_html(url)
+
+    try:
+        page = http.get_html(url)
+    except (http.HTTPError, http.URLError) as e:
+        return "Error fetching wiki page: {}".format(e)
 
     for p in page.xpath('//div[@class="mw-content-ltr"]/p'):
         if p.text_content():

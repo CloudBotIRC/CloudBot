@@ -14,7 +14,7 @@ def get_steam_info(url):
     data = {}
 
     data["name"] = soup.find('div', {'class': 'apphub_AppName'}).text
-    data["desc"] = truncate_str(soup.find('div', {'class': 'game_description_snippet'}).text.strip())
+    data["desc"] = truncate_str(soup.find('meta', {'name': 'description'})['content'].strip(), 80)
 
     # get the element details_block
     details = soup.find('div', {'class': 'details_block'})

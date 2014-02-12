@@ -1,28 +1,51 @@
 import re
-from util import hook, http, web, text
-from bs4 import BeautifulSoup
+from util import hook, http, web
+from util.text import truncate_str
+from bs4 import BeautifulSoup, NavigableString, Tag
 
 
 steam_re = (r'(.*:)//(store.steampowered.com)(:[0-9]+)?(.*)', re.I)
 
 
 def get_steam_info(url):
-    # we get the soup manually because the steam pages have some odd encoding troubles
     page = http.get(url)
     soup = BeautifulSoup(page, 'lxml', from_encoding="utf-8")
 
-    name = soup.find('div', {'class': 'apphub_AppName'}).text
-    desc = ": " + text.truncate_str(soup.find('div', {'class': 'game_description_snippet'}).text.strip())
+    data = {}
 
-    # the page has a ton of returns and tabs
-    details = soup.find('div', {'class': 'glance_details'}).text.strip().split(u"\n\n\r\n\t\t\t\t\t\t\t\t\t")
-    genre = " - Genre: " + details[0].replace(u"Genre: ", u"")
-    date = " - Release date: " + details[1].replace(u"Release Date: ", u"")
-    price = ""
-    if not "Free to Play" in genre:
-        price = " - Price: " + soup.find('div', {'class': 'game_purchase_price price'}).text.strip()
+    data["name"] = soup.find('div', {'class': 'apphub_AppName'}).text
+    data["desc"] = truncate_str(soup.find('div', {'class': 'game_description_snippet'}).text.strip())
 
-    return name + desc + genre + date + price
+    # get the element details_block
+    details = soup.find('div', {'class': 'details_block'})
+
+    # MAGIC
+    for b in details.findAll('b'):
+        title = b.text.lower().replace(":", "")
+        if title == "languages":
+            # we have all we need!
+            break
+
+        next = b.nextSibling
+        if next:
+            if isinstance(next, NavigableString):
+                text = next.string.strip()
+                if text:
+                    data[title] = text
+                    continue
+                else: 
+                    next = next.find_next('a', href=True)
+
+            if isinstance(next, Tag) and next.name == 'a':
+                text = next.string.strip()
+                if text:
+                    data[title] = text
+                    continue
+
+
+    data["price"] = soup.find('div', {'class': 'game_purchase_price price'}).text.strip()
+
+    return u"\x02{name}\x02: {desc}, \x02Genre\x02: {genre}, \x02Release Date\x02: {release date}, \x02Price\x02: {price}".format(**data)
 
 
 @hook.regex(*steam_re)

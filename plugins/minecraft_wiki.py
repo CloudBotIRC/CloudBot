@@ -2,7 +2,7 @@ from util import hook, http, text
 import re
 
 api_url = "http://minecraft.gamepedia.com/api.php?action=opensearch"
-mc_url = "http://minecraft.gamepedia.com/wiki/"
+mc_url = "http://minecraft.gamepedia.com/"
 
 
 @hook.command
@@ -14,7 +14,17 @@ def mcwiki(inp):
 
     if not j[1]:
         return "No results found."
-    article_name = j[1][0].replace(' ', '_').encode('utf8')
+
+    # we remove items with a '/' in the name, because
+    # gamepedia uses subpages for different languages
+    # for some stupid reason
+    items = [item for item in j[1] if not "/" in item]
+
+    if items:
+        article_name = items[0].replace(' ', '_').encode('utf8')
+    else:
+        # there are no items without /, just return a / one
+        article_name = j[1][0].replace(' ', '_').encode('utf8')
 
     url = mc_url + http.quote(article_name, '')
     page = http.get_html(url)
@@ -26,4 +36,5 @@ def mcwiki(inp):
             summary = text.truncate_str(summary, 200)
             return u"{} :: {}".format(summary, url)
 
+    # this shouldn't happen
     return "Unknown Error."

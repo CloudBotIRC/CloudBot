@@ -1,8 +1,8 @@
 from util import hook, http, text
 import re
 
-api_url = "http://minecraftwiki.net/api.php?action=opensearch"
-mc_url = "http://minecraftwiki.net/wiki/"
+api_url = "http://minecraft.gamepedia.com/api.php?action=opensearch"
+mc_url = "http://minecraft.gamepedia.com/wiki/"
 
 
 @hook.command

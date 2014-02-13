@@ -106,7 +106,7 @@ def mcping_legacy(host, port):
 
 def get_srv_data(domain):
     """ takes a domain and finds minecraft SRV records """
-    DNS.ParseResolvConf()
+    DNS.DiscoverNameServers()
     srv_req = DNS.Request(qtype='srv')
     srv_result = srv_req.req('_minecraft._tcp.{}'.format(domain))
 
@@ -137,10 +137,10 @@ def parse_input(inp):
 @hook.command("mcp6")
 def mcping6(inp):
     """mcping6 <server>[:port] - Ping a Minecraft server version 1.6 or smaller to check status."""
-    try:
-        host, port = parse_input(inp)
-    except Exception as ex:
-        return ex.args[0]
+    #try:
+    host, port = parse_input(inp)
+    #except Exception as ex:
+     #   return ex.args[0]
     try:
         return mcping_legacy(host, port)
     except:
@@ -165,10 +165,12 @@ def mcping7(inp):
 @hook.command("mcp")
 def mcping(inp):
     """mcping <server>[:port] - Ping a Minecraft server to check status."""
-    try:
-        host, port = parse_input(inp)
-    except Exception as e:
-        return e.args[0]
+  #  try:
+    host, port = parse_input(inp)
+    #except Exception as e:
+     #   return e.args[0]
+#
+
 
     try:
         return mcping_modern(host, port)

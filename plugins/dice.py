@@ -49,7 +49,7 @@ def dice(inp):
 
     spec = whitespace_re.sub('', inp)
     if not valid_diceroll_re.match(spec):
-        return "Invalid diceroll"
+        return "Invalid dice roll"
     groups = sign_re.findall(spec)
 
     total = 0
@@ -73,13 +73,13 @@ def dice(inp):
             side = int(side)
             try:
                 if count > 0:
-                    dice = nrolls(count, side)
-                    rolls += map(str, dice)
-                    total += sum(dice)
+                    d = nrolls(count, side)
+                    rolls += map(str, d)
+                    total += sum(d)
                 else:
-                    dice = nrolls(-count, side)
-                    rolls += [str(-x) for x in dice]
-                    total -= sum(dice)
+                    d = nrolls(-count, side)
+                    rolls += [str(-x) for x in d]
+                    total -= sum(d)
             except OverflowError:
                 return "Thanks for overflowing a float, jerk >:["
 

@@ -26,7 +26,7 @@ def get_api(bot):
 @hook.regex(*TWITTER_RE)
 def twitter_url(match, bot=None):
     tweet_id = match.group(1)
-    
+
     api = get_api(bot)
     if not api:
         return
@@ -46,7 +46,7 @@ def twitter_url(match, bot=None):
     time = timesince.timesince(tweet.created_at, datetime.utcnow())
 
     return u"{}@\x02{}\x02 ({}): {} ({} ago)".format(prefix, user.screen_name, user.name, text, time)
-        
+
 
 @hook.command("tw")
 @hook.command("twatter")

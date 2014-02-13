@@ -9,7 +9,7 @@ def domainr(inp):
     except (http.URLError, http.HTTPError) as e:
         return "Unable to get data for some reason. Try again later."
     if data['query'] == "":
-        return "An error occurrred: {status} - {message}".format(**data['error'])
+        return "An error occurred: {status} - {message}".format(**data['error'])
     domains = ""
     for domain in data['results']:
         domains += ("\x034" if domain['availability'] == "taken" else (

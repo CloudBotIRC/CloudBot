@@ -13,7 +13,7 @@ with open("plugins/data/8ball_responses.txt") as f:
 
 
 @hook.command('8ball')
-def eightball(input, action=None):
+def eightball(inp, action=None):
     """8ball <question> -- The all knowing magic eight ball,
     in electronic form. Ask and it shall be answered!"""
 

@@ -35,7 +35,8 @@ exchanges = {
 @hook.command("btc", autohelp=False)
 @hook.command(autohelp=False)
 def bitcoin(inp):
-    """bitcoin <exchange> -- Gets current exchange rate for bitcoins from several exchanges, default is Blockchain. Supports MtGox, Bitpay, Coinbase and BitStamp."""
+    """bitcoin <exchange> -- Gets current exchange rate for bitcoins from several exchanges, default is Blockchain.
+    Supports MtGox, Bitpay, Coinbase and BitStamp."""
     inp = inp.lower()
 
     if inp:
@@ -58,4 +59,4 @@ def litecoin(inp, message=None):
     data = http.get_json("https://btc-e.com/api/2/ltc_usd/ticker")
     ticker = data['ticker']
     message("Current: \x0307${:,.2f}\x0f - High: \x0307${:,.2f}\x0f"
-        " - Low: \x0307${:,.2f}\x0f - Volume: {:,.2f} LTC".format(ticker['buy'], ticker['high'], ticker['low'], ticker['vol_cur']))
+            " - Low: \x0307${:,.2f}\x0f - Volume: {:,.2f} LTC".format(ticker['buy'], ticker['high'], ticker['low'], ticker['vol_cur']))

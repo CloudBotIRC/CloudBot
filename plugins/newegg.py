@@ -21,11 +21,11 @@ def format_item(item, show_url=True):
     # format the rating nicely if it exists
     if not item["ReviewSummary"]["TotalReviews"] == "[]":
         rating = "Rated {}/5 ({} ratings)".format(item["ReviewSummary"]["Rating"],
-                                                          item["ReviewSummary"]["TotalReviews"][1:-1])
+                                                  item["ReviewSummary"]["TotalReviews"][1:-1])
     else:
         rating = "No Ratings"
 
-    if not item["FinalPrice"] ==  item["OriginalPrice"]:
+    if not item["FinalPrice"] == item["OriginalPrice"]:
         price = "{FinalPrice}, was {OriginalPrice}".format(**item)
     else:
         price = item["FinalPrice"]
@@ -46,17 +46,17 @@ def format_item(item, show_url=True):
     if item["IsShellShockerItem"]:
         tags.append("\x02SHELL SHOCKER®\x02")
 
-    # join all the tags together in a comma seperated string ("tag1, tag2, tag3")
+    # join all the tags together in a comma separated string ("tag1, tag2, tag3")
     tag_text = u", ".join(tags)
 
     if show_url:
         # create the item URL and shorten it
         url = web.try_isgd(ITEM_URL.format(item["NeweggItemNumber"]))
         return u"\x02{}\x02 ({}) - {} - {} - {}".format(title, price, rating,
-                                                    tag_text, url)
+                                                        tag_text, url)
     else:
         return u"\x02{}\x02 ({}) - {} - {}".format(title, price, rating,
-                                                tag_text)
+                                                   tag_text)
 
 
 ## HOOK FUNCTIONS
@@ -80,8 +80,8 @@ def newegg(inp):
 
     # submit the search request
     r = http.get_json(
-      'http://www.ows.newegg.com/Search.egg/Advanced', 
-      post_data = json.dumps(request)
+        'http://www.ows.newegg.com/Search.egg/Advanced',
+        post_data=json.dumps(request)
     )
 
     # get the first result

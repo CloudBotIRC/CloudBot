@@ -9,7 +9,7 @@ def stock(inp):
     query = "SELECT * FROM yahoo.finance.quote WHERE symbol=@symbol LIMIT 1"
     quote = web.query(query, {"symbol": sym}).one()
 
-    # if we dont get a company name back, the symbol doesn't match a company
+    # if we don't get a company name back, the symbol doesn't match a company
     if quote['Change'] is None:
         return "Unknown ticker symbol: {}".format(sym)
 

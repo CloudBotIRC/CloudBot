@@ -14,9 +14,9 @@ def title(inp):
     except (http.HTTPError, http.URLError):
         return "Could not fetch page."
 
-    title = soup.find('title').contents[0]
+    page_title = soup.find('title').contents[0]
 
-    if not title:
+    if not page_title:
         return "Could not find title."
 
-    return u"{} [{}]".format(title, real_url)
+    return u"{} [{}]".format(page_title, real_url)

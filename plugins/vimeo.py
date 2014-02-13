@@ -8,7 +8,7 @@ def vimeo_url(match):
                          % match.group(1))
 
     if info:
-        info[0]["duration"] = timeformat.timeformat(info[0]["duration"])
+        info[0]["duration"] = timeformat.format_time(info[0]["duration"])
         info[0]["stats_number_of_likes"] = format(
             info[0]["stats_number_of_likes"], ",d")
         info[0]["stats_number_of_plays"] = format(

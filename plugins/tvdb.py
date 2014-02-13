@@ -13,7 +13,6 @@ from util import hook, http
 
 
 base_url = "http://thetvdb.com/api/"
-api_key = "469B73127CA0C411"
 
 
 def get_zipped_xml(*args, **kwargs):
@@ -25,11 +24,11 @@ def get_zipped_xml(*args, **kwargs):
     return etree.parse(ZipFile(zip_buffer, "r").open(path))
 
 
-def get_episodes_for_series(seriesname, api_key):
+def get_episodes_for_series(series_name, api_key):
     res = {"error": None, "ended": False, "episodes": None, "name": None}
     # http://thetvdb.com/wiki/index.php/API:GetSeries
     try:
-        query = http.get_xml(base_url + 'GetSeries.php', seriesname=seriesname)
+        query = http.get_xml(base_url + 'GetSeries.php', seriesname=series_name)
     except URLError:
         res["error"] = "error contacting thetvdb.com"
         return res
@@ -63,7 +62,7 @@ def get_episode_info(episode, api_key):
     first_aired = episode.findtext("FirstAired")
 
     try:
-        airdate = datetime.date(*map(int, first_aired.split('-')))
+        air_date = datetime.date(*map(int, first_aired.split('-')))
     except (ValueError, TypeError):
         return None
 
@@ -79,7 +78,7 @@ def get_episode_info(episode, api_key):
     episode_desc = '{}'.format(episode_num)
     if episode_name:
         episode_desc += ' - {}'.format(episode_name)
-    return first_aired, airdate, episode_desc
+    return first_aired, air_date, episode_desc
 
 
 @hook.command
@@ -111,15 +110,15 @@ def tv_next(inp, bot=None):
         if ep_info is None:
             continue
 
-        (first_aired, airdate, episode_desc) = ep_info
+        (first_aired, air_date, episode_desc) = ep_info
 
-        if airdate > today:
+        if air_date > today:
             next_eps = ['{} ({})'.format(first_aired, episode_desc)]
-        elif airdate == today:
+        elif air_date == today:
             next_eps = ['Today ({})'.format(episode_desc)] + next_eps
         else:
-            #we're iterating in reverse order with newest episodes last
-            #so, as soon as we're past today, break out of loop
+            # we're iterating in reverse order with newest episodes last
+            # so, as soon as we're past today, break out of loop
             break
 
     if not next_eps:
@@ -158,9 +157,9 @@ def tv_last(inp, bot=None):
         if ep_info is None:
             continue
 
-        (first_aired, airdate, episode_desc) = ep_info
+        (first_aired, air_date, episode_desc) = ep_info
 
-        if airdate < today:
+        if air_date < today:
             #iterating in reverse order, so the first episode encountered
             #before today was the most recently aired
             prev_ep = '{} ({})'.format(first_aired, episode_desc)

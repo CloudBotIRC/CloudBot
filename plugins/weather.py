@@ -13,7 +13,7 @@ def weather(inp, reply=None, db=None, nick=None, bot=None, notice=None):
     if not api_key:
         return "Error: No wunderground API details."
 
-    # initalise weather DB
+    # initialise weather DB
     db.execute("create table if not exists weather(nick primary key, loc)")
 
     # if there is no input, try getting the users last location from the DB

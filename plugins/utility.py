@@ -7,7 +7,7 @@ import re
 
 colors = collections.OrderedDict([
   ('red',     '\x0304'),
-  ('ornage',  '\x0307'),
+  ('orange',  '\x0307'),
   ('yellow',  '\x0308'),
   ('green',   '\x0309'),
   ('cyan',    '\x0303'),
@@ -24,8 +24,8 @@ colors = collections.OrderedDict([
 strip_re = re.compile("(\x03|\x02|\x1f)(?:,?\d{1,2}(?:,\d{1,2})?)?", re.UNICODE)
 
 
-def strip(text):
-    return strip_re.sub('', text)
+def strip(string):
+    return strip_re.sub('', string)
 
 # basic text tools
 

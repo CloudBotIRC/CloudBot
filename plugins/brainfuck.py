@@ -1,5 +1,5 @@
-'''brainfuck interpreter adapted from (public domain) code at
-http://brainfuck.sourceforge.net/brain.py'''
+"""brainfuck interpreter adapted from (public domain) code at
+http://brainfuck.sourceforge.net/brain.py"""
 
 import re
 import random

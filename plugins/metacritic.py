@@ -41,36 +41,6 @@ def metacritic(inp):
     except HTTPError:
         return 'error fetching results'
 
-    ''' result format:
-    -- game result, with score
-    -- subsequent results are the same structure, without first_result class
-    <li class="result first_result">
-        <div class="result_type">
-            <strong>Game</strong>
-            <span class="platform">WII</span>
-        </div>
-        <div class="result_wrap">
-            <div class="basic_stats has_score">
-                <div class="main_stats">
-                    <h3 class="product_title basic_stat">...</h3>
-                    <div class="std_score">
-                      <div class="score_wrap">
-                        <span class="label">Metascore: </span>
-                        <span class="data metascore score_favorable">87</span>
-                      </div>
-                    </div>
-                </div>
-                <div class="more_stats extended_stats">...</div>
-            </div>
-        </div>
-    </li>
-
-    -- other platforms are the same basic layout
-    -- if it doesn't have a score, there is no div.basic_score
-    -- the <div class="result_type"> changes content for non-games:
-    <div class="result_type"><strong>Movie</strong></div>
-    '''
-
     # get the proper result element we want to pull data from
     result = None
 

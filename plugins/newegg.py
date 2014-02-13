@@ -44,7 +44,7 @@ def format_item(item, show_url=True):
         tags.append("\x02Featured\x02")
 
     if item["IsShellShockerItem"]:
-        tags.append("\x02SHELL SHOCKER®\x02")
+        tags.append(u"\x02SHELL SHOCKER\u00AE\x02")
 
     # join all the tags together in a comma separated string ("tag1, tag2, tag3")
     tag_text = u", ".join(tags)

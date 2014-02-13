@@ -89,7 +89,7 @@ def checkbase64(inp):
         recoded = decoded.encode('base64').strip()
         is_base64 = recoded == inp
     except:
-        is_base64 = False
+        return '"{}" is not base64 encoded'.format(inp)
 
     if is_base64:
         return '"{}" is base64 encoded'.format(recoded)

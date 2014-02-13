@@ -52,7 +52,7 @@ def twitter_url(match, bot=None):
 @hook.command("twatter")
 @hook.command
 def twitter(inp, bot=None):
-    "twitter <user> [n] -- Gets last/[n]th tweet from <user>"
+    """twitter <user> [n] -- Gets last/[n]th tweet from <user>"""
 
     api = get_api(bot)
     if not api:
@@ -117,6 +117,9 @@ def twitter(inp, bot=None):
 
         tweet = random.choice(search)
         user = tweet.user
+    else:
+        # ???
+        return "Unknown Error"
 
     text = " ".join(tweet.text.split())
 

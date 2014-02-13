@@ -23,7 +23,7 @@ refresh_cache()
 
 @hook.command(autohelp=False)
 def mlia(inp, reply=None):
-    "mlia -- Gets a random quote from MyLifeIsAverage.com."
+    """mlia -- Gets a random quote from MyLifeIsAverage.com."""
     # grab the last item in the mlia cache and remove it
     id, text = mlia_cache.pop()
     # reply with the mlia we grabbed

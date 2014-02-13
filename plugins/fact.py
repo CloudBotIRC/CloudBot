@@ -2,7 +2,7 @@ from util import hook, http, web
 
 
 @hook.command(autohelp=False)
-def fact(inp, say=False, nick=False):
+def fact(inp):
     """fact -- Gets a random fact from OMGFACTS."""
 
     attempts = 0
@@ -20,10 +20,10 @@ def fact(inp, say=False, nick=False):
 
         response = soup.find('a', {'class': 'surprise'})
         link = response['href']
-        fact = ''.join(response.find(text=True))
+        fact_data = ''.join(response.find(text=True))
 
-        if fact:
-            fact = fact.strip()
+        if fact_data:
+            fact_data = fact_data.strip()
             break
         else:
             if attempts > 2:
@@ -34,4 +34,4 @@ def fact(inp, say=False, nick=False):
 
     url = web.try_isgd(link)
 
-    return "{} - {}".format(fact, url)
+    return "{} - {}".format(fact_data, url)

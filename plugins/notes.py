@@ -4,7 +4,7 @@ import re
 db_inited = False
 
 
-def cleanSQL(sql):
+def clean_sql(sql):
     return re.sub(r'\s+', " ", sql).strip()
 
 
@@ -20,7 +20,7 @@ def db_init(db):
     """).fetchone()[0] == 1
 
     if not exists:
-        db.execute(cleanSQL("""
+        db.execute(clean_sql("""
            create virtual table todos using fts4(
                 user,
                 text,
@@ -91,7 +91,7 @@ def db_search(db, nick, query):
 @hook.command("notes")
 @hook.command
 def note(inp, nick='', chan='', db=None, notice=None, bot=None):
-    "note(s) <add|del|list|search> args -- Manipulates your list of notes."
+    """note(s) <add|del|list|search> args -- Manipulates your list of notes."""
 
     db_init(db)
 

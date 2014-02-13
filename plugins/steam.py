@@ -53,7 +53,6 @@ def get_steam_info(url):
                     data[title] = text
                     continue
 
-
     data["price"] = soup.find('div', {'class': 'game_purchase_price price'}).text.strip()
 
     return u"\x02{name}\x02: {desc}, \x02Genre\x02: {genre}, \x02Release Date\x02: {release date}," \

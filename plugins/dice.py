@@ -14,7 +14,7 @@ sign_re = re.compile(r'[+-]?(?:\d*d)?(?:\d+|F)', re.I)
 split_re = re.compile(r'([\d+-]*)d?(F|\d*)', re.I)
 
 
-def nrolls(count, n):
+def n_rolls(count, n):
     """roll an n-sided die count times"""
     if n == "F":
         return [random.randint(-1, 1) for x in xrange(min(count, 100))]
@@ -36,7 +36,7 @@ def nrolls(count, n):
 #@hook.regex(valid_diceroll, re.I)
 @hook.command
 def dice(inp):
-    """dice <diceroll> -- Simulates dicerolls. Example of <diceroll>:
+    """dice <dice roll> -- Simulates dice rolls. Example of <dice roll>:
     'dice 2d20-d5+4 roll 2'. D20s, subtract 1D5, add 4"""
 
     try:  # if inp is a re.match object...
@@ -59,7 +59,7 @@ def dice(inp):
         count, side = split_re.match(roll).groups()
         count = int(count) if count not in " +-" else 1
         if side.upper() == "F":  # fudge dice are basically 1d3-2
-            for fudge in nrolls(count, "F"):
+            for fudge in n_rolls(count, "F"):
                 if fudge == 1:
                     rolls.append("\x033+\x0F")
                 elif fudge == -1:
@@ -73,14 +73,15 @@ def dice(inp):
             side = int(side)
             try:
                 if count > 0:
-                    d = nrolls(count, side)
+                    d = n_rolls(count, side)
                     rolls += map(str, d)
                     total += sum(d)
                 else:
-                    d = nrolls(-count, side)
+                    d = n_rolls(-count, side)
                     rolls += [str(-x) for x in d]
                     total -= sum(d)
             except OverflowError:
+                # I have never seen this happen. If you make this happen, you win a cookie
                 return "Thanks for overflowing a float, jerk >:["
 
     if desc:

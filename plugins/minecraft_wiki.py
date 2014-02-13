@@ -21,7 +21,7 @@ def mcwiki(inp):
         return "No results found."
 
     # we remove items with a '/' in the name, because
-    # gamepedia uses subpages for different languages
+    # gamepedia uses sub-pages for different languages
     # for some stupid reason
     items = [item for item in j[1] if not "/" in item]
 

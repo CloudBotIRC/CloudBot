@@ -13,7 +13,7 @@ details_url = base_url + "plugins/bukkit/{}"
 categories = http.get_json("http://api.bukget.org/3/categories")
 
 count_total = sum([cat["count"] for cat in categories])
-count_categores = {cat["name"].lower() : int(cat["count"]) for cat in categories} # dict conps!
+count_categories = {cat["name"].lower() : int(cat["count"]) for cat in categories} # dict comps!
 
 
 class BukgetError(Exception):
@@ -99,7 +99,8 @@ def format_output(data):
     else:
         line_a = u"\x02{}\x02, by \x02{}\x02 ({}) \x02{}".format(name, authors, stage, url)
 
-    line_b = u"Last release: \x02v{}\x02 for \x02{}\x02 at {} \x02{}\x02".format(version_number, bukkit_versions, last_update, link)
+    line_b = u"Last release: \x02v{}\x02 for \x02{}\x02 at {} \x02{}\x02".format(version_number, bukkit_versions,
+                                                                                 last_update, link)
 
     return line_a, line_b
 

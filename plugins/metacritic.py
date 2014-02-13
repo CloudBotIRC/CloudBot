@@ -12,11 +12,7 @@ def metacritic(inp):
     """mc [all|movie|tv|album|x360|ps3|pc|gba|ds|3ds|wii|vita|wiiu|xone|ps4] <title>
     Gets rating for <title> from metacritic on the specified medium."""
 
-
-    # if the results suck, it's metacritic's fault
-
     args = inp.strip()
-
 
     game_platforms = ('x360', 'ps3', 'pc', 'gba', 'ds', '3ds', 'wii',
                       'vita', 'wiiu', 'xone', 'ps4')
@@ -76,7 +72,6 @@ def metacritic(inp):
     '''
 
     # get the proper result element we want to pull data from
-
     result = None
 
     if not doc.find_class('query_results'):

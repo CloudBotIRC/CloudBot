@@ -5,14 +5,17 @@ from util import http, hook
 exchanges = {
     "blockchain": {
         "api_url": "https://blockchain.info/ticker",
-        "func": lambda data: u"Blockchain // Buy: \x0307${:,.2f}\x0f - Sell: \x0307${:,.2f}\x0f".format(data["USD"]["buy"], \
-                               data["USD"]["sell"])
+        "func": lambda data: u"Blockchain // Buy: \x0307${:,.2f}\x0f -"
+                             u" Sell: \x0307${:,.2f}\x0f".format(data["USD"]["buy"], data["USD"]["sell"])
     },
     "mtgox": {
         "api_url": "https://mtgox.com/api/1/BTCUSD/ticker",
-        "func": lambda data: u"MtGox // Current: \x0307{}\x0f - High: \x0307{}\x0f - Low: \x0307{}\x0f - Best Ask: \x0307{}\x0f - Volume: {}".format(data['return']['last']['display'], \
-                               data['return']['high']['display'], data['return']['low']['display'], data['return']['buy']['display'], \
-                               data['return']['vol']['display'])
+        "func": lambda data: u"MtGox // Current: \x0307{}\x0f - High: \x0307{}\x0f - Low: \x0307{}\x0f"
+                             u" - Best Ask: \x0307{}\x0f - Volume: {}".format(data['return']['last']['display'],
+                                                                              data['return']['high']['display'],
+                                                                              data['return']['low']['display'],
+                                                                              data['return']['buy']['display'],
+                                                                              data['return']['vol']['display'])
     },
     "coinbase":{
         "api_url": "https://coinbase.com/api/v1/prices/spot_rate",
@@ -24,8 +27,11 @@ exchanges = {
     },
     "bitstamp": {
         "api_url": "https://www.bitstamp.net/api/ticker/",
-        "func": lambda data: u"BitStamp // Current: \x0307${:,.2f}\x0f - High: \x0307${:,.2f}\x0f - Low: \x0307${:,.2f}\x0f - Volume: {:,.2f} BTC".format(float(data['last']), float(data['high']), float(data['low']), \
-                               float(data['volume']))
+        "func": lambda data: u"BitStamp // Current: \x0307${:,.2f}\x0f - High: \x0307${:,.2f}\x0f -"
+                             u" Low: \x0307${:,.2f}\x0f - Volume: {:,.2f} BTC".format(float(data['last']),
+                                                                                      float(data['high']),
+                                                                                      float(data['low']),
+                                                                                      float(data['volume']))
     }
 }
 
@@ -59,4 +65,5 @@ def litecoin(inp, message=None):
     data = http.get_json("https://btc-e.com/api/2/ltc_usd/ticker")
     ticker = data['ticker']
     message("Current: \x0307${:,.2f}\x0f - High: \x0307${:,.2f}\x0f"
-            " - Low: \x0307${:,.2f}\x0f - Volume: {:,.2f} LTC".format(ticker['buy'], ticker['high'], ticker['low'], ticker['vol_cur']))
+            " - Low: \x0307${:,.2f}\x0f - Volume: {:,.2f} LTC".format(ticker['buy'], ticker['high'], ticker['low'],
+                                                                      ticker['vol_cur']))

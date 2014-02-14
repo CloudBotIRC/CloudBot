@@ -38,7 +38,7 @@ def tellinput(paraml, input=None, notice=None, db=None, bot=None, nick=None, con
         reltime = timesince.timesince(time)
 
         reply = "{} sent you a message {} ago from {}: {}".format(user_from, reltime, chan,
-                                                              message)
+                                                                  message)
         if len(tells) > 1:
             reply += " (+{} more, {}showtells to view)".format(len(tells) - 1, conn.conf["command_prefix"])
 
@@ -91,7 +91,7 @@ def tell(inp, nick='', chan='', db=None, input=None, notice=None):
         return
 
     if user_to.lower() == input.conn.nick.lower():
-        # user is looking for us, being a smartass
+        # user is looking for us, being a smart-ass
         notice("Thanks for the message, {}!".format(user_from))
         return
 

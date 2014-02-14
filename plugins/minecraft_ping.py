@@ -8,16 +8,16 @@ from util import hook
 
 try:
     import DNS
-    # Please remember to install the dependancy 'pydns'
+    # Please remember to install the dependency 'pydns'
     pydns_installed = True
 except ImportError:
     pydns_installed = False
 
 
 mccolors = [u"\x0300,\xa7f", u"\x0301,\xa70", u"\x0302,\xa71", u"\x0303,\xa72", u"\x0304,\xa7c", u"\x0305,\xa74",
-          u"\x0306,\xa75", u"\x0307,\xa76", u"\x0308,\xa7e", u"\x0309,\xa7a", u"\x0310,\xa73", u"\x0311,\xa7b",
-          u"\x0312,\xa71", u"\x0313,\xa7d", u"\x0314,\xa78", u"\x0315,\xa77", u"\x02,\xa7l", u"\x0310,\xa79",
-          u"\x09,\xa7o", u"\x13,\xa7m", u"\x0f,\xa7r", u"\x15,\xa7n"]
+            u"\x0306,\xa75", u"\x0307,\xa76", u"\x0308,\xa7e", u"\x0309,\xa7a", u"\x0310,\xa73", u"\x0311,\xa7b",
+            u"\x0312,\xa71", u"\x0313,\xa7d", u"\x0314,\xa78", u"\x0315,\xa77", u"\x02,\xa7l", u"\x0310,\xa79",
+            u"\x09,\xa7o", u"\x13,\xa7m", u"\x0f,\xa7r", u"\x15,\xa7n"]
 
 
 def mc_color_format(motd):
@@ -77,11 +77,12 @@ def mcping_modern(host, port):
     try:
         version = data["version"]["name"]
         desc = data["description"]
-        max = data["players"]["max"]
+        max_players = data["players"]["max"]
         online = data["players"]["online"]
     except Exception as e:
         return "Invalid data: {}; error: {}".format(data, e)
-    return mc_color_format(u"{}\x0f - {}\x0f - {}/{} players *".format(desc, version, online, max)).replace("\n", u"\x0f - ")
+    return mc_color_format(u"{}\x0f - {}\x0f - {}/{} players *".format(desc, version, online,
+                                                                       max_players)).replace("\n", u"\x0f - ")
 
 
 def mcping_legacy(host, port):
@@ -102,7 +103,8 @@ def mcping_legacy(host, port):
         message = u"{} - {}/{} players".format(mc_color_format(data[0]), data[1], data[2])
     else:
         # decoded data, server is using new format
-        message = u"{} \x0f- {} - {}/{} players".format(mc_color_format(data[3]), mc_color_format(data[2]), data[4], data[5])
+        message = u"{} \x0f- {} - {}/{} players".format(mc_color_format(data[3]),
+                                                        mc_color_format(data[2]), data[4], data[5])
     sock.close()
     return message
 
@@ -173,7 +175,6 @@ def mcping(inp):
     #except Exception as e:
      #   return e.args[0]
 #
-
 
     try:
         return mcping_modern(host, port)

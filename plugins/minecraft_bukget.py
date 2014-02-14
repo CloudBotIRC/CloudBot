@@ -132,7 +132,6 @@ def bukget(inp, reply=None, message=None):
     message(line_b)
 
 
-
 @hook.command(autohelp=None)
 def randomplugin(inp, reply=None, message=None):
     """randomplugin - Gets a random plugin from dev.bukkit.org"""

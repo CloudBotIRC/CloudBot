@@ -19,7 +19,8 @@ def is_valid(data):
 
 @hook.command(autohelp=False)
 def imgur(inp):
-    """imgur [subreddit] -- Gets the first page of imgur images from [subreddit] and returns a link to them. If [subreddit] is undefined, return any imgur images"""
+    """imgur [subreddit] -- Gets the first page of imgur images from [subreddit] and returns a link to them.
+     If [subreddit] is undefined, return any imgur images"""
     if inp:
         # see if the input ends with "nsfw"
         show_nsfw = inp.endswith(" nsfw")
@@ -50,7 +51,7 @@ def imgur(inp):
     items = []
 
     headers = {
-    "Authorization": "Client-ID b5d127e6941b07a"
+        "Authorization": "Client-ID b5d127e6941b07a"
     }
 
     # loop over the list of posts

@@ -96,7 +96,7 @@ def decrypt(inp, bot=None, db=None, notice=None):
 
     # get the encoded IV from the database and decode it
     iv_encoded = db.execute("select iv from encryption where"
-                           " encrypted=?", (text,)).fetchone()[0]
+                            " encrypted=?", (text,)).fetchone()[0]
     iv = base64.b64decode(iv_encoded)
 
     # create AES cipher, decode text, decrypt text, and unpad it

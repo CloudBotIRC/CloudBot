@@ -21,7 +21,7 @@ def rottentomatoes(inp, bot=None):
 
     movie = results['movies'][0]
     title = movie['title']
-    id = movie['id']
+    movie_id = movie['id']
     critics_score = movie['ratings']['critics_score']
     audience_score = movie['ratings']['audience_score']
     url = movie['links']['alternate']
@@ -29,7 +29,7 @@ def rottentomatoes(inp, bot=None):
     if critics_score == -1:
         return
 
-    reviews = http.get_json(movie_reviews_url % id, apikey=api_key, review_type='all')
+    reviews = http.get_json(movie_reviews_url % movie_id, apikey=api_key, review_type='all')
     review_count = reviews['total']
 
     fresh = critics_score * review_count / 100

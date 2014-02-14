@@ -20,7 +20,7 @@ def ping(inp, reply=None):
     args = inp.split(' ')
     host = args[0]
 
-    # check for a seccond argument and set the ping count
+    # check for a second argument and set the ping count
     if len(args) > 1:
         count = int(args[1])
         if count > 20:

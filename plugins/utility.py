@@ -8,17 +8,17 @@ from util import hook, text
 # variables
 
 colors = collections.OrderedDict([
-  ('red',     '\x0304'),
-  ('orange',  '\x0307'),
-  ('yellow',  '\x0308'),
-  ('green',   '\x0309'),
-  ('cyan',    '\x0303'),
-  ('ltblue',  '\x0310'),
-  ('rylblue', '\x0312'),
-  ('blue',    '\x0302'),
-  ('magenta', '\x0306'),
-  ('pink',    '\x0313'),
-  ('maroon',  '\x0305')
+    ('red', '\x0304'),
+    ('orange', '\x0307'),
+    ('yellow', '\x0308'),
+    ('green', '\x0309'),
+    ('cyan', '\x0303'),
+    ('ltblue', '\x0310'),
+    ('rylblue', '\x0312'),
+    ('blue', '\x0302'),
+    ('magenta', '\x0306'),
+    ('pink', '\x0313'),
+    ('maroon', '\x0305')
 ])
 
 # helper functions
@@ -28,6 +28,7 @@ strip_re = re.compile("(\x03|\x02|\x1f)(?:,?\d{1,2}(?:,\d{1,2})?)?", re.UNICODE)
 
 def strip(string):
     return strip_re.sub('', string)
+
 
 # basic text tools
 
@@ -62,6 +63,7 @@ def titlecase(inp):
 def swapcase(inp):
     """swapcase <string> -- Swaps the capitalization of <string>."""
     return inp.swapcase()
+
 
 # encoding
 
@@ -116,6 +118,7 @@ def escape(inp):
     except Exception as e:
         return "Error: {}".format(e)
 
+
 # length
 
 
@@ -123,6 +126,7 @@ def escape(inp):
 def length(inp):
     """length <string> -- gets the length of <string>"""
     return "The length of that string is {} characters.".format(len(inp))
+
 
 # reverse
 
@@ -132,14 +136,16 @@ def reverse(inp):
     """reverse <string> -- reverses <string>."""
     return inp[::-1]
 
+
 # hashing
 
 
-@hook.command
-def hash(inp):
+@hook.command("hash")
+def hash_command(inp):
     """hash <string> -- Returns hashes of <string>."""
     return ', '.join(x + ": " + getattr(hashlib, x)(inp).hexdigest()
                      for x in ['md5', 'sha1', 'sha256'])
+
 
 # novelty
 
@@ -148,6 +154,7 @@ def hash(inp):
 def munge(inp):
     """munge <text> -- Munges up <text>."""
     return text.munge(inp)
+
 
 # colors - based on code by Reece Selwood - <https://github.com/hitzler/homero>
 

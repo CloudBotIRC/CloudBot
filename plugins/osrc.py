@@ -1,5 +1,7 @@
-from util import hook, http, web
 from bs4 import BeautifulSoup
+
+from util import hook, http, web
+
 
 api_url = "http://osrc.dfm.io/{}/stats"
 user_url = "http://osrc.dfm.io/{}"

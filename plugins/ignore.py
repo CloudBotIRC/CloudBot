@@ -1,6 +1,7 @@
 import json
-from util import hook
 from fnmatch import fnmatch
+
+from util import hook
 
 
 @hook.sieve

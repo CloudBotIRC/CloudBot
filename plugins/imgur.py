@@ -1,6 +1,7 @@
-from util import hook, http, web
 import re
 import random
+
+from util import hook, http, web
 
 
 base_url = "http://reddit.com/r/{}/.json"

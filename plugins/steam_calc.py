@@ -1,6 +1,8 @@
-from util import hook, http, text
 import csv
 import StringIO
+
+from util import hook, http, text
+
 
 gauge_url = "http://www.mysteamgauge.com/search?username={}"
 

@@ -1,5 +1,6 @@
-from util import hook, http, timesince
 import datetime
+
+from util import hook, http, timesince
 
 
 @hook.command("scene")

@@ -1,6 +1,8 @@
-from util import hook, http, text, web
 import json
 import re
+
+from util import hook, http, text, web
+
 
 ## CONSTANTS
 

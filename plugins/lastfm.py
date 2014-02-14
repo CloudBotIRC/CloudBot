@@ -1,5 +1,7 @@
-from util import hook, http, timesince
 from datetime import datetime
+
+from util import hook, http, timesince
+
 
 api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
 

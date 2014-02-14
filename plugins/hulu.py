@@ -1,6 +1,8 @@
-from util import hook, http, timeformat
 from urllib import urlencode
 import re
+
+from util import hook, http, timeformat
+
 
 hulu_re = (r'(.*://)(www.hulu.com|hulu.com)(.*)', re.I)
 

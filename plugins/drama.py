@@ -1,5 +1,7 @@
-from util import hook, http, text
 import re
+
+from util import hook, http, text
+
 
 api_url = "http://encyclopediadramatica.se/api.php?action=opensearch"
 ed_url = "http://encyclopediadramatica.se/"

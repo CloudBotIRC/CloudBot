@@ -1,7 +1,9 @@
 # IMDb lookup plugin by Ghetto Wizard (2011) and blha303 (2013)
 
-from util import hook, http, text
 import re
+
+from util import hook, http, text
+
 
 id_re = re.compile("tt\d+")
 imdb_re = (r'(.*:)//(imdb.com|www.imdb.com)(:[0-9]+)?(.*)', re.I)

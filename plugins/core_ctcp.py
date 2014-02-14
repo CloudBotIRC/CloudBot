@@ -1,5 +1,7 @@
 import time
+
 from util import hook
+
 
 
 # CTCP responses

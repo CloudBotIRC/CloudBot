@@ -1,8 +1,10 @@
 # ping plugin by neersighted
-from util import hook
 import subprocess
 import re
 import os
+
+from util import hook
+
 
 ping_regex = re.compile(r"(\d+.\d+)/(\d+.\d+)/(\d+.\d+)/(\d+.\d+)")
 

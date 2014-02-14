@@ -1,5 +1,6 @@
-from util import hook, textgen
 import json
+
+from util import hook, textgen
 
 
 def get_generator(_json, variables):

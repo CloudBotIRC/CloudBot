@@ -1,6 +1,7 @@
 # Plugin by Infinity - <https://github.com/infinitylabs/UguuBot>
 
 import random
+
 from util import hook, http
 
 

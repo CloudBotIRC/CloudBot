@@ -1,12 +1,14 @@
-from util import hook
-from Crypto import Random
-from Crypto.Cipher import AES
-from Crypto.Protocol.KDF import PBKDF2
-
 import os
 import base64
 import json
 import hashlib
+
+from Crypto import Random
+from Crypto.Cipher import AES
+from Crypto.Protocol.KDF import PBKDF2
+
+from util import hook
+
 
 # helper functions to pad and unpad a string to a specified block size
 # <http://stackoverflow.com/questions/12524994/encrypt-decrypt-using-pycrypto-aes-256>

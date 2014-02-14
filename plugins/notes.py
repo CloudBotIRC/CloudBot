@@ -1,5 +1,7 @@
-from util import hook
 import re
+
+from util import hook
+
 
 db_inited = False
 

@@ -1,6 +1,8 @@
-from util import hook, http, web, text
 import time
 import random
+
+from util import hook, http, web, text
+
 
 ## CONSTANTS
 

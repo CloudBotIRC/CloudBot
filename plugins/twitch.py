@@ -1,6 +1,8 @@
 import re
-from util import hook, http
 from HTMLParser import HTMLParser
+
+from util import hook, http
+
 
 twitch_re = (r'(.*:)//(twitch.tv|www.twitch.tv)(:[0-9]+)?(.*)', re.I)
 multitwitch_re = (r'(.*:)//(www.multitwitch.tv|multitwitch.tv)/(.*)', re.I)

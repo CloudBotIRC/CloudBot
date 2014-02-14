@@ -1,5 +1,7 @@
-from util import hook, http, text
 import re
+
+from util import hook, http, text
+
 
 base_url = 'http://www.urbandictionary.com/iphone/search/define'
 

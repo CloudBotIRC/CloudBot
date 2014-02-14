@@ -1,6 +1,7 @@
-from util import hook, http, web
 import json
 import urllib2
+
+from util import hook, http, web
 
 
 def get_sound_info(game, search):

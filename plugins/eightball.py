@@ -1,5 +1,7 @@
 import random
+
 from util import hook, text
+
 
 color_codes = {
     "<r>": "\x02\x0305",

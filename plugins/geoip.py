@@ -1,9 +1,12 @@
-from util import hook, http
 import os.path
-import pygeoip
 import json
 import gzip
 from StringIO import StringIO
+
+import pygeoip
+
+from util import hook, http
+
 
 
 # load region database

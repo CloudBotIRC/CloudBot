@@ -1,8 +1,9 @@
 # TODO: Add some kind of pronounceable password generation
 # TODO: Improve randomness
-from util import hook
 import string
 import random
+
+from util import hook
 
 
 @hook.command

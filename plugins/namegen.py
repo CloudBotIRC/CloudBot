@@ -1,6 +1,7 @@
-from util import hook, text, textgen
 import json
 import os
+
+from util import hook, text, textgen
 
 
 GEN_DIR = "./plugins/data/name_files/"

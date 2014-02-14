@@ -1,10 +1,11 @@
-from util import hook
 import os
 import sys
 import re
 import json
 import time
 import subprocess
+
+from util import hook
 
 
 @hook.command(autohelp=False, permissions=["permissions_users"])

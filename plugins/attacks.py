@@ -1,5 +1,7 @@
-from util import hook
 import random
+
+from util import hook
+
 
 with open("plugins/data/larts.txt") as f:
     larts = [line.strip() for line in f.readlines()

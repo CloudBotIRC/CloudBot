@@ -1,7 +1,8 @@
-from util import hook
 from enchant.checker import SpellChecker
-
 import enchant
+
+from util import hook
+
 
 locale = "en_US"
 

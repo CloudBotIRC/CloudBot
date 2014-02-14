@@ -1,7 +1,9 @@
-from util import hook, text
 import hashlib
 import collections
 import re
+
+from util import hook, text
+
 
 # variables
 

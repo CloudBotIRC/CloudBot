@@ -1,9 +1,11 @@
-from util import hook, http, text, timesince
 from datetime import datetime
 import re
 import random
 
-reddit_re = (r'.*((www\.)?reddit\.com/r[^ ]+)', re.I)
+from util import hook, http, text, timesince
+
+
+reddit_re = (r'.*(((www\.)?reddit\.com/r|redd\.it)[^ ]+)', re.I)
 
 base_url = "http://reddit.com/r/{}/.json"
 short_url = "http://redd.it/{}"

@@ -8,7 +8,7 @@ from util import hook
 
 try:
     import DNS
-    # Please remember to install the dependancy 'pydns'
+    # Please remember to install the dependency 'pydns'
     pydns_installed = True
 except ImportError:
     pydns_installed = False

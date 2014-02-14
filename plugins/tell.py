@@ -91,7 +91,7 @@ def tell(inp, nick='', chan='', db=None, input=None, notice=None):
         return
 
     if user_to.lower() == input.conn.nick.lower():
-        # user is looking for us, being a smartass
+        # user is looking for us, being a smart-ass
         notice("Thanks for the message, {}!".format(user_from))
         return
 

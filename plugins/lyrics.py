@@ -38,6 +38,6 @@ def lyrics(inp):
         else:
             lyricsum = " / ".join(lyricsum.strip().split("\n")[0:4])  # truncate, format
         return "\x02{}\x02 by \x02{}\x02 {}{} - {}".format(title, artist, web.try_isgd(link), pasteurl,
-                                                             lyricsum[:-3])
+                                                           lyricsum[:-3])
     else:
         return "No song results. " + url + inp.replace(" ", "+")

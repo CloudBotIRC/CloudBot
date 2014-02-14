@@ -46,14 +46,14 @@ def db_getall(db, nick, limit=-1):
         """, (nick, limit))
 
 
-def db_get(db, nick, id):
+def db_get(db, nick, note_id):
     return db.execute("""
         select added, text from todos
         where lower(user) = lower(?)
         order by added desc
         limit 1
         offset ?
-    """, (nick, id)).fetchone()
+    """, (nick, note_id)).fetchone()
 
 
 def db_del(db, nick, limit='all'):

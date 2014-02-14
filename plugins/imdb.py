@@ -39,10 +39,10 @@ def imdb(inp):
 
 @hook.regex(*imdb_re)
 def imdb_url(match):
-    id = match.group(4).split('/')[-1]
-    if id == "":
-        id = match.group(4).split('/')[-2]
-    content = http.get_json("http://www.omdbapi.com/", i=id)
+    imdb_id = match.group(4).split('/')[-1]
+    if imdb_id == "":
+        imdb_id = match.group(4).split('/')[-2]
+    content = http.get_json("http://www.omdbapi.com/", i=imdb_id)
     if content.get('Error', None) == 'Movie not found!':
         return 'Movie not found!'
     elif content['Response'] == 'True':

@@ -3,8 +3,8 @@ import re
 from util import hook
 
 
-@hook.command(autohelp=False)
-def help(inp, notice=None, conn=None, bot=None):
+@hook.command("help", autohelp=False)
+def help_command(inp, notice=None, conn=None, bot=None):
     """help  -- Gives a list of commands/help for a command."""
 
     funcs = {}

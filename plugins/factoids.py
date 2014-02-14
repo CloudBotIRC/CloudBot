@@ -132,8 +132,8 @@ def factoid(inp, message=None, db=None, bot=None, action=None, conn=None, input=
         if data.startswith("<py>"):
             code = data[4:].strip()
             variables = 'input="""{}"""; nick="{}"; chan="{}"; bot_nick="{}";'.format(arguments.replace('"', '\\"'),
-                                                                                  input.nick, input.chan,
-                                                                                  input.conn.nick)
+                                                                                      input.nick, input.chan,
+                                                                                      input.conn.nick)
             result = pyexec.eval_py(variables + code)
         else:
             result = data

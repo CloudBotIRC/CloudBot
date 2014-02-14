@@ -44,7 +44,7 @@ def get_episodes_for_series(series_name, api_key):
 
     try:
         series = get_zipped_xml(base_url + '%s/series/%s/all/en.zip' %
-                                    (api_key, series_id), path="en.xml")
+                                (api_key, series_id), path="en.xml")
     except URLError:
         res["error"] = "Error contacting thetvdb.com."
         return res

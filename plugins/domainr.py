@@ -13,6 +13,6 @@ def domainr(inp):
     domains = ""
     for domain in data['results']:
         domains += ("\x034" if domain['availability'] == "taken" else (
-            "\x033" if domain['availability'] == "available" else "\x031")) + domain['domain'] + "\x0f" + domain[
-            'path'] + ", "
+                    "\x033" if domain['availability'] == "available" else "\x031")) + domain['domain'] + "\x0f" + domain[
+                    'path'] + ", "
     return "Domains: " + domains

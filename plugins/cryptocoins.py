@@ -17,7 +17,7 @@ exchanges = {
                                                                               data['return']['buy']['display'],
                                                                               data['return']['vol']['display'])
     },
-    "coinbase":{
+    "coinbase": {
         "api_url": "https://coinbase.com/api/v1/prices/spot_rate",
         "func": lambda data: u"Coinbase // Current: \x0307${:,.2f}\x0f".format(float(data['amount']))
     },

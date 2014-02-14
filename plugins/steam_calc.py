@@ -99,8 +99,8 @@ def steamcalc(inp, reply=None):
     data["size"] = "{0:.1f}".format(total_size)
 
     reply("{name} ({state}) has {games} games with a total value of ${value}"
-           " and a total size of {size}GB! The average metascore for these"
-           " games is {average_metascore}.".format(**data))
+          " and a total size of {size}GB! The average metascore for these"
+          " games is {average_metascore}.".format(**data))
 
     if do_refresh:
         refresh_data(name)

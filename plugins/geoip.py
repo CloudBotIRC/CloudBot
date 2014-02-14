@@ -8,7 +8,6 @@ import pygeoip
 from util import hook, http
 
 
-
 # load region database
 with open("./plugins/data/geoip_regions.json", "rb") as f:
     regions = json.loads(f.read())

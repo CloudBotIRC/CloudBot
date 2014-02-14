@@ -30,11 +30,11 @@ def get_steam_info(url):
             break
 
         # find the next element directly after the <b></b> tag
-        next = b.nextSibling
-        if next:
+        next_element = b.nextSibling
+        if next_element:
             # if the element is some text
-            if isinstance(next, NavigableString):
-                text = next.string.strip()
+            if isinstance(next_element, NavigableString):
+                text = next_element.string.strip()
                 if text:
                     # we found valid text, save it and continue the loop
                     data[title] = text
@@ -44,11 +44,11 @@ def get_steam_info(url):
                     # useless spaces or tabs between the <b> and <a> tags.
                     # so we find the next <a> tag and carry on to the next
                     # bit of code below
-                    next = next.find_next('a', href=True)
+                    next_element = next_element.find_next('a', href=True)
 
             # if the element is an <a></a> tag
-            if isinstance(next, Tag) and next.name == 'a':
-                text = next.string.strip()
+            if isinstance(next_element, Tag) and next_element.name == 'a':
+                text = next_element.string.strip()
                 if text:
                     # we found valid text (in the <a></a> tag),
                     # save it and continue the loop

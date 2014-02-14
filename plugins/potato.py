@@ -39,7 +39,7 @@ potatoes = ['AC Belmont', 'AC Blue Pride', 'AC Brador', 'AC Chaleur', 'AC Domino
 
 
 @hook.command
-def potato(inp, action=None, input=None):
+def potato(inp, action=None):
     """potato <user> - Makes <user> a tasty little potato."""
     inp = inp.strip()
 

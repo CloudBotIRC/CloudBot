@@ -50,7 +50,7 @@ def horoscope(inp, db=None, notice=None, nick=None):
 
     if inp and not dontsave:
         db.execute("insert or replace into horoscope(nick, sign) values (?,?)",
-                     (nick.lower(), sign))
+                    (nick.lower(), sign))
         db.commit()
 
     return result

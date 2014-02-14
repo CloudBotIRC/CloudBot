@@ -1,6 +1,7 @@
 # Plugin by Infinity - <https://github.com/infinitylabs/UguuBot>
 
 import random
+
 from util import hook, http
 
 
@@ -23,11 +24,11 @@ refresh_cache()
 
 @hook.command(autohelp=False)
 def mlia(inp, reply=None):
-    "mlia -- Gets a random quote from MyLifeIsAverage.com."
+    """mlia -- Gets a random quote from MyLifeIsAverage.com."""
     # grab the last item in the mlia cache and remove it
-    id, text = mlia_cache.pop()
+    mlia_id, text = mlia_cache.pop()
     # reply with the mlia we grabbed
-    reply('({}) {}'.format(id, text))
+    reply('({}) {}'.format(mlia_id, text))
     # refresh mlia cache if its getting empty
     if len(mlia_cache) < 3:
         refresh_cache()

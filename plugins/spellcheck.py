@@ -1,7 +1,8 @@
-from util import hook
 from enchant.checker import SpellChecker
-
 import enchant
+
+from util import hook
+
 
 locale = "en_US"
 
@@ -15,11 +16,11 @@ def spell(inp):
 
     if len(inp.split(" ")) > 1:
         # input is a sentence
-        chkr = SpellChecker(locale)
-        chkr.set_text(inp)
+        checker = SpellChecker(locale)
+        checker.set_text(inp)
 
         offset = 0
-        for err in chkr:
+        for err in checker:
             # find the location of the incorrect word
             start = err.wordpos + offset
             finish = start + len(err.word)

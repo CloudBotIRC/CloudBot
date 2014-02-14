@@ -50,7 +50,7 @@ def tellinput(paraml, input=None, notice=None, db=None, bot=None, nick=None, con
 
 @hook.command(autohelp=False)
 def showtells(inp, nick='', chan='', notice=None, db=None):
-    "showtells -- View all pending tell messages (sent in a notice)."
+    """showtells -- View all pending tell messages (sent in a notice)."""
 
     db_init(db)
 

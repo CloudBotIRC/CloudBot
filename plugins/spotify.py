@@ -1,7 +1,7 @@
 import re
+from urllib import urlencode
 
 from util import hook, http, web
-from urllib import urlencode
 
 gateway = 'http://open.spotify.com/{}/{}'  # http spotify gw address
 spuri = 'spotify:{}:{}'

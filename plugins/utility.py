@@ -1,13 +1,15 @@
-from util import hook, text
 import hashlib
 import collections
 import re
+
+from util import hook, text
+
 
 # variables
 
 colors = collections.OrderedDict([
   ('red',     '\x0304'),
-  ('ornage',  '\x0307'),
+  ('orange',  '\x0307'),
   ('yellow',  '\x0308'),
   ('green',   '\x0309'),
   ('cyan',    '\x0303'),
@@ -24,8 +26,8 @@ colors = collections.OrderedDict([
 strip_re = re.compile("(\x03|\x02|\x1f)(?:,?\d{1,2}(?:,\d{1,2})?)?", re.UNICODE)
 
 
-def strip(text):
-    return strip_re.sub('', text)
+def strip(string):
+    return strip_re.sub('', string)
 
 # basic text tools
 
@@ -89,7 +91,7 @@ def checkbase64(inp):
         recoded = decoded.encode('base64').strip()
         is_base64 = recoded == inp
     except:
-        is_base64 = False
+        return '"{}" is not base64 encoded'.format(inp)
 
     if is_base64:
         return '"{}" is base64 encoded'.format(recoded)

@@ -4,6 +4,7 @@ import re
 
 from util import hook
 
+
 socket.setdefaulttimeout(10)
 
 nick_re = re.compile(":(.+?)!")

@@ -1,7 +1,9 @@
 import re
+
+from bs4 import BeautifulSoup, NavigableString, Tag
+
 from util import hook, http, web
 from util.text import truncate_str
-from bs4 import BeautifulSoup, NavigableString, Tag
 
 
 steam_re = (r'(.*:)//(store.steampowered.com)(:[0-9]+)?(.*)', re.I)
@@ -53,10 +55,10 @@ def get_steam_info(url):
                     data[title] = text
                     continue
 
-
     data["price"] = soup.find('div', {'class': 'game_purchase_price price'}).text.strip()
 
-    return u"\x02{name}\x02: {desc}, \x02Genre\x02: {genre}, \x02Release Date\x02: {release date}, \x02Price\x02: {price}".format(**data)
+    return u"\x02{name}\x02: {desc}, \x02Genre\x02: {genre}, \x02Release Date\x02: {release date}," \
+           u" \x02Price\x02: {price}".format(**data)
 
 
 @hook.regex(*steam_re)

@@ -4,6 +4,7 @@ TOKENS = 10
 RESTORE_RATE = 2
 MESSAGE_COST = 5
 
+
 buckets = {}
 
 @hook.sieve

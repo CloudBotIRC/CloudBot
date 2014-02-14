@@ -1,8 +1,10 @@
 # ping plugin by neersighted
-from util import hook
 import subprocess
 import re
 import os
+
+from util import hook
+
 
 ping_regex = re.compile(r"(\d+.\d+)/(\d+.\d+)/(\d+.\d+)/(\d+.\d+)")
 
@@ -13,6 +15,7 @@ def ping(inp, reply=None):
 
     if os.name == "nt":
         return "Sorry, this command is not supported on Windows systems."
+        # TODO: Rewrite this entire command to work on Windows, somehow
 
     args = inp.split(' ')
     host = args[0]

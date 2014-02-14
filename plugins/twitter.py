@@ -1,8 +1,11 @@
-from util import hook, timesince
-import tweepy
 import re
 import random
 from datetime import datetime
+
+import tweepy
+
+from util import hook, timesince
+
 
 TWITTER_RE = (r"(?:(?:www.twitter.com|twitter.com)/(?:[-_a-zA-Z0-9]+)/status/)([0-9]+)", re.I)
 
@@ -26,7 +29,7 @@ def get_api(bot):
 @hook.regex(*TWITTER_RE)
 def twitter_url(match, bot=None):
     tweet_id = match.group(1)
-    
+
     api = get_api(bot)
     if not api:
         return
@@ -46,13 +49,13 @@ def twitter_url(match, bot=None):
     time = timesince.timesince(tweet.created_at, datetime.utcnow())
 
     return u"{}@\x02{}\x02 ({}): {} ({} ago)".format(prefix, user.screen_name, user.name, text, time)
-        
+
 
 @hook.command("tw")
 @hook.command("twatter")
 @hook.command
 def twitter(inp, bot=None):
-    "twitter <user> [n] -- Gets last/[n]th tweet from <user>"
+    """twitter <user> [n] -- Gets last/[n]th tweet from <user>"""
 
     api = get_api(bot)
     if not api:
@@ -117,6 +120,9 @@ def twitter(inp, bot=None):
 
         tweet = random.choice(search)
         user = tweet.user
+    else:
+        # ???
+        return "Unknown Error"
 
     text = " ".join(tweet.text.split())
 

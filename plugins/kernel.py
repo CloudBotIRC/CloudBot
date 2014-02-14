@@ -1,5 +1,6 @@
-from util import hook, http
 import re
+
+from util import hook, http
 
 
 @hook.command(autohelp=False)

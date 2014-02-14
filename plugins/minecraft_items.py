@@ -1,8 +1,10 @@
 """ plugin by _303 (?)
 """
 
-from util import hook
 import re
+
+from util import hook
+
 
 pattern = re.compile(r'^(?P<count>\d+)x (?P<name>.+?): (?P<ingredients>.*)$')
 
@@ -42,29 +44,29 @@ with open("./data/itemids.txt") as f:
         if line.startswith("//"):
             continue
         parts = line.strip().split()
-        id = parts[0]
+        itemid = parts[0]
         name = " ".join(parts[1:])
-        ids.append((id, name))
+        ids.append((itemid, name))
 
 
 @hook.command("mcid")
 @hook.command
-def mcitem(input, reply=None):
+def mcitem(inp, reply=None):
     """mcitem <item/id> -- gets the id from an item or vice versa"""
-    input = input.lower().strip()
+    inp = inp.lower().strip()
 
-    if input == "":
+    if inp == "":
         reply("error: no input.")
         return
 
     results = []
 
-    for id, name in ids:
-        if input == id:
-            results = ["\x02[{}]\x02 {}".format(id, name)]
+    for item_id, item_name in ids:
+        if inp == item_id:
+            results = ["\x02[{}]\x02 {}".format(item_id, item_name)]
             break
-        elif input in name.lower():
-            results.append("\x02[{}]\x02 {}".format(id, name))
+        elif inp in item_name.lower():
+            results.append("\x02[{}]\x02 {}".format(item_id, item_name))
 
     if not results:
         return "No matches found."
@@ -80,12 +82,12 @@ def mcitem(input, reply=None):
 
 @hook.command("mccraft")
 @hook.command
-def mcrecipe(input, reply=None):
+def mcrecipe(inp, reply=None):
     """mcrecipe <item> -- gets the crafting recipe for an item"""
-    input = input.lower().strip()
+    inp = inp.lower().strip()
 
     results = [recipe.line for recipe in recipelist
-               if input in recipe.output]
+               if inp in recipe.output]
 
     if not results:
         return "No matches found."

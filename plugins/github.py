@@ -1,6 +1,8 @@
-from util import hook, http
 import json
 import urllib2
+
+from util import hook, http
+
 
 shortcuts = {"cloudbot": "ClouDev/CloudBot"}
 

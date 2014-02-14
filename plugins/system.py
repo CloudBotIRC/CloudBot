@@ -2,8 +2,9 @@ import os
 import re
 import time
 import platform
-from util import hook
 from datetime import timedelta
+
+from util import hook
 
 
 def convert_kilobytes(kilobytes):

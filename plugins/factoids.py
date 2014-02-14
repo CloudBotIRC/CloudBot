@@ -1,7 +1,9 @@
 # Written by Scaevolus 2010
-from util import hook, http, text, pyexec
 import string
 import re
+
+from util import hook, http, text, pyexec
+
 
 re_lineends = re.compile(r'[\r\n]*')
 

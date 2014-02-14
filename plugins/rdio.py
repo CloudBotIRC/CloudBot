@@ -1,8 +1,10 @@
 import urllib
 import json
 import re
-from util import hook
+
 import oauth2 as oauth
+
+from util import hook
 
 
 def getdata(inp, types, api_key, api_secret):

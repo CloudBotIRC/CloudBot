@@ -1,6 +1,8 @@
-from util import hook, http, timeformat
 from urllib import urlencode
 import re
+
+from util import hook, http, timeformat
+
 
 hulu_re = (r'(.*://)(www.hulu.com|hulu.com)(.*)', re.I)
 
@@ -10,7 +12,7 @@ def hulu_url(match):
     data = http.get_json("http://www.hulu.com/api/oembed.json?url=http://www.hulu.com" + match.group(3))
     showname = data['title'].split("(")[-1].split(")")[0]
     title = data['title'].split(" (")[0]
-    return "{}: {} - {}".format(showname, title, timeformat.timeformat(int(data['duration'])))
+    return "{}: {} - {}".format(showname, title, timeformat.format_time(int(data['duration'])))
 
 
 @hook.command('hulu')
@@ -21,7 +23,7 @@ def hulu_search(inp):
     data = result.find('results').find('videos').find('video')
     showname = data.find('show').find('name').text
     title = data.find('title').text
-    duration = timeformat.timeformat(int(float(data.find('duration').text)))
+    duration = timeformat.format_time(int(float(data.find('duration').text)))
     description = data.find('description').text
     rating = data.find('content-rating').text
     return "{}: {} - {} - {} ({}) {}".format(showname, title, description, duration, rating,

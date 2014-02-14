@@ -1,5 +1,7 @@
-from util import hook, http
 from urllib import quote_plus
+
+from util import hook, http
+
 
 api_url = "http://api.fishbans.com/stats/{}/"
 
@@ -51,6 +53,5 @@ def bancount(inp):
     if not out:
         return "The user \x02{}\x02 has no bans.".format(user)
     else:
-        # dat string.
         return "Bans for \x02{}\x02: ".format(user) + ", ".join(out) + ". More info " \
                "at {}".format(user_url)

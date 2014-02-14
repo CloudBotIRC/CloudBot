@@ -1,3 +1,4 @@
+Crypto
 BeautifulSoup==3.2.1
 lxml==3.1beta1
 pyenchant==1.6.5

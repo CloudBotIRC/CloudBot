@@ -1,7 +1,9 @@
-# based on password generation code by TheNoodle
-from util import hook
+# TODO: Add some kind of pronounceable password generation
+# TODO: Improve randomness
 import string
 import random
+
+from util import hook
 
 
 @hook.command
@@ -39,10 +41,10 @@ def password(inp, notice=None):
     if not okay:
         okay = okay + list(string.ascii_lowercase)
 
-    password = ""
+    pw = ""
 
     # generates password
     for x in range(length):
-        password = password + random.choice(okay)
+        pw = pw + random.choice(okay)
 
-    notice(password)
+    notice(pw)

@@ -8,9 +8,9 @@ def qrcode(inp):
     """qrcode [link] returns a link for a QR code."""
 
     args = {
-        "cht": "qr",  # chart type
+        "cht": "qr",  # chart type (QR)
         "chs": "200x200",  # dimensions
-        "chl": inp
+        "chl": inp  # data
     }
 
     link = http.prepare_url("http://chart.googleapis.com/chart", args)

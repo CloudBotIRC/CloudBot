@@ -1,7 +1,9 @@
 # coding=utf-8
-from util import hook
 import re
 import random
+
+from util import hook
+
 
 potatoes = ['AC Belmont', 'AC Blue Pride', 'AC Brador', 'AC Chaleur', 'AC Domino', 'AC Dubuc', 'AC Glacier Chip',
             'AC Maple Gold', 'AC Novachip', 'AC Peregrine Red', 'AC Ptarmigan', 'AC Red Island', 'AC Saguenor',
@@ -51,4 +53,4 @@ def potato(inp, action=None, input=None):
     side_dish = random.choice(['side salad', 'dollop of sour cream', 'piece of chicken', 'bowl of shredded bacon'])
 
     action("{} a {} {} {} potato for {} and serves it with a small {}!".format(method, flavor, size, potato_type, inp,
-                                                                           side_dish))
+                                                                               side_dish))

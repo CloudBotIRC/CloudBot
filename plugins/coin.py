@@ -1,5 +1,6 @@
-from util import hook
 import random
+
+from util import hook
 
 
 @hook.command(autohelp=False)

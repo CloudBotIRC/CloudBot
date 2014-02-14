@@ -1,5 +1,6 @@
-from util import hook, text
 import random
+
+from util import hook, text
 
 
 with open("./data/slogans.txt") as f:

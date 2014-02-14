@@ -1,5 +1,7 @@
-from util import hook, http, text
 import re
+
+from util import hook, http, text
+
 
 api_url = "http://minecraft.gamepedia.com/api.php?action=opensearch"
 mc_url = "http://minecraft.gamepedia.com/"
@@ -21,7 +23,7 @@ def mcwiki(inp):
         return "No results found."
 
     # we remove items with a '/' in the name, because
-    # gamepedia uses subpages for different languages
+    # gamepedia uses sub-pages for different languages
     # for some stupid reason
     items = [item for item in j[1] if not "/" in item]
 

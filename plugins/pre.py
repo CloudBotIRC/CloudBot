@@ -1,11 +1,12 @@
-from util import hook, http, timesince
 import datetime
+
+from util import hook, http, timesince
 
 
 @hook.command("scene")
 @hook.command
 def pre(inp):
-    'pre <query> -- searches scene releases using orlydb.com'
+    """pre <query> -- searches scene releases using orlydb.com"""
 
     try:
         h = http.get_html("http://orlydb.com/", q=inp)

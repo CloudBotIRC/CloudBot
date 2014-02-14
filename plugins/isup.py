@@ -5,7 +5,7 @@ from util import hook, http, urlnorm
 
 @hook.command
 def isup(inp):
-    "isup -- uses isup.me to see if a site is up or not"
+    """isup -- uses isup.me to see if a site is up or not"""
 
     # slightly overcomplicated, esoteric URL parsing
     scheme, auth, path, query, fragment = urlparse.urlsplit(inp.strip())

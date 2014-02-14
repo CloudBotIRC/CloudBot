@@ -42,6 +42,7 @@ while True:
     else:
         if cloudbot.do_restart:
             # create a new bot thread and start it
+            del cloudbot
             cloudbot = bot.Bot()
             cloudbot.start()
             continue

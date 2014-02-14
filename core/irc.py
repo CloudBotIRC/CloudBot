@@ -29,10 +29,10 @@ def censor(text):
 
 class ReceiveThread(threading.Thread):
     """receives messages from IRC and puts them in the input_queue"""
-    def __init__(self, socket, input_queue, timeout):
+    def __init__(self, sock, input_queue, timeout):
         self.input_buffer = ""
         self.input_queue = input_queue
-        self.socket = socket
+        self.socket = sock
         self.timeout = timeout
 
         self.shutdown = False
@@ -76,8 +76,8 @@ class ReceiveThread(threading.Thread):
 
 
 class SSLReceiveThread(ReceiveThread):
-    def __init__(self, socket, input_queue, timeout):
-        ReceiveThread.Thread.__init__(self, socket, input_queue, timeout)
+    def __init__(self, sock, input_queue, timeout):
+        ReceiveThread.__init__(self, sock, input_queue, timeout)
 
     def recv_from_socket(self, nbytes):
         return self.socket.read(nbytes)
@@ -94,11 +94,11 @@ class SSLReceiveThread(ReceiveThread):
 
 class SendThread(threading.Thread):
     """sends messages from output_queue to IRC"""
-    def __init__(self, socket, conn_name, output_queue):
+    def __init__(self, sock, conn_name, output_queue):
         self.output_buffer = ""
         self.output_queue = output_queue
         self.conn_name = conn_name
-        self.socket = socket
+        self.socket = sock
 
         self.shutdown = False
         threading.Thread.__init__(self)
@@ -148,11 +148,11 @@ class ParseThread(threading.Thread):
                 lastparam = paramlist[-1]
             # put the parsed message in the response queue
             self.parsed_queue.put([msg, prefix, command, params, nick, user, host,
-                          mask, paramlist, lastparam])
+                                   mask, paramlist, lastparam])
             # if the server pings us, pong them back
             if command == "PING":
-                str = "PONG :" + paramlist[0]
-                self.output_queue.put(str)
+                string = "PONG :" + paramlist[0]
+                self.output_queue.put(string)
 
 
 class IRCConnection(object):
@@ -198,7 +198,7 @@ class SSLIRCConnection(IRCConnection):
 
     def create_socket(self):
         return wrap_socket(IRCConnection.create_socket(self), server_side=False,
-                          cert_reqs=CERT_NONE if self.ignore_cert_errors else
+                           cert_reqs=CERT_NONE if self.ignore_cert_errors else
                            CERT_REQUIRED)
 
 
@@ -229,18 +229,17 @@ class IRC(object):
         self.set_pass(self.config.get('server_password'))
         self.set_nick(self.nick)
         self.cmd("USER",
-                 [self.config.get('user', 'cloudbot'), "3", "*", self.config.get('realname',
-                                                                   'CloudBot - http://git.io/cloudbot')])
+                 [self.config.get('user', 'cloudbot'), "3", "*",
+                  self.config.get('realname', 'CloudBot - http://git.io/cloudbot')])
 
         self.parse_thread = ParseThread(self.input_queue, self.output_queue,
                                         self.parsed_queue)
         self.parse_thread.daemon = True
         self.parse_thread.start()
 
-
     def create_connection(self):
         return IRCConnection(self.name, self.server, self.port,
-                          self.input_queue, self.output_queue)
+                             self.input_queue, self.output_queue)
 
     def stop(self):
         self.connection.stop()
@@ -280,8 +279,8 @@ class IRC(object):
         else:
             self.send(command)
 
-    def send(self, str):
-        self.output_queue.put(str)
+    def send(self, string):
+        self.output_queue.put(string)
 
 
 class SSLIRC(IRC):
@@ -292,4 +291,4 @@ class SSLIRC(IRC):
 
     def create_connection(self):
         return SSLIRCConnection(self.name, self.server, self.port, self.input_queue,
-                             self.output_queue, self.ignore_cert_errors)
+                                self.output_queue, self.ignore_cert_errors)

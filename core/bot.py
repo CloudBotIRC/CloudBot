@@ -45,7 +45,6 @@ def get_logger():
     logger.addHandler(sh)
     return logger
 
-
 class Bot(threading.Thread):
     def __init__(self):
         # basic variables
@@ -74,7 +73,6 @@ class Bot(threading.Thread):
 
         threading.Thread.__init__(self)
 
-
     def run(self):
         """recieves input from the IRC engine and processes it"""
         self.logger.info("Starting main thread.")
@@ -93,7 +91,6 @@ class Bot(threading.Thread):
             # if no messages are in the incoming queue, sleep
             while self.running and all(c.parsed_queue.empty() for c in self.connections):
                 time.sleep(.1)
-
 
     def setup(self):
         """create the logger and config objects"""
@@ -117,7 +114,6 @@ class Bot(threading.Thread):
         self.db_session = scoped_session(db_factory)
         self.logger.debug("Database system initalised.")
 
-
     def connect(self):
         """connect to all the networks defined in the bot config"""
         for conf in self.config['connections']:
@@ -130,15 +126,14 @@ class Bot(threading.Thread):
             self.logger.debug("({}) Creating connection to {}.".format(name, server))
 
             if conf['connection'].get('ssl'):
-                self.connections.append(irc.SSLIRC(name, server, nick, config = conf,
-                                     port = port, channels = conf['channels'],
-                                     ignore_certificate_errors=conf['connection'].get('ignore_cert', True)))
+                self.connections.append(irc.SSLIRC(name, server, nick, config=conf,
+                                        port=port, channels=conf['channels'],
+                                        ignore_certificate_errors=conf['connection'].get('ignore_cert', True)))
                 self.logger.debug("({}) Created SSL connection.".format(name))   
             else:
-                self.connections.append(irc.IRC(name, server, nick, config = conf,
-                                                 port = port, channels = conf['channels']))
+                self.connections.append(irc.IRC(name, server, nick, config=conf,
+                                                port=port, channels=conf['channels']))
                 self.logger.debug("({}) Created connection.".format(name)) 
-
 
     def stop(self, reason=None):
         """quits all networks and shuts the bot down"""
@@ -164,7 +159,6 @@ class Bot(threading.Thread):
         logging.shutdown()
 
         self.running = False
-
 
     def restart(self, reason=None):
         """shuts the bot down and restarts it"""

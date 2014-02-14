@@ -39,11 +39,9 @@ class PluginLoader(object):
 
         self.load_all()
 
-
     def stop(self):
         """shuts down the plugin reloader"""
         self.observer.stop()
-
 
     def load_all(self):
         """runs load_file() on all python files in the plugins folder"""
@@ -51,7 +49,6 @@ class PluginLoader(object):
         for f in files:
             self.load_file(f, rebuild=True)
         self.rebuild()
-
 
     def load_file(self, path, rebuild=False):
         """loads (or reloads) all valid plugins from a specified file"""
@@ -117,7 +114,6 @@ class PluginLoader(object):
                 del self.bot.threads[func]
 
         self.rebuild()
-
 
     def rebuild(self):
         """rebuilds the cloudbot command and event hook lists"""

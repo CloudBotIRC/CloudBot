@@ -32,16 +32,16 @@ def horoscope(inp, db=None, notice=None, nick=None):
         sign = db.execute("select sign from horoscope where nick=lower(?)",
                           (nick,)).fetchone()
         if not sign:
-            notice(horoscope.__doc__)
+            notice("horoscope <sign> -- Get your horoscope")
             return
         sign = sign[0]
 
-    url = "http://my.horoscope.com/astrology/free-daily-horoscope-%s.html" % sign
+    url = "http://my.horoscope.com/astrology/free-daily-horoscope-{}.html".format(sign)
     soup = http.get_soup(url)
 
     title = soup.find_all('h1', {'class': 'h1b'})[1]
-    horoscope = soup.find('div', {'class': 'fontdef1'})
-    result = "\x02%s\x02 %s" % (title, horoscope)
+    horoscope_text = soup.find('div', {'class': 'fontdef1'})
+    result = u"\x02%s\x02 %s" % (title, horoscope_text)
     result = text.strip_html(result)
     #result = unicode(result, "utf8").replace('flight ','')
 

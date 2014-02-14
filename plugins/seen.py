@@ -11,10 +11,12 @@ db_ready = False
 
 def db_init(db):
     """check to see that our db has the the seen table and return a connection."""
-    db.execute("create table if not exists seen_user(name, time, quote, chan, host, "
-               "primary key(name, chan))")
-    db.commit()
-    db_ready = True
+    global db_ready
+    if not db_ready:
+        db.execute("create table if not exists seen_user(name, time, quote, chan, host, "
+                   "primary key(name, chan))")
+        db.commit()
+        db_ready = True
 
 
 @hook.singlethread

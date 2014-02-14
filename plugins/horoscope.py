@@ -7,17 +7,17 @@ db_ready = False
 
 def db_init(db):
     """check to see that our db has the horoscope table and return a connection."""
-    db.execute("create table if not exists horoscope(nick primary key, sign)")
-    db.commit()
-    db_ready = True
+    global db_ready
+    if not db_ready:
+        db.execute("create table if not exists horoscope(nick primary key, sign)")
+        db.commit()
+        db_ready = True
 
 
 @hook.command(autohelp=False)
 def horoscope(inp, db=None, notice=None, nick=None):
     """horoscope <sign> -- Get your horoscope."""
-
-    if not db_ready:
-        db_init(db)
+    db_init(db)
 
     # check if the user asked us not to save his details
     dontsave = inp.endswith(" dontsave")

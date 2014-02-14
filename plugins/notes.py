@@ -3,7 +3,7 @@ import re
 from util import hook
 
 
-db_inited = False
+db_ready = False
 
 
 def clean_sql(sql):
@@ -11,8 +11,8 @@ def clean_sql(sql):
 
 
 def db_init(db):
-    global db_inited
-    if db_inited:
+    global db_ready
+    if db_ready:
         return
 
     exists = db.execute("""
@@ -32,7 +32,7 @@ def db_init(db):
 
     db.commit()
 
-    db_inited = True
+    db_ready = True
 
 
 def db_getall(db, nick, limit=-1):

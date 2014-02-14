@@ -6,13 +6,17 @@ import re
 
 from util import hook, timesince
 
+db_ready = False
 
 def db_init(db):
     """check to see that our db has the tell table and return a dbection."""
-    db.execute("create table if not exists tell"
-               "(user_to, user_from, message, chan, time,"
-               "primary key(user_to, message))")
-    db.commit()
+    global db_ready
+    if not db_ready:
+        db.execute("create table if not exists tell"
+                   "(user_to, user_from, message, chan, time,"
+                   "primary key(user_to, message))")
+        db.commit()
+        db_ready = True
 
     return db
 

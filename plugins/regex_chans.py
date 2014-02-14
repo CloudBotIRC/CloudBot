@@ -6,15 +6,15 @@ from util import hook
 # If False, all channels without a setting will have regex disabled
 default_enabled = True
 
-db_already_initiated = False
+db_ready = False
 
 
 def db_init(db):
-    global db_already_initiated
-    if not db_already_initiated:
-        db_already_initiated = True
+    global db_ready
+    if not db_ready:
         db.execute("CREATE TABLE IF NOT EXISTS regexchans(channel PRIMARY KEY, status)")
         db.commit()
+        db_ready = True
 
 
 def get_status(db, channel):

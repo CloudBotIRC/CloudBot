@@ -1,7 +1,7 @@
 # BING translation plugin by Lukeroge and neersighted
 from util import hook
 from util import http
-import re 
+import re
 import htmlentitydefs
 import mygengo
 

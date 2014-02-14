@@ -51,4 +51,4 @@ def potato(inp, action=None, input=None):
     side_dish = random.choice(['side salad', 'dollop of sour cream', 'piece of chicken', 'bowl of shredded bacon'])
 
     action("{} a {} {} {} potato for {} and serves it with a small {}!".format(method, flavor, size, potato_type, inp,
-                                                                           side_dish))
+                                                                               side_dish))

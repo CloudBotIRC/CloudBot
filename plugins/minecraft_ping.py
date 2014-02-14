@@ -1,3 +1,4 @@
+# TODO: Rewrite this whole mess
 from util import hook
 import socket
 import struct

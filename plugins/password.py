@@ -1,4 +1,5 @@
-# based on password generation code by TheNoodle
+# TODO: Add some kind of pronounceable password generation
+# TODO: Improve randomness
 from util import hook
 import string
 import random

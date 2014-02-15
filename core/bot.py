@@ -128,12 +128,12 @@ class Bot(threading.Thread):
 
             if conf['connection'].get('ssl'):
                 self.connections.append(irc.SSLIRC(name, server, nick, config=conf,
-                                        port=port, channels=conf['channels'],
+                                        port=port, logger=self.logger, channels=conf['channels'],
                                         ignore_certificate_errors=conf['connection'].get('ignore_cert', True)))
                 self.logger.debug("({}) Created SSL connection.".format(name))   
             else:
                 self.connections.append(irc.IRC(name, server, nick, config=conf,
-                                                port=port, channels=conf['channels']))
+                                                port=port, logger=self.logger, channels=conf['channels']))
                 self.logger.debug("({}) Created connection.".format(name)) 
 
     def stop(self, reason=None):

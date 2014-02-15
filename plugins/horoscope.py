@@ -49,7 +49,7 @@ def horoscope(inp, db=None, notice=None, nick=None):
         return "Could not get the horoscope for {}.".format(inp)
 
     if inp and not dontsave:
-        db.execute("insert or replace into horoscope(nick, sign) values (:nick,:sign)",
+        db.execute("insert or replace into horoscope(nick, sign) values (:nick,:signS)",
                    {'nick':nick.lower(), 'sign': sign})
         db.commit()
 

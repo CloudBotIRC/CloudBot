@@ -106,7 +106,6 @@ class SendThread(threading.Thread):
     def run(self):
         while not self.shutdown:
             line = self.output_queue.get().splitlines()[0][:500]
-            print u"{}> {}".format(self.conn_name, line)
             self.output_buffer += line.encode('utf-8', 'replace') + '\r\n'
             while self.output_buffer:
                 sent = self.socket.send(self.output_buffer)
@@ -205,12 +204,13 @@ class SSLIRCConnection(IRCConnection):
 class IRC(object):
     """handles the IRC protocol"""
 
-    def __init__(self, name, server, nick, port=6667, channels=[], config={}):
+    def __init__(self, name, server, nick, port=6667, logger=None, channels=[], config={}):
         self.name = name
         self.channels = channels
         self.config = config
         self.server = server
         self.port = port
+        self.logger = logger
         self.nick = nick
         self.vars = {}
 
@@ -280,14 +280,19 @@ class IRC(object):
             self.send(command)
 
     def send(self, string):
+        try:
+            self.logger.info(u"{} >> {}".format(self.name.upper(), string))
+        except:
+            # if this doesn't work, no big deal
+            pass
         self.output_queue.put(string)
 
 
 class SSLIRC(IRC):
-    def __init__(self, name, server, nick, port=6667, channels=[], config={},
+    def __init__(self, name, server, nick, port=6667, logger=None, channels=[], config={},
                  ignore_certificate_errors=True):
         self.ignore_cert_errors = ignore_certificate_errors
-        IRC.__init__(self, name, server, nick, port, channels, config)
+        IRC.__init__(self, name, server, nick, port, logger, channels, config)
 
     def create_connection(self):
         return SSLIRCConnection(self.name, self.server, self.port, self.input_queue,

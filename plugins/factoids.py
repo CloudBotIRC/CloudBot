@@ -7,6 +7,8 @@ from util import hook, http, text, pyexec
 
 re_lineends = re.compile(r'[\r\n]*')
 
+db_ready = False
+
 # some simple "shortcodes" for formatting purposes
 shortcodes = {
     '[b]': '\x02',
@@ -18,9 +20,12 @@ shortcodes = {
 
 
 def db_init(db):
-    db.execute("create table if not exists mem(word, data, nick,"
-               " primary key(word))")
-    db.commit()
+    global db_ready
+    if not db_ready:
+        db.execute("create table if not exists mem(word, data, nick,"
+                   " primary key(word))")
+        db.commit()
+        db_ready = True
 
 
 def get_memory(db, word):

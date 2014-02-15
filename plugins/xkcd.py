@@ -4,7 +4,7 @@ from util import hook, http
 
 
 xkcd_re = (r'(.*:)//(www.xkcd.com|xkcd.com)(.*)', re.I)
-months = {'1': 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 7: 'July', 8: 'August',
+months = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 7: 'July', 8: 'August',
           9: 'September', 10: 'October', 11: 'November', 12: 'December'}
 
 
@@ -17,13 +17,15 @@ def xkcd_info(xkcd_id, url=False):
     return "xkcd: \x02%s\x02 (%s)%s" % (data['title'], date, url if url else "")
 
 
-def xkcd_search(inp):
+def xkcd_search(term):
+    search_term = http.quote_plus(term)
     soup = http.get_soup("http://www.ohnorobot.com/index.pl?s={}&Search=Search&"
-                         "comic=56&e=0&n=0&b=0&m=0&d=0&t=0".format(inp))
+                         "comic=56&e=0&n=0&b=0&m=0&d=0&t=0".format(search_term))
     result = soup.find('li')
     if result:
         url = result.find('div', {'class': 'tinylink'}).text
         xkcd_id = url[:-1].split("/")[-1]
+        print xkcd_id
         return xkcd_info(xkcd_id, url=True)
     else:
         return "No results found!"

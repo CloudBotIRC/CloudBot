@@ -25,10 +25,12 @@ db_ready = False
 
 def db_init(db):
     """check to see that our db has the the encryption table."""
-    db.execute("create table if not exists encryption(encrypted, iv, "
-               "primary key(encrypted))")
-    db.commit()
-    db_ready = True
+    global db_ready
+    if not db_ready:
+        db.execute("create table if not exists encryption(encrypted, iv, "
+                   "primary key(encrypted))")
+        db.commit()
+        db_ready = True
 
 
 def get_salt(bot):
@@ -42,8 +44,7 @@ def get_salt(bot):
 @hook.command
 def encrypt(inp, bot=None, db=None, notice=None):
     """encrypt <pass> <string> -- Encrypts <string> with <pass>. (<string> can only be decrypted using this bot)"""
-    if not db_ready:
-        db_init(db)
+    db_init(db)
 
     split = inp.split(" ")
 

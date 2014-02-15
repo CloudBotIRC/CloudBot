@@ -27,8 +27,11 @@ def seen_sieve(paraml, input=None, db=None):
         # keep private messages private
     if input.chan[:1] == "#" and not re.findall('^s/.*/.*/$', input.msg.lower()):
         db.execute("insert or replace into seen_user(name, time, quote, chan, host)"
-                   "values(?,?,?,?,?)", (input.nick.lower(), time.time(), input.msg,
-                                         input.chan, input.mask))
+                   "values(:name,:time,:quote,:chan,:host)", {'name': input.nick.lower(),
+                                                              'time': time.time(),
+                                                              'quote': input.msg,
+                                                              'chan': input.chan,
+                                                              'host': input.mask})
         db.commit()
 
 
@@ -49,7 +52,7 @@ def seen(inp, nick='', chan='', db=None, input=None):
         db_init(db)
 
     last_seen = db.execute("select name, time, quote from seen_user where name"
-                           " like ? and chan = ?", (inp, chan)).fetchone()
+                           " like :name and chan = :chan", {'name': inp, 'chan': chan}).fetchone()
 
     if last_seen:
         reltime = timesince.timesince(last_seen[1])

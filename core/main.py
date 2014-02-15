@@ -124,12 +124,16 @@ class Handler(object):
                 break
 
             if uses_db:
-                input.db = None
+                input.db  = input.bot.db_session()
 
             try:
                 run(self.bot, self.func, input)
             except:
                 self.bot.logger.exception("Error in plugin {}:".format(self.func._filename))
+            finally:
+                if uses_db:
+                    print "Closett"
+                    input.db.close()
 
     def stop(self):
         self.input_queue.put(StopIteration)

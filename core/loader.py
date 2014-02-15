@@ -110,7 +110,7 @@ class PluginLoader(object):
         # stop all currently running instances of the plugins from this file
         for func, handler in list(self.bot.threads.iteritems()):
             if func._filename == filename:
-                main.handler.stop()
+                handler.stop()
                 del self.bot.threads[func]
 
         self.rebuild()

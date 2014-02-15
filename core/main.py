@@ -73,6 +73,10 @@ def run(bot, func, input):
             except:
                 bot.logger.exception("Error in plugin {}:".format(func._filename))
                 return
+            finally:
+                if uses_db:
+                    print "Close"
+                    input.db.close()
         else:
             kw = dict((key, input[key]) for key in args if key in input)
             try:
@@ -80,6 +84,10 @@ def run(bot, func, input):
             except:
                 bot.logger.exception("Error in plugin {}:".format(func._filename))
                 return
+            finally:
+                if uses_db:
+                    print "Close"
+                    input.db.close()
     else:
         try:
             out = func(input.inp)
@@ -88,10 +96,6 @@ def run(bot, func, input):
             return
     if out is not None:
         input.reply(unicode(out))
-
-    if uses_db:
-        # close SQLAlchemy session
-        input.db.close()
 
 
 def do_sieve(sieve, bot, input, func, type, args):

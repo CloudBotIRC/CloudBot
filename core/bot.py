@@ -45,6 +45,7 @@ def get_logger():
     logger.addHandler(sh)
     return logger
 
+
 class Bot(threading.Thread):
     def __init__(self):
         # basic variables

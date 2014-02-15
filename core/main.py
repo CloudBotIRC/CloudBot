@@ -64,6 +64,7 @@ def run(bot, func, input):
     if args:
         if uses_db:
             # create SQLAlchemy session
+            bot.logger.debug("Opened DB session for: {}".format(func._filename))
             input.db = input.bot.db_session()
         if 'input' in args:
             input.input = input
@@ -86,7 +87,7 @@ def run(bot, func, input):
                 return
             finally:
                 if uses_db:
-                    print "Close"
+                    bot.logger.debug("Closed DB session for: {}".format(func._filename))
                     input.db.close()
     else:
         try:
@@ -124,6 +125,7 @@ class Handler(object):
                 break
 
             if uses_db:
+                # self.bot.logger.debug("Opened ST DB session for: {}".format(self.func._filename))
                 input.db  = input.bot.db_session()
 
             try:
@@ -132,7 +134,7 @@ class Handler(object):
                 self.bot.logger.exception("Error in plugin {}:".format(self.func._filename))
             finally:
                 if uses_db:
-                    print "Closett"
+                    # self.bot.logger.debug("Closed ST DB session for: {}".format(self.func._filename))
                     input.db.close()
 
     def stop(self):

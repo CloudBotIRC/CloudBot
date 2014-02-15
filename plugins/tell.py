@@ -23,8 +23,8 @@ def db_init(db):
 
 def get_tells(db, user_to):
     return db.execute("select user_from, message, time, chan from tell where"
-                      " user_to=lower(?) order by time",
-                      (user_to.lower(),)).fetchall()
+                      " user_to=lower(:user) order by time",
+                      {'user': user_to}).fetchall()
 
 
 @hook.singlethread
@@ -46,8 +46,8 @@ def tellinput(paraml, input=None, notice=None, db=None, bot=None, nick=None, con
         if len(tells) > 1:
             reply += " (+{} more, {}showtells to view)".format(len(tells) - 1, conn.conf["command_prefix"])
 
-        db.execute("delete from tell where user_to=lower(?) and message=?",
-                   (nick, message))
+        db.execute("delete from tell where user_to=lower(:user) and message=:message",
+                   {'user': nick, 'message': message})
         db.commit()
         notice(reply)
 

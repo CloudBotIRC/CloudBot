@@ -76,13 +76,16 @@ def mcping_modern(host, port):
     data = json.loads(d.decode('utf8'))
     try:
         version = data["version"]["name"]
-        desc = data["description"]
+        if data["description"].get("text", None):
+            desc = u" ".join(data["description"]["text"].split())
+        else:
+            desc = u" ".join(data["description"].split())
         max_players = data["players"]["max"]
         online = data["players"]["online"]
     except Exception as e:
         return "Invalid data: {}; error: {}".format(data, e)
-    return mc_color_format(u"{}\x0f - {}\x0f - {}/{} players *".format(desc, version, online,
-                                                                       max_players)).replace("\n", u"\x0f - ")
+    return mc_color_format(u"{}\x0f - {}\x0f - {}/{} players.".format(desc, version, online,
+                                                                      max_players)).replace("\n", u"\x0f - ")
 
 
 def mcping_legacy(host, port):

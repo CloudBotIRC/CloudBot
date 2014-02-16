@@ -83,7 +83,9 @@ def mcping_modern(host, port):
         max_players = data["players"]["max"]
         online = data["players"]["online"]
     except Exception as e:
-        return "Invalid data: {}; error: {}".format(data, e)
+        from pprint import pprint
+        pprint(data)
+        return "Invalid data - check console ({})".format(e)
     return mc_color_format(u"{}\x0f - {}\x0f - {}/{} players.".format(desc, version, online,
                                                                       max_players)).replace("\n", u"\x0f - ")
 

@@ -69,7 +69,8 @@ def encrypt(inp, bot=None, db=None, notice=None):
 
     # store the encoded text and IV in the DB for decoding later
     db.execute("insert or replace into encryption(encrypted, iv)"
-               "values(?,?)", (encoded, iv_encoded))
+               "values(:encoded,:iv)", {'encoded': encoded,
+                                        'iv': iv_encoded})
     db.commit()
 
     return encoded
@@ -97,7 +98,7 @@ def decrypt(inp, bot=None, db=None, notice=None):
 
     # get the encoded IV from the database and decode it
     iv_encoded = db.execute("select iv from encryption where"
-                            " encrypted=?", (text,)).fetchone()[0]
+                            " encrypted=:text", {'text': text}).fetchone()[0]
     iv = base64.b64decode(iv_encoded)
 
     # create AES cipher, decode text, decrypt text, and unpad it

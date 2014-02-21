@@ -25,8 +25,8 @@ def lastfm(inp, nick='', db=None, bot=None, notice=None):
     db.execute("create table if not exists lastfm(nick primary key, acc)")
 
     if not user:
-        user = db.execute("select acc from lastfm where nick=lower(?)",
-                          (nick,)).fetchone()
+        user = db.execute("select acc from lastfm where nick=lower(:nick)",
+                          {'nick': nick}).fetchone()
         if not user:
             notice(lastfm.__doc__)
             return
@@ -76,8 +76,8 @@ def lastfm(inp, nick='', db=None, bot=None, notice=None):
     out += ending
 
     if inp and not dontsave:
-        db.execute("insert or replace into lastfm(nick, acc) values (?,?)",
-                   (nick.lower(), user))
+        db.execute("insert or replace into lastfm(nick, acc) values "
+                   "(:nick, :account)", {'nick': nick.lower(), 'account': user})
         db.commit()
 
     return out

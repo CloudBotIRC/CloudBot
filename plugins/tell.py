@@ -23,8 +23,7 @@ def db_init(db):
 
 def get_tells(db, user_to):
     return db.execute("select user_from, message, time, chan from tell where"
-                      " user_to=lower(:user) order by time",
-                      {'user': user_to}).fetchall()
+                      " user_to=lower(:user) order by time", {'user': user_to}).fetchall()
 
 
 @hook.singlethread

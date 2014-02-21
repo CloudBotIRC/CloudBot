@@ -9,7 +9,8 @@ def correction(inp, message=None, input=None, notice=None, db=None):
     else:
         nick = input.nick
     last_message = db.execute("select name, quote from seen_user where name"
-                              " like ? and chan = ?", (nick.lower(), input.chan.lower())).fetchone()
+                              " like :nick and chan = :chan", {'nick': nick.lower(),
+                                                               'chan': input.chan.lower()}).fetchone()
 
     if last_message:
         splitinput = input.msg.split("/")

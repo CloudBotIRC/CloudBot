@@ -14,6 +14,11 @@ def db_init(db):
         db_ready = True
 
 
+@hook.onload
+def init(paraml, db=None):
+    db_init(db)
+
+
 @hook.command(autohelp=False)
 def horoscope(inp, db=None, notice=None, nick=None):
     """horoscope <sign> -- Get your horoscope."""
@@ -29,8 +34,8 @@ def horoscope(inp, db=None, notice=None, nick=None):
     db.execute("create table if not exists horoscope(nick primary key, sign)")
 
     if not sign:
-        sign = db.execute("select sign from horoscope where nick=lower(:nick)",
-            {'nick':nick}).fetchone()
+        sign = db.execute("select sign from horoscope where "
+                          "nick=lower(:nick)", {'nick': nick}).fetchone()
         if not sign:
             notice("horoscope <sign> -- Get your horoscope")
             return
@@ -49,8 +54,8 @@ def horoscope(inp, db=None, notice=None, nick=None):
         return "Could not get the horoscope for {}.".format(inp)
 
     if inp and not dontsave:
-        db.execute("insert or replace into horoscope(nick, sign) values (:nick,:signS)",
-                   {'nick':nick.lower(), 'sign': sign})
+        db.execute("insert or replace into horoscope(nick, sign) values (:nick, :sign)",
+                   {'nick': nick.lower(), 'sign': sign})
         db.commit()
 
     return result

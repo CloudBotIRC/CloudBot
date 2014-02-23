@@ -63,7 +63,13 @@ def mcping_modern(host, port):
     """ pings a server using the modern (1.7+) protocol and returns data """
     # connect to the server
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((host, port))
+
+    try:
+        s.connect((host, port))
+    except socket.gaierror:
+        raise PingError("Invalid hostname")
+    except socket.timeout:
+        raise PingError("Request timed out")
 
     # send handshake + status request
     s.send(pack_data("\x00\x00" + pack_data(host.encode('utf8')) + pack_port(port) + "\x01"))
@@ -75,7 +81,7 @@ def mcping_modern(host, port):
     l = unpack_varint(s)  # String length
 
     if not l > 1:
-        raise Exception
+        raise PingError("Invalid response")
 
     d = ""
     while len(d) < l:
@@ -111,13 +117,16 @@ def mcping_modern(host, port):
 def mcping_legacy(host, port):
     """ pings a server using the legacy (1.6 and older) protocol and returns data """
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
     try:
         sock.connect((host, port))
         sock.send('\xfe\x01')
         response = sock.recv(1)
+    except socket.gaierror:
+        raise PingError("Invalid hostname")
     except socket.timeout:
         raise PingError("Request timed out")
-    print response
+
     if response[0] != '\xff':
         raise PingError("Invalid response")
 
@@ -206,7 +215,7 @@ def mcping(inp):
     try:
         host, port = parse_input(inp)
     except ParseError as e:
-        return "Could not parse input: {}".format(e)
+        return "Could not parse input ({})".format(e)
 
     try:
         data = mcping_modern(host, port)
@@ -214,7 +223,6 @@ def mcping(inp):
         try:
             data = mcping_legacy(host, port)
         except PingError as e:
-            print e
-            return "The server {} ({}:{}) looks offline from here.".format(inp, host, port)
+            return "Could not ping server, is it offline? ({})".format(e)
 
     return format_output(data)

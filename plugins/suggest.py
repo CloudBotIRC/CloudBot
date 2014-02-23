@@ -24,6 +24,4 @@ def suggest(inp):
     soup = BeautifulSoup(out)
     out = soup.get_text()
 
-    out = text.truncate_str(out, 200)
-
-    return out
+    return text.truncate_str(out, 200)

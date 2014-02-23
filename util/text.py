@@ -144,7 +144,9 @@ def truncate_words(content, length=10, suffix='...'):
 
 # from <http://stackoverflow.com/questions/250357/smart-truncate-in-python>
 def truncate_str(content, length=100, suffix='...'):
-    """Truncates a string after a certain number of chars."""
+    """Truncates a string after a certain number of chars.
+    @rtype : str
+    """
     if len(content) <= length:
         return content
     else:

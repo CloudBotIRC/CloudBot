@@ -137,7 +137,7 @@ def mcping_legacy(host, port):
         # failed to decode data, server is using old format
         data = values.split(u'\xa7')
         output = {
-            "motd": format_colors(data[0]),
+            "motd": format_colors(" ".join(data[0].split())),
             "motd_raw": data[0],
             "version": None,
             "players": data[1],
@@ -146,7 +146,7 @@ def mcping_legacy(host, port):
     else:
         # decoded data, server is using new format
         output = {
-            "motd": format_colors(data[3]),
+            "motd": format_colors(" ".join(data[3].split())),
             "motd_raw": data[3],
             "version": data[2],
             "players": data[4],

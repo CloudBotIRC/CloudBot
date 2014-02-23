@@ -1,6 +1,7 @@
 import socket
 import struct
 import json
+import traceback
 
 from util import hook
 
@@ -87,16 +88,15 @@ def mcping_modern(host, port):
     data = json.loads(d.decode('utf8'))
     try:
         version = data["version"]["name"]
-        if data["description"].get("text", None):
+        try:
             desc = u" ".join(data["description"]["text"].split())
-        else:
+        except TypeError:
             desc = u" ".join(data["description"].split())
         max_players = data["players"]["max"]
         online = data["players"]["online"]
     except Exception as e:
-        from pprint import pprint
-        pprint(data)
-        return "Invalid data - check console ({})".format(e)
+        traceback.print_exc(e)
+        raise PingError("Unknown Error: {}".format(e))
 
     output = {
         "motd": format_colors(desc),
@@ -111,12 +111,16 @@ def mcping_modern(host, port):
 def mcping_legacy(host, port):
     """ pings a server using the legacy (1.6 and older) protocol and returns data """
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect((host, port))
-    sock.send('\xfe\x01')
-    response = sock.recv(1)
+    try:
+        sock.connect((host, port))
+        sock.send('\xfe\x01')
+        response = sock.recv(1)
+    except socket.timeout:
+        raise PingError("Request timed out")
     print response
     if response[0] != '\xff':
-        return "Server gave invalid response: " + repr(response)
+        raise PingError("Invalid response")
+
     length = struct.unpack('!h', sock.recv(2))[0]
     values = sock.recv(length * 2).decode('utf-16be')
     data = values.split(u'\x00')  # try to decode data using new format
@@ -206,10 +210,11 @@ def mcping(inp):
 
     try:
         data = mcping_modern(host, port)
-        return format_output(data)
     except PingError:
         try:
             data = mcping_legacy(host, port)
-            return format_output(data)
-        except PingError:
+        except PingError as e:
+            print e
             return "The server {} ({}:{}) looks offline from here.".format(inp, host, port)
+
+    return format_output(data)

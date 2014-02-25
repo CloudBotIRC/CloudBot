@@ -101,6 +101,7 @@ def mcping_modern(host, port):
         max_players = data["players"]["max"]
         online = data["players"]["online"]
     except Exception as e:
+        # TODO: except Exception is bad
         traceback.print_exc(e)
         raise PingError("Unknown Error: {}".format(e))
 

@@ -45,7 +45,6 @@ def steamcalc(inp, reply=None):
     else:
         name = inp.strip()
 
-
     if force_reload:
         try:
             reply("Collecting data, this may take a while.")

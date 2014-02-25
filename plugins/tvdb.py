@@ -1,28 +1,10 @@
-"""
-TV information, written by Lurchington 2010
-modified by rmmh 2010
-"""
-
 import datetime
-from urllib2 import URLError
-from zipfile import ZipFile
-from cStringIO import StringIO
-
-from lxml import etree
 
 from util import hook, http
 
 
 base_url = "http://thetvdb.com/api/"
-
-
-def get_zipped_xml(*args, **kwargs):
-    try:
-        path = kwargs.pop("path")
-    except KeyError:
-        raise KeyError("must specify a path for the zipped file to be read")
-    zip_buffer = StringIO(http.get(*args, **kwargs))
-    return etree.parse(ZipFile(zip_buffer, "r").open(path))
+api_key = "469B73127CA0C411"
 
 
 def get_episodes_for_series(series_name, api_key):
@@ -30,7 +12,7 @@ def get_episodes_for_series(series_name, api_key):
     # http://thetvdb.com/wiki/index.php/API:GetSeries
     try:
         query = http.get_xml(base_url + 'GetSeries.php', seriesname=series_name)
-    except URLError:
+    except http.URLError:
         res["error"] = "error contacting thetvdb.com"
         return res
 
@@ -43,9 +25,8 @@ def get_episodes_for_series(series_name, api_key):
     series_id = series_id[0]
 
     try:
-        series = get_zipped_xml(base_url + '%s/series/%s/all/en.zip' %
-                                (api_key, series_id), path="en.xml")
-    except URLError:
+        series = http.get_xml(base_url + '%s/series/%s/all/en.xml' % (api_key, series_id))
+    except http.URLError:
         res["error"] = "Error contacting thetvdb.com."
         return res
 

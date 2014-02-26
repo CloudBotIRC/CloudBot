@@ -34,7 +34,7 @@ def version(inp, bot=None):
         in_sync = False
 
     # output
-    return "Local {} is at commit {}, remote {} is at commit {}." \
+    return "Local \x02{}\x02 is at commit \x02{}\x02, remote \x02{}\x02 is at commit \x02{}\x02." \
            " You {} running the latest version.".format(head, current_commit.name_rev[:7],
                                                         origin_head, remote_commit.name_rev[:7],
                                                         "are" if in_sync else "are not")

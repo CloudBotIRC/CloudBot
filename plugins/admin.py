@@ -200,11 +200,11 @@ def say(inp, conn=None, chan=None):
     the command was used in."""
     inp = inp.split(" ")
     if inp[0][0] == "#":
-        message = " ".join(inp[1:])
-        out = "PRIVMSG {} :{}".format(inp[0], message)
+        message = u" ".join(inp[1:])
+        out = u"PRIVMSG {} :{}".format(inp[0], message)
     else:
-        message = " ".join(inp[0:])
-        out = "PRIVMSG {} :{}".format(chan, message)
+        message = u" ".join(inp[0:])
+        out = u"PRIVMSG {} :{}".format(chan, message)
     conn.send(out)
 
 
@@ -220,11 +220,11 @@ def me(inp, conn=None, chan=None):
         for x in inp[1:]:
             message = message + x + " "
         message = message[:-1]
-        out = "PRIVMSG {} :\x01ACTION {}\x01".format(inp[0], message)
+        out = u"PRIVMSG {} :\x01ACTION {}\x01".format(inp[0], message)
     else:
         message = ""
         for x in inp[0:]:
             message = message + x + " "
         message = message[:-1]
-        out = "PRIVMSG {} :\x01ACTION {}\x01".format(chan, message)
+        out = u"PRIVMSG {} :\x01ACTION {}\x01".format(chan, message)
     conn.send(out)

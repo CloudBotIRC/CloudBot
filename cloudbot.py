@@ -18,6 +18,7 @@ print 'CloudBot DEV <http://git.io/cloudbotirc>'
 # create new bot object
 bot = Bot()
 bot.vars = {}
+bot.history = {}
 
 # record start time for the uptime command
 bot.start_time = time.time()

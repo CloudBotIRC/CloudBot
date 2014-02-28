@@ -19,19 +19,6 @@ def db_init(db):
         db_ready = True
 
 
-@hook.singlethread
-@hook.event('PRIVMSG', ignorebots=False)
-def seen_sieve(paraml, input=None, db=None):
-    if not db_ready:
-        db_init(db)
-        # keep private messages private
-    if input.chan[:1] == "#" and not re.findall('^s/.*/.*/$', input.msg.lower()):
-        db.execute("insert or replace into seen_user(name, time, quote, chan, host)"
-                   "values(?,?,?,?,?)", (input.nick.lower(), time.time(), input.msg,
-                                         input.chan, input.mask))
-        db.commit()
-
-
 @hook.command
 def seen(inp, nick='', chan='', db=None, input=None):
     """seen <nick> <channel> -- Tell when a nickname was last in active in one of this bot's channels."""

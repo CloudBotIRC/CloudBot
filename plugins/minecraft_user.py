@@ -1,3 +1,4 @@
+import json
 from util import hook, http
 
 NAME_URL = "https://account.minecraft.net/buy/frame/checkName/{}"
@@ -24,18 +25,41 @@ def get_status(name):
         return "invalid"
 
 
-def is_paid(name):
-    """ takes a name and returns true if it's assosiated with a paid minecraft account
-        if the account does not exist or is not paid, returns false """
+def get_profile(name):
+    profile = {}
+
+    # form the profile request
+    request = {
+        "name": name,
+        "agent": "minecraft"
+    }
+
+    # submit the profile request
+    try:
+        headers = {"Content-Type": "application/json"}
+        r = http.get_json(
+            'https://api.mojang.com/profiles/page/1',
+            post_data=json.dumps(request),
+            headers=headers
+        )
+    except (http.URLError, http.HTTPError) as e:
+        raise McuError("Could not get profile status: {}".format(e))
+
+    user = r["profiles"][0]
+    profile["name"] = user["name"]
+    profile["id"] = user["id"]
+
     try:
         response = http.get(PAID_URL, user=name)
     except (http.URLError, http.HTTPError) as e:
         raise McuError("Could not get payment status: {}".format(e))
 
     if "true" in response:
-        return True
+        profile["paid"] = True
     else:
-        return False
+        profile["paid"] = False
+
+    return profile
 
 
 @hook.command("haspaid")
@@ -46,20 +70,24 @@ def mcuser(inp):
     user = inp.strip()
 
     try:
+        # get status of name (does it exist?)
         name_status = get_status(user)
     except McuError as e:
         return e
 
     if name_status == "taken":
         try:
-            paid = is_paid(user)
+            # get information about user
+            profile = get_profile(user)
         except McuError as e:
-            return e
+            return "Error: {}".format(e)
 
-        if paid:
-            return u"The account \x02{}\x02 exists and \x02is a paid\x02 minecraft account.".format(user)
+        if profile["paid"]:
+            return u"The account \x02{name}\x02 ({id}) exists and \x02is a paid\x02 minecraft" \
+                   u" account.".format(**profile)
         else:
-            return u"The account \x02{}\x02 exists, but \x02is not\x02 a paid minecraft account.".format(user)
+            return u"The account \x02{name}\x02 ({id}) exists, but \x02is NOT\x02 a paid minecraft" \
+                   u" account.".format(**profile)
     elif name_status == "free":
         return u"The account \x02{}\x02 does not exist.".format(user)
     elif name_status == "invalid":

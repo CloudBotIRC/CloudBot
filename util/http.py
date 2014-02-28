@@ -52,7 +52,7 @@ def get_json(*args, **kwargs):
 
 
 def open(url, query_params=None, user_agent=None, post_data=None,
-         referer=None, get_method=None, cookies=False, timeout=None, **kwargs):
+         referer=None, get_method=None, cookies=False, timeout=None, headers=None, **kwargs):
     if query_params is None:
         query_params = {}
 
@@ -67,6 +67,10 @@ def open(url, query_params=None, user_agent=None, post_data=None,
 
     if get_method is not None:
         request.get_method = lambda: get_method
+
+    if headers is not None:
+        for header_key, header_value in headers.iteritems():
+            request.add_header(header_key, header_value)
 
     request.add_header('User-Agent', user_agent)
 

@@ -35,7 +35,7 @@ def track_history(input, message_time, bot):
         bot.history[input.chan] = deque(maxlen=1000)
         history = bot.history[input.chan]
 
-    data = (input.nick.lower(), message_time, input.msg)
+    data = (input.nick, message_time, input.msg)
     history.append(data)
 
 

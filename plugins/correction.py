@@ -1,30 +1,30 @@
 from util import hook
 
+import re
+
+CORRECTION_RE = re.compile(r'^(s|S)/.*/.*/\S*$')
+
 
 @hook.regex(r'^(s|S)/.*/.*/\S*$')
-def correction(inp, message=None, input=None, notice=None, db=None):
-    splitinput = input.msg.split("/")
-    if splitinput[3]:
-        nick = splitinput[3]
-    else:
-        nick = input.nick
-    last_message = db.execute("select name, quote from seen_user where name"
-                              " like ? and chan = ?", (nick.lower(), input.chan.lower())).fetchone()
+def correction(inp, input=None, bot=None, message=None):
+    split = input.msg.split("/")
 
-    if last_message:
-        splitinput = input.msg.split("/")
-        find = splitinput[1]
-        replace = splitinput[2]
-        if find in last_message[1]:
-            if "\x01ACTION" in last_message[1]:
-                msg = last_message[1].replace("\x01ACTION ", "/me ").replace("\x01", "")
-            else:
-                msg = last_message[1]
-            message(u"Correction, <{}> {}".format(nick, msg.replace(find, "\x02" + replace + "\x02")))
+    find = split[1]
+    replace = split[2]
+
+    for item in bot.history[input.chan].__reversed__():
+        name, timestamp, msg = item
+        if "/" in msg:
+            if re.match(CORRECTION_RE, msg):
+                # don't correct corrections, it gets really confusing
+                continue
+        if find in msg:
+            if "\x01ACTION" in msg:
+                msg = msg.replace("\x01ACTION ", "/me ").replace("\x01", "")
+            message(u"Correction, <{}> {}".format(name, msg.replace(find, "\x02" + replace + "\x02")))
+            return
         else:
-            notice(u"{} can't be found in your last message".format(find))
-    else:
-        if nick == input.nick:
-            notice(u"I haven't seen you say anything here yet")
-        else:
-            notice(u"I haven't seen {} say anything here yet".format(nick))
+            continue
+
+    return "Did not find {} in any recent messages.".format(find)
+

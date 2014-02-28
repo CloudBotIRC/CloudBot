@@ -59,7 +59,7 @@ def mcuser(inp):
         if paid:
             return u"The account \x02{}\x02 exists and \x02is a paid\x02 minecraft account.".format(user)
         else:
-            return u"The account \x02{}\x02 exists, but \x02is not a paid\x02 minecraft account.".format(user)
+            return u"The account \x02{}\x02 exists, but \x02is not\x02 a paid minecraft account.".format(user)
     elif name_status == "free":
         return u"The account \x02{}\x02 does not exist.".format(user)
     elif name_status == "invalid":

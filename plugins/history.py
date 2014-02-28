@@ -32,7 +32,7 @@ def track_history(input, message_time, bot):
     try:
         history = bot.history[input.chan]
     except KeyError:
-        bot.history[input.chan] = deque(maxlen=1000)
+        bot.history[input.chan] = deque(maxlen=100)
         history = bot.history[input.chan]
 
     data = (input.nick, message_time, input.msg)

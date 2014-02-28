@@ -2,12 +2,17 @@ from util import hook
 
 import re
 
-CORRECTION_RE = r'^(s|S)/.*/.*/\S*$'
+CORRECTION_RE = r'^(s|S)/.*/.*/?\S*$'
 
 
 @hook.regex(CORRECTION_RE)
-def correction(inp, input=None, bot=None, message=None):
+def correction(match, input=None, bot=None, message=None):
     split = input.msg.split("/")
+
+    if len(split) == 4:
+        nick = split[3].lower()
+    else:
+        nick = None
 
     find = split[1]
     replace = split[2]
@@ -17,6 +22,9 @@ def correction(inp, input=None, bot=None, message=None):
         if msg.startswith("s/"):
             # don't correct corrections, it gets really confusing
             continue
+        if nick:
+            if nick != name.lower():
+                continue
         if find in msg:
             if "\x01ACTION" in msg:
                 msg = msg.replace("\x01ACTION ", "/me ").replace("\x01", "")

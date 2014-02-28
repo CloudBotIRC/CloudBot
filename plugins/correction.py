@@ -5,7 +5,7 @@ import re
 CORRECTION_RE = re.compile(r'^(s|S)/.*/.*/\S*$')
 
 
-@hook.regex(r'^(s|S)/.*/.*/\S*$')
+@hook.regex(CORRECTION_RE)
 def correction(inp, input=None, bot=None, message=None):
     split = input.msg.split("/")
 
@@ -14,10 +14,9 @@ def correction(inp, input=None, bot=None, message=None):
 
     for item in bot.history[input.chan].__reversed__():
         name, timestamp, msg = item
-        if "/" in msg:
-            if re.match(CORRECTION_RE, msg):
-                # don't correct corrections, it gets really confusing
-                continue
+        if msg.startswith("s/"):
+            # don't correct corrections, it gets really confusing
+            continue
         if find in msg:
             if "\x01ACTION" in msg:
                 msg = msg.replace("\x01ACTION ", "/me ").replace("\x01", "")
@@ -26,5 +25,5 @@ def correction(inp, input=None, bot=None, message=None):
         else:
             continue
 
-    return "Did not find {} in any recent messages.".format(find)
+    return u"Did not find {} in any recent messages.".format(find)
 

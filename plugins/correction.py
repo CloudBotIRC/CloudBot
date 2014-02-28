@@ -2,7 +2,7 @@ from util import hook
 
 import re
 
-CORRECTION_RE = re.compile(r'^(s|S)/.*/.*/\S*$')
+CORRECTION_RE = r'^(s|S)/.*/.*/\S*$'
 
 
 @hook.regex(CORRECTION_RE)

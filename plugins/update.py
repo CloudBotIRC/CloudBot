@@ -7,7 +7,10 @@ from util import hook, web
 def update(inp, bot=None):
     repo = Repo()
     git = repo.git
-    pull = git.pull()
+    try:
+        pull = git.pull()
+    except Exception as e:
+        return e
     if "\n" in pull:
         return web.haste(pull)
     else:

@@ -34,21 +34,3 @@ def mcstatus(inp):
 
     return "\x0f" + out.replace(".mojang.com", ".mj") \
                        .replace(".minecraft.net", ".mc")
-
-
-@hook.command("haspaid")
-@hook.command
-def mcpaid(inp):
-    """mcpaid <username> -- Checks if <username> has a premium Minecraft account."""
-
-    user = inp.strip()
-
-    try:
-        status = http.get("http://www.minecraft.net/haspaid.jsp", user=user)
-    except (http.URLError, http.HTTPError) as e:
-        return "Unable to get user registration status: {}".format(e)
-
-    if "true" in status:
-        return 'The account "{}" is a premium Minecraft account!'.format(inp)
-    else:
-        return 'The account "{}" is not a premium Minecraft account!'.format(inp)

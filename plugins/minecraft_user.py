@@ -49,6 +49,8 @@ def get_profile(name):
     profile["name"] = user["name"]
     profile["id"] = user["id"]
 
+    profile["legacy"] = user.get("legacy", False)
+
     try:
         response = http.get(PAID_URL, user=name)
     except (http.URLError, http.HTTPError) as e:
@@ -82,11 +84,13 @@ def mcuser(inp):
         except McuError as e:
             return "Error: {}".format(e)
 
+        profile["lt"] = ", legacy" if profile["legacy"] else ""
+
         if profile["paid"]:
-            return u"The account \x02{name}\x02 ({id}) exists and \x02is a paid\x02 minecraft" \
+            return u"The account \x02{name}\x02 ({id}{lt}) exists. It is a \x033\x02paid\x02\x0f" \
                    u" account.".format(**profile)
         else:
-            return u"The account \x02{name}\x02 ({id}) exists, but \x02is NOT\x02 a paid minecraft" \
+            return u"The account \x02{name}\x02 ({id}{lt}) exists. It \x034\x02is NOT\x02\x0f a paid" \
                    u" account.".format(**profile)
     elif name_status == "free":
         return u"The account \x02{}\x02 does not exist.".format(user)

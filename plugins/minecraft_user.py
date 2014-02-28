@@ -39,7 +39,7 @@ def is_paid(name):
 
 
 @hook.command("haspaid")
-@hook.command("mcstatus")
+@hook.command("mcpaid")
 @hook.command
 def mcuser(inp):
     """mcpaid <username> -- Gets information about the Minecraft user <account>."""

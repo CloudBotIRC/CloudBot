@@ -18,19 +18,27 @@ def mcstatus(inp):
     out = []
 
     # use a loop so we don't have to update it if they add more servers
-    yes = []
-    no = []
+    green = []
+    yellow = []
+    red = []
     for server, status in data.items():
         if status == "green":
-            yes.append(server)
+            green.append(server)
+        elif status == "yellow":
+            yellow.append(server)
         else:
-            no.append(server)
-    if yes:
-        out = "\x033\x02Online\x02\x0f: " + ", ".join(yes)
-        if no:
+            red.append(server)
+
+    if green:
+        out = "\x033\x02Online\x02\x0f: " + ", ".join(green)
+        if yellow:
             out += " "
-    if no:
-        out += "\x034\x02Offline\x02\x0f: " + ", ".join(no)
+    if yellow:
+        out += "\x02Issues\x02: " + ", ".join(yellow)
+        if red:
+            out += " "
+    if red:
+        out += "\x034\x02Offline\x02\x0f: " + ", ".join(red)
 
     return "\x0f" + out.replace(".mojang.com", ".mj") \
                        .replace(".minecraft.net", ".mc")

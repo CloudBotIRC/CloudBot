@@ -61,34 +61,37 @@ pack_port = lambda i: struct.pack('>H', i)
 
 def mcping_modern(host, port):
     """ pings a server using the modern (1.7+) protocol and returns data """
-    # connect to the server
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
     try:
-        s.connect((host, port))
-    except socket.gaierror:
-        raise PingError("Invalid hostname")
-    except socket.timeout:
-        raise PingError("Request timed out")
+        # connect to the server
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    # send handshake + status request
-    s.send(pack_data("\x00\x00" + pack_data(host.encode('utf8')) + pack_port(port) + "\x01"))
-    s.send(pack_data("\x00"))
+        try:
+            s.connect((host, port))
+        except socket.gaierror:
+            raise PingError("Invalid hostname")
+        except socket.timeout:
+            raise PingError("Request timed out")
 
-    # read response
-    unpack_varint(s)      # Packet length
-    unpack_varint(s)      # Packet ID
-    l = unpack_varint(s)  # String length
+        # send handshake + status request
+        s.send(pack_data("\x00\x00" + pack_data(host.encode('utf8')) + pack_port(port) + "\x01"))
+        s.send(pack_data("\x00"))
 
-    if not l > 1:
-        raise PingError("Invalid response")
+        # read response
+        unpack_varint(s)      # Packet length
+        unpack_varint(s)      # Packet ID
+        l = unpack_varint(s)  # String length
 
-    d = ""
-    while len(d) < l:
-        d += s.recv(1024)
+        if not l > 1:
+            raise PingError("Invalid response")
 
-    # Close our socket
-    s.close()
+        d = ""
+        while len(d) < l:
+            d += s.recv(1024)
+
+        # Close our socket
+        s.close()
+    except socket.error:
+        raise PingError("Socket Error")
 
     # Load json and return
     data = json.loads(d.decode('utf8'))

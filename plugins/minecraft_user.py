@@ -87,7 +87,7 @@ def mcuser(inp):
         profile["lt"] = ", legacy" if profile["legacy"] else ""
 
         if profile["paid"]:
-            return u"The account \x02{name}\x02 ({id}{lt}) exists. It is a \x033\x02paid\x02\x0f" \
+            return u"The account \x02{name}\x02 ({id}{lt}) exists. It is a \x02paid\x02" \
                    u" account.".format(**profile)
         else:
             return u"The account \x02{name}\x02 ({id}{lt}) exists. It \x034\x02is NOT\x02\x0f a paid" \

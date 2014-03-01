@@ -135,6 +135,7 @@ class IRC(object):
         self.server = server
         self.port = port
         self.nick = nick
+        self.history = {}
         self.vars = {}
 
         self.out = Queue.Queue()  # responses from the server are placed here

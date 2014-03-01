@@ -6,7 +6,7 @@ CORRECTION_RE = r'^(s|S)/.*/.*/?\S*$'
 
 
 @hook.regex(CORRECTION_RE)
-def correction(match, input=None, bot=None, message=None):
+def correction(match, input=None, conn=None, message=None):
     split = input.msg.split("/")
 
     if len(split) == 4:
@@ -17,7 +17,7 @@ def correction(match, input=None, bot=None, message=None):
     find = split[1]
     replace = split[2]
 
-    for item in bot.history[input.chan].__reversed__():
+    for item in conn.history[input.chan].__reversed__():
         name, timestamp, msg = item
         if msg.startswith("s/"):
             # don't correct corrections, it gets really confusing

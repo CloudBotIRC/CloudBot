@@ -28,12 +28,12 @@ def track_seen(input, message_time, db):
         db.commit()
 
 
-def track_history(input, message_time, bot):
+def track_history(input, message_time, conn):
     try:
-        history = bot.history[input.chan]
+        history = conn.history[input.chan]
     except KeyError:
-        bot.history[input.chan] = deque(maxlen=100)
-        history = bot.history[input.chan]
+        conn.history[input.chan] = deque(maxlen=100)
+        history = conn.history[input.chan]
 
     data = (input.nick, message_time, input.msg)
     history.append(data)
@@ -41,17 +41,17 @@ def track_history(input, message_time, bot):
 
 @hook.singlethread
 @hook.event('PRIVMSG', ignorebots=False)
-def chat_tracker(paraml, input=None, db=None, bot=None):
+def chat_tracker(paraml, input=None, db=None, conn=None):
     message_time = time.time()
     track_seen(input, message_time, db)
-    track_history(input, message_time, bot)
+    track_history(input, message_time, conn)
 
 
 @hook.command(autohelp=False)
-def resethistory(inp, input=None, bot=None):
+def resethistory(inp, input=None, conn=None):
     """resethistory - Resets chat history for the current channel"""
     try:
-        bot.history[input.chan].clear()
+        conn.history[input.chan].clear()
         return "Reset chat history for current channel."
     except KeyError:
         # wat

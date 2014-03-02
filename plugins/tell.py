@@ -6,19 +6,18 @@ import re
 
 from util import hook, timesince
 
-db_ready = False
+db_ready = []
 
-def db_init(db):
-    """check to see that our db has the tell table and return a dbection."""
+
+def db_init(db, conn):
+    """Check that our db has the tell table, create it if not."""
     global db_ready
-    if not db_ready:
+    if not conn.name in db_ready:
         db.execute("create table if not exists tell"
                    "(user_to, user_from, message, chan, time,"
                    "primary key(user_to, message))")
         db.commit()
-        db_ready = True
-
-    return db
+        db_ready.append(conn.name)
 
 
 def get_tells(db, user_to):
@@ -29,11 +28,11 @@ def get_tells(db, user_to):
 
 @hook.singlethread
 @hook.event('PRIVMSG')
-def tellinput(paraml, input=None, notice=None, db=None, bot=None, nick=None, conn=None):
+def tellinput(inp, input=None, notice=None, db=None, nick=None, conn=None):
     if 'showtells' in input.msg.lower():
         return
 
-    db_init(db)
+    db_init(db, conn)
 
     tells = get_tells(db, nick)
 
@@ -53,10 +52,10 @@ def tellinput(paraml, input=None, notice=None, db=None, bot=None, nick=None, con
 
 
 @hook.command(autohelp=False)
-def showtells(inp, nick='', chan='', notice=None, db=None):
+def showtells(inp, nick='', chan='', notice=None, db=None, conn=None):
     """showtells -- View all pending tell messages (sent in a notice)."""
 
-    db_init(db)
+    db_init(db, conn)
 
     tells = get_tells(db, nick)
 
@@ -75,7 +74,7 @@ def showtells(inp, nick='', chan='', notice=None, db=None):
 
 
 @hook.command
-def tell(inp, nick='', chan='', db=None, input=None, notice=None):
+def tell(inp, nick='', chan='', db=None, input=None, notice=None, conn=None):
     """tell <nick> <message> -- Relay <message> to <nick> when <nick> is around."""
     query = inp.split(' ', 1)
 
@@ -100,10 +99,10 @@ def tell(inp, nick='', chan='', db=None, input=None, notice=None):
         return
 
     if not re.match("^[A-Za-z0-9_|.\-\]\[]*$", user_to.lower()):
-        notice("I cant send a message to that user!")
+        notice("I can't send a message to that user!")
         return
 
-    db_init(db)
+    db_init(db, conn)
 
     if db.execute("select count() from tell where user_to=?",
                   (user_to,)).fetchone()[0] >= 10:

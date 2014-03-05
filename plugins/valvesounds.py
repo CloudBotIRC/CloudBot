@@ -1,5 +1,5 @@
 import json
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 from util import hook, http, web
 
@@ -8,14 +8,14 @@ def get_sound_info(game, search):
     search = search.replace(" ", "+")
     try:
         data = http.get_json("http://p2sounds.blha303.com.au/search/%s/%s?format=json" % (game, search))
-    except urllib2.HTTPError as e:
+    except urllib.error.HTTPError as e:
         return "Error: " + json.loads(e.read())["error"]
     items = []
     for item in data["items"]:
         if "music" in game:
             textsplit = item["text"].split('"')
             text = ""
-            for i in xrange(len(textsplit)):
+            for i in range(len(textsplit)):
                 if i % 2 != 0 and i < 6:
                     if text:
                         text += " / " + textsplit[i]

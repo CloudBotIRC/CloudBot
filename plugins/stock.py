@@ -22,9 +22,9 @@ def stock(inp):
         quote['color'] = "3"
 
     quote['PercentChange'] = 100 * change / (price - change)
-    print quote
+    print(quote)
 
-    return u"\x02{Name}\x02 (\x02{symbol}\x02) - {LastTradePriceOnly} " \
+    return "\x02{Name}\x02 (\x02{symbol}\x02) - {LastTradePriceOnly} " \
            "\x03{color}{Change} ({PercentChange:.2f}%)\x03 " \
            "Day Range: {DaysRange} " \
            "MCAP: {MarketCapitalization}".format(**quote)

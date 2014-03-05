@@ -35,5 +35,5 @@ def rottentomatoes(inp, bot=None):
     fresh = critics_score * review_count / 100
     rotten = review_count - fresh
 
-    return u"{} - Critics Rating: \x02{}%\x02 ({} liked, {} disliked) " \
+    return "{} - Critics Rating: \x02{}%\x02 ({} liked, {} disliked) " \
            "Audience Rating: \x02{}%\x02 - {}".format(title, critics_score, fresh, rotten, audience_score, url)

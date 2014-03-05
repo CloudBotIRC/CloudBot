@@ -1,4 +1,4 @@
-from urllib import quote_plus
+from urllib.parse import quote_plus
 
 from util import hook, http
 
@@ -44,7 +44,7 @@ def bancount(inp):
     services = request["stats"]["service"]
 
     out = []
-    for service, ban_count in services.items():
+    for service, ban_count in list(services.items()):
         if ban_count != 0:
             out.append("{}: \x02{}\x02".format(service, ban_count))
         else:

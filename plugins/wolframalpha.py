@@ -36,9 +36,9 @@ def wolframalpha(inp, bot=None):
             if subpod:
                 results.append(subpod)
         if results:
-            pod_texts.append(title + u': ' + u', '.join(results))
+            pod_texts.append(title + ': ' + ', '.join(results))
 
-    ret = u' - '.join(pod_texts)
+    ret = ' - '.join(pod_texts)
 
     if not pod_texts:
         return 'No results.'
@@ -46,7 +46,7 @@ def wolframalpha(inp, bot=None):
     ret = re.sub(r'\\(.)', r'\1', ret)
 
     def unicode_sub(match):
-        return unichr(int(match.group(1), 16))
+        return chr(int(match.group(1), 16))
 
     ret = re.sub(r'\\:([0-9a-z]{4})', unicode_sub, ret)
 
@@ -55,4 +55,4 @@ def wolframalpha(inp, bot=None):
     if not ret:
         return 'No results.'
 
-    return u"{} - {}".format(ret, short_url)
+    return "{} - {}".format(ret, short_url)

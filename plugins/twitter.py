@@ -42,13 +42,13 @@ def twitter_url(match, bot=None):
     text = " ".join(tweet.text.split())
 
     if user.verified:
-        prefix = u"\u2713"
+        prefix = "\u2713"
     else:
         prefix = ""
 
     time = timesince.timesince(tweet.created_at, datetime.utcnow())
 
-    return u"{}@\x02{}\x02 ({}): {} ({} ago)".format(prefix, user.screen_name, user.name, text, time)
+    return "{}@\x02{}\x02 ({}): {} ({} ago)".format(prefix, user.screen_name, user.name, text, time)
 
 
 @hook.command("tw")
@@ -71,7 +71,7 @@ def twitter(inp, bot=None):
             if e[0][0]['code'] == 34:
                 return "Could not find tweet."
             else:
-                return u"Error {}: {}".format(e[0][0]['code'], e[0][0]['message'])
+                return "Error {}: {}".format(e[0][0]['code'], e[0][0]['message'])
 
         user = tweet.user
 
@@ -95,21 +95,21 @@ def twitter(inp, bot=None):
             if e[0][0]['code'] == 34:
                 return "Could not find user."
             else:
-                return u"Error {}: {}".format(e[0][0]['code'], e[0][0]['message'])
+                return "Error {}: {}".format(e[0][0]['code'], e[0][0]['message'])
 
         # get the users tweets
         user_timeline = api.user_timeline(id=user.id, count=tweet_number + 1)
 
         # if the timeline is empty, return an error
         if not user_timeline:
-            return u"The user \x02{}\x02 has no tweets.".format(user.screen_name)
+            return "The user \x02{}\x02 has no tweets.".format(user.screen_name)
 
         # grab the newest tweet from the users timeline
         try:
             tweet = user_timeline[tweet_number]
         except IndexError:
             tweet_count = len(user_timeline)
-            return u"The user \x02{}\x02 only has \x02{}\x02 tweets.".format(user.screen_name, tweet_count)
+            return "The user \x02{}\x02 only has \x02{}\x02 tweets.".format(user.screen_name, tweet_count)
 
     elif re.match(r'^#\w+$', inp):
         # user is searching by hashtag
@@ -127,13 +127,13 @@ def twitter(inp, bot=None):
     text = " ".join(tweet.text.split())
 
     if user.verified:
-        prefix = u"\u2713"
+        prefix = "\u2713"
     else:
         prefix = ""
 
     time = timesince.timesince(tweet.created_at, datetime.utcnow())
 
-    return u"{}@\x02{}\x02 ({}): {} ({} ago)".format(prefix, user.screen_name, user.name, text, time)
+    return "{}@\x02{}\x02 ({}): {} ({} ago)".format(prefix, user.screen_name, user.name, text, time)
 
 
 @hook.command("twinfo")
@@ -155,20 +155,20 @@ def twuser(inp, bot=None):
             return "Unknown error"
 
     if user.verified:
-        prefix = u"\u2713"
+        prefix = "\u2713"
     else:
         prefix = ""
 
     if user.location:
-        loc_str = u" is located in \x02{}\x02 and".format(user.location)
+        loc_str = " is located in \x02{}\x02 and".format(user.location)
     else:
         loc_str = ""
 
     if user.description:
-        desc_str = u" The users description is \"{}\"".format(user.description)
+        desc_str = " The users description is \"{}\"".format(user.description)
     else:
         desc_str = ""
 
-    return u"{}@\x02{}\x02 ({}){} has \x02{:,}\x02 tweets and \x02{:,}\x02 followers.{}" \
+    return "{}@\x02{}\x02 ({}){} has \x02{:,}\x02 tweets and \x02{:,}\x02 followers.{}" \
            "".format(prefix, user.screen_name, user.name, loc_str, user.statuses_count, user.followers_count,
                      desc_str)

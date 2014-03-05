@@ -56,7 +56,7 @@ def plugin_random():
 
     while not results:
         plugin_number = random.randint(1, count_total)
-        print "trying {}".format(plugin_number)
+        print("trying {}".format(plugin_number))
         try:
             results = http.get_json(random_url.format(plugin_number))
         except (http.HTTPError, http.URLError) as e:
@@ -84,7 +84,7 @@ def format_output(data):
     description = text.truncate_str(data['description'], 30)
     url = data['website']
     authors = data['authors'][0]
-    authors = authors[0] + u"\u200b" + authors[1:]
+    authors = authors[0] + "\u200b" + authors[1:]
     stage = data['stage']
 
     current_version = data['versions'][0]
@@ -97,11 +97,11 @@ def format_output(data):
     link = web.try_isgd(current_version['link'])
 
     if description:
-        line_a = u"\x02{}\x02, by \x02{}\x02 - {} - ({}) \x02{}".format(name, authors, description, stage, url)
+        line_a = "\x02{}\x02, by \x02{}\x02 - {} - ({}) \x02{}".format(name, authors, description, stage, url)
     else:
-        line_a = u"\x02{}\x02, by \x02{}\x02 ({}) \x02{}".format(name, authors, stage, url)
+        line_a = "\x02{}\x02, by \x02{}\x02 ({}) \x02{}".format(name, authors, stage, url)
 
-    line_b = u"Last release: \x02v{}\x02 for \x02{}\x02 at {} \x02{}\x02".format(version_number, bukkit_versions,
+    line_b = "Last release: \x02v{}\x02 for \x02{}\x02 at {} \x02{}\x02".format(version_number, bukkit_versions,
                                                                                  last_update, link)
 
     return line_a, line_b

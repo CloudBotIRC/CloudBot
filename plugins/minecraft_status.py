@@ -21,7 +21,7 @@ def mcstatus(inp):
     green = []
     yellow = []
     red = []
-    for server, status in data.items():
+    for server, status in list(data.items()):
         if status == "green":
             green.append(server)
         elif status == "yellow":

@@ -15,7 +15,7 @@ def test(s):
 def newgrounds_url(match):
     location = match.group(4).split("/")[-1]
     if not test(location):
-        print "Not a valid Newgrounds portal ID. Example: http://www.newgrounds.com/portal/view/593993"
+        print("Not a valid Newgrounds portal ID. Example: http://www.newgrounds.com/portal/view/593993")
         return None
     soup = http.get_soup("http://www.newgrounds.com/portal/view/" + location)
 
@@ -31,7 +31,7 @@ def newgrounds_url(match):
     # get rating
     try:
         rating_info = soup.find('dd', {'class': 'star-variable'})['title'].split("Stars &ndash;")[0].strip()
-        rating = u" - rated \x02{}\x02/\x025.0\x02".format(rating_info)
+        rating = " - rated \x02{}\x02/\x025.0\x02".format(rating_info)
     except:
         rating = ""
 

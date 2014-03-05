@@ -5,21 +5,21 @@ from util import http, hook
 exchanges = {
     "blockchain": {
         "api_url": "https://blockchain.info/ticker",
-        "func": lambda data: u"Blockchain // Buy: \x0307${:,.2f}\x0f -"
-                             u" Sell: \x0307${:,.2f}\x0f".format(data["USD"]["buy"], data["USD"]["sell"])
+        "func": lambda data: "Blockchain // Buy: \x0307${:,.2f}\x0f -"
+                             " Sell: \x0307${:,.2f}\x0f".format(data["USD"]["buy"], data["USD"]["sell"])
     },
     "coinbase": {
         "api_url": "https://coinbase.com/api/v1/prices/spot_rate",
-        "func": lambda data: u"Coinbase // Current: \x0307${:,.2f}\x0f".format(float(data['amount']))
+        "func": lambda data: "Coinbase // Current: \x0307${:,.2f}\x0f".format(float(data['amount']))
     },
     "bitpay": {
         "api_url": "https://bitpay.com/api/rates",
-        "func": lambda data: u"Bitpay // Current: \x0307${:,.2f}\x0f".format(data[0]['rate'])
+        "func": lambda data: "Bitpay // Current: \x0307${:,.2f}\x0f".format(data[0]['rate'])
     },
     "bitstamp": {
         "api_url": "https://www.bitstamp.net/api/ticker/",
-        "func": lambda data: u"BitStamp // Current: \x0307${:,.2f}\x0f - High: \x0307${:,.2f}\x0f -"
-                             u" Low: \x0307${:,.2f}\x0f - Volume: {:,.2f} BTC".format(float(data['last']),
+        "func": lambda data: "BitStamp // Current: \x0307${:,.2f}\x0f - High: \x0307${:,.2f}\x0f -"
+                             " Low: \x0307${:,.2f}\x0f - Volume: {:,.2f} BTC".format(float(data['last']),
                                                                                       float(data['high']),
                                                                                       float(data['low']),
                                                                                       float(data['volume']))

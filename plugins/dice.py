@@ -18,15 +18,15 @@ split_re = re.compile(r'([\d+-]*)d?(F|\d*)', re.I)
 def n_rolls(count, n):
     """roll an n-sided die count times"""
     if n == "F":
-        return [random.randint(-1, 1) for x in xrange(min(count, 100))]
+        return [random.randint(-1, 1) for x in range(min(count, 100))]
     if n < 2:  # it's a coin
         if count < 100:
-            return [random.randint(0, 1) for x in xrange(count)]
+            return [random.randint(0, 1) for x in range(count)]
         else:  # fake it
             return [int(random.normalvariate(.5 * count, (.75 * count) ** .5))]
     else:
         if count < 100:
-            return [random.randint(1, n) for x in xrange(count)]
+            return [random.randint(1, n) for x in range(count)]
         else:  # fake it
             return [int(random.normalvariate(.5 * (1 + n) * count,
                                              (((n + 1) * (2 * n + 1) / 6. -
@@ -75,7 +75,7 @@ def dice(inp):
             try:
                 if count > 0:
                     d = n_rolls(count, side)
-                    rolls += map(str, d)
+                    rolls += list(map(str, d))
                     total += sum(d)
                 else:
                     d = n_rolls(-count, side)

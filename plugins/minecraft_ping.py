@@ -13,12 +13,12 @@ except ImportError:
     has_dns = False
 
 
-mc_colors = [(u'\xa7f', u'\x0300'), (u'\xa70', u'\x0301'), (u'\xa71', u'\x0302'), (u'\xa72', u'\x0303'),
-             (u'\xa7c', u'\x0304'), (u'\xa74', u'\x0305'), (u'\xa75', u'\x0306'), (u'\xa76', u'\x0307'),
-             (u'\xa7e', u'\x0308'), (u'\xa7a', u'\x0309'), (u'\xa73', u'\x0310'), (u'\xa7b', u'\x0311'),
-             (u'\xa71', u'\x0312'), (u'\xa7d', u'\x0313'), (u'\xa78', u'\x0314'), (u'\xa77', u'\x0315'),
-             (u'\xa7l', u'\x02'), (u'\xa79', u'\x0310'), (u'\xa7o', u'\t'), (u'\xa7m', u'\x13'),
-             (u'\xa7r', u'\x0f'), (u'\xa7n', u'\x15')]
+mc_colors = [('\xa7f', '\x0300'), ('\xa70', '\x0301'), ('\xa71', '\x0302'), ('\xa72', '\x0303'),
+             ('\xa7c', '\x0304'), ('\xa74', '\x0305'), ('\xa75', '\x0306'), ('\xa76', '\x0307'),
+             ('\xa7e', '\x0308'), ('\xa7a', '\x0309'), ('\xa73', '\x0310'), ('\xa7b', '\x0311'),
+             ('\xa71', '\x0312'), ('\xa7d', '\x0313'), ('\xa78', '\x0314'), ('\xa77', '\x0315'),
+             ('\xa7l', '\x02'), ('\xa79', '\x0310'), ('\xa7o', '\t'), ('\xa7m', '\x13'),
+             ('\xa7r', '\x0f'), ('\xa7n', '\x15')]
 
 
 ## EXCEPTIONS
@@ -98,9 +98,9 @@ def mcping_modern(host, port):
     try:
         version = data["version"]["name"]
         try:
-            desc = u" ".join(data["description"]["text"].split())
+            desc = " ".join(data["description"]["text"].split())
         except TypeError:
-            desc = u" ".join(data["description"].split())
+            desc = " ".join(data["description"].split())
         max_players = data["players"]["max"]
         online = data["players"]["online"]
     except Exception as e:
@@ -136,10 +136,10 @@ def mcping_legacy(host, port):
 
     length = struct.unpack('!h', sock.recv(2))[0]
     values = sock.recv(length * 2).decode('utf-16be')
-    data = values.split(u'\x00')  # try to decode data using new format
+    data = values.split('\x00')  # try to decode data using new format
     if len(data) == 1:
         # failed to decode data, server is using old format
-        data = values.split(u'\xa7')
+        data = values.split('\xa7')
         output = {
             "motd": format_colors(" ".join(data[0].split())),
             "motd_raw": data[0],
@@ -199,17 +199,17 @@ def parse_input(inp):
 def format_colors(motd):
     for original, replacement in mc_colors:
         motd = motd.replace(original, replacement)
-    motd = motd.replace(u"\xa7k", "")
+    motd = motd.replace("\xa7k", "")
     return motd
 
 
 def format_output(data):
     if data["version"]:
-        return u"{motd}\x0f - {version}\x0f - {players}/{players_max}" \
-               u" players.".format(**data).replace("\n", u"\x0f - ")
+        return "{motd}\x0f - {version}\x0f - {players}/{players_max}" \
+               " players.".format(**data).replace("\n", "\x0f - ")
     else:
-        return u"{motd}\x0f - {players}/{players_max}" \
-               u" players.".format(**data).replace("\n", u"\x0f - ")
+        return "{motd}\x0f - {players}/{players_max}" \
+               " players.".format(**data).replace("\n", "\x0f - ")
 
 
 @hook.command

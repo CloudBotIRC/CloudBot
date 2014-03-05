@@ -46,18 +46,18 @@ def format_item(item, show_url=True):
         tags.append("\x02Featured\x02")
 
     if item["IsShellShockerItem"]:
-        tags.append(u"\x02SHELL SHOCKER\u00AE\x02")
+        tags.append("\x02SHELL SHOCKER\u00AE\x02")
 
     # join all the tags together in a comma separated string ("tag1, tag2, tag3")
-    tag_text = u", ".join(tags)
+    tag_text = ", ".join(tags)
 
     if show_url:
         # create the item URL and shorten it
         url = web.try_isgd(ITEM_URL.format(item["NeweggItemNumber"]))
-        return u"\x02{}\x02 ({}) - {} - {} - {}".format(title, price, rating,
+        return "\x02{}\x02 ({}) - {} - {} - {}".format(title, price, rating,
                                                         tag_text, url)
     else:
-        return u"\x02{}\x02 ({}) - {} - {}".format(title, price, rating,
+        return "\x02{}\x02 ({}) - {} - {}".format(title, price, rating,
                                                    tag_text)
 
 

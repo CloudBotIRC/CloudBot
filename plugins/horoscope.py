@@ -46,7 +46,7 @@ def horoscope(inp, db=None, notice=None, nick=None):
 
     title = soup.find_all('h1', {'class': 'h1b'})[1]
     horoscope_text = soup.find('div', {'class': 'fontdef1'})
-    result = u"\x02%s\x02 %s" % (title, horoscope_text)
+    result = "\x02%s\x02 %s" % (title, horoscope_text)
     result = text.strip_html(result)
     #result = unicode(result, "utf8").replace('flight ','')
 

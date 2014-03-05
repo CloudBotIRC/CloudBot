@@ -72,7 +72,7 @@ def timesince(d, now=None):
     since = delta.days * 24 * 60 * 60 + delta.seconds
     if since <= 0:
         # d is in the future compared to now, stop processing.
-        return u'0 ' + 'minutes'
+        return '0 ' + 'minutes'
     for i, (seconds, name) in enumerate(chunks):
         count = since // seconds
         if count != 0:

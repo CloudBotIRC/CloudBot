@@ -37,4 +37,4 @@ def pre(inp):
 
     return '{} - {}{} - {} ({} ago)'.format(section, name, size, date_string, since)
 
-print pre("top gear")
+print(pre("top gear"))

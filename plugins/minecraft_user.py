@@ -87,15 +87,15 @@ def mcuser(inp):
         profile["lt"] = ", legacy" if profile["legacy"] else ""
 
         if profile["paid"]:
-            return u"The account \x02{name}\x02 ({id}{lt}) exists. It is a \x02paid\x02" \
-                   u" account.".format(**profile)
+            return "The account \x02{name}\x02 ({id}{lt}) exists. It is a \x02paid\x02" \
+                   " account.".format(**profile)
         else:
-            return u"The account \x02{name}\x02 ({id}{lt}) exists. It \x034\x02is NOT\x02\x0f a paid" \
-                   u" account.".format(**profile)
+            return "The account \x02{name}\x02 ({id}{lt}) exists. It \x034\x02is NOT\x02\x0f a paid" \
+                   " account.".format(**profile)
     elif name_status == "free":
-        return u"The account \x02{}\x02 does not exist.".format(user)
+        return "The account \x02{}\x02 does not exist.".format(user)
     elif name_status == "invalid":
-        return u"The name \x02{}\x02 contains invalid characters.".format(user)
+        return "The name \x02{}\x02 contains invalid characters.".format(user)
     else:
         # if you see this, panic
         return "Unknown Error."

@@ -45,7 +45,7 @@ def mcwiki(inp):
             summary = " ".join(p.text_content().splitlines())
             summary = re.sub("\[\d+\]", "", summary)
             summary = text.truncate_str(summary, 200)
-            return u"{} :: {}".format(summary, url)
+            return "{} :: {}".format(summary, url)
 
     # this shouldn't happen
     return "Unknown Error."

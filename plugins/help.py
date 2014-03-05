@@ -10,7 +10,7 @@ def help_command(inp, notice=None, conn=None, bot=None):
     funcs = {}
     disabled = bot.config.get('disabled_plugins', [])
     disabled_comm = bot.config.get('disabled_commands', [])
-    for command, (func, args) in bot.commands.iteritems():
+    for command, (func, args) in bot.commands.items():
         fn = re.match(r'^plugins.(.+).py$', func._filename)
         if fn.group(1).lower() not in disabled:
             if command not in disabled_comm:
@@ -21,7 +21,7 @@ def help_command(inp, notice=None, conn=None, bot=None):
                     else:
                         funcs[func] = command
 
-    commands = dict((value, key) for key, value in funcs.iteritems())
+    commands = dict((value, key) for key, value in funcs.items())
 
     if not inp:
         out = [""]

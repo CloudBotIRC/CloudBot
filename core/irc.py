@@ -2,7 +2,7 @@ import re
 import socket
 import time
 import threading
-import Queue
+import queue
 
 from core import permissions
 
@@ -30,7 +30,7 @@ def censor(text):
 class ReceiveThread(threading.Thread):
     """receives messages from IRC and puts them in the input_queue"""
     def __init__(self, sock, input_queue, timeout):
-        self.input_buffer = ""
+        self.input_buffer = b""
         self.input_queue = input_queue
         self.socket = sock
         self.timeout = timeout
@@ -70,8 +70,9 @@ class ReceiveThread(threading.Thread):
                     return
                 continue
 
-            while '\r\n' in self.input_buffer:
-                line, self.input_buffer = self.input_buffer.split('\r\n', 1)
+            while b'\r\n' in self.input_buffer:
+                line, self.input_buffer = self.input_buffer.split(b'\r\n', 1)
+                print(decode(line))
                 self.input_queue.put(decode(line))
 
 
@@ -95,7 +96,7 @@ class SSLReceiveThread(ReceiveThread):
 class SendThread(threading.Thread):
     """sends messages from output_queue to IRC"""
     def __init__(self, sock, conn_name, output_queue):
-        self.output_buffer = ""
+        self.output_buffer = b""
         self.output_queue = output_queue
         self.conn_name = conn_name
         self.socket = sock
@@ -106,7 +107,7 @@ class SendThread(threading.Thread):
     def run(self):
         while not self.shutdown:
             line = self.output_queue.get().splitlines()[0][:500]
-            self.output_buffer += line.encode('utf-8', 'replace') + '\r\n'
+            self.output_buffer += line.encode('utf-8', 'replace') + b'\r\n'
             while self.output_buffer:
                 sent = self.socket.send(self.output_buffer)
                 self.output_buffer = self.output_buffer[sent:]
@@ -215,13 +216,13 @@ class IRC(object):
         self.vars = {}
         self.history = {}
 
-        self.parsed_queue = Queue.Queue()  # responses from the server are placed here
+        self.parsed_queue = queue.Queue()  # responses from the server are placed here
         # format: [rawline, prefix, command, params,
         # nick, user, host, paramlist, msg]
 
-        self.parsed_queue = Queue.Queue()
-        self.input_queue = Queue.Queue()
-        self.output_queue = Queue.Queue()
+        self.parsed_queue = queue.Queue()
+        self.input_queue = queue.Queue()
+        self.output_queue = queue.Queue()
 
         # create the IRC connection and connect
         self.connection = self.create_connection()
@@ -270,19 +271,19 @@ class IRC(object):
 
     def ctcp(self, target, ctcp_type, text):
         """ makes the bot send a PRIVMSG CTCP to a target """
-        out = u"\x01{} {}\x01".format(ctcp_type, text)
+        out = "\x01{} {}\x01".format(ctcp_type, text)
         self.cmd("PRIVMSG", [target, out])
 
     def cmd(self, command, params=None):
         if params:
-            params[-1] = u':' + params[-1]
-            self.send(u"{} {}".format(command, ' '.join(params)))
+            params[-1] = ':' + params[-1]
+            self.send("{} {}".format(command, ' '.join(params)))
         else:
             self.send(command)
 
     def send(self, string):
         try:
-            self.logger.info(u"{} >> {}".format(self.name.upper(), string))
+            self.logger.info("{} >> {}".format(self.name.upper(), string))
         except:
             # if this doesn't work, no big deal
             pass

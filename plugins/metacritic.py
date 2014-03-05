@@ -1,7 +1,7 @@
 # metacritic.com scraper
 
 import re
-from urllib2 import HTTPError
+from urllib.error import HTTPError
 
 from util import hook, http
 

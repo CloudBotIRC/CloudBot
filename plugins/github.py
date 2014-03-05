@@ -1,5 +1,5 @@
 import json
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 from util import hook, http
 
@@ -43,12 +43,12 @@ def ghissues(inp):
         number = False
     try:
         data = json.loads(http.open(url).read())
-        print url
+        print(url)
         if not number:
             try:
                 data = data[0]
             except IndexError:
-                print data
+                print(data)
                 return "Repo has no open issues"
     except ValueError:
         return "Invalid data returned. Check arguments (.github issues username/repo [number]"
@@ -56,9 +56,9 @@ def ghissues(inp):
     fmt1 = "Issue: #%s (%s) by %s: %s %s"  # (number, state, user.login, title, gitio.gitio(data.url))
     number = data["number"]
     if data["state"] == "open":
-        state = u"\x033\x02OPEN\x02\x0f"
+        state = "\x033\x02OPEN\x02\x0f"
     else:
-        state = u"\x034\x02CLOSED\x02\x0f by {}".format(data["closed_by"]["login"])
+        state = "\x034\x02CLOSED\x02\x0f by {}".format(data["closed_by"]["login"])
     user = data["user"]["login"]
     title = data["title"]
     summary = truncate(data["body"])
@@ -93,12 +93,12 @@ def gitio(inp):
     url = 'url=' + str(url)
     if code:
         url = url + '&code=' + str(code)
-    req = urllib2.Request(url='http://git.io', data=url)
+    req = urllib.request.Request(url='http://git.io', data=url)
 
     # try getting url, catch http error
     try:
-        f = urllib2.urlopen(req)
-    except urllib2.HTTPError:
+        f = urllib.request.urlopen(req)
+    except urllib.error.HTTPError:
         return "Failed to get URL!"
     urlinfo = str(f.info())
 
@@ -110,7 +110,7 @@ def gitio(inp):
         if row.find("Location") != -1:
             location = row
 
-    print status
+    print(status)
     if not "201" in status:
         return "Failed to get URL!"
 

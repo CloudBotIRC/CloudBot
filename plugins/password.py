@@ -29,7 +29,7 @@ def password(inp, notice=None):
 
     # add numbers
     if "numeric" in inp or "number" in inp:
-        okay = okay + [str(x) for x in xrange(0, 10)]
+        okay = okay + [str(x) for x in range(0, 10)]
 
     # add symbols
     if "symbol" in inp:

@@ -6,8 +6,8 @@
 
 import re
 
-from HTMLParser import HTMLParser
-import htmlentitydefs
+from html.parser import HTMLParser
+import html.entities
 
 
 class HTMLTextExtractor(HTMLParser):
@@ -19,15 +19,15 @@ class HTMLTextExtractor(HTMLParser):
         self.result.append(d)
 
     def handle_charref(self, number):
-        codepoint = int(number[1:], 16) if number[0] in (u'x', u'X') else int(number)
-        self.result.append(unichr(codepoint))
+        codepoint = int(number[1:], 16) if number[0] in ('x', 'X') else int(number)
+        self.result.append(chr(codepoint))
 
     def handle_entityref(self, name):
-        codepoint = htmlentitydefs.name2codepoint[name]
-        self.result.append(unichr(codepoint))
+        codepoint = html.entities.name2codepoint[name]
+        self.result.append(chr(codepoint))
 
     def get_text(self):
-        return u''.join(self.result)
+        return ''.join(self.result)
 
 
 def strip_html(html):
@@ -39,7 +39,7 @@ def strip_html(html):
 def munge(text, munge_count=0):
     """munges up text."""
     reps = 0
-    for n in xrange(len(text)):
+    for n in range(len(text)):
         rep = character_replacements.get(text[n])
         if rep:
             text = text[:n] + rep.decode('utf8') + text[n + 1:]

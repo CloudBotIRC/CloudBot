@@ -161,9 +161,9 @@ def munge(inp):
 
 @hook.command
 def rainbow(inp):
-    inp = unicode(inp)
+    inp = str(inp)
     inp = strip(inp)
-    col = colors.items()
+    col = list(colors.items())
     out = ""
     l = len(colors)
     for i, t in enumerate(inp):
@@ -176,8 +176,8 @@ def rainbow(inp):
 
 @hook.command
 def wrainbow(inp):
-    inp = unicode(inp)
-    col = colors.items()
+    inp = str(inp)
+    col = list(colors.items())
     inp = strip(inp).split(' ')
     out = []
     l = len(colors)

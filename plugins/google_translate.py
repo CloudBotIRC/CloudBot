@@ -3,7 +3,7 @@ A Google API key is required and retrieved from the bot config file.
 Since December 1, 2011, the Google Translate API is a paid service only.
 """
 
-import htmlentitydefs
+import html.entities
 import re
 
 from util import hook, http
@@ -22,15 +22,15 @@ def unescape(text):
             # character reference
             try:
                 if text[:3] == "&#x":
-                    return unichr(int(text[3:-1], 16))
+                    return chr(int(text[3:-1], 16))
                 else:
-                    return unichr(int(text[2:-1]))
+                    return chr(int(text[2:-1]))
             except ValueError:
                 pass
         else:
             # named entity
             try:
-                text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
+                text = chr(html.entities.name2codepoint[text[1:-1]])
             except KeyError:
                 pass
         return text  # leave as is
@@ -83,7 +83,7 @@ def translate(inp, bot=None):
     if not api_key:
         return "This command requires a paid API key."
 
-    args = inp.split(u' ', 2)
+    args = inp.split(' ', 2)
 
     try:
         if len(args) >= 2:
@@ -100,7 +100,7 @@ def translate(inp, bot=None):
                     return goog_trans(api_key, args[1] + ' ' + args[2], sl, 'en')
                 return goog_trans(api_key, args[2], sl, tl)
         return goog_trans(api_key, inp, '', 'en')
-    except IOError, e:
+    except IOError as e:
         return e
 
 

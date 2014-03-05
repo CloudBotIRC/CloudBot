@@ -22,7 +22,7 @@ def reddit_url(match):
     timeago = thread.xpath("//div[@id='siteTable']//p[@class='tagline']/time/text()")[0]
     comments = thread.xpath("//div[@id='siteTable']//a[@class='comments']/text()")[0]
 
-    return u'\x02{}\x02 - posted by \x02{}\x02 {} ago - {} upvotes, {} downvotes - {}'.format(
+    return '\x02{}\x02 - posted by \x02{}\x02 {} ago - {} upvotes, {} downvotes - {}'.format(
         title, author, timeago, upvotes, downvotes, comments)
 
 
@@ -74,6 +74,6 @@ def reddit(inp):
     else:
         item["warning"] = ""
 
-    return u"\x02{title} : {subreddit}\x02 - posted by \x02{author}\x02" \
+    return "\x02{title} : {subreddit}\x02 - posted by \x02{author}\x02" \
            " {timesince} ago - {ups} upvotes, {downs} downvotes -" \
            " {link}{warning}".format(**item)

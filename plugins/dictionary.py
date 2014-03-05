@@ -41,7 +41,7 @@ def define(inp):
         for article in sections:
             result += article[0]
             if len(article) > 2:
-                result += u' '.join(u'{}. {}'.format(n + 1, section)
+                result += ' '.join('{}. {}'.format(n + 1, section)
                                     for n, section in enumerate(article[1:]))
             else:
                 result += article[1] + ' '

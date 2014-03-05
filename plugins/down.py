@@ -1,4 +1,4 @@
-import urlparse
+import urllib.parse
 
 from util import hook, http
 
@@ -10,7 +10,7 @@ def down(inp):
     if 'http://' not in inp:
         inp = 'http://' + inp
 
-    inp = 'http://' + urlparse.urlparse(inp).netloc
+    inp = 'http://' + urllib.parse.urlparse(inp).netloc
 
     # http://mail.python.org/pipermail/python-list/2006-December/589854.html
     try:

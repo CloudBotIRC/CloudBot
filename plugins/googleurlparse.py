@@ -1,5 +1,5 @@
 from util import hook
-from urllib import unquote
+from urllib.parse import unquote
 
 @hook.command(autohelp=False)
 def googleurl(inp, db=None, nick=None):

@@ -1,4 +1,4 @@
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import json
 import re
 
@@ -11,7 +11,7 @@ def getdata(inp, types, api_key, api_secret):
     consumer = oauth.Consumer(api_key, api_secret)
     client = oauth.Client(consumer)
     response = client.request('http://api.rdio.com/1/', 'POST',
-                              urllib.urlencode({'method': 'search', 'query': inp, 'types': types, 'count': '1'}))
+                              urllib.parse.urlencode({'method': 'search', 'query': inp, 'types': types, 'count': '1'}))
     data = json.loads(response[1])
     return data
 
@@ -34,16 +34,16 @@ def rdio(inp, bot=None):
             artist = info['artist']
             album = info['album']
             url = info['shortUrl']
-            return u"\x02{}\x02 by \x02{}\x02 - {} {}".format(name, artist, album, url)
+            return "\x02{}\x02 by \x02{}\x02 - {} {}".format(name, artist, album, url)
         elif 'artist' in info and not 'album' in info:  # Album
             name = info['name']
             artist = info['artist']
             url = info['shortUrl']
-            return u"\x02{}\x02 by \x02{}\x02 - {}".format(name, artist, url)
+            return "\x02{}\x02 by \x02{}\x02 - {}".format(name, artist, url)
         else:  # Artist
             name = info['name']
             url = info['shortUrl']
-            return u"\x02{}\x02 - {}".format(name, url)
+            return "\x02{}\x02 - {}".format(name, url)
 
 
 @hook.command
@@ -62,7 +62,7 @@ def rdiot(inp, bot=None):
     artist = info['artist']
     album = info['album']
     url = info['shortUrl']
-    return u"\x02{}\x02 by \x02{}\x02 - {} - {}".format(name, artist, album, url)
+    return "\x02{}\x02 by \x02{}\x02 - {} - {}".format(name, artist, album, url)
 
 
 @hook.command
@@ -79,7 +79,7 @@ def rdioar(inp, bot=None):
         return "No results."
     name = info['name']
     url = info['shortUrl']
-    return u"\x02{}\x02 - {}".format(name, url)
+    return "\x02{}\x02 - {}".format(name, url)
 
 
 @hook.command
@@ -97,7 +97,7 @@ def rdioal(inp, bot=None):
     name = info['name']
     artist = info['artist']
     url = info['shortUrl']
-    return u"\x02{}\x02 by \x02{}\x02 - {}".format(name, artist, url)
+    return "\x02{}\x02 by \x02{}\x02 - {}".format(name, artist, url)
 
 
 rdio_re = (r'(.*:)//(rd.io|www.rdio.com|rdio.com)(:[0-9]+)?(.*)', re.I)
@@ -113,7 +113,7 @@ def rdio_url(match, bot=None):
     consumer = oauth.Consumer(api_key, api_secret)
     client = oauth.Client(consumer)
     response = client.request('http://api.rdio.com/1/', 'POST',
-                              urllib.urlencode({'method': 'getObjectFromUrl', 'url': url}))
+                              urllib.parse.urlencode({'method': 'getObjectFromUrl', 'url': url}))
     data = json.loads(response[1])
     info = data['result']
     if 'name' in info:
@@ -121,11 +121,11 @@ def rdio_url(match, bot=None):
             name = info['name']
             artist = info['artist']
             album = info['album']
-            return u"Rdio track: \x02{}\x02 by \x02{}\x02 - {}".format(name, artist, album)
+            return "Rdio track: \x02{}\x02 by \x02{}\x02 - {}".format(name, artist, album)
         elif 'artist' in info and not 'album' in info:  # Album
             name = info['name']
             artist = info['artist']
-            return u"Rdio album: \x02{}\x02 by \x02{}\x02".format(name, artist)
+            return "Rdio album: \x02{}\x02 by \x02{}\x02".format(name, artist)
         else:  # Artist
             name = info['name']
-            return u"Rdio artist: \x02{}\x02".format(name)
+            return "Rdio artist: \x02{}\x02".format(name)

@@ -1,4 +1,4 @@
-import urlparse
+import urllib.parse
 
 from util import hook, http, urlnorm
 
@@ -8,14 +8,15 @@ def isup(inp):
     """isup -- uses isup.me to see if a site is up or not"""
 
     # slightly overcomplicated, esoteric URL parsing
-    scheme, auth, path, query, fragment = urlparse.urlsplit(inp.strip())
+    scheme, auth, path, query, fragment = urllib.parse.urlsplit(inp.strip())
 
     domain = auth.encode('utf-8') or path.encode('utf-8')
     url = urlnorm.normalize(domain, assume_scheme="http")
 
     try:
         soup = http.get_soup('http://isup.me/' + domain)
-    except http.HTTPError, http.URLError:
+    except http.HTTPError as xxx_todo_changeme:
+        http.URLError = xxx_todo_changeme
         return "Could not get status."
 
     content = soup.find('div').text.strip()

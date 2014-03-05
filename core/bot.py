@@ -2,7 +2,7 @@ import time
 import logging
 import re
 import os
-import Queue
+import queue
 import collections
 import threading
 
@@ -60,11 +60,11 @@ class Bot(threading.Thread):
 
         # start IRC connections
         self.connect()
-        print self.connections
+        print(self.connections)
 
         for conn in self.connections:
             conn.permissions = PermissionManager(self, conn)
-            print conn
+            print(conn)
 
         # run plugin loader
         self.plugins = collections.defaultdict(list)
@@ -82,11 +82,11 @@ class Bot(threading.Thread):
                 try:
                     incoming = conn.parsed_queue.get_nowait()
                     if incoming == StopIteration:
-                        print "StopIteration"
+                        print("StopIteration")
                         # IRC engine has signalled timeout, so reconnect (ugly)
                         conn.connection.reconnect()
                     main.main(self, conn, incoming)
-                except Queue.Empty:
+                except queue.Empty:
                     pass
 
             # if no messages are in the incoming queue, sleep

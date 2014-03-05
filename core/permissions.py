@@ -24,7 +24,7 @@ class PermissionManager(object):
         self.logger.info("Reloading permissions for {}.".format(self.conn.name))
         groups = self.conn.config.get("permissions", [])
         # work out the permissions and users each group has
-        for key, value in groups.iteritems():
+        for key, value in groups.items():
             self.group_perms[key] = []
             self.group_users[key] = []
             for permission in value["perms"]:
@@ -32,7 +32,7 @@ class PermissionManager(object):
             for user in value["users"]:
                 self.group_users[key].append(user)
 
-        for group, users in self.group_users.iteritems():
+        for group, users in self.group_users.items():
             group_perms = self.group_perms[group]
             for perm in group_perms:
                 self.perm_users[perm] = []

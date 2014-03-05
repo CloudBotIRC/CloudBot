@@ -20,4 +20,4 @@ def title(inp):
     if not page_title:
         return "Could not find title."
 
-    return u"{} [{}]".format(page_title, real_url)
+    return "{} [{}]".format(page_title, real_url)

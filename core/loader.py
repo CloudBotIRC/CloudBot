@@ -10,7 +10,7 @@ from core import main
 
 
 def make_signature(f):
-    return f.func_code.co_filename, f.func_name, f.func_code.co_firstlineno
+    return f.__code__.co_filename, f.__name__, f.__code__.co_firstlineno
 
 
 def format_plug(plug, kind='', lpad=0):
@@ -71,19 +71,19 @@ class PluginLoader(object):
             return
 
         # remove plugins already loaded from this file
-        for name, data in self.bot.plugins.iteritems():
+        for name, data in self.bot.plugins.items():
             self.bot.plugins[name] = [x for x in data
                                 if x[0]._filename != filename]
 
         # stop all currently running instances of the plugins from this file
-        for func, handler in list(self.bot.threads.iteritems()):
+        for func, handler in list(self.bot.threads.items()):
             if func._filename == filename:
                 handler.stop()
                 del self.bot.threads[func]
 
         # find objects with hooks in the plugin namespace
         # TODO: kill it with fire, kill it all
-        for obj in namespace.itervalues():
+        for obj in namespace.values():
             if hasattr(obj, '_hook'):  # check for magic
                 if obj._thread:
                     self.bot.threads[obj] = main.Handler(self.bot, obj)
@@ -104,11 +104,11 @@ class PluginLoader(object):
         self.bot.logger.info("Unloading plugins from: {}".format(filename))
 
         # remove plugins loaded from this file
-        for plugin_type, plugins in self.bot.plugins.iteritems():
+        for plugin_type, plugins in self.bot.plugins.items():
             self.bot.plugins[plugin_type] = [x for x in plugins if x[0]._filename != filename]
 
         # stop all currently running instances of the plugins from this file
-        for func, handler in list(self.bot.threads.iteritems()):
+        for func, handler in list(self.bot.threads.items()):
             if func._filename == filename:
                 handler.stop()
                 del self.bot.threads[func]

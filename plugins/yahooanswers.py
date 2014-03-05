@@ -13,4 +13,4 @@ def answer(inp):
     # we split the answer and .join() it to remove newlines/extra spaces
     answer_text = text.truncate_str(' '.join(result["ChosenAnswer"].split()), 80)
 
-    return u'\x02{}\x02 "{}" - {}'.format(result["Subject"], answer_text, short_url)
+    return '\x02{}\x02 "{}" - {}'.format(result["Subject"], answer_text, short_url)

@@ -1,11 +1,11 @@
-import thread
+import _thread
 import traceback
-import Queue
+import queue
 import re
 
 from sqlalchemy.orm import scoped_session
 
-thread.stack_size(1024 * 512)  # reduce vm size
+_thread.stack_size(1024 * 512)  # reduce vm size
 
 
 class Input(dict):
@@ -25,7 +25,7 @@ class Input(dict):
             if target == nick:
                 conn.msg(target, message)
             else:
-                conn.msg(target, u"({}) {}".format(nick, message))
+                conn.msg(target, "({}) {}".format(nick, message))
 
         def action(message, target=chan):
             """sends an action to the current channel/user or a specific channel/user"""
@@ -76,7 +76,7 @@ def run(bot, func, input):
                 return
             finally:
                 if uses_db:
-                    print "Close"
+                    print("Close")
                     input.db.close()
         else:
             kw = dict((key, input[key]) for key in args if key in input)
@@ -96,7 +96,7 @@ def run(bot, func, input):
             bot.logger.exception("Error in plugin {}:".format(func._filename))
             return
     if out is not None:
-        input.reply(unicode(out))
+        input.reply(str(out))
 
 
 def do_sieve(sieve, bot, input, func, type, args):
@@ -113,8 +113,8 @@ class Handler(object):
     def __init__(self, bot, func):
         self.func = func
         self.bot = bot
-        self.input_queue = Queue.Queue()
-        thread.start_new_thread(self.start, ())
+        self.input_queue = queue.Queue()
+        _thread.start_new_thread(self.start, ())
 
     def start(self):
         uses_db = 'db' in self.func._args
@@ -157,14 +157,14 @@ def dispatch(bot, input, kind, func, args, autohelp=False):
     if func._thread:
         bot.threads[func].put(input)
     else:
-        thread.start_new_thread(run, (bot, func, input))
+        _thread.start_new_thread(run, (bot, func, input))
 
 
 def match_command(bot, command):
     commands = list(bot.commands)
 
     # do some fuzzy matching
-    prefix = filter(lambda x: x.startswith(command), commands)
+    prefix = [x for x in commands if x.startswith(command)]
     if len(prefix) == 1:
         return prefix[0]
     elif prefix and command not in prefix:

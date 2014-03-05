@@ -111,6 +111,6 @@ def log(paraml, input=None, bot=None):
         fd = get_log_fd(bot.data_dir, input.server, input.chan)
         fd.write(timestamp + ' ' + beau + '\n')
 
-    out = "{} {} {}".format(timestamp, input.chan, beau.encode('utf8', 'ignore'))
+    out = "{} {} {}".format(timestamp, input.chan, beau)
 
     bot.logger.debug(out)

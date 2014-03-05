@@ -1,5 +1,5 @@
 import re
-from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 
 from util import hook, http
 
@@ -36,7 +36,7 @@ def multitwitch_url(match):
     out = ""
     for i in usernames:
         if not test(i):
-            print "Not a valid username"
+            print("Not a valid username")
             return None
         if out == "":
             out = twitch_lookup(i)
@@ -50,7 +50,7 @@ def twitch_url(match):
     bit = match.group(4).split("#")[0]
     location = "/".join(bit.split("/")[1:])
     if not test(location):
-        print "Not a valid username"
+        print("Not a valid username")
         return None
     return twitch_lookup(location)
 
@@ -100,9 +100,9 @@ def twitch_lookup(location):
             title = data['title']
             playing = data['meta_game']
             viewers = "\x033\x02Online now!\x02\x0f " + str(data["channel_count"]) + " viewer"
-            print viewers
+            print(viewers)
             viewers = viewers + "s" if not " 1 view" in viewers else viewers
-            print viewers
+            print(viewers)
             return h.unescape(fmt.format(title, channel, playing, viewers))
         else:
             try:

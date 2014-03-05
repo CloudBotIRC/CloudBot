@@ -1,7 +1,7 @@
 import os.path
 import json
 import gzip
-from StringIO import StringIO
+from io import StringIO
 
 import pygeoip
 

@@ -44,7 +44,7 @@ def get_episode_info(episode, api_key):
     first_aired = episode.findtext("FirstAired")
 
     try:
-        air_date = datetime.date(*map(int, first_aired.split('-')))
+        air_date = datetime.date(*list(map(int, first_aired.split('-'))))
     except (ValueError, TypeError):
         return None
 

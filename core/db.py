@@ -1,6 +1,6 @@
 import os
 import sqlite3
-import thread
+import _thread
 
 threaddbs = {}
 
@@ -11,7 +11,7 @@ def get_db_connection(conn, name=''):
     if not name:
         name = '{}.db'.format(conn.name)
 
-    threadid = thread.get_ident()
+    threadid = _thread.get_ident()
     if name in threaddbs and threadid in threaddbs[name]:
         return threaddbs[name][threadid]
     filename = os.path.join(bot.data_dir, name)

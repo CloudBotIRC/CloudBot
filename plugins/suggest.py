@@ -18,7 +18,7 @@ def suggest(inp):
     if not suggestions:
         return 'no suggestions found'
 
-    out = u", ".join(suggestions)
+    out = ", ".join(suggestions)
 
     # defuckify text
     soup = BeautifulSoup(out)

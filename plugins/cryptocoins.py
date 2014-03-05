@@ -8,15 +8,6 @@ exchanges = {
         "func": lambda data: u"Blockchain // Buy: \x0307${:,.2f}\x0f -"
                              u" Sell: \x0307${:,.2f}\x0f".format(data["USD"]["buy"], data["USD"]["sell"])
     },
-    "mtgox": {
-        "api_url": "https://mtgox.com/api/1/BTCUSD/ticker",
-        "func": lambda data: u"MtGox // Current: \x0307{}\x0f - High: \x0307{}\x0f - Low: \x0307{}\x0f"
-                             u" - Best Ask: \x0307{}\x0f - Volume: {}".format(data['return']['last']['display'],
-                                                                              data['return']['high']['display'],
-                                                                              data['return']['low']['display'],
-                                                                              data['return']['buy']['display'],
-                                                                              data['return']['vol']['display'])
-    },
     "coinbase": {
         "api_url": "https://coinbase.com/api/v1/prices/spot_rate",
         "func": lambda data: u"Coinbase // Current: \x0307${:,.2f}\x0f".format(float(data['amount']))

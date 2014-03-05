@@ -18,37 +18,27 @@ def mcstatus(inp):
     out = []
 
     # use a loop so we don't have to update it if they add more servers
-    yes = []
-    no = []
+    green = []
+    yellow = []
+    red = []
     for server, status in data.items():
         if status == "green":
-            yes.append(server)
+            green.append(server)
+        elif status == "yellow":
+            yellow.append(server)
         else:
-            no.append(server)
-    if yes:
-        out = "\x033\x02Online\x02\x0f: " + ", ".join(yes)
-        if no:
+            red.append(server)
+
+    if green:
+        out = "\x033\x02Online\x02\x0f: " + ", ".join(green)
+        if yellow:
             out += " "
-    if no:
-        out += "\x034\x02Offline\x02\x0f: " + ", ".join(no)
+    if yellow:
+        out += "\x02Issues\x02: " + ", ".join(yellow)
+        if red:
+            out += " "
+    if red:
+        out += "\x034\x02Offline\x02\x0f: " + ", ".join(red)
 
     return "\x0f" + out.replace(".mojang.com", ".mj") \
                        .replace(".minecraft.net", ".mc")
-
-
-@hook.command("haspaid")
-@hook.command
-def mcpaid(inp):
-    """mcpaid <username> -- Checks if <username> has a premium Minecraft account."""
-
-    user = inp.strip()
-
-    try:
-        status = http.get("http://www.minecraft.net/haspaid.jsp", user=user)
-    except (http.URLError, http.HTTPError) as e:
-        return "Unable to get user registration status: {}".format(e)
-
-    if "true" in status:
-        return 'The account "{}" is a premium Minecraft account!'.format(inp)
-    else:
-        return 'The account "{}" is not a premium Minecraft account!'.format(inp)

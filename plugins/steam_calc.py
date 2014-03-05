@@ -38,12 +38,14 @@ def steamcalc(inp, reply=None):
     """steamcalc <username> [currency] - Gets value of steam account and
        total hours played. Uses steamcommunity.com/id/<nickname>. """
 
-    name = inp.strip()
+    # check if the user asked us to force reload
+    force_reload = inp.endswith(" forcereload")
+    if force_reload:
+        name = inp[:-12].strip().lower()
+    else:
+        name = inp.strip()
 
-    try:
-        request = get_data(name)
-        do_refresh = True
-    except (http.HTTPError, http.URLError):
+    if force_reload:
         try:
             reply("Collecting data, this may take a while.")
             refresh_data(name)
@@ -51,6 +53,18 @@ def steamcalc(inp, reply=None):
             do_refresh = False
         except (http.HTTPError, http.URLError):
             return "Could not get data for this user."
+    else:
+        try:
+            request = get_data(name)
+            do_refresh = True
+        except (http.HTTPError, http.URLError):
+            try:
+                reply("Collecting data, this may take a while.")
+                refresh_data(name)
+                request = get_data(name)
+                do_refresh = False
+            except (http.HTTPError, http.URLError):
+                return "Could not get data for this user."
 
     csv_data = StringIO.StringIO(request)  # we use StringIO because CSV can't read a string
     reader = unicode_dictreader(csv_data)

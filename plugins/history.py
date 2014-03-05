@@ -1,30 +1,25 @@
-"""seen.py: written by sklnd in about two beers July 2009"""
-
+from collections import deque
+from util import hook, timesince
 import time
 import re
 
-from util import hook, timesince
+db_ready = []
 
 
-db_ready = False
-
-
-def db_init(db):
-    """check to see that our db has the the seen table and return a connection."""
+def db_init(db, conn_name):
+    """check to see that our db has the the seen table (connection name is for caching the result per connection)"""
     global db_ready
-    if not db_ready:
+    if db_ready.count(conn_name) < 1:
         db.execute("create table if not exists seen_user(name, time, quote, chan, host, "
                    "primary key(name, chan))")
         db.commit()
-        db_ready = True
+        db_ready.append(conn_name)
 
 
-@hook.singlethread
-@hook.event('PRIVMSG', ignorebots=False)
-def seen_sieve(paraml, input=None, db=None):
-    if not db_ready:
-        db_init(db)
-        # keep private messages private
+def track_seen(input, message_time, db, conn):
+    """ Tracks messages for the .seen command """
+    db_init(db, conn)
+    # keep private messages private
     if input.chan[:1] == "#" and not re.findall('^s/.*/.*/$', input.msg.lower()):
         db.execute("insert or replace into seen_user(name, time, quote, chan, host)"
                    "values(:name,:time,:quote,:chan,:host)", {'name': input.nick.lower(),
@@ -35,8 +30,38 @@ def seen_sieve(paraml, input=None, db=None):
         db.commit()
 
 
+def track_history(input, message_time, conn):
+    try:
+        history = conn.history[input.chan]
+    except KeyError:
+        conn.history[input.chan] = deque(maxlen=100)
+        history = conn.history[input.chan]
+
+    data = (input.nick, message_time, input.msg)
+    history.append(data)
+
+
+@hook.singlethread
+@hook.event('PRIVMSG', ignorebots=False)
+def chat_tracker(paraml, input=None, db=None, conn=None):
+    message_time = time.time()
+    track_seen(input, message_time, db, conn)
+    track_history(input, message_time, conn)
+
+
+@hook.command(autohelp=False)
+def resethistory(inp, input=None, conn=None):
+    """resethistory - Resets chat history for the current channel"""
+    try:
+        conn.history[input.chan].clear()
+        return "Reset chat history for current channel."
+    except KeyError:
+        # wat
+        return "There is no history for this channel."
+
+
 @hook.command
-def seen(inp, nick='', chan='', db=None, input=None):
+def seen(inp, nick='', chan='', db=None, input=None, conn=None):
     """seen <nick> <channel> -- Tell when a nickname was last in active in one of this bot's channels."""
 
     if input.conn.nick.lower() == inp.lower():
@@ -48,8 +73,7 @@ def seen(inp, nick='', chan='', db=None, input=None):
     if not re.match("^[A-Za-z0-9_|.\-\]\[]*$", inp.lower()):
         return "I can't look up that name, its impossible to use!"
 
-    if not db_ready:
-        db_init(db)
+    db_init(db, conn.name)
 
     last_seen = db.execute("select name, time, quote from seen_user where name"
                            " like :name and chan = :chan", {'name': inp, 'chan': chan}).fetchone()

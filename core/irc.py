@@ -213,6 +213,7 @@ class IRC(object):
         self.logger = logger
         self.nick = nick
         self.vars = {}
+        self.history = {}
 
         self.parsed_queue = Queue.Queue()  # responses from the server are placed here
         # format: [rawline, prefix, command, params,

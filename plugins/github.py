@@ -37,7 +37,7 @@ def ghissues(inp):
     except IndexError:
         return "Invalid syntax. .github issues username/repo [number]"
     try:
-        url += "/%s" % args[1]
+        url += "/{}".format(args[1])
         number = True
     except IndexError:
         number = False

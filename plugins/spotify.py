@@ -24,8 +24,8 @@ def sptfy(inp, sptfy=False):
             link = soup.find('div', {'class': 'resultLink'}).text.strip()
             return link
         except:
-            message = "Unable to shorten URL: %s" % \
-                      soup.find('div', {'class': 'messagebox_text'}).find('p').text.split("<br/>")[0]
+            message = "Unable to shorten URL: {}".format(soup.find('div', {
+                'class': 'messagebox_text'}).find('p').text.split("<br/>")[0])
             return message
     else:
         return web.try_isgd(inp)

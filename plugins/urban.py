@@ -41,7 +41,6 @@ def urban(inp):
 
     url = definitions[id_num - 1]['permalink']
 
-    output = "[%i/%i] %s :: %s" % \
-             (id_num, len(definitions), definition, url)
+    output = "[{}/{}] {} :: {}".format(id_num, len(definitions), definition, url)
 
     return output

@@ -7,8 +7,8 @@ import time
 import signal
 
 # check python version 
-if sys.version_info < (2, 7, 0):
-    print("CloudBot requires Python 2.7 or newer.")
+if sys.version_info < (3, 2, 0):
+    print("CloudBot3 requires Python 3.2 or newer.")
     sys.exit(1)
 
 # set up enviroment
@@ -18,10 +18,10 @@ os.chdir(sys.path[0] or '.')  # do stuff relative to the install directory
 if os.path.exists(os.path.abspath('lib')):
     sys.path += ['lib'] 
 
-print('CloudBot2 <http://git.io/cloudbotirc>')
+print('CloudBot3 <http://git.io/cloudbotirc>')
 
 def exit_gracefully(signum, frame):
-    # this doesn't really work that well
+    # this doesn't really work at all
     cloudbot.stop()
 
     # restore the original handler so if they do it again it triggers
@@ -42,6 +42,7 @@ while True:
     else:
         if cloudbot.do_restart:
             # create a new bot thread and start it
+            # THIS DOES NOT WORK
             del cloudbot
             cloudbot = bot.Bot()
             cloudbot.start()

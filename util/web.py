@@ -23,7 +23,7 @@ def isgd(url):
     """ shortens a URL with the is.gd API """
     url = urlnorm.normalize(url.encode('utf-8'), assume_scheme='http')
     params = urllib.parse.urlencode({'format': 'json', 'url': url})
-    request = http.get_json("http://is.gd/create.php?%s" % params)
+    request = http.get_json("http://is.gd/create.php?{}".format(params))
 
     if "errorcode" in request:
         raise ShortenError(request["errorcode"], request["errormessage"])

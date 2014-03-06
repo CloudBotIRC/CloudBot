@@ -41,8 +41,8 @@ def help_command(inp, notice=None, conn=None, bot=None):
         if len(out) > 1:
             for x in out[1:]:
                 notice(x)
-        notice("For detailed help, do '%shelp <example>' where <example> "
-               "is the name of the command you want help for." % conn.conf["command_prefix"])
+        notice("For detailed help, do '{}help <example>' where <example> "
+               "is the name of the command you want help for.".format(conn.conf["command_prefix"]))
 
     else:
         if inp in commands:

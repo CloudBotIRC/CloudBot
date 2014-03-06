@@ -11,10 +11,10 @@ months = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'Jun
 def xkcd_info(xkcd_id, url=False):
     """ takes an XKCD entry ID and returns a formatted string """
     data = http.get_json("http://www.xkcd.com/" + xkcd_id + "/info.0.json")
-    date = "%s %s %s" % (data['day'], months[int(data['month'])], data['year'])
+    date = "{} {} {}".format(data['day'], months[int(data['month'])], data['year'])
     if url:
         url = " | http://xkcd.com/" + xkcd_id.replace("/", "")
-    return "xkcd: \x02%s\x02 (%s)%s" % (data['title'], date, url if url else "")
+    return "xkcd: \x02{}\x02 ({}){}".format(data['title'], date, url if url else "")
 
 
 def xkcd_search(term):

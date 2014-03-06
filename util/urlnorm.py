@@ -40,7 +40,9 @@ class Normalizer(object):
 
 
 normalizers = (Normalizer(re.compile(
-    r'(?:https?://)?(?:[a-zA-Z0-9\-]+\.)?(?:amazon|amzn){1}\.(?P<tld>[a-zA-Z\.]{2,})\/(gp/(?:product|offer-listing|customer-media/product-gallery)/|exec/obidos/tg/detail/-/|o/ASIN/|dp/|(?:[A-Za-z0-9\-]+)/dp/)?(?P<ASIN>[0-9A-Za-z]{10})'),
+    r'(?:https?://)?(?:[a-zA-Z0-9\-]+\.)?(?:amazon|amzn){1}\.(?P<tld>[a-zA-Z\.]{2,})\/(gp/(?:product|offer-listing|cu'
+    r'stomer-media/product-gallery)/|exec/obidos/tg/detail/-/|o/ASIN/|dp/|(?:[A-Za-z0-9\-]+)/dp/)?(?P<ASIN>[0-9A-Za-z'
+    r']{10})'),
                           lambda m: r'http://amazon.%s/dp/%s' % (m.group('tld'), m.group('ASIN'))),
                Normalizer(re.compile(r'.*waffleimages\.com.*/([0-9a-fA-F]{40})'),
                           lambda m: r'http://img.waffleimages.com/%s' % m.group(1)),
@@ -131,7 +133,7 @@ def normalize(url, assume_scheme=False):
     if url.endswith("#") and query == "" and fragment == "":
         path += "#"
     normal_url = urllib.parse.urlunsplit((scheme, auth, path, query,
-                                      fragment)).replace("http:///", "http://")
+                                          fragment)).replace("http:///", "http://")
     for norm in normalizers:
         m = norm.regex.match(normal_url)
         if m:

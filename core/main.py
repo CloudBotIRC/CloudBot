@@ -126,7 +126,7 @@ class Handler(object):
 
             if uses_db:
                 # self.bot.logger.debug("Opened ST DB session for: {}".format(self.func._filename))
-                input.db  = input.bot.db_session()
+                input.db = input.bot.db_session()
 
             try:
                 run(self.bot, self.func, input)

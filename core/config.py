@@ -21,6 +21,7 @@ class Config(dict):
         # start watcher
         self.watcher()
 
+
     def load_config(self):
         """(re)loads the bot config from the config file"""
         if not os.path.exists(self.path):
@@ -41,12 +42,10 @@ class Config(dict):
             for conn in self.bot.connections:
                 conn.permissions.reload()
 
-
     def save_config(self):
         """saves the contents of the config dict to the config file"""
         json.dump(self, open(self.path, 'w'), sort_keys=True, indent=2)
         self.logger.info("Config saved to file.")
-
 
     def watcher(self):
         """starts the watchdog to automatically reload the config when it changes on disk"""

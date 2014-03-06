@@ -41,7 +41,7 @@ class TextGenerator(object):
 
         return text
 
-    def generate_strings(self, amount, template=None):
+    def generate_strings(self, amount):
         strings = []
         for i in range(amount):
             strings.append(self.generate_string())

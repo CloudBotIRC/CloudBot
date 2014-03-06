@@ -25,15 +25,16 @@ def sieve_suite(bot, input, func, kind, args):
 
         _bucket = buckets[uid]
         if _bucket.consume(MESSAGE_COST):
-            return input
+            pass
         else:
             print("pong!")
             return None
 
-
         disabled_commands = conn.config.get('disabled_commands', [])
         if input.trigger in disabled_commands:
             return None
+
+        return input
 
 
     acl = conn.config.get('acls', {}).get(func.__name__)

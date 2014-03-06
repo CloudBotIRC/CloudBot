@@ -11,7 +11,7 @@ if sys.version_info < (3, 2, 0):
     print("CloudBot3 requires Python 3.2 or newer.")
     sys.exit(1)
 
-# set up enviroment
+# set up environment
 os.chdir(sys.path[0] or '.')  # do stuff relative to the install directory
 
 # this is not the code you are looking for
@@ -19,6 +19,7 @@ if os.path.exists(os.path.abspath('lib')):
     sys.path += ['lib'] 
 
 print('CloudBot3 <http://git.io/cloudbotirc>')
+
 
 def exit_gracefully(signum, frame):
     # this doesn't really work at all
@@ -42,7 +43,7 @@ while True:
     else:
         if cloudbot.do_restart:
             # create a new bot thread and start it
-            # THIS DOES NOT WORK
+            # Todo: Make this work
             del cloudbot
             cloudbot = bot.Bot()
             cloudbot.start()

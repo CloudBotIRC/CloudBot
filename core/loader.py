@@ -73,7 +73,7 @@ class PluginLoader(object):
         # remove plugins already loaded from this file
         for name, data in self.bot.plugins.items():
             self.bot.plugins[name] = [x for x in data
-                                if x[0]._filename != filename]
+                                      if x[0]._filename != filename]
 
         # stop all currently running instances of the plugins from this file
         for func, handler in list(self.bot.threads.items()):
@@ -88,15 +88,14 @@ class PluginLoader(object):
                 if obj._thread:
                     self.bot.threads[obj] = main.Handler(self.bot, obj)
 
-                for type, data in obj._hook:
+                for plug_type, data in obj._hook:
                     # add plugin to the plugin list
-                    self.bot.plugins[type] += [data]
-                    self.bot.logger.info("Loaded plugin: {} ({})".format(format_plug(data), type))
+                    self.bot.plugins[plug_type] += [data]
+                    self.bot.logger.info("Loaded plugin: {} ({})".format(format_plug(data), plug_type))
 
         # do a rebuild, unless the bot is loading all plugins (rebuild happens after load_all)
         if not rebuild:
             self.rebuild()
-
 
     def unload_file(self, path):
         """unloads all loaded plugins from a specified file"""

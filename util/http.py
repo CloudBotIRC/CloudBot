@@ -2,13 +2,19 @@
 
 import http.cookiejar
 import json
-import urllib.request, urllib.parse, urllib.error
-import urllib.request, urllib.error, urllib.parse
+import urllib.request
 import urllib.parse
-from urllib.parse import quote, quote_plus as _quote_plus
+import urllib.error
+import urllib.request
+import urllib.error
+import urllib.parse
+import urllib.parse
+from urllib.parse import quote_plus as _quote_plus
+
+from bs4 import BeautifulSoup
 
 from lxml import etree, html
-from bs4 import BeautifulSoup
+
 from urllib.error import URLError, HTTPError
 
 ua_cloudbot = 'Cloudbot/DEV http://github.com/CloudDev/CloudBot'
@@ -92,7 +98,7 @@ def prepare_url(url, queries):
         query = dict(urllib.parse.parse_qsl(query))
         query.update(queries)
         query = urllib.parse.urlencode(dict((to_utf8(key), to_utf8(value))
-                                      for key, value in query.items()))
+                                            for key, value in query.items()))
 
         url = urllib.parse.urlunsplit((scheme, netloc, path, query, fragment))
 

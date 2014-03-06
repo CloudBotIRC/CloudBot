@@ -1,5 +1,6 @@
 from fnmatch import fnmatch
 
+
 class PermissionManager(object):
     def __init__(self, bot, conn):
 
@@ -12,7 +13,6 @@ class PermissionManager(object):
         self.bot = bot
         self.conn = conn
         self.config = conn.config
-
 
         self.group_perms = {}
         self.group_users = {}

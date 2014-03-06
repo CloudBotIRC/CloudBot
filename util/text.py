@@ -112,15 +112,16 @@ def capitalize_first(line):
     return ' '.join([s[0].upper() + s[1:] for s in line.split(' ')])
 
 
-def multiword_replace(text, wordDic):
+# TODO: rewrite to use a list of tuples
+def multiword_replace(text, word_dic):
     """
     take a text and replace words that match a key in a dictionary with
     the associated value, return the changed text
     """
-    rc = re.compile('|'.join(map(re.escape, wordDic)))
+    rc = re.compile('|'.join(map(re.escape, word_dic)))
 
     def translate(match):
-        return wordDic[match.group(0)]
+        return word_dic[match.group(0)]
     return rc.sub(translate, text)
 
 

@@ -1,13 +1,16 @@
 """ web.py - handy functions for web services """
 
+import json
+import urllib.request
+import urllib.parse
+import urllib.error
+
 from . import http
 from . import urlnorm
-import json
-import urllib.request, urllib.parse, urllib.error
+
 
 short_url = "http://is.gd/create.php"
 paste_url = "http://hastebin.com"
-
 
 
 class ShortenError(Exception):

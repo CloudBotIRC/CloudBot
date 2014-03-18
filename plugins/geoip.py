@@ -51,4 +51,4 @@ def geoip(inp):
     data["cc"] = record["country_code"] or "N/A"
     data["country"] = record["country_name"] or "Unknown"
     data["city"] = record["city"] or "Unknown"
-    return "\x02Country:\x02 {country} ({cc}), \x02City:\x02 {city}{region}".format(**data)
+    return u"\x02Country:\x02 {country} ({cc}), \x02City:\x02 {city}{region}".format(**data)

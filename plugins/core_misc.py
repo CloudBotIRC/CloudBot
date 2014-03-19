@@ -7,9 +7,6 @@ from util import hook
 
 socket.setdefaulttimeout(10)
 
-nick_re = re.compile(":(.+?)!")
-
-
 # Auto-join on Invite (Configurable, defaults to True)
 @hook.event('INVITE')
 def invite(paraml, conn=None):
@@ -51,25 +48,6 @@ def onjoin(paraml, conn=None, bot=None):
         time.sleep(1)
 
     bot.logger.info("ONJOIN hook completed. Bot ready.")
-
-
-@hook.event("KICK")
-def onkick(paraml, conn=None, chan=None):
-    # if the bot has been kicked, remove from the channel list
-    if paraml[1] == conn.nick:
-        conn.channels.remove(chan)
-        auto_rejoin = conn.config.get('auto_rejoin', False)
-        if auto_rejoin:
-            conn.join(paraml[0])
-
-
-@hook.event("NICK")
-def onnick(paraml, bot=None, conn=None, raw=None):
-    old_nick = nick_re.search(raw).group(1)
-    new_nick = str(paraml[0])
-    if old_nick == conn.nick:
-        conn.nick = new_nick
-        bot.logger.info("Bot nick changed from '{}' to '{}'.".format(old_nick, new_nick))
 
 
 @hook.singlethread

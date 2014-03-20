@@ -5,6 +5,7 @@ import collections
 
 from watchdog.observers import Observer
 from watchdog.tricks import Trick
+from pprint import pprint
 
 from core import main
 
@@ -38,6 +39,7 @@ class PluginLoader(object):
         self.observer.start()
 
         self.load_all()
+        pprint(bot.plugins)
 
     def stop(self):
         """shuts down the plugin reloader"""
@@ -58,7 +60,7 @@ class PluginLoader(object):
         disabled = self.bot.config.get('disabled_plugins', [])
         if title in disabled:
             self.bot.logger.info("Did not load plugins from: {} (plugin disabled)".format(filename))
-            return None
+            return
 
         # compile the file and eval it in a namespace
         try:
@@ -67,13 +69,12 @@ class PluginLoader(object):
             eval(code, namespace)
         except Exception:
             self.bot.logger.exception("Error compiling {}:".format(filename))
-            #self.bot.logger.error(traceback.format_exc())
             return
 
         # remove plugins already loaded from this file
-        for name, data in self.bot.plugins.items():
-            self.bot.plugins[name] = [x for x in data
-                                      if x[0]._filename != filename]
+        for plug_type, data in self.bot.plugins.items():
+            self.bot.plugins[plug_type] = [x for x in data
+                                           if x[0]._filename != filename]
 
         # stop all currently running instances of the plugins from this file
         for func, handler in list(self.bot.threads.items()):

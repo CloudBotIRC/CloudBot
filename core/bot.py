@@ -68,6 +68,17 @@ class Bot(threading.Thread):
 
         # run plugin loader
         self.plugins = collections.defaultdict(list)
+
+        """ plugins format
+        {'PLUGIN_TYPE': [(<COMPILED_PLUGIN_FUNTION>,
+                          {PLUGIN_ARGS}),
+                         (<COMPILED_PLUGIN_FUNTION>,
+                          {PLUGIN_ARGS})],
+        'PLUGIN_TYPE': [(<COMPILED_PLUGIN_FUNTION>,
+                          {PLUGIN_ARGS})]
+        }
+        """
+
         self.threads = {}
 
         self.loader = PluginLoader(self)

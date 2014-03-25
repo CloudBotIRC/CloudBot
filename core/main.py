@@ -54,47 +54,27 @@ class Input(dict):
 
 
 def run(bot, func, input):
-    args = func._args
-
-    uses_db = 'db' in args and 'db' not in input
-
+    uses_db = True
+    # TODO: change to bot.get_db_session()
+    print(input)
     if 'inp' not in input:
         input.inp = input.paraml
 
-    if args:
+    if uses_db:
+        # create SQLAlchemy session
+        bot.logger.debug("Opened DB session for: {}".format(func._filename))
+        input.db = input.bot.db_session()
+
+    try:
+        out = func(input, input.conn)
+    except:
+        bot.logger.exception("Error in plugin {}:".format(func._filename))
+        return
+    finally:
         if uses_db:
-            # create SQLAlchemy session
-            bot.logger.debug("Opened DB session for: {}".format(func._filename))
-            input.db = input.bot.db_session()
-        if 'input' in args:
-            input.input = input
-        if 0 in args:
-            try:
-                out = func(input.inp, **input)
-            except:
-                bot.logger.exception("Error in plugin {}:".format(func._filename))
-                return
-            finally:
-                if uses_db:
-                    print("Close")
-                    input.db.close()
-        else:
-            kw = dict((key, input[key]) for key in args if key in input)
-            try:
-                out = func(input.inp, **kw)
-            except:
-                bot.logger.exception("Error in plugin {}:".format(func._filename))
-                return
-            finally:
-                if uses_db:
-                    bot.logger.debug("Closed DB session for: {}".format(func._filename))
-                    input.db.close()
-    else:
-        try:
-            out = func(input.inp)
-        except:
-            bot.logger.exception("Error in plugin {}:".format(func._filename))
-            return
+            bot.logger.debug("Closed DB session for: {}".format(func._filename))
+            input.db.close()
+
     if out is not None:
         input.reply(str(out))
 
@@ -124,24 +104,14 @@ class Handler(object):
             if input == StopIteration:
                 break
 
-            if uses_db:
-                # self.bot.logger.debug("Opened ST DB session for: {}".format(self.func._filename))
-                input.db = input.bot.db_session()
+            run(self.bot, self.func, input)
 
-            try:
-                run(self.bot, self.func, input)
-            except:
-                self.bot.logger.exception("Error in plugin {}:".format(self.func._filename))
-            finally:
-                if uses_db:
-                    # self.bot.logger.debug("Closed ST DB session for: {}".format(self.func._filename))
-                    input.db.close()
 
     def stop(self):
         self.input_queue.put(StopIteration)
 
-    def put(self, value):
-        self.input_queue.put(value)
+    def put(self, value, args):
+        self.input_queue.put((value, args))
 
 
 def dispatch(bot, input, kind, func, args, autohelp=False):
@@ -155,7 +125,7 @@ def dispatch(bot, input, kind, func, args, autohelp=False):
         return
 
     if func._thread:
-        bot.threads[func].put(input)
+        bot.threads[func].put(input, args)
     else:
         _thread.start_new_thread(run, (bot, func, input))
 

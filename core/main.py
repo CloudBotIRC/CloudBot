@@ -8,6 +8,7 @@ from sqlalchemy.orm import scoped_session
 _thread.stack_size(1024 * 512)  # reduce vm size
 
 
+#TODO: redesign this messy thing
 class Input(dict):
     def __init__(self, bot, conn, raw, prefix, command, params,
                  nick, user, host, mask, paraml, msg):
@@ -57,8 +58,8 @@ def run(bot, func, input):
     uses_db = True
     # TODO: change to bot.get_db_session()
     print(input)
-    if 'inp' not in input:
-        input.inp = input.paraml
+    if 'text' not in input:
+        input.text = input.paraml
 
     if uses_db:
         # create SQLAlchemy session
@@ -97,7 +98,7 @@ class Handler(object):
         _thread.start_new_thread(self.start, ())
 
     def start(self):
-        uses_db = 'db' in self.func._args
+        uses_db = True
         while True:
             input = self.input_queue.get()
 
@@ -173,8 +174,8 @@ def main(bot, conn, out):
             elif command in bot.commands:
                 input = Input(bot, conn, *out)
                 input.trigger = trigger
-                input.inp_unstripped = m.group(2)
-                input.inp = input.inp_unstripped.strip()
+                input.text_unstripped = m.group(2)
+                input.text = input.text_unstripped.strip()
 
                 func, args = bot.commands[command]
                 dispatch(bot, input, "command", func, args, autohelp=True)
@@ -184,6 +185,6 @@ def main(bot, conn, out):
             m = args['re'].search(inp.lastparam)
             if m:
                 input = Input(bot, conn, *out)
-                input.inp = m
+                input.text = m
 
                 dispatch(bot, input, "regex", func, args)

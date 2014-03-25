@@ -14,7 +14,7 @@ with open("./data/8ball_responses.txt") as f:
                  f.readlines() if not line.startswith("//")]
 
 
-@hook.command('8ball')
+@hook.command()
 def eightball(input, conn):
     """8ball <question> -- The all knowing magic eight ball,
     in electronic form. Ask and it shall be answered!"""

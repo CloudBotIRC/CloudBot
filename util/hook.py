@@ -45,8 +45,9 @@ def sieve(func):
     _hook_add(func, ['sieve', (func,)])
     return func
 
-
-def command(arg=None, **kwargs):
+# TODO: Add support for multiple commands in one hook
+# EG: @hook.command(["command1", "command2"], **args)
+def command(name=None, **kwargs):
     args = {}
 
     def command_wrapper(func):
@@ -54,13 +55,13 @@ def command(arg=None, **kwargs):
         _hook_add(func, ['command', (func, args)], 'command')
         return func
 
-    if kwargs or not inspect.isfunction(arg):
-        if arg is not None:
-            args['name'] = arg
+    if kwargs or not inspect.isfunction(name):
+        if name is not None:
+            args['name'] = name
         args.update(kwargs)
         return command_wrapper
     else:
-        return command_wrapper(arg)
+        return command_wrapper(name)
 
 
 def event(arg=None, **kwargs):

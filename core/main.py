@@ -110,8 +110,8 @@ class Handler(object):
     def stop(self):
         self.input_queue.put(StopIteration)
 
-    def put(self, value, args):
-        self.input_queue.put((value, args))
+    def put(self, value):
+        self.input_queue.put(value)
 
 
 def dispatch(bot, input, kind, func, args, autohelp=False):
@@ -125,7 +125,7 @@ def dispatch(bot, input, kind, func, args, autohelp=False):
         return
 
     if func._thread:
-        bot.threads[func].put(input, args)
+        bot.threads[func].put(input)
     else:
         _thread.start_new_thread(run, (bot, func, input))
 

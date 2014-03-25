@@ -46,30 +46,30 @@ def get_logger():
     return logger
 
 
-class Bot(threading.Thread):
+class CloudBot(threading.Thread):
     def __init__(self):
         # basic variables
         self.start_time = time.time()
         self.running = True
         self.do_restart = False
-        self.connections = []
+
+        # stores each instance of the
+        self.instances = []
 
         # set up config and logging
         self.setup()
         self.logger.debug("Bot setup completed.")
 
-        # start IRC connections
-        self.connect()
-        print(self.connections)
+        # start bot instances
+        self.create()
 
-        for conn in self.connections:
-            conn.permissions = PermissionManager(self, conn)
-            print(conn)
+        for instance in self.instances:
+            instance.permissions = PermissionManager(self, instance)
 
         # run plugin loader
         self.plugins = collections.defaultdict(list)
 
-        """ plugins format
+        """ self.plugins format
         {'PLUGIN_TYPE': [(<COMPILED_PLUGIN_FUNTION>,
                           {PLUGIN_ARGS}),
                          (<COMPILED_PLUGIN_FUNTION>,
@@ -89,19 +89,19 @@ class Bot(threading.Thread):
         """recieves input from the IRC engine and processes it"""
         self.logger.info("Starting main thread.")
         while self.running:
-            for conn in self.connections:
+            for instance in self.instances:
                 try:
-                    incoming = conn.parsed_queue.get_nowait()
+                    incoming = instance.parsed_queue.get_nowait()
                     if incoming == StopIteration:
                         print("StopIteration")
                         # IRC engine has signalled timeout, so reconnect (ugly)
-                        conn.connection.reconnect()
-                    main.main(self, conn, incoming)
+                        instance.connection.reconnect()
+                    main.main(self, instance, incoming)
                 except queue.Empty:
                     pass
 
             # if no messages are in the incoming queue, sleep
-            while self.running and all(c.parsed_queue.empty() for c in self.connections):
+            while self.running and all(i.parsed_queue.empty() for i in self.instances):
                 time.sleep(.1)
 
     def setup(self):
@@ -126,26 +126,23 @@ class Bot(threading.Thread):
         self.db_session = scoped_session(db_factory)
         self.logger.debug("Database system initalised.")
 
-    def connect(self):
-        """connect to all the networks defined in the bot config"""
-        for conf in self.config['connections']:
+    def create(self):
+        """ Create a BotInstance for all the networks defined in the config """
+        for conf in self.config['instances']:
+
             # strip all spaces and capitalization from the connection name
             name = clean_name(conf['name'])
             nick = conf['nick']
             server = conf['connection']['server']
             port = conf['connection'].get('port', 6667)
 
-            self.logger.debug("({}) Creating connection to {}.".format(name, server))
+            self.logger.debug("Creating BotInstance for {}.".format(name))
 
-            if conf['connection'].get('ssl'):
-                self.connections.append(irc.SSLIRC(name, server, nick, config=conf,
-                                        port=port, logger=self.logger, channels=conf['channels'],
-                                        ignore_certificate_errors=conf['connection'].get('ignore_cert', True)))
-                self.logger.debug("({}) Created SSL connection.".format(name))   
-            else:
-                self.connections.append(irc.IRC(name, server, nick, config=conf,
-                                                port=port, logger=self.logger, channels=conf['channels']))
-                self.logger.debug("({}) Created connection.".format(name)) 
+            self.instances.append(irc.BotInstance(name, server, nick, config=conf,
+                                  port=port, logger=self.logger, channels=conf['channels'],
+                                  ssl=conf['connection'].get('ssl', False)))
+            self.logger.debug("({}) Created connection.".format(name))
+
 
     def stop(self, reason=None):
         """quits all networks and shuts the bot down"""

@@ -14,7 +14,7 @@ def get_generator(_json):
 
 
 @hook.command(autohelp=False)
-def namegen(input, conn):
+def namegen(input, instance, bot):
     """namegen [generator] -- Generates some names using the chosen generator.
     'namegen list' will display a list of all generators."""
 

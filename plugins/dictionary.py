@@ -19,10 +19,10 @@ def define(inp):
                          '//div[@class="example"]')
 
     if not definition:
-        return 'No results for ' + inp + ' :('
+        return u'No results for {} :('.format(inp)
 
     def format_output(show_examples):
-        result = '{}: '.format(h.xpath('//dt[@class="title-word"]/a/text()')[0])
+        result = u'{}: '.format(h.xpath('//dt[@class="title-word"]/a/text()')[0])
 
         correction = h.xpath('//span[@class="correct-word"]/text()')
         if correction:
@@ -77,7 +77,7 @@ def etymology(inp):
     etym = h.xpath('//dl')
 
     if not etym:
-        return 'No etymology found for {} :('.format(inp)
+        return u'No etymology found for {} :('.format(inp)
 
     etym = etym[0].text_content()
 

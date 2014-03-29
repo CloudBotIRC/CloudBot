@@ -42,8 +42,8 @@ def wiki(inp):
     if title.lower() not in desc.lower():
         desc = title + desc
 
-    desc = re.sub('\s+', ' ', desc).strip()  # remove excess spaces
+    desc = u' '.join(desc.split())  # remove excess spaces
 
     desc = text.truncate_str(desc, 200)
 
-    return '{} :: {}'.format(desc, http.quote(url, ':/'))
+    return u'{} :: {}'.format(desc, http.quote(url, ':/'))

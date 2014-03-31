@@ -202,13 +202,14 @@ class SSLIRCConnection(IRCConnection):
                            CERT_REQUIRED)
 
 
-class IRC(object):
-    """handles the IRC protocol"""
+class BotInstance(object):
+    """ A BotInstance represents each connection the bot makes to an IRC server """
 
-    def __init__(self, name, server, nick, port=6667, logger=None, channels=[], config={}):
+    def __init__(self, name, server, nick, port=6667, ssl=False, logger=None, channels=[], config={}):
         self.name = name
         self.channels = channels
         self.config = config
+        self.ssl = ssl
         self.server = server
         self.port = port
         self.logger = logger
@@ -240,8 +241,12 @@ class IRC(object):
         self.parse_thread.start()
 
     def create_connection(self):
-        return IRCConnection(self.name, self.server, self.port,
-                             self.input_queue, self.output_queue)
+        if self.ssl:
+            return SSLIRCConnection(self.name, self.server, self.port, self.input_queue,
+                                    self.output_queue, True)
+        else:
+            return IRCConnection(self.name, self.server, self.port,
+                                 self.input_queue, self.output_queue)
 
     def stop(self):
         self.connection.stop()
@@ -288,14 +293,3 @@ class IRC(object):
             # if this doesn't work, no big deal
             pass
         self.output_queue.put(string)
-
-
-class SSLIRC(IRC):
-    def __init__(self, name, server, nick, port=6667, logger=None, channels=[], config={},
-                 ignore_certificate_errors=True):
-        self.ignore_cert_errors = ignore_certificate_errors
-        IRC.__init__(self, name, server, nick, port, logger, channels, config)
-
-    def create_connection(self):
-        return SSLIRCConnection(self.name, self.server, self.port, self.input_queue,
-                                self.output_queue, self.ignore_cert_errors)

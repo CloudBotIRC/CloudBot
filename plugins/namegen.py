@@ -14,12 +14,12 @@ def get_generator(_json):
 
 
 @hook.command(autohelp=False)
-def namegen(inp, notice=None):
+def namegen(input, instance, bot):
     """namegen [generator] -- Generates some names using the chosen generator.
     'namegen list' will display a list of all generators."""
 
     # clean up the input
-    inp = inp.strip().lower()
+    inp = input.text.strip().lower()
 
     # get a list of available name generators
     files = os.listdir(GEN_DIR)
@@ -33,7 +33,7 @@ def namegen(inp, notice=None):
     if inp == "list":
         message = "Available generators: "
         message += text.get_text_list(all_modules, 'and')
-        notice(message)
+        input.notice(message)
         return
 
     if inp:

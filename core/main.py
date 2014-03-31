@@ -8,6 +8,7 @@ from sqlalchemy.orm import scoped_session
 _thread.stack_size(1024 * 512)  # reduce vm size
 
 
+#TODO: redesign this messy thing
 class Input(dict):
     def __init__(self, bot, conn, raw, prefix, command, params,
                  nick, user, host, mask, paraml, msg):
@@ -54,47 +55,27 @@ class Input(dict):
 
 
 def run(bot, func, input):
-    args = func._args
+    uses_db = True
+    # TODO: change to bot.get_db_session()
+    print(input)
+    if 'text' not in input:
+        input.text = input.paraml
 
-    uses_db = 'db' in args and 'db' not in input
+    if uses_db:
+        # create SQLAlchemy session
+        bot.logger.debug("Opened DB session for: {}".format(func._filename))
+        input.db = input.bot.db_session()
 
-    if 'inp' not in input:
-        input.inp = input.paraml
-
-    if args:
+    try:
+        out = func(input, input.conn)
+    except:
+        bot.logger.exception("Error in plugin {}:".format(func._filename))
+        return
+    finally:
         if uses_db:
-            # create SQLAlchemy session
-            bot.logger.debug("Opened DB session for: {}".format(func._filename))
-            input.db = input.bot.db_session()
-        if 'input' in args:
-            input.input = input
-        if 0 in args:
-            try:
-                out = func(input.inp, **input)
-            except:
-                bot.logger.exception("Error in plugin {}:".format(func._filename))
-                return
-            finally:
-                if uses_db:
-                    print("Close")
-                    input.db.close()
-        else:
-            kw = dict((key, input[key]) for key in args if key in input)
-            try:
-                out = func(input.inp, **kw)
-            except:
-                bot.logger.exception("Error in plugin {}:".format(func._filename))
-                return
-            finally:
-                if uses_db:
-                    bot.logger.debug("Closed DB session for: {}".format(func._filename))
-                    input.db.close()
-    else:
-        try:
-            out = func(input.inp)
-        except:
-            bot.logger.exception("Error in plugin {}:".format(func._filename))
-            return
+            bot.logger.debug("Closed DB session for: {}".format(func._filename))
+            input.db.close()
+
     if out is not None:
         input.reply(str(out))
 
@@ -117,25 +98,15 @@ class Handler(object):
         _thread.start_new_thread(self.start, ())
 
     def start(self):
-        uses_db = 'db' in self.func._args
+        uses_db = True
         while True:
             input = self.input_queue.get()
 
             if input == StopIteration:
                 break
 
-            if uses_db:
-                # self.bot.logger.debug("Opened ST DB session for: {}".format(self.func._filename))
-                input.db = input.bot.db_session()
+            run(self.bot, self.func, input)
 
-            try:
-                run(self.bot, self.func, input)
-            except:
-                self.bot.logger.exception("Error in plugin {}:".format(self.func._filename))
-            finally:
-                if uses_db:
-                    # self.bot.logger.debug("Closed ST DB session for: {}".format(self.func._filename))
-                    input.db.close()
 
     def stop(self):
         self.input_queue.put(StopIteration)
@@ -203,8 +174,8 @@ def main(bot, conn, out):
             elif command in bot.commands:
                 input = Input(bot, conn, *out)
                 input.trigger = trigger
-                input.inp_unstripped = m.group(2)
-                input.inp = input.inp_unstripped.strip()
+                input.text_unstripped = m.group(2)
+                input.text = input.text_unstripped.strip()
 
                 func, args = bot.commands[command]
                 dispatch(bot, input, "command", func, args, autohelp=True)
@@ -214,6 +185,6 @@ def main(bot, conn, out):
             m = args['re'].search(inp.lastparam)
             if m:
                 input = Input(bot, conn, *out)
-                input.inp = m
+                input.text = m
 
                 dispatch(bot, input, "regex", func, args)

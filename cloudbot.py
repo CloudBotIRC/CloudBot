@@ -32,8 +32,8 @@ def exit_gracefully(signum, frame):
 original_sigint = signal.getsignal(signal.SIGINT)
 signal.signal(signal.SIGINT, exit_gracefully)
 
-# create a bot thread and start it
-cloudbot = bot.Bot()
+# create a bot master and start it
+cloudbot = bot.CloudBot()
 cloudbot.start()
 
 # watch to see if the bot stops running or needs a restart

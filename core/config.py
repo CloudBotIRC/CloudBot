@@ -38,9 +38,9 @@ class Config(dict):
             self.logger.info("Config loaded from file.")
 
         # reload permissions
-        if self.bot.connections:
-            for conn in self.bot.connections:
-                conn.permissions.reload()
+        if self.bot.instances:
+            for instance in self.bot.instances:
+                instance.permissions.reload()
 
     def save_config(self):
         """saves the contents of the config dict to the config file"""

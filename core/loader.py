@@ -39,7 +39,6 @@ class PluginLoader(object):
         self.observer.start()
 
         self.load_all()
-        pprint(bot.plugins)
 
     def stop(self):
         """shuts down the plugin reloader"""
@@ -88,7 +87,6 @@ class PluginLoader(object):
             if hasattr(obj, '_hook'):  # check for magic
                 if obj._thread:
                     self.bot.threads[obj] = main.Handler(self.bot, obj)
-
                 for plug_type, data in obj._hook:
                     # add plugin to the plugin list
                     self.bot.plugins[plug_type] += [data]

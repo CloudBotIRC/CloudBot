@@ -10,30 +10,6 @@ def _hook_add(func, add, name=''):
     if not hasattr(func, '_filename'):
         func._filename = func.__code__.co_filename
 
-    if not hasattr(func, '_args'):
-        argspec = inspect.getargspec(func)
-        if name:
-            n_args = len(argspec.args)
-            if argspec.defaults:
-                n_args -= len(argspec.defaults)
-            if argspec.keywords:
-                n_args -= 1
-            if argspec.varargs:
-                n_args -= 1
-            if n_args != 1:
-                err = '%ss must take 1 non-keyword argument (%s)' % (name,
-                                                                     func.__name__)
-                raise ValueError(err)
-
-        args = []
-        if argspec.defaults:
-            end = bool(argspec.keywords) + bool(argspec.varargs)
-            args.extend(argspec.args[-len(argspec.defaults):
-            end if end else None])
-        if argspec.keywords:
-            args.append(0)  # means kwargs present
-        func._args = args
-
     if not hasattr(func, '_thread'):  # does function run in its own thread?
         func._thread = False
 

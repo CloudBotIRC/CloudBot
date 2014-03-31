@@ -28,8 +28,10 @@ def get_api(bot):
 
 @hook.regex(*TWITTER_RE)
 def twitter_url(match, bot=None):
+    # Find the tweet ID from the URL
     tweet_id = match.group(1)
 
+    # Get the tweet using the tweepy API
     api = get_api(bot)
     if not api:
         return
@@ -39,6 +41,7 @@ def twitter_url(match, bot=None):
     except tweepy.error.TweepError:
         return
 
+    # Format the return the text of the tweet
     text = " ".join(tweet.text.split())
 
     if user.verified:
@@ -122,8 +125,9 @@ def twitter(inp, bot=None):
         user = tweet.user
     else:
         # ???
-        return "Unknown Error"
+        return "Invalid Input"
 
+    # Format the return the text of the tweet
     text = " ".join(tweet.text.split())
 
     if user.verified:

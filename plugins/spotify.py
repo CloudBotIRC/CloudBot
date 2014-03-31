@@ -45,7 +45,7 @@ def spotify(inp):
     except IndexError:
         return "Could not find track."
     url = sptfy(gateway.format(type, id))
-    return u"\x02{}\x02 by \x02{}\x02 - \x02{}\x02".format(data["tracks"][0]["name"],
+    return u"\x02{}\x02 by \x02{}\x02 - {}".format(data["tracks"][0]["name"],
                                                            data["tracks"][0]["artists"][0]["name"], url)
 
 
@@ -62,7 +62,7 @@ def spalbum(inp):
     except IndexError:
         return "Could not find album."
     url = sptfy(gateway.format(type, id))
-    return u"\x02{}\x02 by \x02{}\x02 - \x02{}\x02".format(data["albums"][0]["name"],
+    return u"\x02{}\x02 by \x02{}\x02 - {}".format(data["albums"][0]["name"],
                                                            data["albums"][0]["artists"][0]["name"], url)
 
 
@@ -79,7 +79,7 @@ def spartist(inp):
     except IndexError:
         return "Could not find artist."
     url = sptfy(gateway.format(type, id))
-    return u"\x02{}\x02 - \x02{}\x02".format(data["artists"][0]["name"], url)
+    return u"\x02{}\x02 - {}".format(data["artists"][0]["name"], url)
 
 
 @hook.regex(*http_re)
@@ -94,13 +94,13 @@ def spotify_url(match):
         name = data["track"]["name"]
         artist = data["track"]["artists"][0]["name"]
         album = data["track"]["album"]["name"]
-        return u"Spotify Track: \x02{}\x02 by \x02{}\x02 from the album \x02{}\x02 - \x02{}\x02".format(name, artist,
+        return u"Spotify Track: \x02{}\x02 by \x02{}\x02 from the album \x02{}\x02 - {}".format(name, artist,
                                                                                                         album, sptfy(
                 gateway.format(type, spotify_id)))
     elif type == "artist":
-        return u"Spotify Artist: \x02{}\x02 - \x02{}\x02".format(data["artist"]["name"],
+        return u"Spotify Artist: \x02{}\x02 - {}".format(data["artist"]["name"],
                                                                  sptfy(gateway.format(type, spotify_id)))
     elif type == "album":
-        return u"Spotify Album: \x02{}\x02 - \x02{}\x02 - \x02{}\x02".format(data["album"]["artist"],
+        return u"Spotify Album: \x02{}\x02 - \x02{}\x02 - {}".format(data["album"]["artist"],
                                                                              data["album"]["name"],
                                                                              sptfy(gateway.format(type, spotify_id)))

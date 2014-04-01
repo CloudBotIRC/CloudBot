@@ -36,10 +36,10 @@ def lastfm(inp, nick='', db=None, bot=None, notice=None):
                              api_key=api_key, user=user, limit=1)
 
     if 'error' in response:
-        return "Error: {}.".format(response["message"])
+        return u"Error: {}.".format(response["message"])
 
     if not "track" in response["recenttracks"] or len(response["recenttracks"]["track"]) == 0:
-        return 'No recent tracks for user "{}" found.'.format(user)
+        return u'No recent tracks for user "{}" found.'.format(user)
 
     tracks = response["recenttracks"]["track"]
 
@@ -66,11 +66,11 @@ def lastfm(inp, nick='', db=None, bot=None, notice=None):
     album = track["album"]["#text"]
     artist = track["artist"]["#text"]
 
-    out = '{} {} "{}"'.format(user, status, title)
+    out = u'{} {} "{}"'.format(user, status, title)
     if artist:
-        out += " by \x02{}\x0f".format(artist)
+        out += u" by \x02{}\x0f".format(artist)
     if album:
-        out += " from the album \x02{}\x0f".format(album)
+        out += u" from the album \x02{}\x0f".format(album)
 
     # append ending based on what type it was
     out += ending

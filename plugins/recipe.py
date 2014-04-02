@@ -52,12 +52,15 @@ def recipe(inp):
             return "Could not get recipe: {}".format(e)
 
         # find the list of results
-        results = search.find('div', {'class': 'found_results'})
+        result_list = search.find('div', {'class': 'found_results'})
 
-        if results:
-            result = results.find('div', {'class': 'recipe_result'})
+        if result_list:
+            results = result_list.find_all('div', {'class': 'recipe_result'})
         else:
             return "No results"
+
+        # pick a random front page result
+        result = random.choice(results)
 
         # extract the URL from the result
         url = BASE_URL + result.find('div', {'class': 'image-wrapper'}).find('a')['href']

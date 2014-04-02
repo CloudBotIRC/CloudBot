@@ -2,20 +2,20 @@ import random
 
 from util import hook, http, web
 
-# set this to true to censor this plugin!
-CENSOR = True
-
 METADATA_URL = "http://omnidator.appspot.com/microdata/json/?url={}"
-RANDOM_URL = "http://www.cookstr.com/searches/surprise"
 
-PHRASES = [
+BASE_URL = "http://www.cookstr.com"
+SEARCH_URL = BASE_URL + "/searches"
+RANDOM_URL = SEARCH_URL + "/surprise"
+
+# set this to true to censor this plugin!
+censor = True
+phrases = [
     u"EAT SOME FUCKING \x02{}\x02",
-    u"I'D SAY EAT SHIT, BUT THAT WOULDN'T BE HELPFUL, HOW ABOUT SOME FUCKING \x02{}\x02",
     u"YOU WON'T NOT MAKE SOME FUCKING \x02{}\x02",
     u"HOW ABOUT SOME FUCKING \x02{}\x02",
     u"WHY DON'T YOU EAT SOME FUCKING \x02{}\x02",
     u"MAKE SOME FUCKING \x02{}\x02",
-    u"FEAST YOUR EYES AND SUBSEQUENTLY MOUTH ON SOME FUCKING \x02{}\x02",
     u"INDUCE FOOD COMA WITH SOME FUCKING \x02{}\x02"
 ]
 
@@ -43,13 +43,34 @@ def get_data(url):
 
 @hook.command(autohelp=False)
 def recipe(inp):
-    """recipe - Gets a random recipe from cookstr.com!"""
-    try:
-        page = http.open(RANDOM_URL)
-    except (http.HTTPError, http.URLError) as e:
-        return "Could not get recipe: {}".format(e)
-    url = page.geturl()
+    """recipe [term] - Gets a recipe for [term], or ets a random recipe if [term] is not provided"""
+    if inp:
+        # get the recipe URL by searching
+        try:
+            search = http.get_soup(SEARCH_URL, query=inp.strip())
+        except (http.HTTPError, http.URLError) as e:
+            return "Could not get recipe: {}".format(e)
 
+        # find the list of results
+        results = search.find('div', {'class': 'found_results'})
+
+        if results:
+            result = results.find('div', {'class': 'recipe_result'})
+        else:
+            return "No results"
+
+        # extract the URL from the result
+        url = BASE_URL + result.find('div', {'class': 'image-wrapper'}).find('a')['href']
+
+    else:
+        # get a random recipe URL
+        try:
+            page = http.open(RANDOM_URL)
+        except (http.HTTPError, http.URLError) as e:
+            return "Could not get recipe: {}".format(e)
+        url = page.geturl()
+
+    # use get_data() to get the recipe info from the URL
     try:
         data = get_data(url)
     except ParseError as e:
@@ -60,8 +81,8 @@ def recipe(inp):
 
 
 @hook.command(autohelp=False)
-def frecipe(inp):
-    """frecipe - GET A FUCKING RECIPE!"""
+def wtfisfordinner(inp):
+    """wtfisfordinner - WTF IS FOR DINNER"""
     try:
         page = http.open(RANDOM_URL)
     except (http.HTTPError, http.URLError) as e:
@@ -74,9 +95,9 @@ def frecipe(inp):
         return "Could not parse recipe: {}".format(e)
 
     name = data["name"].upper()
-    text = random.choice(PHRASES).format(name)
+    text = random.choice(phrases).format(name)
 
-    if CENSOR:
+    if censor:
         text = text.replace("FUCK", "F**K")
 
     return u"{} - {}".format(text, web.try_isgd(url))

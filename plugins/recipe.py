@@ -15,7 +15,7 @@ phrases = [
     u"YOU WON'T NOT MAKE SOME FUCKING \x02{}\x02",
     u"HOW ABOUT SOME FUCKING \x02{}?\x02",
     u"WHY DON'T YOU EAT SOME FUCKING \x02{}?\x02",
-    u"MAKE SOME FUCKING \x02{}\x02",
+    u"MAKE SOME FUCKING \x02{}\x02",  v
     u"INDUCE FOOD COMA WITH SOME FUCKING \x02{}\x02"
 ]
 

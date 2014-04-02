@@ -76,7 +76,7 @@ def recipe(inp):
     except ParseError as e:
         return "Could not parse recipe: {}".format(e)
 
-    name = data["name"]
+    name = data["name"].strip()
     return u"Try eating \x02{}!\x02 - {}".format(name, web.try_isgd(url))
 
 
@@ -94,7 +94,7 @@ def wtfisfordinner(inp):
     except ParseError as e:
         return "Could not parse recipe: {}".format(e)
 
-    name = data["name"].upper()
+    name = data["name"].strip().upper()
     text = random.choice(phrases).format(name)
 
     if censor:

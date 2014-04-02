@@ -13,8 +13,8 @@ censor = True
 phrases = [
     u"EAT SOME FUCKING \x02{}\x02",
     u"YOU WON'T NOT MAKE SOME FUCKING \x02{}\x02",
-    u"HOW ABOUT SOME FUCKING \x02{}\x02",
-    u"WHY DON'T YOU EAT SOME FUCKING \x02{}\x02",
+    u"HOW ABOUT SOME FUCKING \x02{}?\x02",
+    u"WHY DON'T YOU EAT SOME FUCKING \x02{}?\x02",
     u"MAKE SOME FUCKING \x02{}\x02",
     u"INDUCE FOOD COMA WITH SOME FUCKING \x02{}\x02"
 ]
@@ -84,8 +84,8 @@ def recipe(inp):
 
 
 @hook.command(autohelp=False)
-def wtfisfordinner(inp):
-    """wtfisfordinner - WTF IS FOR DINNER"""
+def dinner(inp):
+    """dinner - WTF IS FOR DINNER"""
     try:
         page = http.open(RANDOM_URL)
     except (http.HTTPError, http.URLError) as e:

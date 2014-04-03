@@ -42,21 +42,21 @@ def urban(inp):
     if id_num:
         # try getting the requested definition
         try:
-            definition = definitions[id_num - 1]['definition'].replace('\r\n', ' ')
-            definition = re.sub('\s+', ' ', definition).strip()  # remove excess spaces
-            definition = text.truncate_str(definition, 200)
+            definition = definitions[id_num - 1]
+
+            def_text = " ".join(definition['definition'].split())  # remove excess spaces
+            def_text = text.truncate_str(def_text, 200)
         except IndexError:
             return 'Not found.'
 
-        url = definitions[id_num - 1]['permalink']
+        url = definition['permalink']
         output = u"[%i/%i] %s :: %s" % \
-                 (id_num, len(definitions), definition, url)
+                 (id_num, len(definitions), def_text, url)
 
     else:
         definition = random.choice(definitions)
 
-        def_text = definition['definition'].replace('\r\n', ' ')
-        def_text = re.sub('\s+', ' ', def_text).strip()  # remove excess spaces
+        def_text = " ".join(definition['definition'].split())  # remove excess spaces
         def_text = text.truncate_str(def_text, 200)
 
         name = definition['word']

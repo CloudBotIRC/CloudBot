@@ -34,7 +34,6 @@ def get_video_description(video_id):
     out += u' - length \x02{}\x02'.format(timeformat.format_time(length, simple=True))
 
     if 'ratingCount' in data:
-        # format
         likes = plural(int(data['likeCount']), "like")
         dislikes = plural(data['ratingCount'] - int(data['likeCount']), "dislike")
 

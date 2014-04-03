@@ -2,11 +2,11 @@ import random
 
 from util import hook, http, web
 
-METADATA_URL = "http://omnidator.appspot.com/microdata/json/?url={}"
+metadata_url = "http://omnidator.appspot.com/microdata/json/?url={}"
 
-BASE_URL = "http://www.cookstr.com"
-SEARCH_URL = BASE_URL + "/searches"
-RANDOM_URL = SEARCH_URL + "/surprise"
+base_url = "http://www.cookstr.com"
+search_url = base_url + "/searches"
+random_url = search_url + "/surprise"
 
 # set this to true to censor this plugin!
 censor = True
@@ -29,7 +29,7 @@ class ParseError(Exception):
 def get_data(url):
     """ Uses the omnidator API to parse the metadata from the provided URL """
     try:
-        omni = http.get_json(METADATA_URL.format(url))
+        omni = http.get_json(metadata_url.format(url))
     except (http.HTTPError, http.URLError) as e:
         raise ParseError(e)
     schemas = omni["@"]
@@ -47,7 +47,7 @@ def recipe(inp):
     if inp:
         # get the recipe URL by searching
         try:
-            search = http.get_soup(SEARCH_URL, query=inp.strip())
+            search = http.get_soup(search_url, query=inp.strip())
         except (http.HTTPError, http.URLError) as e:
             return "Could not get recipe: {}".format(e)
 
@@ -63,12 +63,12 @@ def recipe(inp):
         result = random.choice(results)
 
         # extract the URL from the result
-        url = BASE_URL + result.find('div', {'class': 'image-wrapper'}).find('a')['href']
+        url = base_url + result.find('div', {'class': 'image-wrapper'}).find('a')['href']
 
     else:
         # get a random recipe URL
         try:
-            page = http.open(RANDOM_URL)
+            page = http.open(random_url)
         except (http.HTTPError, http.URLError) as e:
             return "Could not get recipe: {}".format(e)
         url = page.geturl()
@@ -87,7 +87,7 @@ def recipe(inp):
 def dinner(inp):
     """dinner - WTF IS FOR DINNER"""
     try:
-        page = http.open(RANDOM_URL)
+        page = http.open(random_url)
     except (http.HTTPError, http.URLError) as e:
         return "Could not get recipe: {}".format(e)
     url = page.geturl()

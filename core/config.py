@@ -9,6 +9,9 @@ from watchdog.tricks import Trick
 
 class Config(dict):
     def __init__(self, bot, *args, **kwargs):
+        """
+        :type bot: core.bot.CloudBot
+        """
         self.filename = "config.json"
         self.path = os.path.abspath(self.filename)
         self.bot = bot
@@ -18,9 +21,11 @@ class Config(dict):
         # populate self with config data
         self.load_config()
 
+        # Declaring here, to be assigned later
+        self.observer = None
+        self.event_handler = None
         # start watcher
         self.watcher()
-
 
     def load_config(self):
         """(re)loads the bot config from the config file"""
@@ -38,9 +43,9 @@ class Config(dict):
             self.logger.info("Config loaded from file.")
 
         # reload permissions
-        if self.bot.instances:
-            for instance in self.bot.instances:
-                instance.permissions.reload()
+        if self.bot.connections:
+            for connection in self.bot.connections:
+                connection.permissions.reload()
 
     def save_config(self):
         """saves the contents of the config dict to the config file"""
@@ -57,7 +62,7 @@ class Config(dict):
         self.observer.schedule(self.event_handler, path='.', recursive=False)
         self.observer.start()
 
- 
+
 class ConfigEventHandler(Trick):
     def __init__(self, config, *args, **kwargs):
         self.config = config

@@ -1,9 +1,4 @@
-import os
-import sys
 import re
-import json
-import time
-import subprocess
 
 from util import hook
 
@@ -103,8 +98,8 @@ def adduser(inp, bot=None, notice=None):
     bot.config.save_config()
 
 
-@hook.command("quit", autohelp=False)
-@hook.command(autohelp=False)
+@hook.command(permissions=["botcontrol"], autohelp=False)
+@hook.command("quit", permissions=["botcontrol"], autohelp=False)
 def stop(inp, bot=None):
     """stop [reason] -- Kills the bot with [reason] as its quit message."""
     if inp:
@@ -113,20 +108,13 @@ def stop(inp, bot=None):
         bot.stop()
 
 
-@hook.command(autohelp=False)
+@hook.command(permissions=["botcontrol"], autohelp=False)
 def restart(inp, bot=None):
     """restart [reason] -- Restarts the bot with [reason] as its quit message."""
     if inp:
         bot.restart(reason=inp)
     else:
         bot.restart()
-
-
-
-@hook.command(autohelp=False, permissions=["botcontrol"])
-def clearlogs(inp, input=None):
-    """clearlogs -- Clears the bots log(s)."""
-    subprocess.call(["./cloudbot", "clear"])
 
 
 @hook.command(permissions=["botcontrol"])
@@ -139,7 +127,7 @@ def join(inp, conn=None, notice=None):
         conn.join(target)
 
 
-@hook.command(autohelp=False, permissions=["botcontrol"])
+@hook.command(permissions=["botcontrol"], autohelp=False)
 def part(inp, conn=None, chan=None, notice=None):
     """part <channel> -- Leaves <channel>.
     If [channel] is blank the bot will leave the
@@ -198,6 +186,16 @@ def say(inp, conn=None, chan=None):
     else:
         message = " ".join(inp[0:])
         out = "PRIVMSG {} :{}".format(chan, message)
+    conn.send(out)
+
+
+@hook.command(permissions=["botcontrol"])
+def message(inp, conn=None, chan=None):
+    """message <name> <message> -- Makes the bot say <message> to <name>.
+    If <name> is a channel, the bot will say the message in that channel."""
+    inp = inp.split(" ")
+    message = " ".join(inp[1:])
+    out = "PRIVMSG {} :{}".format(inp[0], message)
     conn.send(out)
 
 

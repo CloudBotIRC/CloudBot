@@ -2,10 +2,9 @@ import re
 import socket
 import time
 import threading
-from ssl import wrap_socket, CERT_NONE, CERT_REQUIRED, SSLError
-
 import queue
 
+from ssl import wrap_socket, CERT_NONE, CERT_REQUIRED, SSLError
 
 irc_prefix_rem = re.compile(r'(.*?) (.*?) (.*)').match
 irc_noprefix_rem = re.compile(r'()(.*?) (.*)').match
@@ -28,6 +27,7 @@ def censor(text):
 
 class ReceiveThread(threading.Thread):
     """receives messages from IRC and puts them in the input_queue"""
+
     def __init__(self, sock, input_queue, timeout):
         self.input_buffer = b""
         self.input_queue = input_queue
@@ -86,14 +86,15 @@ class SSLReceiveThread(ReceiveThread):
         return SSLError
 
     def handle_receive_exception(self, error, last_timestamp):
-       # this is terrible
+        # this is terrible
         if not "timed out" in error.args[0]:
-            raise
+            raise error
         return ReceiveThread.handle_receive_exception(self, error, last_timestamp)
 
 
 class SendThread(threading.Thread):
     """sends messages from output_queue to IRC"""
+
     def __init__(self, sock, conn_name, output_queue):
         self.output_buffer = b""
         self.output_queue = output_queue
@@ -114,6 +115,7 @@ class SendThread(threading.Thread):
 
 class ParseThread(threading.Thread):
     """parses messages from input_queue and puts them in parsed_queue"""
+
     def __init__(self, input_queue, output_queue, parsed_queue):
         self.input_queue = input_queue  # lines that were received
         self.output_queue = output_queue  # lines to be sent out
@@ -140,7 +142,7 @@ class ParseThread(threading.Thread):
             nick, user, host = irc_netmask_rem(prefix).groups()
             mask = nick + "!" + user + "@" + host
             paramlist = irc_param_ref(params)
-            lastparam = "" 
+            lastparam = ""
             if paramlist:
                 if paramlist[-1].startswith(':'):
                     paramlist[-1] = paramlist[-1][1:]
@@ -156,6 +158,7 @@ class ParseThread(threading.Thread):
 
 class IRCConnection(object):
     """handles an IRC connection"""
+
     def __init__(self, name, host, port, input_queue, output_queue):
         self.output_queue = output_queue  # lines to be sent out
         self.input_queue = input_queue  # lines that were received
@@ -204,10 +207,29 @@ class SSLIRCConnection(IRCConnection):
 class BotConnection(object):
     """ A BotConnection represents each connection the bot makes to an IRC server """
 
-    def __init__(self, name, server, nick, port=6667, ssl=False, logger=None, channels=[], config={}):
+    def __init__(self, name, server, nick, port=6667, ssl=False, logger=None, channels=None, config=None):
+        """
+        :type name: str
+        :type server: str
+        :type nick: str
+        :type port: int
+        :type ssl: bool
+        :type logger: logging.Logger
+        :type channels: list
+        :type config: map
+        """
         self.name = name
-        self.channels = channels
-        self.config = config
+
+        if channels is None:
+            self.channels = []
+        else:
+            self.channels = channels
+
+        if config is None:
+            self.config = {}
+        else:
+            self.config = config
+
         self.ssl = ssl
         self.server = server
         self.port = port
@@ -251,34 +273,55 @@ class BotConnection(object):
         self.connection.stop()
 
     def set_pass(self, password):
+        """
+        :type password: str
+        """
         if password:
             self.cmd("PASS", [password])
 
     def set_nick(self, nick):
+        """
+        :type nick: str
+        """
         self.cmd("NICK", [nick])
 
     def join(self, channel):
-        """ makes the bot join a channel """
+        """ makes the bot join a channel
+        :type channel: str
+        """
         self.send("JOIN {}".format(channel))
         if channel not in self.channels:
             self.channels.append(channel)
 
     def part(self, channel):
-        """ makes the bot leave a channel """
+        """ makes the bot leave a channel
+        :type channel: str
+        """
         self.cmd("PART", [channel])
         if channel in self.channels:
             self.channels.remove(channel)
 
     def msg(self, target, text):
-        """ makes the bot send a PRIVMSG to a target  """
+        """ makes the bot send a PRIVMSG to a target
+        :type text: str
+        :type target: str
+        """
         self.cmd("PRIVMSG", [target, text])
 
     def ctcp(self, target, ctcp_type, text):
-        """ makes the bot send a PRIVMSG CTCP to a target """
+        """ makes the bot send a PRIVMSG CTCP to a target
+        :type ctcp_type: str
+        :type text: str
+        :type target: str
+        """
         out = "\x01{} {}\x01".format(ctcp_type, text)
         self.cmd("PRIVMSG", [target, out])
 
     def cmd(self, command, params=None):
+        """
+        :type command: str
+        :type params: list
+        """
         if params:
             params[-1] = ':' + params[-1]
             self.send("{} {}".format(command, ' '.join(params)))
@@ -286,6 +329,9 @@ class BotConnection(object):
             self.send(command)
 
     def send(self, string):
+        """
+        :type string: str
+        """
         try:
             self.logger.info("{} >> {}".format(self.name.upper(), string))
         except:

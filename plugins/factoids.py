@@ -7,7 +7,7 @@ from util import hook, http, text, pyexec
 
 re_lineends = re.compile(r'[\r\n]*')
 
-db_ready = False
+db_ready = []
 
 # some simple "shortcodes" for formatting purposes
 shortcodes = {
@@ -19,13 +19,13 @@ shortcodes = {
     '[/i]': '\x16'}
 
 
-def db_init(db):
+def db_init(db, conn):
     global db_ready
-    if not db_ready:
+    if not conn.name in db_ready:
         db.execute("create table if not exists mem(word, data, nick,"
                    " primary key(word))")
         db.commit()
-        db_ready = True
+        db_ready.append(conn.name)
 
 
 def get_memory(db, word):
@@ -39,12 +39,14 @@ def get_memory(db, word):
 
 @hook.command("r", permissions=["addfactoid"])
 @hook.command(permissions=["addfactoid"])
-def remember(inp, nick='', db=None, notice=None):
+def remember(inp, nick='', db=None, notice=None, conn=None):
     """remember <word> [+]<data> -- Remembers <data> with <word>. Add +
     to <data> to append."""
-    db_init(db)
+    db_init(db, conn)
 
     append = False
+
+    inp = string.replace(inp, "\\n", "\n")
 
     try:
         word, data = inp.split(None, 1)
@@ -69,27 +71,27 @@ def remember(inp, nick='', db=None, notice=None):
 
     if old_data:
         if append:
-            notice("Appending \x02{}\x02 to \x02{}\x02".format(new_data, old_data))
+            notice(u"Appending \x02{}\x02 to \x02{}\x02. Type ?{} to see it.".format(new_data, old_data, word))
         else:
-            notice('Remembering \x02{}\x02 for \x02{}\x02. Type ?{} to see it.'.format(data, word, word))
-            notice('Previous data was \x02{}\x02'.format(old_data))
+            notice(u'Remembering \x02{}\x02 for \x02{}\x02. Type ?{} to see it.'.format(data, word, word))
+            notice(u'Previous data was \x02{}\x02'.format(old_data))
     else:
-        notice('Remembering \x02{}\x02 for \x02{}\x02. Type ?{} to see it.'.format(data, word, word))
+        notice(u'Remembering \x02{}\x02 for \x02{}\x02. Type ?{} to see it.'.format(data, word, word))
 
 
 @hook.command("f", permissions=["delfactoid"])
 @hook.command(permissions=["delfactoid"])
-def forget(inp, db=None, notice=None):
+def forget(inp, db=None, notice=None, conn=None):
     """forget <word> -- Forgets a remembered <word>."""
 
-    db_init(db)
+    db_init(db, conn)
     data = get_memory(db, inp)
 
     if data:
         db.execute("delete from mem where word=lower(?)",
                    [inp])
         db.commit()
-        notice('"%s" has been forgotten.' % data.replace('`', "'"))
+        notice(u'"%s" has been forgotten.' % data.replace('`', "'"))
         return
     else:
         notice("I don't know about that.")
@@ -97,10 +99,10 @@ def forget(inp, db=None, notice=None):
 
 
 @hook.command
-def info(inp, notice=None, db=None):
+def info(inp, notice=None, db=None, conn=None):
     """info <factoid> -- Shows the source of a factoid."""
 
-    db_init(db)
+    db_init(db, conn)
 
     # attempt to get the factoid from the database
     data = get_memory(db, inp.strip())
@@ -119,7 +121,7 @@ def factoid(inp, message=None, db=None, bot=None, action=None, conn=None, input=
     except KeyError:
         prefix_on = False
 
-    db_init(db)
+    db_init(db, conn)
 
     # split up the input
     split = inp.group(1).strip().split(" ")
@@ -136,7 +138,7 @@ def factoid(inp, message=None, db=None, bot=None, action=None, conn=None, input=
         # factoid preprocessors
         if data.startswith("<py>"):
             code = data[4:].strip()
-            variables = 'input="""{}"""; nick="{}"; chan="{}"; bot_nick="{}";'.format(arguments.replace('"', '\\"'),
+            variables = u'input="""{}"""; nick="{}"; chan="{}"; bot_nick="{}";'.format(arguments.replace('"', '\\"'),
                                                                                       input.nick, input.chan,
                                                                                       input.conn.nick)
             result = pyexec.eval_py(variables + code)
@@ -157,6 +159,6 @@ def factoid(inp, message=None, db=None, bot=None, action=None, conn=None, input=
                 message("Could not fetch URL.")
         else:
             if prefix_on:
-                message("\x02[{}]:\x02 {}".format(factoid_id, result))
+                message(u"\x02[{}]:\x02 {}".format(factoid_id, result))
             else:
                 message(result)

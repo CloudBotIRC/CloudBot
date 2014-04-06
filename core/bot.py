@@ -2,13 +2,12 @@ import time
 import logging
 import re
 import os
-import queue
 import collections
 import threading
 
+import queue
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy import create_engine
-
 from core import config, irc, main
 from core.permissions import PermissionManager
 from core.loader import PluginLoader
@@ -54,7 +53,7 @@ class CloudBot(threading.Thread):
         self.do_restart = False
 
         # stores each instance of the
-        self.instances = []
+        self.connections = []
 
         # set up config and logging
         self.setup()
@@ -63,7 +62,7 @@ class CloudBot(threading.Thread):
         # start bot instances
         self.create()
 
-        for instance in self.instances:
+        for instance in self.connections:
             instance.permissions = PermissionManager(self, instance)
 
         # run plugin loader
@@ -89,7 +88,7 @@ class CloudBot(threading.Thread):
         """recieves input from the IRC engine and processes it"""
         self.logger.info("Starting main thread.")
         while self.running:
-            for instance in self.instances:
+            for instance in self.connections:
                 try:
                     incoming = instance.parsed_queue.get_nowait()
                     if incoming == StopIteration:
@@ -101,7 +100,7 @@ class CloudBot(threading.Thread):
                     pass
 
             # if no messages are in the incoming queue, sleep
-            while self.running and all(i.parsed_queue.empty() for i in self.instances):
+            while self.running and all(i.parsed_queue.empty() for i in self.connections):
                 time.sleep(.1)
 
     def setup(self):
@@ -138,9 +137,9 @@ class CloudBot(threading.Thread):
 
             self.logger.debug("Creating BotInstance for {}.".format(name))
 
-            self.instances.append(irc.BotInstance(name, server, nick, config=conf,
-                                  port=port, logger=self.logger, channels=conf['channels'],
-                                  ssl=conf['connection'].get('ssl', False)))
+            self.connections.append(irc.BotConnection(name, server, nick, config=conf,
+                                                      port=port, logger=self.logger, channels=conf['channels'],
+                                                      ssl=conf['connection'].get('ssl', False)))
             self.logger.debug("({}) Created connection.".format(name))
 
 

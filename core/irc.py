@@ -2,11 +2,10 @@ import re
 import socket
 import time
 import threading
+from ssl import wrap_socket, CERT_NONE, CERT_REQUIRED, SSLError
+
 import queue
 
-from core import permissions
-
-from ssl import wrap_socket, CERT_NONE, CERT_REQUIRED, SSLError
 
 irc_prefix_rem = re.compile(r'(.*?) (.*?) (.*)').match
 irc_noprefix_rem = re.compile(r'()(.*?) (.*)').match
@@ -202,8 +201,8 @@ class SSLIRCConnection(IRCConnection):
                            CERT_REQUIRED)
 
 
-class BotInstance(object):
-    """ A BotInstance represents each connection the bot makes to an IRC server """
+class BotConnection(object):
+    """ A BotConnection represents each connection the bot makes to an IRC server """
 
     def __init__(self, name, server, nick, port=6667, ssl=False, logger=None, channels=[], config={}):
         self.name = name

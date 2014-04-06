@@ -4,9 +4,6 @@ import os
 from util import hook, text, textgen
 
 
-GEN_DIR = "./plugins/data/name_files/"
-
-
 def get_generator(_json):
     data = json.loads(_json)
     return textgen.TextGenerator(data["templates"],
@@ -16,13 +13,14 @@ def get_generator(_json):
 @hook.command(autohelp=False)
 def namegen(input, instance, bot):
     """namegen [generator] -- Generates some names using the chosen generator.
+    :type bot: core.bot.CloudBot
     'namegen list' will display a list of all generators."""
 
     # clean up the input
     inp = input.text.strip().lower()
 
     # get a list of available name generators
-    files = os.listdir(GEN_DIR)
+    files = os.listdir(os.path.join(bot.data_dir, "name_files"))
     all_modules = []
     for i in files:
         if os.path.splitext(i)[1] == ".json":
@@ -47,7 +45,7 @@ def namegen(input, instance, bot):
         return "Invalid name generator :("
 
     # load the name generator
-    with open(os.path.join(GEN_DIR, "{}.json".format(selected_module))) as f:
+    with open(os.path.join(bot.data_dir, "name_files", "{}.json".format(selected_module))) as f:
         try:
             generator = get_generator(f.read())
         except ValueError as error:

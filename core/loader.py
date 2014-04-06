@@ -5,7 +5,6 @@ import collections
 
 from watchdog.observers import Observer
 from watchdog.tricks import Trick
-from pprint import pprint
 
 from core import main
 
@@ -30,6 +29,9 @@ def format_plug(plug, kind='', lpad=0):
 
 class PluginLoader(object):
     def __init__(self, bot):
+        """
+        :type bot: core.bot.CloudBot
+        """
         self.observer = Observer()
         self.path = os.path.abspath("plugins")
         self.bot = bot
@@ -52,7 +54,10 @@ class PluginLoader(object):
         self.rebuild()
 
     def load_file(self, path, rebuild=False):
-        """loads (or reloads) all valid plugins from a specified file"""
+        """loads (or reloads) all valid plugins from a specified file
+        :type path: str
+        :type rebuild: bool
+        """
         filename = os.path.basename(path)
         title = os.path.splitext(filename)[0]
 
@@ -97,7 +102,9 @@ class PluginLoader(object):
             self.rebuild()
 
     def unload_file(self, path):
-        """unloads all loaded plugins from a specified file"""
+        """unloads all loaded plugins from a specified file
+        :type path: str
+        """
         filename = os.path.basename(path)
         self.bot.logger.info("Unloading plugins from: {}".format(filename))
 
@@ -122,9 +129,8 @@ class PluginLoader(object):
                 self.bot.logger.error('Invalid command name: "{}" ({})'.format(name, format_plug(plugin)))
                 continue
             if name in self.bot.commands:
-                self.bot.logger.error('Command already registered: "{}" ({}, {})'.format(name,
-                                                                                   format_plug(self.bot.commands[name]),
-                                                                                   format_plug(plugin)))
+                self.bot.logger.error('Command already registered: "{}" ({}, {})'
+                                      .format(name, format_plug(self.bot.commands[name]), format_plug(plugin)))
                 continue
             self.bot.commands[name] = plugin
 

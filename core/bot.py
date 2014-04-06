@@ -4,22 +4,28 @@ import re
 import os
 import collections
 import threading
-
 import queue
+
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy import create_engine
+
 from core import config, irc, main
 from core.permissions import PermissionManager
 from core.loader import PluginLoader
 
 
 def clean_name(n):
-    """strip all spaces and capitalization"""
+    """strip all spaces and capitalization
+    :type n: str
+    :rtype : str
+    """
     return re.sub('[^A-Za-z0-9_]+', '', n.replace(" ", "_"))
 
 
 def get_logger():
-    """create and return a new logger object"""
+    """create and return a new logger object
+    :rtype : logging.Logger
+    """
     # create logger
     logger = logging.getLogger("cloudbot")
     logger.setLevel(logging.DEBUG)
@@ -52,15 +58,36 @@ class CloudBot(threading.Thread):
         self.running = True
         self.do_restart = False
 
-        # stores each instance of the
+        # stores each bot server connection
         self.connections = []
+        # bot commands
+        self.commands = []
 
-        # set up config and logging
-        self.setup()
+        # set up logging
+        self.logger = get_logger()
+        self.logger.debug("Logging system initalised.")
+
+        # declare and create data folder
+        self.data_dir = os.path.abspath('data')
+        if not os.path.exists(self.data_dir):
+            self.logger.debug("Data folder not found, creating.")
+            os.mkdir(self.data_dir)
+
+        # set up config
+        self.config = config.Config(self)
+        self.logger.debug("Config system initalised.")
+
+        # setup db
+        engine = create_engine('sqlite:///cloudbot.db')
+        db_factory = sessionmaker(bind=engine)
+        self.db_session = scoped_session(db_factory)
+        self.logger.debug("Database system initalised.")
+
+        # Bot initialisation complete
         self.logger.debug("Bot setup completed.")
 
         # start bot instances
-        self.create()
+        self.create_connections()
 
         for instance in self.connections:
             instance.permissions = PermissionManager(self, instance)
@@ -100,35 +127,12 @@ class CloudBot(threading.Thread):
                     pass
 
             # if no messages are in the incoming queue, sleep
-            while self.running and all(i.parsed_queue.empty() for i in self.connections):
+            while self.running and all(connection.parsed_queue.empty() for connection in self.connections):
                 time.sleep(.1)
 
-    def setup(self):
-        """create the logger and config objects"""
-        # logging
-        self.logger = get_logger()
-        self.logger.debug("Logging system initalised.")
-
-        # data folder
-        self.data_dir = os.path.abspath('persist')
-        if not os.path.exists(self.data_dir):
-            self.logger.debug("Data folder not found, creating.")
-            os.mkdir(self.data_dir)
-
-        # config
-        self.config = config.Config(self)
-        self.logger.debug("Config system initalised.")
-
-        # db
-        engine = create_engine('sqlite:///cloudbot.db')
-        db_factory = sessionmaker(bind=engine)
-        self.db_session = scoped_session(db_factory)
-        self.logger.debug("Database system initalised.")
-
-    def create(self):
-        """ Create a BotInstance for all the networks defined in the config """
-        for conf in self.config['instances']:
-
+    def create_connections(self):
+        """ Create a BotConnection for all the networks defined in the config """
+        for conf in self.config['connections']:
             # strip all spaces and capitalization from the connection name
             name = clean_name(conf['name'])
             nick = conf['nick']
@@ -138,10 +142,9 @@ class CloudBot(threading.Thread):
             self.logger.debug("Creating BotInstance for {}.".format(name))
 
             self.connections.append(irc.BotConnection(name, server, nick, config=conf,
-                                                      port=port, logger=self.logger, channels=conf['channels'],
-                                                      ssl=conf['connection'].get('ssl', False)))
+                                                             port=port, logger=self.logger, channels=conf['channels'],
+                                                             ssl=conf['connection'].get('ssl', False)))
             self.logger.debug("({}) Created connection.".format(name))
-
 
     def stop(self, reason=None):
         """quits all networks and shuts the bot down"""

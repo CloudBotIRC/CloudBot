@@ -49,7 +49,7 @@ def gmtime(format):
 
 def beautify(input):
     format = formats.get(input.command, '%(raw)s')
-    args = dict(input)
+    args = input.__dict__
 
     leng = len(args['paraml'])
     for n, p in enumerate(args['paraml']):
@@ -92,6 +92,10 @@ def get_log_fd(dir, server, chan):
 #@hook.singlethread
 @hook.event('*')
 def log(paraml, input=None, bot=None):
+    """
+
+    :type bot: core.bot.CloudBot
+    """
     timestamp = gmtime(timestamp_format)
 
     fd = get_log_fd(bot.data_dir, input.server, 'raw')

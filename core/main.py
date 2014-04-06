@@ -1,75 +1,141 @@
 import _thread
-import traceback
+import inspect
 import queue
 import re
-
-from sqlalchemy.orm import scoped_session
 
 _thread.stack_size(1024 * 512)  # reduce vm size
 
 
-#TODO: redesign this messy thing
-class Input(dict):
+class Input:
     def __init__(self, bot, conn, raw, prefix, command, params,
                  nick, user, host, mask, paraml, msg):
+        """
+        :type bot: core.bot.CloudBot
+        :type conn: core.irc.BotConnection
+        """
+        self.bot = bot
+        self.conn = conn
+        self.raw = raw
+        self.prefix = prefix
+        self.command = command
+        self.params = params
+        self.nick = nick
+        self.user = user
+        self.host = host
+        self.mask = mask
+        self.paraml = paraml
+        self.msg = msg
+        self.input = self
+        self.text = self.paraml
+        self.server = conn.server
+        self.lastparam = paraml[-1]
+        self.chan = paraml[0].lower()
 
-        chan = paraml[0].lower()
-        if chan == conn.nick.lower():  # is a PM
-            chan = nick
+        if self.chan == conn.nick.lower():  # is a PM
+            self.chan = nick
 
-        def message(message, target=chan):
-            """sends a message to a specific or current channel/user"""
-            conn.msg(target, message)
+    def message(self, message, target=None):
+        """sends a message to a specific or current channel/user
+        :type target: str
+        :type message: str
+        """
+        if target is None:
+            target = self.chan
+        self.conn.msg(target, message)
 
-        def reply(message, target=chan):
-            """sends a message to the current channel/user with a prefix"""
-            if target == nick:
-                conn.msg(target, message)
-            else:
-                conn.msg(target, "({}) {}".format(nick, message))
+    def reply(self, message, target=None):
+        """sends a message to the current channel/user with a prefix
+        :type target: str
+        :type message: str
+        """
+        if target is None:
+            target = self.chan
 
-        def action(message, target=chan):
-            """sends an action to the current channel/user or a specific channel/user"""
-            conn.ctcp(target, "ACTION", message)
+        if target == self.nick:
+            self.conn.msg(target, message)
+        else:
+            self.conn.msg(target, "{}, {}".format(self.nick, message))
 
-        def ctcp(message, ctcp_type, target=chan):
-            """sends an ctcp to the current channel/user or a specific channel/user"""
-            conn.ctcp(target, ctcp_type, message)
+    def action(self, message, target=None):
+        """sends an action to the current channel/user or a specific channel/user
+        :type target: str
+        :type message: str
+        """
+        if target is None:
+            target = self.chan
 
-        def notice(message, target=nick):
-            """sends a notice to the current channel/user or a specific channel/user"""
-            conn.cmd('NOTICE', [target, message])
+        self.conn.ctcp(target, "ACTION", message)
 
-        dict.__init__(self, conn=conn, raw=raw, prefix=prefix, command=command,
-                      params=params, nick=nick, user=user, host=host, mask=mask,
-                      paraml=paraml, msg=msg, server=conn.server, chan=chan,
-                      notice=notice, message=message, reply=reply, bot=bot,
-                      action=action, ctcp=ctcp, lastparam=paraml[-1])
+    def ctcp(self, message, ctcp_type, target=None):
+        """sends an ctcp to the current channel/user or a specific channel/user
+        :type target: str
+        :type ctcp_type: str
+        :type message: str
+        """
+        if target is None:
+            target = self.chan
+        self.conn.ctcp(target, ctcp_type, message)
 
-    # make dict keys accessible as attributes
-    def __getattr__(self, key):
-        return self[key]
+    def notice(self, message, target=None):
+        """sends a notice to the current channel/user or a specific channel/user
+        :type target: str
+        :type message: str
+        """
+        if target is None:
+            target = self.nick
 
-    def __setattr__(self, key, value):
-        self[key] = value
+        self.conn.cmd('NOTICE', [target, message])
 
 
 def run(bot, func, input):
+    """
+    :type func: func
+    :type bot: core.bot.CloudBot
+    :type input: Input
+    """
     uses_db = True
     # TODO: change to bot.get_db_session()
-    print(input)
-    if 'text' not in input:
-        input.text = input.paraml
+    bot.logger.debug("Input: {}".format(input))
 
     if uses_db:
         # create SQLAlchemy session
         bot.logger.debug("Opened DB session for: {}".format(func._filename))
         input.db = input.bot.db_session()
 
+    parameters = []
+    named_parameters = {}
+    specifications = inspect.getargspec(func)
+    required_args = specifications[0]
+    default_args = specifications[3]
+    if required_args is None:
+        required_args = []
+    if default_args is None:
+        default_args = []
+
+    if len(required_args) - len(default_args) == 1:
+        # The function is using the old format, with all arguments with defaults except for 'text'
+        # Assume that the funct want the first non-default arg to be 'input'
+        parameters = [input.text]
+        required_args = required_args[1:]  # Trim the first argument, as it's been assigned as a non-named parameter
+
+        for required_arg in required_args:
+            # Assign the rest of the named parameters to values from input
+            value = getattr(input, required_arg)
+
+            named_parameters[required_arg] = value
+    elif len(required_args) - len(default_args) == 3:
+        # We're assuming that this function is using the new format
+        # Treat the first three parameters as input, instance, bot
+        parameters = [input, input.conn, input.bot]
+    else:
+        print("Warning, ignoring function which doesn't fit arg spec: {}".format(specifications))
+        return
+
     try:
-        out = func(input, input.conn)
+        out = func(*parameters, **named_parameters)
     except:
         bot.logger.exception("Error in plugin {}:".format(func._filename))
+        bot.logger.info("Parameters used: {}, named parameters used: {}".format(parameters, named_parameters))
         return
     finally:
         if uses_db:
@@ -81,6 +147,14 @@ def run(bot, func, input):
 
 
 def do_sieve(sieve, bot, input, func, type, args):
+    """
+    :type sieve: function
+    :type bot: core.bot.CloudBot
+    :type input: Input
+    :type func: function
+    :type type: str
+    :type args: list
+    """
     try:
         return sieve(bot, input, func, type, args)
     except Exception:
@@ -88,7 +162,7 @@ def do_sieve(sieve, bot, input, func, type, args):
         return None
 
 
-class Handler(object):
+class Handler:
     """Runs plugins in their own threads (ensures order)"""
 
     def __init__(self, bot, func):
@@ -107,7 +181,6 @@ class Handler(object):
 
             run(self.bot, self.func, input)
 
-
     def stop(self):
         self.input_queue.put(StopIteration)
 
@@ -116,12 +189,20 @@ class Handler(object):
 
 
 def dispatch(bot, input, kind, func, args, autohelp=False):
+    """
+    :type bot: core.bot.CloudBot
+    :type input: Input
+    :type kind: str
+    :type func: function
+    :type args: list
+    :type autohelp: bool
+    """
     for sieve, in bot.plugins['sieve']:
         input = do_sieve(sieve, bot, input, func, kind, args)
         if input is None:
             return
 
-    if not (not autohelp or not args.get('autohelp', True) or input.inp or not (func.__doc__ is not None)):
+    if autohelp and args.get('autohelp', True) and not input.text and func.__doc__ is not None:
         input.notice(input.conn.config["command_prefix"] + func.__doc__)
         return
 
@@ -132,6 +213,10 @@ def dispatch(bot, input, kind, func, args, autohelp=False):
 
 
 def match_command(bot, command):
+    """
+    :type command: str
+    :type bot: core.bot.CloudBot
+    """
     commands = list(bot.commands)
 
     # do some fuzzy matching

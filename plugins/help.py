@@ -12,7 +12,7 @@ def help_command(inp, notice=None, conn=None, bot=None):
     disabled_comm = bot.config.get('disabled_commands', [])
     for command, (func, args) in bot.commands.items():
         fn = re.match(r'^plugins.(.+).py$', func._filename)
-        if fn.group(1).lower() not in disabled:
+        if fn is None and (func._filename not in disabled) or (fn.group(1).lower() not in disabled):
             if command not in disabled_comm:
                 if func.__doc__ is not None:
                     if func in funcs:
@@ -42,10 +42,10 @@ def help_command(inp, notice=None, conn=None, bot=None):
             for x in out[1:]:
                 notice(x)
         notice("For detailed help, do '{}help <example>' where <example> "
-               "is the name of the command you want help for.".format(conn.conf["command_prefix"]))
+               "is the name of the command you want help for.".format(conn.config["command_prefix"]))
 
     else:
         if inp in commands:
-            notice(conn.conf["command_prefix"] + commands[inp].__doc__)
+            notice(conn.config["command_prefix"] + commands[inp].__doc__)
         else:
-            notice("Command {}{} not found".format(conn.conf["command_prefix"], inp))
+            notice("Command {}{} not found".format(conn.config["command_prefix"], inp))

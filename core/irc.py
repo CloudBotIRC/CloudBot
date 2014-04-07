@@ -3,8 +3,10 @@ import socket
 import time
 import threading
 import queue
-
 from ssl import wrap_socket, CERT_NONE, CERT_REQUIRED, SSLError
+
+from core.permissions import PermissionManager
+
 
 irc_prefix_rem = re.compile(r'(.*?) (.*?) (.*)').match
 irc_noprefix_rem = re.compile(r'()(.*?) (.*)').match
@@ -207,8 +209,9 @@ class SSLIRCConnection(IRCConnection):
 class BotConnection(object):
     """ A BotConnection represents each connection the bot makes to an IRC server """
 
-    def __init__(self, name, server, nick, port=6667, ssl=False, logger=None, channels=None, config=None):
+    def __init__(self, bot, name, server, nick, port=6667, ssl=False, logger=None, channels=None, config=None):
         """
+        :type bot: core.bot.CloudBot
         :type name: str
         :type server: str
         :type nick: str
@@ -218,6 +221,7 @@ class BotConnection(object):
         :type channels: list
         :type config: map
         """
+        self.bot = bot
         self.name = name
 
         if channels is None:
@@ -260,6 +264,9 @@ class BotConnection(object):
                                         self.parsed_queue)
         self.parse_thread.daemon = True
         self.parse_thread.start()
+
+        # create permissions manager
+        self.permissions = PermissionManager(bot, self)
 
     def create_connection(self):
         if self.ssl:

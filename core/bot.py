@@ -10,7 +10,6 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy import create_engine
 
 from core import config, irc, main
-from core.permissions import PermissionManager
 from core.loader import PluginLoader
 
 
@@ -100,9 +99,6 @@ class CloudBot(threading.Thread):
         # start bot instances
         self.create_connections()
 
-        for instance in self.connections:
-            instance.permissions = PermissionManager(self, instance)
-
         # run plugin loader
         self.plugins = collections.defaultdict(list)
 
@@ -152,7 +148,7 @@ class CloudBot(threading.Thread):
 
             self.logger.debug("Creating BotInstance for {}.".format(name))
 
-            self.connections.append(irc.BotConnection(name, server, nick, config=conf,
+            self.connections.append(irc.BotConnection(self, name, server, nick, config=conf,
                                                       port=port, logger=self.logger, channels=conf['channels'],
                                                       ssl=conf['connection'].get('ssl', False)))
             self.logger.debug("({}) Created connection.".format(name))

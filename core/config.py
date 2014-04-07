@@ -58,17 +58,23 @@ class Config(dict):
 
         pattern = "*{}".format(self.filename)
 
-        self.event_handler = ConfigEventHandler(self, patterns=[pattern])
+        self.event_handler = ConfigEventHandler(self.bot, self, patterns=[pattern])
         self.observer.schedule(self.event_handler, path='.', recursive=False)
         self.observer.start()
 
 
 class ConfigEventHandler(Trick):
-    def __init__(self, config, *args, **kwargs):
+    def __init__(self, bot, config, *args, **kwargs):
+        """
+        :type bot: core.bot.CloudBot
+        :type config: Config
+        """
+        self.bot = bot
         self.config = config
         self.logger = config.logger
         Trick.__init__(self, *args, **kwargs)
 
     def on_any_event(self, event):
-        self.logger.info("Config changed, triggering reload.")
-        self.config.load_config()
+        if self.bot.running:
+            self.logger.info("Config changed, triggering reload.")
+            self.config.load_config()

@@ -8,11 +8,40 @@ _thread.stack_size(1024 * 512)  # reduce vm size
 
 
 class Input:
+    """
+    :type bot: core.bot.CloudBot
+    :type conn: core.irc.BotConnection
+    :type raw: str
+    :type prefix: str
+    :type command: str
+    :type params: str
+    :type nick: str
+    :type user: str
+    :type host: str
+    :type mask: str
+    :type paraml: list[str]
+    :type msg: str
+    :type input: Input
+    :type text: list[str]
+    :type server: str
+    :type lastparam: str
+    :type chan: str
+    """
     def __init__(self, bot, conn, raw, prefix, command, params,
-                 nick, user, host, mask, paraml, msg):
+                 nick, user, host, mask, paramlist, msg):
         """
         :type bot: core.bot.CloudBot
         :type conn: core.irc.BotConnection
+        :type raw: str
+        :type prefix: str
+        :type command: str
+        :type params: str
+        :type nick: str
+        :type user: str
+        :type host: str
+        :type mask: str
+        :type paramlist: list[str]
+        :type msg: str
         """
         self.bot = bot
         self.conn = conn
@@ -24,21 +53,21 @@ class Input:
         self.user = user
         self.host = host
         self.mask = mask
-        self.paraml = paraml
+        self.paraml = paramlist
         self.msg = msg
         self.input = self
         self.text = self.paraml
         self.server = conn.server
-        self.lastparam = paraml[-1]
-        self.chan = paraml[0].lower()
+        self.lastparam = paramlist[-1]  # TODO: This is equivalent to msg
+        self.chan = paramlist[0].lower()
 
         if self.chan == conn.nick.lower():  # is a PM
             self.chan = nick
 
     def message(self, message, target=None):
         """sends a message to a specific or current channel/user
-        :type target: str
         :type message: str
+        :type target: str
         """
         if target is None:
             target = self.chan
@@ -46,8 +75,8 @@ class Input:
 
     def reply(self, message, target=None):
         """sends a message to the current channel/user with a prefix
-        :type target: str
         :type message: str
+        :type target: str
         """
         if target is None:
             target = self.chan
@@ -59,8 +88,8 @@ class Input:
 
     def action(self, message, target=None):
         """sends an action to the current channel/user or a specific channel/user
-        :type target: str
         :type message: str
+        :type target: str
         """
         if target is None:
             target = self.chan
@@ -69,9 +98,9 @@ class Input:
 
     def ctcp(self, message, ctcp_type, target=None):
         """sends an ctcp to the current channel/user or a specific channel/user
-        :type target: str
-        :type ctcp_type: str
         :type message: str
+        :type ctcp_type: str
+        :type target: str
         """
         if target is None:
             target = self.chan
@@ -79,8 +108,8 @@ class Input:
 
     def notice(self, message, target=None):
         """sends a notice to the current channel/user or a specific channel/user
-        :type target: str
         :type message: str
+        :type target: str
         """
         if target is None:
             target = self.nick
@@ -90,8 +119,8 @@ class Input:
 
 def run(bot, func, input):
     """
-    :type func: func
     :type bot: core.bot.CloudBot
+    :type func: func
     :type input: Input
     """
     uses_db = True
@@ -154,24 +183,30 @@ def do_sieve(sieve, bot, input, func, type, args):
     :type input: Input
     :type func: function
     :type type: str
-    :type args: list
+    :type args: dict[str, ?]
+    :rtype: Input
     """
     try:
         return sieve(bot, input, func, type, args)
-    except Exception:
+    except:
         bot.logger.exception("Error in sieve {}:".format(func._filename))
         return None
 
 
 class Handler:
-    """Runs plugins in their own threads (ensures order)"""
+    """Runs plugins in their own threads (ensures order)
+    :type bot: core.bot.CloudBot
+    :type func: function
+    :type input_queue: queue.Queue[Input]
+    """
 
     def __init__(self, bot, func):
         """
         :type bot: core.bot.CloudBot
+        :type func: function
         """
-        self.func = func
         self.bot = bot
+        self.func = func
         self.input_queue = queue.Queue()
         _thread.start_new_thread(self.start, ())
 
@@ -194,6 +229,9 @@ class Handler:
         self.input_queue.put(StopIteration)
 
     def put(self, value):
+        """
+        :type value: Input
+        """
         self.input_queue.put(value)
 
 
@@ -203,7 +241,7 @@ def dispatch(bot, input, kind, func, args, autohelp=False):
     :type input: Input
     :type kind: str
     :type func: function
-    :type args: list
+    :type args: dict[str, ?]
     :type autohelp: bool
     """
     for sieve, in bot.plugins['sieve']:
@@ -223,8 +261,9 @@ def dispatch(bot, input, kind, func, args, autohelp=False):
 
 def match_command(bot, command):
     """
-    :type command: str
     :type bot: core.bot.CloudBot
+    :type command: str
+    :rtype: str | list
     """
     commands = list(bot.commands)
 
@@ -239,6 +278,11 @@ def match_command(bot, command):
 
 
 def main(bot, conn, out):
+    """
+    :type bot: core.bot.CloudBot
+    :type conn: core.irc.BotConnection
+    :type out: list
+    """
     inp = Input(bot, conn, *out)
     command_prefix = conn.config.get('command_prefix', '.')
 

@@ -51,7 +51,7 @@ def sieve_suite(bot, input, func, kind, args):
 
     # check command spam tokens
     if kind == "command":
-        uid = (input.nick, input.chan)
+        uid = input.chan
 
         if not uid in buckets:
             _bucket = bucket.TokenBucket(TOKENS, RESTORE_RATE)

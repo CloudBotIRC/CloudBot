@@ -53,6 +53,8 @@ class CloudBotWrapper():
                 if self.cloudbot.do_restart:
                     # create a new bot thread and start it
                     del self.cloudbot
+                    print("Restarting")
+                    time.sleep(1)  # sleep one second for timeouts
                     self.cloudbot = bot.CloudBot()
                     self.cloudbot.start()
                     continue

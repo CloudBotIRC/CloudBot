@@ -14,13 +14,13 @@ irc_netmask_rem = re.compile(r':?([^!@]*)!?([^@]*)@?(.*)').match
 irc_param_ref = re.compile(r'(?:^|(?<= ))(:.*|[^ ]+)').findall
 
 
-def decode(txt):
+def decode(encoded):
     for codec in ('utf-8', 'iso-8859-1', 'shift_jis', 'cp1252'):
         try:
-            return txt.decode(codec)
+            return encoded.decode(codec)
         except UnicodeDecodeError:
             continue
-    return txt.decode('utf-8', 'ignore')
+    return encoded.decode('utf-8', 'ignore')
 
 
 def censor(text):
@@ -207,7 +207,25 @@ class SSLIRCConnection(IRCConnection):
 
 
 class BotConnection(object):
-    """ A BotConnection represents each connection the bot makes to an IRC server """
+    """ A BotConnection represents each connection the bot makes to an IRC server
+    :type bot: core.bot.CloudBot
+    :type name: str
+    :type channels: list[str]
+    :type config: dict[str, ?]
+    :type ssl: bool
+    :type server: str
+    :type port: int
+    :type logger: logging.Logger
+    :type nick: str
+    :type vars: dict
+    :type history: dict
+    :type parsed_queue: queue.Queue
+    :type input_queue: queue.Queue
+    :type output_queue: queue.Queue
+    :type connection: IRCConnection
+    :type parse_thread: ParseThread
+    :type permissions: PermissionManager
+    """
 
     def __init__(self, bot, name, server, nick, port=6667, ssl=False, logger=None, channels=None, config=None):
         """
@@ -218,8 +236,8 @@ class BotConnection(object):
         :type port: int
         :type ssl: bool
         :type logger: logging.Logger
-        :type channels: list
-        :type config: map
+        :type channels: list[str]
+        :type config: dict[str, ?]
         """
         self.bot = bot
         self.name = name
@@ -246,7 +264,6 @@ class BotConnection(object):
         # format: [rawline, prefix, command, params,
         # nick, user, host, paramlist, msg]
 
-        self.parsed_queue = queue.Queue()
         self.input_queue = queue.Queue()
         self.output_queue = queue.Queue()
 
@@ -327,7 +344,7 @@ class BotConnection(object):
     def cmd(self, command, params=None):
         """
         :type command: str
-        :type params: list
+        :type params: list[str]
         """
         if params:
             params[-1] = ':' + params[-1]

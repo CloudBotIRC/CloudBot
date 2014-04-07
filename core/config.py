@@ -8,10 +8,20 @@ from watchdog.tricks import Trick
 
 
 class Config(dict):
+    """
+    :type filename: str
+    :type path: bytes
+    :type bot: core.bot.CloudBot
+    :type observer: Observer
+    :type event_handler: ConfigEventHandler
+    """
     def __init__(self, bot, *args, **kwargs):
         """
         :type bot: core.bot.CloudBot
+        :type args: list
+        :type kwargs: dict
         """
+        dict.__init__(self, *args, **kwargs)
         self.filename = "config.json"
         self.path = os.path.abspath(self.filename)
         self.bot = bot
@@ -64,6 +74,11 @@ class Config(dict):
 
 
 class ConfigEventHandler(Trick):
+    """
+    :type bot: core.bot.CloudBot
+    :type config: core.config.Config
+    :type logger: logging.Logger
+    """
     def __init__(self, bot, config, *args, **kwargs):
         """
         :type bot: core.bot.CloudBot

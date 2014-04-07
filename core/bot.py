@@ -19,14 +19,14 @@ logger_initialized = False
 def clean_name(n):
     """strip all spaces and capitalization
     :type n: str
-    :rtype : str
+    :rtype: str
     """
     return re.sub('[^A-Za-z0-9_]+', '', n.replace(" ", "_"))
 
 
 def get_logger():
     """create and return a new logger object
-    :rtype : logging.Logger
+    :rtype: logging.Logger
     """
     # create logger
     logger = logging.getLogger("cloudbot")
@@ -62,6 +62,20 @@ def get_logger():
 
 
 class CloudBot(threading.Thread):
+    """
+    :type start_time: float
+    :type running: bool
+    :type do_restart: bool
+    :type connections: list[core.irc.BotConnection]
+    :type commands: list
+    :type logger: logging.Logger
+    :type data_dir: bytes
+    :type config: core.config.Config
+    :type db_session: scoped_session
+    :type plugins: dict
+    :type loader: core.loader.PluginLoader
+    """
+
     def __init__(self):
         # basic variables
         self.start_time = time.time()
@@ -122,14 +136,14 @@ class CloudBot(threading.Thread):
         """recieves input from the IRC engine and processes it"""
         self.logger.info("Starting main thread.")
         while self.running:
-            for instance in self.connections:
+            for connection in self.connections:
                 try:
-                    incoming = instance.parsed_queue.get_nowait()
+                    incoming = connection.parsed_queue.get_nowait()
                     if incoming == StopIteration:
                         print("StopIteration")
                         # IRC engine has signalled timeout, so reconnect (ugly)
-                        instance.connection.reconnect()
-                    main.main(self, instance, incoming)
+                        connection.connection.reconnect()
+                    main.main(self, connection, incoming)
                 except queue.Empty:
                     pass
 

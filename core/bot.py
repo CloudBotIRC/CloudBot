@@ -14,6 +14,9 @@ from core.permissions import PermissionManager
 from core.loader import PluginLoader
 
 
+logger_initialized = False
+
+
 def clean_name(n):
     """strip all spaces and capitalization
     :type n: str
@@ -28,6 +31,11 @@ def get_logger():
     """
     # create logger
     logger = logging.getLogger("cloudbot")
+    global logger_initialized
+    if logger_initialized:
+        # Only initialize once
+        return logger
+
     logger.setLevel(logging.DEBUG)
 
     # add a file handler
@@ -48,6 +56,9 @@ def get_logger():
     # add the Handlers to the logger
     logger.addHandler(fh)
     logger.addHandler(sh)
+
+    # be sure to set initialized = True
+    logger_initialized = True
     return logger
 
 
@@ -142,8 +153,8 @@ class CloudBot(threading.Thread):
             self.logger.debug("Creating BotInstance for {}.".format(name))
 
             self.connections.append(irc.BotConnection(name, server, nick, config=conf,
-                                                             port=port, logger=self.logger, channels=conf['channels'],
-                                                             ssl=conf['connection'].get('ssl', False)))
+                                                      port=port, logger=self.logger, channels=conf['channels'],
+                                                      ssl=conf['connection'].get('ssl', False)))
             self.logger.debug("({}) Created connection.".format(name))
 
     def stop(self, reason=None):
@@ -166,9 +177,10 @@ class CloudBot(threading.Thread):
 
             connection.stop()
 
-        self.logger.debug("Logging engine stopped")
-        logging.shutdown()
-
+        if not self.do_restart:
+            # Don't shut down logging if restarting
+            self.logger.debug("Stopping logging engine")
+            logging.shutdown()
         self.running = False
 
     def restart(self, reason=None):

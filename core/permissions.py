@@ -44,5 +44,21 @@ class PermissionManager(object):
 
         for pattern in allowed_users:
             if fnmatch(mask.lower(), pattern.lower()):
-                return input
+                self.logger.info("Allowed user {} access to {}".format(mask, perm))
+                return True
 
+        return False
+
+    def get_group_permissions(self, group):
+        return self.group_perms.get(group)
+
+    def get_group_users(self, group):
+        return self.group_users.get(group)
+
+    def get_user_permissions(self, user):
+        permissions = []
+        for permission, users in self.perm_users.items():
+            for mask in users:
+                if fnmatch(user.lower(), mask.lower()):
+                    permissions.append(permission)
+        return permissions

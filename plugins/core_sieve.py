@@ -4,16 +4,52 @@ TOKENS = 10
 RESTORE_RATE = 2
 MESSAGE_COST = 5
 
-
 buckets = {}
+
 
 @hook.sieve
 def sieve_suite(bot, input, func, kind, args):
     conn = input.conn
+    # check ignorebots
     if input.command == 'PRIVMSG' and \
             input.nick.endswith('bot') and args.get('ignorebots', True):
         return None
 
+    # check acls
+    acl = conn.config.get('acls', {}).get(func.__name__)
+    if acl:
+        if 'deny-except' in acl:
+            allowed_channels = list(map(str.lower, acl['deny-except']))
+            if input.chan.lower() not in allowed_channels:
+                return None
+        if 'allow-except' in acl:
+            denied_channels = list(map(str.lower, acl['allow-except']))
+            if input.chan.lower() in denied_channels:
+                return None
+
+    # check disabled_commands
+    if kind == "command":
+        disabled_commands = conn.config.get('disabled_commands', [])
+        if input.trigger in disabled_commands:
+            return None
+
+    # check permissions
+    if args.get('adminonly', False):
+        args["permissions"] = ["adminonly"]
+    if args.get('permissions', False):
+        mask = input.mask.lower()
+
+        allowed_permissions = args.get('permissions', [])
+        allowed = False
+        for perm in allowed_permissions:
+            if conn.permissions.has_perm_mask(mask, perm):
+                allowed = True
+
+        if not allowed:
+            input.notice("Sorry, you are not allowed to use this command.")
+            return None
+
+    # check command spam tokens
     if kind == "command":
         uid = (input.nick, input.chan)
 
@@ -29,38 +65,5 @@ def sieve_suite(bot, input, func, kind, args):
         else:
             print("pong!")
             return None
-
-        disabled_commands = conn.config.get('disabled_commands', [])
-        if input.trigger in disabled_commands:
-            return None
-
-        return input
-
-
-    acl = conn.config.get('acls', {}).get(func.__name__)
-    if acl:
-        if 'deny-except' in acl:
-            allowed_channels = list(map(str.lower, acl['deny-except']))
-            if input.chan.lower() not in allowed_channels:
-                return None
-        if 'allow-except' in acl:
-            denied_channels = list(map(str.lower, acl['allow-except']))
-            if input.chan.lower() in denied_channels:
-                return None
-
-    # shim so plugins using the old "adminonly" permissions format still work
-    if args.get('adminonly', False):
-        args["permissions"] = ["adminonly"]
-
-    if args.get('permissions', False):
-        mask = input.mask.lower()
-
-        allowed_permissions = args.get('permissions', [])
-        for perm in allowed_permissions:
-            if conn.permissions.has_perm_mask(mask, perm):
-                return input
-
-        input.notice("Sorry, you are not allowed to use this command.")
-        return None
 
     return input

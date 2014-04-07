@@ -7,8 +7,8 @@ import signal
 from core import bot
 
 
-# check python version 
 if sys.version_info < (3, 2, 0):
+    # check python version
     print("CloudBot3 requires Python 3.2 or newer.")
     sys.exit(1)
 
@@ -29,14 +29,19 @@ class CloudBotWrapper():
 
         self.original_sigint = None
 
+        self.stopped_while_restarting = False
+
     def set_signals(self):
         # store the original SIGINT handler
         self.original_sigint = signal.getsignal(signal.SIGINT)
         signal.signal(signal.SIGINT, self.exit_gracefully)
 
     def exit_gracefully(self, signum, frame):
-        # this doesn't really work at all
-        self.cloudbot.stop()
+        if not self.cloudbot:
+            # we are currently in the process of restarting
+            self.stopped_while_restarting = True
+        else:
+            self.cloudbot.stop()
 
         # restore the original handler so if they do it again it triggers
         signal.signal(signal.SIGINT, self.original_sigint)
@@ -52,9 +57,12 @@ class CloudBotWrapper():
             else:
                 if self.cloudbot.do_restart:
                     # create a new bot thread and start it
-                    del self.cloudbot
+                    self.cloudbot = None
                     print("Restarting")
                     time.sleep(1)  # sleep one second for timeouts
+                    if self.stopped_while_restarting:
+                        print("Recieved stop signal, no longer restarting")
+                        return
                     self.cloudbot = bot.CloudBot()
                     self.cloudbot.start()
                     continue

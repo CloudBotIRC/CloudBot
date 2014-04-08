@@ -30,7 +30,8 @@ def censor(text):
 class ReceiveThread(threading.Thread):
     """receives messages from IRC and puts them in the input_queue"""
 
-    def __init__(self, sock, input_queue, timeout):
+    def __init__(self, logger, sock, input_queue, timeout):
+        self.logger = logger
         self.input_buffer = b""
         self.input_queue = input_queue
         self.socket = sock
@@ -73,13 +74,13 @@ class ReceiveThread(threading.Thread):
 
             while b'\r\n' in self.input_buffer:
                 line, self.input_buffer = self.input_buffer.split(b'\r\n', 1)
-                print(decode(line))
+                self.logger.debug("[Raw] {}".format(decode(line)))
                 self.input_queue.put(decode(line))
 
 
 class SSLReceiveThread(ReceiveThread):
-    def __init__(self, sock, input_queue, timeout):
-        ReceiveThread.__init__(self, sock, input_queue, timeout)
+    def __init__(self, logger, sock, input_queue, timeout):
+        ReceiveThread.__init__(self, logger, sock, input_queue, timeout)
 
     def recv_from_socket(self, nbytes):
         return self.socket.read(nbytes)
@@ -161,7 +162,8 @@ class ParseThread(threading.Thread):
 class IRCConnection(object):
     """handles an IRC connection"""
 
-    def __init__(self, name, host, port, input_queue, output_queue):
+    def __init__(self, logger, name, host, port, input_queue, output_queue):
+        self.logger = logger
         self.output_queue = output_queue  # lines to be sent out
         self.input_queue = input_queue  # lines that were received
         self.socket = self.create_socket()
@@ -176,7 +178,7 @@ class IRCConnection(object):
     def connect(self):
         self.socket.connect((self.host, self.port))
 
-        self.receive_thread = ReceiveThread(self.socket, self.input_queue, self.timeout)
+        self.receive_thread = ReceiveThread(self.logger, self.socket, self.input_queue, self.timeout)
         self.receive_thread.start()
 
         self.send_thread = SendThread(self.socket, self.conn_name, self.output_queue)
@@ -196,9 +198,9 @@ class IRCConnection(object):
 class SSLIRCConnection(IRCConnection):
     """handles a SSL IRC connection"""
 
-    def __init__(self, name, host, port, input_queue, output_queue, ignore_cert_errors):
+    def __init__(self, logger, name, host, port, input_queue, output_queue, ignore_cert_errors):
         self.ignore_cert_errors = ignore_cert_errors
-        IRCConnection.__init__(self, name, host, port, input_queue, output_queue)
+        IRCConnection.__init__(self, logger, name, host, port, input_queue, output_queue)
 
     def create_socket(self):
         return wrap_socket(IRCConnection.create_socket(self), server_side=False,
@@ -267,6 +269,9 @@ class BotConnection(object):
         self.input_queue = queue.Queue()
         self.output_queue = queue.Queue()
 
+        # create permissions manager
+        self.permissions = PermissionManager(bot, self)
+
         # create the IRC connection and connect
         self.connection = self.create_connection()
         self.connection.connect()
@@ -282,16 +287,13 @@ class BotConnection(object):
         self.parse_thread.daemon = True
         self.parse_thread.start()
 
-        # create permissions manager
-        self.permissions = PermissionManager(bot, self)
-
     def create_connection(self):
         if self.ssl:
-            return SSLIRCConnection(self.name, self.server, self.port, self.input_queue,
+            return SSLIRCConnection(self.bot.logger, self.name, self.server, self.port, self.input_queue,
                                     self.output_queue, True)
         else:
-            return IRCConnection(self.name, self.server, self.port,
-                                 self.input_queue, self.output_queue)
+            return IRCConnection(self.bot.logger, self.name, self.server, self.port, self.input_queue,
+                                 self.output_queue)
 
     def stop(self):
         self.connection.stop()

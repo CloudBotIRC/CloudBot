@@ -70,7 +70,7 @@ class Config(dict):
 
     def save_config(self):
         """saves the contents of the config dict to the config file"""
-        json.dump(self, open(self.path, 'w'), sort_keys=True, indent=2)
+        json.dump(self, open(self.path, 'w'), sort_keys=True, indent=4)
         self.logger.info("Config saved to file.")
 
 

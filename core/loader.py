@@ -59,11 +59,19 @@ class PluginLoader(object):
         :type rebuild: bool
         """
         filename = os.path.basename(path)
-        title = os.path.splitext(filename)[0]
+        if isinstance(filename, bytes):
+            # makes sure that the filename is a 'str' object, not a 'bytes' object
+            filename = filename.decode()
+        file_split = os.path.splitext(filename)
+        title = file_split[0]
+        extension = file_split[1]
+        if extension != ".py":
+            # ignore non-python plugin files
+            return
 
         disabled = self.bot.config.get('disabled_plugins', [])
         if title in disabled:
-            self.bot.logger.info("Did not load plugins from: {} (plugin disabled)".format(filename))
+            self.bot.logger.info("Not loading plugin {}: plugin disabled".format(filename))
             return
 
         # compile the file and eval it in a namespace
@@ -106,6 +114,21 @@ class PluginLoader(object):
         :type path: str
         """
         filename = os.path.basename(path)
+        if isinstance(filename, bytes):
+            # makes sure that the filename is a 'str' object, not a 'bytes' object
+            filename = filename.decode()
+        file_split = os.path.splitext(filename)
+        title = file_split[0]
+        extension = file_split[1]
+        if extension != ".py":
+            # ignore non-python plugin files
+            return
+
+        disabled = self.bot.config.get('disabled_plugins', [])
+        if title in disabled:
+            # this plugin hasn't been loaded, so no need to unload it
+            return
+
         self.bot.logger.info("Unloading plugins from: {}".format(filename))
 
         # remove plugins loaded from this file

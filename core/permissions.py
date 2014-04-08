@@ -11,17 +11,16 @@ class PermissionManager(object):
     :type group_users: dict[str, list[str]]
     :type perm_users: dict[str, list[str]]
     """
-    def __init__(self, bot, conn):
+
+    def __init__(self, conn):
         """
-        :type bot: core.bot.CloudBot
         :type conn: core.irc.BotConnection
         """
-        self.logger = bot.logger
+        self.logger = conn.logger
 
         self.logger.info("Created permission manager for {}.".format(conn.name))
 
         # stuff
-        self.bot = bot
         self.name = conn.name
         self.config = conn.config
 
@@ -32,10 +31,16 @@ class PermissionManager(object):
         self.reload()
 
     def reload(self):
+        self.group_perms = {}
+        self.group_users = {}
+        self.perm_users = {}
         self.logger.info("Reloading permissions for {}.".format(self.name))
         groups = self.config.get("permissions", {})
         # work out the permissions and users each group has
         for key, value in groups.items():
+            if not key.islower():
+                self.logger.warning("Warning! Non-lower-case group '{}' in config. This will cause problems when"
+                                    "setting permissions using the bot's permissions commands")
             key = key.lower()
             self.group_perms[key] = []
             self.group_users[key] = []
@@ -70,6 +75,9 @@ class PermissionManager(object):
 
         return False
 
+    def get_groups(self):
+        return set().union(self.group_perms.keys(), self.group_users.keys())
+
     def get_group_permissions(self, group):
         """
         :type group: str
@@ -89,9 +97,98 @@ class PermissionManager(object):
         :type user_mask: str
         :rtype: list[str]
         """
-        permissions = []
+        permissions = set()
         for permission, users in self.perm_users.items():
             for mask_to_check in users:
                 if fnmatch(user_mask.lower(), mask_to_check):
-                    permissions.append(permission)
+                    permissions.add(permission)
         return permissions
+
+    def get_user_groups(self, user_mask):
+        """
+        :type user_mask: str
+        :rtype: list[str]
+        """
+        groups = []
+        for group, users in self.group_users.items():
+            for mask_to_check in users:
+                if fnmatch(user_mask.lower(), mask_to_check):
+                    groups.append(group)
+                    continue
+        return groups
+
+    def group_exists(self, group):
+        """
+        Checks whether a group exists
+        :type group: str
+        :rtype: bool
+        """
+        return group.lower() in self.group_perms
+
+    def user_in_group(self, user_mask, group):
+        """
+        Checks whether a user is matched by any masks in a given group
+        :type group: str
+        :type user_mask: str
+        :rtype: bool
+        """
+        users = self.group_users.get(group.lower())
+        if not users:
+            return False
+        for mask_to_check in users:
+            if fnmatch(user_mask.lower(), mask_to_check):
+                return True
+        return False
+
+    def remove_group_user(self, group, user_mask):
+        """
+        Removes all users that match user_mask from group. Returns a list of user masks removed from the group.
+        Use permission_manager.reload() to make this change take affect.
+        Use bot.config.save_config() to save this change to file.
+        :type group: str
+        :type user_mask: str
+        :rtype: list[str]
+        """
+        masks_removed = []
+
+        config_groups = self.config.get("permissions", {})
+
+        for mask_to_check in list(self.group_users[group.lower()]):
+            if fnmatch(user_mask.lower(), mask_to_check):
+                masks_removed.append(mask_to_check)
+                # We're going to act like the group keys are all lowercase.
+                # The user has been warned (above) if they aren't.
+                # Okay, maybe a warning, but no support.
+                if group not in config_groups:
+                    self.logger.warning("Can't remove user from group due to upper-case group names!")
+                    continue
+                config_group = config_groups.get(group)
+                config_users = config_group.get("users")
+                config_users.remove(mask_to_check)
+
+        return masks_removed
+
+    def add_user_to_group(self, user_mask, group):
+        """
+        Adds user to group. Returns whether this actually did anything.
+        Use permission_manager.reload() to make this change take affect.
+        Use bot.config.save_config() to save this change to file.
+        :type group: str
+        :type user_mask: str
+        :rtype: bool
+        """
+        if self.user_in_group(user_mask, group):
+            return False
+        # We're going to act like the group keys are all lowercase.
+        # The user has been warned (above) if they aren't.
+        groups = self.config.get("permissions", {})
+        if group in groups:
+            group_dict = groups.get(group)
+            users = group_dict["users"]
+            users.append(user_mask)
+        else:
+            # create the group
+            group_dict = {"users": [user_mask], "perms": []}
+            groups[group] = group_dict
+
+        return True

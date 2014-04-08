@@ -267,6 +267,9 @@ class BotConnection(object):
         self.input_queue = queue.Queue()
         self.output_queue = queue.Queue()
 
+        # create permissions manager
+        self.permissions = PermissionManager(self)
+
         # create the IRC connection and connect
         self.connection = self.create_connection()
         self.connection.connect()
@@ -281,9 +284,6 @@ class BotConnection(object):
                                         self.parsed_queue)
         self.parse_thread.daemon = True
         self.parse_thread.start()
-
-        # create permissions manager
-        self.permissions = PermissionManager(bot, self)
 
     def create_connection(self):
         if self.ssl:

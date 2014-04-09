@@ -39,8 +39,7 @@ def get_logger():
     logger.setLevel(logging.DEBUG)
 
     # add a file handler
-    log_name = "bot.log"
-    file_handler = logging.FileHandler(log_name)
+    file_handler = logging.FileHandler("bot.log")
     file_handler.setLevel(logging.INFO)
 
     # add debug file handler

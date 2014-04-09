@@ -37,12 +37,10 @@ def sieve_suite(bot, input, func, kind, args):
     if args.get('adminonly', False):
         args["permissions"] = ["adminonly"]
     if args.get('permissions', False):
-        mask = input.mask.lower()
-
         allowed_permissions = args.get('permissions', [])
         allowed = False
         for perm in allowed_permissions:
-            if conn.permissions.has_perm_mask(mask, perm):
+            if input.has_permission(perm):
                 allowed = True
 
         if not allowed:

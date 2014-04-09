@@ -1,9 +1,10 @@
 """
 log.py: written by Scaevolus 2009
+
+edited 2014
 """
 
 import os
-import sys
 import codecs
 import time
 import re
@@ -11,110 +12,115 @@ import re
 from util import hook
 
 
-log_fds = {}  # '%(net)s %(chan)s': (filename, fd)
-
-timestamp_format = '%H:%M:%S'
+stream_cache = {}  # '{server} {chan}': (filename, fd)
 
 formats = {
-    'PRIVMSG': '<%(nick)s> %(msg)s',
-    'PART': '-!- %(nick)s [%(user)s@%(host)s] has left %(chan)s',
-    'JOIN': '-!- %(nick)s [%(user)s@%(host)s] has joined %(param0)s',
-    'MODE': '-!- mode/%(chan)s [%(param_tail)s] by %(nick)s',
-    'KICK': '-!- %(param1)s was kicked from %(chan)s by %(nick)s [%(msg)s]',
-    'TOPIC': '-!- %(nick)s changed the topic of %(chan)s to: %(msg)s',
-    'QUIT': '-!- %(nick)s has quit [%(msg)s]',
-    'PING': '',
-    'NOTICE': '-%(nick)s- %(msg)s'
+    "PRIVMSG": "[{server}:{chan}] <{nick}> {msg}",
+    "PART": "[{server}] -!- {nick} [{user}@{host}] has left {chan}",
+    "JOIN": "[{server}] -!- {nick} [{user}@{host}] has joined {param0}",
+    "MODE": "[{server}] -!- mode/{chan} [{param_tail}] by {nick}",
+    "KICK": "[{server}] -!- {param1} was kicked from {chan} by {nick} ({msg})",
+    "TOPIC": "[{server}] -!- {nick} changed the topic of {chan} to: {msg}",
+    "QUIT": "[{server}] -!- {nick} has quit ({msg})",
+    "PING": "",
+    "NOTICE": "[{server}:{chan}] -{nick}- {msg}",
+    "default": "[{server}] {raw}"
 }
 
-ctcp_formats = {
-    'ACTION': '* %(nick)s %(ctcpmsg)s',
-    'VERSION': '%(nick)s has requested CTCP %(ctcpcmd)s from %(chan)s: %(ctcpmsg)s',
-    'PING': '%(nick)s has requested CTCP %(ctcpcmd)s from %(chan)s: %(ctcpmsg)s',
-    'TIME': '%(nick)s has requested CTCP %(ctcpcmd)s from %(chan)s: %(ctcpmsg)s',
-    'FINGER': '%(nick)s has requested CTCP %(ctcpcmd)s from %(chan)s: %(ctcpmsg)s'
-}
-
-irc_color_re = re.compile(r'(\x03(\d+,\d+|\d)|[\x0f\x02\x16\x1f])')
+action_ctcp_format = "[{server}:{chan}] * {nick} {ctcpmsg}"
+known_ctcp_format = "[{server}:{chan}] {nick} has requested CTCP {ctcpcmd}: {ctcpmsg}"
+unknown_ctcp_format = "[{server}:{chan}] {nick} ({user}@{host}) requested unknown CTCP {ctcpcmd}: {ctcpmsg}"
 
 
-def get_log_filename(dir, server, chan):
-    return os.path.join(dir, 'log', gmtime('%Y'), server, chan,
-                        (gmtime('%%s.%m-%d.log') % chan).lower())
+def get_ctcp_format(ctcpcmd):
+    if ctcpcmd.lower() == "action":
+        return action_ctcp_format
+    elif ctcpcmd.lower() in ("version", "ping", "time", "finger"):
+        return known_ctcp_format
+    else:
+        return unknown_ctcp_format
 
 
-def gmtime(format):
-    return time.strftime(format, time.gmtime())
+irc_color_re = re.compile(r"(\x03(\d+,\d+|\d)|[\x0f\x02\x16\x1f])")
+
+
+def get_log_filename(data_dir, server, chan):
+    return os.path.join(data_dir, "log", gmtime('%Y'), server, chan, (gmtime("%%s.%m-%d.log") % chan).lower())
+
+
+def gmtime(time_format):
+    return time.strftime(time_format, time.gmtime())
 
 
 def beautify(input):
-    format = formats.get(input.command, '%(raw)s')
+    log_format = formats.get(input.command, formats.get("default"))
     args = input.__dict__
 
-    leng = len(args['paraml'])
-    for n, p in enumerate(args['paraml']):
-        args['param' + str(n)] = p
-        args['param_' + str(abs(n - leng))] = p
+    leng = len(args["paraml"])
+    for n, p in enumerate(args["paraml"]):
+        args["param" + str(n)] = p
+        args["param_" + str(abs(n - leng))] = p
 
-    args['param_tail'] = ' '.join(args['paraml'][1:])
-    args['msg'] = irc_color_re.sub('', args['msg'])
+    args["param_tail"] = " ".join(args["paraml"][1:])
+    args["msg"] = irc_color_re.sub("", args["msg"])
 
-    if input.command == 'PRIVMSG' and input.msg.count('\x01') >= 2:
-        ctcp = input.msg.split('\x01', 2)[1].split(' ', 1)
-        if len(ctcp) == 1:
-            ctcp += ['']
-        args['ctcpcmd'], args['ctcpmsg'] = ctcp
-        format = ctcp_formats.get(args['ctcpcmd'],
-                                  '%(nick)s [%(user)s@%(host)s] requested unknown CTCP '
-                                  '%(ctcpcmd)s from %(chan)s: %(ctcpmsg)s')
+    if input.command == "PRIVMSG" and input.msg.count("\x01") >= 2:
+        ctcp_split = input.msg.split("\x01", 2)[1].split(' ', 1)
 
-    return format % args
+        args["ctcpcmd"] = ctcp_split[0]
+        if len(ctcp_split) < 2:
+            args["ctcpmsg"] = ""
+        else:
+            args["ctcpmsg"] = ctcp_split[1]
 
+        log_format = get_ctcp_format(args["ctcpcmd"])
 
-def get_log_fd(dir, server, chan):
-    fn = get_log_filename(dir, server, chan)
-    cache_key = '%s %s' % (server, chan)
-    filename, fd = log_fds.get(cache_key, ('', 0))
-
-    if fn != filename:  # we need to open a file for writing
-        if fd != 0:     # is a valid fd
-            fd.flush()
-            fd.close()
-        dir = os.path.split(fn)[0]
-        if not os.path.exists(dir):
-            os.makedirs(dir)
-        fd = codecs.open(fn, 'a', 'utf-8')
-        log_fds[cache_key] = (fn, fd)
-
-    return fd
+    return log_format.format(**args)
 
 
-#@hook.singlethread
-@hook.event('*')
+def get_log_stream(data_dir, server, chan):
+    new_filename = get_log_filename(data_dir, server, chan)
+    cache_key = "{} {}".format(server, chan)
+    old_filename, log_stream = stream_cache.get(cache_key, (None, None))
+
+    if new_filename != old_filename:  # we need to open a new stream
+        if log_stream:
+            # already open stream needs to be closed
+            log_stream.flush()
+            log_stream.close()
+        data_dir = os.path.split(new_filename)[0]
+        if not os.path.exists(data_dir):
+            os.makedirs(data_dir)
+        log_stream = codecs.open(new_filename, "a", "utf-8")
+        stream_cache[cache_key] = (new_filename, log_stream)
+
+    return log_stream
+
+
+@hook.event("*")
 def log(paraml, input=None, bot=None):
     """
-
+    :type input: core.main.Input
     :type bot: core.bot.CloudBot
     """
-    timestamp = gmtime(timestamp_format)
+    raw_log = get_log_stream(bot.data_dir, input.server, "raw")
+    raw_log.write(input.raw + "\n")
 
-    fd = get_log_fd(bot.data_dir, input.server, 'raw')
-    fd.write(timestamp + ' ' + input.raw + '\n')
+    human_readable = beautify(input)
 
-    if input.command == 'QUIT':  # these are temporary fixes until proper
-        input.chan = 'quit'      # presence tracking is implemented
-    if input.command == 'NICK':
-        input.chan = 'nick'
+    if human_readable:
+        # beautify will return an empty string if input.command is "PING"
+        if input.chan:
+            channel = input.chan
+            # temporary fix until presence tracking is implemented:
+        elif input.command == 'QUIT':
+            channel = 'quit'
+        elif input.command == 'NICK':
+            channel = 'nick'
+        else:
+            channel = None
+        if channel:
+            channel_log = get_log_stream(bot.data_dir, input.server, channel)
+            channel_log.write(human_readable + '\n')
 
-    beau = beautify(input)
-
-    if beau == '':  # don't log this
-        return
-
-    if input.chan:
-        fd = get_log_fd(bot.data_dir, input.server, input.chan)
-        fd.write(timestamp + ' ' + beau + '\n')
-
-    out = "{} {} {}".format(timestamp, input.chan, beau)
-
-    bot.logger.debug(out)
+        bot.logger.info(human_readable)

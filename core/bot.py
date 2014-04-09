@@ -5,6 +5,7 @@ import os
 import collections
 import threading
 import queue
+import sys
 
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy import create_engine
@@ -39,22 +40,28 @@ def get_logger():
 
     # add a file handler
     log_name = "bot.log"
-    fh = logging.FileHandler(log_name)
-    fh.setLevel(logging.INFO)
+    file_handler = logging.FileHandler(log_name)
+    file_handler.setLevel(logging.INFO)
+
+    # add debug file handler
+    debug_file_handler = logging.FileHandler("debug.log")
+    debug_file_handler.setLevel(logging.DEBUG)
 
     # stdout handler
-    sh = logging.StreamHandler()
-    sh.setLevel(logging.DEBUG)
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setLevel(logging.INFO)
 
     # create a formatter and set the formatter for the handler.
-    frmt = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
-    fh.setFormatter(frmt)
-    simple_frmt = logging.Formatter('[%(levelname)s] %(message)s')
-    sh.setFormatter(simple_frmt)
+    file_formatter = logging.Formatter('%(asctime)s[%(levelname)s] %(message)s', '[%Y-%m-%d][%H:%M:%S]')
+    console_formatter = logging.Formatter('%(asctime)s[%(levelname)s] %(message)s', '[%H:%M:%S]')
+    file_handler.setFormatter(file_formatter)
+    debug_file_handler.setFormatter(file_formatter)
+    console_handler.setFormatter(console_formatter)
 
     # add the Handlers to the logger
-    logger.addHandler(fh)
-    logger.addHandler(sh)
+    logger.addHandler(file_handler)
+    logger.addHandler(debug_file_handler)
+    logger.addHandler(console_handler)
 
     # be sure to set initialized = True
     logger_initialized = True
@@ -110,9 +117,6 @@ class CloudBot(threading.Thread):
         # Bot initialisation complete
         self.logger.debug("Bot setup completed.")
 
-        # start bot instances
-        self.create_connections()
-
         # run plugin loader
         self.plugins = collections.defaultdict(list)
 
@@ -129,6 +133,9 @@ class CloudBot(threading.Thread):
         self.threads = {}
 
         self.loader = PluginLoader(self)
+
+        # start bot connections
+        self.create_connections()
 
         threading.Thread.__init__(self)
 

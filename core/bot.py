@@ -178,7 +178,7 @@ class CloudBot(threading.Thread):
         """quits all networks and shuts the bot down"""
         self.logger.info("Stopping bot.")
 
-        self.config.observer.stop()
+        self.config.stop()
         self.logger.debug("Stopping config reloader.")
 
         self.loader.stop()

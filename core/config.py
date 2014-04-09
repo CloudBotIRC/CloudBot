@@ -37,6 +37,10 @@ class Config(dict):
         # start watcher
         self.watcher()
 
+    def stop(self):
+        """shuts down the config reloader"""
+        self.observer.stop()
+
     def load_config(self):
         """(re)loads the bot config from the config file"""
         if not os.path.exists(self.path):

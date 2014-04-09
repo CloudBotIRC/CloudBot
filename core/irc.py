@@ -270,7 +270,7 @@ class BotConnection(object):
         self.output_queue = queue.Queue()
 
         # create permissions manager
-        self.permissions = PermissionManager(bot, self)
+        self.permissions = PermissionManager(self)
 
         # create the IRC connection and connect
         self.connection = self.create_connection()

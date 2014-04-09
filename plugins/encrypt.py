@@ -13,12 +13,13 @@ from util import hook
 # helper functions to pad and unpad a string to a specified block size
 # <http://stackoverflow.com/questions/12524994/encrypt-decrypt-using-pycrypto-aes-256>
 BS = AES.block_size
-pad = lambda s: s + (BS - len(s) % BS) * chr(BS - len(s) % BS)
-unpad = lambda s: s[0:-ord(s[-1])]
+
+def pad(s): return s + (BS - len(s) % BS) * chr(BS - len(s) % BS)
+def unpad(s): return s[0:-ord(s[-1])]
 
 # helper functions to encrypt and encode a string with AES and base64
-encode_aes = lambda c, s: base64.b64encode(c.encrypt(pad(s)))
-decode_aes = lambda c, s: unpad(c.decrypt(base64.b64decode(s)))
+def encode_aes(c, s): return base64.b64encode(c.encrypt(pad(s)))
+def decode_aes(c, s): return unpad(c.decrypt(base64.b64decode(s)))
 
 db_ready = False
 

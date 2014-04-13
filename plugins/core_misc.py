@@ -1,6 +1,5 @@
 import socket
 import time
-import re
 
 from util import hook
 
@@ -26,13 +25,14 @@ def onjoin(paraml, conn=None, bot=None):
         nickserv_account_name = nickserv.get('nickserv_user', '')
         nickserv_command = nickserv.get('nickserv_command', 'IDENTIFY')
         if nickserv_password:
-            if nickserv_password in bot.config['censored_strings']:
+            if "censored_strings" in bot.config and nickserv_password in bot.config['censored_strings']:
                 bot.config['censored_strings'].remove(nickserv_password)
             if nickserv_account_name:
                 conn.msg(nickserv_name, "{} {} {}".format(nickserv_command, nickserv_account_name, nickserv_password))
             else:
                 conn.msg(nickserv_name, "{} {}".format(nickserv_command, nickserv_password))
-            bot.config['censored_strings'].append(nickserv_password)
+            if "censored_strings" in bot.config:
+                bot.config['censored_strings'].append(nickserv_password)
             time.sleep(1)
 
     # Set bot modes

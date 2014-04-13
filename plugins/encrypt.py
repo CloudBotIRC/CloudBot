@@ -1,31 +1,53 @@
 import os
 import base64
-import json
 import hashlib
+import traceback
 
 from Crypto import Random
 from Crypto.Cipher import AES
-from Crypto.Protocol.KDF import PBKDF2
+from pbkdf2 import PBKDF2
 
 from util import hook
 
 
-# helper functions to pad and unpad a string to a specified block size
-# <http://stackoverflow.com/questions/12524994/encrypt-decrypt-using-pycrypto-aes-256>
 BS = AES.block_size
 
-def pad(s): return s + (BS - len(s) % BS) * chr(BS - len(s) % BS)
-def unpad(s): return s[0:-ord(s[-1])]
+# helper functions to pad and unpad a string to a specified block size
+# <http://stackoverflow.com/questions/12524994/encrypt-decrypt-using-pycrypto-aes-256>
+
+
+def pad(s):
+    return s + (BS - len(s) % BS) * chr(BS - len(s) % BS)
+
+
+def unpad(s):
+    return s[0:-ord(s[-1])]
+
 
 # helper functions to encrypt and encode a string with AES and base64
-def encode_aes(c, s): return base64.b64encode(c.encrypt(pad(s)))
-def decode_aes(c, s): return unpad(c.decrypt(base64.b64decode(s)))
+
+def encode_aes(c, s):
+    return base64.b64encode(c.encrypt(pad(s)))
+
+
+def decode_aes(c, s):
+    decoded = c.decrypt(base64.b64decode(s))
+    try:
+        return unpad(decoded.decode())
+    except UnicodeDecodeError:
+        print("Failed to encode an encrypted message result as UTF-8")
+        traceback.print_exc()
+        # This usually happens if password is invalid
+        return "Invalid password for the given message (couldn't encode result as utf-8)"
+
 
 db_ready = False
 
 
 def db_init(db):
-    """check to see that our db has the the encryption table."""
+    """check to see that our db has the the encryption table.
+    :type db: sqlalchemy.orm.session.Session
+    """
     global db_ready
     if not db_ready:
         db.execute("create table if not exists encryption(encrypted, iv, "
@@ -35,7 +57,9 @@ def db_init(db):
 
 
 def get_salt(bot):
-    """generate an encryption salt if none exists, then returns the salt"""
+    """generate an encryption salt if none exists, then returns the salt
+    :type bot: core.bot.CloudBot
+    """
     if not bot.config.get("random_salt", False):
         bot.config["random_salt"] = hashlib.md5(os.urandom(16)).hexdigest()
         bot.config.save_config()
@@ -44,27 +68,30 @@ def get_salt(bot):
 
 @hook.command
 def encrypt(inp, bot=None, db=None, notice=None):
-    """encrypt <pass> <string> -- Encrypts <string> with <pass>. (<string> can only be decrypted using this bot)"""
+    """encrypt <pass> <string> -- Encrypts <string> with <pass>. (<string> can only be decrypted using this bot)
+    :type bot: core.bot.CloudBot
+    :type db: sqlalchemy.orm.session.Session
+    """
     db_init(db)
 
-    split = inp.split(" ")
+    inp_split = inp.split(" ")
 
     # if there is only one argument, return the help message
-    if len(split) == 1:
+    if len(inp_split) == 1:
         notice(encrypt.__doc__)
         return
 
     # generate the key from the password and salt
-    password = split[0]
+    password = inp_split[0]
     salt = get_salt(bot)
-    key = PBKDF2(password, salt)
+    key = PBKDF2(password, salt).read(32)
 
     # generate the IV and encode it to store in the database
     iv = Random.new().read(AES.block_size)
     iv_encoded = base64.b64encode(iv)
 
     # create the AES cipher and encrypt/encode the text with it
-    text = " ".join(split[1:])
+    text = " ".join(inp_split[1:])
     cipher = AES.new(key, AES.MODE_CBC, iv)
     encoded = encode_aes(cipher, text)
 
@@ -74,34 +101,46 @@ def encrypt(inp, bot=None, db=None, notice=None):
                                         'iv': iv_encoded})
     db.commit()
 
-    return encoded
+    return encoded.decode()
 
 
 @hook.command
 def decrypt(inp, bot=None, db=None, notice=None):
-    """decrypt <pass> <string> -- Decrypts <string> with <pass>. (can only decrypt strings encrypted on this bot)"""
+    """decrypt <pass> <string> -- Decrypts <string> with <pass>. (can only decrypt strings encrypted on this bot)
+    :type bot: core.bot.CloudBot
+    :type db: sqlalchemy.orm.session.Session
+    """
     if not db_ready:
         db_init(db)
 
-    split = inp.split(" ")
+    inp_split = inp.split(" ")
 
     # if there is only one argument, return the help message
-    if len(split) == 1:
+    if len(inp_split) == 1:
         notice(decrypt.__doc__)
         return
 
+    encrypted_str = " ".join(inp_split[1:])
+
     # generate the key from the password and salt
-    password = split[0]
+    password = inp_split[0]
     salt = get_salt(bot)
-    key = PBKDF2(password, salt)
+    key = PBKDF2(password, salt).read(32)
 
-    text = " ".join(split[1:])
+    encrypted_bytes = bytes(encrypted_str, encoding="UTF-8")
 
-    # get the encoded IV from the database and decode it
-    iv_encoded = db.execute("select iv from encryption where"
-                            " encrypted=:text", {'text': text}).fetchone()[0]
+    # get the encoded IV from the database
+    database_result = db.execute("select iv from encryption where"
+                                 " encrypted=:key", {'key': encrypted_bytes}).fetchone()
+
+    if database_result is None:
+        notice("Unknown encrypted string '{}'".format(encrypted_str))
+        return
+
+    # decode the IV
+    iv_encoded = database_result[0]
     iv = base64.b64decode(iv_encoded)
 
     # create AES cipher, decode text, decrypt text, and unpad it
     cipher = AES.new(key, AES.MODE_CBC, iv)
-    return decode_aes(cipher, text)
+    return decode_aes(cipher, encrypted_bytes)

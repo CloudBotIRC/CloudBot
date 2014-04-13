@@ -5,14 +5,12 @@ from util import hook
 
 
 @hook.command
-def choose(inp):
-    """choose <choice1>, [choice2], [choice3], [choice4], ... --
-    Randomly picks one of the given choices."""
-
-    c = re.findall(r'([^,]+)', inp)
-    if len(c) == 1:
-        c = re.findall(r'(\S+)', inp)
-        if len(c) == 1:
-            return 'The decision is up to you!'
-
-    return random.choice(c).strip()
+def choose(inp, notice=None):
+    """choose <choice1>, [choice2], [choice3], etc. -- Randomly picks one of the given choices.
+    :type inp: str
+    """
+    choices = re.findall(r'([^,\s]+)', inp)
+    if len(choices) == 1:
+        notice(choose.__doc__)
+        return
+    return random.choice(choices)

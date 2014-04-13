@@ -16,7 +16,10 @@ split_re = re.compile(r'([\d+-]*)d?(F|\d*)', re.I)
 
 
 def n_rolls(count, n):
-    """roll an n-sided die count times"""
+    """roll an n-sided die count times
+    :type count: int | str
+    :type n: int
+    """
     if n == "F":
         return [random.randint(-1, 1) for x in range(min(count, 100))]
     if n < 2:  # it's a coin
@@ -36,21 +39,28 @@ def n_rolls(count, n):
 @hook.command('roll')
 #@hook.regex(valid_diceroll, re.I)
 @hook.command
-def dice(inp):
-    """dice <dice roll> -- Simulates dice rolls. Example of <dice roll>:
-    'dice 2d20-d5+4 roll 2'. D20s, subtract 1D5, add 4"""
+def dice(inp, notice=None):
+    """dice <dice roll> -- Simulates dice rolls. Example: 'dice 2d20-d5+4 roll 2': D20s, subtract 1D5, add 4
+    :type inp: str
+    """
 
-    try:  # if inp is a re.match object...
-        (inp, desc) = inp.groups()
-    except AttributeError:
-        (inp, desc) = valid_diceroll_re.match(inp).groups()
+    if hasattr(inp, "groups"):
+        inp, desc = inp.groups()
+    else:  # type(inp) == str
+        match = valid_diceroll_re.match(whitespace_re.sub("", inp))
+        if match:
+            inp, desc = match.groups()
+        else:
+            notice("Invalid dice roll '{}'".format(inp))
+            return
 
     if "d" not in inp:
         return
 
     spec = whitespace_re.sub('', inp)
     if not valid_diceroll_re.match(spec):
-        return "Invalid dice roll"
+        notice("Invalid dice roll '{}'".format(inp))
+        return
     groups = sign_re.findall(spec)
 
     total = 0

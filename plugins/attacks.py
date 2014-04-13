@@ -1,4 +1,5 @@
 import random
+import re
 
 from util import hook
 
@@ -16,57 +17,75 @@ with open("data/flirts.txt") as f:
               if not line.startswith("//")]
 
 
+def is_self(conn, target):
+    """
+    :type conn: core.irc.BotConnection
+    :type target: str
+    """
+    if re.search("(^..?.?.?self|{})".format(re.escape(conn.nick.lower())), target.lower()):
+        return True
+    else:
+        return False
+
+
 @hook.command
-def lart(inp, action=None, nick=None, conn=None, notice=None):
-    """lart <user> -- LARTs <user>."""
+def lart(inp, conn=None, nick=None, notice=None, action=None):
+    """lart <user> -- LARTs <user>.
+    :type inp: str
+    :type conn: core.irc.BotConnection
+    :type nick: str
+    """
     target = inp.strip()
 
     if " " in target:
         notice("Invalid username!")
         return
 
-    # if the user is trying to make the bot slap itself, slap them
-    if target.lower() == conn.nick.lower() or target.lower() == "itself":
+    # if the user is trying to make the bot target itself, target them
+    if is_self(conn, target):
         target = nick
 
-    values = {"user": target}
     phrase = random.choice(larts)
 
     # act out the message
-    action(phrase.format(**values))
+    action(phrase.format(user=target))
 
 
 @hook.command
-def insult(inp, nick=None, action=None, conn=None, notice=None):
-    """insult <user> -- Makes the bot insult <user>."""
+def insult(inp, conn=None, nick=None, notice=None, message=None):
+    """insult <user> -- Makes the bot insult <user>.
+    :type inp: str
+    :type conn: core.irc.BotConnection
+    :type nick: str
+    """
     target = inp.strip()
 
     if " " in target:
         notice("Invalid username!")
         return
 
-    if target == conn.nick.lower() or target == "itself":
+    # if the user is trying to make the bot target itself, target them
+    if is_self(conn, target):
         target = nick
-    else:
-        target = inp
 
-    out = 'insults {}... "{}"'.format(target, random.choice(insults))
-    action(out)
+    message("{}, {}".format(target, random.choice(insults)))
 
 
 @hook.command
-def flirt(inp, action=None, conn=None, notice=None):
-    """flirt <user> -- Make the bot flirt with <user>."""
+def flirt(inp, conn=None, nick=None, notice=None, message=None):
+    """flirt <user> -- Makes the bot flirt with <user>.
+    :type inp: str
+    :type conn: core.irc.BotConnection
+    :type nick: str
+    """
     target = inp.strip()
 
+    # if the user is trying to make the bot target itself, target them
     if " " in target:
         notice("Invalid username!")
         return
 
-    if target == conn.nick.lower() or target == "itself":
-        target = 'itself'
-    else:
-        target = inp
+    if is_self(conn, target):
+        target = nick
 
-    out = 'flirts with {}... "{}"'.format(target, random.choice(flirts))
-    action(out)
+    message('{}, {}'.format(target, random.choice(flirts)))

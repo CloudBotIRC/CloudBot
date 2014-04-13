@@ -11,3 +11,4 @@ tweepy
 pygeoip
 BeautifulSoup4
 pycrypto
+pbkdf2

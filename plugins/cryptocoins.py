@@ -20,9 +20,9 @@ exchanges = {
         "api_url": "https://www.bitstamp.net/api/ticker/",
         "func": lambda data: "BitStamp // Current: \x0307${:,.2f}\x0f - High: \x0307${:,.2f}\x0f -"
                              " Low: \x0307${:,.2f}\x0f - Volume: {:,.2f} BTC".format(float(data['last']),
-                                                                                      float(data['high']),
-                                                                                      float(data['low']),
-                                                                                      float(data['volume']))
+                                                                                     float(data['high']),
+                                                                                     float(data['low']),
+                                                                                     float(data['volume']))
     }
 }
 
@@ -31,16 +31,21 @@ exchanges = {
 
 @hook.command("btc", autohelp=False)
 @hook.command(autohelp=False)
-def bitcoin(inp):
+def bitcoin(inp, notice=None):
     """bitcoin <exchange> -- Gets current exchange rate for bitcoins from several exchanges, default is Blockchain.
-    Supports MtGox, Bitpay, Coinbase and BitStamp."""
+    Supports MtGox, Bitpay, Coinbase and BitStamp.
+    :type inp: str
+    """
     inp = inp.lower()
 
     if inp:
         if inp in exchanges:
             exchange = exchanges[inp]
         else:
-            return "Invalid Exchange"
+            valid_exchanges = list(exchanges.keys())
+            notice("Invalid exchange '{}', valid exchanges are {} and {}".format(inp, ", ".join(valid_exchanges[:-1]),
+                                                                                 valid_exchanges[-1]))
+            return
     else:
         exchange = exchanges["blockchain"]
 
@@ -52,7 +57,9 @@ def bitcoin(inp):
 @hook.command("ltc", autohelp=False)
 @hook.command(autohelp=False)
 def litecoin(inp, message=None):
-    """litecoin -- gets current exchange rate for litecoins from BTC-E"""
+    """litecoin -- gets current exchange rate for litecoins from BTC-E
+    :type inp: str
+    """
     data = http.get_json("https://btc-e.com/api/2/ltc_usd/ticker")
     ticker = data['ticker']
     message("Current: \x0307${:,.2f}\x0f - High: \x0307${:,.2f}\x0f"

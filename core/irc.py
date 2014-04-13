@@ -213,14 +213,14 @@ class BotConnection(object):
     :type bot: core.bot.CloudBot
     :type name: str
     :type channels: list[str]
-    :type config: dict[str, ?]
+    :type config: dict[str, unknown]
     :type ssl: bool
     :type server: str
     :type port: int
     :type logger: logging.Logger
     :type nick: str
     :type vars: dict
-    :type history: dict
+    :type history: dict[str, list[tuple]]
     :type parsed_queue: queue.Queue
     :type input_queue: queue.Queue
     :type output_queue: queue.Queue
@@ -239,7 +239,7 @@ class BotConnection(object):
         :type ssl: bool
         :type logger: logging.Logger
         :type channels: list[str]
-        :type config: dict[str, ?]
+        :type config: dict[str, unknown]
         """
         self.bot = bot
         self.name = name

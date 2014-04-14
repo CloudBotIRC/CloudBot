@@ -6,9 +6,11 @@ from util import http
 
 
 @hook.command('dictionary')
-@hook.command
+@hook.command()
 def define(inp):
-    """define <word> -- Fetches definition of <word>."""
+    """define <word> -- Fetches definition of <word>.
+    :type inp: str
+    """
 
     url = 'http://ninjawords.com/'
 
@@ -42,7 +44,7 @@ def define(inp):
             result += article[0]
             if len(article) > 2:
                 result += ' '.join('{}. {}'.format(n + 1, section)
-                                    for n, section in enumerate(article[1:]))
+                                   for n, section in enumerate(article[1:]))
             else:
                 result += article[1] + ' '
 
@@ -66,9 +68,11 @@ def define(inp):
 
 
 @hook.command('e')
-@hook.command
+@hook.command()
 def etymology(inp):
-    """etymology <word> -- Retrieves the etymology of <word>."""
+    """etymology <word> -- Retrieves the etymology of <word>.
+    :type inp: str
+    """
 
     url = 'http://www.etymonline.com/index.php'
 

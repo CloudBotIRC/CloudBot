@@ -1,39 +1,63 @@
 import base64
+import binascii
 
 from util import hook
 
 
-def encode(key, clear):
+def encode(password, text):
+    """
+    :type password: str
+    :type text: str
+    """
     enc = []
-    for i in range(len(clear)):
-        key_c = key[i % len(key)]
-        enc_c = chr((ord(clear[i]) + ord(key_c)) % 256)
+    for i in range(len(text)):
+        key_c = password[i % len(password)]
+        enc_c = chr((ord(text[i]) + ord(key_c)) % 256)
         enc.append(enc_c)
-    return base64.urlsafe_b64encode("".join(enc))
+    return base64.urlsafe_b64encode("".join(enc).encode()).decode()
 
 
-def decode(key, enc):
+def decode(password, encoded, notice):
+    """
+    :type password: str
+    :type encoded: str
+    """
     dec = []
-    enc = base64.urlsafe_b64decode(enc.encode('ascii', 'ignore'))
-    for i in range(len(enc)):
-        key_c = key[i % len(key)]
-        dec_c = chr((256 + ord(enc[i]) - ord(key_c)) % 256)
+    try:
+        encoded_bytes = base64.urlsafe_b64decode(encoded.encode()).decode()
+    except binascii.Error:
+        notice("Invalid input '{}'".format(encoded))
+        return
+    for i in range(len(encoded_bytes)):
+        key_c = password[i % len(password)]
+        dec_c = chr((256 + ord(encoded_bytes[i]) - ord(key_c)) % 256)
         dec.append(dec_c)
     return "".join(dec)
 
 
 @hook.command
-def cypher(inp):
-    """cypher <pass> <string> -- Cyphers <string> with <password>."""
-
-    passwd = inp.split(" ")[0]
-    inp = " ".join(inp.split(" ")[1:])
-    return encode(passwd, inp)
+def cypher(inp, notice=None):
+    """cypher <pass> <string> -- Cyphers <string> with <password>.
+    :type inp: str
+    """
+    split = inp.split(None, 1)
+    if len(split) < 2:
+        notice(cypher.__doc__)
+        return
+    password = split[0]
+    plaintext = split[1]
+    return encode(password, plaintext)
 
 
 @hook.command
-def decypher(inp):
-    """decypher <pass> <string> -- Decyphers <string> with <password>."""
-    passwd = inp.split(" ")[0]
-    inp = " ".join(inp.split(" ")[1:])
-    return decode(passwd, inp)
+def decypher(inp, notice=None):
+    """decypher <pass> <string> -- Decyphers <string> with <password>.
+    :type inp: str
+    """
+    split = inp.split(None, 1)
+    if len(split) < 2:
+        notice(decypher.__doc__)
+        return
+    password = split[0]
+    encoded = split[1]
+    return decode(password, encoded, notice)

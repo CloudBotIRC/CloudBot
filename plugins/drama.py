@@ -1,4 +1,5 @@
 import re
+from urllib import parse
 
 from util import hook, http, text
 
@@ -12,13 +13,13 @@ def drama(inp):
     """drama <phrase> -- Gets the first paragraph of
     the Encyclopedia Dramatica article on <phrase>."""
 
-    j = http.get_json(api_url, search=inp)
+    data = http.get_json(api_url, search=inp)
 
-    if not j[1]:
+    if not data[1]:
         return "No results found."
-    article_name = j[1][0].replace(' ', '_').encode('utf8')
+    article_name = data[1][0].replace(' ', '_')
 
-    url = ed_url + http.quote(article_name, '')
+    url = ed_url + parse.quote(article_name, '')
     page = http.get_html(url)
 
     for p in page.xpath('//div[@id="bodyContent"]/p'):
@@ -26,6 +27,6 @@ def drama(inp):
             summary = " ".join(p.text_content().splitlines())
             summary = re.sub("\[\d+\]", "", summary)
             summary = text.truncate_str(summary, 220)
-            return "{} :: {}".format(summary, url)
+            return "{} - {}".format(summary, url)
 
     return "Unknown Error."

@@ -9,6 +9,12 @@ buckets = {}
 
 @hook.sieve
 def sieve_suite(bot, input, func, kind, args):
+    """
+    :type bot: core.bot.CloudBot
+    :type input: core.main.Input
+    :type kind: str
+    :type args: dict[str, unknown]
+    """
     conn = input.conn
     # check ignorebots
     if input.command == 'PRIVMSG' and \
@@ -42,6 +48,7 @@ def sieve_suite(bot, input, func, kind, args):
         for perm in allowed_permissions:
             if input.has_permission(perm):
                 allowed = True
+                break
 
         if not allowed:
             input.notice("Sorry, you are not allowed to use this command.")

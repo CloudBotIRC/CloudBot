@@ -2,7 +2,7 @@ from util import hook, web
 from os import listdir
 
 
-@hook.command(adminonly=True)
+@hook.command(permissions=["adminonly"])
 def plpaste(inp, bot=None):
     if inp in bot.commands:
         with open(bot.commands[inp][0].func_code.co_filename.strip()) as f:

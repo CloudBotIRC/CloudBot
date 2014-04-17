@@ -192,6 +192,7 @@ class IRCConnection(object):
 
     def reconnect(self):
         self.stop()
+        self.socket = self.create_socket()
         self.connect()
 
 

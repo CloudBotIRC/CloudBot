@@ -358,9 +358,5 @@ class BotConnection(object):
         """
         :type string: str
         """
-        try:
-            self.logger.info("{} >> {}".format(self.name.upper(), string))
-        except:
-            # if this doesn't work, no big deal
-            pass
+        self.logger.info("[{}] {} >> {}".format(self.server, self.name.upper(), string))
         self.output_queue.put(string)

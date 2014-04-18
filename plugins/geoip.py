@@ -1,7 +1,7 @@
 import os.path
 import json
 import gzip
-from io import StringIO
+from io import BytesIO
 
 import pygeoip
 
@@ -10,15 +10,17 @@ from util import hook, http
 
 # load region database
 with open("./data/geoip_regions.json", "rb") as f:
-    regions = json.loads(f.read())
+    regions = json.loads(f.read().decode())
 
 if os.path.isfile(os.path.abspath("./data/GeoLiteCity.dat")):
     # initialise geolocation database
     geo = pygeoip.GeoIP(os.path.abspath("./data/GeoLiteCity.dat"))
 else:
-    download = http.get("http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz")
-    string_io = StringIO(download)
-    geoip_file = gzip.GzipFile(fileobj=string_io, mode='rb')
+    print("Downloading GeoIP database")
+    download = http.get("http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz", decode=False)
+    print("Download complete")
+    bytes_io = BytesIO(download)
+    geoip_file = gzip.GzipFile(fileobj=bytes_io, mode='rb')
 
     output = open(os.path.abspath("./data/GeoLiteCity.dat"), 'wb')
     output.write(geoip_file.read())

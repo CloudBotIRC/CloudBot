@@ -7,7 +7,6 @@ from ssl import wrap_socket, CERT_NONE, CERT_REQUIRED, SSLError
 
 from core.permissions import PermissionManager
 
-
 irc_prefix_rem = re.compile(r'(.*?) (.*?) (.*)').match
 irc_noprefix_rem = re.compile(r'()(.*?) (.*)').match
 irc_netmask_rem = re.compile(r':?([^!@]*)!?([^@]*)@?(.*)').match
@@ -162,18 +161,28 @@ class ParseThread(threading.Thread):
 class IRCConnection(object):
     """handles an IRC connection"""
 
-    def __init__(self, logger, name, host, port, input_queue, output_queue):
+    def __init__(self, logger, name, host, port, input_queue, output_queue, ssl, ignore_cert_errors=True, timeout=300):
         self.logger = logger
-        self.output_queue = output_queue  # lines to be sent out
-        self.input_queue = input_queue  # lines that were received
-        self.socket = self.create_socket()
         self.conn_name = name
         self.host = host
         self.port = port
-        self.timeout = 300
+        self.output_queue = output_queue  # lines to be sent out
+        self.input_queue = input_queue  # lines that were received
+        self.ssl = ssl
+        self.ignore_cert_errors = ignore_cert_errors
+        self.timeout = timeout
+        self.socket = self.create_socket()
 
     def create_socket(self):
-        return socket.socket(socket.AF_INET, socket.TCP_NODELAY)
+        sock = socket.socket(socket.AF_INET, socket.TCP_NODELAY)
+        if self.ssl:
+            if self.ignore_cert_errors:
+                cert_requirement = CERT_NONE
+            else:
+                cert_requirement = CERT_REQUIRED
+            sock = wrap_socket(sock, server_side=False, cert_reqs=cert_requirement)
+
+        return sock
 
     def connect(self):
         self.socket.connect((self.host, self.port))
@@ -194,19 +203,6 @@ class IRCConnection(object):
         self.stop()
         self.socket = self.create_socket()
         self.connect()
-
-
-class SSLIRCConnection(IRCConnection):
-    """handles a SSL IRC connection"""
-
-    def __init__(self, logger, name, host, port, input_queue, output_queue, ignore_cert_errors):
-        self.ignore_cert_errors = ignore_cert_errors
-        IRCConnection.__init__(self, logger, name, host, port, input_queue, output_queue)
-
-    def create_socket(self):
-        return wrap_socket(IRCConnection.create_socket(self), server_side=False,
-                           cert_reqs=CERT_NONE if self.ignore_cert_errors else
-                           CERT_REQUIRED)
 
 
 class BotConnection(object):
@@ -274,7 +270,8 @@ class BotConnection(object):
         self.permissions = PermissionManager(self)
 
         # create the IRC connection and connect
-        self.connection = self.create_connection()
+        self.connection = IRCConnection(self.bot.logger, self.name, self.server, self.port, self.input_queue,
+                                        self.output_queue, self.ssl)
         self.connection.connect()
 
         self.set_pass(self.config.get('server_password'))
@@ -287,14 +284,6 @@ class BotConnection(object):
                                         self.parsed_queue)
         self.parse_thread.daemon = True
         self.parse_thread.start()
-
-    def create_connection(self):
-        if self.ssl:
-            return SSLIRCConnection(self.bot.logger, self.name, self.server, self.port, self.input_queue,
-                                    self.output_queue, True)
-        else:
-            return IRCConnection(self.bot.logger, self.name, self.server, self.port, self.input_queue,
-                                 self.output_queue)
 
     def stop(self):
         self.connection.stop()

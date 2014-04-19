@@ -159,7 +159,17 @@ class ParseThread(threading.Thread):
 
 
 class IRCConnection(object):
-    """handles an IRC connection"""
+    """handles an IRC connection
+    :type logger: logging.Logger
+    :type output_queue: queue.Queue
+    :type input_queue; queue.Queue
+    :type socket: socket.socket
+    :type conn_name: str
+    :type host: str
+    :type port: int
+    :type ssl: bool
+    :type ignore_cert_errors: bool
+    """
 
     def __init__(self, logger, name, host, port, input_queue, output_queue, ssl, ignore_cert_errors=True, timeout=300):
         self.logger = logger
@@ -172,6 +182,9 @@ class IRCConnection(object):
         self.ignore_cert_errors = ignore_cert_errors
         self.timeout = timeout
         self.socket = self.create_socket()
+        # to be assigned in connect()
+        self.receive_thread = None
+        self.send_thread = None
 
     def create_socket(self):
         sock = socket.socket(socket.AF_INET, socket.TCP_NODELAY)
@@ -185,7 +198,14 @@ class IRCConnection(object):
         return sock
 
     def connect(self):
-        self.socket.connect((self.host, self.port))
+        try:
+            self.socket.connect((self.host, self.port))
+        except socket.error:
+            if self.ssl:
+                self.logger.warning("Failed to connect to +{}:{}".format(self.host, self.port))
+            else:
+                self.logger.warning("Failed to connect to {}:{}".format(self.host, self.port))
+            raise
 
         self.receive_thread = ReceiveThread(self.logger, self.socket, self.input_queue, self.timeout)
         self.receive_thread.start()

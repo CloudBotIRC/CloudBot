@@ -1,8 +1,10 @@
-import _thread
 import inspect
+import re
+
+import _thread
 import queue
 from queue import Empty
-import re
+
 
 _thread.stack_size(1024 * 512)  # reduce vm size
 
@@ -134,20 +136,21 @@ def run(bot, func, input):
     :type func: func
     :type input: Input
     """
-    uses_db = True
-    # TODO: change to bot.get_db_session()
     bot.logger.debug("Input: {}".format(input.__dict__))
-
-    if uses_db:
-        # create SQLAlchemy session
-        bot.logger.debug("Opened DB session for: {}".format(func._filename))
-        input.db = input.bot.db_session()
 
     parameters = []
     specifications = inspect.getargspec(func)
     required_args = specifications[0]
     if required_args is None:
         required_args = []
+
+    # Does the command need DB access?
+    uses_db = "db" in required_args
+
+    if uses_db:
+        # create SQLAlchemy session
+        bot.logger.debug("Opened DB session for: {}".format(func._filename))
+        input.db = input.bot.db_session()
 
     # all the dynamic arguments
     for required_arg in required_args:

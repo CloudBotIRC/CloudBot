@@ -52,7 +52,7 @@ On Windows you can usually just double-click `cloudbot.py` to start the bot, as 
 
 To configure your CloudBot, visit the [Config Wiki Page](http://git.io/cloudbotircconfig).
 
-To write your own plugins, visit the [Plugin Wiki Page](http://git.io/cloudbotircplugins).
+To write your own plugins, visit the [Module Wiki Page](http://git.io/cloudbotircplugins).
 
 More at the [Wiki Main Page](http://git.io/cloudbotircwiki).
 

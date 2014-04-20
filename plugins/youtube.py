@@ -134,4 +134,4 @@ def ytplaylist_url(match):
     author = soup.find('img', {'class': 'channel-header-profile-image'})['title']
     num_videos = soup.find('ul', {'class': 'header-stats'}).findAll('li')[0].text.split(' ')[0]
     views = soup.find('ul', {'class': 'header-stats'}).findAll('li')[1].text.split(' ')[0]
-    return "\x02{}\x02 - \x02{}\x02 views - \x02{}\x02 videos - \x0{}\x02".format(title, views, num_videos, author)
+    return "\x02{}\x02 - \x02{}\x02 views - \x02{}\x02 videos - \x02{}\x02".format(title, views, num_videos, author)

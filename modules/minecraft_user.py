@@ -1,5 +1,7 @@
 import json
+
 from util import hook, http
+
 
 NAME_URL = "https://account.minecraft.net/buy/frame/checkName/{}"
 PAID_URL = "http://www.minecraft.net/haspaid.jsp"

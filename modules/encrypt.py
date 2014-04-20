@@ -3,10 +3,10 @@ import base64
 import hashlib
 import traceback
 
-from Crypto import Random
-from Crypto.Cipher import AES
 from pbkdf2 import PBKDF2
 
+from Crypto import Random
+from Crypto.Cipher import AES
 from util import hook
 
 

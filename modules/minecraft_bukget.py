@@ -5,13 +5,14 @@ from util import hook, http, web, formatting
 
 
 
+
 ## CONSTANTS
 
 base_url = "http://api.bukget.org/3/"
 
 search_url = base_url + "search/plugin_name/like/{}"
-random_url = base_url + "plugins/bukkit/?start={}&size=1"
-details_url = base_url + "plugins/bukkit/{}"
+random_url = base_url + "modules/bukkit/?start={}&size=1"
+details_url = base_url + "modules/bukkit/{}"
 
 categories = http.get_json("http://api.bukget.org/3/categories")
 

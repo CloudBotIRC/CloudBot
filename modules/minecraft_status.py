@@ -41,4 +41,4 @@ def mcstatus(inp):
         out += "\x034\x02Offline\x02\x0f: " + ", ".join(red)
 
     return "\x0f" + out.replace(".mojang.com", ".mj") \
-                       .replace(".minecraft.net", ".mc")
+        .replace(".minecraft.net", ".mc")

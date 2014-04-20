@@ -12,7 +12,7 @@ import re
 from util import hook
 
 
-stream_cache = {}  # '{server} {chan}': (filename, fd)
+stream_cache = {}  # '{server} {chan}': (file_name, fd)
 
 formats = {
     "PRIVMSG": "[{server}:{chan}] <{nick}> {msg}",

@@ -1,7 +1,9 @@
 from collections import deque
-from util import hook, timesince
 import time
 import re
+
+from util import hook, timesince
+
 
 db_ready = []
 

@@ -1,6 +1,6 @@
-from urllib.parse import urlencode
 import re
 
+from urllib.parse import urlencode
 from util import hook, http, timeformat
 
 

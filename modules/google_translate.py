@@ -3,9 +3,9 @@ A Google API key is required and retrieved from the bot config file.
 Since December 1, 2011, the Google Translate API is a paid service only.
 """
 
-import html.entities
 import re
 
+import html.entities
 from util import hook, http
 
 
@@ -36,6 +36,7 @@ def unescape(text):
         return text  # leave as is
 
     return re.sub("&#?\w+;", fixup, text)
+
 
 ##############################################################################
 

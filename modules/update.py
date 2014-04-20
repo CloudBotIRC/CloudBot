@@ -1,7 +1,7 @@
 from git import Repo
 
-
 from util import hook, web
+
 
 @hook.command
 def update(inp, bot=None):

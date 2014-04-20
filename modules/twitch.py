@@ -1,6 +1,6 @@
 import re
-from html.parser import HTMLParser
 
+from html.parser import HTMLParser
 from util import hook, http
 
 

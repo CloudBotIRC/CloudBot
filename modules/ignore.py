@@ -1,4 +1,3 @@
-import json
 from fnmatch import fnmatch
 
 from util import hook
@@ -7,7 +6,7 @@ from util import hook
 #@hook.sieve
 def ignore_sieve(bot, input, func, type, args):
     """ blocks input from ignored channels/hosts """
-    ignorelist = bot.config["plugins"]["ignore"]["ignored"]
+    ignorelist = bot.config["modules"]["ignore"]["ignored"]
     mask = input.mask.lower()
 
     # don't block input to event hooks
@@ -33,7 +32,7 @@ def ignore_sieve(bot, input, func, type, args):
 @hook.command(autohelp=False)
 def ignored(inp, notice=None, bot=None):
     """ignored -- Lists ignored channels/users."""
-    ignorelist = bot.config["plugins"]["ignore"]["ignored"]
+    ignorelist = bot.config["modules"]["ignore"]["ignored"]
     if ignorelist:
         notice("Ignored channels/users are: {}".format(", ".join(ignorelist)))
     else:
@@ -45,7 +44,7 @@ def ignored(inp, notice=None, bot=None):
 def ignore(inp, notice=None, bot=None, config=None):
     """ignore <channel|nick|host> -- Makes the bot ignore <channel|user>."""
     target = inp.lower()
-    ignorelist = bot.config["plugins"]["ignore"]["ignored"]
+    ignorelist = bot.config["modules"]["ignore"]["ignored"]
     if target in ignorelist:
         notice("{} is already ignored.".format(target))
     else:
@@ -61,7 +60,7 @@ def unignore(inp, notice=None, bot=None, config=None):
     """unignore <channel|user> -- Makes the bot listen to
     <channel|user>."""
     target = inp.lower()
-    ignorelist = bot.config["plugins"]["ignore"]["ignored"]
+    ignorelist = bot.config["modules"]["ignore"]["ignored"]
     if target in ignorelist:
         notice("{} has been unignored.".format(target))
         ignorelist.remove(target)

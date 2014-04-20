@@ -4,7 +4,6 @@ from util import hook
 
 
 with open("./data/fortunes.txt") as f:
-
     fortunes = [line.strip() for line in f.readlines()
                 if not line.startswith("//")]
 

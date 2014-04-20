@@ -1,5 +1,3 @@
-from bs4 import BeautifulSoup
-
 from util import hook, http, web
 
 

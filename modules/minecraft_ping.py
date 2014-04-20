@@ -8,10 +8,10 @@ from util import hook
 
 try:
     import DNS
+
     has_dns = True
 except ImportError:
     has_dns = False
-
 
 mc_colors = [('\xa7f', '\x0300'), ('\xa70', '\x0301'), ('\xa71', '\x0302'), ('\xa72', '\x0303'),
              ('\xa7c', '\x0304'), ('\xa74', '\x0305'), ('\xa75', '\x0306'), ('\xa76', '\x0307'),
@@ -53,6 +53,7 @@ def unpack_varint(s):
         if not b & 0x80:
             return d
 
+
 pack_data = lambda d: struct.pack('>b', len(d)) + d
 pack_port = lambda i: struct.pack('>H', i)
 
@@ -77,8 +78,8 @@ def mcping_modern(host, port):
         s.send(pack_data("\x00"))
 
         # read response
-        unpack_varint(s)      # Packet length
-        unpack_varint(s)      # Packet ID
+        unpack_varint(s)  # Packet length
+        unpack_varint(s)  # Packet ID
         l = unpack_varint(s)  # String length
 
         if not l > 1:

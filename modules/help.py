@@ -11,7 +11,7 @@ def help_command(inp, notice=None, conn=None, bot=None):
     disabled = bot.config.get('disabled_plugins', [])
     disabled_comm = bot.config.get('disabled_commands', [])
     for command, (func, args) in bot.commands.items():
-        fn = re.match(r'^plugins.(.+).py$', func._filename)
+        fn = re.match(r'^modules.(.+).py$', func._filename)
         if fn is None and (func._filename not in disabled) or (fn.group(1).lower() not in disabled):
             if command not in disabled_comm:
                 if func.__doc__ is not None:

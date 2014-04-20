@@ -2,16 +2,17 @@ import time
 import logging
 import re
 import os
-import collections
 import threading
 import sys
 
-import queue
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy import create_engine
+
+import queue
 from core import config, irc, main
 from core.loader import PluginLoader
 from core.pluginmanager import PluginManager
+
 
 logger_initialized = False
 
@@ -77,7 +78,7 @@ class CloudBot(threading.Thread):
     :type data_dir: bytes
     :type config: core.config.Config
     :type db_session: scoped_session
-    :type plugins: dict
+    :type modules: dict
     :type loader: core.loader.PluginLoader
     """
 
@@ -116,7 +117,7 @@ class CloudBot(threading.Thread):
         # run plugin loader
         self.plugin_manager = PluginManager(self)
 
-        """ self.plugins format
+        """ self.modules format
         {'PLUGIN_TYPE': [(<COMPILED_PLUGIN_FUNTION>,
                           {PLUGIN_ARGS}),
                          (<COMPILED_PLUGIN_FUNTION>,

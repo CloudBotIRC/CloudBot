@@ -4,6 +4,7 @@ import urllib
 
 from util import hook, http
 
+
 shortcuts = {"cloudbot": "ClouDev/CloudBot"}
 
 # (number, state, user.login, title, truncate(body), gitio.gitio(data.url))

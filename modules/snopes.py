@@ -28,7 +28,7 @@ def snopes(inp):
         status = "Status: {}.".format(re.search(r"FALSE|TRUE|MIXTURE|UNDETERMINED",
                                                 snopes_text).group(0).title())
 
-    claim = re.sub(r"[\s\xa0]+", " ", claim)   # compress whitespace
+    claim = re.sub(r"[\s\xa0]+", " ", claim)  # compress whitespace
     status = re.sub(r"[\s\xa0]+", " ", status)
 
     return "{} {} {}".format(claim, status, result_urls[0])

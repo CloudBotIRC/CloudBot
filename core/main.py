@@ -1,8 +1,10 @@
 import inspect
 import re
+
 import _thread
 import queue
 from queue import Empty
+
 
 _thread.stack_size(1024 * 512)  # reduce vm size
 
@@ -163,12 +165,12 @@ def run(bot, plugin, input):
     try:
         out = plugin.function(*parameters)
     except:
-        bot.logger.exception("Error in plugin {}:".format(plugin.fileplugin.title))
+        bot.logger.exception("Error in plugin {}:".format(plugin.module.title))
         bot.logger.info("Parameters used: {}".format(parameters))
         return
     finally:
         if uses_db:
-            bot.logger.debug("Closed DB session for: {}".format(plugin.fileplugin.title))
+            bot.logger.debug("Closed DB session for: {}".format(plugin.module.title))
             input.db.close()
 
     if out is not None:
@@ -194,7 +196,7 @@ def do_sieve(sieve, bot, input, plugin, kind):
 
 
 class Handler:
-    """Runs plugins in their own threads (ensures order)
+    """Runs modules in their own threads (ensures order)
     :type bot: core.bot.CloudBot
     :type func: function
     :type input_queue: queue.Queue[Input]

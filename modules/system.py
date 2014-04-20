@@ -45,7 +45,7 @@ def memory(inp):
         out = "Threads: \x02{}\x02, Real Memory: \x02{}\x02, Allocated Memory: \x02{}\x02, Peak " \
               "Allocated Memory: \x02{}\x02, Stack Size: \x02{}\x02, Heap " \
               "Size: \x02{}\x02".format(s['Threads'], strings[0], strings[1], strings[2],
-              strings[3], strings[4])
+                                        strings[3], strings[4])
         # return output
         return out
 

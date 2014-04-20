@@ -6,6 +6,7 @@ from util import hook
 
 socket.setdefaulttimeout(10)
 
+
 # Auto-join on Invite (Configurable, defaults to True)
 @hook.event('INVITE')
 def invite(paraml, conn=None):

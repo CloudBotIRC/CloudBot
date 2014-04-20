@@ -1,7 +1,8 @@
 import re
-from urllib.parse import urlencode
 
+from urllib.parse import urlencode
 from util import hook, http, web
+
 
 gateway = 'http://open.spotify.com/{}/{}'  # http spotify gw address
 spuri = 'spotify:{}:{}'
@@ -47,7 +48,7 @@ def spotify(inp):
     url = sptfy(gateway.format(type, id))
 
     return "\x02{}\x02 by \x02{}\x02 - {}".format(data["tracks"][0]["name"],
-                                                           data["tracks"][0]["artists"][0]["name"], url)
+                                                  data["tracks"][0]["artists"][0]["name"], url)
 
 
 @hook.command
@@ -65,7 +66,7 @@ def spalbum(inp):
     url = sptfy(gateway.format(type, id))
 
     return "\x02{}\x02 by \x02{}\x02 - {}".format(data["albums"][0]["name"],
-                                                           data["albums"][0]["artists"][0]["name"], url)
+                                                  data["albums"][0]["artists"][0]["name"], url)
 
 
 @hook.command
@@ -99,12 +100,12 @@ def spotify_url(match):
         album = data["track"]["album"]["name"]
 
         return "Spotify Track: \x02{}\x02 by \x02{}\x02 from the album \x02{}\x02 - {}".format(name, artist,
-                                                                                                        album, sptfy(
+                                                                                               album, sptfy(
                 gateway.format(type, spotify_id)))
     elif type == "artist":
         return "Spotify Artist: \x02{}\x02 - {}".format(data["artist"]["name"],
-                                                                 sptfy(gateway.format(type, spotify_id)))
+                                                        sptfy(gateway.format(type, spotify_id)))
     elif type == "album":
         return "Spotify Album: \x02{}\x02 - \x02{}\x02 - {}".format(data["album"]["artist"],
-                                                                             data["album"]["name"],
-                                                                             sptfy(gateway.format(type, spotify_id)))
+                                                                    data["album"]["name"],
+                                                                    sptfy(gateway.format(type, spotify_id)))

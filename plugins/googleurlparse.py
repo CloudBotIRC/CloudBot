@@ -1,6 +1,7 @@
 from util import hook
 from urllib.parse import unquote
 
+
 @hook.command(autohelp=False)
 def googleurl(inp, db=None, nick=None):
     """googleurl [nickname] - Converts Google urls (google.com/url) to normal urls
@@ -12,8 +13,8 @@ def googleurl(inp, db=None, nick=None):
                               " like ? and chan = ?", (inp.lower(), input.chan.lower())).fetchone()
     if last_message:
         msg = last_message[1]
-        out = ", ".join([(unquote(a[4:]) if a[:4] == "url=" else "") for a in msg.split("&")])\
-              .replace(", ,", "").strip()
+        out = ", ".join([(unquote(a[4:]) if a[:4] == "url=" else "") for a in msg.split("&")]) \
+            .replace(", ,", "").strip()
         return out if out else "No matches in your last message."
     else:
         if inp == nick:

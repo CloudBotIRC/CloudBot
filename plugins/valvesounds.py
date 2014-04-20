@@ -1,5 +1,5 @@
 import json
-import urllib.request, urllib.error, urllib.parse
+import urllib
 
 from util import hook, http, web
 

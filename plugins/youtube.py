@@ -40,7 +40,7 @@ def get_video_description(video_id):
 
         percent = 100 * float(data['likeCount']) / float(data['ratingCount'])
         out += ' - {}, {} (\x02{:.1f}\x02%)'.format(likes,
-                                                     dislikes, percent)
+                                                    dislikes, percent)
 
     if 'viewCount' in data:
         views = data['viewCount']
@@ -54,7 +54,7 @@ def get_video_description(video_id):
 
     upload_time = time.strptime(data['uploaded'], "%Y-%m-%dT%H:%M:%S.000Z")
     out += ' - \x02{}\x02 on \x02{}\x02'.format(uploader,
-                                                 time.strftime("%Y.%m.%d", upload_time))
+                                                time.strftime("%Y.%m.%d", upload_time))
 
     if 'contentRating' in data:
         out += ' - \x034NSFW\x02'
@@ -117,7 +117,7 @@ def youtime(inp):
 
     return 'The video \x02{}\x02 has a length of {} and has been viewed {:,} times for ' \
            'a total run time of {}!'.format(data['title'], length_text, views,
-                                             total_text)
+                                            total_text)
 
 
 ytpl_re = (r'(.*:)//(www.youtube.com/playlist|youtube.com/playlist)(:[0-9]+)?(.*)', re.I)

@@ -37,8 +37,9 @@ def newgrounds_url(match):
 
     # get amount of ratings
     try:
-        ratings_info = soup.find('dd', {'class': 'star-variable'})['title'].split("Stars &ndash;")[1].replace("Votes",
-                                                                                                              "").strip()
+        ratings_info = soup.find('dd', {'class': 'star-variable'})['title'].split("Stars"
+                                                                                  " &ndsh;")[1].replace("Votes",
+                                                                                                        "").strip()
         numofratings = " ({})".format(ratings_info)
     except:
         numofratings = ""

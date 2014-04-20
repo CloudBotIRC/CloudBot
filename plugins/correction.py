@@ -6,6 +6,7 @@ from util import hook
 CORRECTION_RE = r'^[sS]/([^/]*)/([^/]*)(/.*)?\s*$'
 S_RE = re.compile(r'^[sS]/[^/]*/[^/]*(/.*)?\s*$')
 
+
 @hook.regex(CORRECTION_RE)
 def correction(match, input=None, conn=None, message=None):
     """

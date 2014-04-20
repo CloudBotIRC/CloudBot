@@ -58,12 +58,15 @@ class Input:
         self.msg = msg
         self.input = self
         self.text = self.paraml
+        self.inp = self.paraml  # this is just text with a different name
         self.server = conn.server
         self.lastparam = paramlist[-1]  # TODO: This is equivalent to msg
         self.chan = paramlist[0].lower()
 
         if self.chan == conn.nick.lower():  # is a PM
             self.chan = nick
+
+        self.trigger = None  # assigned later?
 
     def message(self, message, target=None):
         """sends a message to a specific or current channel/user

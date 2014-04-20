@@ -11,7 +11,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy import create_engine
 from core import config, irc, main
 from core.loader import PluginLoader
-
+from core.pluginmanager import PluginManager
 
 logger_initialized = False
 
@@ -89,8 +89,6 @@ class CloudBot(threading.Thread):
 
         # stores each bot server connection
         self.connections = []
-        # bot commands
-        self.commands = []
 
         # set up logging
         self.logger = get_logger()
@@ -116,7 +114,7 @@ class CloudBot(threading.Thread):
         self.logger.debug("Bot setup completed.")
 
         # run plugin loader
-        self.plugins = collections.defaultdict(list)
+        self.plugin_manager = PluginManager(self)
 
         """ self.plugins format
         {'PLUGIN_TYPE': [(<COMPILED_PLUGIN_FUNTION>,

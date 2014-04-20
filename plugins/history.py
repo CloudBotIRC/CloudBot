@@ -41,8 +41,7 @@ def track_history(input, message_time, conn):
     history.append(data)
 
 
-@hook.singlethread
-@hook.event('PRIVMSG', ignorebots=False)
+@hook.event('PRIVMSG', ignorebots=False, singlethread=True)
 def chat_tracker(paraml, input=None, db=None, conn=None):
     message_time = time.time()
     track_seen(input, message_time, db, conn)

@@ -60,9 +60,8 @@ def onjoin(paraml, conn=None, bot=None):
     bot.logger.info("ONJOIN hook completed. Bot ready.")
 
 
-@hook.singlethread
-@hook.event('004')
-def keep_alive(paraml, conn=None):
+@hook.event('004', singlethread=True)
+def keep_alive(paramlist, conn=None):
     """
     :type paraml: list[str]
     :type conn: core.irc.BotConnection

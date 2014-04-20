@@ -25,8 +25,7 @@ def get_tells(db, user_to):
                       " user_to=lower(:user) order by time", {'user': user_to}).fetchall()
 
 
-@hook.singlethread
-@hook.event('PRIVMSG')
+@hook.event('PRIVMSG', singlethread=True)
 def tellinput(inp, input=None, notice=None, db=None, nick=None, conn=None):
     if 'showtells' in input.msg.lower():
         return

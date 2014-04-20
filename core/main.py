@@ -90,7 +90,7 @@ class Input:
         if target == self.nick:
             self.conn.msg(target, message)
         else:
-            self.conn.msg(target, "{}, {}".format(self.nick, message))
+            self.conn.msg(target, "({}) {}".format(self.nick, message))
 
     def action(self, message, target=None):
         """sends an action to the current channel/user or a specific channel/user

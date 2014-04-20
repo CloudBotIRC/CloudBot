@@ -97,7 +97,7 @@ def get_log_stream(data_dir, server, chan):
     return log_stream
 
 
-@hook.event("*")
+@hook.event("*", singlethread=True)
 def log(paraml, input=None, bot=None):
     """
     :type input: core.main.Input

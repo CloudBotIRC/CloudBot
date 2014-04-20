@@ -230,7 +230,7 @@
  128 Sandstone Stairs
  129 Emerald Ore
  130 Ender Chest
- 131 Tripwire Hook
+ 131 Tripwire Plugin
  132 Tripwire
  133 Block of Emerald
  134 Wooden Stairs (Spruce)

@@ -307,6 +307,7 @@ def main(bot, conn, out):
                 input.trigger = trigger
                 input.text_unstripped = m.group(2)
                 input.text = input.text_unstripped.strip()
+                input.inp = input.text
 
                 func, args = bot.commands[command]
                 dispatch(bot, input, "command", func, args, autohelp=True)
@@ -317,5 +318,6 @@ def main(bot, conn, out):
             if m:
                 input = Input(bot, conn, *out)
                 input.text = m
+                input.inp = m
 
                 dispatch(bot, input, "regex", func, args)

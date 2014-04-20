@@ -198,17 +198,17 @@ def do_sieve(sieve, bot, input, plugin, kind):
 class Handler:
     """Runs modules in their own threads (ensures order)
     :type bot: core.bot.CloudBot
-    :type func: function
+    :type plugin: Plugin
     :type input_queue: queue.Queue[Input]
     """
 
-    def __init__(self, bot, func):
+    def __init__(self, bot, plugin):
         """
         :type bot: core.bot.CloudBot
         :type func: function
         """
         self.bot = bot
-        self.func = func
+        self.plugin = plugin
         self.input_queue = queue.Queue()
         _thread.start_new_thread(self.start, ())
 
@@ -217,15 +217,15 @@ class Handler:
         while True:
             while self.bot.running:  # This loop will break when successful
                 try:
-                    input = self.input_queue.get(block=True, timeout=1)
+                    plugin_input = self.input_queue.get(block=True, timeout=1)
                     break
                 except Empty:
                     pass
 
-            if not self.bot.running or input == StopIteration:
+            if not self.bot.running or plugin_input == StopIteration:
                 break
 
-            run(self.bot, self.func, input)
+            run(self.bot, self.plugin.function, plugin_input)
 
     def stop(self):
         self.input_queue.put(StopIteration)
@@ -254,7 +254,10 @@ def dispatch(bot, input, kind, plugin):
         return
 
     if plugin.args.get("singlethread", False):
-        bot.threads[plugin].put(input)
+        if plugin in bot.threads:
+            bot.threads[plugin].put(input)
+        else:
+            bot.threads[plugin] = Handler(bot, plugin)
     else:
         _thread.start_new_thread(run, (bot, plugin, input))
 

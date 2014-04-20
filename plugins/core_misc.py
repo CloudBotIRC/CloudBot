@@ -28,9 +28,7 @@ def onjoin(paraml, conn=None, bot=None):
     """
     bot.logger.info("ONJOIN hook triggered.")
     nickserv = conn.config.get('nickserv')
-    if nickserv:
-        if "enabled" in nickserv and not nickserv["enabled"]:
-            return
+    if nickserv and nickserv.get("enabled", True):
         nickserv_password = nickserv.get('nickserv_password', '')
         nickserv_name = nickserv.get('nickserv_name', 'nickserv')
         nickserv_account_name = nickserv.get('nickserv_user', '')

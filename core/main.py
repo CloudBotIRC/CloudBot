@@ -165,7 +165,7 @@ def run(bot, plugin, input):
             parameters.append(value)
         else:
             bot.logger.error("Plugin {}:{} asked for invalid argument '{}', cancelling execution!"
-                             .format(plugin.fileplugin.title, plugin.function_name, required_arg))
+                             .format(plugin.module.title, plugin.function_name, required_arg))
             return
 
     try:

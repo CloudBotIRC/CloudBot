@@ -60,11 +60,11 @@ class PluginLoader(object):
         """unloads all loaded modules from a specified file
         :type path: str
         """
+        if isinstance(path, bytes):
+            # makes sure that the file_name is a 'str' object, not a 'bytes' object
+            file_name = path.decode()
         file_path = os.path.abspath(path)
         file_name = os.path.basename(path)
-        if isinstance(file_name, bytes):
-            # makes sure that the file_name is a 'str' object, not a 'bytes' object
-            file_name = file_name.decode()
         title_and_extension = os.path.splitext(file_name)
 
         if title_and_extension[1] != ".py":

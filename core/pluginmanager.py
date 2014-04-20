@@ -155,6 +155,7 @@ class PluginManager:
                 assert module in self.modules
             module = self.modules[module]
         else:
+            assert isinstance(module, Module)
             if ignore_not_registered:
                 if not module.file_name in self.modules:
                     return

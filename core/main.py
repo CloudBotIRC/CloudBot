@@ -5,8 +5,12 @@ import _thread
 import queue
 from queue import Empty
 
-
 _thread.stack_size(1024 * 512)  # reduce vm size
+
+_input_name_aliases = {
+    "inp": "text",
+    "paramlist": "paraml"
+}
 
 
 class Input:
@@ -59,8 +63,7 @@ class Input:
         self.paraml = paramlist
         self.msg = msg
         self.input = self
-        self.text = self.paraml
-        self.inp = self.paraml  # this is just text with a different name
+        self.text = self.paraml  # this will be assigned later
         self.server = conn.server
         self.lastparam = paramlist[-1]  # TODO: This is equivalent to msg
         self.chan = paramlist[0].lower()
@@ -149,11 +152,14 @@ def run(bot, plugin, input):
 
     if uses_db:
         # create SQLAlchemy session
-        bot.logger.debug("Opened DB session for: {}".format(plugin.fileplugin.title))
+        bot.logger.debug("Opened DB session for: {}".format(plugin.module.title))
         input.db = input.bot.db_session()
 
     # all the dynamic arguments
     for required_arg in required_args:
+        if required_arg in _input_name_aliases:
+            required_arg = _input_name_aliases[required_arg]
+
         if hasattr(input, required_arg):
             value = getattr(input, required_arg)
             parameters.append(value)
@@ -184,13 +190,12 @@ def do_sieve(sieve, bot, input, plugin, kind):
     :type input: Input
     :type plugin: Plugin
     :type kind: str
-    :type args: dict[str, ?]
     :rtype: Input
     """
     try:
         return sieve.function(bot, input, plugin.function, kind, plugin.args)
     except:
-        bot.logger.exception("Error running sieve {}:{} on {}:".format(sieve.fileplugin.title, sieve.function_name,
+        bot.logger.exception("Error running sieve {}:{} on {}:".format(sieve.module.title, sieve.function_name,
                                                                        plugin.function_name))
         return None
 
@@ -205,7 +210,7 @@ class Handler:
     def __init__(self, bot, plugin):
         """
         :type bot: core.bot.CloudBot
-        :type func: function
+        :type plugin: Plugin
         """
         self.bot = bot
         self.plugin = plugin
@@ -225,7 +230,7 @@ class Handler:
             if not self.bot.running or plugin_input == StopIteration:
                 break
 
-            run(self.bot, self.plugin.function, plugin_input)
+            run(self.bot, self.plugin, plugin_input)
 
     def stop(self):
         self.input_queue.put(StopIteration)
@@ -297,7 +302,6 @@ def main(bot, conn, out):
                 input.trigger = command
                 input.text_unstripped = match.group(2)
                 input.text = input.text_unstripped.strip()
-                input.inp = input.text
 
                 dispatch(bot, input, "command", plugin)
 
@@ -307,6 +311,5 @@ def main(bot, conn, out):
             if match:
                 input = Input(bot, conn, *out)
                 input.text = match
-                input.inp = match
 
                 dispatch(bot, input, "regex", plugin)

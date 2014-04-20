@@ -246,7 +246,8 @@ class BotConnection(object):
     :type permissions: PermissionManager
     """
 
-    def __init__(self, bot, name, server, nick, port=6667, ssl=False, logger=None, channels=None, config=None):
+    def __init__(self, bot, name, server, nick, port=6667, ssl=False, logger=None, channels=None, config=None,
+                 nice_name=None):
         """
         :type bot: core.bot.CloudBot
         :type name: str
@@ -260,7 +261,10 @@ class BotConnection(object):
         """
         self.bot = bot
         self.name = name
-
+        if nice_name:
+            self.nice_name = nice_name
+        else:
+            self.nice_name = name
         if channels is None:
             self.channels = []
         else:
@@ -368,5 +372,5 @@ class BotConnection(object):
         """
         :type string: str
         """
-        self.logger.info("[{}] {} >> {}".format(self.server, self.name.upper(), string))
+        self.logger.info("[{}] >> {}".format(self.nice_name, string))
         self.output_queue.put(string)

@@ -54,7 +54,7 @@ class PluginLoader(object):
             self.bot.logger.exception("Error loading {}:".format(file_name))
             return
 
-        self.bot.plugin_manager.load_modules(file_path, module)
+        self.bot.plugin_manager.load_module(file_path, module)
 
     def unload_file(self, path):
         """unloads all loaded modules from a specified file

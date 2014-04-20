@@ -4,9 +4,6 @@ import re
 from util import hook
 
 
-# PluginManager loads Module, Module has Plugin, Plugin has Hook
-
-
 def find_hooks(parent, code):
     """
     :type parent: Module
@@ -30,24 +27,19 @@ def find_hooks(parent, code):
     return commands, regexes, events, sieves
 
 
-def plugin_desc(plugin):
-    """
-    Takes a Plugin object and returns a descriptive string
-    :type plugin: Plugin
-    """
-    if isinstance(plugin, CommandPlugin):
-        return "command {}".format("/".join(plugin.aliases))
-    elif isinstance(plugin, EventPlugin):
-        return "events {} ({})".format(plugin.function_name, ",".join(plugin.events))
-    elif isinstance(plugin, RegexPlugin):
-        return "regex {}".format(plugin.function_name)
-    elif isinstance(plugin, SievePlugin):
-        return "sieve {}".format(plugin.function_name)
-
-
 class PluginManager:
     """
-    modules is dict from file name to Module
+    PluginManager is the core of CloudBot plugin loading.
+
+    PluginManager loads Modules, and adds their Plugins to easy-access dicts/lists.
+
+    Each Module represents a file, and loads plugins onto itself using find_hooks.
+
+    Plugins are the lowest level of abstraction in this class. There are four different plugin types:
+    - CommandPlugin is for bot commands
+    - EventPlugin hooks onto bot 'events'
+    - RegexPlugin loads a regex paramater, and executes on input lines which match the regex
+    - SievePlugin is a catch-all sieve, which all other plugins go through before being executed.
 
     :type bot: core.bot.CloudBot
     :type modules: dict[str, Module]
@@ -60,6 +52,7 @@ class PluginManager:
 
     def __init__(self, bot):
         """
+        Creates a new PluginManager. You generally only need to do this from inside core.bot.CloudBot
         :type bot: core.bot.CloudBot
         """
         self.bot = bot
@@ -71,16 +64,12 @@ class PluginManager:
         self.regex_plugins = []
         self.sieves = []
 
-    def register_modules(self, modules):
+    def load_module(self, path, code):
         """
-        :param modules: list of (file path, module)
-        :type modules: list[(str, object)]
-        """
-        for path, code in modules:
-            self.load_modules(path, code)
+        Loads a module from the given path and module object, then registers all plugins from that module.
 
-    def load_modules(self, path, code):
-        """loads a module from the given path and code object
+        This function checks whether the module is disabled in "disabled_plugins".
+
         :type path: str
         :type code: object
         """
@@ -91,10 +80,11 @@ class PluginManager:
             self.bot.logger.info("Not loading module {}: module disabled".format(file_name))
             return
         module = Module(file_path, file_name, title, code)
-        self.register_module(module)
+        self.register_plugins(module)
 
     def unload_module(self, path):
-        """unloads a module from the given path
+        """
+        Unloads the module from the given path, unloading all plugins from the module.
         :type path: str
         """
         filename = os.path.basename(path)
@@ -103,14 +93,16 @@ class PluginManager:
             # this plugin hasn't been loaded, so no need to unload it
             return
 
-        self.unregister_module(filename, ignore_not_registered=True)
+        self.unregister_plugins(filename, ignore_not_registered=True)
 
-    def register_module(self, module, check_if_exists=True):
+    def register_plugins(self, module, check_if_exists=True):
         """
+        Registers all plugins in a given module
+
         :type module: Module
         """
         if check_if_exists and module.file_name in self.modules:
-            self.unregister_module(module.file_name)
+            self.unregister_plugins(module.file_name)
 
         self.modules[module.file_name] = module
 
@@ -120,10 +112,10 @@ class PluginManager:
                 if alias in self.commands:
                     self.bot.logger.warning("Plugin {} attempted to register command {} which was already registered "
                                             "by {}. Ignoring new assignment.",
-                                            module.title, alias, self.commands[alias].fileplugin.title)
+                                            module.title, alias, self.commands[alias].module.title)
                 else:
                     self.commands[alias] = command
-            self.log_plugin_register(command)
+            self.log_plugin(command)
 
         # register events
         for event_plugin in module.events:
@@ -135,22 +127,24 @@ class PluginManager:
                         self.events[event_name].append(event_plugin)
                     else:
                         self.events[event_name] = [event_plugin]
-            self.log_plugin_register(event_plugin)
+            self.log_plugin(event_plugin)
 
         # register regexes
         for regex_plugin in module.regexes:
             for regex_match in regex_plugin.regexes:
                 self.regex_plugins.append((regex_match, regex_plugin))
-            self.log_plugin_register(regex_plugin)
+            self.log_plugin(regex_plugin)
 
         # register sieves
         for sieve_plugin in module.sieves:
             self.sieves.append(sieve_plugin)
-            self.log_plugin_register(sieve_plugin)
+            self.log_plugin(sieve_plugin)
 
-    def unregister_module(self, module, ignore_not_registered=False):
+    def unregister_plugins(self, module, ignore_not_registered=False):
         """
-        :param module: Module to directly unload, or str to lookup via file_name and then unload.
+        Unregisters all plugins from a given module.
+
+        :param module: Module to unregister plugins from, or str to lookup via file_name and then unload.
         :type module: Module | str
         """
         if isinstance(module, str):
@@ -199,17 +193,19 @@ class PluginManager:
 
         self.bot.logger.info("Unloaded all plugins from {}".format(module.title))
 
-    def log_plugin_register(self, plugin):
+    def log_plugin(self, plugin):
         """
-
-        :param plugin:
+        Logs registering this plugin.
+        :type plugin: Plugin
         """
-        self.bot.logger.info(
-            "Loaded {} from module {}".format(plugin_desc(plugin), plugin.module.file_name))
+        self.bot.logger.info("Loaded {}".format(plugin))
+        self.bot.logger.debug("Loaded {}".format(repr(plugin)))
 
 
 class Module:
     """
+    Each Module represents a file, and loads plugins onto itself using find_hooks.
+
     :type file_path: str
     :type file_name: str
     :type title: str
@@ -235,8 +231,10 @@ class Module:
 
 class Plugin:
     """
+    Each plugin is specific to one function. This class is never used by iself, it's always extended by CommandPlugin,
+    EventPlugin, RegexPlugin, or SievePlugin
     :type type; str
-    :type file_plugin: Module
+    :type module: Module
     :type function: function
     :type function_name: str
     :type args: dict[str, unknown]
@@ -245,7 +243,7 @@ class Plugin:
     def __init__(self, plugin_type, module, func_hook):
         """
         :type plugin_type: str
-        :type file_plugin: Module
+        :type module: Module
         :type func_hook: hook._Hook
         """
         self.type = plugin_type
@@ -254,10 +252,8 @@ class Plugin:
         self.function_name = self.function.__name__
         self.args = func_hook.kwargs
 
-    def __str__(self):
-        return plugin_desc(self)
-
-    __repr__ = __str__
+    def __repr__(self):
+        return "type: {}, module: {}, args: {}".format(self.type, self.module.file_name, self.args)
 
 
 class CommandPlugin(Plugin):
@@ -265,8 +261,6 @@ class CommandPlugin(Plugin):
     :type name: str
     :type aliases: list[str]
     :type doc: str
-    :type autohelp: bool
-    :type permissions: list[str]
     """
 
     def __init__(self, module, cmd_hook):
@@ -274,19 +268,26 @@ class CommandPlugin(Plugin):
         :type module: Module
         :type cmd_hook: hook._CommandHook
         """
-        Plugin.__init__(self, "command", module, cmd_hook)
 
         # make sure that autohelp and permissions are set
         if not "autohelp" in cmd_hook.kwargs:
-            self.autohelp = False
+            cmd_hook.kwargs["autohelp"] = False
         if not "permissions" in cmd_hook.kwargs:
-            self.permissions = []
+            cmd_hook.kwargs["permissions"] = []
+
+        Plugin.__init__(self, "command", module, cmd_hook)
 
         self.name = cmd_hook.main_alias
         self.aliases = list(cmd_hook.aliases)  # turn the set into a list
         self.aliases.remove(self.name)
         self.aliases.insert(0, self.name)  # make sure the name, or 'main alias' is in position 0
         self.doc = cmd_hook.doc
+
+    def __repr__(self):
+        return "CommandPlugin[name: {}, aliases: {}, {}]".format(self.name, self.aliases[1:], Plugin.__repr__(self))
+
+    def __str__(self):
+        return "command {} from {}".format("/".join(self.aliases), self.module.file_name)
 
 
 class RegexPlugin(Plugin):
@@ -301,6 +302,12 @@ class RegexPlugin(Plugin):
         """
         Plugin.__init__(self, "regex", module, regex_hook)
         self.regexes = regex_hook.regexes
+
+    def __repr__(self):
+        return "RegexPlugin[regexes: {}, {}]".format([regex.pattern for regex in self.regexes], Plugin.__repr__(self))
+
+    def __str__(self):
+        return "regex {} from {}".format(self.function_name, self.module.file_name)
 
 
 class EventPlugin(Plugin):
@@ -319,6 +326,12 @@ class EventPlugin(Plugin):
     def is_catch_all(self):
         return "*" in self.events
 
+    def __repr__(self):
+        return "EventPlugin[events: {}, {}]".format(list(self.events), Plugin.__repr__(self))
+
+    def __str__(self):
+        return "events {} ({}) from {}".format(self.function_name, ",".join(self.events), self.module.file_name)
+
 
 class SievePlugin(Plugin):
     def __init__(self, module, sieve_hook):
@@ -327,6 +340,12 @@ class SievePlugin(Plugin):
         :type sieve_hook: hook._SieveHook
         """
         Plugin.__init__(self, "sieve", module, sieve_hook)
+
+    def __repr__(self):
+        return "SievePlugin[{}]".format(Plugin.__repr__(self))
+
+    def __str__(self):
+        return "sieve {} from {}".format(self.function_name, self.module.file_name)
 
 
 _hook_name_to_plugin = {

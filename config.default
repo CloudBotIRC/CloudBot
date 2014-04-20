@@ -7,7 +7,7 @@
         "server": "irc.esper.net",
         "port": 6667,
         "ssl": false,
-        "ignore_cert": true
+        "ignore_cert": true,
         "password": ""
       },
       "nick": "MyCloueqerdBot",

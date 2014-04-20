@@ -11,7 +11,6 @@ import re
 
 from util import hook
 
-
 stream_cache = {}  # '{server} {chan}': (filename, fd)
 
 formats = {
@@ -54,7 +53,8 @@ def gmtime(time_format):
 
 def beautify(input):
     log_format = formats.get(input.command, formats.get("default"))
-    args = input.__dict__
+    args = dict(input.__dict__)  # create a new dict
+    args["server"] = input.conn.nice_name  # use the connection name for server
 
     leng = len(args["paraml"])
     for n, p in enumerate(args["paraml"]):

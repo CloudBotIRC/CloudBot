@@ -160,7 +160,8 @@ class CloudBot(threading.Thread):
         """ Create a BotConnection for all the networks defined in the config """
         for conf in self.config['connections']:
             # strip all spaces and capitalization from the connection name
-            name = clean_name(conf['name'])
+            nice_name = conf['name']
+            name = clean_name(nice_name)
             nick = conf['nick']
             server = conf['connection']['server']
             port = conf['connection'].get('port', 6667)
@@ -169,7 +170,8 @@ class CloudBot(threading.Thread):
 
             self.connections.append(irc.BotConnection(self, name, server, nick, config=conf,
                                                       port=port, logger=self.logger, channels=conf['channels'],
-                                                      ssl=conf['connection'].get('ssl', False)))
+                                                      ssl=conf['connection'].get('ssl', False),
+                                                      nice_name=nice_name))
             self.logger.debug("({}) Created connection.".format(name))
 
     def stop(self, reason=None):

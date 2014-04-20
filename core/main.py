@@ -27,6 +27,7 @@ class Input:
     :type lastparam: str
     :type chan: str
     """
+
     def __init__(self, bot, conn, raw, prefix, command, params,
                  nick, user, host, mask, paramlist, msg):
         """
@@ -140,39 +141,21 @@ def run(bot, func, input):
         input.db = input.bot.db_session()
 
     parameters = []
-    named_parameters = {}
     specifications = inspect.getargspec(func)
     required_args = specifications[0]
-    default_args = specifications[3]
     if required_args is None:
         required_args = []
-    if default_args is None:
-        default_args = []
 
-    if len(required_args) - len(default_args) == 1:
-        # The function is using the old format, with all arguments with defaults except for 'text'
-        # Assume that the funct want the first non-default arg to be 'input'
-        parameters.append(input.text)
-        required_args = required_args[1:]  # Trim the first argument, as it's been assigned as a non-named parameter
-
-        for required_arg in required_args:
-            # Assign the rest of the named parameters to values from input
-            value = getattr(input, required_arg)
-
-            named_parameters[required_arg] = value
-    elif len(required_args) - len(default_args) == 3:
-        # We're assuming that this function is using the new format
-        # Treat the first three parameters as input, instance, bot
-        parameters = [input, input.conn, input.bot]
-    else:
-        print("Warning, ignoring function which doesn't fit arg spec: {}".format(specifications))
-        return
+    # all the dynamic arguments
+    for required_arg in required_args:
+        value = getattr(input, required_arg)
+        parameters.append(value)
 
     try:
-        out = func(*parameters, **named_parameters)
+        out = func(*parameters)
     except:
         bot.logger.exception("Error in plugin {}:".format(func._filename))
-        bot.logger.info("Parameters used: {}, named parameters used: {}".format(parameters, named_parameters))
+        bot.logger.info("Parameters used: {}".format(parameters))
         return
     finally:
         if uses_db:

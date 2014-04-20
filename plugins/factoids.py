@@ -40,8 +40,7 @@ def get_memory(db, word):
 @hook.command("r", permissions=["addfactoid"])
 @hook.command(permissions=["addfactoid"])
 def remember(inp, nick='', db=None, notice=None):
-    """remember <word> [+]<data> -- Remembers <data> with <word>. Add +
-    to <data> to append."""
+    """remember <word> [+]<data> -- Remembers <data> with <word>. Add + to <data> to append."""
     db_init(db)
 
     append = False

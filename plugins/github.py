@@ -1,10 +1,16 @@
 import json
-import urllib.request, urllib.error, urllib.parse
+import traceback
+import urllib
 
 from util import hook, http
 
-
 shortcuts = {"cloudbot": "ClouDev/CloudBot"}
+
+# (number, state, user.login, title, truncate(body), gitio.gitio(data.url))
+format_with_summary = "Issue: #{} ({}) by {}: {} | {} {}"
+
+# (number, state, user.login, title, gitio.gitio(data.url))
+format_without_summary = "Issue: #{} ({}) by {}: {} {}"
 
 
 def truncate(msg):
@@ -24,97 +30,98 @@ def truncate(msg):
         return out + "..."
 
 
+def shorten_gitio(url, code=None):
+    # Make sure the url starts with https://
+    if not url.startswith("https://"):
+        if url.startswith("http://"):
+            url = "https://" + url
+        else:
+            url = "https://" + url
+
+    data = 'url=' + url
+    if code:
+        data += '&code=' + code
+        print(code)
+    req = urllib.request.Request(url='http://git.io', data=data.encode())
+
+    # try getting url, let http error raise to next level
+    response = urllib.request.urlopen(req)
+
+    # return location
+    return response.headers["Location"]
+
+
+def try_shorten_gitio(url, code=None):
+    try:
+        return shorten_gitio(url, code)
+    except urllib.error.HTTPError:
+        return url
+
+
 @hook.command
 def ghissues(inp):
     """ghissues username/repo [number] - Get specified issue summary, or open issue count """
-    args = inp.split(" ")
-    try:
-        if args[0] in shortcuts:
-            repo = shortcuts[args[0]]
-        else:
-            repo = args[0]
-        url = "https://api.github.com/repos/{}/issues".format(repo)
-    except IndexError:
-        return "Invalid syntax. .github issues username/repo [number]"
-    try:
+    args = inp.split()
+    if args[0] in shortcuts:
+        repo = shortcuts[args[0]]
+    else:
+        repo = args[0]
+    url = "https://api.github.com/repos/{}/issues".format(repo)
+
+    specific_issue = len(args) > 1
+    if specific_issue:
         url += "/{}".format(args[1])
-        number = True
-    except IndexError:
-        number = False
+    print("Fetching {}".format(url))
     try:
-        data = json.loads(http.open(url).read())
-        print(url)
-        if not number:
-            try:
-                data = data[0]
-            except IndexError:
-                print(data)
-                return "Repo has no open issues"
-    except ValueError:
-        return "Invalid data returned. Check arguments (.github issues username/repo [number]"
-    fmt = "Issue: #%s (%s) by %s: %s | %s %s"  # (number, state, user.login, title, truncate(body), gitio.gitio(data.url))
-    fmt1 = "Issue: #%s (%s) by %s: %s %s"  # (number, state, user.login, title, gitio.gitio(data.url))
-    number = data["number"]
-    if data["state"] == "open":
+        raw_data = http.get(url)
+    except urllib.error.HTTPError:
+        if specific_issue:
+            return "Error getting issues for '{}/{}', is it a valid issue?".format(args[0], args[1])
+        else:
+            return "Error getting issues for '{}', is it a valid repository?".format(args[0])
+
+    issue_list = json.loads(raw_data)
+
+    if not specific_issue:
+        if len(issue_list) < 1:
+            return "Repository has no open issues"
+        issue = issue_list[0]
+    else:
+        issue = issue_list  # only had one issue
+
+    issue_number = issue["number"]
+    if issue["state"] == "open":
         state = "\x033\x02OPEN\x02\x0f"
     else:
-        state = "\x034\x02CLOSED\x02\x0f by {}".format(data["closed_by"]["login"])
-    user = data["user"]["login"]
-    title = data["title"]
-    summary = truncate(data["body"])
-    gitiourl = gitio(data["html_url"])
-    if "Failed to get URL" in gitiourl:
-        gitiourl = gitio(data["html_url"] + " " + repo.split("/")[1] + number)
-    if summary == "":
-        return fmt1 % (number, state, user, title, gitiourl)
+        state = "\x034\x02CLOSED\x02\x0f by {}".format(issue["closed_by"]["login"])
+    user = issue["user"]["login"]
+    title = issue["title"]
+    summary = truncate(issue["body"])
+
+    try:
+        shorturl = try_shorten_gitio(issue["html_url"])
+    except urllib.error.HTTPError:
+        shorturl = try_shorten_gitio(issue["html_url"] + " " + repo.split("/")[1] + issue_number)
+
+    if summary:
+        return format_with_summary.format(issue_number, state, user, title, summary, shorturl)
     else:
-        return fmt % (number, state, user, title, summary, gitiourl)
+        return format_without_summary.format(issue_number, state, user, title, shorturl)
 
 
 @hook.command
 def gitio(inp):
-    """gitio <url> [code] -- Shorten Github URLs with git.io.  [code] is
-    a optional custom short code."""
-    split = inp.split(" ")
+    """gitio <url> [code] -- Shorten Github URLs with git.io. [code] is an optional custom short code."""
+    split = inp.split()
     url = split[0]
 
-    try:
+    if len(split) > 1:
         code = split[1]
-    except:
+    else:
         code = None
 
-    # if the first 8 chars of "url" are not "https://" then append
-    # "https://" to the url, also convert "http://" to "https://"
-    if url[:8] != "https://":
-        if url[:7] != "http://":
-            url = "https://" + url
-        else:
-            url = "https://" + url[7:]
-    url = 'url=' + str(url)
-    if code:
-        url = url + '&code=' + str(code)
-    req = urllib.request.Request(url='http://git.io', data=url)
-
-    # try getting url, catch http error
     try:
-        f = urllib.request.urlopen(req)
+        return shorten_gitio(url, code=code)
     except urllib.error.HTTPError:
-        return "Failed to get URL!"
-    urlinfo = str(f.info())
-
-    # loop over the rows in urlinfo and pick out location and
-    # status (this is pretty odd code, but urllib2.Request is weird)
-    for row in urlinfo.split("\n"):
-        if row.find("Status") != -1:
-            status = row
-        if row.find("Location") != -1:
-            location = row
-
-    print(status)
-    if not "201" in status:
-        return "Failed to get URL!"
-
-    # this wont work for some reason, so lets ignore it ^
-
-    # return location, minus the first 10 chars
-    return location[10:]
+        traceback.print_exc()
+        return "Failed to shorten!"

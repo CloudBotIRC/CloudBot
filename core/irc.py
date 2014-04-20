@@ -192,6 +192,7 @@ class IRCConnection(object):
 
     def reconnect(self):
         self.stop()
+        self.socket = self.create_socket()
         self.connect()
 
 
@@ -213,14 +214,14 @@ class BotConnection(object):
     :type bot: core.bot.CloudBot
     :type name: str
     :type channels: list[str]
-    :type config: dict[str, ?]
+    :type config: dict[str, unknown]
     :type ssl: bool
     :type server: str
     :type port: int
     :type logger: logging.Logger
     :type nick: str
     :type vars: dict
-    :type history: dict
+    :type history: dict[str, list[tuple]]
     :type parsed_queue: queue.Queue
     :type input_queue: queue.Queue
     :type output_queue: queue.Queue
@@ -239,7 +240,7 @@ class BotConnection(object):
         :type ssl: bool
         :type logger: logging.Logger
         :type channels: list[str]
-        :type config: dict[str, ?]
+        :type config: dict[str, unknown]
         """
         self.bot = bot
         self.name = name
@@ -358,9 +359,5 @@ class BotConnection(object):
         """
         :type string: str
         """
-        try:
-            self.logger.info("{} >> {}".format(self.name.upper(), string))
-        except:
-            # if this doesn't work, no big deal
-            pass
+        self.logger.info("[{}] {} >> {}".format(self.server, self.name.upper(), string))
         self.output_queue.put(string)

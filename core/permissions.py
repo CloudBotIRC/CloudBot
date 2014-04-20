@@ -18,10 +18,11 @@ class PermissionManager(object):
         """
         self.logger = conn.logger
 
-        self.logger.info("Created permission manager for {}.".format(conn.name))
+        self.logger.info("[{}] Created permission manager for {}.".format(conn.server, conn.name))
 
         # stuff
         self.name = conn.name
+        self.server_address = conn.server
         self.config = conn.config
 
         self.group_perms = {}
@@ -34,7 +35,7 @@ class PermissionManager(object):
         self.group_perms = {}
         self.group_users = {}
         self.perm_users = {}
-        self.logger.info("Reloading permissions for {}.".format(self.name))
+        self.logger.info("[{}] Reloading permissions for {}.".format(self.server_address, self.name))
         groups = self.config.get("permissions", {})
         # work out the permissions and users each group has
         for key, value in groups.items():
@@ -70,7 +71,7 @@ class PermissionManager(object):
 
         for allowed_mask in allowed_users:
             if fnmatch(user_mask.lower(), allowed_mask):
-                self.logger.info("Allowed user {} access to {}".format(user_mask, perm))
+                self.logger.info("[{}] Allowed user {} access to {}".format(self.server_address, user_mask, perm))
                 return True
 
         return False

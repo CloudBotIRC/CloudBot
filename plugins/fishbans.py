@@ -1,6 +1,6 @@
 from urllib.parse import quote_plus
 
-from util import hook, http
+from util import hook, http, text
 
 
 api_url = "http://api.fishbans.com/stats/{}/"
@@ -23,8 +23,7 @@ def fishbans(inp):
     user_url = "http://fishbans.com/u/{}/".format(user)
     ban_count = request["stats"]["totalbans"]
 
-    return "The user \x02{}\x02 has \x02{}\x02 ban(s). See detailed info " \
-           "at {}".format(user, ban_count, user_url)
+    return "The user \x02{}\x02 has \x02{}\x02 ban(s) - {}".format(user, ban_count, user_url)
 
 
 @hook.command
@@ -53,5 +52,4 @@ def bancount(inp):
     if not out:
         return "The user \x02{}\x02 has no bans.".format(user)
     else:
-        return "Bans for \x02{}\x02: ".format(user) + ", ".join(out) + ". More info " \
-               "at {}".format(user_url)
+        return "Bans for \x02{}\x02: {} - {}".format(user, text.get_text_list(out, "and"), user_url)

@@ -91,11 +91,11 @@ def get_user_groups(inp, conn=None, has_permission=None, notice=None, mask=None)
 
     permission_manager = conn.permissions
 
-    user_permissions = permission_manager.get_user_permissions(user)
-    if user_permissions:
-        return "User {} has permissions: {}".format(user, user_permissions)
+    user_groups = permission_manager.get_user_groups(user)
+    if user_groups:
+        return "User {} is in groups: {}".format(user, user_groups)
     else:
-        return "User {} has no elevated permissions".format(user)
+        return "User {} is in no permission groups".format(user)
 
 
 @hook.command("deluser", permissions=["permissions_users"])

@@ -1,14 +1,14 @@
-from util import hook, http, web, text
+from util import hook, http, web, formatting
 
 
 @hook.command("feed")
 @hook.command
-def rss(inp, message=None):
+def rss(text, message):
     """rss <feed> -- Gets the first three items from the RSS feed <feed>."""
     limit = 3
 
     # preset news feeds
-    strip = inp.lower().strip()
+    strip = text.lower().strip()
     if strip == "bukkit":
         feed = "http://dl.bukkit.org/downloads/craftbukkit/feeds/latest-rb.rss"
         limit = 1
@@ -17,7 +17,7 @@ def rss(inp, message=None):
     elif strip == "ars":
         feed = "http://feeds.arstechnica.com/arstechnica/index"
     else:
-        feed = inp
+        feed = text
 
     query = "SELECT title, link FROM rss WHERE url=@feed LIMIT @limit"
     result = web.query(query, {"feed": feed, "limit": limit})
@@ -26,7 +26,7 @@ def rss(inp, message=None):
         return "Could not find/read RSS feed."
 
     for row in result.rows:
-        title = text.truncate_str(row["title"], 100)
+        title = formatting.truncate_str(row["title"], 100)
         try:
             link = web.isgd(row["link"])
         except (web.ShortenError, http.HTTPError, http.URLError):
@@ -35,6 +35,6 @@ def rss(inp, message=None):
 
 
 @hook.command(autohelp=False)
-def rb(inp, message=None):
+def rb(message):
     """rb -- Shows the latest Craftbukkit recommended build"""
     rss("bukkit", message)

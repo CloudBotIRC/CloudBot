@@ -1,7 +1,7 @@
 import re
 from urllib import parse
 
-from util import hook, http, text
+from util import hook, http, formatting
 
 
 api_url = "http://encyclopediadramatica.se/api.php?action=opensearch"
@@ -9,11 +9,11 @@ ed_url = "http://encyclopediadramatica.se/"
 
 
 @hook.command
-def drama(inp):
+def drama(text):
     """drama <phrase> -- Gets the first paragraph of
     the Encyclopedia Dramatica article on <phrase>."""
 
-    data = http.get_json(api_url, search=inp)
+    data = http.get_json(api_url, search=text)
 
     if not data[1]:
         return "No results found."
@@ -26,7 +26,7 @@ def drama(inp):
         if p.text_content():
             summary = " ".join(p.text_content().splitlines())
             summary = re.sub("\[\d+\]", "", summary)
-            summary = text.truncate_str(summary, 220)
+            summary = formatting.truncate_str(summary, 220)
             return "{} - {}".format(summary, url)
 
     return "Unknown Error."

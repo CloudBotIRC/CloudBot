@@ -2,7 +2,7 @@ from datetime import datetime
 import re
 import random
 
-from util import hook, http, text, timesince
+from util import hook, http, formatting, timesince
 
 
 reddit_re = (r'.*(((www\.)?reddit\.com/r|redd\.it)[^ ]+)', re.I)
@@ -63,7 +63,7 @@ def reddit(inp):
     else:
         item = random.choice(data)["data"]
 
-    item["title"] = text.truncate_str(item["title"], 50)
+    item["title"] = formatting.truncate_str(item["title"], 50)
     item["link"] = short_url.format(item["id"])
 
     raw_time = datetime.fromtimestamp(int(item["created_utc"]))

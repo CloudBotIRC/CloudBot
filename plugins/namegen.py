@@ -1,7 +1,7 @@
 import json
 import os
 
-from util import hook, text, textgen
+from util import hook, formatting, textgen
 
 
 def get_generator(_json):
@@ -30,7 +30,7 @@ def namegen(input, instance, bot):
     # command to return a list of all available generators
     if inp == "list":
         message = "Available generators: "
-        message += text.get_text_list(all_modules, 'and')
+        message += formatting.get_text_list(all_modules, 'and')
         input.notice(message)
         return
 
@@ -55,4 +55,4 @@ def namegen(input, instance, bot):
     name_list = generator.generate_strings(10)
 
     # and finally return the final message :D
-    return "Some names to ponder: {}.".format(text.get_text_list(name_list, 'and'))
+    return "Some names to ponder: {}.".format(formatting.get_text_list(name_list, 'and'))

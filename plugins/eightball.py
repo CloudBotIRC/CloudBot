@@ -1,6 +1,6 @@
 import random
 
-from util import hook, text
+from util import hook, formatting
 
 
 color_codes = {
@@ -17,10 +17,10 @@ with open("./data/8ball_responses.txt") as f:
 @hook.command()
 @hook.command("8")
 @hook.command("8ball")
-def eightball(inp, action=None):
+def eightball(action):
     """8ball <question> -- The all knowing magic eight ball, in electronic form. Ask and it shall be answered!
     :type inp: str
     """
 
-    magic = text.multiword_replace(random.choice(responses), color_codes)
+    magic = formatting.multiword_replace(random.choice(responses), color_codes)
     action("shakes the magic 8 ball... {}".format(magic))

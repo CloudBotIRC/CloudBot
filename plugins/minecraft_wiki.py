@@ -1,6 +1,6 @@
 import re
 
-from util import hook, http, text
+from util import hook, http, formatting
 
 
 api_url = "http://minecraft.gamepedia.com/api.php?action=opensearch"
@@ -8,12 +8,12 @@ mc_url = "http://minecraft.gamepedia.com/"
 
 
 @hook.command
-def mcwiki(inp):
+def mcwiki(text):
     """mcwiki <phrase> -- Gets the first paragraph of
     the Minecraft Wiki article on <phrase>."""
 
     try:
-        j = http.get_json(api_url, search=inp)
+        j = http.get_json(api_url, search=text)
     except (http.HTTPError, http.URLError) as e:
         return "Error fetching search results: {}".format(e)
     except ValueError as e:
@@ -44,7 +44,7 @@ def mcwiki(inp):
         if p.text_content():
             summary = " ".join(p.text_content().splitlines())
             summary = re.sub("\[\d+\]", "", summary)
-            summary = text.truncate_str(summary, 200)
+            summary = formatting.truncate_str(summary, 200)
             return "{} :: {}".format(summary, url)
 
     # this shouldn't happen

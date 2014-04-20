@@ -1,6 +1,6 @@
 # Plugin by Infinity - <https://github.com/infinitylabs/UguuBot>
 
-from util import hook, http, text
+from util import hook, http, formatting
 
 db_ready = False
 
@@ -14,22 +14,23 @@ def db_init(db):
         db_ready = True
 
 
+# TODO: this isn't a thing. We should make this a thing
 @hook.onload
 def init(paraml, db=None):
     db_init(db)
 
 
 @hook.command(autohelp=False)
-def horoscope(inp, db=None, notice=None, nick=None):
+def horoscope(text, db, notice, nick):
     """horoscope <sign> -- Get your horoscope."""
     db_init(db)
 
     # check if the user asked us not to save his details
-    dontsave = inp.endswith(" dontsave")
+    dontsave = text.endswith(" dontsave")
     if dontsave:
-        sign = inp[:-9].strip().lower()
+        sign = text[:-9].strip().lower()
     else:
-        sign = inp
+        sign = text
 
     db.execute("create table if not exists horoscope(nick primary key, sign)")
 
@@ -47,13 +48,13 @@ def horoscope(inp, db=None, notice=None, nick=None):
     title = soup.find_all('h1', {'class': 'h1b'})[1]
     horoscope_text = soup.find('div', {'class': 'fontdef1'})
     result = "\x02{}\x02 {}".format(title, horoscope_text)
-    result = text.strip_html(result)
+    result = formatting.strip_html(result)
     #result = unicode(result, "utf8").replace('flight ','')
 
     if not title:
         return "Could not get the horoscope for {}.".format(inp)
 
-    if inp and not dontsave:
+    if text and not dontsave:
         db.execute("insert or replace into horoscope(nick, sign) values (:nick, :sign)",
                    {'nick': nick.lower(), 'sign': sign})
         db.commit()

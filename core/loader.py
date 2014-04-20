@@ -49,6 +49,7 @@ class PluginLoader(object):
     def load_all(self):
         """runs load_file() on all python files in the plugins folder"""
         files = set(glob.glob(os.path.join(self.path, '*.py')))
+        print(files)
         for f in files:
             self.load_file(f, rebuild=True)
         self.rebuild()
@@ -65,6 +66,7 @@ class PluginLoader(object):
         file_split = os.path.splitext(filename)
         title = file_split[0]
         extension = file_split[1]
+        print(extension)
         if extension != ".py":
             # ignore non-python plugin files
             return

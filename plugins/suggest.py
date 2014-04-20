@@ -1,15 +1,16 @@
 import json
 
-from util import hook, http, text
 from bs4 import BeautifulSoup
+
+from util import hook, http, formatting
 
 
 @hook.command
-def suggest(inp):
+def suggest(text):
     """suggest <phrase> -- Gets suggested phrases for a google search"""
 
     page = http.get('http://google.com/complete/search',
-                    output='json', client='hp', q=inp)
+                    output='json', client='hp', q=text)
     page_json = page.split('(', 1)[1][:-1]
 
     suggestions = json.loads(page_json)[1]
@@ -24,4 +25,4 @@ def suggest(inp):
     soup = BeautifulSoup(out)
     out = soup.get_text()
 
-    return text.truncate_str(out, 200)
+    return formatting.truncate_str(out, 200)

@@ -3,7 +3,7 @@ Scaevolus 2009"""
 
 import re
 
-from util import hook, http, text
+from util import hook, http, formatting
 
 
 api_prefix = "http://en.wikipedia.org/w/api.php"
@@ -44,6 +44,6 @@ def wiki(inp):
 
     desc = re.sub('\s+', ' ', desc).strip()  # remove excess spaces
 
-    desc = text.truncate_str(desc, 200)
+    desc = formatting.truncate_str(desc, 200)
 
     return '{} :: {}'.format(desc, http.quote(url, ':/'))

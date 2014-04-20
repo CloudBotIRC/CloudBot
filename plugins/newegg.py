@@ -1,7 +1,8 @@
 import json
 import re
 
-from util import hook, http, text, web
+from util import hook, http, formatting, web
+
 
 
 ## CONSTANTS
@@ -18,7 +19,7 @@ NEWEGG_RE = (r"(?:(?:www.newegg.com|newegg.com)/Product/Product\.aspx\?Item=)([-
 
 def format_item(item, show_url=True):
     """ takes a newegg API item object and returns a description """
-    title = text.truncate_str(item["Title"], 50)
+    title = formatting.truncate_str(item["Title"], 50)
 
     # format the rating nicely if it exists
     if not item["ReviewSummary"]["TotalReviews"] == "[]":
@@ -55,10 +56,10 @@ def format_item(item, show_url=True):
         # create the item URL and shorten it
         url = web.try_isgd(ITEM_URL.format(item["NeweggItemNumber"]))
         return "\x02{}\x02 ({}) - {} - {} - {}".format(title, price, rating,
-                                                        tag_text, url)
+                                                       tag_text, url)
     else:
         return "\x02{}\x02 ({}) - {} - {}".format(title, price, rating,
-                                                   tag_text)
+                                                  tag_text)
 
 
 ## HOOK FUNCTIONS

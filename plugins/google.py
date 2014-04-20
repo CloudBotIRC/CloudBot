@@ -1,6 +1,6 @@
 import random
 
-from util import hook, http, text
+from util import hook, http, formatting
 
 
 def api_get(kind, query):
@@ -13,10 +13,10 @@ def api_get(kind, query):
 @hook.command('image')
 @hook.command('gis')
 @hook.command
-def googleimage(inp):
+def googleimage(text):
     """gis <query> -- Returns first Google Image result for <query>."""
 
-    parsed = api_get('images', inp)
+    parsed = api_get('images', text)
     if not 200 <= parsed['responseStatus'] < 300:
         raise IOError('error searching for images: {}: {}'.format(parsed['responseStatus'], ''))
     if not parsed['responseData']['results']:
@@ -27,10 +27,10 @@ def googleimage(inp):
 @hook.command('search')
 @hook.command('g')
 @hook.command
-def google(inp):
+def google(text):
     """google <query> -- Returns first google search result for <query>."""
 
-    parsed = api_get('web', inp)
+    parsed = api_get('web', text)
     if not 200 <= parsed['responseStatus'] < 300:
         raise IOError('error searching for pages: {}: {}'.format(parsed['responseStatus'], ''))
     if not parsed['responseData']['results']:
@@ -39,13 +39,13 @@ def google(inp):
     result = parsed['responseData']['results'][0]
 
     title = http.unescape(result['titleNoFormatting'])
-    title = text.truncate_str(title, 60)
+    title = formatting.truncate_str(title, 60)
     content = http.unescape(result['content'])
 
     if not content:
         content = "No description available."
     else:
         content = http.html.fromstring(content).text_content()
-        content = text.truncate_str(content, 150)
+        content = formatting.truncate_str(content, 150)
 
     return '{} -- \x02{}\x02: "{}"'.format(result['unescapedUrl'], title, content)

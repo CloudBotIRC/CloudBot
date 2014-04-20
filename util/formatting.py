@@ -122,6 +122,7 @@ def multiword_replace(text, word_dic):
 
     def translate(match):
         return word_dic[match.group(0)]
+
     return rc.sub(translate, text)
 
 

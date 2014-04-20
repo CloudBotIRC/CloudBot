@@ -1,6 +1,6 @@
 from urllib.parse import quote_plus
 
-from util import hook, http, text
+from util import hook, http, formatting
 
 
 api_url = "http://api.fishbans.com/stats/{}/"
@@ -8,9 +8,9 @@ api_url = "http://api.fishbans.com/stats/{}/"
 
 @hook.command("bans")
 @hook.command
-def fishbans(inp):
+def fishbans(text):
     """fishbans <user> -- Gets information on <user>s minecraft bans from fishbans"""
-    user = inp.strip()
+    user = text.strip()
 
     try:
         request = http.get_json(api_url.format(quote_plus(user)))
@@ -27,9 +27,9 @@ def fishbans(inp):
 
 
 @hook.command
-def bancount(inp):
+def bancount(text):
     """bancount <user> -- Gets a count of <user>s minecraft bans from fishbans"""
-    user = inp.strip()
+    user = text.strip()
 
     try:
         request = http.get_json(api_url.format(quote_plus(user)))
@@ -52,4 +52,4 @@ def bancount(inp):
     if not out:
         return "The user \x02{}\x02 has no bans.".format(user)
     else:
-        return "Bans for \x02{}\x02: {} - {}".format(user, text.get_text_list(out, "and"), user_url)
+        return "Bans for \x02{}\x02: {} - {}".format(user, formatting.get_text_list(out, "and"), user_url)

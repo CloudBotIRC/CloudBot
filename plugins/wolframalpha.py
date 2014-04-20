@@ -1,13 +1,13 @@
 import re
 
-from util import hook, http, text, web
+from util import hook, http, formatting, web
 
 
 @hook.command('math')
 @hook.command('calc')
 @hook.command('wa')
 @hook.command
-def wolframalpha(inp, bot=None):
+def wolframalpha(text, bot):
     """wa <query> -- Computes <query> using Wolfram Alpha."""
     api_key = bot.config.get("api_keys", {}).get("wolframalpha", None)
 
@@ -16,11 +16,11 @@ def wolframalpha(inp, bot=None):
 
     url = 'http://api.wolframalpha.com/v2/query?format=plaintext'
 
-    result = http.get_xml(url, input=inp, appid=api_key)
+    result = http.get_xml(url, input=text, appid=api_key)
 
     # get the URL for a user to view this query in a browser
     query_url = "http://www.wolframalpha.com/input/?i=" + \
-                http.quote_plus(inp.encode('utf-8'))
+                http.quote_plus(text.encode('utf-8'))
     short_url = web.try_isgd(query_url)
 
     pod_texts = []
@@ -50,7 +50,7 @@ def wolframalpha(inp, bot=None):
 
     ret = re.sub(r'\\:([0-9a-z]{4})', unicode_sub, ret)
 
-    ret = text.truncate_str(ret, 250)
+    ret = formatting.truncate_str(ret, 250)
 
     if not ret:
         return 'No results.'

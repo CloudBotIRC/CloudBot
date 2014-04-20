@@ -1,7 +1,8 @@
 import time
 import random
 
-from util import hook, http, web, text
+from util import hook, http, web, formatting
+
 
 
 ## CONSTANTS
@@ -39,7 +40,7 @@ def plugin_search(term):
         results = http.get_json(search_url.format(search_term))
     except (http.HTTPError, http.URLError) as e:
         raise BukgetError(500, "Error Fetching Search Page: {}".format(e))
-    
+
     if not results:
         raise BukgetError(404, "No Results Found")
 
@@ -81,7 +82,7 @@ def plugin_details(slug):
 def format_output(data):
     """ takes plugin data and returns two strings representing information about that plugin """
     name = data["plugin_name"]
-    description = text.truncate_str(data['description'], 30)
+    description = formatting.truncate_str(data['description'], 30)
     url = data['website']
     authors = data['authors'][0]
     authors = authors[0] + "\u200b" + authors[1:]
@@ -102,7 +103,7 @@ def format_output(data):
         line_a = "\x02{}\x02, by \x02{}\x02 ({}) \x02{}".format(name, authors, stage, url)
 
     line_b = "Last release: \x02v{}\x02 for \x02{}\x02 at {} \x02{}\x02".format(version_number, bukkit_versions,
-                                                                                 last_update, link)
+                                                                                last_update, link)
 
     return line_a, line_b
 

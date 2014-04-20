@@ -4,16 +4,16 @@ from util import hook
 
 
 @hook.command(autohelp=False)
-def coin(inp, notice=None, action=None):
+def coin(text, notice, action):
     """coin [amount] -- Flips [amount] of coins.
     :type inp: str
     """
 
-    if inp:
+    if text:
         try:
-            amount = int(inp)
+            amount = int(text)
         except (ValueError, TypeError):
-            notice("Invalid input '{}': not a number".format(inp))
+            notice("Invalid input '{}': not a number".format(text))
             return
     else:
         amount = 1

@@ -2,7 +2,8 @@ import hashlib
 import collections
 import re
 
-from util import hook, text
+from util import hook, formatting
+
 
 
 # variables
@@ -153,7 +154,7 @@ def hash_command(inp):
 @hook.command
 def munge(inp):
     """munge <text> -- Munges up <text>."""
-    return text.munge(inp)
+    return formatting.munge(inp)
 
 
 # colors - based on code by Reece Selwood - <https://github.com/hitzler/homero>

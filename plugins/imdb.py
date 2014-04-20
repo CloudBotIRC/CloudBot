@@ -2,7 +2,7 @@
 
 import re
 
-from util import hook, http, text
+from util import hook, http, formatting
 
 
 id_re = re.compile("tt\d+")
@@ -47,7 +47,7 @@ def imdb_url(match):
         return 'Movie not found!'
     elif content['Response'] == 'True':
         content['URL'] = 'http://www.imdb.com/title/%(imdbID)s' % content
-        content['Plot'] = text.truncate_str(content['Plot'], 50)
+        content['Plot'] = formatting.truncate_str(content['Plot'], 50)
         out = '\x02%(Title)s\x02 (%(Year)s) (%(Genre)s): %(Plot)s'
         if content['Runtime'] != 'N/A':
             out += ' \x02%(Runtime)s\x02.'

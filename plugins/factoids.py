@@ -2,7 +2,7 @@
 import string
 import re
 
-from util import hook, http, text, pyexec
+from util import hook, http, formatting, pyexec
 
 
 re_lineends = re.compile(r'[\r\n]*')
@@ -139,7 +139,7 @@ def factoid(inp, message=None, db=None, bot=None, action=None, conn=None, input=
             result = data
 
         # factoid postprocessors
-        result = text.multiword_replace(result, shortcodes)
+        result = formatting.multiword_replace(result, shortcodes)
 
         if result.startswith("<act>"):
             result = result[5:].strip()

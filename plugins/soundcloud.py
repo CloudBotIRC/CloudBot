@@ -1,7 +1,7 @@
-from urllib.parse import urlencode
 import re
 
-from util import hook, http, web, text
+from urllib.parse import urlencode
+from util import hook, http, web, formatting
 
 
 sc_re = (r'(.*:)//(www.)?(soundcloud.com)(.*)', re.I)
@@ -13,7 +13,7 @@ def soundcloud(url, api_key):
     data = http.get_json(api_url + '/resolve.json?' + urlencode({'url': url, 'client_id': api_key}))
 
     if data['description']:
-        desc = ": {} ".format(text.truncate_str(data['description'], 50))
+        desc = ": {} ".format(formatting.truncate_str(data['description'], 50))
     else:
         desc = ""
     if data['genre']:

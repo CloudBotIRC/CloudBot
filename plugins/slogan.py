@@ -1,6 +1,6 @@
 import random
 
-from util import hook, text
+from util import hook, formatting
 
 
 with open("./data/slogans.txt") as f:
@@ -9,10 +9,10 @@ with open("./data/slogans.txt") as f:
 
 
 @hook.command
-def slogan(inp):
+def slogan(text):
     """slogan <word> -- Makes a slogan for <word>."""
     out = random.choice(slogans)
-    if inp.lower() and out.startswith("<text>"):
-        inp = text.capitalize_first(inp)
+    if text.lower() and out.startswith("<text>"):
+        inp = formatting.capitalize_first(text)
 
-    return out.replace('<text>', inp)
+    return out.replace('<text>', text)

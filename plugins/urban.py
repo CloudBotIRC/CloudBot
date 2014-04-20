@@ -1,6 +1,6 @@
 import re
 
-from util import hook, http, text
+from util import hook, http
 
 
 base_url = 'http://www.urbandictionary.com/iphone/search/define'
@@ -8,11 +8,11 @@ base_url = 'http://www.urbandictionary.com/iphone/search/define'
 
 @hook.command('u')
 @hook.command
-def urban(inp):
+def urban(text):
     """urban <phrase> [id] -- Looks up <phrase> on urbandictionary.com."""
 
     # clean and split the input
-    inp = inp.lower().strip()
+    inp = text.lower().strip()
     parts = inp.split()
 
     # if the last word is a number, set the ID to that number

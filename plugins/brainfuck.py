@@ -13,7 +13,7 @@ MAX_STEPS = 1000000
 
 @hook.command('brainfuck')
 @hook.command()
-def bf(inp):
+def bf(text):
     """bf <prog> -- Executes <prog> as Brainfuck code.
     :type inp: str
     """

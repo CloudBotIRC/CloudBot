@@ -3,13 +3,12 @@ import logging
 import re
 import os
 import collections
-import threading
-import queue
+import multiprocessing
 import sys
 
+import queue
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy import create_engine
-
 from core import config, irc, main
 from core.loader import PluginLoader
 
@@ -67,7 +66,7 @@ def get_logger():
     return logger
 
 
-class CloudBot(threading.Thread):
+class CloudBot(multiprocessing.Process):
     """
     :type start_time: float
     :type running: bool
@@ -136,7 +135,7 @@ class CloudBot(threading.Thread):
         # start bot connections
         self.create_connections()
 
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
 
     def run(self):
         """recieves input from the IRC engine and processes it"""

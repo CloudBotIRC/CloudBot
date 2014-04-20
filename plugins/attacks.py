@@ -29,13 +29,13 @@ def is_self(conn, target):
 
 
 @hook.command
-def lart(inp, conn=None, nick=None, notice=None, action=None):
+def lart(text, conn, nick, notice, action):
     """lart <user> -- LARTs <user>.
     :type inp: str
     :type conn: core.irc.BotConnection
     :type nick: str
     """
-    target = inp.strip()
+    target = text.strip()
 
     if " " in target:
         notice("Invalid username!")
@@ -52,13 +52,13 @@ def lart(inp, conn=None, nick=None, notice=None, action=None):
 
 
 @hook.command
-def insult(inp, conn=None, nick=None, notice=None, message=None):
+def insult(text, conn, nick, notice, message):
     """insult <user> -- Makes the bot insult <user>.
-    :type inp: str
+    :type text: str
     :type conn: core.irc.BotConnection
     :type nick: str
     """
-    target = inp.strip()
+    target = text.strip()
 
     if " " in target:
         notice("Invalid username!")
@@ -72,13 +72,13 @@ def insult(inp, conn=None, nick=None, notice=None, message=None):
 
 
 @hook.command
-def flirt(inp, conn=None, nick=None, notice=None, message=None):
+def flirt(text, conn, nick, notice, message):
     """flirt <user> -- Makes the bot flirt with <user>.
-    :type inp: str
+    :type text: str
     :type conn: core.irc.BotConnection
     :type nick: str
     """
-    target = inp.strip()
+    target = text.strip()
 
     # if the user is trying to make the bot target itself, target them
     if " " in target:

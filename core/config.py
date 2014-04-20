@@ -54,7 +54,7 @@ class Config(dict):
 
         with open(self.path) as f:
             self.update(json.load(f))
-            self.logger.info("Config loaded from file.")
+            self.logger.debug("Config loaded from file.")
 
         # reload permissions
         if self.bot.connections:

@@ -5,7 +5,6 @@ import _thread
 import queue
 from queue import Empty
 
-
 _thread.stack_size(1024 * 512)  # reduce vm size
 
 
@@ -154,9 +153,13 @@ def run(bot, func, input):
 
     # all the dynamic arguments
     for required_arg in required_args:
-        value = getattr(input, required_arg)
-        parameters.append(value)
-
+        if hasattr(input, required_arg):
+            value = getattr(input, required_arg)
+            parameters.append(value)
+        else:
+            bot.logger.warning(
+                "Plugin {} asked for invalid argument '{}', setting it to None".format(func._filename, required_arg))
+            parameters.append(None)
     try:
         out = func(*parameters)
     except:

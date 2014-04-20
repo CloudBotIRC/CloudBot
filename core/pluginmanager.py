@@ -85,21 +85,26 @@ class PluginManager:
     def unload_module(self, path):
         """
         Unloads the module from the given path, unloading all plugins from the module.
+
+        Returns True if the module was unloaded, False if the module wasn't loaded in the first place.
+
         :type path: str
+        :rtype: bool
         """
         filename = os.path.basename(path)
         title = os.path.splitext(filename)[0]
         if "disabled_plugins" in self.bot.config and title in self.bot.config['disabled_plugins']:
             # this plugin hasn't been loaded, so no need to unload it
-            return
+            return False
 
-        self.unregister_plugins(filename, ignore_not_registered=True)
+        return self.unregister_plugins(filename, ignore_not_registered=True)
 
     def register_plugins(self, module, check_if_exists=True):
         """
         Registers all plugins in a given module
 
         :type module: Module
+        :type check_if_exists: bool
         """
         if check_if_exists and module.file_name in self.modules:
             self.unregister_plugins(module.file_name)
@@ -144,13 +149,18 @@ class PluginManager:
         """
         Unregisters all plugins from a given module.
 
+        Returns True if all plugins in the module were unloaded, False if the ignore_not_registered and the module
+        wasn't registered in the first place. Throws an exception if ignore_not_registered is false and it wasn't loaded
+        in the first place.
+
         :param module: Module to unregister plugins from, or str to lookup via file_name and then unload.
         :type module: Module | str
+
         """
         if isinstance(module, str):
             if ignore_not_registered:
                 if not module in self.modules:
-                    return
+                    return False
             else:
                 assert module in self.modules
             module = self.modules[module]
@@ -158,7 +168,7 @@ class PluginManager:
             assert isinstance(module, Module)
             if ignore_not_registered:
                 if not module.file_name in self.modules:
-                    return
+                    return False
             else:
                 assert module.file_name in self.modules
             assert self.modules[module.file_name] is module
@@ -192,7 +202,17 @@ class PluginManager:
         # remove last reference to module
         del self.modules[module.file_name]
 
+        # this will remove all reverences to the plugins and functions themselves if anyone still has an old Module or
+        # Plugin object
+        for plugin in module.commands + module.regexes + module.events + module.sieves:
+            del plugin.function
+        del module.commands[:]
+        del module.regexes[:]
+        del module.events[:]
+        del module.sieves[:]
         self.bot.logger.info("Unloaded all plugins from {}".format(module.title))
+
+        return True
 
     def log_plugin(self, plugin):
         """
@@ -210,7 +230,6 @@ class Module:
     :type file_path: str
     :type file_name: str
     :type title: str
-    :type code: object
     :type commands: list[CommandPlugin]
     :type regexes: list[RegexPlugin]
     :type events: list[EventPlugin]
@@ -226,7 +245,6 @@ class Module:
         self.file_path = filepath
         self.file_name = filename
         self.title = title
-        self.code = code
         self.commands, self.regexes, self.events, self.sieves = find_hooks(self, code)
 
 

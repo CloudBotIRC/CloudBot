@@ -1,6 +1,7 @@
 import importlib
 import os
 import glob
+import imp
 
 from watchdog.observers import Observer
 from watchdog.tricks import Trick
@@ -33,12 +34,13 @@ class PluginLoader(object):
             self.load_file(f)
 
     def load_file(self, path):
-        """loads (or reloads) all valid modules from a specified file
+        """
+        Loads a module, given its file path.
         :type path: str
         """
         if isinstance(path, bytes):
-            # makes sure that the file_name is a 'str' object, not a 'bytes' object
             path = path.decode()
+
         file_path = os.path.abspath(path)
         file_name = os.path.basename(path)
         split_path = os.path.splitext(file_name)
@@ -46,30 +48,40 @@ class PluginLoader(object):
         if split_path[1] != ".py":
             # ignore non-python plugin files
             return
-        self.unload_file(file_path)
+        reload = self.unload_file(file_path)
 
+        module_name = "modules.{}".format(split_path[0])
         try:
-            module = importlib.import_module("modules.{}".format(split_path[0]))
-        except:
+            module = importlib.import_module(module_name)
+            if reload:
+                # if this plugin was loaded before, reload it
+                # this statement has to come after re-importing it, because we don't actually have a module object
+                imp.reload(module)
+        except Exception:
             self.bot.logger.exception("Error loading {}:".format(file_name))
             return
+
 
         self.bot.plugin_manager.load_module(file_path, module)
 
     def unload_file(self, path):
-        """unloads all loaded modules from a specified file
+        """
+        Unloads a module, given its file path.
+
+        Returns True if the module was unloaded, False if the module wasn't loaded in the first place.
         :type path: str
+        :rtype: bool
         """
         if isinstance(path, bytes):
-            # makes sure that the file_name is a 'str' object, not a 'bytes' object
-            file_name = path.decode()
+            path = path.decode()
+
         file_path = os.path.abspath(path)
         file_name = os.path.basename(path)
         title_and_extension = os.path.splitext(file_name)
 
         if title_and_extension[1] != ".py":
             # ignore non-python plugin files
-            return
+            return False
 
         # stop all currently running instances of the modules from this file
         for running_plugin, handler in list(self.bot.threads.items()):
@@ -78,7 +90,7 @@ class PluginLoader(object):
                 del self.bot.threads[running_plugin]
 
         # unload the plugin
-        self.bot.plugin_manager.unload_module(file_path)
+        return self.bot.plugin_manager.unload_module(file_path)
 
 
 class PluginEventHandler(Trick):

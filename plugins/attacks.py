@@ -31,7 +31,7 @@ def is_self(conn, target):
 @hook.command
 def lart(text, conn, nick, notice, action):
     """lart <user> -- LARTs <user>.
-    :type inp: str
+    :type text: str
     :type conn: core.irc.BotConnection
     :type nick: str
     """

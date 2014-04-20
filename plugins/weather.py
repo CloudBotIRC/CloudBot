@@ -18,8 +18,9 @@ def weather(inp, reply=None, db=None, nick=None, bot=None, notice=None):
 
     # if there is no input, try getting the users last location from the DB
     if not inp:
-        location = db.execute("select loc from weather where nick=lower(?)",
-                              [nick]).fetchone()
+        location = db.execute("select loc from weather where nick=lower(:nick)",
+                              {"nick": nick}).fetchone()
+        print(location)
         if not location:
             # no location saved in the database, send the user help text
             notice(weather.__doc__)
@@ -94,6 +95,6 @@ def weather(inp, reply=None, db=None, nick=None, bot=None, notice=None):
           "Low: {tomorrow_low_f}F/{tomorrow_low_c}C - {url}".format(**weather_data))
 
     if location and not dontsave:
-        db.execute("insert or replace into weather(nick, loc) values (?,?)",
-                   (nick.lower(), location))
+        db.execute("insert or replace into weather(nick, loc) values (:nick, :loc)",
+                   {"nick": nick.lower(), "loc": loc})
         db.commit()

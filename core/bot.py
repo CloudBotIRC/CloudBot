@@ -3,7 +3,7 @@ import logging
 import re
 import os
 import collections
-import multiprocessing
+import threading
 import sys
 
 import queue
@@ -66,7 +66,7 @@ def get_logger():
     return logger
 
 
-class CloudBot(multiprocessing.Process):
+class CloudBot(threading.Thread):
     """
     :type start_time: float
     :type running: bool
@@ -135,7 +135,7 @@ class CloudBot(multiprocessing.Process):
         # start bot connections
         self.create_connections()
 
-        multiprocessing.Process.__init__(self)
+        threading.Thread.__init__(self)
 
     def run(self):
         """recieves input from the IRC engine and processes it"""

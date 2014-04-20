@@ -294,7 +294,7 @@ class BotConnection(object):
                                         self.output_queue, self.ssl)
         self.connection.connect()
 
-        self.set_pass(self.config.get('server_password'))
+        self.set_pass(self.config["connection"].get("password"))
         self.set_nick(self.nick)
         self.cmd("USER",
                  [self.config.get('user', 'cloudbot'), "3", "*",

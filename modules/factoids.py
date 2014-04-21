@@ -4,7 +4,6 @@ import re
 
 from util import hook, http, formatting, pyexec
 
-
 re_lineends = re.compile(r'[\r\n]*')
 
 db_ready = False
@@ -37,16 +36,15 @@ def get_memory(db, word):
         return None
 
 
-@hook.command("r", permissions=["addfactoid"])
-@hook.command(permissions=["addfactoid"])
-def remember(inp, nick='', db=None, notice=None):
+@hook.command(["r", "remember"], permissions=["addfactoid"])
+def remember(text, nick, db, notice):
     """remember <word> [+]<data> -- Remembers <data> with <word>. Add + to <data> to append."""
     db_init(db)
 
     append = False
 
     try:
-        word, data = inp.split(None, 1)
+        word, data = text.split(None, 1)
     except ValueError:
         return remember.__doc__
 
@@ -76,17 +74,16 @@ def remember(inp, nick='', db=None, notice=None):
         notice('Remembering \x02{}\x02 for \x02{}\x02. Type ?{} to see it.'.format(data, word, word))
 
 
-@hook.command("f", permissions=["delfactoid"])
-@hook.command(permissions=["delfactoid"])
-def forget(inp, db=None, notice=None):
+@hook.command(["f", "forget"], permissions=["delfactoid"])
+def forget(text, db, notice):
     """forget <word> -- Forgets a remembered <word>."""
 
     db_init(db)
-    data = get_memory(db, inp)
+    data = get_memory(db, text)
 
     if data:
         db.execute("delete from mem where word=lower(?)",
-                   [inp])
+                   [text])
         db.commit()
         notice('"%s" has been forgotten.' % data.replace('`', "'"))
         return
@@ -96,13 +93,13 @@ def forget(inp, db=None, notice=None):
 
 
 @hook.command
-def info(inp, notice=None, db=None):
+def info(text, notice, db):
     """info <factoid> -- Shows the source of a factoid."""
 
     db_init(db)
 
     # attempt to get the factoid from the database
-    data = get_memory(db, inp.strip())
+    data = get_memory(db, text.strip())
 
     if data:
         notice(data)
@@ -111,7 +108,7 @@ def info(inp, notice=None, db=None):
 
 
 @hook.regex(r'^\? ?(.+)')
-def factoid(inp, message=None, db=None, bot=None, action=None, conn=None, input=None):
+def factoid(inp, input, db, message, action):
     """?<word> -- Shows what data is associated with <word>."""
 
     db_init(db)
@@ -148,7 +145,7 @@ def factoid(inp, message=None, db=None, bot=None, action=None, conn=None, input=
             url = result[5:].strip()
             try:
                 message(http.get(url))
-            except http.HttpError:
+            except http.HTTPError:
                 message("Could not fetch URL.")
         else:
             message(result)

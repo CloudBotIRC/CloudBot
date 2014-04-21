@@ -4,7 +4,7 @@ from util import hook
 
 
 @hook.command("help", autohelp=False)
-def help_command(inp, notice=None, conn=None, bot=None):
+def help_command(text, notice, conn, bot):
     """help  -- Gives a list of commands/help for a command."""
 
     funcs = {}
@@ -23,7 +23,7 @@ def help_command(inp, notice=None, conn=None, bot=None):
 
     commands = dict((value, key) for key, value in funcs.items())
 
-    if not inp:
+    if not text:
         out = [""]
         well = []
         for x in commands:
@@ -45,7 +45,7 @@ def help_command(inp, notice=None, conn=None, bot=None):
                "is the name of the command you want help for.".format(conn.config["command_prefix"]))
 
     else:
-        if inp in commands:
-            notice(conn.config["command_prefix"] + commands[inp].__doc__)
+        if text in commands:
+            notice(conn.config["command_prefix"] + commands[text].__doc__)
         else:
-            notice("Command {}{} not found".format(conn.config["command_prefix"], inp))
+            notice("Command {}{} not found".format(conn.config["command_prefix"], text))

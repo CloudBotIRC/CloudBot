@@ -75,7 +75,7 @@ def match_language(fragment):
 
 
 @hook.command
-def translate(inp, bot=None):
+def translate(text, bot):
     """translate [source language [target language]] <sentence> -- translates
     <sentence> from source language (default autodetect) to target
     language (default English) using Google Translate"""
@@ -84,13 +84,13 @@ def translate(inp, bot=None):
     if not api_key:
         return "This command requires a paid API key."
 
-    args = inp.split(' ', 2)
+    args = text.split(' ', 2)
 
     try:
         if len(args) >= 2:
             sl = match_language(args[0])
             if not sl:
-                return goog_trans(api_key, inp, '', 'en')
+                return goog_trans(api_key, text, '', 'en')
             if len(args) == 2:
                 return goog_trans(api_key, args[1], sl, 'en')
             if len(args) >= 3:
@@ -100,7 +100,7 @@ def translate(inp, bot=None):
                         return 'unable to determine desired target language'
                     return goog_trans(api_key, args[1] + ' ' + args[2], sl, 'en')
                 return goog_trans(api_key, args[2], sl, tl)
-        return goog_trans(api_key, inp, '', 'en')
+        return goog_trans(api_key, text, '', 'en')
     except IOError as e:
         return e
 

@@ -10,9 +10,7 @@ def api_get(kind, query):
     return http.get_json(url % kind, q=query)
 
 
-@hook.command('image')
-@hook.command('gis')
-@hook.command
+@hook.command(["googleimage", "gis", "image"])
 def googleimage(text):
     """gis <query> -- Returns first Google Image result for <query>."""
 
@@ -24,9 +22,7 @@ def googleimage(text):
     return random.choice(parsed['responseData']['results'][:10])['unescapedUrl']
 
 
-@hook.command('search')
-@hook.command('g')
-@hook.command
+@hook.command("google", "g", "search")
 def google(text):
     """google <query> -- Returns first google search result for <query>."""
 

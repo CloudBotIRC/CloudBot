@@ -9,11 +9,13 @@ import urllib.request
 import urllib.error
 import urllib.parse
 import urllib.parse
-from urllib.parse import quote_plus as _quote_plus
+from urllib.parse import quote, quote_plus as _quote_plus
 
 from bs4 import BeautifulSoup
+
 from lxml import etree, html
 
+from urllib.error import URLError, HTTPError
 
 ua_cloudbot = 'Cloudbot/DEV http://github.com/CloudDev/CloudBot'
 

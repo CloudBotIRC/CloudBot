@@ -1,9 +1,10 @@
 import inspect
 import re
-
 import _thread
 import queue
 from queue import Empty
+
+from core.pluginmanager import CommandPlugin
 
 _thread.stack_size(1024 * 512)  # reduce vm size
 
@@ -183,20 +184,19 @@ def run(bot, plugin, input):
         input.reply(str(out))
 
 
-def do_sieve(sieve, bot, input, plugin, kind):
+def do_sieve(sieve, bot, input, plugin):
     """
     :type sieve: Plugin
     :type bot: core.bot.CloudBot
     :type input: Input
     :type plugin: Plugin
-    :type kind: str
     :rtype: Input
     """
     try:
-        return sieve.function(bot, input, plugin.function, kind, plugin.args)
+        return sieve.function(bot, input, plugin.function, plugin.type, plugin.args)
     except:
-        bot.logger.exception("Error running sieve {}:{} on {}:".format(sieve.module.title, sieve.function_name,
-                                                                       plugin.function_name))
+        bot.logger.exception("Error running sieve {}:{} on {}:{}:".format(sieve.module.title, sieve.function_name,
+                                                                          plugin.module.title, plugin.function_name))
         return None
 
 
@@ -218,7 +218,6 @@ class Handler:
         _thread.start_new_thread(self.start, ())
 
     def start(self):
-        uses_db = True
         while True:
             while self.bot.running:  # This loop will break when successful
                 try:
@@ -242,19 +241,19 @@ class Handler:
         self.input_queue.put(value)
 
 
-def dispatch(bot, input, kind, plugin):
+def dispatch(bot, input, plugin):
     """
     :type bot: core.bot.CloudBot
     :type input: Input
-    :type kind: str
     :type plugin: core.pluginmanager.Plugin
     """
     for sieve in bot.plugin_manager.sieves:
-        input = do_sieve(sieve, bot, input, plugin, kind)
+        input = do_sieve(sieve, bot, input, plugin)
         if input is None:
             return
 
-    if kind == "command" and plugin.args.get('autohelp', True) and not input.text and plugin.doc is not None:
+    if isinstance(plugin, CommandPlugin) and \
+            plugin.args.get('autohelp', True) and not input.text and plugin.doc is not None:
         input.notice(input.conn.config["command_prefix"] + plugin.doc)
         return
 
@@ -279,9 +278,9 @@ def main(bot, conn, out):
     # EVENTS
     if inp.command in bot.plugin_manager.events:
         for event_plugin in bot.plugin_manager.events[inp.command]:
-            dispatch(bot, Input(bot, conn, *out), "event", event_plugin)
+            dispatch(bot, Input(bot, conn, *out), event_plugin)
     for event_plugin in bot.plugin_manager.catch_all_events:
-        dispatch(bot, Input(bot, conn, *out), "event", event_plugin)
+        dispatch(bot, Input(bot, conn, *out), event_plugin)
 
     if inp.command == 'PRIVMSG':
         # COMMANDS
@@ -303,7 +302,7 @@ def main(bot, conn, out):
                 input.text_unstripped = match.group(2)
                 input.text = input.text_unstripped.strip()
 
-                dispatch(bot, input, "command", plugin)
+                dispatch(bot, input, plugin)
 
         # REGEXES
         for regex, plugin in bot.plugin_manager.regex_plugins:
@@ -312,4 +311,4 @@ def main(bot, conn, out):
                 input = Input(bot, conn, *out)
                 input.text = match
 
-                dispatch(bot, input, "regex", plugin)
+                dispatch(bot, input, plugin)

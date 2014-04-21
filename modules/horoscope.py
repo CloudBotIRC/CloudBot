@@ -16,7 +16,7 @@ def db_init(db):
 
 # TODO: this isn't a thing. We should make this a thing
 @hook.onload
-def init(paraml, db=None):
+def init(db):
     db_init(db)
 
 
@@ -52,7 +52,7 @@ def horoscope(text, db, notice, nick):
     #result = unicode(result, "utf8").replace('flight ','')
 
     if not title:
-        return "Could not get the horoscope for {}.".format(inp)
+        return "Could not get the horoscope for {}.".format(text)
 
     if text and not dontsave:
         db.execute("insert or replace into horoscope(nick, sign) values (:nick, :sign)",

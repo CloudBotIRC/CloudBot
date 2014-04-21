@@ -67,22 +67,23 @@ def get_salt(bot):
 
 
 @hook.command
-def encrypt(inp, bot=None, db=None, notice=None):
+def encrypt(text, bot, db, notice):
     """encrypt <pass> <string> -- Encrypts <string> with <pass>. (<string> can only be decrypted using this bot)
+    :type text: str
     :type bot: core.bot.CloudBot
     :type db: sqlalchemy.orm.session.Session
     """
     db_init(db)
 
-    inp_split = inp.split(" ")
+    text_split = text.split(" ")
 
     # if there is only one argument, return the help message
-    if len(inp_split) == 1:
+    if len(text_split) == 1:
         notice(encrypt.__doc__)
         return
 
     # generate the key from the password and salt
-    password = inp_split[0]
+    password = text_split[0]
     salt = get_salt(bot)
     key = PBKDF2(password, salt).read(32)
 
@@ -91,7 +92,7 @@ def encrypt(inp, bot=None, db=None, notice=None):
     iv_encoded = base64.b64encode(iv)
 
     # create the AES cipher and encrypt/encode the text with it
-    text = " ".join(inp_split[1:])
+    text = " ".join(text_split[1:])
     cipher = AES.new(key, AES.MODE_CBC, iv)
     encoded = encode_aes(cipher, text)
 
@@ -105,7 +106,7 @@ def encrypt(inp, bot=None, db=None, notice=None):
 
 
 @hook.command
-def decrypt(inp, bot=None, db=None, notice=None):
+def decrypt(text, bot, db, notice):
     """decrypt <pass> <string> -- Decrypts <string> with <pass>. (can only decrypt strings encrypted on this bot)
     :type bot: core.bot.CloudBot
     :type db: sqlalchemy.orm.session.Session
@@ -113,7 +114,7 @@ def decrypt(inp, bot=None, db=None, notice=None):
     if not db_ready:
         db_init(db)
 
-    inp_split = inp.split(" ")
+    inp_split = text.split(" ")
 
     # if there is only one argument, return the help message
     if len(inp_split) == 1:

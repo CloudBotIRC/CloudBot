@@ -60,9 +60,9 @@ def try_shorten_gitio(url, code=None):
 
 
 @hook.command
-def ghissues(inp):
+def ghissues(text):
     """ghissues username/repo [number] - Get specified issue summary, or open issue count """
-    args = inp.split()
+    args = text.split()
     if args[0] in shortcuts:
         repo = shortcuts[args[0]]
     else:
@@ -111,9 +111,9 @@ def ghissues(inp):
 
 
 @hook.command
-def gitio(inp):
+def gitio(text):
     """gitio <url> [code] -- Shorten Github URLs with git.io. [code] is an optional custom short code."""
-    split = inp.split()
+    split = text.split()
     url = split[0]
 
     if len(split) > 1:

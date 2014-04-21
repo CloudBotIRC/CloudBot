@@ -11,7 +11,7 @@ def fact():
     while True:
         try:
             soup = http.get_soup('http://www.omg-facts.com/random')
-        except:
+        except (http.HTTPError, http.URLError):
             if attempts > 2:
                 return "Could not find a fact!"
             else:

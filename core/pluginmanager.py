@@ -115,9 +115,9 @@ class PluginManager:
         for command in module.commands:
             for alias in command.aliases:
                 if alias in self.commands:
-                    self.bot.logger.warning("Plugin {} attempted to register command {} which was already registered "
-                                            "by {}. Ignoring new assignment.",
-                                            module.title, alias, self.commands[alias].module.title)
+                    self.bot.logger.warning(
+                        "Plugin {} attempted to register command {} which was already registered by {}. "
+                        "Ignoring new assignment.".format(module.title, alias, self.commands[alias].module.title))
                 else:
                     self.commands[alias] = command
             self.log_plugin(command)
@@ -134,7 +134,7 @@ class PluginManager:
                         self.events[event_name] = [event_plugin]
             self.log_plugin(event_plugin)
 
-        # register regexes
+        # register regexps
         for regex_plugin in module.regexes:
             for regex_match in regex_plugin.regexes:
                 self.regex_plugins.append((regex_match, regex_plugin))
@@ -190,7 +190,7 @@ class PluginManager:
                     assert event_name in self.events  # this can't be not true
                     self.events[event_name].remove(event_plugin)
 
-        # unregister regexes
+        # unregister regexps
         for regex_plugin in module.regexes:
             for regex_match in regex_plugin.regexes:
                 self.regex_plugins.remove((regex_match, regex_plugin))

@@ -6,12 +6,12 @@ from queue import Empty
 
 from core.pluginmanager import CommandPlugin
 
-
 _thread.stack_size(1024 * 512)  # reduce vm size
 
 _input_name_aliases = {
-    "inp": "text",
-    "match": "text",
+    "text": "input_arg",
+    "match": "input_arg",
+    "inp": "input_arg",
     "paramlist": "paraml"
 }
 
@@ -31,14 +31,14 @@ class Input:
     :type paraml: list[str]
     :type msg: str
     :type input: Input
-    :type text: list[str]
+    :type inp_arg: str | re.__Match
     :type server: str
     :type lastparam: str
     :type chan: str
     """
 
-    def __init__(self, bot, conn, raw, prefix, command, params,
-                 nick, user, host, mask, paramlist, msg):
+    def __init__(self, bot=None, conn=None, raw=None, prefix=None, command=None, params=None, nick=None, user=None,
+                 host=None, mask=None, paramlist=None, lastparam=None, inp_arg=None, trigger=None):
         """
         :type bot: core.bot.CloudBot
         :type conn: core.irc.BotConnection
@@ -51,7 +51,9 @@ class Input:
         :type host: str
         :type mask: str
         :type paramlist: list[str]
-        :type msg: str
+        :type lastparam: str
+        :type inp_arg: str | re.__Match
+        :type trigger: str
         """
         self.bot = bot
         self.conn = conn
@@ -64,12 +66,16 @@ class Input:
         self.host = host
         self.mask = mask
         self.paraml = paramlist
-        self.msg = msg
-        self.input = self
-        self.text = self.paraml  # this will be assigned later
+        self.lastparam = lastparam
+        self.msg = lastparam
+        if inp_arg:
+            self.inp_arg = self.inp_arg
+        else:
+            self.inp_arg = paramlist  # this might be assigned later
+        self.trigger = trigger
         self.server = conn.server
-        self.lastparam = paramlist[-1]  # TODO: This is equivalent to msg
         self.chan = paramlist[0].lower()
+        self.input = self
 
         if self.chan == conn.nick.lower():  # is a PM
             self.chan = nick
@@ -249,7 +255,7 @@ def dispatch(bot, input, plugin):
             return
 
     if isinstance(plugin, CommandPlugin) and \
-            plugin.args.get('autohelp', True) and not input.text and plugin.doc is not None:
+            plugin.args.get('autohelp', True) and not input.inp_arg and plugin.doc is not None:
         input.notice(input.conn.config["command_prefix"] + plugin.doc)
         return
 
@@ -262,21 +268,21 @@ def dispatch(bot, input, plugin):
         _thread.start_new_thread(run, (bot, plugin, input))
 
 
-def main(bot, conn, out):
+def main(bot, conn, input_params):
     """
     :type bot: core.bot.CloudBot
     :type conn: core.irc.BotConnection
-    :type out: list
+    :type input_params: dict[str, unknown]
     """
-    inp = Input(bot, conn, *out)
+    inp = Input(bot, conn, **input_params)
     command_prefix = conn.config.get('command_prefix', '.')
 
     # EVENTS
     if inp.command in bot.plugin_manager.events:
         for event_plugin in bot.plugin_manager.events[inp.command]:
-            dispatch(bot, Input(bot, conn, *out), event_plugin)
+            dispatch(bot, Input(bot, conn, **input_params), event_plugin)
     for event_plugin in bot.plugin_manager.catch_all_events:
-        dispatch(bot, Input(bot, conn, *out), event_plugin)
+        dispatch(bot, Input(bot, conn, **input_params), event_plugin)
 
     if inp.command == 'PRIVMSG':
         # COMMANDS
@@ -293,18 +299,12 @@ def main(bot, conn, out):
             command = match.group(1).lower()
             if command in bot.plugin_manager.commands:
                 plugin = bot.plugin_manager.commands[command]
-                input = Input(bot, conn, *out)
-                input.trigger = command
-                input.text_unstripped = match.group(2)
-                input.text = input.text_unstripped.strip()
-
+                input = Input(bot, conn, inp_arg=match.group(2).strip(), trigger=command, **input_params)
                 dispatch(bot, input, plugin)
 
         # REGEXES
         for regex, plugin in bot.plugin_manager.regex_plugins:
             match = regex.search(inp.lastparam)
             if match:
-                input = Input(bot, conn, *out)
-                input.text = match
-
+                input = Input(bot, conn, inp_arg=match, **input_params)
                 dispatch(bot, input, plugin)

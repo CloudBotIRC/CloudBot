@@ -150,8 +150,10 @@ class ParseThread(threading.Thread):
                     paramlist[-1] = paramlist[-1][1:]
                 lastparam = paramlist[-1]
             # put the parsed message in the response queue
-            self.parsed_queue.put([msg, prefix, command, params, nick, user, host,
-                                   mask, paramlist, lastparam])
+            self.parsed_queue.put({
+                "raw": msg, "prefix": prefix, "command": command, "params": params, "nick": nick, "user": user,
+                "host": host, "mask": mask, "paramlist": paramlist, "lastparam": lastparam
+            })
             # if the server pings us, pong them back
             if command == "PING":
                 string = "PONG :" + paramlist[0]
@@ -284,8 +286,8 @@ class BotConnection(object):
         self.history = {}
 
         self.parsed_queue = queue.Queue()  # responses from the server are placed here
-        # format: [rawline, prefix, command, params,
-        # nick, user, host, paramlist, msg]
+        # format: [raw, prefix, command, params,
+        # nick, user, host, mask, paramlist, lastparam]
 
         self.input_queue = queue.Queue()
         self.output_queue = queue.Queue()
@@ -300,12 +302,10 @@ class BotConnection(object):
 
         self.set_pass(self.config["connection"].get("password"))
         self.set_nick(self.nick)
-        self.cmd("USER",
-                 [self.config.get('user', 'cloudbot'), "3", "*",
-                  self.config.get('realname', 'CloudBot - http://git.io/cloudbot')])
+        self.cmd("USER", [self.config.get('user', 'cloudbot'), "3", "*",
+                          self.config.get('realname', 'CloudBot - http://git.io/cloudbot')])
 
-        self.parse_thread = ParseThread(self.input_queue, self.output_queue,
-                                        self.parsed_queue)
+        self.parse_thread = ParseThread(self.input_queue, self.output_queue, self.parsed_queue)
         self.parse_thread.daemon = True
         self.parse_thread.start()
 

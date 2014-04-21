@@ -4,15 +4,13 @@ import re
 import os
 import threading
 import sys
+import queue
 
-from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy import create_engine
 
-import queue
 from core import config, irc, main
 from core.loader import PluginLoader
 from core.pluginmanager import PluginManager
-
 
 logger_initialized = False
 
@@ -73,12 +71,10 @@ class CloudBot(threading.Thread):
     :type running: bool
     :type do_restart: bool
     :type connections: list[core.irc.BotConnection]
-    :type commands: list
     :type logger: logging.Logger
     :type data_dir: bytes
     :type config: core.config.Config
-    :type db_session: scoped_session
-    :type modules: dict
+    :type plugin_manager: core.pluginmanager.PluginManager
     :type loader: core.loader.PluginLoader
     """
 
@@ -112,20 +108,10 @@ class CloudBot(threading.Thread):
         # Bot initialisation complete
         self.logger.debug("Bot setup completed.")
 
+        self.threads = {}
+
         # run plugin loader
         self.plugin_manager = PluginManager(self)
-
-        """ self.modules format
-        {'PLUGIN_TYPE': [(<COMPILED_PLUGIN_FUNTION>,
-                          {PLUGIN_ARGS}),
-                         (<COMPILED_PLUGIN_FUNTION>,
-                          {PLUGIN_ARGS})],
-        'PLUGIN_TYPE': [(<COMPILED_PLUGIN_FUNTION>,
-                          {PLUGIN_ARGS})]
-        }
-        """
-
-        self.threads = {}
 
         self.loader = PluginLoader(self)
 
@@ -135,19 +121,19 @@ class CloudBot(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
-        """recieves input from the IRC engine and processes it"""
+        """receives input from the IRC engine and processes it"""
         self.logger.info("Starting main thread.")
         while self.running:
             for connection in self.connections:
                 try:
-                    incoming = connection.parsed_queue.get_nowait()
-                    if incoming == StopIteration:
+                    incoming_parameters = connection.parsed_queue.get_nowait()
+                    if incoming_parameters == StopIteration:
                         print("StopIteration")
                         # IRC engine has signalled timeout, so reconnect (ugly)
                         connection.connection.reconnect()
                         # don't send main StopIteration, it can't handle it
                         continue
-                    main.main(self, connection, incoming)
+                    main.main(self, connection, incoming_parameters)
                 except queue.Empty:
                     pass
 

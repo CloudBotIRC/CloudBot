@@ -6,19 +6,17 @@ import random
 
 from util import hook
 
-
 BUFFER_SIZE = 5000
 MAX_STEPS = 1000000
 
 
-@hook.command('brainfuck')
-@hook.command()
+@hook.command(["brainfuck", "bf"])
 def bf(text):
     """bf <prog> -- Executes <prog> as Brainfuck code.
-    :type inp: str
+    :type text: str
     """
 
-    program = re.sub('[^][<>+-.,]', '', inp)
+    program = re.sub('[^][<>+-.,]', '', text)
 
     # create a dict of brackets pairs, for speed later on
     brackets = {}

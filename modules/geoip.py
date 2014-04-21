@@ -8,7 +8,6 @@ import pygeoip
 from util import hook, http
 
 
-
 # load region database
 with open("./data/geoip_regions.json", "rb") as f:
     regions = json.loads(f.read().decode())
@@ -31,12 +30,12 @@ else:
 
 
 @hook.command
-def geoip(inp):
+def geoip(text):
     """geoip <host/ip> -- Gets the location of <host/ip>"""
 
     try:
-        record = geo.record_by_name(inp)
-    except:
+        record = geo.record_by_name(text)
+    except Exception:
         return "Sorry, I can't locate that in my database."
 
     data = {}

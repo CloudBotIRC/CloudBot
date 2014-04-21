@@ -6,7 +6,7 @@ from util import hook
 @hook.command(autohelp=False)
 def coin(text, notice, action):
     """coin [amount] -- Flips [amount] of coins.
-    :type inp: str
+    :type text: str
     """
 
     if text:

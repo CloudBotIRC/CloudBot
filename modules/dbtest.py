@@ -2,5 +2,5 @@ from util import hook
 
 
 @hook.command
-def dbtest(inp, db=None):
+def dbtest(db):
     print(db)

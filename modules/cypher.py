@@ -36,11 +36,11 @@ def decode(password, encoded, notice):
 
 
 @hook.command
-def cypher(inp, notice=None):
+def cypher(text, notice):
     """cypher <pass> <string> -- Cyphers <string> with <password>.
-    :type inp: str
+    :type text: str
     """
-    split = inp.split(None, 1)
+    split = text.split(None, 1)
     if len(split) < 2:
         notice(cypher.__doc__)
         return
@@ -50,11 +50,11 @@ def cypher(inp, notice=None):
 
 
 @hook.command
-def decypher(inp, notice=None):
+def decypher(text, notice):
     """decypher <pass> <string> -- Decyphers <string> with <password>.
-    :type inp: str
+    :type text: str
     """
-    split = inp.split(None, 1)
+    split = text.split(None, 1)
     if len(split) < 2:
         notice(decypher.__doc__)
         return

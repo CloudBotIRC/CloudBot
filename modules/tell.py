@@ -1,24 +1,25 @@
-""" tell.py: written by sklnd in July 2009
-       2010.01.25 - modified by Scaevolus"""
-
 import time
 import re
 
 from util import hook, timesince
 
+from sqlalchemy import Table, Column, String, Boolean, DateTime, MetaData
 
-db_ready = []
+# define DB tables
+metadata = MetaData()
+tells = Table('tells', metadata,
+              Column('connection', String),
+              Column('sender', String),
+              Column('target', String),
+              Column('message', String),
+              Column('is_read', Boolean),
+              Column('time_sent', DateTime),
+              Column('time_read', DateTime))
 
 
-def db_init(db, conn):
-    """Check that our db has the tell table, create it if not."""
-    global db_ready
-    if not conn.name in db_ready:
-        db.execute("create table if not exists tell"
-                   "(user_to, user_from, message, chan, time,"
-                   "primary key(user_to, message))")
-        db.commit()
-        db_ready.append(conn.name)
+def db_init(db):
+    metadata.bind = db
+    metadata.create_all()
 
 
 def get_tells(db, user_to):
@@ -31,9 +32,9 @@ def tellinput(inp, input=None, notice=None, db=None, nick=None, conn=None):
     if 'showtells' in input.msg.lower():
         return
 
-    db_init(db, conn)
+    db_init(db)
 
-    tells = get_tells(db, nick)
+    tells = get_tells(db, conn, nick)
 
     if tells:
         user_from, message, time, chan = tells[0]
@@ -54,9 +55,9 @@ def tellinput(inp, input=None, notice=None, db=None, nick=None, conn=None):
 def showtells(inp, nick='', chan='', notice=None, db=None, conn=None):
     """showtells -- View all pending tell messages (sent in a notice)."""
 
-    db_init(db, conn)
+    db_init(db)
 
-    tells = get_tells(db, nick)
+    tells = get_tells(db, conn, nick)
 
     if not tells:
         notice("You have no pending tells.")

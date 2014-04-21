@@ -51,16 +51,21 @@ class PluginLoader(object):
         reload = self.unload_file(file_path)
 
         module_name = "modules.{}".format(split_path[0])
+        if hasattr(importlib, "reload"):
+            # we're on python 3.4+ and should use importlib.reload()
+            reload_function = importlib.reload
+        else:
+            # we're on python 3.3- and should use imp.reload()
+            reload_function = imp.reload
         try:
             module = importlib.import_module(module_name)
             if reload:
                 # if this plugin was loaded before, reload it
                 # this statement has to come after re-importing it, because we don't actually have a module object
-                imp.reload(module)
+                reload_function(module)
         except Exception:
             self.bot.logger.exception("Error loading {}:".format(file_name))
             return
-
 
         self.bot.plugin_manager.load_module(file_path, module)
 

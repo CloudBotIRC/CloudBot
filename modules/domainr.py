@@ -18,14 +18,13 @@ def format_domain(domain):
     return domainformat.format(**domain)
 
 
-@hook.command()
-@hook.command("domain")
-def domainr(inp):
+@hook.command(["domain", "domainr"])
+def domainr(text):
     """domainr <domain> - Use domain.nr's API to search for a domain, and similar domains.
-    :type inp: str
+    :type text: str
     """
     try:
-        data = http.get_json('http://domai.nr/api/json/search?q=' + inp)
+        data = http.get_json('http://domai.nr/api/json/search?q=' + text)
     except (http.URLError, http.HTTPError) as e:
         return "Unable to get data for some reason. Try again later."
     if data['query'] == "":

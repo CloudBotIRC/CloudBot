@@ -3,27 +3,25 @@ import time
 
 from util import hook
 
-
 socket.setdefaulttimeout(10)
 
 
 # Auto-join on Invite (Configurable, defaults to True)
 @hook.event('INVITE')
-def invite(paraml, conn=None):
+def invite(paramlist, conn):
     """
-    :type paraml: list[str]
+    :type paramlist: list[str]
     :type conn: core.irc.BotConnection
     """
     invite_join = conn.config.get('invite_join', True)
     if invite_join:
-        conn.join(paraml[-1])
+        conn.join(paramlist[-1])
 
 
 # Identify to NickServ (or other service)
 @hook.event('004')
-def onjoin(paraml, conn=None, bot=None):
+def onjoin(conn, bot):
     """
-    :type paraml: list[str]
     :type conn: core.irc.BotConnection
     :type bot: core.bot.CloudBot
     """
@@ -61,9 +59,8 @@ def onjoin(paraml, conn=None, bot=None):
 
 
 @hook.event('004', singlethread=True)
-def keep_alive(paramlist, conn=None):
+def keep_alive(conn):
     """
-    :type paraml: list[str]
     :type conn: core.irc.BotConnection
     """
     keepalive = conn.config.get('keep_alive', False)

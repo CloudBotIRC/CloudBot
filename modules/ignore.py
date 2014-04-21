@@ -4,7 +4,7 @@ from util import hook
 
 
 #@hook.sieve
-def ignore_sieve(bot, input, func, type, args):
+def ignore_sieve(bot, input, plugin):
     """ blocks input from ignored channels/hosts """
     ignorelist = bot.config["modules"]["ignore"]["ignored"]
     mask = input.mask.lower()
@@ -30,7 +30,7 @@ def ignore_sieve(bot, input, func, type, args):
 
 
 @hook.command(autohelp=False)
-def ignored(inp, notice=None, bot=None):
+def ignored(notice, bot):
     """ignored -- Lists ignored channels/users."""
     ignorelist = bot.config["modules"]["ignore"]["ignored"]
     if ignorelist:
@@ -41,9 +41,9 @@ def ignored(inp, notice=None, bot=None):
 
 
 @hook.command(permissions=["ignore"])
-def ignore(inp, notice=None, bot=None, config=None):
+def ignore(text, notice, bot):
     """ignore <channel|nick|host> -- Makes the bot ignore <channel|user>."""
-    target = inp.lower()
+    target = text.lower()
     ignorelist = bot.config["modules"]["ignore"]["ignored"]
     if target in ignorelist:
         notice("{} is already ignored.".format(target))
@@ -56,10 +56,10 @@ def ignore(inp, notice=None, bot=None, config=None):
 
 
 @hook.command(permissions=["ignore"])
-def unignore(inp, notice=None, bot=None, config=None):
+def unignore(text, notice, bot):
     """unignore <channel|user> -- Makes the bot listen to
     <channel|user>."""
-    target = inp.lower()
+    target = text.lower()
     ignorelist = bot.config["modules"]["ignore"]["ignored"]
     if target in ignorelist:
         notice("{} has been unignored.".format(target))

@@ -29,21 +29,20 @@ exchanges = {
 
 ## HOOK FUNCTIONS
 
-@hook.command("btc", autohelp=False)
-@hook.command(autohelp=False)
-def bitcoin(inp, notice=None):
+@hook.command(["btc", "bitcoin"], autohelp=False)
+def bitcoin(text, notice):
     """bitcoin <exchange> -- Gets current exchange rate for bitcoins from several exchanges, default is Blockchain.
     Supports MtGox, Bitpay, Coinbase and BitStamp.
-    :type inp: str
+    :type text: str
     """
-    inp = inp.lower()
+    text = text.lower()
 
-    if inp:
-        if inp in exchanges:
-            exchange = exchanges[inp]
+    if text:
+        if text in exchanges:
+            exchange = exchanges[text]
         else:
             valid_exchanges = list(exchanges.keys())
-            notice("Invalid exchange '{}', valid exchanges are {} and {}".format(inp, ", ".join(valid_exchanges[:-1]),
+            notice("Invalid exchange '{}', valid exchanges are {} and {}".format(text, ", ".join(valid_exchanges[:-1]),
                                                                                  valid_exchanges[-1]))
             return
     else:
@@ -54,12 +53,9 @@ def bitcoin(inp, notice=None):
     return func(data)
 
 
-@hook.command("ltc", autohelp=False)
-@hook.command(autohelp=False)
-def litecoin(inp, message=None):
-    """litecoin -- gets current exchange rate for litecoins from BTC-E
-    :type inp: str
-    """
+@hook.command(["ltc", "litecoin"], autohelp=False)
+def litecoin(message):
+    """litecoin -- gets current exchange rate for litecoins from BTC-E"""
     data = http.get_json("https://btc-e.com/api/2/ltc_usd/ticker")
     ticker = data['ticker']
     message("Current: \x0307${:,.2f}\x0f - High: \x0307${:,.2f}\x0f"

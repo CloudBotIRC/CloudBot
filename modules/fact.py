@@ -2,7 +2,7 @@ from util import hook, http, web
 
 
 @hook.command(autohelp=False)
-def fact(inp):
+def fact():
     """fact -- Gets a random fact from OMGFACTS."""
 
     attempts = 0

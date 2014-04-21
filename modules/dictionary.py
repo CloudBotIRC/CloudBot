@@ -43,23 +43,22 @@ def format_output(h, definition, show_examples):
     return result
 
 
-@hook.command('dictionary')
-@hook.command()
-def define(inp):
+@hook.command(["dictionary", "define"])
+def define(text):
     """define <word> -- Fetches definition of <word>.
-    :type inp: str
+    :type text: str
     """
 
     url = 'http://ninjawords.com/'
 
-    h = http.get_html(url + http.quote_plus(inp))
+    h = http.get_html(url + http.quote_plus(text))
 
     definition = h.xpath('//dd[@class="article"] | '
                          '//div[@class="definition"] |'
                          '//div[@class="example"]')
 
     if not definition:
-        return 'No results for ' + inp + ' :('
+        return 'No results for ' + text + ' :('
 
     result = format_output(h, definition, True)
     if len(result) > 450:
@@ -72,21 +71,20 @@ def define(inp):
     return result
 
 
-@hook.command('e')
-@hook.command()
-def etymology(inp):
+@hook.command(["e", "etymology"])
+def etymology(text):
     """etymology <word> -- Retrieves the etymology of <word>.
-    :type inp: str
+    :type text: str
     """
 
     url = 'http://www.etymonline.com/index.php'
 
-    h = http.get_html(url, term=inp)
+    h = http.get_html(url, term=text)
 
     etym = h.xpath('//dl')
 
     if not etym:
-        return 'No etymology found for {} :('.format(inp)
+        return 'No etymology found for {} :('.format(text)
 
     etym = etym[0].text_content()
 

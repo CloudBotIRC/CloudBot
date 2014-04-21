@@ -1,5 +1,4 @@
 sqlalchemy
-oauth2
 pygeoip
 tweepy
 lxml

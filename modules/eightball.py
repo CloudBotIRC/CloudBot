@@ -14,13 +14,9 @@ with open("./data/8ball_responses.txt") as f:
                  f.readlines() if not line.startswith("//")]
 
 
-@hook.command()
-@hook.command("8")
-@hook.command("8ball")
+@hook.command(["8ball", "8", "eightball"])
 def eightball(action):
-    """8ball <question> -- The all knowing magic eight ball, in electronic form. Ask and it shall be answered!
-    :type inp: str
-    """
+    """8ball <question> -- The all knowing magic eight ball, in electronic form. Ask and it shall be answered!"""
 
     magic = formatting.multiword_replace(random.choice(responses), color_codes)
     action("shakes the magic 8 ball... {}".format(magic))

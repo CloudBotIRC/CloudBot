@@ -154,9 +154,7 @@ def run(bot, plugin, input):
     uses_db = "db" in required_args
 
     if uses_db:
-        # create SQLAlchemy session
-        bot.logger.debug("Opened DB session for: {}".format(plugin.module.title))
-        input.db = input.bot.db_session()
+        input.db = input.bot.db_engine
 
     # all the dynamic arguments
     for required_arg in required_args:
@@ -177,10 +175,6 @@ def run(bot, plugin, input):
         bot.logger.exception("Error in plugin {}:".format(plugin.module.title))
         bot.logger.info("Parameters used: {}".format(parameters))
         return
-    finally:
-        if uses_db:
-            bot.logger.debug("Closed DB session for: {}".format(plugin.module.title))
-            input.db.close()
 
     if out is not None:
         input.reply(str(out))

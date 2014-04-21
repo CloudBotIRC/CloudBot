@@ -10,7 +10,8 @@ _thread.stack_size(1024 * 512)  # reduce vm size
 
 _input_name_aliases = {
     "inp": "text",
-    "paramlist": "paraml"
+    "paramlist": "paraml",
+    "match": "text"
 }
 
 

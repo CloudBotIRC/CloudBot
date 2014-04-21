@@ -2,15 +2,16 @@ import time
 import logging
 import re
 import os
-import collections
 import threading
 import sys
 
-import queue
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy import create_engine
+
+import queue
 from core import config, irc, main
 from core.loader import PluginLoader
+from core.pluginmanager import PluginManager
 
 
 logger_initialized = False
@@ -77,7 +78,7 @@ class CloudBot(threading.Thread):
     :type data_dir: bytes
     :type config: core.config.Config
     :type db_session: scoped_session
-    :type plugins: dict
+    :type modules: dict
     :type loader: core.loader.PluginLoader
     """
 
@@ -89,8 +90,6 @@ class CloudBot(threading.Thread):
 
         # stores each bot server connection
         self.connections = []
-        # bot commands
-        self.commands = []
 
         # set up logging
         self.logger = get_logger()
@@ -107,18 +106,16 @@ class CloudBot(threading.Thread):
         self.logger.debug("Config system initalised.")
 
         # setup db
-        engine = create_engine('sqlite:///cloudbot.db')
-        db_factory = sessionmaker(bind=engine)
-        self.db_session = scoped_session(db_factory)
+        self.db_engine = create_engine('sqlite:///cloudbot.db')
         self.logger.debug("Database system initalised.")
 
         # Bot initialisation complete
         self.logger.debug("Bot setup completed.")
 
         # run plugin loader
-        self.plugins = collections.defaultdict(list)
+        self.plugin_manager = PluginManager(self)
 
-        """ self.plugins format
+        """ self.modules format
         {'PLUGIN_TYPE': [(<COMPILED_PLUGIN_FUNTION>,
                           {PLUGIN_ARGS}),
                          (<COMPILED_PLUGIN_FUNTION>,
@@ -148,6 +145,8 @@ class CloudBot(threading.Thread):
                         print("StopIteration")
                         # IRC engine has signalled timeout, so reconnect (ugly)
                         connection.connection.reconnect()
+                        # don't send main StopIteration, it can't handle it
+                        continue
                     main.main(self, connection, incoming)
                 except queue.Empty:
                     pass

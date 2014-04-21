@@ -62,17 +62,23 @@ class PermissionManager(object):
         self.logger.debug("[{}] Group users: {}".format(self.nice_name, self.group_users))
         self.logger.debug("[{}] Permission users: {}".format(self.nice_name, self.perm_users))
 
-    def has_perm_mask(self, user_mask, perm):
+    def has_perm_mask(self, user_mask, perm, notice=True):
         """
         :type user_mask: str
         :type perm: str
         :rtype: bool
         """
+
+        if not perm.lower() in self.perm_users:
+            # no one has access
+            return False
+
         allowed_users = self.perm_users[perm.lower()]
 
         for allowed_mask in allowed_users:
             if fnmatch(user_mask.lower(), allowed_mask):
-                self.logger.info("[{}] Allowed user {} access to {}".format(self.nice_name, user_mask, perm))
+                if notice:
+                    self.logger.info("[{}] Allowed user {} access to {}".format(self.nice_name, user_mask, perm))
                 return True
 
         return False

@@ -1,30 +1,10 @@
+import importlib
 import os
-import re
 import glob
-import collections
+import imp
 
 from watchdog.observers import Observer
 from watchdog.tricks import Trick
-
-from core import main
-
-
-def make_signature(f):
-    return f.__code__.co_filename, f.__name__, f.__code__.co_firstlineno
-
-
-def format_plug(plug, kind='', lpad=0):
-    out = ' ' * lpad + '{}:{}:{}'.format(*make_signature(plug[0]))
-    if kind == 'command':
-        out += ' ' * (50 - len(out)) + plug[1]['name']
-
-    if kind == 'event':
-        out += ' ' * (50 - len(out)) + ', '.join(plug[1]['events'])
-
-    if kind == 'regex':
-        out += ' ' * (50 - len(out)) + plug[1]['regex']
-
-    return out
 
 
 class PluginLoader(object):
@@ -33,11 +13,12 @@ class PluginLoader(object):
         :type bot: core.bot.CloudBot
         """
         self.observer = Observer()
-        self.path = os.path.abspath("plugins")
+        self.module_path = os.path.abspath("modules")
+        print(self.module_path)
         self.bot = bot
 
         self.event_handler = PluginEventHandler(self, patterns=["*.py"])
-        self.observer.schedule(self.event_handler, self.path, recursive=False)
+        self.observer.schedule(self.event_handler, self.module_path, recursive=False)
         self.observer.start()
 
         self.load_all()
@@ -47,122 +28,74 @@ class PluginLoader(object):
         self.observer.stop()
 
     def load_all(self):
-        """runs load_file() on all python files in the plugins folder"""
-        files = set(glob.glob(os.path.join(self.path, '*.py')))
-        print(files)
+        """runs load_file() on all python files in the modules folder"""
+        files = set(glob.glob(os.path.join(self.module_path, '*.py')))
         for f in files:
-            self.load_file(f, rebuild=True)
-        self.rebuild()
+            self.load_file(f)
 
-    def load_file(self, path, rebuild=False):
-        """loads (or reloads) all valid plugins from a specified file
-        :type path: str
-        :type rebuild: bool
+    def load_file(self, path):
         """
-        filename = os.path.basename(path)
-        if isinstance(filename, bytes):
-            # makes sure that the filename is a 'str' object, not a 'bytes' object
-            filename = filename.decode()
-        file_split = os.path.splitext(filename)
-        title = file_split[0]
-        extension = file_split[1]
-        print(extension)
-        if extension != ".py":
+        Loads a module, given its file path.
+        :type path: str
+        """
+        if isinstance(path, bytes):
+            path = path.decode()
+
+        file_path = os.path.abspath(path)
+        file_name = os.path.basename(path)
+        split_path = os.path.splitext(file_name)
+
+        if split_path[1] != ".py":
             # ignore non-python plugin files
             return
+        reload = self.unload_file(file_path)
 
-        disabled = self.bot.config.get('disabled_plugins', [])
-        if title in disabled:
-            self.bot.logger.info("Not loading plugin {}: plugin disabled".format(filename))
-            return
-
-        # compile the file and eval it in a namespace
+        module_name = "modules.{}".format(split_path[0])
+        if hasattr(importlib, "reload"):
+            # we're on python 3.4+ and should use importlib.reload()
+            reload_function = importlib.reload
+        else:
+            # we're on python 3.3- and should use imp.reload()
+            reload_function = imp.reload
         try:
-            code = compile(open(path, 'U').read(), filename, 'exec')
-            namespace = {}
-            eval(code, namespace)
+            module = importlib.import_module(module_name)
+            if reload:
+                # if this plugin was loaded before, reload it
+                # this statement has to come after re-importing it, because we don't actually have a module object
+                reload_function(module)
         except Exception:
-            self.bot.logger.exception("Error compiling {}:".format(filename))
+            self.bot.logger.exception("Error loading {}:".format(file_name))
             return
 
-        # remove plugins already loaded from this file
-        for plug_type, data in self.bot.plugins.items():
-            self.bot.plugins[plug_type] = [x for x in data
-                                           if x[0]._filename != filename]
-
-        # stop all currently running instances of the plugins from this file
-        for func, handler in list(self.bot.threads.items()):
-            if func._filename == filename:
-                handler.stop()
-                del self.bot.threads[func]
-
-        # find objects with hooks in the plugin namespace
-        # TODO: kill it with fire, kill it all
-        for obj in namespace.values():
-            if hasattr(obj, '_hook'):  # check for magic
-                if obj._thread:
-                    self.bot.threads[obj] = main.Handler(self.bot, obj)
-                for plug_type, data in obj._hook:
-                    # add plugin to the plugin list
-                    self.bot.plugins[plug_type] += [data]
-                    self.bot.logger.info("Loaded plugin: {} ({})".format(format_plug(data), plug_type))
-
-        # do a rebuild, unless the bot is loading all plugins (rebuild happens after load_all)
-        if not rebuild:
-            self.rebuild()
+        self.bot.plugin_manager.load_module(file_path, module)
 
     def unload_file(self, path):
-        """unloads all loaded plugins from a specified file
-        :type path: str
         """
-        filename = os.path.basename(path)
-        if isinstance(filename, bytes):
-            # makes sure that the filename is a 'str' object, not a 'bytes' object
-            filename = filename.decode()
-        file_split = os.path.splitext(filename)
-        title = file_split[0]
-        extension = file_split[1]
-        if extension != ".py":
+        Unloads a module, given its file path.
+
+        Returns True if the module was unloaded, False if the module wasn't loaded in the first place.
+        :type path: str
+        :rtype: bool
+        """
+        if isinstance(path, bytes):
+            path = path.decode()
+
+        file_path = os.path.abspath(path)
+        file_name = os.path.basename(path)
+        title_and_extension = os.path.splitext(file_name)
+
+        if title_and_extension[1] != ".py":
             # ignore non-python plugin files
-            return
+            return False
 
-        disabled = self.bot.config.get('disabled_plugins', [])
-        if title in disabled:
-            # this plugin hasn't been loaded, so no need to unload it
-            return
-
-        self.bot.logger.info("Unloading plugins from: {}".format(filename))
-
-        # remove plugins loaded from this file
-        for plugin_type, plugins in self.bot.plugins.items():
-            self.bot.plugins[plugin_type] = [x for x in plugins if x[0]._filename != filename]
-
-        # stop all currently running instances of the plugins from this file
-        for func, handler in list(self.bot.threads.items()):
-            if func._filename == filename:
+        # stop all currently running instances of the modules from this file
+        for running_plugin, handler in list(self.bot.threads.items()):
+            if running_plugin.module.file_path == file_path:
                 handler.stop()
-                del self.bot.threads[func]
+                del self.bot.threads[running_plugin]
 
-        self.rebuild()
-
-    def rebuild(self):
-        """rebuilds the cloudbot command and event hook lists"""
-        self.bot.commands = {}
-        for plugin in self.bot.plugins['command']:
-            name = plugin[1]['name'].lower()
-            if not re.match(r'^\w+$', name):
-                self.bot.logger.error('Invalid command name: "{}" ({})'.format(name, format_plug(plugin)))
-                continue
-            if name in self.bot.commands:
-                self.bot.logger.error('Command already registered: "{}" ({}, {})'
-                                      .format(name, format_plug(self.bot.commands[name]), format_plug(plugin)))
-                continue
-            self.bot.commands[name] = plugin
-
-        self.bot.events = collections.defaultdict(list)
-        for func, args in self.bot.plugins['event']:
-            for event in args['events']:
-                self.bot.events[event].append((func, args))
+        # unload the plugin
+        return self.bot.plugin_manager.unload_module(file_path)
 
 
 class PluginEventHandler(Trick):

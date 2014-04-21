@@ -1,12 +1,19 @@
 import inspect
 import re
-
 import _thread
 import queue
 from queue import Empty
 
+from core.pluginmanager import CommandPlugin
+
 
 _thread.stack_size(1024 * 512)  # reduce vm size
+
+_input_name_aliases = {
+    "inp": "text",
+    "match": "text",
+    "paramlist": "paraml"
+}
 
 
 class Input:
@@ -59,8 +66,7 @@ class Input:
         self.paraml = paramlist
         self.msg = msg
         self.input = self
-        self.text = self.paraml
-        self.inp = self.paraml  # this is just text with a different name
+        self.text = self.paraml  # this will be assigned later
         self.server = conn.server
         self.lastparam = paramlist[-1]  # TODO: This is equivalent to msg
         self.chan = paramlist[0].lower()
@@ -122,24 +128,24 @@ class Input:
 
         self.conn.cmd('NOTICE', [target, message])
 
-    def has_permission(self, permission):
+    def has_permission(self, permission, notice=True):
         """ returns whether or not the current user has a given permission
         :type permission: str
         :rtype: bool
         """
-        return self.conn.permissions.has_perm_mask(self.mask, permission)
+        return self.conn.permissions.has_perm_mask(self.mask, permission, notice=notice)
 
 
-def run(bot, func, input):
+def run(bot, plugin, input):
     """
     :type bot: core.bot.CloudBot
-    :type func: func
+    :type plugin: Plugin
     :type input: Input
     """
     bot.logger.debug("Input: {}".format(input.__dict__))
 
     parameters = []
-    specifications = inspect.getargspec(func)
+    specifications = inspect.getargspec(plugin.function)
     required_args = specifications[0]
     if required_args is None:
         required_args = []
@@ -148,83 +154,78 @@ def run(bot, func, input):
     uses_db = "db" in required_args
 
     if uses_db:
-        # create SQLAlchemy session
-        bot.logger.debug("Opened DB session for: {}".format(func._filename))
-        input.db = input.bot.db_session()
+        input.db = input.bot.db_engine
 
     # all the dynamic arguments
     for required_arg in required_args:
+        if required_arg in _input_name_aliases:
+            required_arg = _input_name_aliases[required_arg]
+
         if hasattr(input, required_arg):
             value = getattr(input, required_arg)
             parameters.append(value)
         else:
-            bot.logger.error("Plugin {} asked for invalid argument '{}', " \
-                             "cancelling execution!".format(func._filename, required_arg))
+            bot.logger.error("Plugin {}:{} asked for invalid argument '{}', cancelling execution!"
+                             .format(plugin.module.title, plugin.function_name, required_arg))
             return
 
     try:
-        out = func(*parameters)
-    except:
-        bot.logger.exception("Error in plugin {}:".format(func._filename))
+        out = plugin.function(*parameters)
+    except Exception:
+        bot.logger.exception("Error in plugin {}:".format(plugin.module.title))
         bot.logger.info("Parameters used: {}".format(parameters))
         return
-    finally:
-        if uses_db:
-            bot.logger.debug("Closed DB session for: {}".format(func._filename))
-            input.db.close()
 
     if out is not None:
         input.reply(str(out))
 
 
-def do_sieve(sieve, bot, input, func, type, args):
+def do_sieve(sieve, bot, input, plugin):
     """
-    :type sieve: function
+    :type sieve: Plugin
     :type bot: core.bot.CloudBot
     :type input: Input
-    :type func: function
-    :type type: str
-    :type args: dict[str, ?]
+    :type plugin: Plugin
     :rtype: Input
     """
     try:
-        return sieve(bot, input, func, type, args)
-    except:
-        bot.logger.exception("Error in sieve {}:".format(func._filename))
+        return sieve.function(bot, input, plugin)
+    except Exception:
+        bot.logger.exception("Error running sieve {}:{} on {}:{}:".format(sieve.module.title, sieve.function_name,
+                                                                          plugin.module.title, plugin.function_name))
         return None
 
 
 class Handler:
-    """Runs plugins in their own threads (ensures order)
+    """Runs modules in their own threads (ensures order)
     :type bot: core.bot.CloudBot
-    :type func: function
+    :type plugin: Plugin
     :type input_queue: queue.Queue[Input]
     """
 
-    def __init__(self, bot, func):
+    def __init__(self, bot, plugin):
         """
         :type bot: core.bot.CloudBot
-        :type func: function
+        :type plugin: Plugin
         """
         self.bot = bot
-        self.func = func
+        self.plugin = plugin
         self.input_queue = queue.Queue()
         _thread.start_new_thread(self.start, ())
 
     def start(self):
-        uses_db = True
         while True:
             while self.bot.running:  # This loop will break when successful
                 try:
-                    input = self.input_queue.get(block=True, timeout=1)
+                    plugin_input = self.input_queue.get(block=True, timeout=1)
                     break
                 except Empty:
                     pass
 
-            if not self.bot.running or input == StopIteration:
+            if not self.bot.running or plugin_input == StopIteration:
                 break
 
-            run(self.bot, self.func, input)
+            run(self.bot, self.plugin, plugin_input)
 
     def stop(self):
         self.input_queue.put(StopIteration)
@@ -236,46 +237,29 @@ class Handler:
         self.input_queue.put(value)
 
 
-def dispatch(bot, input, kind, func, args, autohelp=False):
+def dispatch(bot, input, plugin):
     """
     :type bot: core.bot.CloudBot
     :type input: Input
-    :type kind: str
-    :type func: function
-    :type args: dict[str, ?]
-    :type autohelp: bool
+    :type plugin: core.pluginmanager.Plugin
     """
-    for sieve, in bot.plugins['sieve']:
-        input = do_sieve(sieve, bot, input, func, kind, args)
+    for sieve in bot.plugin_manager.sieves:
+        input = do_sieve(sieve, bot, input, plugin)
         if input is None:
             return
 
-    if autohelp and args.get('autohelp', True) and not input.text and func.__doc__ is not None:
-        input.notice(input.conn.config["command_prefix"] + func.__doc__.split('\n', 1)[0])
+    if isinstance(plugin, CommandPlugin) and \
+            plugin.args.get('autohelp', True) and not input.text and plugin.doc is not None:
+        input.notice(input.conn.config["command_prefix"] + plugin.doc)
         return
 
-    if func._thread:
-        bot.threads[func].put(input)
+    if plugin.args.get("singlethread", False):
+        if plugin in bot.threads:
+            bot.threads[plugin].put(input)
+        else:
+            bot.threads[plugin] = Handler(bot, plugin)
     else:
-        _thread.start_new_thread(run, (bot, func, input))
-
-
-def match_command(bot, command):
-    """
-    :type bot: core.bot.CloudBot
-    :type command: str
-    :rtype: str | list
-    """
-    commands = list(bot.commands)
-
-    # do some fuzzy matching
-    prefix = [x for x in commands if x.startswith(command)]
-    if len(prefix) == 1:
-        return prefix[0]
-    elif prefix and command not in prefix:
-        return prefix
-
-    return command
+        _thread.start_new_thread(run, (bot, plugin, input))
 
 
 def main(bot, conn, out):
@@ -288,8 +272,11 @@ def main(bot, conn, out):
     command_prefix = conn.config.get('command_prefix', '.')
 
     # EVENTS
-    for func, args in bot.events[inp.command] + bot.events['*']:
-        dispatch(bot, Input(bot, conn, *out), "event", func, args)
+    if inp.command in bot.plugin_manager.events:
+        for event_plugin in bot.plugin_manager.events[inp.command]:
+            dispatch(bot, Input(bot, conn, *out), event_plugin)
+    for event_plugin in bot.plugin_manager.catch_all_events:
+        dispatch(bot, Input(bot, conn, *out), event_plugin)
 
     if inp.command == 'PRIVMSG':
         # COMMANDS
@@ -300,32 +287,24 @@ def main(bot, conn, out):
         command_re = prefix + inp.conn.nick
         command_re += r'[,;:]+\s+)(\w+)(?:$|\s+)(.*)'
 
-        m = re.match(command_re, inp.lastparam)
+        match = re.match(command_re, inp.lastparam)
 
-        if m:
-            trigger = m.group(1).lower()
-            command = match_command(bot, trigger)
-
-            if isinstance(command, list):  # multiple potential matches
+        if match:
+            command = match.group(1).lower()
+            if command in bot.plugin_manager.commands:
+                plugin = bot.plugin_manager.commands[command]
                 input = Input(bot, conn, *out)
-                input.notice("Did you mean {} or {}?".format
-                             (', '.join(command[:-1]), command[-1]))
-            elif command in bot.commands:
-                input = Input(bot, conn, *out)
-                input.trigger = trigger
-                input.text_unstripped = m.group(2)
+                input.trigger = command
+                input.text_unstripped = match.group(2)
                 input.text = input.text_unstripped.strip()
-                input.inp = input.text
 
-                func, args = bot.commands[command]
-                dispatch(bot, input, "command", func, args, autohelp=True)
+                dispatch(bot, input, plugin)
 
         # REGEXES
-        for func, args in bot.plugins['regex']:
-            m = args['re'].search(inp.lastparam)
-            if m:
+        for regex, plugin in bot.plugin_manager.regex_plugins:
+            match = regex.search(inp.lastparam)
+            if match:
                 input = Input(bot, conn, *out)
-                input.text = m
-                input.inp = m
+                input.text = match
 
-                dispatch(bot, input, "regex", func, args)
+                dispatch(bot, input, plugin)

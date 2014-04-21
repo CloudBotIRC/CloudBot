@@ -140,11 +140,11 @@
 1x Piston: Wooden Planks, Wooden Planks, Wooden Planks | Cobblestone, Iron Ingot, Cobblestone | Cobblestone, Redstone, Cobblestone
 1x Sticky Piston: Slime Ball | Piston
 1x Redstone Lamp: None, Redstone Dust, None | Redstone Dust, Glowstone Block, Redstone Dust | None, Redstone Dust, None
-1x Trapped Chest: Chest, Tripwire Hook
+1x Trapped Chest: Chest, Tripwire Plugin
 1x Dropper: Cobblestone, Cobblestone, Cobblestone | Cobblestone, None, Cobblestone | Cobblestone, Redstone Dust, Cobblestone
 1x Weighted Pressure Plate (Heavy): Iron Ingot, Iron Ingot
 1x Weighted Pressure Plate (Light): Gold Ingot, Gold Ingot
-2x Tripwire Hook: Iron Ingot | Stick | Wooden Planks
+2x Tripwire Plugin: Iron Ingot | Stick | Wooden Planks
 //
 //Food Recipes
 //

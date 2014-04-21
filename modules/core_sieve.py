@@ -8,21 +8,19 @@ buckets = {}
 
 
 @hook.sieve
-def sieve_suite(bot, input, func, kind, args):
+def sieve_suite(bot, input, plugin):
     """
     :type bot: core.bot.CloudBot
     :type input: core.main.Input
-    :type kind: str
-    :type args: dict[str, unknown]
     """
     conn = input.conn
     # check ignorebots
     if input.command == 'PRIVMSG' and \
-            input.nick.endswith('bot') and args.get('ignorebots', True):
+            input.nick.endswith('bot') and plugin.args.get('ignorebots', True):
         return None
 
     # check acls
-    acl = conn.config.get('acls', {}).get(func.__name__)
+    acl = conn.config.get('acls', {}).get(plugin.function_name)
     if acl:
         if 'deny-except' in acl:
             allowed_channels = list(map(str.lower, acl['deny-except']))
@@ -34,16 +32,14 @@ def sieve_suite(bot, input, func, kind, args):
                 return None
 
     # check disabled_commands
-    if kind == "command":
+    if plugin.type == "command":
         disabled_commands = conn.config.get('disabled_commands', [])
         if input.trigger in disabled_commands:
             return None
 
     # check permissions
-    if args.get('adminonly', False):
-        args["permissions"] = ["adminonly"]
-    if args.get('permissions', False):
-        allowed_permissions = args.get('permissions', [])
+    allowed_permissions = plugin.args.get('permissions', [])
+    if allowed_permissions:
         allowed = False
         for perm in allowed_permissions:
             if input.has_permission(perm):
@@ -55,7 +51,7 @@ def sieve_suite(bot, input, func, kind, args):
             return None
 
     # check command spam tokens
-    if kind == "command":
+    if plugin.type == "command":
         uid = input.chan
 
         if not uid in buckets:

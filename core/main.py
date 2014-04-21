@@ -171,7 +171,7 @@ def run(bot, plugin, input):
 
     try:
         out = plugin.function(*parameters)
-    except:
+    except Exception:
         bot.logger.exception("Error in plugin {}:".format(plugin.module.title))
         bot.logger.info("Parameters used: {}".format(parameters))
         return
@@ -193,8 +193,8 @@ def do_sieve(sieve, bot, input, plugin):
     :rtype: Input
     """
     try:
-        return sieve.function(bot, input, plugin.function, plugin.type, plugin.args)
-    except:
+        return sieve.function(bot, input, plugin)
+    except Exception:
         bot.logger.exception("Error running sieve {}:{} on {}:{}:".format(sieve.module.title, sieve.function_name,
                                                                           plugin.module.title, plugin.function_name))
         return None

@@ -1,3 +1,4 @@
+import inspect
 import re
 
 
@@ -193,8 +194,8 @@ def _get_hook(func, hook_type):
 
 
 def _sieve_hook(func, **kwargs):
-    assert func.__code__.co_argcount == 5, "Sieve plugin has incorrect argument count. Needs params: " \
-                                           "bot, input, func, type, and args"
+    assert len(inspect.getargspec(func).args) == 3, \
+        "Sieve plugin has incorrect argument count. Needs params: bot, input, plugin"
 
     sieve_hook = _get_hook(func, "sieve")
     if sieve_hook:

@@ -8,11 +8,14 @@ users = Table('user_table', metadata,
 )
 
 
-@hook.command
-def adduser(text, db):
-    # create tables
+def init_db(db):
     metadata.bind = db
     metadata.create_all()
+
+
+@hook.command
+def adduser(text, db):
+    init_db(db)
 
     # create DB connection
     connection = db.connect()
@@ -29,9 +32,7 @@ def adduser(text, db):
 
 @hook.command(autohelp=False)
 def select(db, message):
-    # create tables
-    metadata.bind = db
-    metadata.create_all()
+    init_db(db)
 
     # create DB connection
     connection = db.connect()

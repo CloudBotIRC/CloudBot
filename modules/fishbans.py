@@ -6,8 +6,7 @@ from util import hook, http, formatting
 api_url = "http://api.fishbans.com/stats/{}/"
 
 
-@hook.command("bans")
-@hook.command
+@hook.command(["bans", "fishbans"])
 def fishbans(text):
     """fishbans <user> -- Gets information on <user>s minecraft bans from fishbans"""
     user = text.strip()

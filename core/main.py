@@ -127,12 +127,12 @@ class Input:
 
         self.conn.cmd('NOTICE', [target, message])
 
-    def has_permission(self, permission):
+    def has_permission(self, permission, notice=True):
         """ returns whether or not the current user has a given permission
         :type permission: str
         :rtype: bool
         """
-        return self.conn.permissions.has_perm_mask(self.mask, permission)
+        return self.conn.permissions.has_perm_mask(self.mask, permission, notice=notice)
 
 
 def run(bot, plugin, input):

@@ -4,48 +4,56 @@ from util import hook
 
 
 @hook.command("help", autohelp=False)
-def help_command(text, notice, conn, bot):
-    """help  -- Gives a list of commands/help for a command."""
-
-    funcs = {}
-    disabled = bot.config.get('disabled_plugins', [])
-    disabled_comm = bot.config.get('disabled_commands', [])
-    for command, (func, args) in bot.commands.items():
-        fn = re.match(r'^modules.(.+).py$', func._filename)
-        if fn is None and (func._filename not in disabled) or (fn.group(1).lower() not in disabled):
-            if command not in disabled_comm:
-                if func.__doc__ is not None:
-                    if func in funcs:
-                        if len(funcs[func]) < len(command):
-                            funcs[func] = command
-                    else:
-                        funcs[func] = command
-
-    commands = dict((value, key) for key, value in funcs.items())
-
-    if not text:
-        out = [""]
-        well = []
-        for x in commands:
-            well.append(x)
-        well.sort()
-        count = 0
-        for x in well:
-            if len(out[count]) + len(str(x)) > 405:
-                count += 1
-                out.append(str(x))
-            else:
-                out[count] += " " + str(x)
-
-        notice("Commands I recognise: " + out[0][1:])
-        if len(out) > 1:
-            for x in out[1:]:
-                notice(x)
-        notice("For detailed help, do '{}help <example>' where <example> "
-               "is the name of the command you want help for.".format(conn.config["command_prefix"]))
-
+def help_command(text, conn, bot, notice, has_permission):
+    """help  -- Gives a list of commands/help for a command.
+    :type text: str
+    :type conn: core.irc.BotConnection
+    :type bot: core.bot.CloudBot
+    """
+    if text:
+        searching_for = text.lower().strip()
+        if not re.match(r'^\w+$', searching_for):
+            notice("Invalid command name '{}'".format(text))
+            return
     else:
-        if text in commands:
-            notice(conn.config["command_prefix"] + commands[text].__doc__)
+        searching_for = None
+
+    if searching_for:
+        if searching_for in bot.plugin_manager.commands:
+            doc = bot.plugin_manager.commands[searching_for].doc
+            if doc:
+                notice(conn.config["command_prefix"] + doc)
+            else:
+                notice("Command {} has no additional documentation.".format(searching_for))
         else:
-            notice("Command {}{} not found".format(conn.config["command_prefix"], text))
+            notice("Unknown command '{}'".format(searching_for))
+    else:
+        available_commands = []
+        for command_plugin in bot.plugin_manager.commands.values():
+            if not command_plugin.args.get("permissions"):
+                available_commands.append(command_plugin.name)
+            else:
+                for perm in command_plugin.args.get("permissions"):
+                    if has_permission(perm, notice=False):
+                        available_commands.append(command_plugin.name)
+                        break
+        print(available_commands)
+        lines = []
+        current_line = []
+        current_line_length = 0
+        for command in available_commands:
+            if current_line_length + len(command) > 405:  # line limit
+                lines.append(", ".join(current_line))
+                current_line = []
+                current_line_length = 0
+
+            current_line.append(command)
+            current_line_length += len(command) + 2  # + 2 to account for space and comma
+
+        if current_line:
+            lines.append(", ".join(current_line))  # make sure to include the last line
+
+        notice("Commands use can use:")
+        for line in lines:
+            notice(line)
+        notice("For detailed help, use {}help <commands>, without the brackets.".format(conn.config["command_prefix"]))

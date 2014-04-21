@@ -2,17 +2,16 @@ import re
 
 from util import hook
 
-
 CORRECTION_RE = r'^[sS]/([^/]*)/([^/]*)(/.*)?\s*$'
 S_RE = re.compile(r'^[sS]/[^/]*/[^/]*(/.*)?\s*$')
 
 
 @hook.regex(CORRECTION_RE)
-def correction(match, input=None, conn=None, message=None):
+def correction(match, conn, chan, message):
     """
     :type match: re.__Match
-    :type input: core.main.Input
     :type conn: core.irc.BotConnection
+    :type chan: str
     """
     print(match.groups())
     to_find, replacement, find_nick = match.groups()
@@ -21,7 +20,7 @@ def correction(match, input=None, conn=None, message=None):
 
     find_re = re.compile("(?i){}".format(re.escape(to_find)))
 
-    for item in conn.history[input.chan].__reversed__():
+    for item in conn.history[chan].__reversed__():
         nick, timestamp, msg = item
         if S_RE.match(msg):
             # don't correct corrections, it gets really confusing

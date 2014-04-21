@@ -3,24 +3,21 @@ import re
 from util import hook
 
 
-@hook.command("groups", permissions=["permissions_users"], autohelp=False)
-@hook.command("listgroups", permissions=["permissions_users"], autohelp=False)
-@hook.command("permgroups", permissions=["permissions_users"], autohelp=False)
-def get_permission_groups(inp, conn=None):
+@hook.command(["groups", "listgroups", "permgroups"], permissions=["permissions_users"], autohelp=False)
+def get_permission_groups(conn):
     """groups -- lists all valid groups
-    :type inp: str
     :type conn: core.irc.BotConnection
     """
     return "Valid groups: {}".format(conn.permissions.get_groups())
 
 
 @hook.command("gperms", permissions=["permissions_users"])
-def get_group_permissions(inp, conn=None, notice=None):
+def get_group_permissions(text, conn, notice):
     """gperms <group> -- lists permissions of a group
-    :type inp: str
+    :type text: str
     :type conn: core.irc.BotConnection
     """
-    group = inp.strip().lower()
+    group = text.strip().lower()
     permission_manager = conn.permissions
     group_users = permission_manager.get_group_users(group)
     group_permissions = permission_manager.get_group_permissions(group)
@@ -33,12 +30,12 @@ def get_group_permissions(inp, conn=None, notice=None):
 
 
 @hook.command("gusers", permissions=["permissions_users"])
-def get_group_users(inp, conn=None, notice=None):
+def get_group_users(text, conn, notice):
     """gusers <group> -- lists users in a group
-    :type inp: str
+    :type text: str
     :type conn: core.irc.BotConnection
     """
-    group = inp.strip().lower()
+    group = text.strip().lower()
     permission_manager = conn.permissions
     group_users = permission_manager.get_group_users(group)
     group_permissions = permission_manager.get_group_permissions(group)
@@ -51,17 +48,17 @@ def get_group_users(inp, conn=None, notice=None):
 
 
 @hook.command("uperms", autohelp=False)
-def get_user_permissions(inp, conn=None, has_permission=None, notice=None, mask=None):
+def get_user_permissions(text, conn, mask, has_permission, notice):
     """uperms [user] -- lists all permissions given to a user, or the current user if none is given
-    :type inp: str
+    :type text: str
     :type conn: core.irc.BotConnection
     :type mask: str
     """
-    if inp:
+    if text:
         if not has_permission("permissions_users"):
             notice("Sorry, you are not allowed to use this command on another user")
             return
-        user = inp.strip().lower()
+        user = text.strip().lower()
     else:
         user = mask.lower()
 
@@ -75,17 +72,17 @@ def get_user_permissions(inp, conn=None, has_permission=None, notice=None, mask=
 
 
 @hook.command("ugroups", autohelp=False)
-def get_user_groups(inp, conn=None, has_permission=None, notice=None, mask=None):
+def get_user_groups(text, conn, mask, has_permission, notice):
     """uperms [user] -- lists all permissions given to a user, or the current user if none is given
-    :type inp: str
+    :type text: str
     :type conn: core.irc.BotConnection
     :type mask: str
     """
-    if inp:
+    if text:
         if not has_permission("permissions_users"):
             notice("Sorry, you are not allowed to use this command on another user")
             return
-        user = inp.strip().lower()
+        user = text.strip().lower()
     else:
         user = mask.lower()
 
@@ -99,13 +96,13 @@ def get_user_groups(inp, conn=None, has_permission=None, notice=None, mask=None)
 
 
 @hook.command("deluser", permissions=["permissions_users"])
-def remove_permission_user(inp, bot=None, conn=None, notice=None, reply=None):
+def remove_permission_user(text, bot, conn, notice, reply):
     """deluser <user> [group] -- Removes a user from a permission group, or all permission groups if none is specified
-    :type inp: str
+    :type text: str
     :type bot: core.bot.CloudBot
     :type conn: core.irc.BotConnection
     """
-    split = inp.split()
+    split = text.split()
     if len(split) > 2:
         notice("Too many arguments")
         return
@@ -154,12 +151,13 @@ def remove_permission_user(inp, bot=None, conn=None, notice=None, reply=None):
 
 
 @hook.command("adduser", permissions=["permissions_users"])
-def add_permissions_user(inp, conn=None, bot=None, notice=None, reply=None):
+def add_permissions_user(text, conn, bot, notice, reply):
     """adduser <user> <group> -- Adds a user to a permission group
-    :type inp: str
+    :type text: str
     :type conn: core.irc.BotConnection
+    :type bot: core.bot.CloudBot
     """
-    split = inp.split()
+    split = text.split()
     if len(split) > 2:
         notice("Too many arguments")
         return
@@ -193,38 +191,37 @@ def add_permissions_user(inp, conn=None, bot=None, notice=None, reply=None):
         permission_manager.reload()
 
 
-@hook.command(permissions=["botcontrol"], autohelp=False)
-@hook.command("quit", permissions=["botcontrol"], autohelp=False)
-def stop(inp, bot=None):
+@hook.command(["stop", "quit"], permissions=["botcontrol"], autohelp=False)
+def stop(text, bot):
     """stop [reason] -- Stops the bot with [reason] as its quit message.
-    :type inp: str
+    :type text: str
     :type bot: core.bot.CloudBot
     """
-    if inp:
-        bot.stop(reason=inp)
+    if text:
+        bot.stop(reason=text)
     else:
         bot.stop()
 
 
 @hook.command(permissions=["botcontrol"], autohelp=False)
-def restart(inp, bot=None):
+def restart(text, bot):
     """restart [reason] -- Restarts the bot with [reason] as its quit message.
-    :type inp: str
+    :type text: str
     :type bot: core.bot.CloudBot
     """
-    if inp:
-        bot.restart(reason=inp)
+    if text:
+        bot.restart(reason=text)
     else:
         bot.restart()
 
 
 @hook.command(permissions=["botcontrol"])
-def join(inp, conn=None, notice=None):
+def join(text, conn, notice):
     """join <channel> -- Joins a given channel
-    :type inp: str
+    :type text: str
     :type conn: core.irc.BotConnection
     """
-    for target in inp.split():
+    for target in text.split():
         if not target.startswith("#"):
             target = "#{}".format(target)
         notice("Attempting to join {}...".format(target))
@@ -232,14 +229,14 @@ def join(inp, conn=None, notice=None):
 
 
 @hook.command(permissions=["botcontrol"], autohelp=False)
-def part(inp, conn=None, chan=None, notice=None):
+def part(text, conn, chan, notice):
     """part [channel] -- Leaves a given channel, or the current one if no channel is specified
-    :type inp: str
+    :type text: str
     :type conn: core.irc.BotConnection
     :type chan: str
     """
-    if inp:
-        targets = inp
+    if text:
+        targets = text
     else:
         targets = chan
     for target in targets.split():
@@ -250,14 +247,14 @@ def part(inp, conn=None, chan=None, notice=None):
 
 
 @hook.command(autohelp=False, permissions=["botcontrol"])
-def cycle(inp, conn=None, chan=None, notice=None):
+def cycle(text, conn, chan, notice):
     """cycle <channel> -- Cycles a given channel, or the current one if no channel is specified
-    :type inp: str
+    :type text: str
     :type conn: core.irc.BotConnection
     :type chan: str
     """
-    if inp:
-        targets = inp
+    if text:
+        targets = text
     else:
         targets = chan
     for target in targets.split():
@@ -269,53 +266,53 @@ def cycle(inp, conn=None, chan=None, notice=None):
 
 
 @hook.command(permissions=["botcontrol"])
-def nick(inp, conn=None, notice=None):
+def nick(text, conn, notice):
     """nick <nick> -- Changes the bot's nickname
-    :type inp: str
+    :type text: str
     :type conn: core.irc.BotConnection
     """
-    if not re.match("^[a-z0-9_|.-\]\[]*$", inp.lower()):
-        notice("Invalid username '{}'".format(inp))
+    if not re.match("^[a-z0-9_|.-\]\[]*$", text.lower()):
+        notice("Invalid username '{}'".format(text))
         return
-    notice("Attempting to change nick to '{}'...".format(inp))
-    conn.set_nick(inp)
+    notice("Attempting to change nick to '{}'...".format(text))
+    conn.set_nick(text)
 
 
 @hook.command(permissions=["botcontrol"])
-def raw(inp, conn=None, notice=None):
+def raw(text, conn, notice):
     """raw <command> -- Sends a raw IRC command
-    :type inp: str
+    :type text: str
     :type conn: core.irc.BotConnection
     """
     notice("Raw command sent.")
-    conn.send(inp)
+    conn.send(text)
 
 
 @hook.command(permissions=["botcontrol"])
-def say(inp, conn=None, chan=None):
+def say(text, conn, chan):
     """say [channel] <message> -- Makes the bot say <message> in [channel], or the current channel if none is specified
-    :type inp: str
+    :type text: str
     :type conn: core.irc.BotConnection
     :type chan: str
     """
-    inp = inp.strip()
-    if inp.startswith("#"):
-        split = inp.split(None, 1)
+    text = text.strip()
+    if text.startswith("#"):
+        split = text.split(None, 1)
         channel = split[0]
         text = split[1]
     else:
         channel = chan
-        text = inp
+        text = text
     conn.msg(channel, text)
 
 
 @hook.command(permissions=["botcontrol"])
-def message(inp, conn=None):
+def message(text, conn):
     """message <name> <message> -- Makes the bot say <message> to <name>, <name> may be a #channel or a nickname
-    :type inp: str
+    :type text: str
     :type conn: core.irc.BotConnection
     """
-    split = inp.split(None, 1)
+    split = text.split(None, 1)
     channel = split[0]
     text = split[1]
     conn.msg(channel, text)
@@ -323,18 +320,18 @@ def message(inp, conn=None):
 
 @hook.command("act", permissions=["botcontrol"])
 @hook.command(permissions=["botcontrol"])
-def me(inp, conn=None, chan=None):
+def me(text, conn, chan):
     """me [channel] <action> -- Makes the bot act out <action> in a [channel], or the current channel if none is given
-    :type inp: str
+    :type text: str
     :type conn: core.irc.BotConnection
     :type chan: str
     """
-    inp = inp.strip()
-    if inp.startswith("#"):
-        split = inp.split(None, 1)
+    text = text.strip()
+    if text.startswith("#"):
+        split = text.split(None, 1)
         channel = split[0]
         text = split[1]
     else:
         channel = chan
-        text = inp
+        text = text
     conn.ctcp(channel, "ACTION", text)

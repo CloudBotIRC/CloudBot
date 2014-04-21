@@ -44,14 +44,14 @@ def track_history(input, message_time, conn):
 
 
 @hook.event('PRIVMSG', ignorebots=False, singlethread=True)
-def chat_tracker(paraml, input=None, db=None, conn=None):
+def chat_tracker(input, db, conn):
     message_time = time.time()
     track_seen(input, message_time, db, conn)
     track_history(input, message_time, conn)
 
 
 @hook.command(autohelp=False)
-def resethistory(inp, input=None, conn=None):
+def resethistory(input, conn):
     """resethistory - Resets chat history for the current channel"""
     try:
         conn.history[input.chan].clear()
@@ -62,31 +62,31 @@ def resethistory(inp, input=None, conn=None):
 
 
 @hook.command
-def seen(inp, nick='', chan='', db=None, input=None, conn=None):
+def seen(text, nick, chan, db, input, conn):
     """seen <nick> <channel> -- Tell when a nickname was last in active in one of this bot's channels."""
 
-    if input.conn.nick.lower() == inp.lower():
+    if input.conn.nick.lower() == text.lower():
         return "You need to get your eyes checked."
 
-    if inp.lower() == nick.lower():
+    if text.lower() == nick.lower():
         return "Have you looked in a mirror lately?"
 
-    if not re.match("^[A-Za-z0-9_|.\-\]\[]*$", inp.lower()):
+    if not re.match("^[A-Za-z0-9_|.\-\]\[]*$", text.lower()):
         return "I can't look up that name, its impossible to use!"
 
     db_init(db, conn.name)
 
     last_seen = db.execute("select name, time, quote from seen_user where name"
-                           " like :name and chan = :chan", {'name': inp, 'chan': chan}).fetchone()
+                           " like :name and chan = :chan", {'name': text, 'chan': chan}).fetchone()
 
     if last_seen:
         reltime = timesince.timesince(last_seen[1])
-        if last_seen[0] != inp.lower():  # for glob matching
-            inp = last_seen[0]
+        if last_seen[0] != text.lower():  # for glob matching
+            text = last_seen[0]
         if last_seen[2][0:1] == "\x01":
-            return '{} was last seen {} ago: * {} {}'.format(inp, reltime, inp,
+            return '{} was last seen {} ago: * {} {}'.format(text, reltime, text,
                                                              last_seen[2][8:-1])
         else:
-            return '{} was last seen {} ago saying: {}'.format(inp, reltime, last_seen[2])
+            return '{} was last seen {} ago saying: {}'.format(text, reltime, last_seen[2])
     else:
-        return "I've never seen {} talking in this channel.".format(inp)
+        return "I've never seen {} talking in this channel.".format(text)

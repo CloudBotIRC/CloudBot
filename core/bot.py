@@ -147,6 +147,8 @@ class CloudBot(threading.Thread):
                         print("StopIteration")
                         # IRC engine has signalled timeout, so reconnect (ugly)
                         connection.connection.reconnect()
+                        # don't send main StopIteration, it can't handle it
+                        continue
                     main.main(self, connection, incoming)
                 except queue.Empty:
                     pass

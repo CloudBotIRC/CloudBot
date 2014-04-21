@@ -4,12 +4,11 @@ import re
 
 from util import hook
 
-
 nick_re = re.compile(":(.+?)!")
 
 
 @hook.event("KICK")
-def on_kick(paramlist, conn=None, chan=None):
+def on_kick(paramlist, conn, chan):
     """
     :type paramlist: list[str]
     :type conn: core.irc.BotConnection
@@ -24,7 +23,7 @@ def on_kick(paramlist, conn=None, chan=None):
 
 
 @hook.event("NICK")
-def on_nick(paramlist, bot=None, conn=None, raw=None):
+def on_nick(paramlist, bot, conn, raw):
     """
     :type paramlist: list[str]
     :type bot: core.bot.CloudBot

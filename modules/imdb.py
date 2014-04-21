@@ -10,10 +10,10 @@ imdb_re = (r'(.*:)//(imdb.com|www.imdb.com)(:[0-9]+)?(.*)', re.I)
 
 
 @hook.command
-def imdb(inp):
+def imdb(text):
     """imdb <movie> -- Gets information about <movie> from IMDb."""
 
-    strip = inp.strip()
+    strip = text.strip()
 
     if id_re.match(strip):
         content = http.get_json("http://www.omdbapi.com/", i=strip)

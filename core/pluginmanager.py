@@ -38,7 +38,7 @@ class PluginManager:
     Plugins are the lowest level of abstraction in this class. There are four different plugin types:
     - CommandPlugin is for bot commands
     - EventPlugin hooks onto bot 'events'
-    - RegexPlugin loads a regex paramater, and executes on input lines which match the regex
+    - RegexPlugin loads a regex parameter, and executes on input lines which match the regex
     - SievePlugin is a catch-all sieve, which all other plugins go through before being executed.
 
     :type bot: core.bot.CloudBot

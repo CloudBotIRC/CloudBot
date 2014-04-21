@@ -6,12 +6,13 @@ from queue import Empty
 
 from core.pluginmanager import CommandPlugin
 
+
 _thread.stack_size(1024 * 512)  # reduce vm size
 
 _input_name_aliases = {
     "inp": "text",
-    "paramlist": "paraml",
-    "match": "text"
+    "match": "text",
+    "paramlist": "paraml"
 }
 
 

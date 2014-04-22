@@ -2,7 +2,6 @@ import re
 
 from util import hook
 
-
 db_ready = False
 
 
@@ -90,9 +89,8 @@ def db_search(db, nick, query):
     """, (query, nick))
 
 
-@hook.command("notes")
-@hook.command
-def note(inp, nick='', chan='', db=None, notice=None, bot=None):
+@hook.command(["note", "notes"])
+def note(inp, nick, db, notice):
     """note(s) <add|del|list|search> args -- Manipulates your list of notes."""
 
     db_init(db)

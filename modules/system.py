@@ -17,7 +17,7 @@ def convert_kilobytes(kilobytes):
 
 
 @hook.command(autohelp=False)
-def system(inp):
+def system():
     """system -- Retrieves information about the host system."""
     hostname = platform.node()
     os = platform.platform()
@@ -31,7 +31,7 @@ def system(inp):
 
 
 @hook.command(autohelp=False)
-def memory(inp):
+def memory():
     """memory -- Displays the bot's current memory usage."""
     if os.name == "posix":
         # get process info
@@ -51,7 +51,7 @@ def memory(inp):
 
     elif os.name == "nt":
         cmd = 'tasklist /FI "PID eq %s" /FO CSV /NH' % os.getpid()
-        out = os.popen(cmd).read()
+        out = os.popen(cmd).read().decode()
         memory = 0
         for amount in re.findall(r'([,0-9]+) K', out):
             memory += float(amount.replace(',', ''))
@@ -63,7 +63,7 @@ def memory(inp):
 
 
 @hook.command(autohelp=False)
-def uptime(inp, bot=None):
+def uptime(bot):
     """uptime -- Shows the bot's uptime."""
     uptime_raw = round(time.time() - bot.start_time)
     uptime = timedelta(seconds=uptime_raw)
@@ -71,6 +71,6 @@ def uptime(inp, bot=None):
 
 
 @hook.command(autohelp=False)
-def pid(inp):
+def pid():
     """pid -- Prints the bot's PID."""
     return "PID: \x02{}\x02".format(os.getpid())

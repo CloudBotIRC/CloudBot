@@ -1,9 +1,10 @@
 import time
 import re
 
+from sqlalchemy import Table, Column, String, Boolean, DateTime, MetaData
+
 from util import hook, timesince
 
-from sqlalchemy import Table, Column, String, Boolean, DateTime, MetaData
 
 # define DB tables
 metadata = MetaData()
@@ -28,7 +29,7 @@ def get_tells(db, user_to):
 
 
 @hook.event('PRIVMSG', singlethread=True)
-def tellinput(inp, input=None, notice=None, db=None, nick=None, conn=None):
+def tellinput(input, notice, db, nick, conn):
     if 'showtells' in input.msg.lower():
         return
 
@@ -52,7 +53,7 @@ def tellinput(inp, input=None, notice=None, db=None, nick=None, conn=None):
 
 
 @hook.command(autohelp=False)
-def showtells(inp, nick='', chan='', notice=None, db=None, conn=None):
+def showtells(nick, notice, db, conn):
     """showtells -- View all pending tell messages (sent in a notice)."""
 
     db_init(db)

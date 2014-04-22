@@ -27,6 +27,9 @@ no_count_reply = "The user \x02notch\x02 has no bans - http://fishbans.com/u/not
 
 
 def test_bans(monkeypatch):
+    """ tests fishbans with a successful API response having a number of bans
+    """
+
     def fake_http(url):
         assert url == "http://api.fishbans.com/stats/notch/"
         return json.loads(test_api)
@@ -37,6 +40,9 @@ def test_bans(monkeypatch):
 
 
 def test_bans_failed(monkeypatch):
+    """ tests fishbans with a failed API response
+    """
+
     def fake_http(url):
         assert url == "http://api.fishbans.com/stats/notch/"
         return json.loads(test_api_failed)
@@ -47,6 +53,9 @@ def test_bans_failed(monkeypatch):
 
 
 def test_bans_no_bans(monkeypatch):
+    """ tests fishbans with a successful API response having no bans
+    """
+
     def fake_http(url):
         assert url == "http://api.fishbans.com/stats/notch/"
         return json.loads(test_api_no_bans)

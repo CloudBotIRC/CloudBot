@@ -8,13 +8,6 @@ from core.pluginmanager import CommandPlugin
 
 _thread.stack_size(1024 * 512)  # reduce vm size
 
-_input_name_aliases = {
-    "text": "input_arg",
-    "match": "input_arg",
-    "inp": "input_arg",
-    "paramlist": "paraml"
-}
-
 
 class Input:
     """
@@ -31,14 +24,16 @@ class Input:
     :type paraml: list[str]
     :type msg: str
     :type input: Input
-    :type inp_arg: str | re.__Match
+    :type inp: str | re.__Match
+    :type text: str
+    :type match: re.__Match
     :type server: str
     :type lastparam: str
     :type chan: str
     """
 
     def __init__(self, bot=None, conn=None, raw=None, prefix=None, command=None, params=None, nick=None, user=None,
-                 host=None, mask=None, paramlist=None, lastparam=None, inp_arg=None, trigger=None):
+                 host=None, mask=None, paramlist=None, lastparam=None, text=None, match=None, trigger=None):
         """
         :type bot: core.bot.CloudBot
         :type conn: core.irc.BotConnection
@@ -52,7 +47,8 @@ class Input:
         :type mask: str
         :type paramlist: list[str]
         :type lastparam: str
-        :type inp_arg: str | re.__Match
+        :type text: str
+        :type match: re.__Match
         :type trigger: str
         """
         self.bot = bot
@@ -66,12 +62,17 @@ class Input:
         self.host = host
         self.mask = mask
         self.paraml = paramlist
+        self.paramlist = paramlist
         self.lastparam = lastparam
         self.msg = lastparam
-        if inp_arg:
-            self.inp_arg = self.inp_arg
+        self.text = text
+        self.match = match
+        if text:
+            self.inp = text
+        elif match:
+            self.inp = match
         else:
-            self.inp_arg = paramlist  # this might be assigned later
+            self.inp = paramlist
         self.trigger = trigger
         self.server = conn.server
         self.chan = paramlist[0].lower()
@@ -79,8 +80,6 @@ class Input:
 
         if self.chan == conn.nick.lower():  # is a PM
             self.chan = nick
-
-        self.trigger = None  # assigned later?
 
     def message(self, message, target=None):
         """sends a message to a specific or current channel/user
@@ -164,9 +163,6 @@ def run(bot, plugin, input):
 
     # all the dynamic arguments
     for required_arg in required_args:
-        if required_arg in _input_name_aliases:
-            required_arg = _input_name_aliases[required_arg]
-
         if hasattr(input, required_arg):
             value = getattr(input, required_arg)
             parameters.append(value)
@@ -255,7 +251,7 @@ def dispatch(bot, input, plugin):
             return
 
     if isinstance(plugin, CommandPlugin) and \
-            plugin.args.get('autohelp', True) and not input.inp_arg and plugin.doc is not None:
+            plugin.args.get('autohelp', True) and not input.text and plugin.doc is not None:
         input.notice(input.conn.config["command_prefix"] + plugin.doc)
         return
 
@@ -299,12 +295,12 @@ def main(bot, conn, input_params):
             command = match.group(1).lower()
             if command in bot.plugin_manager.commands:
                 plugin = bot.plugin_manager.commands[command]
-                input = Input(bot, conn, inp_arg=match.group(2).strip(), trigger=command, **input_params)
+                input = Input(bot, conn, text=match.group(2).strip(), trigger=command, **input_params)
                 dispatch(bot, input, plugin)
 
         # REGEXES
         for regex, plugin in bot.plugin_manager.regex_plugins:
             match = regex.search(inp.lastparam)
             if match:
-                input = Input(bot, conn, inp_arg=match, **input_params)
+                input = Input(bot, conn, match=match, **input_params)
                 dispatch(bot, input, plugin)

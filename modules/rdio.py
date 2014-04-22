@@ -2,7 +2,7 @@ import urllib
 import json
 import re
 
-oauth = None # import oauth2 as oauth
+oauth = None  # import oauth2 as oauth
 
 from util import hook
 

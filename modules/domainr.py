@@ -25,7 +25,7 @@ def domainr(text):
     """
     try:
         data = http.get_json('http://domai.nr/api/json/search?q=' + text)
-    except (http.URLError, http.HTTPError) as e:
+    except (http.URLError, http.HTTPError):
         return "Unable to get data for some reason. Try again later."
     if data['query'] == "":
         return "An error occurred: {status} - {message}".format(**data['error'])

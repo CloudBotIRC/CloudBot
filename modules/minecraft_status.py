@@ -4,7 +4,7 @@ from util import hook, http
 
 
 @hook.command(autohelp=False)
-def mcstatus(inp):
+def mcstatus():
     """mcstatus -- Checks the status of various Mojang (the creators of Minecraft) servers."""
 
     try:

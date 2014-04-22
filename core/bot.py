@@ -102,7 +102,7 @@ class CloudBot(threading.Thread):
         self.logger.debug("Config system initalised.")
 
         # setup db
-        db_path = config.get('database', 'sqlite:///cloudbot.db')
+        db_path = self.config.get('database', 'sqlite:///cloudbot.db')
         self.db_engine = create_engine(db_path)
         self.logger.debug("Database system initalised.")
 

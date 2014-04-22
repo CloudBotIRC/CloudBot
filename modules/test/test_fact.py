@@ -30,7 +30,7 @@ def test_fact(monkeypatch):
     monkeypatch.setattr(http, "get_soup", fake_http)
     monkeypatch.setattr(web, "try_isgd", fake_isgd)
 
-    assert fact(None) == testfact + " - isgd link"
+    assert fact() == testfact + " - isgd link"
 
 
 def test_except(monkeypatch):
@@ -50,7 +50,7 @@ def test_except(monkeypatch):
     monkeypatch.setattr(web, "try_isgd", fake_isgd)
 
     with pytest.raises(TestException):
-        fact(None)
+        fact()
 
 
 def test_timeout(monkeypatch):
@@ -72,7 +72,7 @@ def test_timeout(monkeypatch):
     monkeypatch.setattr(http, "get_soup", fake_http)
     monkeypatch.setattr(web, "try_isgd", fake_isgd)
 
-    assert fact(None) == testfact + " - isgd link"
+    assert fact() == testfact + " - isgd link"
 
 
 def test_multi_timeout(monkeypatch):
@@ -94,4 +94,4 @@ def test_multi_timeout(monkeypatch):
     monkeypatch.setattr(http, "get_soup", fake_http)
     monkeypatch.setattr(web, "try_isgd", fake_isgd)
 
-    assert fact(None) == "Could not find a fact!"
+    assert fact() == "Could not find a fact!"

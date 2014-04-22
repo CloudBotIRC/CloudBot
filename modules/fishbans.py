@@ -22,7 +22,12 @@ def fishbans(text):
     user_url = "http://fishbans.com/u/{}/".format(user)
     ban_count = request["stats"]["totalbans"]
 
-    return "The user \x02{}\x02 has \x02{}\x02 ban(s) - {}".format(user, ban_count, user_url)
+    if ban_count == 1:
+        return "The user \x02{}\x02 has \x021\x02 ban - {}".format(user, user_url)
+    elif ban_count > 1:
+        return "The user \x02{}\x02 has \x02{}\x02 bans - {}".format(user, ban_count, user_url)
+    else:
+        return "The user \x02{}\x02 has no bans - {}".format(user, user_url)
 
 
 @hook.command
@@ -49,6 +54,6 @@ def bancount(text):
             pass
 
     if not out:
-        return "The user \x02{}\x02 has no bans.".format(user)
+        return "The user \x02{}\x02 has no bans - {}".format(user, user_url)
     else:
         return "Bans for \x02{}\x02: {} - {}".format(user, formatting.get_text_list(out, "and"), user_url)

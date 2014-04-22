@@ -57,6 +57,12 @@ class PluginLoader(object):
         else:
             # we're on python 3.3- and should use imp.reload()
             reload_function = imp.reload
+
+        if "disabled_plugins" in self.bot.config and split_path[0] in self.bot.config['disabled_plugins']:
+            # this would be done in pluginmanager, but we don't even want to load the python module
+            self.bot.logger.info("Not loading module {}: module disabled".format(file_name))
+            return
+
         try:
             module = importlib.import_module(module_name)
             if reload:

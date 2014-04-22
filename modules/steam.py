@@ -5,7 +5,6 @@ from bs4 import BeautifulSoup, NavigableString, Tag
 from util import hook, http, web
 from util.formatting import truncate_str
 
-
 steam_re = (r'(.*:)//(store.steampowered.com)(:[0-9]+)?(.*)', re.I)
 
 
@@ -13,10 +12,8 @@ def get_steam_info(url):
     page = http.get(url)
     soup = BeautifulSoup(page, 'lxml', from_encoding="utf-8")
 
-    data = {}
-
-    data["name"] = soup.find('div', {'class': 'apphub_AppName'}).text
-    data["desc"] = truncate_str(soup.find('meta', {'name': 'description'})['content'].strip(), 80)
+    data = {"name": soup.find('div', {'class': 'apphub_AppName'}).text,
+            "desc": truncate_str(soup.find('meta', {'name': 'description'})['content'].strip(), 80)}
 
     # get the element details_block
     details = soup.find('div', {'class': 'details_block'})

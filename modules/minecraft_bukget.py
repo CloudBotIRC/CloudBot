@@ -4,9 +4,6 @@ import random
 from util import hook, http, web, formatting
 
 
-
-
-
 ## CONSTANTS
 
 base_url = "http://api.bukget.org/3/"

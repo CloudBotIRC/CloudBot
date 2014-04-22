@@ -128,7 +128,7 @@ def decrypt(text, bot, db, notice):
     salt = get_salt(bot)
     key = PBKDF2(password, salt).read(32)
 
-    encrypted_bytes = bytes(encrypted_str, encoding="UTF-8")
+    encrypted_bytes = encrypted_str.encode("utf-8")
 
     # get the encoded IV from the database
     database_result = db.execute("select iv from encryption where"

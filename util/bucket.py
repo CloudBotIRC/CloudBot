@@ -10,6 +10,7 @@ class TokenBucket(object):
     >>> print bucket.consume(90)
     False
     """
+
     def __init__(self, tokens, fill_rate):
         """tokens is the total tokens in the bucket. fill_rate is the
         rate in tokens/second that the bucket will be refilled."""
@@ -37,4 +38,5 @@ class TokenBucket(object):
             self._tokens = min(self.capacity, self._tokens + delta)
         self.timestamp = now
         return self._tokens
+
     tokens = property(get_tokens)

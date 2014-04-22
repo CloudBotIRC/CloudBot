@@ -27,6 +27,8 @@ def adduser(text, db):
     }
 
     query = users.insert(values=values)
+    # OR users.insert().values(**values) - http://docs.sqlalchemy.org/en/rel_0_9/core/tutorial.html
+
     connection.execute(query)
 
 
@@ -40,6 +42,3 @@ def select(db, message):
     results = connection.execute(users.select())
     for row in results:
         message("name: {}, phone: {}".format(row.name, row.phone))
-
-
-

@@ -4,7 +4,7 @@ from util import hook, web
 
 
 @hook.command
-def update(inp, bot=None):
+def update():
     repo = Repo()
     git = repo.git
     try:
@@ -18,7 +18,7 @@ def update(inp, bot=None):
 
 
 @hook.command
-def version(inp, bot=None):
+def version():
     repo = Repo()
 
     # get origin and fetch it

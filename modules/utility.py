@@ -5,6 +5,7 @@ import re
 from util import hook, formatting
 
 
+
 # variables
 
 colors = collections.OrderedDict([
@@ -141,9 +142,9 @@ def reverse(inp):
 
 
 @hook.command("hash")
-def hash_command(inp):
+def hash_command(text):
     """hash <string> -- Returns hashes of <string>."""
-    return ', '.join(x + ": " + getattr(hashlib, x)(inp).hexdigest()
+    return ', '.join(x + ": " + getattr(hashlib, x)(text.encode("utf-8")).hexdigest()
                      for x in ['md5', 'sha1', 'sha256'])
 
 

@@ -5,7 +5,6 @@ import os
 
 from util import hook
 
-
 ping_regex = re.compile(r"(\d+.\d+)/(\d+.\d+)/(\d+.\d+)/(\d+.\d+)")
 
 
@@ -36,7 +35,7 @@ def ping(inp, reply=None):
 
     reply("Attempting to ping {} {} times...".format(host, count))
 
-    pingcmd = subprocess.check_output(["ping", "-c", count, host])
+    pingcmd = subprocess.check_output(["ping", "-c", count, host]).decode("utf-8")
     if "request timed out" in pingcmd or "unknown host" in pingcmd:
         return "error: could not ping host"
     else:

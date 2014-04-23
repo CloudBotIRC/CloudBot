@@ -1,7 +1,6 @@
 import re
 
-from util import hook, http
-
+from util import hook, http, formatting
 
 base_url = 'http://www.urbandictionary.com/iphone/search/define'
 
@@ -35,7 +34,7 @@ def urban(text):
     try:
         definition = definitions[id_num - 1]['definition'].replace('\r\n', ' ')
         definition = re.sub('\s+', ' ', definition).strip()  # remove excess spaces
-        definition = text.truncate_str(definition, 200)
+        definition = formatting.truncate_str(definition, 200)
     except IndexError:
         return 'Not found.'
 

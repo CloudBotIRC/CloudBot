@@ -41,7 +41,7 @@ def get_profile(name):
         headers = {"Content-Type": "application/json"}
         r = http.get_json(
             'https://api.mojang.com/profiles/page/1',
-            post_data=json.dumps(request),
+            post_data=json.dumps(request).encode('utf-8'),
             headers=headers
         )
     except (http.URLError, http.HTTPError) as e:

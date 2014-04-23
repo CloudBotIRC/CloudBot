@@ -83,7 +83,7 @@ def newegg(inp):
     # submit the search request
     r = http.get_json(
         'http://www.ows.newegg.com/Search.egg/Advanced',
-        post_data=json.dumps(request)
+        post_data=json.dumps(request).encode('utf-8')
     )
 
     # get the first result

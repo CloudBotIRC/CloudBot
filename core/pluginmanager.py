@@ -290,7 +290,7 @@ class CommandPlugin(Plugin):
 
         # make sure that autohelp and permissions are set
         if not "autohelp" in cmd_hook.kwargs:
-            cmd_hook.kwargs["autohelp"] = False
+            cmd_hook.kwargs["autohelp"] = True
         if not "permissions" in cmd_hook.kwargs:
             cmd_hook.kwargs["permissions"] = []
 

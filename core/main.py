@@ -4,8 +4,6 @@ import _thread
 import queue
 from queue import Empty
 
-from core.pluginmanager import CommandPlugin
-
 _thread.stack_size(1024 * 512)  # reduce vm size
 
 
@@ -250,9 +248,11 @@ def dispatch(bot, input, plugin):
         if input is None:
             return
 
-    if isinstance(plugin, CommandPlugin) and \
-            plugin.args.get('autohelp', True) and not input.text and plugin.doc is not None:
-        input.notice(input.conn.config["command_prefix"] + plugin.doc)
+    if plugin.type == "command" and plugin.args.get('autohelp') and not input.text:
+        if plugin.doc is not None:
+            input.notice(input.conn.config["command_prefix"] + plugin.doc)
+        else:
+            input.notice(input.conn.config["command_prefix"] + plugin.name + " requires additional arguments.")
         return
 
     if plugin.args.get("singlethread", False):

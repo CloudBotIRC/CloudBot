@@ -80,7 +80,7 @@ def beautify(input):
 
 def get_log_stream(data_dir, server, chan):
     new_filename = get_log_filename(data_dir, server, chan)
-    cache_key = "{} {}".format(server, chan)
+    cache_key = (server, chan)
     old_filename, log_stream = stream_cache.get(cache_key, (None, None))
 
     if new_filename != old_filename:  # we need to open a new stream

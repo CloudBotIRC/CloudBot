@@ -74,8 +74,8 @@ def mcping_modern(host, port):
             raise PingError("Request timed out")
 
         # send handshake + status request
-        s.send(pack_data("\x00\x00" + pack_data(host.encode('utf8')) + pack_port(port) + "\x01"))
-        s.send(pack_data("\x00"))
+        s.send(pack_data(b"\x00\x00" + pack_data(host.encode('utf8')) + pack_port(port) + b"\x01"))
+        s.send(pack_data(b"\x00"))
 
         # read response
         unpack_varint(s)  # Packet length
@@ -85,7 +85,7 @@ def mcping_modern(host, port):
         if not l > 1:
             raise PingError("Invalid response")
 
-        d = ""
+        d = b""
         while len(d) < l:
             d += s.recv(1024)
 

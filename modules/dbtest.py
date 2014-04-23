@@ -14,7 +14,7 @@ def init_db(db):
 
 
 @hook.command
-def adduser(text, db):
+def dbadduser(text, db):
     init_db(db)
 
     # create DB connection

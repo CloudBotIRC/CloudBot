@@ -42,7 +42,7 @@ def munge(text, munge_count=0):
     for n in range(len(text)):
         rep = character_replacements.get(text[n])
         if rep:
-            text = text[:n] + rep.decode('utf8') + text[n + 1:]
+            text = text[:n] + rep + text[n + 1:]
             reps += 1
             if reps == munge_count:
                 break
@@ -101,7 +101,8 @@ character_replacements = {
     'W': 'Ŵ',
     'X': 'Χ',
     'Y': 'Ỳ',
-    'Z': 'Ż'}
+    'Z': 'Ż'
+}
 
 
 def capitalize_first(line):
@@ -153,7 +154,6 @@ def truncate_str(content, length=100, suffix='...'):
         return content
     else:
         return content[:length].rsplit(' ', 1)[0] + suffix
-
 
 # ALL CODE BELOW THIS LINE IS COVERED BY THE FOLLOWING AGREEMENT:
 

@@ -6,7 +6,7 @@ from util import hook, http, urlnorm
 @hook.command
 def title(inp):
     """title <url> -- gets the title of a web page"""
-    url = urlnorm.normalize(inp.encode('utf-8'), assume_scheme="http")
+    url = urlnorm.normalize(inp, assume_scheme="http")
 
     try:
         page = http.open(url)

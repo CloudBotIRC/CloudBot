@@ -57,6 +57,7 @@ def beautify(input):
     args["server"] = input.conn.nice_name  # use the connection name for server
 
     leng = len(args["paraml"])
+
     for n, p in enumerate(args["paraml"]):
         args["param" + str(n)] = p
         args["param_" + str(abs(n - leng))] = p
@@ -123,4 +124,8 @@ def log(input, bot):
             channel_log = get_log_stream(bot.data_dir, input.server, channel)
             channel_log.write(human_readable + '\n')
 
-        bot.logger.info(human_readable)
+# Log console separately to prevent lag
+@hook.event("*", run_sync=True)
+def console_log(input, bot):
+    human_readable = beautify(input)
+    bot.logger.info(human_readable)

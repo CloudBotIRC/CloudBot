@@ -67,9 +67,9 @@ class Input:
         self.msg = lastparam
         self.text = text
         self.match = match
-        if text:
+        if text is not None:
             self.inp = text
-        elif match:
+        elif match is not None:
             self.inp = match
         else:
             self.inp = paramlist

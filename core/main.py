@@ -255,7 +255,10 @@ def dispatch(bot, input, plugin):
             input.notice(input.conn.config["command_prefix"] + plugin.name + " requires additional arguments.")
         return
 
-    if plugin.args.get("singlethread", False):
+    if plugin.type == "event" and plugin.args.get("run_sync"):
+        run(bot, plugin, input)  # make sure the event runs in sync, *before* commands and regexes are run
+        # TODO: Possibly make this run in the command's/regex's own thread, or make all of 'main' run async?
+    elif plugin.args.get("singlethread", False):
         if plugin in bot.threads:
             bot.threads[plugin].put(input)
         else:

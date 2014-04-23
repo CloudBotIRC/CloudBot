@@ -287,14 +287,13 @@ class CommandPlugin(Plugin):
         :type module: Module
         :type cmd_hook: hook._CommandHook
         """
+        Plugin.__init__(self, "command", module, cmd_hook)
 
         # make sure that autohelp and permissions are set
-        if not "autohelp" in cmd_hook.kwargs:
-            cmd_hook.kwargs["autohelp"] = True
-        if not "permissions" in cmd_hook.kwargs:
-            cmd_hook.kwargs["permissions"] = []
-
-        Plugin.__init__(self, "command", module, cmd_hook)
+        if not "autohelp" in self.args:
+            self.args["autohelp"] = True
+        if not "permissions" in self.args:
+            self.args["permissions"] = []
 
         self.name = cmd_hook.main_alias
         self.aliases = list(cmd_hook.aliases)  # turn the set into a list
@@ -340,6 +339,10 @@ class EventPlugin(Plugin):
         :type event_hook: hook._EventHook
         """
         Plugin.__init__(self, "event", module, event_hook)
+
+        if not "run_sync" in self.args:
+            self.args["run_sync"] = False
+
         self.events = event_hook.events
 
     def is_catch_all(self):

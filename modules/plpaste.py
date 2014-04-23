@@ -1,16 +1,20 @@
-import os
 from os import listdir
 
 from util import hook, web
 
 
 @hook.command(permissions=["adminonly"])
-def plpaste(inp, bot=None):
-    if inp in bot.commands:
-        with open(os.path.join("modules", bot.commands[inp][0].__code__.co_filename.strip())) as f:
+def plpaste(text, bot):
+    """
+    :type text: str
+    :type bot: core.bot.CloudBot
+    """
+    if text in bot.plugin_manager.commands:
+        file_path = bot.plugin_manager.commands[text].module.file_path
+        with open(file_path) as f:
             return web.haste(f.read(), ext='py')
-    elif inp + ".py" in listdir('modules/'):
-        with open('modules/{}.py'.format(inp)) as f:
+    elif text + ".py" in listdir('modules/'):
+        with open('modules/{}.py'.format(text)) as f:
             return web.haste(f.read(), ext='py')
     else:
         return "Could not find specified plugin."

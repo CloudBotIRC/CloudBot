@@ -295,18 +295,25 @@ class BotConnection(object):
         # create permissions manager
         self.permissions = PermissionManager(self)
 
-        # create the IRC connection and connect
+        # create the IRC connection
         self.connection = IRCConnection(self.bot.logger, self.name, self.server, self.port, self.input_queue,
                                         self.output_queue, self.ssl)
+
+        # create the parse_thread, to be started in connect()
+        self.parse_thread = ParseThread(self.input_queue, self.output_queue, self.parsed_queue)
+        self.parse_thread.daemon = True
+
+    def connect(self):
+        # connect to the irc server
         self.connection.connect()
 
+        # send the password, nick, and user
         self.set_pass(self.config["connection"].get("password"))
         self.set_nick(self.nick)
         self.cmd("USER", [self.config.get('user', 'cloudbot'), "3", "*",
                           self.config.get('realname', 'CloudBot - http://git.io/cloudbot')])
 
-        self.parse_thread = ParseThread(self.input_queue, self.output_queue, self.parsed_queue)
-        self.parse_thread.daemon = True
+        # start the parse thread
         self.parse_thread.start()
 
     def stop(self):

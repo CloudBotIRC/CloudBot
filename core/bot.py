@@ -119,6 +119,10 @@ class CloudBot(threading.Thread):
         # start bot connections
         self.create_connections()
 
+        # connect to irc servers
+        self.connect()
+
+        # start main thread
         threading.Thread.__init__(self)
 
     def run(self):
@@ -158,7 +162,12 @@ class CloudBot(threading.Thread):
                                                       port=port, logger=self.logger, channels=conf['channels'],
                                                       ssl=conf['connection'].get('ssl', False),
                                                       nice_name=nice_name))
-            self.logger.debug("({}) Created connection.".format(name))
+            self.logger.debug("[{}] Created connection.".format(nice_name))
+
+    def connect(self):
+        """ Connects each BotConnection to it's irc server """
+        for conn in self.connections:
+            conn.connect()
 
     def stop(self, reason=None):
         """quits all networks and shuts the bot down"""

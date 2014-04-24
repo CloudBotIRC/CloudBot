@@ -6,12 +6,13 @@ import sys
 import queue
 
 from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.schema import MetaData
 
+from util import botvars
 from core import config, irc, main
 from core.loader import PluginLoader
 from core.pluginmanager import PluginManager
-from util import botvars
 
 logger_initialized = False
 
@@ -105,6 +106,8 @@ class CloudBot:
         # setup db
         db_path = self.config.get('database', 'sqlite:///cloudbot.db')
         self.db_engine = create_engine(db_path)
+        self.db_factory = sessionmaker(bind=self.db_engine)
+        self.db_session = scoped_session(self.db_factory)
         self.db_metadata = MetaData()
         # set botvars.metadata so plugins can access when loading
         botvars.metadata = self.db_metadata

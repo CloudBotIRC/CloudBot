@@ -185,29 +185,40 @@ def run(bot, plugin, input):
     uses_db = "db" in required_args
 
     if uses_db:
-        input.db = bot.db_engine
-
-    # all the dynamic arguments
-    for required_arg in required_args:
-        if hasattr(input, required_arg):
-            value = getattr(input, required_arg)
-            parameters.append(value)
-        else:
-            bot.logger.error("Plugin {}:{} asked for invalid argument '{}', cancelling execution!"
-                             .format(plugin.module.title, plugin.function_name, required_arg))
-            return False
+        # create SQLAlchemy session
+        bot.logger.debug("Opened database session for: {}".format(plugin.module.title))
+        input.db = input.bot.db_session()
 
     try:
-        out = plugin.function(*parameters)
-    except Exception:
-        bot.logger.exception("Error in plugin {}:".format(plugin.module.title))
-        bot.logger.info("Parameters used: {}".format(parameters))
-        return False
+        # suround all of this in a try statement, to make sure that the database session is closed
 
-    if out is not None:
-        input.reply(str(out))
+        # all the dynamic arguments
+        for required_arg in required_args:
+            if hasattr(input, required_arg):
+                value = getattr(input, required_arg)
+                parameters.append(value)
+            else:
+                bot.logger.error("Plugin {}:{} asked for invalid argument '{}', cancelling execution!"
+                                 .format(plugin.module.title, plugin.function_name, required_arg))
+                return False
 
-    return True
+        try:
+            out = plugin.function(*parameters)
+        except Exception:
+            bot.logger.exception("Error in plugin {}:".format(plugin.module.title))
+            bot.logger.info("Parameters used: {}".format(parameters))
+            return False
+
+        if out is not None:
+            input.reply(str(out))
+
+        return True
+
+    finally:
+        # ensure that the database session is closed
+        if uses_db:
+            bot.logger.debug("Closed database session for: {}".format(plugin.module.title))
+            input.db.close()
 
 
 def do_sieve(sieve, bot, input, plugin):

@@ -2,28 +2,16 @@
 
 from util import hook, http, formatting
 
-db_ready = False
 
-
-def db_init(db):
-    """check to see that our db has the horoscope table and return a connection."""
-    global db_ready
-    if not db_ready:
-        db.execute("create table if not exists horoscope(nick primary key, sign)")
-        db.commit()
-        db_ready = True
-
-
-# TODO: this isn't a thing. We should make this a thing
 @hook.onload
 def init(db):
-    db_init(db)
+    db.execute("create table if not exists horoscope(nick primary key, sign)")
+    db.commit()
 
 
 @hook.command(autohelp=False)
 def horoscope(text, db, notice, nick):
     """horoscope <sign> -- Get your horoscope."""
-    db_init(db)
 
     # check if the user asked us not to save his details
     dontsave = text.endswith(" dontsave")

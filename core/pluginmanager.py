@@ -1,6 +1,7 @@
 import os
 import re
 
+from core import main
 from util import hook
 
 
@@ -81,6 +82,13 @@ class PluginManager:
             self.bot.logger.info("Not loading module {}: module disabled".format(file_name))
             return
         module = Module(file_path, file_name, title, code)
+
+        for onload_plugin in module.run_on_load:
+            success = main.run(self.bot, onload_plugin, main.Input(bot=self.bot))
+            if not success:
+                self.bot.logger.warning("Not registering module {}: module onload hook errored".format(file_name))
+                return
+
         self.register_plugins(module)
 
     def unload_module(self, path):

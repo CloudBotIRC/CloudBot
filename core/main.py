@@ -153,9 +153,14 @@ class Input:
 
 def run(bot, plugin, input):
     """
+    Runs the specific plugin with the given bot and input.
+
+    Returns False if the plugin errored, True otherwise.
+
     :type bot: core.bot.CloudBot
     :type plugin: Plugin
     :type input: Input
+    :rtype: bool
     """
     bot.logger.debug("Input: {}".format(input.__dict__))
 
@@ -169,7 +174,7 @@ def run(bot, plugin, input):
     uses_db = "db" in required_args
 
     if uses_db:
-        input.db = input.bot.db_engine
+        input.db = bot.db_engine
 
     # all the dynamic arguments
     for required_arg in required_args:
@@ -179,17 +184,19 @@ def run(bot, plugin, input):
         else:
             bot.logger.error("Plugin {}:{} asked for invalid argument '{}', cancelling execution!"
                              .format(plugin.module.title, plugin.function_name, required_arg))
-            return
+            return False
 
     try:
         out = plugin.function(*parameters)
     except Exception:
         bot.logger.exception("Error in plugin {}:".format(plugin.module.title))
         bot.logger.info("Parameters used: {}".format(parameters))
-        return
+        return False
 
     if out is not None:
         input.reply(str(out))
+
+    return True
 
 
 def do_sieve(sieve, bot, input, plugin):

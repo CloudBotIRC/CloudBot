@@ -42,7 +42,7 @@ def wiki(inp):
     if title.lower() not in desc.lower():
         desc = title + desc
 
-    desc = re.sub('\s+', ' ', desc).strip()  # remove excess spaces
+    desc = ' '.join(desc.split())  # remove excess spaces
 
     desc = formatting.truncate_str(desc, 200)
 

@@ -15,21 +15,17 @@ shortcodes = {
     '[u]': '\x1F',
     '[/u]': '\x1F',
     '[i]': '\x16',
-    '[/i]': '\x16'}
+    '[/i]': '\x16'
+}
 
-
-def db_init(db):
-    global db_ready
-    if not db_ready:
-        db.execute("create table if not exists mem(word, data, nick,"
-                   " primary key(word))")
-        db.commit()
-        db_ready = True
+@hook.onload()
+def create_db(db):
+    db.execute("create table if not exists mem(word, data, nick, primary key(word))")
+    db.commit()
 
 
 def get_memory(db, word):
-    row = db.execute("select data from mem where word=lower(?)",
-                     [word]).fetchone()
+    row = db.execute("select data from mem where word=lower(?)", [word]).fetchone()
     if row:
         return row[0]
     else:
@@ -39,7 +35,6 @@ def get_memory(db, word):
 @hook.command(["r", "remember"], permissions=["addfactoid"])
 def remember(text, nick, db, notice):
     """remember <word> [+]<data> -- Remembers <data> with <word>. Add + to <data> to append."""
-    db_init(db)
 
     append = False
 
@@ -60,8 +55,7 @@ def remember(text, nick, db, notice):
         else:
             data = old_data + ' ' + new_data
 
-    db.execute("replace into mem(word, data, nick) values"
-               " (lower(?),?,?)", (word, data, nick))
+    db.execute("replace into mem(word, data, nick) values (lower(?),?,?)", (word, data, nick))
     db.commit()
 
     if old_data:
@@ -78,12 +72,10 @@ def remember(text, nick, db, notice):
 def forget(text, db, notice):
     """forget <word> -- Forgets a remembered <word>."""
 
-    db_init(db)
     data = get_memory(db, text)
 
     if data:
-        db.execute("delete from mem where word=lower(?)",
-                   [text])
+        db.execute("delete from mem where word=lower(?)", [text])
         db.commit()
         notice('"%s" has been forgotten.' % data.replace('`', "'"))
         return
@@ -95,8 +87,6 @@ def forget(text, db, notice):
 @hook.command
 def info(text, notice, db):
     """info <factoid> -- Shows the source of a factoid."""
-
-    db_init(db)
 
     # attempt to get the factoid from the database
     data = get_memory(db, text.strip())
@@ -110,8 +100,6 @@ def info(text, notice, db):
 @hook.regex(r'^\? ?(.+)')
 def factoid(inp, input, db, message, action):
     """?<word> -- Shows what data is associated with <word>."""
-
-    db_init(db)
 
     # split up the input
     split = inp.group(1).strip().split(" ")
@@ -149,3 +137,17 @@ def factoid(inp, input, db, message, action):
                 message("Could not fetch URL.")
         else:
             message(result)
+
+
+@hook.command(autohelp=False, permissions=["listfactoids"])
+def listfactoids(db, reply):
+    reply_text = False
+    for word in db.execute("select word from mem").fetchall():
+        if not reply_text:
+            reply_text = word[0]
+        else:
+            reply_text += ", {}".format(word[0])
+        if len(reply_text) > 400:
+            reply(reply_text.rsplit(', ', 1)[0])
+            reply_text = word[0]
+    return reply_text

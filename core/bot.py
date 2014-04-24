@@ -6,10 +6,12 @@ import sys
 import queue
 
 from sqlalchemy import create_engine
+from sqlalchemy.schema import MetaData
 
 from core import config, irc, main
 from core.loader import PluginLoader
 from core.pluginmanager import PluginManager
+from util import botvars
 
 logger_initialized = False
 
@@ -103,6 +105,9 @@ class CloudBot:
         # setup db
         db_path = self.config.get('database', 'sqlite:///cloudbot.db')
         self.db_engine = create_engine(db_path)
+        self.db_metadata = MetaData()
+        # set botvars.metadata so plugins can access when loading
+        botvars.metadata = self.db_metadata
         self.logger.debug("Database system initalised.")
 
         # Bot initialisation complete

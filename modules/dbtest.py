@@ -1,22 +1,20 @@
-from util import hook
-from sqlalchemy import Table, Column, String, MetaData
+from sqlalchemy import Table, Column, String
 
-metadata = MetaData()
-users = Table('user_table', metadata,
-              Column('name', String),
-              Column('phone', String)
+from util import hook, botvars
+
+users = Table(
+    'user_table', botvars.metadata,
+    Column('name', String),
+    Column('phone', String)
 )
-
-
-def init_db(db):
-    metadata.bind = db
-    metadata.create_all()
 
 
 @hook.command
 def dbadduser(text, db):
-    init_db(db)
-
+    """
+    :type text: str
+    :type db: sqlalchemy.engine.base.Engine
+    """
     # create DB connection
     connection = db.connect()
 
@@ -34,8 +32,6 @@ def dbadduser(text, db):
 
 @hook.command(autohelp=False)
 def select(db, message):
-    init_db(db)
-
     # create DB connection
     connection = db.connect()
 

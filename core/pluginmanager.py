@@ -1,8 +1,10 @@
 import os
 import re
 
+import sqlalchemy
+
 from core import main
-from util import hook
+from util import hook, botvars
 
 
 def find_hooks(parent, code):
@@ -27,6 +29,21 @@ def find_hooks(parent, code):
                 type_lists[hook_type].append(_hook_name_to_plugin[hook_type](parent, func_hook))
 
     return commands, regexes, events, sieves, run_on_load
+
+
+def find_tables(code):
+    """
+    :type parent: Module
+    :type code: object
+    :rtype: list[sqlalchemy.Table]
+    """
+    tables = []
+    for name, obj in code.__dict__.items():
+        if isinstance(obj, sqlalchemy.Table) and obj.metadata == botvars.metadata:
+            # if it's a Table, and it's using our metadata, append it to the list
+            tables.append(obj)
+
+    return tables
 
 
 class PluginManager:
@@ -83,6 +100,10 @@ class PluginManager:
             return
         module = Module(file_path, file_name, title, code)
 
+        # create database tables
+        module.create_tables(self.bot)
+
+        # run onload hooks
         for onload_plugin in module.run_on_load:
             success = main.run(self.bot, onload_plugin, main.Input(bot=self.bot))
             if not success:
@@ -106,7 +127,12 @@ class PluginManager:
             # this plugin hasn't been loaded, so no need to unload it
             return False
 
-        return self.unregister_plugins(filename, ignore_not_registered=True)
+        was_loaded = self.unregister_plugins(filename, ignore_not_registered=True)
+        if was_loaded:
+            module = self.modules[filename]
+            # unregister sqlalchemy Tables
+            module.unregister_tables(self.bot)
+        return was_loaded
 
     def register_plugins(self, module, check_if_exists=True):
         """
@@ -243,6 +269,7 @@ class Module:
     :type regexes: list[RegexPlugin]
     :type events: list[EventPlugin]
     :type sieves: list[SievePlugin]
+    :type tables: list[sqlalchemy.Table]
     """
 
     def __init__(self, filepath, filename, title, code):
@@ -255,6 +282,26 @@ class Module:
         self.file_name = filename
         self.title = title
         self.commands, self.regexes, self.events, self.sieves, self.run_on_load = find_hooks(self, code)
+        # we need to find tables for each module so that they can be unloaded from the global metadata when the
+        # plugin is reloaded
+        self.tables = find_tables(code)
+
+    def create_tables(self, bot):
+        """
+        Creates all sqlalchemy Tables that are registered in this plugin
+        :type bot: core.bot.CloudBot
+        """
+        for table in self.tables:
+            if not table.exists(bot.db_engine):
+                table.create(bot.db_engine)
+
+    def unregister_tables(self, bot):
+        """
+        Unregisters all sqlalchemy Tables registered to the global metadata by this module
+        :type bot: core.bot.CloudBot
+        """
+        for table in self.tables:
+            bot.db_metadata.remove(table)
 
 
 class Plugin:

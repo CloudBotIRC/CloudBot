@@ -177,6 +177,16 @@ class _SieveHook(_Hook):
         self.kwargs.update(kwargs)
 
 
+class _OnLoadHook(_Hook):
+    def __init__(self, function, kwargs):
+        _Hook.__init__(self, function, "onload", kwargs)
+        # there isn't that much else to do, as onload plugins don't have params
+
+    def add_hook(self, kwargs):
+        # update kwargs, overwriting duplicates
+        self.kwargs.update(kwargs)
+
+
 def _add_hook(func, hook):
     if not hasattr(func, "_cloudbot_hook"):
         func._cloudbot_hook = {}
@@ -191,20 +201,6 @@ def _get_hook(func, hook_type):
         return func._cloudbot_hook[hook_type]
 
     return None
-
-
-def _sieve_hook(func, **kwargs):
-    assert len(inspect.getargspec(func).args) == 3, \
-        "Sieve plugin has incorrect argument count. Needs params: bot, input, plugin"
-
-    sieve_hook = _get_hook(func, "sieve")
-    if sieve_hook:
-        assert isinstance(sieve_hook, _SieveHook)
-        sieve_hook.add_hook(kwargs)
-    else:
-        _add_hook(func, _SieveHook(func, kwargs))
-
-    return func
 
 
 def _command_hook(func, alias_param=None, **kwargs):
@@ -257,14 +253,29 @@ def _regex_hook(func, regex_param, flags, **kwargs):
     return func
 
 
-def sieve(param=None, **kwargs):
-    """External sieve decorator. Can be used directly as a decorator, or with args to return a decorator
-    :type param: function | None
-    """
-    if callable(param):
-        return _sieve_hook(param, **kwargs)
+def _sieve_hook(func, **kwargs):
+    assert len(inspect.getargspec(func).args) == 3, \
+        "Sieve plugin has incorrect argument count. Needs params: bot, input, plugin"
+
+    sieve_hook = _get_hook(func, "sieve")
+    if sieve_hook:
+        assert isinstance(sieve_hook, _SieveHook)
+        sieve_hook.add_hook(kwargs)
     else:
-        return lambda func: _sieve_hook(func, **kwargs)
+        _add_hook(func, _SieveHook(func, kwargs))
+
+    return func
+
+
+def _onload_hook(func, **kwargs):
+    on_load_hook = _get_hook(func, "onload")
+    if on_load_hook:
+        assert isinstance(on_load_hook, _OnLoadHook)
+        on_load_hook.add_hook(kwargs)
+    else:
+        _add_hook(func, _OnLoadHook(func, kwargs))
+
+    return func
 
 
 def command(param=None, **kwargs):
@@ -296,3 +307,23 @@ def regex(regex_param, flags=0, **kwargs):
         raise TypeError("The regex hook must be used as a function that returns a decorator")
     else:  # this decorator is being used as a function, so return a decorator
         return lambda func: _regex_hook(func, regex_param, flags, **kwargs)
+
+
+def sieve(param=None, **kwargs):
+    """External sieve decorator. Can be used directly as a decorator, or with args to return a decorator
+    :type param: function | None
+    """
+    if callable(param):
+        return _sieve_hook(param, **kwargs)
+    else:
+        return lambda func: _sieve_hook(func, **kwargs)
+
+
+def onload(param=None, **kwargs):
+    """External onload decorator. Can be used directly as a decorator, or with args to return a decorator
+    :type param: function | None
+    """
+    if callable(param):
+        return _onload_hook(param, **kwargs)
+    else:
+        return lambda func: _onload_hook(func, **kwargs)

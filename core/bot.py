@@ -2,7 +2,6 @@ import time
 import logging
 import re
 import os
-import threading
 import sys
 import queue
 
@@ -65,7 +64,7 @@ def get_logger():
     return logger
 
 
-class CloudBot(threading.Thread):
+class CloudBot:
     """
     :type start_time: float
     :type running: bool
@@ -111,17 +110,18 @@ class CloudBot(threading.Thread):
 
         self.threads = {}
 
+        # create bot connections
+        self.create_connections()
+
         # run plugin loader
         self.plugin_manager = PluginManager(self)
 
         self.loader = PluginLoader(self)
 
-        # start bot connections
-        self.create_connections()
+        # start connections
+        self.connect()
 
-        threading.Thread.__init__(self)
-
-    def run(self):
+    def start_bot(self):
         """receives input from the IRC engine and processes it"""
         self.logger.info("Starting main thread.")
         while self.running:
@@ -158,7 +158,12 @@ class CloudBot(threading.Thread):
                                                       port=port, logger=self.logger, channels=conf['channels'],
                                                       ssl=conf['connection'].get('ssl', False),
                                                       nice_name=nice_name))
-            self.logger.debug("({}) Created connection.".format(name))
+            self.logger.debug("[{}] Created connection.".format(nice_name))
+
+    def connect(self):
+        """ Connects each BotConnection to it's irc server """
+        for conn in self.connections:
+            conn.connect()
 
     def stop(self, reason=None):
         """quits all networks and shuts the bot down"""

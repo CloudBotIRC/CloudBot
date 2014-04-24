@@ -246,6 +246,7 @@ class BotConnection(object):
     :type connection: IRCConnection
     :type parse_thread: ParseThread
     :type permissions: PermissionManager
+    :type connected: bool
     """
 
     def __init__(self, bot, name, server, nick, port=6667, ssl=False, logger=None, channels=None, config=None,
@@ -295,18 +296,29 @@ class BotConnection(object):
         # create permissions manager
         self.permissions = PermissionManager(self)
 
-        # create the IRC connection and connect
+        # create the IRC connection
         self.connection = IRCConnection(self.bot.logger, self.name, self.server, self.port, self.input_queue,
                                         self.output_queue, self.ssl)
+
+        # create the parse_thread, to be started in connect()
+        self.parse_thread = ParseThread(self.input_queue, self.output_queue, self.parsed_queue)
+        self.parse_thread.daemon = True
+
+        self.connected = False
+
+    def connect(self):
+        # connect to the irc server
         self.connection.connect()
 
+        self.connected = True
+
+        # send the password, nick, and user
         self.set_pass(self.config["connection"].get("password"))
         self.set_nick(self.nick)
         self.cmd("USER", [self.config.get('user', 'cloudbot'), "3", "*",
                           self.config.get('realname', 'CloudBot - http://git.io/cloudbot')])
 
-        self.parse_thread = ParseThread(self.input_queue, self.output_queue, self.parsed_queue)
-        self.parse_thread.daemon = True
+        # start the parse thread
         self.parse_thread.start()
 
     def stop(self):
@@ -372,5 +384,7 @@ class BotConnection(object):
         """
         :type string: str
         """
+        if not self.connected:
+            raise ValueError("Connection must be connected to irc server to use send")
         self.logger.info("[{}] >> {}".format(self.nice_name, string))
         self.output_queue.put(string)

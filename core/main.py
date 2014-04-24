@@ -59,25 +59,36 @@ class Input:
         self.user = user
         self.host = host
         self.mask = mask
-        self.paraml = paramlist
         self.paramlist = paramlist
+        self.paraml = paramlist
         self.lastparam = lastparam
         self.msg = lastparam
         self.text = text
         self.match = match
-        if text is not None:
-            self.inp = text
-        elif match is not None:
-            self.inp = match
-        else:
-            self.inp = paramlist
         self.trigger = trigger
-        self.server = conn.server
-        self.chan = paramlist[0].lower()
+
         self.input = self
 
-        if self.chan == conn.nick.lower():  # is a PM
-            self.chan = nick
+        if self.text is not None:
+            self.inp = self.text
+        elif self.match is not None:
+            self.inp = self.match
+        else:
+            self.inp = self.paramlist
+
+        if self.conn is not None:
+            self.server = conn.server
+        else:
+            self.server = None
+
+        if self.paramlist:
+            self.chan = paramlist[0].lower()
+        else:
+            self.chan = None
+
+        if self.chan is not None and self.nick is not None:
+            if self.chan == conn.nick.lower():  # is a PM
+                self.chan = self.nick
 
     def message(self, message, target=None):
         """sends a message to a specific or current channel/user
@@ -85,6 +96,8 @@ class Input:
         :type target: str
         """
         if target is None:
+            if self.chan is None:
+                raise ValueError("Target must be specified when chan is not assigned")
             target = self.chan
         self.conn.msg(target, message)
 
@@ -94,6 +107,8 @@ class Input:
         :type target: str
         """
         if target is None:
+            if self.chan is None:
+                raise ValueError("Target must be specified when chan is not assigned")
             target = self.chan
 
         if target == self.nick:
@@ -107,6 +122,8 @@ class Input:
         :type target: str
         """
         if target is None:
+            if self.chan is None:
+                raise ValueError("Target must be specified when chan is not assigned")
             target = self.chan
 
         self.conn.ctcp(target, "ACTION", message)
@@ -118,6 +135,8 @@ class Input:
         :type target: str
         """
         if target is None:
+            if self.chan is None:
+                raise ValueError("Target must be specified when chan is not assigned")
             target = self.chan
         self.conn.ctcp(target, ctcp_type, message)
 
@@ -127,6 +146,8 @@ class Input:
         :type target: str
         """
         if target is None:
+            if self.nick is None:
+                raise ValueError("Target must be specified when nick is not assigned")
             target = self.nick
 
         self.conn.cmd('NOTICE', [target, message])
@@ -136,14 +157,21 @@ class Input:
         :type permission: str
         :rtype: bool
         """
+        if not self.mask:
+            raise ValueError("has_permission requires mask is not assigned")
         return self.conn.permissions.has_perm_mask(self.mask, permission, notice=notice)
 
 
 def run(bot, plugin, input):
     """
+    Runs the specific plugin with the given bot and input.
+
+    Returns False if the plugin errored, True otherwise.
+
     :type bot: core.bot.CloudBot
     :type plugin: Plugin
     :type input: Input
+    :rtype: bool
     """
     bot.logger.debug("Input: {}".format(input.__dict__))
 
@@ -157,7 +185,7 @@ def run(bot, plugin, input):
     uses_db = "db" in required_args
 
     if uses_db:
-        input.db = input.bot.db_engine
+        input.db = bot.db_engine
 
     # all the dynamic arguments
     for required_arg in required_args:
@@ -167,17 +195,19 @@ def run(bot, plugin, input):
         else:
             bot.logger.error("Plugin {}:{} asked for invalid argument '{}', cancelling execution!"
                              .format(plugin.module.title, plugin.function_name, required_arg))
-            return
+            return False
 
     try:
         out = plugin.function(*parameters)
     except Exception:
         bot.logger.exception("Error in plugin {}:".format(plugin.module.title))
         bot.logger.info("Parameters used: {}".format(parameters))
-        return
+        return False
 
     if out is not None:
         input.reply(str(out))
+
+    return True
 
 
 def do_sieve(sieve, bot, input, plugin):
@@ -273,15 +303,15 @@ def main(bot, conn, input_params):
     :type conn: core.irc.BotConnection
     :type input_params: dict[str, unknown]
     """
-    inp = Input(bot, conn, **input_params)
+    inp = Input(bot=bot, conn=conn, **input_params)
     command_prefix = conn.config.get('command_prefix', '.')
 
     # EVENTS
     if inp.command in bot.plugin_manager.events:
         for event_plugin in bot.plugin_manager.events[inp.command]:
-            dispatch(bot, Input(bot, conn, **input_params), event_plugin)
+            dispatch(bot, Input(bot=bot, conn=conn, **input_params), event_plugin)
     for event_plugin in bot.plugin_manager.catch_all_events:
-        dispatch(bot, Input(bot, conn, **input_params), event_plugin)
+        dispatch(bot, Input(bot=bot, conn=conn, **input_params), event_plugin)
 
     if inp.command == 'PRIVMSG':
         # COMMANDS
@@ -298,12 +328,12 @@ def main(bot, conn, input_params):
             command = match.group(1).lower()
             if command in bot.plugin_manager.commands:
                 plugin = bot.plugin_manager.commands[command]
-                input = Input(bot, conn, text=match.group(2).strip(), trigger=command, **input_params)
+                input = Input(bot=bot, conn=conn, text=match.group(2).strip(), trigger=command, **input_params)
                 dispatch(bot, input, plugin)
 
         # REGEXES
         for regex, plugin in bot.plugin_manager.regex_plugins:
             match = regex.search(inp.lastparam)
             if match:
-                input = Input(bot, conn, match=match, **input_params)
+                input = Input(bot=bot, conn=conn, match=match, **input_params)
                 dispatch(bot, input, plugin)

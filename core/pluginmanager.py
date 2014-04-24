@@ -1,6 +1,7 @@
 import os
 import re
 
+from core import main
 from util import hook
 
 
@@ -8,13 +9,14 @@ def find_hooks(parent, code):
     """
     :type parent: Module
     :type code: object
-    :rtype: (list[CommandPlugin], list[RegexPlugin], list[EventPlugin], list[SievePlugin])
+    :rtype: (list[CommandPlugin], list[RegexPlugin], list[EventPlugin], list[SievePlugin], list[OnLoadPlugin])
     """
     commands = []
     regexes = []
     events = []
     sieves = []
-    type_lists = {"command": commands, "regex": regexes, "event": events, "sieve": sieves}
+    run_on_load = []
+    type_lists = {"command": commands, "regex": regexes, "event": events, "sieve": sieves, "onload": run_on_load}
     for name, func in code.__dict__.items():
         if hasattr(func, "_cloudbot_hook"):
             # if it has cloudbot hook
@@ -24,7 +26,7 @@ def find_hooks(parent, code):
 
                 type_lists[hook_type].append(_hook_name_to_plugin[hook_type](parent, func_hook))
 
-    return commands, regexes, events, sieves
+    return commands, regexes, events, sieves, run_on_load
 
 
 class PluginManager:
@@ -80,6 +82,13 @@ class PluginManager:
             self.bot.logger.info("Not loading module {}: module disabled".format(file_name))
             return
         module = Module(file_path, file_name, title, code)
+
+        for onload_plugin in module.run_on_load:
+            success = main.run(self.bot, onload_plugin, main.Input(bot=self.bot))
+            if not success:
+                self.bot.logger.warning("Not registering module {}: module onload hook errored".format(file_name))
+                return
+
         self.register_plugins(module)
 
     def unload_module(self, path):
@@ -245,7 +254,7 @@ class Module:
         self.file_path = filepath
         self.file_name = filename
         self.title = title
-        self.commands, self.regexes, self.events, self.sieves = find_hooks(self, code)
+        self.commands, self.regexes, self.events, self.sieves, self.run_on_load = find_hooks(self, code)
 
 
 class Plugin:
@@ -370,9 +379,25 @@ class SievePlugin(Plugin):
         return "sieve {} from {}".format(self.function_name, self.module.file_name)
 
 
+class OnLoadPlugin(Plugin):
+    def __init__(self, module, on_load_hook):
+        """
+        :type module: Module
+        :type on_load_hook: hook._OnLoadHook
+        """
+        Plugin.__init__(self, "onload", module, on_load_hook)
+
+    def __repr__(self):
+        return "OnLoadPlugin[{}]".format(Plugin.__repr__(self))
+
+    def __str__(self):
+        return "onload {} from {}".format(self.function_name, self.module.file_name)
+
+
 _hook_name_to_plugin = {
     "command": CommandPlugin,
     "regex": RegexPlugin,
     "event": EventPlugin,
     "sieve": SievePlugin,
+    "onload": OnLoadPlugin
 }

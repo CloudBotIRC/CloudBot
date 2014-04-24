@@ -85,6 +85,8 @@ class Input:
         :type target: str
         """
         if target is None:
+            if self.chan is None:
+                raise ValueError("Target must be specified when chan is not assigned")
             target = self.chan
         self.conn.msg(target, message)
 
@@ -94,6 +96,8 @@ class Input:
         :type target: str
         """
         if target is None:
+            if self.chan is None:
+                raise ValueError("Target must be specified when chan is not assigned")
             target = self.chan
 
         if target == self.nick:
@@ -107,6 +111,8 @@ class Input:
         :type target: str
         """
         if target is None:
+            if self.chan is None:
+                raise ValueError("Target must be specified when chan is not assigned")
             target = self.chan
 
         self.conn.ctcp(target, "ACTION", message)
@@ -118,6 +124,8 @@ class Input:
         :type target: str
         """
         if target is None:
+            if self.chan is None:
+                raise ValueError("Target must be specified when chan is not assigned")
             target = self.chan
         self.conn.ctcp(target, ctcp_type, message)
 
@@ -127,6 +135,8 @@ class Input:
         :type target: str
         """
         if target is None:
+            if self.nick is None:
+                raise ValueError("Target must be specified when nick is not assigned")
             target = self.nick
 
         self.conn.cmd('NOTICE', [target, message])
@@ -136,6 +146,8 @@ class Input:
         :type permission: str
         :rtype: bool
         """
+        if not self.mask:
+            raise ValueError("has_permission requires mask is not assigned")
         return self.conn.permissions.has_perm_mask(self.mask, permission, notice=notice)
 
 
@@ -273,15 +285,15 @@ def main(bot, conn, input_params):
     :type conn: core.irc.BotConnection
     :type input_params: dict[str, unknown]
     """
-    inp = Input(bot, conn, **input_params)
+    inp = Input(bot=bot, conn=conn, **input_params)
     command_prefix = conn.config.get('command_prefix', '.')
 
     # EVENTS
     if inp.command in bot.plugin_manager.events:
         for event_plugin in bot.plugin_manager.events[inp.command]:
-            dispatch(bot, Input(bot, conn, **input_params), event_plugin)
+            dispatch(bot, Input(bot=bot, conn=conn, **input_params), event_plugin)
     for event_plugin in bot.plugin_manager.catch_all_events:
-        dispatch(bot, Input(bot, conn, **input_params), event_plugin)
+        dispatch(bot, Input(bot=bot, conn=conn, **input_params), event_plugin)
 
     if inp.command == 'PRIVMSG':
         # COMMANDS
@@ -298,12 +310,12 @@ def main(bot, conn, input_params):
             command = match.group(1).lower()
             if command in bot.plugin_manager.commands:
                 plugin = bot.plugin_manager.commands[command]
-                input = Input(bot, conn, text=match.group(2).strip(), trigger=command, **input_params)
+                input = Input(bot=bot, conn=conn, text=match.group(2).strip(), trigger=command, **input_params)
                 dispatch(bot, input, plugin)
 
         # REGEXES
         for regex, plugin in bot.plugin_manager.regex_plugins:
             match = regex.search(inp.lastparam)
             if match:
-                input = Input(bot, conn, match=match, **input_params)
+                input = Input(bot=bot, conn=conn, match=match, **input_params)
                 dispatch(bot, input, plugin)

@@ -100,16 +100,6 @@ class PluginManager:
             return
         module = Module(file_path, file_name, title, code)
 
-        # create database tables
-        module.create_tables(self.bot)
-
-        # run onload hooks
-        for onload_plugin in module.run_on_load:
-            success = main.run(self.bot, onload_plugin, main.Input(bot=self.bot))
-            if not success:
-                self.bot.logger.warning("Not registering module {}: module onload hook errored".format(file_name))
-                return
-
         self.register_plugins(module)
 
     def unload_module(self, path):
@@ -127,12 +117,7 @@ class PluginManager:
             # this plugin hasn't been loaded, so no need to unload it
             return False
 
-        was_loaded = self.unregister_plugins(filename, ignore_not_registered=True)
-        if was_loaded:
-            module = self.modules[filename]
-            # unregister sqlalchemy Tables
-            module.unregister_tables(self.bot)
-        return was_loaded
+        return self.unregister_plugins(filename, ignore_not_registered=True)
 
     def register_plugins(self, module, check_if_exists=True):
         """
@@ -143,6 +128,16 @@ class PluginManager:
         """
         if check_if_exists and module.file_name in self.modules:
             self.unregister_plugins(module.file_name)
+
+        # create database tables
+        module.create_tables(self.bot)
+
+        # run onload hooks
+        for onload_plugin in module.run_on_load:
+            success = main.run(self.bot, onload_plugin, main.Input(bot=self.bot))
+            if not success:
+                self.bot.logger.warning("Not registering module {}: module onload hook errored".format(module.title))
+                return
 
         self.modules[module.file_name] = module
 
@@ -234,6 +229,9 @@ class PluginManager:
         for sieve_plugin in module.sieves:
             self.sieves.remove(sieve_plugin)
 
+        # unregister databases
+        module.unregister_tables(self.bot)
+
         # remove last reference to module
         del self.modules[module.file_name]
 
@@ -291,17 +289,26 @@ class Module:
         Creates all sqlalchemy Tables that are registered in this plugin
         :type bot: core.bot.CloudBot
         """
-        for table in self.tables:
-            if not table.exists(bot.db_engine):
-                table.create(bot.db_engine)
+        if self.tables:
+            # if there are any tables
+
+            bot.logger.info("Registering tables for {}".format(self.title))
+
+            for table in self.tables:
+                if not table.exists(bot.db_engine):
+                    table.create(bot.db_engine)
 
     def unregister_tables(self, bot):
         """
         Unregisters all sqlalchemy Tables registered to the global metadata by this module
         :type bot: core.bot.CloudBot
         """
-        for table in self.tables:
-            bot.db_metadata.remove(table)
+        if self.tables:
+            # if there are any tables
+            bot.logger.info("Unregistering tables for {}".format(self.title))
+
+            for table in self.tables:
+                bot.db_metadata.remove(table)
 
 
 class Plugin:

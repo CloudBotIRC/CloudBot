@@ -13,7 +13,7 @@ users = Table(
 def dbadduser(text, db):
     """
     :type text: str
-    :type db: sqlalchemy.engine.base.Engine
+    :type db: sqlalchemy.orm.Session
     """
 
     data = text.split()
@@ -26,6 +26,7 @@ def dbadduser(text, db):
     # OR users.insert().values(**values) - http://docs.sqlalchemy.org/en/rel_0_9/core/tutorial.html
 
     db.execute(query)
+    db.commit()
 
 
 @hook.command(autohelp=False)

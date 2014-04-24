@@ -6,7 +6,6 @@ import signal
 
 from core import bot
 
-
 if sys.version_info < (3, 2, 0):
     # check python version
     print("CloudBot3 requires Python 3.2 or newer.")
@@ -47,27 +46,25 @@ class CloudBotWrapper():
         signal.signal(signal.SIGINT, self.original_sigint)
 
     def run(self):
-        # start the bot master
-        self.cloudbot.start()
-
-        # watch to see if the bot stops running or needs a restart
         while True:
-            if self.cloudbot.running:
-                time.sleep(.1)
+
+            # start the bot master
+
+            self.cloudbot.start_bot()
+
+            if self.cloudbot.do_restart:
+                # create a new bot thread and start it
+                self.cloudbot = None
+                print("Restarting")
+                time.sleep(1)  # sleep one second for timeouts
+                if self.stopped_while_restarting:
+                    print("Recieved stop signal, no longer restarting")
+                    return
+                self.cloudbot = bot.CloudBot()
+                continue
             else:
-                if self.cloudbot.do_restart:
-                    # create a new bot thread and start it
-                    self.cloudbot = None
-                    print("Restarting")
-                    time.sleep(1)  # sleep one second for timeouts
-                    if self.stopped_while_restarting:
-                        print("Recieved stop signal, no longer restarting")
-                        return
-                    self.cloudbot = bot.CloudBot()
-                    self.cloudbot.start()
-                    continue
-                else:
-                    break
+                # if it isn't restarting, exit the program
+                break
 
 
 if __name__ == "__main__":

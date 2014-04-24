@@ -2,7 +2,6 @@ import time
 import logging
 import re
 import os
-import threading
 import sys
 import queue
 
@@ -65,7 +64,7 @@ def get_logger():
     return logger
 
 
-class CloudBot(threading.Thread):
+class CloudBot:
     """
     :type start_time: float
     :type running: bool
@@ -122,10 +121,7 @@ class CloudBot(threading.Thread):
         # start connections
         self.connect()
 
-        # start main thread
-        threading.Thread.__init__(self)
-
-    def run(self):
+    def start_bot(self):
         """receives input from the IRC engine and processes it"""
         self.logger.info("Starting main thread.")
         while self.running:

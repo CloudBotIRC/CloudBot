@@ -21,51 +21,47 @@ if os.path.exists(os.path.abspath('lib')):
 print('CloudBot3 <http://git.io/cloudbotirc>')
 
 
-class CloudBotWrapper():
-    def __init__(self):
-        # create the master cloudbot
-        self.cloudbot = bot.CloudBot()
+def main():
+    cloudbot = bot.CloudBot()
 
-        self.original_sigint = None
+    # whether we are killed while restarting
+    stopped_while_restarting = False
 
-        self.stopped_while_restarting = False
+    # store the original SIGINT handler
+    original_sigint = signal.getsignal(signal.SIGINT)
 
-    def set_signals(self):
-        # store the original SIGINT handler
-        self.original_sigint = signal.getsignal(signal.SIGINT)
-        signal.signal(signal.SIGINT, self.exit_gracefully)
-
-    def exit_gracefully(self, signum, frame):
-        if not self.cloudbot:
+    # define closure for signal handling
+    def exit_gracefully(signum, frame):
+        nonlocal stopped_while_restarting
+        if not cloudbot:
             # we are currently in the process of restarting
-            self.stopped_while_restarting = True
+            stopped_while_restarting = True
         else:
-            self.cloudbot.stop()
+            cloudbot.stop()
 
         # restore the original handler so if they do it again it triggers
-        signal.signal(signal.SIGINT, self.original_sigint)
+        signal.signal(signal.SIGINT, original_sigint)
 
-    def run(self):
-        while True:
-            # start the bot master
-            self.cloudbot.start_bot()
+    signal.signal(signal.SIGINT, exit_gracefully)
 
-            if self.cloudbot.do_restart:
-                # if cloudbot should restart, create a new bot object
-                self.cloudbot = None
-                print("Restarting")
-                time.sleep(2)  # sleep two seconds for timeouts to timeout
-                if self.stopped_while_restarting:
-                    print("Recieved stop signal, no longer restarting")
-                    return
-                self.cloudbot = bot.CloudBot()
-                continue
-            else:
-                # if it isn't restarting, exit the program
-                break
+    while True:
+        # start the bot master
+        cloudbot.start_bot()
+
+        if cloudbot.do_restart:
+            # if cloudbot should restart, create a new bot object
+            cloudbot = None
+            print("Restarting")
+            time.sleep(2)  # sleep two seconds for timeouts to timeout
+            if stopped_while_restarting:
+                print("Recieved stop signal, no longer restarting")
+                return
+            cloudbot = bot.CloudBot()
+            continue
+        else:
+            # if it isn't restarting, exit the program
+            break
 
 
 if __name__ == "__main__":
-    main_wrapper = CloudBotWrapper()
-    main_wrapper.set_signals()
-    main_wrapper.run()
+    main()

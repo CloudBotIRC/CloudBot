@@ -21,7 +21,7 @@ def suggest(text):
 
     out = ", ".join(suggestions)
 
-    # defuckify text
+    # defuckify text (might not be needed now, but I'll keep it)
     soup = BeautifulSoup(out)
     out = soup.get_text()
 

@@ -100,11 +100,9 @@ def topic(inp, conn=None, chan=None):
     if split[0].startswith("#"):
         message = " ".join(split[1:])
         chan = split[0]
-        out = "TOPIC {} :{}".format(chan, message)
     else:
         message = " ".join(split)
-        out = "TOPIC {} :{}".format(chan, message)
-    conn.send(out)
+    conn.send("TOPIC {} :{}".format(chan, message))
 
 
 @hook.command(permissions=["op_kick", "op"])

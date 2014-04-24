@@ -12,8 +12,10 @@ def refresh_cache():
         text = ''.join(e.find('p').find_all(text=True))
         fml_cache.append((fml_id, text))
 
-# do an initial refresh of the cache
-refresh_cache()
+@hook.onload()
+def initial_refresh():
+    # do an initial refresh of the cache
+    refresh_cache()
 
 
 @hook.command(autohelp=False)

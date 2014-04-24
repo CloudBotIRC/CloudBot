@@ -7,8 +7,8 @@ from pbkdf2 import PBKDF2
 
 from Crypto import Random
 from Crypto.Cipher import AES
-from util import hook
 
+from util import hook
 
 BS = AES.block_size
 
@@ -41,19 +41,14 @@ def decode_aes(c, s):
         return "Invalid password for the given message (couldn't encode result as utf-8)"
 
 
-db_ready = False
-
-
-def db_init(db):
+@hook.onload()
+def create_db(db):
     """check to see that our db has the the encryption table.
     :type db: sqlalchemy.orm.session.Session
     """
-    global db_ready
-    if not db_ready:
-        db.execute("create table if not exists encryption(encrypted, iv, "
-                   "primary key(encrypted))")
-        db.commit()
-        db_ready = True
+    db.execute("create table if not exists encryption(encrypted, iv, "
+               "primary key(encrypted))")
+    db.commit()
 
 
 def get_salt(bot):
@@ -73,7 +68,6 @@ def encrypt(text, bot, db, notice):
     :type bot: core.bot.CloudBot
     :type db: sqlalchemy.orm.session.Session
     """
-    db_init(db)
 
     text_split = text.split(" ")
 
@@ -111,8 +105,6 @@ def decrypt(text, bot, db, notice):
     :type bot: core.bot.CloudBot
     :type db: sqlalchemy.orm.session.Session
     """
-    if not db_ready:
-        db_init(db)
 
     inp_split = text.split(" ")
 

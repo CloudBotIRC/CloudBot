@@ -8,25 +8,28 @@ import pygeoip
 from util import hook, http
 
 
-# load region database
-with open("./data/geoip_regions.json", "rb") as f:
-    regions = json.loads(f.read().decode())
+@hook.onload()
+def load_regions(bot):
+    global regions, geo
+    # load region database
+    with open(os.path.join(bot.data_dir, "geoip_regions.json"), "rb") as f:
+        regions = json.loads(f.read().decode())
 
-if os.path.isfile(os.path.abspath("./data/GeoLiteCity.dat")):
-    # initialise geolocation database
-    geo = pygeoip.GeoIP(os.path.abspath("./data/GeoLiteCity.dat"))
-else:
-    print("Downloading GeoIP database")
-    download = http.get("http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz", decode=False)
-    print("Download complete")
-    bytes_io = BytesIO(download)
-    geoip_file = gzip.GzipFile(fileobj=bytes_io, mode='rb')
+    if os.path.isfile(os.path.join(bot.data_dir, "GeoLiteCity.dat")):
+        # initialise geolocation database
+        geo = pygeoip.GeoIP(os.path.join(bot.data_dir, "GeoLiteCity.dat"))
+    else:
+        print("Downloading GeoIP database")
+        download = http.get("http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz", decode=False)
+        print("Download complete")
+        bytes_io = BytesIO(download)
+        geoip_file = gzip.GzipFile(fileobj=bytes_io, mode='rb')
 
-    output = open(os.path.abspath("./data/GeoLiteCity.dat"), 'wb')
-    output.write(geoip_file.read())
-    output.close()
+        output = open(os.path.join(bot.data_dir, "GeoLiteCity.dat"), 'wb')
+        output.write(geoip_file.read())
+        output.close()
 
-    geo = pygeoip.GeoIP(os.path.abspath("./data/GeoLiteCity.dat"))
+        geo = pygeoip.GeoIP(os.path.join(bot.data_dir, "GeoLiteCity.dat"))
 
 
 @hook.command

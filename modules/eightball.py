@@ -1,7 +1,7 @@
+import os
 import random
 
 from util import hook, formatting
-
 
 color_codes = {
     "<r>": "\x02\x0305",
@@ -9,9 +9,14 @@ color_codes = {
     "<y>": "\x02"
 }
 
-with open("./data/8ball_responses.txt") as f:
-    responses = [line.strip() for line in
-                 f.readlines() if not line.startswith("//")]
+
+@hook.onload()
+def load_responses(bot):
+    path = os.path.join(bot.data_dir, "8ball_responses.txt")
+    global responses
+    with open(path) as f:
+        responses = [line.strip() for line in
+                     f.readlines() if not line.startswith("//")]
 
 
 @hook.command(["8ball", "8", "eightball"])

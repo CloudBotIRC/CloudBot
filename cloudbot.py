@@ -47,16 +47,14 @@ class CloudBotWrapper():
 
     def run(self):
         while True:
-
             # start the bot master
-
             self.cloudbot.start_bot()
 
             if self.cloudbot.do_restart:
-                # create a new bot thread and start it
+                # if cloudbot should restart, create a new bot object
                 self.cloudbot = None
                 print("Restarting")
-                time.sleep(1)  # sleep one second for timeouts
+                time.sleep(2)  # sleep two seconds for timeouts to timeout
                 if self.stopped_while_restarting:
                     print("Recieved stop signal, no longer restarting")
                     return

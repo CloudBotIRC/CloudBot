@@ -59,25 +59,36 @@ class Input:
         self.user = user
         self.host = host
         self.mask = mask
-        self.paraml = paramlist
         self.paramlist = paramlist
+        self.paraml = paramlist
         self.lastparam = lastparam
         self.msg = lastparam
         self.text = text
         self.match = match
-        if text is not None:
-            self.inp = text
-        elif match is not None:
-            self.inp = match
-        else:
-            self.inp = paramlist
         self.trigger = trigger
-        self.server = conn.server
-        self.chan = paramlist[0].lower()
+
         self.input = self
 
-        if self.chan == conn.nick.lower():  # is a PM
-            self.chan = nick
+        if self.text is not None:
+            self.inp = self.text
+        elif self.match is not None:
+            self.inp = self.match
+        else:
+            self.inp = self.paramlist
+
+        if self.conn is not None:
+            self.server = conn.server
+        else:
+            self.server = None
+
+        if self.paramlist:
+            self.chan = paramlist[0].lower()
+        else:
+            self.chan = None
+
+        if self.chan is not None and self.nick is not None:
+            if self.chan == conn.nick.lower():  # is a PM
+                self.chan = self.nick
 
     def message(self, message, target=None):
         """sends a message to a specific or current channel/user

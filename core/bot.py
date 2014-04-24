@@ -111,15 +111,15 @@ class CloudBot(threading.Thread):
 
         self.threads = {}
 
+        # create bot connections
+        self.create_connections()
+
         # run plugin loader
         self.plugin_manager = PluginManager(self)
 
         self.loader = PluginLoader(self)
 
-        # start bot connections
-        self.create_connections()
-
-        # connect to irc servers
+        # start connections
         self.connect()
 
         # start main thread

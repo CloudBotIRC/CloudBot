@@ -119,8 +119,9 @@ class _RegexHook(_Hook):
         if isinstance(regex_param, str):
             # if the paramater is a string, compile and add
             self.regexes.append(re.compile(regex_param, regex_flags))
-        elif isinstance(regex_param, re.__Regex):
+        elif hasattr(regex_param, "search"):
             # if the paramater is an re.__Regex, just add it
+            # we only use regex.search anyways, so this is a good determiner
             self.regexes.append(regex_param)
         else:
             assert isinstance(regex_param, list)

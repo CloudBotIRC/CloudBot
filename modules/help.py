@@ -1,3 +1,4 @@
+from operator import attrgetter
 import re
 
 from util import hook
@@ -28,32 +29,47 @@ def help_command(text, conn, bot, notice, has_permission):
         else:
             notice("Unknown command '{}'".format(searching_for))
     else:
-        available_commands = []
-        for command_plugin in bot.plugin_manager.commands.values():
-            if not command_plugin.args.get("permissions"):
-                available_commands.append(command_plugin.name)
-            else:
-                for perm in command_plugin.args.get("permissions"):
-                    if has_permission(perm, notice=False):
-                        available_commands.append(command_plugin.name)
-                        break
-        print(available_commands)
+
+        # list of lines to send to the user
         lines = []
+        # current line, containing words to join with " "
         current_line = []
+        # current line length, to count how long the current line will be when joined with " "
         current_line_length = 0
-        for command in available_commands:
-            if current_line_length + len(command) > 405:  # line limit
-                lines.append(", ".join(current_line))
+
+        for plugin in sorted(set(bot.plugin_manager.commands.values()), key=attrgetter("name")):
+            # use set to remove duplicate commands (from multiple aliases), and sorted to sort by name
+
+            if plugin.args.get("permissions"):
+                # check permissions
+                allowed = False
+                for perm in plugin.args.get("permissions"):
+                    if has_permission(perm, notice=False):
+                        allowed = True
+                        break
+
+                if not allowed:
+                    # skip adding this command
+                    continue
+
+            # add the command to lines sent
+            command = plugin.name
+            added_length = len(command) + 2  # + 2 to account for space and comma
+
+            if current_line_length + added_length > 450:
+                # if line limit is reached, add line to lines, and reset
+                lines.append(", ".join(current_line) + ",")
                 current_line = []
                 current_line_length = 0
 
             current_line.append(command)
-            current_line_length += len(command) + 2  # + 2 to account for space and comma
+            current_line_length += added_length
 
         if current_line:
-            lines.append(", ".join(current_line))  # make sure to include the last line
+            # make sure to include the last line
+            lines.append(", ".join(current_line))
 
-        notice("Commands use can use:")
+        notice("Here's a list of commands you can use:")
         for line in lines:
             notice(line)
-        notice("For detailed help, use {}help <commands>, without the brackets.".format(conn.config["command_prefix"]))
+        notice("For detailed help, use {}help <command>, without the brackets.".format(conn.config["command_prefix"]))

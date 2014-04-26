@@ -1,31 +1,73 @@
-import time
 import re
+from datetime import datetime
 
-from sqlalchemy import Table, Column, String, Boolean, DateTime, MetaData
+from sqlalchemy import Table, Column, String, Boolean, DateTime
+from sqlalchemy.sql import select
 
-from util import hook, timesince
+from util import hook, timesince, botvars
 
-
-# define DB tables
-metadata = MetaData()
-tells = Table('tells', metadata,
-              Column('connection', String),
-              Column('sender', String),
-              Column('target', String),
-              Column('message', String),
-              Column('is_read', Boolean),
-              Column('time_sent', DateTime),
-              Column('time_read', DateTime))
-
-
-def db_init(db):
-    metadata.bind = db
-    metadata.create_all()
+table = Table(
+    'tells',
+    botvars.metadata,
+    Column('connection', String),
+    Column('sender', String),
+    Column('target', String),
+    Column('message', String),
+    Column('is_read', Boolean),
+    Column('time_sent', DateTime),
+    Column('time_read', DateTime)
+)
 
 
-def get_tells(db, user_to):
-    return db.execute("select user_from, message, time, chan from tell where"
-                      " user_to=lower(:user) order by time", {'user': user_to}).fetchall()
+def get_unread(db, server, target):
+    query = select([table.c.sender, table.c.message, table.c.time_sent]) \
+        .where(table.c.connection == server) \
+        .where(table.c.target == target.lower()) \
+        .where(table.c.is_read == 0) \
+        .order_by(table.c.time_sent)
+    return db.execute(query).fetchall()
+
+
+def count_unread(db, server, target):
+    query = select([table]) \
+        .where(table.c.connection == server) \
+        .where(table.c.target == target.lower()) \
+        .where(table.c.is_read == 0) \
+        .count()
+    return db.execute(query).fetchone()[0]
+
+
+def read_all_tells(db, server, target):
+    query = table.update() \
+        .where(table.c.connection == server) \
+        .where(table.c.target == target.lower()) \
+        .where(table.c.is_read == 0) \
+        .values(is_read=1)
+    db.execute(query)
+    db.commit()
+
+
+def read_tell(db, server, target, message):
+    query = table.update() \
+        .where(table.c.connection == server) \
+        .where(table.c.target == target.lower()) \
+        .where(table.c.message == message) \
+        .values(is_read=1)
+    db.execute(query)
+    db.commit()
+
+
+def add_tell(db, server, sender, target, message):
+    query = table.insert().values(
+        connection=server,
+        sender=sender,
+        target=target,
+        message=message,
+        is_read=False,
+        time_sent=datetime.today()
+    )
+    db.execute(query)
+    db.commit()
 
 
 @hook.event('PRIVMSG', singlethread=True)
@@ -33,22 +75,17 @@ def tellinput(input, notice, db, nick, conn):
     if 'showtells' in input.msg.lower():
         return
 
-    db_init(db)
-
-    tells = get_tells(db, conn, nick)
+    tells = get_unread(db, conn.server, nick)
 
     if tells:
-        user_from, message, time, chan = tells[0]
-        reltime = timesince.timesince(time)
+        user_from, message, time_sent = tells[0]
+        reltime = timesince.timesince(time_sent)
 
-        reply = "{} sent you a message {} ago from {}: {}".format(user_from, reltime, chan,
-                                                                  message)
+        reply = "{} sent you a message {} ago: {}".format(user_from, reltime, message)
         if len(tells) > 1:
-            reply += " (+{} more, {}showtells to view)".format(len(tells) - 1, conn.conf["command_prefix"])
+            reply += " (+{} more, {}showtells to view)".format(len(tells) - 1, conn.config["command_prefix"])
 
-        db.execute("delete from tell where user_to=lower(:user) and message=:message",
-                   {'user': nick, 'message': message})
-        db.commit()
+        read_tell(db, conn.server, nick, message)
         notice(reply)
 
 
@@ -56,67 +93,50 @@ def tellinput(input, notice, db, nick, conn):
 def showtells(nick, notice, db, conn):
     """showtells -- View all pending tell messages (sent in a notice)."""
 
-    db_init(db)
-
-    tells = get_tells(db, conn, nick)
+    tells = get_unread(db, conn.server, nick)
 
     if not tells:
-        notice("You have no pending tells.")
+        notice("You have no pending messages.")
         return
 
     for tell in tells:
-        user_from, message, time, chan = tell
-        past = timesince.timesince(time)
-        notice("{} sent you a message {} ago from {}: {}".format(user_from, past, chan, message))
+        sender, message, time_sent = tell
+        past = timesince.timesince(time_sent)
+        notice("{} sent you a message {} ago: {}".format(sender, past, message))
 
-    db.execute("delete from tell where user_to=lower(?)",
-               (nick,))
-    db.commit()
+    read_all_tells(db, conn.server, nick)
 
 
-@hook.command
-def tell(inp, nick='', chan='', db=None, input=None, notice=None, conn=None):
+@hook.command("tell")
+def tell_cmd(inp, nick, db, notice, conn):
     """tell <nick> <message> -- Relay <message> to <nick> when <nick> is around."""
     query = inp.split(' ', 1)
 
     if len(query) != 2:
-        notice(tell.__doc__)
+        notice(conn.config("command_prefix") + tell_cmd.__doc__)
         return
 
-    user_to = query[0].lower()
+    target = query[0].lower()
     message = query[1].strip()
-    user_from = nick
+    sender = nick
 
-    if chan.lower() == user_from.lower():
-        chan = 'a pm'
-
-    if user_to == user_from.lower():
+    if target == sender.lower():
         notice("Have you looked in a mirror lately?")
         return
 
-    if user_to.lower() == input.conn.nick.lower():
-        # user is looking for us, being a smart-ass
-        notice("Thanks for the message, {}!".format(user_from))
+    if target.lower() == conn.nick.lower():
+        # we can't send messages to ourselves
+        notice("Invalid nick '{}'.".format(target))
         return
 
-    if not re.match("^[A-Za-z0-9_|.\-\]\[]*$", user_to.lower()):
-        notice("I can't send a message to that user!")
+    if not re.match("^[A-Za-z0-9_|.\-\]\[]*$", target.lower()):
+        notice("Invalid nick '{}'.".format(target))
         return
 
-    db_init(db, conn)
-
-    if db.execute("select count() from tell where user_to=?",
-                  (user_to,)).fetchone()[0] >= 10:
-        notice("That person has too many messages queued.")
+    if count_unread(db, conn.server, target) >= 10:
+        notice("Sorry, {} has too many messages queued already.".format(target))
         return
 
-    try:
-        db.execute("insert into tell(user_to, user_from, message, chan,"
-                   "time) values(?,?,?,?,?)", (user_to, user_from, message,
-                                               chan, time.time()))
-        db.commit()
-    except db.IntegrityError:
-        notice("Message has already been queued.")
-        return
+    add_tell(db, conn.server, sender, target, message)
 
     notice("Your message has been sent!")

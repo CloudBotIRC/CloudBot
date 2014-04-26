@@ -2,11 +2,10 @@ import re
 
 from util import hook
 
-CORRECTION_RE = r'^[sS]/([^/]*)/([^/]*)(/.*)?\s*$'
-S_RE = re.compile(r'^[sS]/[^/]*/[^/]*(/.*)?\s*$')
+correction_re = re.compile(r"^[sS]/([^/]*)/([^/]*)(/.*)?\s*$")
 
 
-@hook.regex(CORRECTION_RE)
+@hook.regex(correction_re)
 def correction(match, conn, chan, message):
     """
     :type match: re.__Match
@@ -22,7 +21,7 @@ def correction(match, conn, chan, message):
 
     for item in conn.history[chan].__reversed__():
         nick, timestamp, msg = item
-        if S_RE.match(msg):
+        if correction_re.match(msg):
             # don't correct corrections, it gets really confusing
             continue
         if find_nick:

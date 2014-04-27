@@ -153,7 +153,7 @@ class CloudBot:
                 # But we don't actually want to process that message, so if we're stopped, just exit.
                 return
 
-            if "reconnect" in message and message["reconnect"]:
+            if message.get("reconnect", False):
                 # The IRC engine will put {"reconnect": True, "conn": BotConnection} into the message queue when the
                 # connection times out, and it needs to be restarted. We'll do that.
                 connection = message["conn"]

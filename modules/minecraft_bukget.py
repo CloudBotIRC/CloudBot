@@ -12,10 +12,14 @@ search_url = base_url + "search/plugin_name/like/{}"
 random_url = base_url + "plugins/bukkit/?start={}&size=1"
 details_url = base_url + "plugins/bukkit/{}"
 
-categories = http.get_json("http://api.bukget.org/3/categories")
 
-count_total = sum([cat["count"] for cat in categories])
-count_categories = {cat["name"].lower(): int(cat["count"]) for cat in categories}  # dict comps!
+@hook.onload()
+def load_categories():
+    global categories, count_total, count_categories
+    categories = http.get_json("http://api.bukget.org/3/categories")
+
+    count_total = sum([cat["count"] for cat in categories])
+    count_categories = {cat["name"].lower(): int(cat["count"]) for cat in categories}  # dict comps!
 
 
 class BukgetError(Exception):

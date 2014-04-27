@@ -228,7 +228,7 @@ class BotConnection(object):
     :type nick: str
     :type vars: dict
     :type history: dict[str, list[tuple]]
-    :type parsed_queue: queue.Queue
+    :type message_queue: queue.Queue
     :type input_queue: queue.Queue
     :type output_queue: queue.Queue
     :type connection: IRCConnection

@@ -8,22 +8,27 @@ CloudBot is a Python IRC bot based on [Skybot](http://git.io/skybot) by [rmmh](h
 
 ### Download 
 
-Get CloudBot at [https://github.com/ClouDev/CloudBot/zipball/develop](https://github.com/ClouDev/CloudBot/zipball/develop "Get CloudBot from Github!").
+Get CloudBot at [https://github.com/ClouDev/CloudBot/zipball/refresh](https://github.com/ClouDev/CloudBot/zipball/refresh "Get CloudBot from Github!").
 
 Unzip the resulting file, and continue to read this document.
 
 ### Install
 
-Before you can run the bot, you need to install a few Python dependencies. LXML is required while Enchant, PyGeoIP, TweePy and PyDNS are needed for several plugins.
+Before you can run the bot, you need to install a few Python dependencies. lxml, watchdog, sqlalchemy and BeautifulSoup4
+are required by CloudBot. `pyenchant`, `pydns`, `pygeoip`, `tweepy`, `pycrypto` and `pbkdf2` are also required for various plugins.
 
+Make sure you're running python version **3.2** or higher.
 
 These can be installed with `pip` (The Python package manager) by running the following command in the bot directory:
 
     pip install -r requirements.txt
-    
+
 **Note:** If you use `pip`, you will also need the following packages on linux or `pip` will fail to install the requirements.
-   ```python, python-dev, libenchant-dev, libenchant1c2a, libxslt-dev, libxml2-dev.```
-   
+
+```
+python, python-dev, libenchant-dev, libenchant1c2a, libxslt-dev, libxml2-dev.
+```
+
 (this can be done using your package manager (eg: *apt-get* or *yum*)
 
 #### How to install `pip`
@@ -33,8 +38,11 @@ You can usually install pip on linux by installing the `python-pip` package usin
     curl -O http://python-distribute.org/distribute_setup.py # or download with your browser on windows
     python distribute_setup.py
     easy_install pip
-    
+
 If you need help installing pip on Windows, follow [this guide](http://simpledeveloper.com/how-to-install-easy_install/) and then run `easy_install pip` on the command line.
+
+
+Note for **Windows** users: Windows compatibility some modules is **broken** (such as ping), but we do intend to add it, eventually.
 
 ### Run
 
@@ -52,11 +60,12 @@ On Windows you can usually just double-click `cloudbot.py` to start the bot, as 
 
 To configure your CloudBot, visit the [Config Wiki Page](http://git.io/cloudbotircconfig).
 
-To write your own plugins, visit the [Module Wiki Page](http://git.io/cloudbotircplugins).
+To write your own modules, visit the [Module Wiki Page](https://github.com/ClouDev/CloudBot/wiki/Writing-Refresh-Modules).
 
 More at the [Wiki Main Page](http://git.io/cloudbotircwiki).
 
-(some of the information on the wiki is outdated and needs to be rewritten)
+Note that the configuration page, and the main wiki page, are still for CloudBot Develop. The Module Wiki Page has been
+rewriten for refresh, but the other pages are outdated.
 
 ### Support
 
@@ -66,13 +75,13 @@ If you think you have found a bug/have a idea/suggestion, please **open a issue*
 
 ### Requirements
 
-CloudBot runs on **Python** *2.7.x*. It is currently developed on **Windows** *8* with **Python** *2.7.5*.
+CloudBot runs on **Python** *3.2+*. It is currently developed on **Windows** *8* with **Python** *3.2.3*.
 
-It **requires the Python modules** lXML, watchdog and BeautifulSoup4.
-The module `Enchant` is needed for the spellcheck plugin.
-The module `PyDNS` is needed for SRV record lookup in the mcping plugin.
-The module `PyGeoIP` is needed for location lookup in the geoip plugin.
-The module `TweePy` is needed for the twitter plugin.
+It **requires the python modules** lxml, watchdog, sqlalchemy and BeautifulSoup4.
+
+Besides that, `pyenchant` is needed for spellcheck plugin, `pydns` is required for srv lookups in the minecraftping
+plugin, `pygeoip` is required for the geoip plugin, `tweepy` is required for the twitter plugin, and `pycrypto` and
+`pbkdf2` are required for the encrypt plugin.
 
 **Windows** users: Windows compatibility some plugins is **broken** (such as ping), but we do intend to add it. Eventually.
 
@@ -86,7 +95,7 @@ CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
 
     CloudBot
 
-    Copyright © 2011-2013 Luke Rogers
+    Copyright © 2011-2014 Luke Rogers
 
     CloudBot is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

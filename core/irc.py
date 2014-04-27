@@ -28,7 +28,18 @@ def censor(text):
 
 
 class ReceiveThread(threading.Thread):
-    """receives messages from IRC and puts them in the input_queue"""
+    """
+    Receives messages from IRC, parses them, and puts them into parsed_queue
+
+    :type input_buffer: bytes
+    :type socket: socket.socket
+    :type timeout: int
+    :type logger: logging.Logger
+    :type readable_name: str
+    :type output_queue: queue.Queue
+    :type parsed_queue: queue.Queue
+    :type shutdown: bool
+    """
 
     def __init__(self, ircconn):
         """
@@ -104,12 +115,14 @@ class ReceiveThread(threading.Thread):
 
 
 class SendThread(threading.Thread):
-    """sends messages from output_queue to IRC"""
+    """sends messages from output_queue to IRC
+    :type output_queue: queue.Queue
+    :type socket: socket.socket
+    :type shutdown: bool
+    """
 
-    def __init__(self, sock, conn_name, output_queue):
-        self.output_buffer = b""
+    def __init__(self, sock, output_queue):
         self.output_queue = output_queue
-        self.conn_name = conn_name
         self.socket = sock
 
         self.shutdown = False
@@ -118,10 +131,8 @@ class SendThread(threading.Thread):
     def run(self):
         while not self.shutdown:
             line = self.output_queue.get().splitlines()[0][:500]
-            self.output_buffer += line.encode('utf-8', 'replace') + b'\r\n'
-            while self.output_buffer:
-                sent = self.socket.send(self.output_buffer)
-                self.output_buffer = self.output_buffer[sent:]
+            encoded = line.encode('utf-8', 'replace') + b'\r\n'
+            self.socket.sendall(encoded)
 
 
 class IRCConnection(object):
@@ -159,7 +170,7 @@ class IRCConnection(object):
         self.socket = self.create_socket()
         # to be started in connect()
         self.receive_thread = ReceiveThread(self)
-        self.send_thread = SendThread(self.socket, self.conn_name, self.output_queue)
+        self.send_thread = SendThread(self.socket, self.output_queue)
 
     def create_socket(self):
         sock = socket.socket(socket.AF_INET, socket.TCP_NODELAY)

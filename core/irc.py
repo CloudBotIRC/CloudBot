@@ -37,7 +37,8 @@ class ReceiveThread(threading.Thread):
     :type logger: logging.Logger
     :type readable_name: str
     :type output_queue: queue.Queue
-    :type parsed_queue: queue.Queue
+    :type message_queue: queue.Queue
+    :type botconn: BotConnection
     :type shutdown: bool
     """
 
@@ -51,7 +52,8 @@ class ReceiveThread(threading.Thread):
         self.logger = ircconn.logger
         self.readable_name = ircconn.readable_name
         self.output_queue = ircconn.output_queue
-        self.parsed_queue = ircconn.parsed_queue
+        self.message_queue = ircconn.message_queue
+        self.botconn = ircconn.botconn
 
         self.shutdown = False
         threading.Thread.__init__(self)
@@ -61,7 +63,7 @@ class ReceiveThread(threading.Thread):
 
     def handle_receive_exception(self, error, last_timestamp):
         if time.time() - last_timestamp > self.timeout:
-            self.parsed_queue.put(StopIteration)
+            self.message_queue.put({"conn": self.botconn, "reconnect": True})
             self.socket.close()
             return True
         return False
@@ -76,7 +78,7 @@ class ReceiveThread(threading.Thread):
                     last_timestamp = time.time()
                 else:
                     if time.time() - last_timestamp > self.timeout:
-                        self.parsed_queue.put(StopIteration)
+                        self.message_queue.put({"conn": self.botconn, "reconnect": True})
                         self.socket.close()
                         return
                     time.sleep(1)
@@ -104,9 +106,10 @@ class ReceiveThread(threading.Thread):
                         paramlist[-1] = paramlist[-1][1:]
                     lastparam = paramlist[-1]
                 # put the parsed message in the response queue
-                self.parsed_queue.put({
-                    "raw": msg, "prefix": prefix, "command": command, "params": params, "nick": nick, "user": user,
-                    "host": host, "mask": mask, "paramlist": paramlist, "lastparam": lastparam
+                self.message_queue.put({
+                    "conn": self.botconn, "raw": msg, "prefix": prefix, "command": command, "params": params,
+                    "nick": nick, "user": user, "host": host, "mask": mask, "paramlist": paramlist,
+                    "lastparam": lastparam
                 })
                 # if the server pings us, pong them back
                 if command == "PING":
@@ -144,7 +147,8 @@ class IRCConnection(object):
     :type port: int
     :type ssl: bool
     :type output_queue: queue.Queue
-    :type parsed_queue: queue.Queue
+    :type message_queue: queue.Queue
+    :type botconn: BotConnection
     :type ignore_cert_errors: bool
     :type timeout: int
     :type socket: socket.socket
@@ -163,7 +167,8 @@ class IRCConnection(object):
         self.port = conn.port
         self.ssl = conn.ssl
         self.output_queue = conn.output_queue  # lines to be sent out
-        self.parsed_queue = conn.parsed_queue  # parsed lines that were recieved
+        self.message_queue = conn.message_queue  # global queue for parsed lines that were recieved
+        self.botconn = conn
 
         self.ignore_cert_errors = ignore_cert_errors
         self.timeout = timeout
@@ -268,9 +273,7 @@ class BotConnection(object):
         self.vars = {}
         self.history = {}
 
-        self.parsed_queue = queue.Queue()  # responses from the server are placed here
-        # format: [raw, prefix, command, params,
-        # nick, user, host, mask, paramlist, lastparam]
+        self.message_queue = bot.queued_messages  # global parsed message queue, for parsed recieved messages
 
         self.input_queue = queue.Queue()
         self.output_queue = queue.Queue()

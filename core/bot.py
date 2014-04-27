@@ -86,6 +86,13 @@ class CloudBot:
         self.running = True
         self.do_restart = False
 
+        # stores all queued messages from all connections
+        self.queued_messages = queue.Queue()
+        # format: [{
+        #   "conn": BotConnection, "raw": str, "prefix": str, "command": str, "params": str, "nick": str,
+        #   "user": str, "host": str, "mask": str, "paramlist": list[str], "lastparam": str
+        # }]
+
         # stores each bot server connection
         self.connections = []
 
@@ -126,29 +133,36 @@ class CloudBot:
 
         self.loader = PluginLoader(self)
 
+    def start(self):
+        """
+        Starts CloudBot.
+        This method first connects all of the IRC conections, then receives input from the IRC engine and processes it
+        """
         # start connections
-        self.connect()
+        for conn in self.connections:
+            conn.connect()
 
-    def start_bot(self):
-        """receives input from the IRC engine and processes it"""
         self.logger.info("Starting main thread.")
         while self.running:
-            for connection in self.connections:
-                try:
-                    incoming_parameters = connection.parsed_queue.get_nowait()
-                    if incoming_parameters == StopIteration:
-                        print("StopIteration")
-                        # IRC engine has signalled timeout, so reconnect (ugly)
-                        connection.connection.reconnect()
-                        # don't send main StopIteration, it can't handle it
-                        continue
-                    main.main(self, connection, incoming_parameters)
-                except queue.Empty:
-                    pass
+            # This method will block until a new message is recieved.
+            message = self.queued_messages.get()
 
-            # if no messages are in the incoming queue, sleep
-            while self.running and all(connection.parsed_queue.empty() for connection in self.connections):
-                time.sleep(.1)
+            if not self.running:
+                # When the bot is stopped, StopIteration is put into the queue to make sure that
+                # self.queued_messages.get() doesn't block this thread forever.
+                # But we don't actually want to process that message, so if we're stopped, just exit.
+                return
+
+            if "reconnect" in message and message["reconnect"]:
+                # The IRC engine will put {"reconnect": True, "conn": BotConnection} into the message queue when the
+                # connection times out, and it needs to be restarted. We'll do that.
+                connection = message["conn"]
+                self.logger.info("[{}] Reconnecting to IRC server".format(connection.readable_name))
+                connection.connection.reconnect()
+                # We've dealt with this message, no need to send it to main
+                continue
+
+            main.main(self, message)
 
     def create_connections(self):
         """ Create a BotConnection for all the networks defined in the config """
@@ -167,11 +181,6 @@ class CloudBot:
                                                       ssl=conf['connection'].get('ssl', False),
                                                       readable_name=readable_name))
             self.logger.debug("[{}] Created connection.".format(readable_name))
-
-    def connect(self):
-        """ Connects each BotConnection to it's irc server """
-        for conn in self.connections:
-            conn.connect()
 
     def stop(self, reason=None):
         """quits all networks and shuts the bot down"""
@@ -198,6 +207,10 @@ class CloudBot:
             self.logger.debug("Stopping logging engine")
             logging.shutdown()
         self.running = False
+        # We need to make sure that the main loop actually exists after this method is called. This will ensure that the
+        # blocking queued_messages.get() method is executed, then the method will stop without processing it because
+        # self.running = False
+        self.queued_messages.put(StopIteration)
 
     def restart(self, reason=None):
         """shuts the bot down and restarts it"""

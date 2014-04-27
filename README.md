@@ -80,7 +80,7 @@ CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
 
     CloudBot
 
-    Copyright © 2011-2013 Luke Rogers
+    Copyright © 2011-2014 Luke Rogers
 
     CloudBot is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

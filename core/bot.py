@@ -154,8 +154,8 @@ class CloudBot:
         """ Create a BotConnection for all the networks defined in the config """
         for conf in self.config['connections']:
             # strip all spaces and capitalization from the connection name
-            nice_name = conf['name']
-            name = clean_name(nice_name)
+            readable_name = conf['name']
+            name = clean_name(readable_name)
             nick = conf['nick']
             server = conf['connection']['server']
             port = conf['connection'].get('port', 6667)
@@ -165,8 +165,8 @@ class CloudBot:
             self.connections.append(irc.BotConnection(self, name, server, nick, config=conf,
                                                       port=port, logger=self.logger, channels=conf['channels'],
                                                       ssl=conf['connection'].get('ssl', False),
-                                                      nice_name=nice_name))
-            self.logger.debug("[{}] Created connection.".format(nice_name))
+                                                      readable_name=readable_name))
+            self.logger.debug("[{}] Created connection.".format(readable_name))
 
     def connect(self):
         """ Connects each BotConnection to it's irc server """

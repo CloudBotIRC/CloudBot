@@ -54,7 +54,7 @@ def gmtime(time_format):
 def beautify(input):
     log_format = formats.get(input.command, formats.get("default"))
     args = dict(input.__dict__)  # create a new dict
-    args["server"] = input.conn.nice_name  # use the connection name for server
+    args["server"] = input.conn.readable_name  # use the connection name for server
 
     leng = len(args["paraml"])
 

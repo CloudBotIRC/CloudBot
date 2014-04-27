@@ -1,9 +1,10 @@
+from _ssl import SSLError
 import re
 import socket
 import time
 import threading
 import queue
-from ssl import wrap_socket, CERT_NONE, CERT_REQUIRED, SSLError
+from ssl import wrap_socket, CERT_NONE, CERT_REQUIRED
 
 from core.permissions import PermissionManager
 
@@ -29,12 +30,17 @@ def censor(text):
 class ReceiveThread(threading.Thread):
     """receives messages from IRC and puts them in the input_queue"""
 
-    def __init__(self, logger, sock, input_queue, timeout):
-        self.logger = logger
+    def __init__(self, ircconn):
+        """
+        :type ircconn: IRCConnection
+        """
         self.input_buffer = b""
-        self.input_queue = input_queue
-        self.socket = sock
-        self.timeout = timeout
+        self.socket = ircconn.socket
+        self.timeout = ircconn.timeout
+        self.logger = ircconn.logger
+        self.readable_name = ircconn.readable_name
+        self.output_queue = ircconn.output_queue
+        self.parsed_queue = ircconn.parsed_queue
 
         self.shutdown = False
         threading.Thread.__init__(self)
@@ -44,13 +50,10 @@ class ReceiveThread(threading.Thread):
 
     def handle_receive_exception(self, error, last_timestamp):
         if time.time() - last_timestamp > self.timeout:
-            self.input_queue.put(StopIteration)
+            self.parsed_queue.put(StopIteration)
             self.socket.close()
             return True
         return False
-
-    def get_timeout_exception_type(self):
-        return socket.timeout
 
     def run(self):
         last_timestamp = time.time()
@@ -62,36 +65,42 @@ class ReceiveThread(threading.Thread):
                     last_timestamp = time.time()
                 else:
                     if time.time() - last_timestamp > self.timeout:
-                        self.input_queue.put(StopIteration)
+                        self.parsed_queue.put(StopIteration)
                         self.socket.close()
                         return
                     time.sleep(1)
-            except (self.get_timeout_exception_type(), socket.error) as e:
+            except (SSLError, socket.timeout, socket.error) as e:
                 if self.handle_receive_exception(e, last_timestamp):
                     return
                 continue
 
             while b'\r\n' in self.input_buffer:
                 line, self.input_buffer = self.input_buffer.split(b'\r\n', 1)
-                self.logger.debug("[Raw] {}".format(decode(line)))
-                self.input_queue.put(decode(line))
+                msg = decode(line)
+                self.logger.debug("[{}][Raw] {}".format(self.readable_name, msg))
 
-
-class SSLReceiveThread(ReceiveThread):
-    def __init__(self, logger, sock, input_queue, timeout):
-        ReceiveThread.__init__(self, logger, sock, input_queue, timeout)
-
-    def recv_from_socket(self, nbytes):
-        return self.socket.read(nbytes)
-
-    def get_timeout_exception_type(self):
-        return SSLError
-
-    def handle_receive_exception(self, error, last_timestamp):
-        # this is terrible
-        if not "timed out" in error.args[0]:
-            raise error
-        return ReceiveThread.handle_receive_exception(self, error, last_timestamp)
+                # parse the message
+                if msg.startswith(":"):  # has a prefix
+                    prefix, command, params = irc_prefix_rem(msg).groups()
+                else:
+                    prefix, command, params = irc_noprefix_rem(msg).groups()
+                nick, user, host = irc_netmask_rem(prefix).groups()
+                mask = nick + "!" + user + "@" + host
+                paramlist = irc_param_ref(params)
+                lastparam = ""
+                if paramlist:
+                    if paramlist[-1].startswith(':'):
+                        paramlist[-1] = paramlist[-1][1:]
+                    lastparam = paramlist[-1]
+                # put the parsed message in the response queue
+                self.parsed_queue.put({
+                    "raw": msg, "prefix": prefix, "command": command, "params": params, "nick": nick, "user": user,
+                    "host": host, "mask": mask, "paramlist": paramlist, "lastparam": lastparam
+                })
+                # if the server pings us, pong them back
+                if command == "PING":
+                    string = "PONG :" + paramlist[0]
+                    self.output_queue.put(string)
 
 
 class SendThread(threading.Thread):
@@ -115,78 +124,42 @@ class SendThread(threading.Thread):
                 self.output_buffer = self.output_buffer[sent:]
 
 
-class ParseThread(threading.Thread):
-    """parses messages from input_queue and puts them in parsed_queue"""
-
-    def __init__(self, input_queue, output_queue, parsed_queue):
-        self.input_queue = input_queue  # lines that were received
-        self.output_queue = output_queue  # lines to be sent out
-        self.parsed_queue = parsed_queue  # lines that have been parsed
-
-        threading.Thread.__init__(self)
-
-    def run(self):
-        while True:
-            # get a message from the input queue
-            msg = self.input_queue.get()
-
-            if msg == StopIteration:
-                # got a StopIteration from the receive thread, pass it on
-                # so the main thread can restart the connection
-                self.parsed_queue.put(StopIteration)
-                continue
-
-            # parse the message
-            if msg.startswith(":"):  # has a prefix
-                prefix, command, params = irc_prefix_rem(msg).groups()
-            else:
-                prefix, command, params = irc_noprefix_rem(msg).groups()
-            nick, user, host = irc_netmask_rem(prefix).groups()
-            mask = nick + "!" + user + "@" + host
-            paramlist = irc_param_ref(params)
-            lastparam = ""
-            if paramlist:
-                if paramlist[-1].startswith(':'):
-                    paramlist[-1] = paramlist[-1][1:]
-                lastparam = paramlist[-1]
-            # put the parsed message in the response queue
-            self.parsed_queue.put({
-                "raw": msg, "prefix": prefix, "command": command, "params": params, "nick": nick, "user": user,
-                "host": host, "mask": mask, "paramlist": paramlist, "lastparam": lastparam
-            })
-            # if the server pings us, pong them back
-            if command == "PING":
-                string = "PONG :" + paramlist[0]
-                self.output_queue.put(string)
-
-
 class IRCConnection(object):
     """handles an IRC connection
     :type logger: logging.Logger
-    :type output_queue: queue.Queue
-    :type input_queue; queue.Queue
-    :type socket: socket.socket
     :type conn_name: str
+    :type readable_name: str
     :type host: str
     :type port: int
     :type ssl: bool
+    :type output_queue: queue.Queue
+    :type parsed_queue: queue.Queue
     :type ignore_cert_errors: bool
+    :type timeout: int
+    :type socket: socket.socket
+    :type receive_thread: ReceiveThread
+    :type send_thread: SendThread
     """
 
-    def __init__(self, logger, name, host, port, input_queue, output_queue, ssl, ignore_cert_errors=True, timeout=300):
-        self.logger = logger
-        self.conn_name = name
-        self.host = host
-        self.port = port
-        self.output_queue = output_queue  # lines to be sent out
-        self.input_queue = input_queue  # lines that were received
-        self.ssl = ssl
+    def __init__(self, conn, ignore_cert_errors=True, timeout=300):
+        """
+        :type conn: BotConnection
+        """
+        self.logger = conn.logger
+        self.conn_name = conn.name
+        self.readable_name = conn.readable_name
+        self.host = conn.server
+        self.port = conn.port
+        self.ssl = conn.ssl
+        self.output_queue = conn.output_queue  # lines to be sent out
+        self.parsed_queue = conn.parsed_queue  # parsed lines that were recieved
+
         self.ignore_cert_errors = ignore_cert_errors
         self.timeout = timeout
         self.socket = self.create_socket()
-        # to be assigned in connect()
-        self.receive_thread = None
-        self.send_thread = None
+        # to be started in connect()
+        self.receive_thread = ReceiveThread(self)
+        self.send_thread = SendThread(self.socket, self.conn_name, self.output_queue)
 
     def create_socket(self):
         sock = socket.socket(socket.AF_INET, socket.TCP_NODELAY)
@@ -209,11 +182,10 @@ class IRCConnection(object):
                 self.logger.warning("Failed to connect to {}:{}".format(self.host, self.port))
             raise
 
-        self.receive_thread = ReceiveThread(self.logger, self.socket, self.input_queue, self.timeout)
-        self.receive_thread.start()
-
-        self.send_thread = SendThread(self.socket, self.conn_name, self.output_queue)
         self.send_thread.start()
+
+    def start_parsing(self):
+        self.receive_thread.start()
 
     def stop(self):
         self.send_thread.shutdown = True
@@ -244,13 +216,12 @@ class BotConnection(object):
     :type input_queue: queue.Queue
     :type output_queue: queue.Queue
     :type connection: IRCConnection
-    :type parse_thread: ParseThread
     :type permissions: PermissionManager
     :type connected: bool
     """
 
     def __init__(self, bot, name, server, nick, port=6667, ssl=False, logger=None, channels=None, config=None,
-                 nice_name=None):
+                 readable_name=None):
         """
         :type bot: core.bot.CloudBot
         :type name: str
@@ -264,10 +235,10 @@ class BotConnection(object):
         """
         self.bot = bot
         self.name = name
-        if nice_name:
-            self.nice_name = nice_name
+        if readable_name:
+            self.readable_name = readable_name
         else:
-            self.nice_name = name
+            self.readable_name = name
         if channels is None:
             self.channels = []
         else:
@@ -297,12 +268,7 @@ class BotConnection(object):
         self.permissions = PermissionManager(self)
 
         # create the IRC connection
-        self.connection = IRCConnection(self.bot.logger, self.name, self.server, self.port, self.input_queue,
-                                        self.output_queue, self.ssl)
-
-        # create the parse_thread, to be started in connect()
-        self.parse_thread = ParseThread(self.input_queue, self.output_queue, self.parsed_queue)
-        self.parse_thread.daemon = True
+        self.connection = IRCConnection(self)
 
         self.connected = False
 
@@ -319,7 +285,7 @@ class BotConnection(object):
                           self.config.get('realname', 'CloudBot - http://git.io/cloudbot')])
 
         # start the parse thread
-        self.parse_thread.start()
+        self.connection.start_parsing()
 
     def stop(self):
         self.connection.stop()
@@ -386,5 +352,5 @@ class BotConnection(object):
         """
         if not self.connected:
             raise ValueError("Connection must be connected to irc server to use send")
-        self.logger.info("[{}] >> {}".format(self.nice_name, string))
+        self.logger.info("[{}] >> {}".format(self.readable_name, string))
         self.output_queue.put(string)

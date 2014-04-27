@@ -99,12 +99,12 @@ def get_log_stream(data_dir, server, chan):
 
 
 @hook.event("*", singlethread=True)
-def log(input, bot):
+def log(bot, input):
     """
-    :type input: core.main.Input
     :type bot: core.bot.CloudBot
+    :type input: core.main.Input
     """
-    raw_log = get_log_stream(bot.data_dir, input.server, "raw")
+    raw_log = get_log_stream(bot.data_dir, input.conn.name, "raw")
     raw_log.write(input.raw + "\n")
 
     human_readable = beautify(input)
@@ -121,7 +121,7 @@ def log(input, bot):
         else:
             channel = None
         if channel:
-            channel_log = get_log_stream(bot.data_dir, input.server, channel)
+            channel_log = get_log_stream(bot.data_dir, input.conn.name, channel)
             channel_log.write(human_readable + '\n')
 
 # Log console separately to prevent lag

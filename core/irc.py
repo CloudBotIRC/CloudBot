@@ -56,7 +56,7 @@ class ReceiveThread(threading.Thread):
         self.botconn = ircconn.botconn
 
         self.shutdown = False
-        threading.Thread.__init__(self)
+        threading.Thread.__init__(self, name="Recieve thread for {}".format(ircconn.readable_name))
 
     def recv_from_socket(self, nbytes):
         return self.socket.recv(nbytes)
@@ -124,12 +124,11 @@ class SendThread(threading.Thread):
     :type shutdown: bool
     """
 
-    def __init__(self, sock, output_queue):
+    def __init__(self, sock, output_queue, name):
         self.output_queue = output_queue
         self.socket = sock
-
         self.shutdown = False
-        threading.Thread.__init__(self)
+        threading.Thread.__init__(self, name="Send thread for {}".format(name))
 
     def run(self):
         while not self.shutdown:
@@ -175,7 +174,7 @@ class IRCConnection(object):
         self.socket = self.create_socket()
         # to be started in connect()
         self.receive_thread = ReceiveThread(self)
-        self.send_thread = SendThread(self.socket, self.output_queue)
+        self.send_thread = SendThread(self.socket, self.output_queue, self.readable_name)
 
     def create_socket(self):
         sock = socket.socket(socket.AF_INET, socket.TCP_NODELAY)

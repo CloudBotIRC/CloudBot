@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.4
 import os
 import sys
 import time
@@ -6,9 +6,9 @@ import signal
 
 from core import bot
 
-if sys.version_info < (3, 2, 0):
+if sys.version_info < (3, 4, 0):
     # check python version
-    print("CloudBot3 requires Python 3.2 or newer.")
+    print("CloudBot3 requires Python 3.4 or newer.")
     sys.exit(1)
 
 # set up environment

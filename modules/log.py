@@ -128,4 +128,6 @@ def log(bot, input):
 @hook.event("*", run_sync=True)
 def console_log(input, bot):
     human_readable = beautify(input)
-    bot.logger.info(human_readable)
+    if human_readable:
+        # beautify will return an empty string if input.command is "PING"
+        bot.logger.info(human_readable)

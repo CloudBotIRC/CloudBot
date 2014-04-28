@@ -3,6 +3,7 @@ import re
 import _thread
 import queue
 from queue import Empty
+import threading
 
 _thread.stack_size(1024 * 512)  # reduce vm size
 
@@ -237,7 +238,7 @@ def do_sieve(sieve, bot, input, plugin):
         return None
 
 
-class Handler:
+class Handler(threading.Thread):
     """Runs modules in their own threads (ensures order)
     :type bot: core.bot.CloudBot
     :type plugin: Plugin
@@ -252,9 +253,10 @@ class Handler:
         self.bot = bot
         self.plugin = plugin
         self.input_queue = queue.Queue()
-        _thread.start_new_thread(self.start, ())
+        threading.Thread.__init__(self, name="Handler for {}".format(plugin.module.title))
+        self.start()
 
-    def start(self):
+    def run(self):
         while True:
             while self.bot.running:  # This loop will break when successful
                 try:
@@ -305,7 +307,11 @@ def dispatch(bot, input, plugin):
         else:
             bot.threads[plugin] = Handler(bot, plugin)
     else:
-        _thread.start_new_thread(run, (bot, plugin, input))
+        threading.Thread(
+            name="Plugin thread for {}".format(plugin.module.title),
+            target=run,
+            args=(bot, plugin, input)
+        )
 
 
 def main(bot, input_params):

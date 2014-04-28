@@ -1,13 +1,9 @@
 sqlalchemy
-pygeoip
-tweepy
-lxml
-pyenchant
-pydns>=2.3.6
 watchdog
-yql
-tweepy
+lxml
+beautifulsoup4
 pygeoip
-BeautifulSoup4
+pyenchant
+py3dns
 pycrypto
 pbkdf2

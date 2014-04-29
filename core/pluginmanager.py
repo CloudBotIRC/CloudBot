@@ -1,3 +1,5 @@
+import imp
+import importlib
 import os
 import re
 
@@ -83,14 +85,13 @@ class PluginManager:
         self.regex_plugins = []
         self.sieves = []
 
-    def load_module(self, path, code):
+    def load_module(self, path):
         """
         Loads a module from the given path and module object, then registers all plugins from that module.
 
         This function checks whether the module is disabled in "disabled_plugins".
 
         :type path: str
-        :type code: object
         """
         file_path = os.path.abspath(path)
         file_name = os.path.basename(path)
@@ -98,7 +99,22 @@ class PluginManager:
         if "disabled_plugins" in self.bot.config and title in self.bot.config['disabled_plugins']:
             self.bot.logger.info("Not loading module {}: module disabled".format(file_name))
             return
-        module = Module(file_path, file_name, title, code)
+
+        existed = self.unload_module(file_path)
+
+        module_name = "modules.{}".format(title)
+        try:
+            python_module = importlib.import_module(module_name)
+            if existed:
+                # if this plugin was loaded before, reload it
+                # this statement has to come after re-importing it, because we don't actually have a module object
+                # use imp.reload instead of importlib.reload, to remain compatible with python 3.2
+                imp.reload(python_module)
+        except Exception:
+            self.bot.logger.exception("Error loading {}:".format(file_name))
+            return
+
+        module = Module(file_path, file_name, title, python_module)
 
         self.register_plugins(module)
 
@@ -111,13 +127,19 @@ class PluginManager:
         :type path: str
         :rtype: bool
         """
-        filename = os.path.basename(path)
-        title = os.path.splitext(filename)[0]
+        file_name = os.path.basename(path)
+        title = os.path.splitext(file_name)[0]
         if "disabled_plugins" in self.bot.config and title in self.bot.config['disabled_plugins']:
             # this plugin hasn't been loaded, so no need to unload it
             return False
 
-        return self.unregister_plugins(filename, ignore_not_registered=True)
+        # stop all currently running instances of the modules from this file
+        for running_plugin, handler in list(self.bot.threads.items()):
+            if running_plugin.module.file_name == file_name:
+                handler.stop()
+                del self.bot.threads[running_plugin]
+
+        return self.unregister_plugins(file_name, ignore_not_registered=True)
 
     def register_plugins(self, module, check_if_exists=True):
         """

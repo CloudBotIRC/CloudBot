@@ -311,7 +311,7 @@ def dispatch(bot, input, plugin):
             name="Plugin thread for {}".format(plugin.module.title),
             target=run,
             args=(bot, plugin, input)
-        )
+        ).start()
 
 
 def main(bot, input_params):

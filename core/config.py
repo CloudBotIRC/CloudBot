@@ -15,6 +15,7 @@ class Config(dict):
     :type observer: Observer
     :type event_handler: ConfigEventHandler
     """
+
     def __init__(self, bot, *args, **kwargs):
         """
         :type bot: core.bot.CloudBot
@@ -83,6 +84,7 @@ class ConfigEventHandler(Trick):
     :type config: core.config.Config
     :type logger: logging.Logger
     """
+
     def __init__(self, bot, config, *args, **kwargs):
         """
         :type bot: core.bot.CloudBot

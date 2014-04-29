@@ -4,8 +4,8 @@ from fnmatch import fnmatch
 class PermissionManager(object):
     """
     :type logger: logging.Logger
-    :type bot: core.bot.CloudBot
     :type name: str
+    :type readable_name: str
     :type config: dict[str, ?]
     :type group_perms: dict[str, list[str]]
     :type group_users: dict[str, list[str]]

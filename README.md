@@ -2,13 +2,13 @@
 
 ## About
 
-CloudBot is a Python IRC bot based on [Skybot](http://git.io/skybot) by [rmmh](http://git.io/rmmh).
+CloudBot Refresh is an updated version of CloudBot, the python IRC bot origially based on [Skybot](http://git.io/skybot) by [rmmh](http://git.io/rmmh).
 
 ## Getting and using CloudBot
 
 ### Download 
 
-Get CloudBot at [https://github.com/ClouDev/CloudBot/zipball/refresh](https://github.com/ClouDev/CloudBot/zipball/refresh "Get CloudBot from Github!").
+Get CloudBot at [https://github.com/CloudBotIRC/CloudBot/zipball/refresh](https://github.com/CloudBotIRC/CloudBot/zipball/refresh "Get CloudBot from Github!").
 
 Unzip the resulting file, and continue to read this document.
 
@@ -60,7 +60,7 @@ On Windows you can usually just double-click `cloudbot.py` to start the bot, as 
 
 To configure your CloudBot, visit the [Config Wiki Page](http://git.io/cloudbotircconfig).
 
-To write your own modules, visit the [Module Wiki Page](https://github.com/ClouDev/CloudBot/wiki/Writing-Refresh-Modules).
+To write your own modules, visit the [Module Wiki Page](https://github.com/CloudBotIRC/CloudBot/wiki/Writing-Refresh-Modules).
 
 More at the [Wiki Main Page](http://git.io/cloudbotircwiki).
 

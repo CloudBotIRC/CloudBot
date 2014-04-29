@@ -2,11 +2,12 @@
 import string
 import re
 
-from util import hook, http, formatting, pyexec
+from sqlalchemy import Table, Column, String
+
+from util import hook, botvars, http, formatting, pyexec
 
 re_lineends = re.compile(r'[\r\n]*')
 
-db_ready = False
 
 # some simple "shortcodes" for formatting purposes
 shortcodes = {
@@ -18,18 +19,53 @@ shortcodes = {
     '[/i]': '\x16'
 }
 
+table = Table(
+    "mem",
+    botvars.metadata,
+    Column("word", String, primary_key=True),
+    Column("data", String),
+    Column("nick", String)
+)
+
 @hook.onload()
-def create_db(db):
-    db.execute("create table if not exists mem(word, data, nick, primary key(word))")
-    db.commit()
+def load_cache(db):
+    """
+    :type db: sqlalchemy.orm.Session
+    """
+    global factoid_cache
+    factoid_cache = {}
+    for row in db.execute(table.select()):
+        word = row["word"]
+        data = row["data"]
+        # nick = row["nick"]
+        factoid_cache[word] = data  # we might want (data, nick) sometime later
 
 
-def get_memory(db, word):
-    row = db.execute("select data from mem where word=lower(?)", [word]).fetchone()
-    if row:
-        return row[0]
+def add_factoid(db, word, data, nick):
+    """
+    :type db: sqlalchemy.orm.Session
+    :type word: str
+    :type data: str
+    :type nick: str
+    """
+    if word in factoid_cache:
+        # if we have a set value, update
+        db.execute(table.update().values(data=data, nick=nick).where(table.c.word == word))
     else:
-        return None
+        # otherwise, insert
+        db.execute(table.insert().values(word=word, data=data, nick=nick))
+    db.commit()
+    load_cache(db)
+
+
+def del_factoid(db, word):
+    """
+    :type db: sqlalchemy.orm.Session
+    :type word: str
+    """
+    db.execute(table.delete().where(table.c.word == word))
+    db.commit()
+    load_cache(db)
 
 
 @hook.command(["r", "remember"], permissions=["addfactoid"])
@@ -43,7 +79,7 @@ def remember(text, nick, db, notice):
     except ValueError:
         return remember.__doc__
 
-    old_data = get_memory(db, word)
+    old_data = factoid_cache.get(word)
 
     if data.startswith('+') and old_data:
         append = True
@@ -55,8 +91,7 @@ def remember(text, nick, db, notice):
         else:
             data = old_data + ' ' + new_data
 
-    db.execute("replace into mem(word, data, nick) values (lower(?),?,?)", (word, data, nick))
-    db.commit()
+    add_factoid(db, word, data, nick)
 
     if old_data:
         if append:
@@ -72,11 +107,10 @@ def remember(text, nick, db, notice):
 def forget(text, db, notice):
     """forget <word> -- Forgets a remembered <word>."""
 
-    data = get_memory(db, text)
+    data = factoid_cache.get(text)
 
     if data:
-        db.execute("delete from mem where word=lower(?)", [text])
-        db.commit()
+        del_factoid(db, text)
         notice('"%s" has been forgotten.' % data.replace('`', "'"))
         return
     else:
@@ -85,14 +119,13 @@ def forget(text, db, notice):
 
 
 @hook.command
-def info(text, notice, db):
+def info(text, notice):
     """info <factoid> -- Shows the source of a factoid."""
 
-    # attempt to get the factoid from the database
-    data = get_memory(db, text.strip())
+    text = text.strip()
 
-    if data:
-        notice(data)
+    if text in factoid_cache:
+        notice(factoid_cache[text])
     else:
         notice("Unknown Factoid.")
 
@@ -110,9 +143,8 @@ def factoid(inp, input, db, message, action):
     else:
         arguments = ""
 
-    data = get_memory(db, factoid_id)
-
-    if data:
+    if factoid_id in factoid_cache:
+        data = factoid_cache[factoid_id]
         # factoid preprocessors
         if data.startswith("<py>"):
             code = data[4:].strip()
@@ -140,14 +172,16 @@ def factoid(inp, input, db, message, action):
 
 
 @hook.command(autohelp=False, permissions=["listfactoids"])
-def listfactoids(db, reply):
-    reply_text = False
-    for word in db.execute("select word from mem").fetchall():
-        if not reply_text:
-            reply_text = word[0]
+def listfactoids(reply):
+    reply_text = []
+    reply_text_length = 0
+    for word in factoid_cache.keys():
+        added_length = len(word) + 2
+        if reply_text_length + added_length > 400:
+            reply(", ".join(reply_text))
+            reply_text = []
+            reply_text_length = 0
         else:
-            reply_text += ", {}".format(word[0])
-        if len(reply_text) > 400:
-            reply(reply_text.rsplit(', ', 1)[0])
-            reply_text = word[0]
-    return reply_text
+            reply_text.append(word)
+            reply_text_length += added_length
+    return ", ".join(reply_text)

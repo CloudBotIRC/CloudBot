@@ -85,11 +85,22 @@ class PluginManager:
         self.regex_plugins = []
         self.sieves = []
 
+    def load_all(self, path_list):
+        """
+        Load a module from each path in the given path list, and register plugins for each of those modules.
+
+        Won't load any modules listed in "disabled_plugins".
+
+        :type path_list: Iterable[str]
+        """
+        for path in path_list:
+            self.load_module(path)
+
     def load_module(self, path):
         """
         Loads a module from the given path and module object, then registers all plugins from that module.
 
-        This function checks whether the module is disabled in "disabled_plugins".
+        Won't load any modules listed in "disabled_plugins".
 
         :type path: str
         """

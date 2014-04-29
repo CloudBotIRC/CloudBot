@@ -28,20 +28,13 @@ class PluginLoader(object):
         """
         Loads all modules in the module directory.
         """
-        files = set(glob.glob(os.path.join(self.module_path, '*.py')))
-        self.bot.logger.info("Loading modules from {}".format(self.module_path))
-        for f in files:
-            self.load_file(f)
+        self.bot.plugin_manager.load_all(glob.iglob(os.path.join(self.module_path, '*.py')))
 
     def load_file(self, path):
         """
         Loads a module, given its file path.
         :type path: str
         """
-        if not path.endswith(".py"):
-            # ignore non-python plugin files
-            return
-
         self.bot.plugin_manager.load_module(path)
 
     def unload_file(self, path):
@@ -49,11 +42,6 @@ class PluginLoader(object):
         Unloads a module, given its file path.
         :type path: str
         """
-        if not path.endswith(".py"):
-            # ignore non-python plugin files
-            return
-
-        # unload the plugin
         self.bot.plugin_manager.unload_module(path)
 
 
@@ -75,5 +63,9 @@ class PluginEventHandler(Trick):
         self.loader.load_file(event.src_path.decode())
 
     def on_moved(self, event):
-        self.loader.unload_file(event.src_path.decode())
-        self.loader.load_file(event.dest_path.decode())
+        if event.src_path.endswith(b".py"):
+            # if it's moved from a non-.py file, don't unload it
+            self.loader.unload_file(event.src_path.decode())
+        if event.dest_path.endswith(b".py"):
+            # if it's moved to a non-.py file, don't load it
+            self.loader.load_file(event.dest_path.decode())

@@ -3,6 +3,7 @@ import re
 import _thread
 import queue
 from queue import Empty
+import threading
 
 _thread.stack_size(1024 * 512)  # reduce vm size
 
@@ -237,7 +238,7 @@ def do_sieve(sieve, bot, input, plugin):
         return None
 
 
-class Handler:
+class Handler(threading.Thread):
     """Runs modules in their own threads (ensures order)
     :type bot: core.bot.CloudBot
     :type plugin: Plugin
@@ -252,9 +253,10 @@ class Handler:
         self.bot = bot
         self.plugin = plugin
         self.input_queue = queue.Queue()
-        _thread.start_new_thread(self.start, ())
+        threading.Thread.__init__(self, name="Handler for {}".format(plugin.module.title))
+        self.start()
 
-    def start(self):
+    def run(self):
         while True:
             while self.bot.running:  # This loop will break when successful
                 try:
@@ -305,24 +307,27 @@ def dispatch(bot, input, plugin):
         else:
             bot.threads[plugin] = Handler(bot, plugin)
     else:
-        _thread.start_new_thread(run, (bot, plugin, input))
+        threading.Thread(
+            name="Plugin thread for {}".format(plugin.module.title),
+            target=run,
+            args=(bot, plugin, input)
+        )
 
 
-def main(bot, conn, input_params):
+def main(bot, input_params):
     """
     :type bot: core.bot.CloudBot
-    :type conn: core.irc.BotConnection
-    :type input_params: dict[str, unknown]
+    :type input_params: dict[str, core.irc.BotConnection | str | list[str]]
     """
-    inp = Input(bot=bot, conn=conn, **input_params)
-    command_prefix = conn.config.get('command_prefix', '.')
+    inp = Input(bot=bot, **input_params)
+    command_prefix = input_params["conn"].config.get('command_prefix', '.')
 
     # EVENTS
     if inp.command in bot.plugin_manager.events:
         for event_plugin in bot.plugin_manager.events[inp.command]:
-            dispatch(bot, Input(bot=bot, conn=conn, **input_params), event_plugin)
+            dispatch(bot, Input(bot=bot, **input_params), event_plugin)
     for event_plugin in bot.plugin_manager.catch_all_events:
-        dispatch(bot, Input(bot=bot, conn=conn, **input_params), event_plugin)
+        dispatch(bot, Input(bot=bot, **input_params), event_plugin)
 
     if inp.command == 'PRIVMSG':
         # COMMANDS
@@ -339,12 +344,12 @@ def main(bot, conn, input_params):
             command = match.group(1).lower()
             if command in bot.plugin_manager.commands:
                 plugin = bot.plugin_manager.commands[command]
-                input = Input(bot=bot, conn=conn, text=match.group(2).strip(), trigger=command, **input_params)
+                input = Input(bot=bot, text=match.group(2).strip(), trigger=command, **input_params)
                 dispatch(bot, input, plugin)
 
         # REGEXES
         for regex, plugin in bot.plugin_manager.regex_plugins:
             match = regex.search(inp.lastparam)
             if match:
-                input = Input(bot=bot, conn=conn, match=match, **input_params)
+                input = Input(bot=bot, match=match, **input_params)
                 dispatch(bot, input, plugin)

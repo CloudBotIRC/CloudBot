@@ -46,7 +46,7 @@ def main():
 
     while True:
         # start the bot master
-        cloudbot.start_bot()
+        cloudbot.start()
 
         if cloudbot.do_restart:
             # if cloudbot should restart, create a new bot object

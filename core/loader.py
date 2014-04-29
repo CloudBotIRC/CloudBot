@@ -1,7 +1,5 @@
-import importlib
 import os
 import glob
-import imp
 
 from watchdog.observers import Observer
 from watchdog.tricks import Trick
@@ -14,7 +12,6 @@ class PluginLoader(object):
         """
         self.observer = Observer()
         self.module_path = os.path.abspath("modules")
-        print(self.module_path)
         self.bot = bot
 
         self.event_handler = PluginEventHandler(self, patterns=["*.py"])
@@ -28,96 +25,47 @@ class PluginLoader(object):
         self.observer.stop()
 
     def load_all(self):
-        """runs load_file() on all python files in the modules folder"""
-        files = set(glob.glob(os.path.join(self.module_path, '*.py')))
-        for f in files:
-            self.load_file(f)
+        """
+        Loads all modules in the module directory.
+        """
+        self.bot.plugin_manager.load_all(glob.iglob(os.path.join(self.module_path, '*.py')))
 
     def load_file(self, path):
         """
         Loads a module, given its file path.
         :type path: str
         """
-        if isinstance(path, bytes):
-            path = path.decode()
-
-        file_path = os.path.abspath(path)
-        file_name = os.path.basename(path)
-        split_path = os.path.splitext(file_name)
-
-        if split_path[1] != ".py":
-            # ignore non-python plugin files
-            return
-        reload = self.unload_file(file_path)
-
-        module_name = "modules.{}".format(split_path[0])
-        if hasattr(importlib, "reload"):
-            # we're on python 3.4+ and should use importlib.reload()
-            reload_function = importlib.reload
-        else:
-            # we're on python 3.3- and should use imp.reload()
-            reload_function = imp.reload
-
-        if "disabled_plugins" in self.bot.config and split_path[0] in self.bot.config['disabled_plugins']:
-            # this would be done in pluginmanager, but we don't even want to load the python module
-            self.bot.logger.info("Not loading module {}: module disabled".format(file_name))
-            return
-
-        try:
-            module = importlib.import_module(module_name)
-            if reload:
-                # if this plugin was loaded before, reload it
-                # this statement has to come after re-importing it, because we don't actually have a module object
-                reload_function(module)
-        except Exception:
-            self.bot.logger.exception("Error loading {}:".format(file_name))
-            return
-
-        self.bot.plugin_manager.load_module(file_path, module)
+        self.bot.plugin_manager.load_module(path)
 
     def unload_file(self, path):
         """
         Unloads a module, given its file path.
-
-        Returns True if the module was unloaded, False if the module wasn't loaded in the first place.
         :type path: str
-        :rtype: bool
         """
-        if isinstance(path, bytes):
-            path = path.decode()
-
-        file_path = os.path.abspath(path)
-        file_name = os.path.basename(path)
-        title_and_extension = os.path.splitext(file_name)
-
-        if title_and_extension[1] != ".py":
-            # ignore non-python plugin files
-            return False
-
-        # stop all currently running instances of the modules from this file
-        for running_plugin, handler in list(self.bot.threads.items()):
-            if running_plugin.module.file_path == file_path:
-                handler.stop()
-                del self.bot.threads[running_plugin]
-
-        # unload the plugin
-        return self.bot.plugin_manager.unload_module(file_path)
+        self.bot.plugin_manager.unload_module(path)
 
 
 class PluginEventHandler(Trick):
     def __init__(self, loader, *args, **kwargs):
+        """
+        :type loader: PluginLoader
+        """
         self.loader = loader
         Trick.__init__(self, *args, **kwargs)
 
     def on_created(self, event):
-        self.loader.load_file(event.src_path)
+        self.loader.load_file(event.src_path.decode())
 
     def on_deleted(self, event):
-        self.loader.unload_file(event.src_path)
+        self.loader.unload_file(event.src_path.decode())
 
     def on_modified(self, event):
-        self.loader.load_file(event.src_path)
+        self.loader.load_file(event.src_path.decode())
 
     def on_moved(self, event):
-        self.loader.unload_file(event.src_path)
-        self.loader.load_file(event.dest_path)
+        if event.src_path.endswith(b".py"):
+            # if it's moved from a non-.py file, don't unload it
+            self.loader.unload_file(event.src_path.decode())
+        if event.dest_path.endswith(b".py"):
+            # if it's moved to a non-.py file, don't load it
+            self.loader.load_file(event.dest_path.decode())

@@ -171,10 +171,12 @@ class IRCConnection(object):
 
         self.ignore_cert_errors = ignore_cert_errors
         self.timeout = timeout
-        self.socket = self.create_socket()
         # to be started in connect()
+        self.socket = self.create_socket()
         self.receive_thread = ReceiveThread(self)
         self.send_thread = SendThread(self.socket, self.output_queue, self.readable_name)
+        # stopped
+        self._stopped = False
 
     def create_socket(self):
         sock = socket.socket(socket.AF_INET, socket.TCP_NODELAY)
@@ -188,6 +190,11 @@ class IRCConnection(object):
         return sock
 
     def connect(self):
+        # stuff for if the connection has been stopped, and needs to be restarted
+        if self._stopped:
+            self.socket = self.create_socket()
+            self.send_thread = SendThread(self.socket, self.output_queue, self.readable_name)
+            self.receive_thread = ReceiveThread(self)
         try:
             self.socket.connect((self.host, self.port))
         except socket.error:
@@ -207,10 +214,10 @@ class IRCConnection(object):
         self.receive_thread.shutdown = True
         time.sleep(0.1)
         self.socket.close()
+        self._stopped = True
 
     def reconnect(self):
         self.stop()
-        self.socket = self.create_socket()
         self.connect()
 
 

@@ -3,7 +3,7 @@ watchdog
 lxml
 beautifulsoup4
 pygeoip
-pyenchant
+git+https://github.com/rfk/pyenchant.git
 py3dns
 pycrypto
 pbkdf2

@@ -56,7 +56,7 @@ class ReceiveThread(threading.Thread):
         self.botconn = ircconn.botconn
 
         self.shutdown = False
-        threading.Thread.__init__(self, name="Recieve thread for {}".format(ircconn.readable_name))
+        threading.Thread.__init__(self, name="Receive thread for {}".format(ircconn.readable_name))
 
     def recv_from_socket(self, nbytes):
         return self.socket.recv(nbytes)
@@ -166,7 +166,7 @@ class IRCConnection(object):
         self.port = conn.port
         self.ssl = conn.ssl
         self.output_queue = conn.output_queue  # lines to be sent out
-        self.message_queue = conn.message_queue  # global queue for parsed lines that were recieved
+        self.message_queue = conn.message_queue  # global queue for parsed lines that were received
         self.botconn = conn
 
         self.ignore_cert_errors = ignore_cert_errors
@@ -279,7 +279,7 @@ class BotConnection(object):
         self.vars = {}
         self.history = {}
 
-        self.message_queue = bot.queued_messages  # global parsed message queue, for parsed recieved messages
+        self.message_queue = bot.queued_messages  # global parsed message queue, for parsed received messages
 
         self.input_queue = queue.Queue()
         self.output_queue = queue.Queue()

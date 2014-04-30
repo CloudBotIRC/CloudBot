@@ -144,7 +144,7 @@ class CloudBot:
 
         self.logger.info("Starting main thread.")
         while self.running:
-            # This method will block until a new message is recieved.
+            # This method will block until a new message is received.
             message = self.queued_messages.get()
 
             if not self.running:

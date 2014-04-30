@@ -7,3 +7,5 @@ pyenchant
 py3dns
 pycrypto
 pbkdf2
+tweepy
+yql

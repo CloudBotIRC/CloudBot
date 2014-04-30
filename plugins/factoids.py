@@ -171,8 +171,8 @@ def listfactoids(inp, db=None, reply=None):
         if not text:
             text = word[0]
         else:
-            text += ", {}".format(word[0])
+            text += u", {}".format(word[0])
         if len(text) > 400:
-            reply(text.rsplit(', ', 1)[0])
+            reply(text.rsplit(u', ', 1)[0])
             text = word[0]
     return text

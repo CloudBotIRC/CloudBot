@@ -89,7 +89,7 @@ class CloudBot:
         self.do_restart = False
 
         # stores all queued messages from all connections
-        self.queued_messages = asyncio.Queue()
+        self.queued_messages = asyncio.Queue(loop=self.loop)
         # format: [{
         #   "conn": BotConnection, "raw": str, "prefix": str, "command": str, "params": str, "nick": str,
         #   "user": str, "host": str, "mask": str, "paramlist": list[str], "lastparam": str
@@ -140,30 +140,18 @@ class CloudBot:
         Starts CloudBot.
         This method first connects all of the IRC conections, then receives input from the IRC engine and processes it.
         """
-        self.loop.run_until_complete(self._run())
+        self.loop.run_until_complete(self.main_loop())
         self.loop.close()
 
-    @asyncio.coroutine
-    def _run(self):
-        """
-        Starts CloudBot.
-        This method first connects all of the IRC conections, then receives input from the IRC engine and processes it
-        """
-        # start connections
-        yield from asyncio.gather(*[conn.connect() for conn in self.connections], loop=self.loop)
-
-        # Run all connections, and the main loop.
-        for conn in self.connections:
-            asyncio.async(conn.run(), loop=self.loop)
-        yield from self.main_loop()
 
     @asyncio.coroutine
     def main_loop(self):
+        yield from asyncio.gather(*[conn.connect() for conn in self.connections], loop=self.loop)
         self.logger.info("Starting main loop")
         while self.running:
             # This method will block until a new message is recieved.
             message = yield from self.queued_messages.get()
-
+            print("Got message!")
             if not self.running:
                 # When the bot is stopped, StopIteration is put into the queue to make sure that
                 # self.queued_messages.get() doesn't block this thread forever.
@@ -199,7 +187,7 @@ class CloudBot:
         self.loader.stop()
 
         for connection in self.connections:
-            self.logger.debug("({}) Closing connection.".format(connection.name))
+            self.logger.debug("[{}] Closing connection.".format(connection.readable_name))
 
             if reason:
                 connection.cmd("QUIT", [reason])
@@ -216,7 +204,7 @@ class CloudBot:
         # We need to make sure that the main loop actually exists after this method is called. This will ensure that the
         # blocking queued_messages.get() method is executed, then the method will stop without processing it because
         # self.running = False
-        self.queued_messages.put(StopIteration)
+        self.queued_messages.put_nowait(StopIteration)
 
     def restart(self, reason=None):
         """shuts the bot down and restarts it"""

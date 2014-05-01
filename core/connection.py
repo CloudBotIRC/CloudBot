@@ -1,9 +1,9 @@
+from _ssl import PROTOCOL_SSLv23
 import asyncio
 import re
 import socket
 import ssl
-import time
-from ssl import SSLError
+from ssl import SSLContext
 
 from core.permissions import PermissionManager
 
@@ -74,8 +74,8 @@ class BotConnection:
 
         self.message_queue = bot.queued_messages  # global parsed message queue, for parsed recieved messages
 
-        self.input_queue = asyncio.Queue()
-        self.output_queue = asyncio.Queue()
+        self.input_queue = asyncio.Queue(loop=self.loop)
+        self.output_queue = asyncio.Queue(loop=self.loop)
 
         # create permissions manager
         self.permissions = PermissionManager(self)
@@ -100,14 +100,6 @@ class BotConnection:
         self.set_nick(self.nick)
         self.cmd("USER", [self.config.get('user', 'cloudbot'), "3", "*",
                           self.config.get('realname', 'CloudBot - http://git.io/cloudbot')])
-
-    @asyncio.coroutine
-    def run(self):
-        """
-        Runs this connection's send and receive loops.
-        """
-        asyncio.async(self.connection.send_loop())
-        asyncio.async(self.connection.receive_loop())
 
     def stop(self):
         self.connection.stop()
@@ -175,7 +167,7 @@ class BotConnection:
         if not self.connected:
             raise ValueError("Connection must be connected to irc server to use send")
         self.logger.info("[{}] >> {}".format(self.readable_name, string))
-        self.output_queue.put(string)
+        self.loop.call_soon_threadsafe(asyncio.async, self.output_queue.put(string))
 
 
 class IRCConnection:
@@ -186,17 +178,15 @@ class IRCConnection:
     :type readable_name: str
     :type host: str
     :type port: int
-    :type ssl: bool
+    :type use_ssl: bool
     :type output_queue: asyncio.Queue
     :type message_queue: asyncio.Queue
     :type botconn: BotConnection
     :type ignore_cert_errors: bool
     :type timeout: int
     :type socket: socket.socket
-    :type _input_buffer: bytes
     :type _connected: bool
     :type _stopped: bool
-    :type _last_received: int
     """
 
     def __init__(self, conn, ignore_cert_errors=True, timeout=300):
@@ -207,37 +197,30 @@ class IRCConnection:
         self.readable_name = conn.readable_name
         self.host = conn.server
         self.port = conn.port
-        self.ssl = conn.ssl
+        self.use_ssl = conn.ssl
         self.output_queue = conn.output_queue  # lines to be sent out
         self.message_queue = conn.message_queue  # global queue for parsed lines that were recieved
         self.loop = conn.loop
         self.botconn = conn
 
-        self.ignore_cert_errors = ignore_cert_errors
-        self.timeout = timeout
-        # to be started in connect()
-        self.socket = None
-        # input buffer
-        self._input_buffer = b""
-        # Are we connected?
-        self._connected = False
-        # Have we been stopped?
-        self._stopped = False
-        # Last time data was received
-        self._last_received = 0
-
-    def create_socket(self):
-        sock = socket.socket(socket.AF_INET, socket.TCP_NODELAY)
-        if self.ssl:
-            if self.ignore_cert_errors:
-                cert_requirement = ssl.CERT_NONE
+        if self.use_ssl:
+            self.ssl_context = SSLContext(PROTOCOL_SSLv23)
+            if ignore_cert_errors:
+                self.ssl_context.verify_mode = ssl.CERT_NONE
             else:
-                cert_requirement = ssl.CERT_REQUIRED
-            sock = ssl.wrap_socket(sock, server_side=False, cert_reqs=cert_requirement)
-        return sock
+                self.ssl_context.verify_mode = ssl.CERT_REQUIRED
+        else:
+            self.ssl_context = None
+
+        self.timeout = timeout
+        # Stores if we're connected
+        self._connected = False
+        # transport and protocol
+        self._transport = None
+        self._protocol = None
 
     def describe_server(self):
-        if self.ssl:
+        if self.use_ssl:
             return "+{}:{}".format(self.host, self.port)
         else:
             return "{}:{}".format(self.host, self.port)
@@ -249,67 +232,68 @@ class IRCConnection:
         """
         if self._connected:
             self.logger.info("[{}] Reconnecting".format(self.readable_name))
-            self.socket.close()
         else:
             self._connected = True
             self.logger.info("[{}] Connecting".format(self.readable_name))
-        self.socket = self.create_socket()
-        # reset input buffer
-        self._input_buffer = b""
-        try:
-            addresses = yield from self.loop.getaddrinfo(self.host, self.port)
-            address = addresses[0][-1]  # Get the host/port pair
-            print("Connecting to {}".format(address))
-            yield from self.loop.sock_connect(self.socket, address)
-        except socket.error:
-            self.logger.warning("Failed to connect to {}".format(self.describe_server()))
-            raise
+
+        self._transport, self._protocol = yield from self.loop.create_connection(
+            lambda: IRCProtocol(self), host=self.host, port=self.port, ssl=self.ssl_context,
+        )
 
     def stop(self):
         if not self._connected:
             return
-        self.socket.close()
+        self._transport.close()
         self._connected = False
-        self._stopped = True
+
+
+class IRCProtocol(asyncio.Protocol):
+    def __init__(self, ircconn):
+        """
+        :type ircconn: IRCConnection
+        """
+        self.loop = ircconn.loop
+        self.logger = ircconn.logger
+        self.readable_name = ircconn.readable_name
+        self.describe_server = lambda: ircconn.describe_server()
+        self.botconn = ircconn.botconn
+        self.output_queue = ircconn.output_queue
+        self.message_queue = ircconn.message_queue
+        # input buffer
+        self._input_buffer = b""
+        # connected
+        self._connected = False
+
+        # transport
+        self.transport = None
+
+    def connection_made(self, transport):
+        print("Connection made!")
+        self.transport = transport
+        asyncio.async(self.send_loop(), loop=self.loop)
+
+    def connection_lost(self, exc):
+        print("Connection lost!")
+        if exc is None:
+            # we've been closed intentionaly, so don't reconnect
+            return
+        self.logger.exception("[{}] Connection lost.".format(self.readable_name))
+        self.botconn.connect()
+
+    def eof_received(self):
+        self.logger.info("[{}] EOF Received, reconnecting.".format(self.readable_name))
+        self.botconn.connect()
 
     @asyncio.coroutine
     def send_loop(self):
-        print("Staring send loop for {}".format(self.readable_name))
-        while not self._stopped:
+        print("Starting send loop for {}!".format(self.readable_name))
+        while self._connected:
             to_send = yield from self.output_queue.get()
             line = to_send.splitlines()[0][:500] + "\r\n"
             data = line.encode("utf-8", "replace")
-            yield from self.loop.sock_sendall(self.socket, data)
+            self.transport.write(data)
 
-    @asyncio.coroutine
-    def receive_loop(self):
-        print("Starting receive loop for {}".format(self.readable_name))
-        self._last_received = time.time()
-        while not self._stopped:
-            try:
-                data = yield from self.loop.sock_recv(self.socket, 4096)
-            except socket.timeout:
-                # Reconnect to the server
-                self.logger.exception("[{}] Got timeout receiving data from {}".format(
-                    self.readable_name, self.describe_server()))
-                yield from self.botconn.connect()
-                continue
-            except (SSLError, socket.error):
-                if self._stopped:
-                    return  # The error is most likely caused by stopping & closing the socket
-                self.logger.exception("[{}] Error receiving data from {}".format(
-                    self.readable_name, self.describe_server()))
-                continue
-
-            if not data:
-                # TODO: I think this only happens if the socket was closed. Shouldn't we automatically reconnect here?
-                if time.time() > self._last_received + self.timeout:
-                    # Reconnect to the server
-                    yield from self.botconn.connect()
-                    continue
-
-            self._last_received = time.time()
-
+    def data_received(self, data):
         while b"\r\n" in self._input_buffer:
             line, self._input_buffer = self._input_buffer.split(b"\r\n")
             line = line.decode()
@@ -374,8 +358,9 @@ class IRCConnection:
 
             # we should also remember to ping the server if they ping us
             if command == "PING":
-                self.output_queue.put("PONG :" + param_list[0])  # TODO: Are we assuming that the ':' as been stripped?
+                # TODO: Are we assuming that the ':' as been stripped?
+                yield from self.output_queue.put("PONG :" + param_list[0])
 
-            # Put the message into the queue to be handled
+                # Put the message into the queue to be handled
             # TODO: Do we want to directly call the handling method here?
-            self.message_queue.put(message)
+            yield from self.message_queue.put(message)

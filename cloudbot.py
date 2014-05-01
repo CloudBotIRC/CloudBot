@@ -54,7 +54,7 @@ def main():
             print("Restarting")
             time.sleep(2)  # sleep two seconds for timeouts to timeout
             if stopped_while_restarting:
-                print("Recieved stop signal, no longer restarting")
+                print("Received stop signal, no longer restarting")
                 return
             cloudbot = bot.CloudBot()
             continue

@@ -174,26 +174,24 @@ def prepare_parameters(bot, plugin, input):
     :rtype: list
     """
     parameters = []
-    specifications = inspect.getargspec(plugin.function)
-    required_args = specifications[0]
-    if required_args is None:
-        required_args = []
 
     # Does the command need DB access?
-    uses_db = "db" in required_args
+    uses_db = "db" in plugin.required_args
 
     if uses_db:
         # create SQLAlchemy session
         bot.logger.debug("Opened database session for: {}:{}".format(plugin.module.title, plugin.function_name))
         input.db = input.bot.db_session()
 
-    for required_arg in required_args:
+    for required_arg in plugin.required_args:
         if hasattr(input, required_arg):
             value = getattr(input, required_arg)
             parameters.append(value)
         else:
-            bot.logger.error("Plugin {}:{} asked for invalid argument '{}', cancelling execution!"
-                             .format(plugin.module.title, plugin.function_name, required_arg))
+            bot.logger.error(
+                "Plugin {}:{} asked for invalid argument '{}', cancelling execution!".format(
+                    plugin.module.title, plugin.function_name, required_arg
+                ))
             input.db.close()
             return None
 

@@ -1,5 +1,6 @@
 import asyncio
 import importlib
+import inspect
 import os
 import re
 
@@ -373,6 +374,10 @@ class Plugin:
         self.function = func_hook.function
         self.function_name = self.function.__name__
 
+        self.required_args = inspect.getargspec(self.function)[0]
+        if self.required_args is None:
+            self.required_args = []
+
         if func_hook.kwargs.get("run_sync", False) \
                 and not asyncio.iscoroutine(self.function):
             self.run_sync = True
@@ -488,7 +493,7 @@ class OnLoadPlugin(Plugin):
         :type module: Module
         :type on_load_hook: hook._OnLoadHook
         """
-        super().__init__( "onload", module, on_load_hook)
+        super().__init__("onload", module, on_load_hook)
 
     def __repr__(self):
         return "OnLoadPlugin[{}]".format(Plugin.__repr__(self))

@@ -1,16 +1,17 @@
+import asyncio
 import time
 import logging
 import re
 import os
 import sys
-import queue
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.schema import MetaData
 
+from core.connection import BotConnection
 from util import botvars
-from core import config, irc, main
+from core import config, main
 from core.loader import PluginLoader
 from core.pluginmanager import PluginManager
 
@@ -80,14 +81,15 @@ class CloudBot:
     :type loader: core.loader.PluginLoader
     """
 
-    def __init__(self):
+    def __init__(self, loop=asyncio.get_event_loop()):
         # basic variables
+        self.loop = loop
         self.start_time = time.time()
         self.running = True
         self.do_restart = False
 
         # stores all queued messages from all connections
-        self.queued_messages = queue.Queue()
+        self.queued_messages = asyncio.Queue()
         # format: [{
         #   "conn": BotConnection, "raw": str, "prefix": str, "command": str, "params": str, "nick": str,
         #   "user": str, "host": str, "mask": str, "paramlist": list[str], "lastparam": str
@@ -133,34 +135,40 @@ class CloudBot:
 
         self.loader = PluginLoader(self)
 
-    def start(self):
+    def run(self):
+        """
+        Starts CloudBot.
+        This method first connects all of the IRC conections, then receives input from the IRC engine and processes it.
+        """
+        self.loop.run_until_complete(self._run())
+        self.loop.close()
+
+    @asyncio.coroutine
+    def _run(self):
         """
         Starts CloudBot.
         This method first connects all of the IRC conections, then receives input from the IRC engine and processes it
         """
         # start connections
-        for conn in self.connections:
-            conn.connect()
+        yield from asyncio.gather(*[conn.connect() for conn in self.connections], loop=self.loop)
 
-        self.logger.info("Starting main thread.")
+        # Run all connections, and the main loop.
+        for conn in self.connections:
+            asyncio.async(conn.run(), loop=self.loop)
+        yield from self.main_loop()
+
+    @asyncio.coroutine
+    def main_loop(self):
+        self.logger.info("Starting main loop")
         while self.running:
             # This method will block until a new message is recieved.
-            message = self.queued_messages.get()
+            message = yield from self.queued_messages.get()
 
             if not self.running:
                 # When the bot is stopped, StopIteration is put into the queue to make sure that
                 # self.queued_messages.get() doesn't block this thread forever.
                 # But we don't actually want to process that message, so if we're stopped, just exit.
                 return
-
-            if message.get("reconnect", False):
-                # The IRC engine will put {"reconnect": True, "conn": BotConnection} into the message queue when the
-                # connection times out, and it needs to be restarted. We'll do that.
-                connection = message["conn"]
-                self.logger.info("[{}] Reconnecting to IRC server".format(connection.readable_name))
-                connection.connection.reconnect()
-                # We've dealt with this message, no need to send it to main
-                continue
 
             main.main(self, message)
 
@@ -174,23 +182,21 @@ class CloudBot:
             server = conf['connection']['server']
             port = conf['connection'].get('port', 6667)
 
-            self.logger.debug("Creating BotInstance for {}.".format(name))
-
-            self.connections.append(irc.BotConnection(self, name, server, nick, config=conf,
-                                                      port=port, logger=self.logger, channels=conf['channels'],
-                                                      ssl=conf['connection'].get('ssl', False),
-                                                      readable_name=readable_name))
+            self.connections.append(BotConnection(self, name, server, nick, config=conf,
+                                                  port=port, logger=self.logger, channels=conf['channels'],
+                                                  use_ssl=conf['connection'].get('ssl', False),
+                                                  readable_name=readable_name))
             self.logger.debug("[{}] Created connection.".format(readable_name))
 
     def stop(self, reason=None):
         """quits all networks and shuts the bot down"""
         self.logger.info("Stopping bot.")
 
-        self.config.stop()
         self.logger.debug("Stopping config reloader.")
+        self.config.stop()
 
-        self.loader.stop()
         self.logger.debug("Stopping plugin loader.")
+        self.loader.stop()
 
         for connection in self.connections:
             self.logger.debug("({}) Closing connection.".format(connection.name))

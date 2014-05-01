@@ -291,6 +291,8 @@ class IRCProtocol(asyncio.Protocol):
             self.transport.write(data)
 
     def data_received(self, data):
+        print("Received data {}".format(data.decode()))
+        self._input_buffer += data
         while b"\r\n" in self._input_buffer:
             line, self._input_buffer = self._input_buffer.split(b"\r\n")
             line = line.decode()

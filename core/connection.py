@@ -1,7 +1,6 @@
 from _ssl import PROTOCOL_SSLv23
 import asyncio
 import re
-import socket
 import ssl
 from ssl import SSLContext
 
@@ -184,9 +183,7 @@ class IRCConnection:
     :type botconn: BotConnection
     :type ignore_cert_errors: bool
     :type timeout: int
-    :type socket: socket.socket
     :type _connected: bool
-    :type _stopped: bool
     """
 
     def __init__(self, conn, ignore_cert_errors=True, timeout=300):

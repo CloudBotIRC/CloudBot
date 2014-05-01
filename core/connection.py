@@ -266,12 +266,12 @@ class IRCProtocol(asyncio.Protocol):
         self.transport = None
 
     def connection_made(self, transport):
-        print("Connection made with {}!".format(self.describe_server()))
         self.transport = transport
+        self._connected = True
         asyncio.async(self.send_loop(), loop=self.loop)
 
     def connection_lost(self, exc):
-        print("Connection lost from {}!".format(self.describe_server()))
+        self._connected = False
         if exc is None:
             # we've been closed intentionaly, so don't reconnect
             return
@@ -279,24 +279,23 @@ class IRCProtocol(asyncio.Protocol):
         asyncio.async(self.botconn.connect(), loop=self.loop)
 
     def eof_received(self):
+        self._connected = False
         self.logger.info("[{}] EOF Received, reconnecting.".format(self.readable_name))
         asyncio.async(self.botconn.connect(), loop=self.loop)
+        return True
 
     @asyncio.coroutine
     def send_loop(self):
-        print("Starting send loop for {}!".format(self.readable_name))
         while self._connected:
             to_send = yield from self.output_queue.get()
             line = to_send.splitlines()[0][:500] + "\r\n"
             data = line.encode("utf-8", "replace")
-            print("Sending {} to {}!".format(data.decode(), self.describe_server()))
             self.transport.write(data)
 
     def data_received(self, data):
-        print("Received {} from {}!".format(data.decode(), self.describe_server()))
         self._input_buffer += data
         while b"\r\n" in self._input_buffer:
-            line, self._input_buffer = self._input_buffer.split(b"\r\n")
+            line, self._input_buffer = self._input_buffer.split(b"\r\n", 1)
             line = line.decode()
 
             # parse the line into a message
@@ -360,8 +359,8 @@ class IRCProtocol(asyncio.Protocol):
             # we should also remember to ping the server if they ping us
             if command == "PING":
                 # TODO: Are we assuming that the ':' as been stripped?
-                yield from self.output_queue.put("PONG :" + param_list[0])
+                self.output_queue.put_nowait("PONG :" + param_list[0])
 
                 # Put the message into the queue to be handled
             # TODO: Do we want to directly call the handling method here?
-            yield from self.message_queue.put(message)
+            self.message_queue.put_nowait(message)

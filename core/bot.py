@@ -151,7 +151,6 @@ class CloudBot:
         while self.running:
             # This method will block until a new message is recieved.
             message = yield from self.queued_messages.get()
-            print("Got message!")
             if not self.running:
                 # When the bot is stopped, StopIteration is put into the queue to make sure that
                 # self.queued_messages.get() doesn't block this thread forever.

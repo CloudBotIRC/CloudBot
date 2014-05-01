@@ -71,7 +71,7 @@ class BotConnection:
         self.vars = {}
         self.history = {}
 
-        self.message_queue = bot.queued_messages  # global parsed message queue, for parsed recieved messages
+        self.message_queue = bot.queued_messages  # global parsed message queue, for parsed received messages
 
         self.input_queue = asyncio.Queue(loop=self.loop)
         self.output_queue = asyncio.Queue(loop=self.loop)
@@ -196,7 +196,7 @@ class IRCConnection:
         self.port = conn.port
         self.use_ssl = conn.ssl
         self.output_queue = conn.output_queue  # lines to be sent out
-        self.message_queue = conn.message_queue  # global queue for parsed lines that were recieved
+        self.message_queue = conn.message_queue  # global queue for parsed lines that were received
         self.loop = conn.loop
         self.botconn = conn
 
@@ -273,7 +273,7 @@ class IRCProtocol(asyncio.Protocol):
     def connection_lost(self, exc):
         self._connected = False
         if exc is None:
-            # we've been closed intentionaly, so don't reconnect
+            # we've been closed intentionally, so don't reconnect
             return
         self.logger.exception("[{}] Connection lost.".format(self.readable_name))
         asyncio.async(self.botconn.connect(), loop=self.loop)

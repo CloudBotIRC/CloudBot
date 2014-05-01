@@ -34,7 +34,6 @@ def find_hooks(parent, code):
 
 def find_tables(code):
     """
-    :type parent: Module
     :type code: object
     :rtype: list[sqlalchemy.Table]
     """

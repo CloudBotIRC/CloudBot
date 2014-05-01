@@ -100,7 +100,7 @@ class CloudBot:
 
         # set up logging
         self.logger = get_logger()
-        self.logger.debug("Logging system initalised.")
+        self.logger.debug("Logging system initialised.")
 
         # declare and create data folder
         self.data_dir = os.path.abspath('data')
@@ -110,7 +110,7 @@ class CloudBot:
 
         # set up config
         self.config = config.Config(self)
-        self.logger.debug("Config system initalised.")
+        self.logger.debug("Config system initialised.")
 
         # setup db
         db_path = self.config.get('database', 'sqlite:///cloudbot.db')
@@ -120,7 +120,7 @@ class CloudBot:
         self.db_metadata = MetaData()
         # set botvars.metadata so plugins can access when loading
         botvars.metadata = self.db_metadata
-        self.logger.debug("Database system initalised.")
+        self.logger.debug("Database system initialised.")
 
         # Bot initialisation complete
         self.logger.debug("Bot setup completed.")
@@ -138,18 +138,17 @@ class CloudBot:
     def run(self):
         """
         Starts CloudBot.
-        This method first connects all of the IRC conections, then receives input from the IRC engine and processes it.
+        This method first connects all of the IRC connections, then receives input from the IRC engine and processes it.
         """
         self.loop.run_until_complete(self.main_loop())
         self.loop.close()
-
 
     @asyncio.coroutine
     def main_loop(self):
         yield from asyncio.gather(*[conn.connect() for conn in self.connections], loop=self.loop)
         self.logger.info("Starting main loop")
         while self.running:
-            # This method will block until a new message is recieved.
+            # This method will block until a new message is received.
             message = yield from self.queued_messages.get()
             if not self.running:
                 # When the bot is stopped, StopIteration is put into the queue to make sure that

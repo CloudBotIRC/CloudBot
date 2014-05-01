@@ -191,7 +191,7 @@ def run(bot, plugin, input):
         input.db = input.bot.db_session()
 
     try:
-        # suround all of this in a try statement, to make sure that the database session is closed
+        # surround all of this in a try statement, to make sure that the database session is closed
 
         # all the dynamic arguments
         for required_arg in required_args:

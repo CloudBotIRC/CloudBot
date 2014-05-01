@@ -10,14 +10,14 @@ class _Hook():
     """
     :type function: function
     :type type: str
-    :type kwargs: dict[str, V]
+    :type kwargs: dict[str, unknown]
     """
 
     def __init__(self, function, hook_type, kwargs):
         """
         :type function: function
         :type hook_type: str
-        :type kwargs: dict[str, V]
+        :type kwargs: dict[str, unknown]
         """
         self.function = function
         self.type = hook_type

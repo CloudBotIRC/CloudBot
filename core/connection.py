@@ -229,6 +229,7 @@ class IRCConnection:
         """
         if self._connected:
             self.logger.info("[{}] Reconnecting".format(self.readable_name))
+            self._transport.close()
         else:
             self._connected = True
             self.logger.info("[{}] Connecting".format(self.readable_name))
@@ -265,21 +266,21 @@ class IRCProtocol(asyncio.Protocol):
         self.transport = None
 
     def connection_made(self, transport):
-        print("Connection made!")
+        print("Connection made with {}!".format(self.describe_server()))
         self.transport = transport
         asyncio.async(self.send_loop(), loop=self.loop)
 
     def connection_lost(self, exc):
-        print("Connection lost!")
+        print("Connection lost from {}!".format(self.describe_server()))
         if exc is None:
             # we've been closed intentionaly, so don't reconnect
             return
         self.logger.exception("[{}] Connection lost.".format(self.readable_name))
-        self.botconn.connect()
+        asyncio.async(self.botconn.connect(), loop=self.loop)
 
     def eof_received(self):
         self.logger.info("[{}] EOF Received, reconnecting.".format(self.readable_name))
-        self.botconn.connect()
+        asyncio.async(self.botconn.connect(), loop=self.loop)
 
     @asyncio.coroutine
     def send_loop(self):
@@ -288,10 +289,11 @@ class IRCProtocol(asyncio.Protocol):
             to_send = yield from self.output_queue.get()
             line = to_send.splitlines()[0][:500] + "\r\n"
             data = line.encode("utf-8", "replace")
+            print("Sending {} to {}!".format(data.decode(), self.describe_server()))
             self.transport.write(data)
 
     def data_received(self, data):
-        print("Received data {}".format(data.decode()))
+        print("Received {} from {}!".format(data.decode(), self.describe_server()))
         self._input_buffer += data
         while b"\r\n" in self._input_buffer:
             line, self._input_buffer = self._input_buffer.split(b"\r\n")

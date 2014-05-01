@@ -1,4 +1,3 @@
-import imp
 import importlib
 import os
 import re
@@ -120,7 +119,7 @@ class PluginManager:
                 # if this plugin was loaded before, reload it
                 # this statement has to come after re-importing it, because we don't actually have a module object
                 # use imp.reload instead of importlib.reload, to remain compatible with python 3.2
-                imp.reload(python_module)
+                importlib.reload(python_module)
         except Exception:
             self.bot.logger.exception("Error loading {}:".format(file_name))
             return
@@ -346,7 +345,7 @@ class Module:
 
 class Plugin:
     """
-    Each plugin is specific to one function. This class is never used by iself, it's always extended by CommandPlugin,
+    Each plugin is specific to one function. This class is never used by itself, it's always extended by CommandPlugin,
     EventPlugin, RegexPlugin, or SievePlugin
     :type type; str
     :type module: Module

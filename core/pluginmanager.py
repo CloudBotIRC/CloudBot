@@ -5,6 +5,7 @@ import re
 import sqlalchemy
 
 from core import main
+
 from util import hook, botvars
 
 
@@ -14,6 +15,8 @@ def find_hooks(parent, code):
     :type code: object
     :rtype: (list[CommandPlugin], list[RegexPlugin], list[EventPlugin], list[SievePlugin], list[OnLoadPlugin])
     """
+    # set the loaded hook on code, so we'll know we need to reload it to get hooks
+    code._cloudbot_loaded = True
     commands = []
     regexes = []
     events = []
@@ -25,9 +28,10 @@ def find_hooks(parent, code):
             # if it has cloudbot hook
             func_hooks = func._cloudbot_hook
             for hook_type, func_hook in func_hooks.items():
-                assert func_hook.function == func  # make sure this is the right function
-
                 type_lists[hook_type].append(_hook_name_to_plugin[hook_type](parent, func_hook))
+
+            # delete the hook to free memory
+            del func._cloudbot_hook
 
     return commands, regexes, events, sieves, run_on_load
 
@@ -114,10 +118,13 @@ class PluginManager:
         module_name = "modules.{}".format(title)
         try:
             python_module = importlib.import_module(module_name)
-            if existed:
+            if existed or hasattr(python_module, "_cloudbot_loaded"):
                 # if this plugin was loaded before, reload it
                 # this statement has to come after re-importing it, because we don't actually have a module object
-                # use imp.reload instead of importlib.reload, to remain compatible with python 3.2
+
+                # Note that we also have to check for "_cloudbot_loaded", so we know we have to reload, even if this
+                # instance of PluginManager doesn't know about it. If the bot has been restarted, we'll need to
+                # reload the module in order to find the hooks. (This is because we delete hooks after loading them)
                 importlib.reload(python_module)
         except Exception:
             self.bot.logger.exception("Error loading {}:".format(file_name))

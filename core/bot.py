@@ -4,6 +4,7 @@ import logging
 import re
 import os
 import sys
+import gc
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -134,6 +135,9 @@ class CloudBot:
         self.plugin_manager = PluginManager(self)
 
         self.loader = PluginLoader(self)
+
+        # run a manual garbage collection cycle, to clean up any unused objects created during initialization
+        gc.collect()
 
     def run(self):
         """

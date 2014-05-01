@@ -1,3 +1,4 @@
+import asyncio
 import importlib
 import os
 import re
@@ -5,7 +6,6 @@ import re
 import sqlalchemy
 
 from core import main
-
 from util import hook, botvars
 
 
@@ -176,6 +176,9 @@ class PluginManager:
             if not success:
                 self.bot.logger.warning("Not registering module {}: module onload hook errored".format(module.title))
                 return
+
+        # we don't need this anymore
+        del module.run_on_load
 
         self.modules[module.file_name] = module
 
@@ -357,7 +360,6 @@ class Plugin:
     :type module: Module
     :type function: function
     :type function_name: str
-    :type args: dict[str, unknown]
     """
 
     def __init__(self, plugin_type, module, func_hook):
@@ -370,10 +372,21 @@ class Plugin:
         self.module = module
         self.function = func_hook.function
         self.function_name = self.function.__name__
-        self.args = func_hook.kwargs
+
+        if func_hook.kwargs.get("run_sync", False) \
+                and not asyncio.iscoroutine(self.function):
+            self.run_sync = True
+            self.function = asyncio.coroutine(self.function)
+        else:
+            self.run_sync = False
+        self.ignore_bots = func_hook.kwargs.get("ignorebots", False)
+        self.permissions = func_hook.kwargs.get("permissions", [])
+        self.single_thread = func_hook.kwargs.get("singlethread", False)
 
     def __repr__(self):
-        return "type: {}, module: {}, args: {}".format(self.type, self.module.file_name, self.args)
+        return "type: {}, module: {}, ignore_bots: {}, permissions: {}, single_thread: {}, run_sync: {}".format(
+            self.type, self.module.title, self.ignore_bots, self.permissions, self.single_thread, self.run_sync
+        )
 
 
 class CommandPlugin(Plugin):
@@ -388,13 +401,10 @@ class CommandPlugin(Plugin):
         :type module: Module
         :type cmd_hook: hook._CommandHook
         """
-        Plugin.__init__(self, "command", module, cmd_hook)
+        super().__init__("command", module, cmd_hook)
 
         # make sure that autohelp and permissions are set
-        if not "autohelp" in self.args:
-            self.args["autohelp"] = True
-        if not "permissions" in self.args:
-            self.args["permissions"] = []
+        self.auto_help = cmd_hook.kwargs.get("autohelp", True)
 
         self.name = cmd_hook.main_alias
         self.aliases = list(cmd_hook.aliases)  # turn the set into a list
@@ -419,7 +429,8 @@ class RegexPlugin(Plugin):
         :type module: Module
         :type regex_hook: hook._RegexHook
         """
-        Plugin.__init__(self, "regex", module, regex_hook)
+        super().__init__("regex", module, regex_hook)
+
         self.regexes = regex_hook.regexes
 
     def __repr__(self):
@@ -439,10 +450,7 @@ class EventPlugin(Plugin):
         :type module: Module
         :type event_hook: hook._EventHook
         """
-        Plugin.__init__(self, "event", module, event_hook)
-
-        if not "run_sync" in self.args:
-            self.args["run_sync"] = False
+        super().__init__("event", module, event_hook)
 
         self.events = event_hook.events
 
@@ -462,7 +470,10 @@ class SievePlugin(Plugin):
         :type module: Module
         :type sieve_hook: hook._SieveHook
         """
-        Plugin.__init__(self, "sieve", module, sieve_hook)
+        super().__init__("sieve", module, sieve_hook)
+
+        if not asyncio.iscoroutine(self.function):
+            self.function = asyncio.coroutine(self.function)
 
     def __repr__(self):
         return "SievePlugin[{}]".format(Plugin.__repr__(self))
@@ -477,7 +488,7 @@ class OnLoadPlugin(Plugin):
         :type module: Module
         :type on_load_hook: hook._OnLoadHook
         """
-        Plugin.__init__(self, "onload", module, on_load_hook)
+        super().__init__( "onload", module, on_load_hook)
 
     def __repr__(self):
         return "OnLoadPlugin[{}]".format(Plugin.__repr__(self))

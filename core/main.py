@@ -1,3 +1,4 @@
+import asyncio
 import inspect
 import re
 import _thread
@@ -163,19 +164,15 @@ class Input:
         return self.conn.permissions.has_perm_mask(self.mask, permission, notice=notice)
 
 
-def run(bot, plugin, input):
+def prepare_parameters(bot, plugin, input):
     """
-    Runs the specific plugin with the given bot and input.
-
-    Returns False if the plugin errored, True otherwise.
+    Prepares arguments for the given plugin
 
     :type bot: core.bot.CloudBot
     :type plugin: Plugin
     :type input: Input
-    :rtype: bool
+    :rtype: list
     """
-    bot.logger.debug("Input: {}".format(input.__dict__))
-
     parameters = []
     specifications = inspect.getargspec(plugin.function)
     required_args = specifications[0]
@@ -187,41 +184,86 @@ def run(bot, plugin, input):
 
     if uses_db:
         # create SQLAlchemy session
-        bot.logger.debug("Opened database session for: {}".format(plugin.module.title))
+        bot.logger.debug("Opened database session for: {}:{}".format(plugin.module.title, plugin.function_name))
         input.db = input.bot.db_session()
 
+    for required_arg in required_args:
+        if hasattr(input, required_arg):
+            value = getattr(input, required_arg)
+            parameters.append(value)
+        else:
+            bot.logger.error("Plugin {}:{} asked for invalid argument '{}', cancelling execution!"
+                             .format(plugin.module.title, plugin.function_name, required_arg))
+            input.db.close()
+            return None
+
+    return parameters
+
+
+def run(bot, plugin, input):
+    """
+    Runs the specific plugin with the given bot and input.
+
+    Returns False if the plugin errored, True otherwise.
+
+    :type bot: core.bot.CloudBot
+    :type plugin: Plugin
+    :type input: Input
+    :rtype: bool
+    """
+    parameters = prepare_parameters(bot, plugin, input)
+    if parameters is None:
+        return False
     try:
-        # surround all of this in a try statement, to make sure that the database session is closed
-
-        # all the dynamic arguments
-        for required_arg in required_args:
-            if hasattr(input, required_arg):
-                value = getattr(input, required_arg)
-                parameters.append(value)
-            else:
-                bot.logger.error("Plugin {}:{} asked for invalid argument '{}', cancelling execution!"
-                                 .format(plugin.module.title, plugin.function_name, required_arg))
-                return False
-
-        try:
-            out = plugin.function(*parameters)
-        except Exception:
-            bot.logger.exception("Error in plugin {}:".format(plugin.module.title))
-            bot.logger.info("Parameters used: {}".format(parameters))
-            return False
-
+        out = plugin.function(*parameters)
+    except Exception:
+        bot.logger.exception("Error in plugin {}:{}:".format(plugin.module.title, plugin.function_name))
+        bot.logger.info("Parameters used: {}".format(parameters))
+        return False
+    else:
         if out is not None:
             input.reply(str(out))
-
         return True
-
     finally:
         # ensure that the database session is closed
-        if uses_db:
-            bot.logger.debug("Closed database session for: {}".format(plugin.module.title))
+        if hasattr(input, "db"):
+            bot.logger.debug("Closed database session for: {}:{}".format(plugin.module.title, plugin.function_name))
             input.db.close()
 
 
+@asyncio.coroutine
+def run_sync(bot, plugin, input):
+    """
+    Runs the specific plugin with the given bot and input.
+
+    Returns False if the plugin errored, True otherwise.
+
+    :type bot: core.bot.CloudBot
+    :type plugin: Plugin
+    :type input: Input
+    :rtype: bool
+    """
+    parameters = prepare_parameters(bot, plugin, input)
+    if parameters is None:
+        return False
+    try:
+        out = yield from plugin.function(*parameters)
+    except Exception:
+        bot.logger.exception("Error in plugin {}:{}:".format(plugin.module.title, plugin.function_name))
+        bot.logger.info("Parameters used: {}".format(parameters))
+        return False
+    else:
+        if out is not None:
+            input.reply(str(out))
+        return True
+    finally:
+        # ensure that the database session is closed
+        if hasattr(input, "db"):
+            bot.logger.debug("Closed database session for: {}:{}".format(plugin.module.title, plugin.function_name))
+            input.db.close()
+
+
+@asyncio.coroutine
 def do_sieve(sieve, bot, input, plugin):
     """
     :type sieve: Plugin
@@ -231,11 +273,14 @@ def do_sieve(sieve, bot, input, plugin):
     :rtype: Input
     """
     try:
-        return sieve.function(bot, input, plugin)
+        result = yield from sieve.function(bot, input, plugin)
     except Exception:
-        bot.logger.exception("Error running sieve {}:{} on {}:{}:".format(sieve.module.title, sieve.function_name,
-                                                                          plugin.module.title, plugin.function_name))
+        bot.logger.exception("Error running sieve {}:{} on {}:{}:".format(
+            sieve.module.title, sieve.function_name, plugin.module.title, plugin.function_name
+        ))
         return None
+    else:
+        return result
 
 
 class Handler(threading.Thread):
@@ -280,6 +325,7 @@ class Handler(threading.Thread):
         self.input_queue.put(value)
 
 
+@asyncio.coroutine
 def dispatch(bot, input, plugin):
     """
     :type bot: core.bot.CloudBot
@@ -287,25 +333,24 @@ def dispatch(bot, input, plugin):
     :type plugin: core.pluginmanager.Plugin
     """
     for sieve in bot.plugin_manager.sieves:
-        input = do_sieve(sieve, bot, input, plugin)
+        input = yield from do_sieve(sieve, bot, input, plugin)
         if input is None:
             return
 
-    if plugin.type == "command" and plugin.args.get('autohelp') and not input.text:
+    if plugin.type == "command" and plugin.auto_help and not input.text:
         if plugin.doc is not None:
             input.notice(input.conn.config["command_prefix"] + plugin.doc)
         else:
             input.notice(input.conn.config["command_prefix"] + plugin.name + " requires additional arguments.")
         return
 
-    if plugin.type == "event" and plugin.args.get("run_sync"):
-        run(bot, plugin, input)  # make sure the event runs in sync, *before* commands and regexes are run
-        # TODO: Possibly make this run in the command's/regex's own thread, or make all of 'main' run async?
-    elif plugin.args.get("singlethread", False):
-        if plugin in bot.threads:
-            bot.threads[plugin].put(input)
+    if plugin.run_sync:
+        yield from run_sync(bot, plugin, input)
+    elif plugin.single_thread:
+        if plugin.module.title in bot.threads:
+            bot.threads[plugin.module.title].put(input)
         else:
-            bot.threads[plugin] = Handler(bot, plugin)
+            bot.threads[plugin.module.title] = Handler(bot, plugin)
     else:
         threading.Thread(
             name="Plugin thread for {}".format(plugin.module.title),
@@ -314,6 +359,7 @@ def dispatch(bot, input, plugin):
         ).start()
 
 
+@asyncio.coroutine
 def main(bot, input_params):
     """
     :type bot: core.bot.CloudBot
@@ -325,9 +371,9 @@ def main(bot, input_params):
     # EVENTS
     if inp.command in bot.plugin_manager.events:
         for event_plugin in bot.plugin_manager.events[inp.command]:
-            dispatch(bot, Input(bot=bot, **input_params), event_plugin)
+            yield from dispatch(bot, Input(bot=bot, **input_params), event_plugin)
     for event_plugin in bot.plugin_manager.catch_all_events:
-        dispatch(bot, Input(bot=bot, **input_params), event_plugin)
+        yield from dispatch(bot, Input(bot=bot, **input_params), event_plugin)
 
     if inp.command == 'PRIVMSG':
         # COMMANDS
@@ -345,11 +391,11 @@ def main(bot, input_params):
             if command in bot.plugin_manager.commands:
                 plugin = bot.plugin_manager.commands[command]
                 input = Input(bot=bot, text=match.group(2).strip(), trigger=command, **input_params)
-                dispatch(bot, input, plugin)
+                yield from dispatch(bot, input, plugin)
 
         # REGEXES
         for regex, plugin in bot.plugin_manager.regex_plugins:
             match = regex.search(inp.lastparam)
             if match:
                 input = Input(bot=bot, match=match, **input_params)
-                dispatch(bot, input, plugin)
+                yield from dispatch(bot, input, plugin)

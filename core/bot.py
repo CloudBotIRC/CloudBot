@@ -160,7 +160,7 @@ class CloudBot:
                 # But we don't actually want to process that message, so if we're stopped, just exit.
                 return
 
-            main.main(self, message)
+            yield from main.main(self, message)
 
     def create_connections(self):
         """ Create a BotConnection for all the networks defined in the config """

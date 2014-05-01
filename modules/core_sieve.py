@@ -14,9 +14,9 @@ def sieve_suite(bot, input, plugin):
     :type input: core.main.Input
     """
     conn = input.conn
-    # check ignorebots
+    # check ignore bots
     if input.command == 'PRIVMSG' and \
-            input.nick.endswith('bot') and plugin.args.get('ignorebots', True):
+            input.nick.endswith('bot') and plugin.ignore_bots:
         return None
 
     # check acls
@@ -38,7 +38,7 @@ def sieve_suite(bot, input, plugin):
             return None
 
     # check permissions
-    allowed_permissions = plugin.args.get('permissions', [])
+    allowed_permissions = plugin.permissions
     if allowed_permissions:
         allowed = False
         for perm in allowed_permissions:

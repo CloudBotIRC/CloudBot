@@ -1,6 +1,7 @@
 import asyncio
 import importlib
 import inspect
+import logging
 import os
 import re
 
@@ -368,9 +369,8 @@ class Plugin:
     :type single_thread: bool
     """
 
-    def __init__(self, logger, plugin_type, module, func_hook):
+    def __init__(self, plugin_type, module, func_hook):
         """
-        :type logger: logging.Logger
         :type plugin_type: str
         :type module: Module
         :type func_hook: hook._Hook
@@ -396,7 +396,7 @@ class Plugin:
 
         if func_hook.kwargs:
             # we should have popped all the args, so warn if there are any left
-            logger.warning("Ignoring extra args {} from {}:{}".format(
+            logging.getLogger("cloudbot").warning("Ignoring extra args {} from {}:{}".format(
                 func_hook.kwargs, self.module.title, self.function_name
             ))
 
@@ -414,9 +414,8 @@ class CommandPlugin(Plugin):
     :type auto_help: bool
     """
 
-    def __init__(self, logger, module, cmd_hook):
+    def __init__(self, module, cmd_hook):
         """
-        :type logger: logging.Logger
         :type module: Module
         :type cmd_hook: hook._CommandHook
         """
@@ -428,7 +427,7 @@ class CommandPlugin(Plugin):
         self.aliases.insert(0, self.name)  # make sure the name, or 'main alias' is in position 0
         self.doc = cmd_hook.doc
 
-        super().__init__(logger, "command", module, cmd_hook)
+        super().__init__("command", module, cmd_hook)
 
     def __repr__(self):
         return "CommandPlugin[name: {}, aliases: {}, {}]".format(self.name, self.aliases[1:], Plugin.__repr__(self))
@@ -442,15 +441,14 @@ class RegexPlugin(Plugin):
     :type regexes: set[re.__Regex]
     """
 
-    def __init__(self, logger, module, regex_hook):
+    def __init__(self, module, regex_hook):
         """
-        :type logger: logging.Logger
         :type module: Module
         :type regex_hook: hook._RegexHook
         """
         self.regexes = regex_hook.regexes
 
-        super().__init__(logger, "regex", module, regex_hook)
+        super().__init__("regex", module, regex_hook)
 
     def __repr__(self):
         return "RegexPlugin[regexes: {}, {}]".format([regex.pattern for regex in self.regexes], Plugin.__repr__(self))
@@ -464,13 +462,12 @@ class EventPlugin(Plugin):
     :type events: set[str]
     """
 
-    def __init__(self, logger, module, event_hook):
+    def __init__(self, module, event_hook):
         """
-        :type logger: logging.Logger
         :type module: Module
         :type event_hook: hook._EventHook
         """
-        super().__init__(logger, "event", module, event_hook)
+        super().__init__("event", module, event_hook)
 
         self.events = event_hook.events
 
@@ -485,13 +482,12 @@ class EventPlugin(Plugin):
 
 
 class SievePlugin(Plugin):
-    def __init__(self, logger, module, sieve_hook):
+    def __init__(self, module, sieve_hook):
         """
-        :type logger: logging.Logger
         :type module: Module
         :type sieve_hook: hook._SieveHook
         """
-        super().__init__(logger, "sieve", module, sieve_hook)
+        super().__init__("sieve", module, sieve_hook)
 
         if not asyncio.iscoroutine(self.function):
             self.function = asyncio.coroutine(self.function)
@@ -504,13 +500,12 @@ class SievePlugin(Plugin):
 
 
 class OnLoadPlugin(Plugin):
-    def __init__(self, logger, module, on_load_hook):
+    def __init__(self, module, on_load_hook):
         """
-        :type logger: logging.Logger
         :type module: Module
         :type on_load_hook: hook._OnLoadHook
         """
-        super().__init__(logger, "onload", module, on_load_hook)
+        super().__init__("onload", module, on_load_hook)
 
     def __repr__(self):
         return "OnLoadPlugin[{}]".format(Plugin.__repr__(self))

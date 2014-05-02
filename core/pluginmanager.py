@@ -153,7 +153,7 @@ class PluginManager:
 
         # stop all currently running instances of the modules from this file
         for running_plugin, handler in list(self.bot.threads.items()):
-            if running_plugin.module.file_name == file_name:
+            if running_plugin == title:
                 handler.stop()
                 del self.bot.threads[running_plugin]
 

@@ -40,7 +40,7 @@ def capitalize(text):
     """capitalize <string> -- Capitalizes <string>.
     :type text: str
     """
-    return ". ".join([sentance.capitalize() for sentance in text.split(". ")])
+    return ". ".join([sentence.capitalize() for sentence in text.split(". ")])
 
 
 @hook.command

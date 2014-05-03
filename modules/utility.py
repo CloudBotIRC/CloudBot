@@ -23,7 +23,7 @@ colors = collections.OrderedDict([
 
 # helper functions
 
-strip_re = re.compile("(\x03|\x02|\x1f)(?:,?\d{1,2}(?:,\d{1,2})?)?", re.UNICODE)
+strip_re = re.compile("(\x03|\x02|\x1f|\x0f)(?:,?\d{1,2}(?:,\d{1,2})?)?")
 
 
 def strip(string):

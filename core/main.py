@@ -1,5 +1,4 @@
 import asyncio
-import inspect
 import re
 import _thread
 import queue
@@ -330,10 +329,11 @@ def dispatch(bot, input, plugin):
     :type input: Input
     :type plugin: core.pluginmanager.Plugin
     """
-    for sieve in bot.plugin_manager.sieves:
-        input = yield from do_sieve(sieve, bot, input, plugin)
-        if input is None:
-            return
+    if plugin.type != "onload":  # we don't need sieves on onload hooks.
+        for sieve in bot.plugin_manager.sieves:
+            input = yield from do_sieve(sieve, bot, input, plugin)
+            if input is None:
+                return
 
     if plugin.type == "command" and plugin.auto_help and not input.text:
         if plugin.doc is not None:

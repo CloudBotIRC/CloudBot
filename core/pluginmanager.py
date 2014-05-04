@@ -496,7 +496,9 @@ class SievePlugin(Plugin):
         """
         super().__init__("sieve", module, sieve_hook)
 
-        if not asyncio.iscoroutine(self.function):
+        if self.threaded:
+            # we can't thread sieves
+            self.threaded = False
             self.function = asyncio.coroutine(self.function)
 
     def __repr__(self):
@@ -512,6 +514,10 @@ class OnLoadPlugin(Plugin):
         :type module: Module
         :type on_load_hook: hook._OnLoadHook
         """
+        if self.threaded:
+            # we can't thread onload hooks
+            self.threaded = False
+            self.function = asyncio.coroutine(self.function)
         super().__init__("onload", module, on_load_hook)
 
     def __repr__(self):

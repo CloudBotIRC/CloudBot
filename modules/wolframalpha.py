@@ -3,10 +3,7 @@ import re
 from util import hook, http, formatting, web
 
 
-@hook.command('math')
-@hook.command('calc')
-@hook.command('wa')
-@hook.command
+@hook.command(["wa", "calc", "math", "wolframalpha"])
 def wolframalpha(text, bot):
     """wa <query> -- Computes <query> using Wolfram Alpha."""
     api_key = bot.config.get("api_keys", {}).get("wolframalpha", None)

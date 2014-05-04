@@ -12,7 +12,7 @@ with open("data/password_words.txt") as f:
     common_words = [line.strip() for line in f.readlines()]
 
 
-@hook.command(autoHelp=False)
+@hook.command(autohelp=False)
 def password(text, notice):
     """password <length> [types] -- Generates a password of <length> (default 10).
     [types] can include 'alpha', 'no caps', 'numeric', 'symbols' or any combination of the inp, eg. 'numbers symbols'"""

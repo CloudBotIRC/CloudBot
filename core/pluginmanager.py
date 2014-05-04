@@ -346,7 +346,7 @@ class Module:
 
 class Plugin:
     """
-    Each plugin is specific to one function. This class is never used by iself, it's always extended by CommandPlugin,
+    Each plugin is specific to one function. This class is never used by itself, it's always extended by CommandPlugin,
     EventPlugin, RegexPlugin, or SievePlugin
     :type type; str
     :type module: Module
@@ -414,7 +414,7 @@ class RegexPlugin(Plugin):
         :type module: Module
         :type regex_hook: hook._RegexHook
         """
-        Plugin.__init__(self, "regex", module, regex_hook)
+        super().__init__("regex", module, regex_hook)
         self.regexes = regex_hook.regexes
 
     def __repr__(self):
@@ -434,7 +434,7 @@ class EventPlugin(Plugin):
         :type module: Module
         :type event_hook: hook._EventHook
         """
-        Plugin.__init__(self, "event", module, event_hook)
+        super().__init__("event", module, event_hook)
 
         if not "run_sync" in self.args:
             self.args["run_sync"] = False
@@ -457,7 +457,7 @@ class SievePlugin(Plugin):
         :type module: Module
         :type sieve_hook: hook._SieveHook
         """
-        Plugin.__init__(self, "sieve", module, sieve_hook)
+        super().__init__("sieve", module, sieve_hook)
 
     def __repr__(self):
         return "SievePlugin[{}]".format(Plugin.__repr__(self))
@@ -472,7 +472,7 @@ class OnLoadPlugin(Plugin):
         :type module: Module
         :type on_load_hook: hook._OnLoadHook
         """
-        Plugin.__init__(self, "onload", module, on_load_hook)
+        super().__init__("onload", module, on_load_hook)
 
     def __repr__(self):
         return "OnLoadPlugin[{}]".format(Plugin.__repr__(self))

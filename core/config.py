@@ -22,7 +22,7 @@ class Config(dict):
         :type args: list
         :type kwargs: dict
         """
-        dict.__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.filename = "config.json"
         self.path = os.path.abspath(self.filename)
         self.bot = bot

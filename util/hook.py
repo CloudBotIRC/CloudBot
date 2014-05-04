@@ -34,7 +34,7 @@ class _CommandHook(_Hook):
         """
         :type alias_param: list[str] | str
         :type function: function
-        :type kwargs: dict[str, V]
+        :type kwargs: dict[str, unknown]
         """
         _Hook.__init__(self, function, "command", kwargs)
 
@@ -84,7 +84,7 @@ class _RegexHook(_Hook):
         """
         :type function: function
         :type regex_param: str | re.__Regex | list[str | re.__Regex]
-        :type kwargs: dict[str, V]
+        :type kwargs: dict[str, unknown]
         """
         _Hook.__init__(self, function, "regex", kwargs)
 
@@ -111,7 +111,7 @@ class _RegexHook(_Hook):
     def add_hook(self, regex_param, regex_flags, kwargs):
         """
         :type regex_param: list[str | re.__Regex] | str | re.__Regex
-        :type kwargs: dict[str, V]
+        :type kwargs: dict[str, unknown]
         """
         # update kwargs, overwriting duplicates
         self.kwargs.update(kwargs)
@@ -144,7 +144,7 @@ class _EventHook(_Hook):
         """
         :type event_param: list[str] | str
         :type function: function
-        :type kwargs: dict[str, V]
+        :type kwargs: dict[str, unknown]
         """
         _Hook.__init__(self, function, "event", kwargs)
 
@@ -157,7 +157,7 @@ class _EventHook(_Hook):
     def add_hook(self, event_param, kwargs):
         """
         :type event_param: list[str] | str
-        :type kwargs: dict[str, V]
+        :type kwargs: dict[str, unknown]
         """
         # update kwargs, overwriting duplicates
         self.kwargs.update(kwargs)

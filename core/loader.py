@@ -30,7 +30,9 @@ class PluginLoader(object):
         Loads a module, given its file path.
         :type path: str
         """
-        self.bot.loop.call_soon_threadsafe(asyncio.async, self.bot.plugin_manager.load_module(path), self.bot.loop)
+        # call_soon_threadsafe doesn't support kwargs, so use a lambda
+        self.bot.loop.call_soon_threadsafe(
+            lambda: asyncio.async(self.bot.plugin_manager.load_module(path), loop=self.bot.loop))
 
     def unload_file(self, path):
         """

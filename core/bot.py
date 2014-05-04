@@ -134,7 +134,6 @@ class CloudBot:
         self.loader = PluginLoader(self)
         self.plugin_manager = PluginManager(self)
 
-
         # run a manual garbage collection cycle, to clean up any unused objects created during initialization
         gc.collect()
 

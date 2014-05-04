@@ -40,10 +40,10 @@ def help_command(text, conn, bot, notice, has_permission):
         for plugin in sorted(set(bot.plugin_manager.commands.values()), key=attrgetter("name")):
             # use set to remove duplicate commands (from multiple aliases), and sorted to sort by name
 
-            if plugin.args.get("permissions"):
+            if plugin.permissions:
                 # check permissions
                 allowed = False
-                for perm in plugin.args.get("permissions"):
+                for perm in plugin.permissions:
                     if has_permission(perm, notice=False):
                         allowed = True
                         break

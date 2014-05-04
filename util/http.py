@@ -9,12 +9,13 @@ import urllib.request
 import urllib.error
 import urllib.parse
 import urllib.parse
+# noinspection PyUnresolvedReferences
 from urllib.parse import quote, quote_plus as _quote_plus
 
 from bs4 import BeautifulSoup
-
 from lxml import etree, html
 
+# noinspection PyUnresolvedReferences
 from urllib.error import URLError, HTTPError
 
 ua_cloudbot = 'Cloudbot/DEV http://github.com/CloudDev/CloudBot'
@@ -31,10 +32,10 @@ jar = http.cookiejar.CookieJar()
 
 
 def get(*args, **kwargs):
-    if "decode" in kwargs and not kwargs["decode"]:
-        return open(*args, **kwargs).read()
-    else:
+    if kwargs.get("decode", True):
         return open(*args, **kwargs).read().decode()
+    else:
+        return open(*args, **kwargs).read()
 
 
 def get_url(*args, **kwargs):
@@ -50,6 +51,7 @@ def get_soup(*args, **kwargs):
 
 
 def get_xml(*args, **kwargs):
+    kwargs["decode"] = False  # we don't want to decode, for etree
     return etree.fromstring(get(*args, **kwargs))
 
 

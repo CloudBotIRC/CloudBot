@@ -1,5 +1,5 @@
+import asyncio
 import os
-import glob
 
 from watchdog.observers import Observer
 from watchdog.tricks import Trick
@@ -16,33 +16,28 @@ class PluginLoader(object):
 
         self.event_handler = PluginEventHandler(self, patterns=["*.py"])
         self.observer.schedule(self.event_handler, self.module_path, recursive=False)
+
+    def start(self):
+        """Starts the plugin reloader"""
         self.observer.start()
 
-        self.load_all()
-
     def stop(self):
-        """shuts down the plugin reloader"""
+        """Stops the plugin reloader"""
         self.observer.stop()
-
-    def load_all(self):
-        """
-        Loads all modules in the module directory.
-        """
-        self.bot.plugin_manager.load_all(glob.iglob(os.path.join(self.module_path, '*.py')))
 
     def load_file(self, path):
         """
         Loads a module, given its file path.
         :type path: str
         """
-        self.bot.plugin_manager.load_module(path)
+        self.bot.loop.call_soon_threadsafe(asyncio.async, self.bot.plugin_manager.load_module(path), self.bot.loop)
 
     def unload_file(self, path):
         """
         Unloads a module, given its file path.
         :type path: str
         """
-        self.bot.plugin_manager.unload_module(path)
+        self.bot.loop.call_soon_threadsafe(self.bot.plugin_manager.unload_module, path)
 
 
 class PluginEventHandler(Trick):

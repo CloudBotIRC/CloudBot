@@ -131,10 +131,9 @@ class CloudBot:
         # create bot connections
         self.create_connections()
 
-        # run plugin loader
+        self.loader = PluginLoader(self)
         self.plugin_manager = PluginManager(self)
 
-        self.loader = PluginLoader(self)
 
         # run a manual garbage collection cycle, to clean up any unused objects created during initialization
         gc.collect()
@@ -142,14 +141,20 @@ class CloudBot:
     def run(self):
         """
         Starts CloudBot.
-        This method first connects all of the IRC connections, then receives input from the IRC engine and processes it.
+        This will first load plugins, then connect to IRC, then start the main loop for processing input.
         """
         self.loop.run_until_complete(self.main_loop())
         self.loop.close()
 
     @asyncio.coroutine
     def main_loop(self):
+        # load plugins
+        yield from self.plugin_manager.load_all(os.path.abspath("modules"))
+        # start plugin reloader
+        self.loader.start()
+        # start connections
         yield from asyncio.gather(*[conn.connect() for conn in self.connections], loop=self.loop)
+        # start main loop
         self.logger.info("Starting main loop")
         while self.running:
             # This method will block until a new message is received.

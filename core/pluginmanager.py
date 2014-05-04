@@ -1,4 +1,5 @@
 import asyncio
+import glob
 import importlib
 import inspect
 import logging
@@ -89,17 +90,20 @@ class PluginManager:
         self.regex_plugins = []
         self.sieves = []
 
-    def load_all(self, path_list):
+    @asyncio.coroutine
+    def load_all(self, module_path):
         """
         Load a module from each path in the given path list, and register plugins for each of those modules.
 
         Won't load any modules listed in "disabled_plugins".
 
-        :type path_list: Iterable[str]
+        :type module_path: str
         """
-        for path in path_list:
-            self.load_module(path)
+        path_list = glob.iglob(os.path.join(module_path, '*.py'))
+        # Load modules asynchronously :O
+        yield from asyncio.gather(*[self.load_module(path) for path in path_list])
 
+    @asyncio.coroutine
     def load_module(self, path):
         """
         Loads a module from the given path and module object, then registers all plugins from that module.
@@ -134,7 +138,7 @@ class PluginManager:
 
         module = Module(file_path, file_name, title, python_module)
 
-        self.register_plugins(module)
+        yield from self.register_plugins(module)
 
     def unload_module(self, path):
         """
@@ -159,6 +163,7 @@ class PluginManager:
 
         return self.unregister_plugins(file_name, ignore_not_registered=True)
 
+    @asyncio.coroutine
     def register_plugins(self, module, check_if_exists=True):
         """
         Registers all plugins in a given module
@@ -174,7 +179,7 @@ class PluginManager:
 
         # run onload hooks
         for onload_plugin in module.run_on_load:
-            success = main.dispatch(self.bot, main.Input(bot=self.bot), onload_plugin)
+            success = yield from main.dispatch(self.bot, main.Input(bot=self.bot), onload_plugin)
             if not success:
                 self.bot.logger.warning("Not registering module {}: module onload hook errored".format(module.title))
                 return

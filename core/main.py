@@ -325,22 +325,29 @@ class Handler(threading.Thread):
 @asyncio.coroutine
 def dispatch(bot, input, plugin):
     """
+    Dispatch a given input to a given plugin using a given bot object. This will either run sync or threaded, depending
+    on the plugin's arguments.
+
+    Returns False if the plugin isn't threaded, and the plugin didn't run successfully.
+    True if the plugin is threaded, and/or if it ran successfully.
+
     :type bot: core.bot.CloudBot
     :type input: Input
     :type plugin: core.pluginmanager.Plugin
+    :rtype: bool
     """
     if plugin.type != "onload":  # we don't need sieves on onload hooks.
         for sieve in bot.plugin_manager.sieves:
             input = yield from do_sieve(sieve, bot, input, plugin)
             if input is None:
-                return
+                return False
 
     if plugin.type == "command" and plugin.auto_help and not input.text:
         if plugin.doc is not None:
             input.notice(input.conn.config["command_prefix"] + plugin.doc)
         else:
             input.notice(input.conn.config["command_prefix"] + plugin.name + " requires additional arguments.")
-        return
+        return False
 
     if plugin.threaded:
         if plugin.single_thread:
@@ -355,7 +362,11 @@ def dispatch(bot, input, plugin):
                 args=(bot, plugin, input)
             ).start()
     else:
-        yield from run(bot, plugin, input)
+        success = yield from run(bot, plugin, input)
+        return success
+
+    # the plugin is threaded, so just return true.
+    return True
 
 
 @asyncio.coroutine

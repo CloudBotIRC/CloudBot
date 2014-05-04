@@ -98,7 +98,7 @@ class CloudBot:
 
         # set up logging
         self.logger = get_logger()
-        self.logger.debug("Logging system initalised.")
+        self.logger.debug("Logging system initialised.")
 
         # declare and create data folder
         self.data_dir = os.path.abspath('data')
@@ -108,7 +108,7 @@ class CloudBot:
 
         # set up config
         self.config = config.Config(self)
-        self.logger.debug("Config system initalised.")
+        self.logger.debug("Config system initialised.")
 
         # setup db
         db_path = self.config.get('database', 'sqlite:///cloudbot.db')
@@ -118,7 +118,7 @@ class CloudBot:
         self.db_metadata = MetaData()
         # set botvars.metadata so plugins can access when loading
         botvars.metadata = self.db_metadata
-        self.logger.debug("Database system initalised.")
+        self.logger.debug("Database system initialised.")
 
         # Bot initialisation complete
         self.logger.debug("Bot setup completed.")
@@ -136,7 +136,7 @@ class CloudBot:
     def start(self):
         """
         Starts CloudBot.
-        This method first connects all of the IRC conections, then receives input from the IRC engine and processes it
+        This method first connects all of the IRC connections, then receives input from the IRC engine and processes it
         """
         # start connections
         for conn in self.connections:
@@ -186,14 +186,14 @@ class CloudBot:
         """quits all networks and shuts the bot down"""
         self.logger.info("Stopping bot.")
 
-        self.config.stop()
         self.logger.debug("Stopping config reloader.")
+        self.config.stop()
 
-        self.loader.stop()
         self.logger.debug("Stopping plugin loader.")
+        self.loader.stop()
 
         for connection in self.connections:
-            self.logger.debug("({}) Closing connection.".format(connection.name))
+            self.logger.debug("[{}] Closing connection.".format(connection.readable_name))
 
             if reason:
                 connection.cmd("QUIT", [reason])

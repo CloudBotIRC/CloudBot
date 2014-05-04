@@ -174,7 +174,7 @@ class PluginManager:
 
         # run onload hooks
         for onload_plugin in module.run_on_load:
-            success = main.run(self.bot, onload_plugin, main.Input(bot=self.bot))
+            success = main.dispatch(self.bot, main.Input(bot=self.bot), onload_plugin)
             if not success:
                 self.bot.logger.warning("Not registering module {}: module onload hook errored".format(module.title))
                 return
@@ -363,7 +363,7 @@ class Plugin:
     :type function: function
     :type function_name: str
     :type required_args: list[str]
-    :type run_sync: bool
+    :type threaded: bool
     :type ignore_bots: bool
     :type permissions: list[str]
     :type single_thread: bool
@@ -384,12 +384,14 @@ class Plugin:
         if self.required_args is None:
             self.required_args = []
 
-        if func_hook.kwargs.pop("run_sync", False) \
+        if func_hook.kwargs.pop("threaded", True) \
                 and not asyncio.iscoroutine(self.function):
-            self.run_sync = True
-            self.function = asyncio.coroutine(self.function)
+            self.threaded = True
         else:
-            self.run_sync = False
+            self.threaded = False
+            if not asyncio.iscoroutine(self.function):
+                self.function = asyncio.coroutine(self.function)
+
         self.ignore_bots = func_hook.kwargs.pop("ignorebots", False)
         self.permissions = func_hook.kwargs.pop("permissions", [])
         self.single_thread = func_hook.kwargs.pop("singlethread", False)
@@ -401,8 +403,8 @@ class Plugin:
             ))
 
     def __repr__(self):
-        return "type: {}, module: {}, ignore_bots: {}, permissions: {}, single_thread: {}, run_sync: {}".format(
-            self.type, self.module.title, self.ignore_bots, self.permissions, self.single_thread, self.run_sync
+        return "type: {}, module: {}, ignore_bots: {}, permissions: {}, single_thread: {}, threaded: {}".format(
+            self.type, self.module.title, self.ignore_bots, self.permissions, self.single_thread, self.threaded
         )
 
 

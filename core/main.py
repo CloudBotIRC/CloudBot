@@ -198,7 +198,7 @@ def prepare_parameters(bot, plugin, input):
     return parameters
 
 
-def run(bot, plugin, input):
+def run_threaded(bot, plugin, input):
     """
     Runs the specific plugin with the given bot and input.
 
@@ -230,7 +230,7 @@ def run(bot, plugin, input):
 
 
 @asyncio.coroutine
-def run_sync(bot, plugin, input):
+def run(bot, plugin, input):
     """
     Runs the specific plugin with the given bot and input.
 
@@ -311,7 +311,7 @@ class Handler(threading.Thread):
             if not self.bot.running or plugin_input == StopIteration:
                 break
 
-            run(self.bot, self.plugin, plugin_input)
+            run_threaded(self.bot, self.plugin, plugin_input)
 
     def stop(self):
         self.input_queue.put(StopIteration)
@@ -342,19 +342,20 @@ def dispatch(bot, input, plugin):
             input.notice(input.conn.config["command_prefix"] + plugin.name + " requires additional arguments.")
         return
 
-    if plugin.run_sync:
-        yield from run_sync(bot, plugin, input)
-    elif plugin.single_thread:
-        if plugin.module.title in bot.threads:
-            bot.threads[plugin.module.title].put(input)
+    if plugin.threaded:
+        if plugin.single_thread:
+            if plugin.module.title in bot.threads:
+                bot.threads[plugin.module.title].put(input)
+            else:
+                bot.threads[plugin.module.title] = Handler(bot, plugin)
         else:
-            bot.threads[plugin.module.title] = Handler(bot, plugin)
+            threading.Thread(
+                name="Plugin thread for {}".format(plugin.module.title),
+                target=run_threaded,
+                args=(bot, plugin, input)
+            ).start()
     else:
-        threading.Thread(
-            name="Plugin thread for {}".format(plugin.module.title),
-            target=run,
-            args=(bot, plugin, input)
-        ).start()
+        yield from run(bot, plugin, input)
 
 
 @asyncio.coroutine

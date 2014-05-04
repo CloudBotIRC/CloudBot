@@ -125,7 +125,7 @@ def log(bot, input):
             channel_log.write(human_readable + '\n')
 
 # Log console separately to prevent lag
-@hook.event("*", run_sync=True)
+@hook.event("*", threaded=False)
 def console_log(input, bot):
     human_readable = beautify(input)
     if human_readable:

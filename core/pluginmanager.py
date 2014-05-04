@@ -514,11 +514,12 @@ class OnLoadPlugin(Plugin):
         :type module: Module
         :type on_load_hook: hook._OnLoadHook
         """
+        super().__init__("onload", module, on_load_hook)
+
         if self.threaded:
             # we can't thread onload hooks
             self.threaded = False
             self.function = asyncio.coroutine(self.function)
-        super().__init__("onload", module, on_load_hook)
 
     def __repr__(self):
         return "OnLoadPlugin[{}]".format(Plugin.__repr__(self))

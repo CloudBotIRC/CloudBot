@@ -349,10 +349,10 @@ def dispatch(bot, input, plugin):
 
     if plugin.threaded:
         if plugin.single_thread:
-            if plugin.module.title in bot.threads:
-                bot.threads[plugin.module.title].put(input)
+            if plugin.module.title in bot.handlers:
+                bot.handlers[plugin.module.title].put(input)
             else:
-                bot.threads[plugin.module.title] = Handler(bot, plugin)
+                bot.handlers[plugin.module.title] = Handler(bot, plugin)
         else:
             threading.Thread(
                 name="Plugin thread for {}".format(plugin.module.title),

@@ -156,10 +156,10 @@ class PluginManager:
             return False
 
         # stop all currently running instances of the modules from this file
-        for running_plugin, handler in list(self.bot.threads.items()):
+        for running_plugin, handler in list(self.bot.handlers.items()):
             if running_plugin == title:
                 handler.stop()
-                del self.bot.threads[running_plugin]
+                del self.bot.handlers[running_plugin]
 
         return self.unregister_plugins(file_name, ignore_not_registered=True)
 

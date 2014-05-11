@@ -126,7 +126,8 @@ class CloudBot:
         # Bot initialisation complete
         self.logger.debug("Bot setup completed.")
 
-        self.threads = {}
+        # Handlers
+        self.handlers = {}
 
         # create bot connections
         self.create_connections()

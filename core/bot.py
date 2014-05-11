@@ -156,15 +156,17 @@ class CloudBot:
         # start main loop
         self.logger.info("Starting main loop")
         while self.running:
-            # This method will block until a new message is received.
+            # This function will wait until a new message is received.
             message = yield from self.queued_messages.get()
+
             if not self.running:
                 # When the bot is stopped, StopIteration is put into the queue to make sure that
                 # self.queued_messages.get() doesn't block this thread forever.
                 # But we don't actually want to process that message, so if we're stopped, just exit.
                 return
 
-            yield from main.main(self, message)
+            # process the message
+            asyncio.async(main.main(self, message), loop=self.loop)
 
     def create_connections(self):
         """ Create a BotConnection for all the networks defined in the config """

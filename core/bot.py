@@ -80,6 +80,11 @@ class CloudBot:
     :type config: core.config.Config
     :type plugin_manager: core.pluginmanager.PluginManager
     :type loader: core.loader.PluginLoader
+    :type db_engine: sqlalchemy.engine.Engine
+    :type db_factory: sqlalchemy.orm.session.sessionmaker
+    :type db_session: sqlalchemy.orm.scoping.scoped_session
+    :type db_metadata: sqlalchemy.sql.schema.MetaData
+    :type handlers: dict[str, core.main.Handler]
     """
 
     def __init__(self, loop=asyncio.get_event_loop()):
@@ -135,9 +140,6 @@ class CloudBot:
         self.loader = PluginLoader(self)
         self.plugin_manager = PluginManager(self)
 
-        # run a manual garbage collection cycle, to clean up any unused objects created during initialization
-        gc.collect()
-
     def run(self):
         """
         Starts CloudBot.
@@ -154,6 +156,8 @@ class CloudBot:
         self.loader.start()
         # start connections
         yield from asyncio.gather(*[conn.connect() for conn in self.connections], loop=self.loop)
+        # run a manual garbage collection cycle, to clean up any unused objects created during initialization
+        gc.collect()
         # start main loop
         self.logger.info("Starting main loop")
         while self.running:

@@ -179,7 +179,7 @@ def prepare_parameters(bot, plugin, input):
 
     if uses_db:
         # create SQLAlchemy session
-        bot.logger.debug("Opened database session for: {}:{}".format(plugin.module.title, plugin.function_name))
+        bot.logger.debug("Opened database session for {}:{}".format(plugin.module.title, plugin.function_name))
         input.db = input.bot.db_session()
 
     for required_arg in plugin.required_args:
@@ -187,10 +187,8 @@ def prepare_parameters(bot, plugin, input):
             value = getattr(input, required_arg)
             parameters.append(value)
         else:
-            bot.logger.error(
-                "Plugin {}:{} asked for invalid argument '{}', cancelling execution!".format(
-                    plugin.module.title, plugin.function_name, required_arg
-                ))
+            bot.logger.error("Plugin {}:{} asked for invalid argument '{}', cancelling execution!"
+                             .format(plugin.module.title, plugin.function_name, required_arg))
             input.db.close()
             return None
 
@@ -246,8 +244,8 @@ def run(bot, plugin, input):
     try:
         out = yield from plugin.function(*parameters)
     except Exception:
-        bot.logger.exception("Error in plugin {}:{}:".format(plugin.module.title, plugin.function_name))
-        bot.logger.info("Parameters used: {}".format(parameters))
+        bot.logger.exception("Error in plugin {}:{}({})"
+                             .format(plugin.module.title, plugin.function_name, ", ".join(parameters)))
         return False
     else:
         if out is not None:
@@ -256,7 +254,7 @@ def run(bot, plugin, input):
     finally:
         # ensure that the database session is closed
         if hasattr(input, "db"):
-            bot.logger.debug("Closed database session for: {}:{}".format(plugin.module.title, plugin.function_name))
+            bot.logger.debug("Closed database session for {}:{}".format(plugin.module.title, plugin.function_name))
             input.db.close()
 
 

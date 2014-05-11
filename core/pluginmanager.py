@@ -101,7 +101,7 @@ class PluginManager:
         """
         path_list = glob.iglob(os.path.join(module_path, '*.py'))
         # Load modules asynchronously :O
-        yield from asyncio.gather(*[self.load_module(path) for path in path_list])
+        yield from asyncio.gather(*[self.load_module(path) for path in path_list], loop=self.bot.loop)
 
     @asyncio.coroutine
     def load_module(self, path):
@@ -389,8 +389,7 @@ class Plugin:
         if self.required_args is None:
             self.required_args = []
 
-        if func_hook.kwargs.pop("threaded", True) \
-                and not asyncio.iscoroutine(self.function):
+        if func_hook.kwargs.pop("threaded", True) and not asyncio.iscoroutine(self.function):
             self.threaded = True
         else:
             self.threaded = False

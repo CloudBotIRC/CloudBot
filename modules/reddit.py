@@ -4,16 +4,15 @@ import random
 
 from util import hook, http, formatting, timesince
 
-
-reddit_re = (r'.*(((www\.)?reddit\.com/r|redd\.it)[^ ]+)', re.I)
+reddit_re = re.compile(r'.*(((www\.)?reddit\.com/r|redd\.it)[^ ]+)', re.I)
 
 base_url = "http://reddit.com/r/{}/.json"
 short_url = "http://redd.it/{}"
 
 
-@hook.regex(*reddit_re)
+@hook.regex(reddit_re)
 def reddit_url(match):
-    thread = http.get_html(match.group(0))
+    thread = http.get_html(match.group(1))
 
     title = thread.xpath('//title/text()')[0]
     upvotes = thread.xpath("//span[@class='upvotes']/span[@class='number']/text()")[0]

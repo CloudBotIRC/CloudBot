@@ -1,3 +1,4 @@
+import asyncio
 import socket
 import time
 
@@ -58,7 +59,7 @@ def onjoin(conn, bot):
     bot.logger.info("ONJOIN hook completed. Bot ready.")
 
 
-@hook.event('004', singlethread=True)
+@hook.event('004', threaded=False)
 def keep_alive(conn):
     """
     :type conn: core.irc.BotConnection
@@ -67,4 +68,4 @@ def keep_alive(conn):
     if keepalive:
         while True:
             conn.cmd('PING', [conn.nick])
-            time.sleep(60)
+            yield from asyncio.sleep(60)

@@ -74,7 +74,7 @@ class CloudBot:
     :type start_time: float
     :type running: bool
     :type do_restart: bool
-    :type connections: list[core.irc.BotConnection]
+    :type connections: list[core.connection.BotConnection]
     :type logger: logging.Logger
     :type data_dir: bytes
     :type config: core.config.Config
@@ -152,6 +152,9 @@ class CloudBot:
     def main_loop(self):
         # load plugins
         yield from self.plugin_manager.load_all(os.path.abspath("modules"))
+        # if we we're stopped while loading modules, cancel that and just stop
+        if not self.running:
+            return
         # start plugin reloader
         self.loader.start()
         # start connections
@@ -200,6 +203,9 @@ class CloudBot:
         self.loader.stop()
 
         for connection in self.connections:
+            if not connection.connected:
+                # Don't close a connection that hasn't connected
+                continue
             self.logger.debug("[{}] Closing connection.".format(connection.readable_name))
 
             if reason:

@@ -119,7 +119,7 @@ class PluginManager:
             self.bot.logger.info("Not loading module {}: module disabled".format(file_name))
             return
 
-        existed = self.unload_module(file_path)
+        existed = yield from self.unload_module(file_path)
 
         module_name = "modules.{}".format(title)
         try:
@@ -140,6 +140,7 @@ class PluginManager:
 
         yield from self.register_plugins(module)
 
+    @asyncio.coroutine
     def unload_module(self, path):
         """
         Unloads the module from the given path, unloading all plugins from the module.
@@ -156,10 +157,11 @@ class PluginManager:
             return False
 
         # stop all currently running instances of the modules from this file
-        for running_plugin, handler in list(self.bot.handlers.items()):
-            if running_plugin == title:
-                handler.stop()
-                del self.bot.handlers[running_plugin]
+        for key, handler in list(self.bot.handlers.items()):
+            module_title, function_name = key
+            if module_title == title:
+                yield from handler.stop()
+                del self.bot.handlers[key]
 
         return self.unregister_plugins(file_name, ignore_not_registered=True)
 

@@ -101,7 +101,7 @@ class PluginManager:
         """
         path_list = glob.iglob(os.path.join(module_path, '*.py'))
         # Load modules asynchronously :O
-        yield from asyncio.gather(*[self.load_module(path) for path in path_list])
+        yield from asyncio.gather(*[self.load_module(path) for path in path_list], loop=self.bot.loop)
 
     @asyncio.coroutine
     def load_module(self, path):
@@ -119,7 +119,7 @@ class PluginManager:
             self.bot.logger.info("Not loading module {}: module disabled".format(file_name))
             return
 
-        existed = self.unload_module(file_path)
+        existed = yield from self.unload_module(file_path)
 
         module_name = "modules.{}".format(title)
         try:
@@ -140,6 +140,7 @@ class PluginManager:
 
         yield from self.register_plugins(module)
 
+    @asyncio.coroutine
     def unload_module(self, path):
         """
         Unloads the module from the given path, unloading all plugins from the module.
@@ -156,10 +157,11 @@ class PluginManager:
             return False
 
         # stop all currently running instances of the modules from this file
-        for running_plugin, handler in list(self.bot.threads.items()):
-            if running_plugin == title:
-                handler.stop()
-                del self.bot.threads[running_plugin]
+        for key, handler in list(self.bot.handlers.items()):
+            module_title, function_name = key
+            if module_title == title:
+                yield from handler.stop()
+                del self.bot.handlers[key]
 
         return self.unregister_plugins(file_name, ignore_not_registered=True)
 
@@ -389,8 +391,7 @@ class Plugin:
         if self.required_args is None:
             self.required_args = []
 
-        if func_hook.kwargs.pop("threaded", True) \
-                and not asyncio.iscoroutine(self.function):
+        if func_hook.kwargs.pop("threaded", True) and not asyncio.iscoroutine(self.function):
             self.threaded = True
         else:
             self.threaded = False

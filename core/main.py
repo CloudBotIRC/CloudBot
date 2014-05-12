@@ -1,11 +1,5 @@
 import asyncio
 import re
-import _thread
-import queue
-from queue import Empty
-import threading
-
-_thread.stack_size(1024 * 512)  # reduce vm size
 
 
 class Input:
@@ -203,59 +197,61 @@ def prepare_parameters(bot, plugin, input):
     :type input: Input
     :rtype: list
     """
-    parameters = []
-
     # Does the command need DB access?
     uses_db = "db" in plugin.required_args
-
+    parameters = []
     if uses_db:
         # create SQLAlchemy session
-        bot.logger.debug("Opened database session for: {}:{}".format(plugin.module.title, plugin.function_name))
-        input.db = input.bot.db_session()
+        bot.logger.debug("Opened database session for {}:{}".format(plugin.module.title, plugin.function_name))
+        input.db = bot.db_session()
 
     for required_arg in plugin.required_args:
-        if hasattr(input, required_arg):
+        if hasattr(input, required_arg):  # input.db will be assigned in _internal_run
             value = getattr(input, required_arg)
             parameters.append(value)
         else:
-            bot.logger.error(
-                "Plugin {}:{} asked for invalid argument '{}', cancelling execution!".format(
-                    plugin.module.title, plugin.function_name, required_arg
-                ))
-            input.db.close()
+            bot.logger.error("Plugin {}:{} asked for invalid argument '{}', cancelling execution!"
+                             .format(plugin.module.title, plugin.function_name, required_arg))
             return None
+    return uses_db, parameters
 
-    return parameters
 
-
-def run_threaded(bot, plugin, input):
-    """
-    Runs the specific plugin with the given bot and input.
-
-    Returns False if the plugin errored, True otherwise.
-
-    :type bot: core.bot.CloudBot
-    :type plugin: Plugin
-    :type input: Input
-    :rtype: bool
-    """
-    parameters = prepare_parameters(bot, plugin, input)
-    if parameters is None:
+def _internal_run_threaded(bot, plugin, input):
+    value = prepare_parameters(bot, plugin, input)
+    if value is None:
         return False
+    create_db, parameters = value
+    if create_db:
+        # create SQLAlchemy session
+        bot.logger.debug("Opened database session for {}:{}".format(plugin.module.title, plugin.function_name))
+        input.db = input.bot.db_session()
+
     try:
-        out = plugin.function(*parameters)
-    except Exception:
-        bot.logger.exception("Error in plugin {}:{}:".format(plugin.module.title, plugin.function_name))
-        bot.logger.info("Parameters used: {}".format(parameters))
-        return False
-    else:
-        if out is not None:
-            input.reply(str(out))
-        return True
+        return plugin.function(*parameters)
     finally:
         # ensure that the database session is closed
-        if hasattr(input, "db"):
-            bot.logger.debug("Closed database session for: {}:{}".format(plugin.module.title, plugin.function_name))
+        if create_db:
+            bot.logger.debug("Closed database session for {}:{}".format(plugin.module.title, plugin.function_name))
+            input.db.close()
+
+
+@asyncio.coroutine
+def _internal_run_coroutine(bot, plugin, input):
+    value = prepare_parameters(bot, plugin, input)
+    if value is None:
+        return False
+    create_db, parameters = value
+    if create_db:
+        # create SQLAlchemy session
+        bot.logger.debug("Opened database session for {}:{}".format(plugin.module.title, plugin.function_name))
+        input.db = bot.db_session()
+
+    try:
+        return plugin.function(*parameters)
+    finally:
+        # ensure that the database session is closed
+        if create_db:
+            bot.logger.debug("Closed database session for {}:{}".format(plugin.module.title, plugin.function_name))
             input.db.close()
 
 
@@ -271,14 +267,15 @@ def run(bot, plugin, input):
     :type input: Input
     :rtype: bool
     """
-    parameters = prepare_parameters(bot, plugin, input)
-    if parameters is None:
-        return False
     try:
-        out = yield from plugin.function(*parameters)
+        # _internal_run_threaded and _internal_run_coroutine prepare the database, and run the plugin.
+        # _internal_run_* will prepare parameters and the database session, but won't do any error catching.
+        if plugin.threaded:
+            out = yield from bot.loop.run_in_executor(None, _internal_run_threaded, bot, plugin, input)
+        else:
+            out = yield from _internal_run_coroutine(bot, plugin, input)
     except Exception:
-        bot.logger.exception("Error in plugin {}:{}:".format(plugin.module.title, plugin.function_name))
-        bot.logger.info("Parameters used: {}".format(parameters))
+        bot.logger.exception("Error in plugin {}:{}".format(plugin.module.title, plugin.function_name))
         return False
     else:
         if out is not None:
@@ -287,7 +284,7 @@ def run(bot, plugin, input):
     finally:
         # ensure that the database session is closed
         if hasattr(input, "db"):
-            bot.logger.debug("Closed database session for: {}:{}".format(plugin.module.title, plugin.function_name))
+            bot.logger.debug("Closed database session for {}:{}".format(plugin.module.title, plugin.function_name))
             input.db.close()
 
 
@@ -311,11 +308,12 @@ def do_sieve(sieve, bot, input, plugin):
         return result
 
 
-class Handler(threading.Thread):
+class Handler:
     """Runs modules in their own threads (ensures order)
     :type bot: core.bot.CloudBot
     :type plugin: Plugin
-    :type input_queue: queue.Queue[Input]
+    :type queue: asyncio.Queue[(asyncio.Future, Input)]
+    :type future: asyncio.Future
     """
 
     def __init__(self, bot, plugin):
@@ -325,32 +323,58 @@ class Handler(threading.Thread):
         """
         self.bot = bot
         self.plugin = plugin
-        self.input_queue = queue.Queue()
-        threading.Thread.__init__(self, name="Handler for {}".format(plugin.module.title))
-        self.start()
+        self.queue = asyncio.Queue(loop=self.bot.loop)
+        # future will be assigned when start() is called
+        self.future = None
 
+    def start(self):
+        self.future = asyncio.async(self.run(), loop=self.bot.loop)
+
+    @asyncio.coroutine
     def run(self):
         while True:
-            while self.bot.running:  # This loop will break when successful
-                try:
-                    plugin_input = self.input_queue.get(block=True, timeout=1)
-                    break
-                except Empty:
-                    pass
+            # we can just continue forever here, disregarding the bot's state
+            # the event loop will stop anyways if the bot gets stopped, so we don't have to care.
+            future, message = yield from self.queue.get()
+            # We do want to stop when we get StopIteration however, because that means the plugin has been unloaded.
+            if message == StopIteration:
+                # Set the future result, to have stop() return
+                future.set_result(StopIteration)
+                return
 
-            if not self.bot.running or plugin_input == StopIteration:
-                break
+            # Run the message
+            result = yield from run(self.bot, self.plugin, message)
+            # Set the future's result, so that run_message can return.
+            future.set_result(result)
 
-            run_threaded(self.bot, self.plugin, plugin_input)
-
+    @asyncio.coroutine
     def stop(self):
-        self.input_queue.put(StopIteration)
+        """
+        Stops this handler. This method blocks until the handler is truly stopped.
+        """
+        self.future.cancel()
+        while not self.queue.empty():
+            future, message = yield from self.queue.get(block=False)
+            future.cancel()
 
-    def put(self, value):
+        stopped_future = asyncio.Future(loop=self.bot.loop)
+        # put StopIteration and the stopped future in the queue
+        yield from self.queue.put((StopIteration, stopped_future))
+        # wait for the handler to signify that it has actually stopped
+        yield from stopped_future
+
+    @asyncio.coroutine
+    def run_message(self, message):
         """
-        :type value: Input
+        Runs a given message in this handler. This method will block until the message has been processed.
+        :type message: Input
         """
-        self.input_queue.put(value)
+        result_future = asyncio.Future(loop=self.bot.loop)
+        # put the future into the queue
+        yield from self.queue.put((result_future, message))
+        # wait for the message to be processed
+        result = yield from result_future
+        return result
 
 
 @asyncio.coroutine
@@ -380,24 +404,23 @@ def dispatch(bot, input, plugin):
             input.notice(input.conn.config["command_prefix"] + plugin.name + " requires additional arguments.")
         return False
 
-    if plugin.threaded:
-        if plugin.single_thread:
-            if plugin.module.title in bot.threads:
-                bot.threads[plugin.module.title].put(input)
-            else:
-                bot.threads[plugin.module.title] = Handler(bot, plugin)
-        else:
-            threading.Thread(
-                name="Plugin thread for {}".format(plugin.module.title),
-                target=run_threaded,
-                args=(bot, plugin, input)
-            ).start()
-    else:
-        success = yield from run(bot, plugin, input)
-        return success
+    if plugin.single_thread:
+        key = (plugin.module.title, plugin.function_name)
+        handler = bot.handlers.get(key)
+        if handler is None:
+            # If we don't have a handler yet, create one
+            handler = Handler(bot, plugin)
+            handler.start()
+            bot.handlers[key] = handler
 
-    # the plugin is threaded, so just return true.
-    return True
+        # Give the handler the message, and wait for it to finish running
+        result = yield from handler.run_message(input)
+    else:
+        # Run the plugin with the message, and wait for it to finish
+        result = yield from run(bot, plugin, input)
+
+    # Return the result
+    return result
 
 
 @asyncio.coroutine

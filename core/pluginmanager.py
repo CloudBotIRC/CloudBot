@@ -405,8 +405,7 @@ class Plugin:
         if func_hook.kwargs:
             # we should have popped all the args, so warn if there are any left
             logging.getLogger("cloudbot").warning("Ignoring extra args {} from {}:{}".format(
-                func_hook.kwargs, self.module.title, self.function_name
-            ))
+                func_hook.kwargs, self.module.title, self.function_name))
 
     def __repr__(self):
         return "type: {}, module: {}, ignore_bots: {}, permissions: {}, single_thread: {}, threaded: {}".format(
@@ -498,6 +497,7 @@ class SievePlugin(Plugin):
         super().__init__("sieve", module, sieve_hook)
 
         if self.threaded:
+            # TODO: We should make threading sieves work
             # we can't thread sieves
             self.threaded = False
             self.function = asyncio.coroutine(self.function)
@@ -518,6 +518,7 @@ class OnLoadPlugin(Plugin):
         super().__init__("onload", module, on_load_hook)
 
         if self.threaded:
+            # TODO: We should make threading onload hooks work using some sort of asyncio.gather
             # we can't thread onload hooks
             self.threaded = False
             self.function = asyncio.coroutine(self.function)

@@ -250,11 +250,6 @@ def run(bot, plugin, input):
         if out is not None:
             input.reply(str(out))
         return True
-    finally:
-        # ensure that the database session is closed
-        if hasattr(input, "db"):
-            bot.logger.debug("Closed database session for {}:{}".format(plugin.module.title, plugin.function_name))
-            input.db.close()
 
 
 @asyncio.coroutine

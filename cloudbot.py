@@ -37,7 +37,7 @@ def main():
             # we are currently in the process of restarting
             stopped_while_restarting = True
         else:
-            cloudbot.stop()
+            cloudbot.loop.call_soon_threadsafe(cloudbot.stop, "Killed")
 
         # restore the original handler so if they do it again it triggers
         signal.signal(signal.SIGINT, original_sigint)

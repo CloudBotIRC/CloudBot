@@ -5,7 +5,7 @@ import re
 class Input:
     """
     :type bot: core.bot.CloudBot
-    :type conn: core.irc.BotConnection
+    :type conn: core.connection.BotConnection
     :type raw: str
     :type prefix: str
     :type command: str

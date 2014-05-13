@@ -14,15 +14,9 @@ class Input:
     :type user: str
     :type host: str
     :type mask: str
-    :type paraml: list[str]
-    :type msg: str
-    :type input: Input
-    :type inp: str | re.__Match
     :type text: str
     :type match: re.__Match
-    :type server: str
     :type lastparam: str
-    :type chan: str
     """
 
     def __init__(self, bot=None, conn=None, raw=None, prefix=None, command=None, params=None, nick=None, user=None,
@@ -55,35 +49,72 @@ class Input:
         self.host = host
         self.mask = mask
         self.paramlist = paramlist
-        self.paraml = paramlist
         self.lastparam = lastparam
-        self.msg = lastparam
         self.text = text
         self.match = match
         self.trigger = trigger
 
-        self.input = self
+    @property
+    def paraml(self):
+        """
+        :rtype: list[str]
+        """
+        return self.paramlist
 
+    @property
+    def msg(self):
+        """
+        :rtype: str
+        """
+        return self.lastparam
+
+    @property
+    def inp(self):
+        """
+        :rtype str | re.__Match | list[str]
+        """
         if self.text is not None:
-            self.inp = self.text
+            return self.text
         elif self.match is not None:
-            self.inp = self.match
+            return self.match
         else:
-            self.inp = self.paramlist
+            return self.paramlist
 
+    @property
+    def server(self):
+        """
+        :rtype: str
+        """
         if self.conn is not None:
-            self.server = conn.server
+            if self.nick is not None and self.chan == self.conn.nick.lower():
+                return self.nick
+            return self.conn.server
         else:
-            self.server = None
+            return None
 
+    @property
+    def chan(self):
+        """
+        :rtype: str
+        """
         if self.paramlist:
-            self.chan = paramlist[0].lower()
+            return self.paramlist[0].lower()
         else:
-            self.chan = None
+            return None
 
-        if self.chan is not None and self.nick is not None:
-            if self.chan == conn.nick.lower():  # is a PM
-                self.chan = self.nick
+    @property
+    def input(self):
+        """
+        :rtype; core.main.Input
+        """
+        return self
+
+    @property
+    def loop(self):
+        """
+        :rtype: asyncio.BaseEventLoop
+        """
+        return self.bot.loop
 
     def message(self, message, target=None):
         """sends a message to a specific or current channel/user

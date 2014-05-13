@@ -52,18 +52,20 @@ def gmtime(time_format):
 
 
 def beautify(input):
-    log_format = formats.get(input.command, formats.get("default"))
-    args = dict(input.__dict__)  # create a new dict
-    args["server"] = input.conn.readable_name  # use the connection name for server
+    log_format = formats.get(input.command)
+    if not log_format:
+        return formats["default"].format(server=input.server, raw=input.raw)
 
-    leng = len(args["paraml"])
+    args = {
+        "server": input.conn.readable_name, "param_tail": " ".join(input.paramlist[1:]),
+        "msg": irc_color_re.sub("", input.msg), "nick": input.nick, "chan": input.chan,
+        "user": input.user, "host": input.host
+    }
 
-    for n, p in enumerate(args["paraml"]):
+    _len = len(input.paramlist)
+    for n, p in enumerate(input.paramlist):
         args["param" + str(n)] = p
-        args["param_" + str(abs(n - leng))] = p
-
-    args["param_tail"] = " ".join(args["paraml"][1:])
-    args["msg"] = irc_color_re.sub("", args["msg"])
+        args["param_" + str(abs(n - _len))] = p
 
     if input.command == "PRIVMSG" and input.msg.count("\x01") >= 2:
         ctcp_split = input.msg.split("\x01", 2)[1].split(' ', 1)
@@ -123,6 +125,7 @@ def log(bot, input):
         if channel:
             channel_log = get_log_stream(bot.data_dir, input.conn.name, channel)
             channel_log.write(human_readable + '\n')
+
 
 # Log console separately to prevent lag
 @hook.event("*", threaded=False)

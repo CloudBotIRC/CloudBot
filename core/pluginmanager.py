@@ -121,7 +121,7 @@ class PluginManager:
 
         yield from self._unload(file_path)
 
-        module_name = "plugins.{}".format(title)
+        module_name = "modules.{}".format(title)
         try:
             plugin_module = importlib.import_module(module_name)
             if hasattr(plugin_module, "_cloudbot_loaded"):

@@ -162,7 +162,7 @@ def prepare_parameters(bot, plugin, input):
     Prepares arguments for the given plugin
 
     :type bot: core.bot.CloudBot
-    :type plugin: Plugin
+    :type plugin: core.pluginmanager.Hook
     :type input: Input
     :rtype: list
     """
@@ -171,7 +171,7 @@ def prepare_parameters(bot, plugin, input):
     parameters = []
     if uses_db:
         # create SQLAlchemy session
-        bot.logger.debug("Opened database session for {}:{}".format(plugin.module.title, plugin.function_name))
+        bot.logger.debug("Opened database session for {}:{}".format(plugin.plugin.title, plugin.function_name))
         input.db = bot.db_session()
 
     for required_arg in plugin.required_args:
@@ -180,47 +180,47 @@ def prepare_parameters(bot, plugin, input):
             parameters.append(value)
         else:
             bot.logger.error("Plugin {}:{} asked for invalid argument '{}', cancelling execution!"
-                             .format(plugin.module.title, plugin.function_name, required_arg))
+                             .format(plugin.plugin.title, plugin.function_name, required_arg))
             return None
     return uses_db, parameters
 
 
-def _internal_run_threaded(bot, plugin, input):
-    value = prepare_parameters(bot, plugin, input)
+def _internal_run_threaded(bot, hook, input):
+    value = prepare_parameters(bot, hook, input)
     if value is None:
         return False
     create_db, parameters = value
     if create_db:
         # create SQLAlchemy session
-        bot.logger.debug("Opened database session for {}:{}".format(plugin.module.title, plugin.function_name))
+        bot.logger.debug("Opened database session for {}:{}".format(hook.plugin.title, hook.function_name))
         input.db = input.bot.db_session()
 
     try:
-        return plugin.function(*parameters)
+        return hook.function(*parameters)
     finally:
         # ensure that the database session is closed
         if create_db:
-            bot.logger.debug("Closed database session for {}:{}".format(plugin.module.title, plugin.function_name))
+            bot.logger.debug("Closed database session for {}:{}".format(hook.plugin.title, hook.function_name))
             input.db.close()
 
 
 @asyncio.coroutine
-def _internal_run_coroutine(bot, plugin, input):
-    value = prepare_parameters(bot, plugin, input)
+def _internal_run_coroutine(bot, hook, input):
+    value = prepare_parameters(bot, hook, input)
     if value is None:
         return False
     create_db, parameters = value
     if create_db:
         # create SQLAlchemy session
-        bot.logger.debug("Opened database session for {}:{}".format(plugin.module.title, plugin.function_name))
+        bot.logger.debug("Opened database session for {}:{}".format(hook.plugin.title, hook.function_name))
         input.db = bot.db_session()
 
     try:
-        return plugin.function(*parameters)
+        return hook.function(*parameters)
     finally:
         # ensure that the database session is closed
         if create_db:
-            bot.logger.debug("Closed database session for {}:{}".format(plugin.module.title, plugin.function_name))
+            bot.logger.debug("Closed database session for {}:{}".format(hook.plugin.title, hook.function_name))
             input.db.close()
 
 
@@ -232,7 +232,7 @@ def run(bot, plugin, input):
     Returns False if the plugin errored, True otherwise.
 
     :type bot: core.bot.CloudBot
-    :type plugin: Plugin
+    :type plugin: Hook
     :type input: Input
     :rtype: bool
     """
@@ -244,7 +244,7 @@ def run(bot, plugin, input):
         else:
             out = yield from _internal_run_coroutine(bot, plugin, input)
     except Exception:
-        bot.logger.exception("Error in plugin {}:{}".format(plugin.module.title, plugin.function_name))
+        bot.logger.exception("Error in plugin {}:{}".format(plugin.plugin.title, plugin.function_name))
         return False
     else:
         if out is not None:
@@ -253,19 +253,22 @@ def run(bot, plugin, input):
 
 
 @asyncio.coroutine
-def do_sieve(sieve, bot, input, plugin):
+def do_sieve(sieve, bot, input, hook):
     """
-    :type sieve: Plugin
+    :type sieve: core.pluginmanager.Hook
     :type bot: core.bot.CloudBot
     :type input: Input
-    :type plugin: Plugin
+    :type hook: core.pluginmanager.Hook
     :rtype: Input
     """
     try:
-        result = yield from sieve.function(bot, input, plugin)
+        if sieve.threaded:
+            result = yield from bot.loop.run_in_executor(sieve.function, bot, input, hook)
+        else:
+            result = yield from sieve.function(bot, input, hook)
     except Exception:
         bot.logger.exception("Error running sieve {}:{} on {}:{}:".format(
-            sieve.module.title, sieve.function_name, plugin.module.title, plugin.function_name
+            sieve.plugin.title, sieve.function_name, hook.plugin.title, hook.function_name
         ))
         return None
     else:
@@ -273,9 +276,9 @@ def do_sieve(sieve, bot, input, plugin):
 
 
 class Handler:
-    """Runs modules in their own threads (ensures order)
+    """Runs plugins in their own threads (ensures order)
     :type bot: core.bot.CloudBot
-    :type plugin: Plugin
+    :type plugin: Hook
     :type queue: asyncio.Queue[(asyncio.Future, Input)]
     :type future: asyncio.Future
     """
@@ -283,7 +286,7 @@ class Handler:
     def __init__(self, bot, plugin):
         """
         :type bot: core.bot.CloudBot
-        :type plugin: Plugin
+        :type plugin: Hook
         """
         self.bot = bot
         self.plugin = plugin
@@ -299,7 +302,13 @@ class Handler:
         while True:
             # we can just continue forever here, disregarding the bot's state
             # the event loop will stop anyways if the bot gets stopped, so we don't have to care.
-            future, message = yield from self.queue.get()
+            try:
+                future, message = self.queue.get_nowait()
+            except asyncio.QueueEmpty:
+                # Handlers are really only useful when there are more than one thing in the queue.
+                # We don't need this one, we can just make another one.
+                self._stopped()
+                return
             # We do want to stop when we get StopIteration however, because that means the plugin has been unloaded.
             if message == StopIteration:
                 # Set the future result, to have stop() return
@@ -326,6 +335,13 @@ class Handler:
         yield from self.queue.put((StopIteration, stopped_future))
         # wait for the handler to signify that it has actually stopped
         yield from stopped_future
+        self._stopped()
+
+    def _stopped(self):
+        """
+        Method to be called after this Handler has been stopped. This is for internal use only, use stop() to stop.
+        """
+        del self.bot.handlers[(self.plugin.plugin.title, self.plugin.function_name)]
 
     @asyncio.coroutine
     def run_message(self, message):
@@ -352,7 +368,7 @@ def dispatch(bot, input, plugin):
 
     :type bot: core.bot.CloudBot
     :type input: Input
-    :type plugin: core.pluginmanager.Plugin
+    :type plugin: core.pluginmanager.Hook
     :rtype: bool
     """
     if plugin.type != "onload":  # we don't need sieves on onload hooks.
@@ -369,7 +385,7 @@ def dispatch(bot, input, plugin):
         return False
 
     if plugin.single_thread:
-        key = (plugin.module.title, plugin.function_name)
+        key = (plugin.plugin.title, plugin.function_name)
         handler = bot.handlers.get(key)
         if handler is None:
             # If we don't have a handler yet, create one
@@ -397,8 +413,8 @@ def main(bot, input_params):
     command_prefix = input_params["conn"].config.get('command_prefix', '.')
 
     # EVENTS
-    if inp.command in bot.plugin_manager.events:
-        for event_plugin in bot.plugin_manager.events[inp.command]:
+    if inp.command in bot.plugin_manager.raw_triggers:
+        for event_plugin in bot.plugin_manager.raw_triggers[inp.command]:
             yield from dispatch(bot, Input(bot=bot, **input_params), event_plugin)
     for event_plugin in bot.plugin_manager.catch_all_events:
         yield from dispatch(bot, Input(bot=bot, **input_params), event_plugin)

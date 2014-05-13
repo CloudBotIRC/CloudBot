@@ -152,7 +152,7 @@ class CloudBot:
     def main_loop(self):
         # load plugins
         yield from self.plugin_manager.load_all(os.path.abspath("modules"))
-        # if we we're stopped while loading modules, cancel that and just stop
+        # if we we're stopped while loading plugins, cancel that and just stop
         if not self.running:
             return
         # start plugin reloader

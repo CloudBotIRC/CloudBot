@@ -11,7 +11,7 @@ class PluginLoader(object):
         :type bot: core.bot.CloudBot
         """
         self.observer = Observer()
-        self.module_path = os.path.abspath("modules")
+        self.module_path = os.path.abspath("plugins")
         self.bot = bot
 
         self.event_handler = PluginEventHandler(self, patterns=["*.py"])
@@ -27,44 +27,33 @@ class PluginLoader(object):
 
     def load_file(self, path):
         """
-        Loads a module, given its file path.
+        Loads or reloads a module, given its file path.
         :type path: str
         """
         # call_soon_threadsafe doesn't support kwargs, so use a lambda
         self.bot.loop.call_soon_threadsafe(
-            lambda: asyncio.async(self.bot.plugin_manager.load_module(path), loop=self.bot.loop))
-
-    def unload_file(self, path):
-        """
-        Unloads a module, given its file path.
-        :type path: str
-        """
-        # call_soon_threadsafe doesn't support kwargs, so use a lambda
-        self.bot.loop.call_soon_threadsafe(
-            lambda: asyncio.async(self.bot.plugin_manager.unload_module(path), loop=self.bot.loop))
+            lambda: asyncio.async(self.bot.plugin_manager.load_plugin(path), loop=self.bot.loop))
 
 
 class PluginEventHandler(Trick):
+    """
+    :type loader: PluginLoader
+    """
+
     def __init__(self, loader, *args, **kwargs):
         """
         :type loader: PluginLoader
         """
+        super().__init__(*args, **kwargs)
         self.loader = loader
-        Trick.__init__(self, *args, **kwargs)
 
     def on_created(self, event):
         self.loader.load_file(event.src_path.decode())
-
-    def on_deleted(self, event):
-        self.loader.unload_file(event.src_path.decode())
 
     def on_modified(self, event):
         self.loader.load_file(event.src_path.decode())
 
     def on_moved(self, event):
-        if event.src_path.endswith(b".py"):
-            # if it's moved from a non-.py file, don't unload it
-            self.loader.unload_file(event.src_path.decode())
+        # only load if it's moved to a .py file
         if event.dest_path.endswith(b".py"):
-            # if it's moved to a non-.py file, don't load it
             self.loader.load_file(event.dest_path.decode())

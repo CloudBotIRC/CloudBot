@@ -10,7 +10,7 @@ def plpaste(text, bot):
     :type bot: core.bot.CloudBot
     """
     if text in bot.plugin_manager.commands:
-        file_path = bot.plugin_manager.commands[text].module.file_path
+        file_path = bot.plugin_manager.commands[text].plugin.file_path
         with open(file_path) as f:
             return web.haste(f.read(), ext='py')
     elif text + ".py" in listdir('modules/'):

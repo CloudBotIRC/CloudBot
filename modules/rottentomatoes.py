@@ -1,4 +1,4 @@
-from util import http, hook
+from cloudbot import http, hook
 
 api_root = 'http://api.rottentomatoes.com/api/public/v1.0/'
 movie_search_url = api_root + 'movies.json'

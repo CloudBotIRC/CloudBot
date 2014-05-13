@@ -1,4 +1,4 @@
-from util import hook, bucket
+from cloudbot import bucket, hook
 
 TOKENS = 10
 RESTORE_RATE = 2

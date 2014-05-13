@@ -5,12 +5,12 @@ import sys
 import time
 import signal
 
-from core import bot
-
 if sys.version_info < (3, 4, 0):
     # check python version
     print("CloudBot3 requires Python 3.4 or newer.")
     sys.exit(1)
+
+print('CloudBot3 <http://git.io/refresh>')
 
 # set up environment
 os.chdir(sys.path[0] or '.')  # do stuff relative to the install directory
@@ -19,7 +19,8 @@ os.chdir(sys.path[0] or '.')  # do stuff relative to the install directory
 if os.path.exists(os.path.abspath('lib')):
     sys.path += ['lib']
 
-print('CloudBot3 <http://git.io/refresh>')
+# import bot
+from cloudbot.core import bot
 
 
 def main():

@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 
-from util import hook, http, urlnorm
+from cloudbot import hook, http, urlnorm
 
 
 @hook.command

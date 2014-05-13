@@ -1,7 +1,7 @@
 import base64
 import binascii
 
-from util import hook
+from cloudbot import hook
 
 
 def encode(password, text):

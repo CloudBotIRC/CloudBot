@@ -2,7 +2,7 @@ import json
 import pytest
 
 from modules.fishbans import fishbans, bancount
-from util import http
+from cloudbot import http
 
 test_user = "notch"
 

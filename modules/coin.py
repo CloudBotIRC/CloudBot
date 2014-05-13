@@ -1,6 +1,6 @@
 import random
 
-from util import hook
+from cloudbot import hook
 
 
 @hook.command(autohelp=False)

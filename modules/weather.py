@@ -1,4 +1,4 @@
-from util import hook, http, web
+from cloudbot import hook, http, web
 
 base_url = "http://api.wunderground.com/api/{}/{}/q/{}.json"
 

@@ -4,8 +4,7 @@ from bs4 import BeautifulSoup
 import pytest
 
 from modules.fact import fact
-from util import http, web
-
+from cloudbot import http, web
 
 testpage = """
 <html>

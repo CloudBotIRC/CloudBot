@@ -1,6 +1,6 @@
 import json
 
-from util import hook, http
+from cloudbot import hook, http
 
 
 @hook.command(autohelp=False)

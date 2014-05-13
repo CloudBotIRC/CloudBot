@@ -1,6 +1,6 @@
 import re
 
-from util import hook
+from cloudbot import hook
 
 db_ready = False
 

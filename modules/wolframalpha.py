@@ -1,6 +1,6 @@
 import re
 
-from util import hook, http, formatting, web
+from cloudbot import hook, http, web, formatting
 
 
 @hook.command(["wa", "calc", "math", "wolframalpha"])

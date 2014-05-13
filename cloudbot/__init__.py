@@ -1,6 +1,12 @@
 import logging
 import sys
 
+from .core import bot, connection, config, permissions, plugins
+from .util import botvars, bucket, formatting, hook, http, pyexec, textgen, timeformat, timesince, urlnorm, web
+
+__all__ = ["core", "util", "bot", "connection", "config", "permissions", "plugins", "botvars", "bucket", "formatting",
+           "hook", "http", "pyexec", "textgen", "timeformat", "timesince", "urlnorm", "web"]
+
 
 def _setup_logger():
     logger = logging.getLogger("cloudbot")
@@ -31,6 +37,5 @@ def _setup_logger():
     logger.addHandler(debug_file_handler)
     logger.addHandler(console_handler)
 
-_setup_logger()
 
-__all__ = ["bot", "config", "connection", "main", "permissions", "pluginmanager"]
+_setup_logger()

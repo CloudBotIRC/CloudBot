@@ -1,7 +1,7 @@
 import json
 import urllib
 
-from util import hook, http, web
+from cloudbot import hook, http, web
 
 
 def get_sound_info(game, search):

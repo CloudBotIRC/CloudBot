@@ -9,11 +9,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.schema import MetaData
 
-from core.connection import BotConnection
-from util import botvars
-from core import config, main
-from core.loader import PluginLoader
-from core.pluginmanager import PluginManager
+from .connection import BotConnection
+from .config import Config
+from .loader import PluginLoader
+from .plugins import PluginManager
+from .main import main
+from ..util import botvars
 
 logger_initialized = False
 
@@ -72,7 +73,7 @@ class CloudBot:
             os.mkdir(self.data_dir)
 
         # set up config
-        self.config = config.Config(self)
+        self.config = Config(self)
         self.logger.debug("Config system initialised.")
 
         # setup db
@@ -131,7 +132,7 @@ class CloudBot:
                 return
 
             # process the message
-            asyncio.async(main.main(self, message), loop=self.loop)
+            asyncio.async(main(self, message), loop=self.loop)
 
     def create_connections(self):
         """ Create a BotConnection for all the networks defined in the config """

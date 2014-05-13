@@ -1,7 +1,6 @@
 import re
 
-from util import hook, http
-
+from cloudbot import hook, http
 
 xkcd_re = (r'(.*:)//(www.xkcd.com|xkcd.com)(.*)', re.I)
 months = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 7: 'July', 8: 'August',

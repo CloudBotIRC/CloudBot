@@ -3,8 +3,7 @@ Scaevolus 2009"""
 
 import re
 
-from util import hook, http, formatting
-
+from cloudbot import hook, http, formatting
 
 api_prefix = "http://en.wikipedia.org/w/api.php"
 search_url = api_prefix + "?action=opensearch&format=xml"

@@ -1,7 +1,6 @@
 from urllib.parse import quote_plus
 
-from util import hook, http, formatting
-
+from cloudbot import hook, http, formatting
 
 api_url = "http://api.fishbans.com/stats/{}/"
 

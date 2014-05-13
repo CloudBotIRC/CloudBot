@@ -1,4 +1,4 @@
-from util import hook, http, web
+from cloudbot import hook, http, web
 
 
 @hook.command

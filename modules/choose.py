@@ -1,7 +1,7 @@
 import re
 import random
 
-from util import hook
+from cloudbot import hook
 
 
 @hook.command

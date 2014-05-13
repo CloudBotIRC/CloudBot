@@ -1,5 +1,6 @@
-from util import hook
 from urllib.parse import unquote
+
+from cloudbot import hook
 
 
 @hook.command(autohelp=False)

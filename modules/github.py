@@ -2,10 +2,9 @@ import json
 import traceback
 import urllib
 
-from util import hook, http
+from cloudbot import hook, http
 
-
-shortcuts = {"cloudbot": "ClouDev/CloudBot"}
+shortcuts = {"cloudbot": "CloudBotIRC/Refresh"}
 
 # (number, state, user.login, title, truncate(body), gitio.gitio(data.url))
 format_with_summary = "Issue: #{} ({}) by {}: {} | {} {}"

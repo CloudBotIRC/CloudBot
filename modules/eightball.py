@@ -1,7 +1,7 @@
 import os
 import random
 
-from util import hook, formatting
+from cloudbot import hook, formatting
 
 color_codes = {
     "<r>": "\x02\x0305",

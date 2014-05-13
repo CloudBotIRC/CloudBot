@@ -1,7 +1,7 @@
 from operator import attrgetter
 import re
 
-from util import hook
+from cloudbot import hook
 
 
 @hook.command("help", autohelp=False)

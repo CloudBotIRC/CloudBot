@@ -3,9 +3,7 @@ import random
 from datetime import datetime
 
 import tweepy
-
-from util import hook, timesince
-
+from cloudbot import hook, timesince
 
 TWITTER_RE = (r"(?:(?:www.twitter.com|twitter.com)/(?:[-_a-zA-Z0-9]+)/status/)([0-9]+)", re.I)
 

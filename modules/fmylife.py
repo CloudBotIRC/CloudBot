@@ -1,4 +1,4 @@
-from util import hook, http
+from cloudbot import hook, http
 
 fml_cache = []
 

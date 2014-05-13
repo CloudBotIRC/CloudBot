@@ -1,8 +1,7 @@
 import re
 import time
 
-from util import hook, http, timeformat
-
+from cloudbot import hook, http, timeformat
 
 youtube_re = (r'(?:youtube.*?(?:v=|/v/)|youtu\.be/|yooouuutuuube.*?id=)'
               '([-_a-zA-Z0-9]+)', re.I)

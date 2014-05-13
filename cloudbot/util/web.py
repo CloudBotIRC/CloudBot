@@ -5,9 +5,7 @@ import urllib.request
 import urllib.parse
 import urllib.error
 
-from . import http
-from . import urlnorm
-
+from . import urlnorm, http
 
 short_url = "http://is.gd/create.php"
 paste_url = "http://hastebin.com"

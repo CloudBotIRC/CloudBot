@@ -1,8 +1,7 @@
 import random
 import re
 
-from util import hook
-
+from cloudbot import hook
 
 with open("data/larts.txt") as f:
     larts = [line.strip() for line in f.readlines()

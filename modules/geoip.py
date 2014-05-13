@@ -5,7 +5,7 @@ from io import BytesIO
 
 import pygeoip
 
-from util import hook, http
+from cloudbot import hook, http
 
 
 @hook.onload()

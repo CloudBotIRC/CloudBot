@@ -1,6 +1,6 @@
 import re
 
-from util import hook
+from cloudbot import hook
 
 
 @hook.command(["groups", "listgroups", "permgroups"], permissions=["permissions_users"], autohelp=False)

@@ -1,6 +1,6 @@
 from os import listdir
 
-from util import hook, web
+from cloudbot import hook, web
 
 
 @hook.command(permissions=["adminonly"])

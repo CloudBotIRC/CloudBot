@@ -2,7 +2,7 @@ from datetime import datetime
 import re
 import random
 
-from util import hook, http, formatting, timesince
+from cloudbot import hook, http, timesince, formatting
 
 reddit_re = re.compile(r'.*(((www\.)?reddit\.com/r|redd\.it)[^ ]+)', re.I)
 

@@ -4,10 +4,9 @@ Since December 1, 2011, the Google Translate API is a paid service only.
 """
 
 import re
-
 import html.entities
-from util import hook, http
 
+from cloudbot import hook, http
 
 max_length = 100
 

@@ -1,7 +1,6 @@
 import re
 
-from util import hook, http
-
+from cloudbot import hook, http
 
 newgrounds_re = (r'(.*:)//(www.newgrounds.com|newgrounds.com)(:[0-9]+)?(.*)', re.I)
 valid = set('0123456789')

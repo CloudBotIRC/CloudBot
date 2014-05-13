@@ -1,8 +1,7 @@
-# coding=utf-8
 import re
 import random
 
-from util import hook
+from cloudbot import hook
 
 cakes = ['Chocolate', 'Ice Cream', 'Angel', 'Boston Cream', 'Birthday', 'Bundt', 'Carrot', 'Coffee', 'Devils', 'Fruit', 'Gingerbread', 'Pound', 'Red Velvet', 'Stack', 'Welsh', 'Yokan']
 

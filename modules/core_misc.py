@@ -2,7 +2,7 @@ import asyncio
 import socket
 import time
 
-from util import hook
+from cloudbot import hook
 
 socket.setdefaulttimeout(10)
 

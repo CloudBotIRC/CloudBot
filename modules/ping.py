@@ -3,7 +3,7 @@ import subprocess
 import re
 import os
 
-from util import hook
+from cloudbot import hook
 
 ping_regex = re.compile(r"(\d+.\d+)/(\d+.\d+)/(\d+.\d+)/(\d+.\d+)")
 

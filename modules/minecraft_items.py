@@ -3,8 +3,7 @@
 
 import re
 
-from util import hook
-
+from cloudbot import hook
 
 pattern = re.compile(r'^(?P<count>\d+)x (?P<name>.+?): (?P<ingredients>.*)$')
 

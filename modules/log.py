@@ -9,7 +9,7 @@ import codecs
 import time
 import re
 
-from util import hook
+from cloudbot import hook
 
 stream_cache = {}  # '{server} {chan}': (filename, fd)
 

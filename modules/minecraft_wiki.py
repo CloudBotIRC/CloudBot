@@ -1,7 +1,6 @@
 import re
 
-from util import hook, http, formatting
-
+from cloudbot import hook, http, formatting
 
 api_url = "http://minecraft.gamepedia.com/api.php?action=opensearch"
 mc_url = "http://minecraft.gamepedia.com/"

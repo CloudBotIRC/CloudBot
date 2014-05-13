@@ -4,7 +4,7 @@ import re
 import ssl
 from ssl import SSLContext
 
-from core.permissions import PermissionManager
+from .permissions import PermissionManager
 
 irc_prefix_re = re.compile(r":([^ ]*) ([^ ]*) (.*)")
 irc_noprefix_re = re.compile(r"([^ ]*) (.*)")

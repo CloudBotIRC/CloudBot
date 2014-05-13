@@ -1,4 +1,4 @@
-from util import http, hook
+from cloudbot import http, hook
 
 ## CONSTANTS
 

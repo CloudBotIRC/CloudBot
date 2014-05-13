@@ -1,4 +1,4 @@
-from util import hook
+from cloudbot import hook
 
 
 def mode_cmd(mode, text, inp, chan, conn, notice):

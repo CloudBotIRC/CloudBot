@@ -1,6 +1,6 @@
 import time
 
-from util import hook
+from cloudbot import hook
 
 
 # CTCP responses

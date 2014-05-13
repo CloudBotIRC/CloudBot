@@ -1,8 +1,7 @@
 import time
 
-from util import hook, http
-from util.formatting import capitalize_first
-
+from cloudbot import hook, http
+from cloudbot.formatting import capitalize_first
 
 api_url = 'http://api.wolframalpha.com/v2/query?format=plaintext'
 

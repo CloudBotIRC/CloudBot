@@ -2,7 +2,7 @@ import random
 import re
 import time
 
-from util import hook
+from cloudbot import hook
 
 
 def format_quote(q, num, n_quotes):

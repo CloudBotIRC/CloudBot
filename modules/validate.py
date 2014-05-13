@@ -4,7 +4,7 @@ Runs a given url through the w3c validator
 by Vladi
 """
 
-from util import hook, http
+from cloudbot import hook, http
 
 
 @hook.command('w3c')

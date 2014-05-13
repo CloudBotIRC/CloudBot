@@ -1,6 +1,6 @@
 from git import Repo
 
-from util import hook, web
+from cloudbot import hook, web
 
 
 @hook.command

@@ -1,4 +1,4 @@
-from util import hook, web, formatting
+from cloudbot import hook, web, formatting
 
 
 @hook.command

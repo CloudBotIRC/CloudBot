@@ -4,7 +4,7 @@
 import re
 import random
 
-from util import hook
+from cloudbot import hook
 
 whitespace_re = re.compile(r'\s+')
 valid_diceroll = re.compile(r'^([+-]?(?:\d+|\d*d(?:\d+|F))(?:[+-](?:\d+|\d*d(?:\d+|F)))*)( .+)?$', re.I)

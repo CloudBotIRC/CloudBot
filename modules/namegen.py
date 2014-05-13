@@ -1,7 +1,7 @@
 import json
 import os
 
-from util import hook, formatting, textgen
+from cloudbot import hook, formatting, textgen
 
 
 def get_generator(_json):

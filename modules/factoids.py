@@ -4,7 +4,7 @@ import re
 
 from sqlalchemy import Table, Column, String
 
-from util import hook, botvars, http, formatting, pyexec
+from cloudbot import botvars, hook, http, formatting, pyexec
 
 re_lineends = re.compile(r'[\r\n]*')
 

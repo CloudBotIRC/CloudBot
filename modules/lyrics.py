@@ -1,4 +1,4 @@
-from util import hook, http, web
+from cloudbot import hook, http, web
 
 url = "http://search.azlyrics.com/search.php?q="
 

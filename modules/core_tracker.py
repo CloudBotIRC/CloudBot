@@ -2,7 +2,7 @@
 
 import re
 
-from util import hook
+from cloudbot import hook
 
 nick_re = re.compile(":(.+?)!")
 

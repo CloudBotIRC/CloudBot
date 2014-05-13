@@ -1,8 +1,7 @@
 # Plugin by GhettoWizard and Scaevolus
 import re
 
-from util import hook
-from util import http
+from cloudbot import hook, http
 
 
 def format_output(h, definition, show_examples):

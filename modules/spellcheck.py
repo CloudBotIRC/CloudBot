@@ -1,8 +1,7 @@
 from enchant.checker import SpellChecker
 import enchant
 
-from util import hook
-
+from cloudbot import hook
 
 locale = "en_US"
 

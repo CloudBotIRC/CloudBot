@@ -2,8 +2,7 @@ from collections import deque
 import time
 import re
 
-from util import hook, timesince
-
+from cloudbot import hook, timesince
 
 db_ready = []
 

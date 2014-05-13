@@ -1,6 +1,6 @@
 import random
 
-from util import hook, formatting
+from cloudbot import hook, formatting
 
 with open("./data/slogans.txt") as f:
     slogans = [line.strip() for line in f.readlines()

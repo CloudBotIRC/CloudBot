@@ -8,8 +8,8 @@ import re
 
 import sqlalchemy
 
-from core import main
-from util import botvars
+from . import main
+from ..util import botvars
 
 
 def find_hooks(parent, code):

@@ -1,7 +1,7 @@
 import json
 import re
 
-from util import hook, http, formatting, web
+from cloudbot import hook, http, formatting, web
 
 
 ## CONSTANTS

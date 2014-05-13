@@ -1,6 +1,6 @@
 import re
 
-from util import hook
+from cloudbot import hook
 
 correction_re = re.compile(r"^[sS]/([^/]*)/([^/]*)(/.*)?\s*$")
 

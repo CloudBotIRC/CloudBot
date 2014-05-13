@@ -1,6 +1,6 @@
 import urllib.parse
 
-from util import hook, http, urlnorm
+from cloudbot import hook, http, urlnorm
 
 
 @hook.command

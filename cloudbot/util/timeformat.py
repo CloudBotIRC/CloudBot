@@ -1,4 +1,4 @@
-from util import formatting
+from . import formatting
 
 
 def format_time(seconds, count=3, accuracy=6, simple=False):

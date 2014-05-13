@@ -6,7 +6,7 @@ except ImportError:
     # Just use the regular random module, not the strong one
     import random
 
-from util import hook
+from cloudbot import hook
 
 with open("data/password_words.txt") as f:
     common_words = [line.strip() for line in f.readlines()]

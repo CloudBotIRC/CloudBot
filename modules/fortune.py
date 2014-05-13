@@ -1,7 +1,7 @@
 import os
 import random
 
-from util import hook
+from cloudbot import hook
 
 
 @hook.onload()

@@ -1,8 +1,7 @@
 import csv
 import io
 
-from util import hook, http
-
+from cloudbot import hook, http
 
 gauge_url = "http://www.mysteamgauge.com/search?username={}"
 

@@ -4,7 +4,7 @@ import re
 
 oauth = None  # import oauth2 as oauth
 
-from util import hook
+from cloudbot import hook
 
 
 def getdata(inp, types, api_key, api_secret):

@@ -2,7 +2,7 @@ import json
 
 from bs4 import BeautifulSoup
 
-from util import hook, http, formatting
+from cloudbot import hook, http, formatting
 
 
 @hook.command

@@ -1,6 +1,6 @@
 import random
 
-from util import hook, http, formatting
+from cloudbot import hook, http, formatting
 
 
 def api_get(kind, query):

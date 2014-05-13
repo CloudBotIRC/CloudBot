@@ -3,8 +3,7 @@ import struct
 import json
 import traceback
 
-from util import hook
-
+from cloudbot import hook
 
 try:
     import DNS

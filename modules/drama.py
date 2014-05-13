@@ -1,8 +1,7 @@
 import re
 from urllib import parse
 
-from util import hook, http, formatting
-
+from cloudbot import hook, http, formatting
 
 api_url = "http://encyclopediadramatica.se/api.php?action=opensearch"
 ed_url = "http://encyclopediadramatica.se/"

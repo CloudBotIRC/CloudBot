@@ -4,7 +4,7 @@ import time
 import platform
 from datetime import timedelta
 
-from util import hook
+from cloudbot import hook
 
 
 def convert_kilobytes(kilobytes):

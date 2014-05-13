@@ -1,4 +1,4 @@
-from util import hook, web, http
+from cloudbot import hook, web, http
 
 
 @hook.command('gfy')

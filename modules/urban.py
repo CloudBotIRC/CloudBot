@@ -1,6 +1,6 @@
 import random
 
-from util import hook, http, formatting
+from cloudbot import hook, http, formatting
 
 base_url = 'http://api.urbandictionary.com/v0'
 define_url = base_url + "/define"

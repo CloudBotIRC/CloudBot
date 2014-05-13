@@ -1,7 +1,6 @@
 import datetime
 
-from util import hook, http
-
+from cloudbot import hook, http
 
 base_url = "http://thetvdb.com/api/"
 api_key = "469B73127CA0C411"

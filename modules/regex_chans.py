@@ -1,6 +1,6 @@
 from sqlalchemy import Table, Column, UniqueConstraint, String
 
-from util import hook, botvars
+from cloudbot import hook, botvars
 
 table = Table(
     "regex_chans",

@@ -1,6 +1,6 @@
 from fnmatch import fnmatch
 
-from util import hook
+from cloudbot import hook
 
 
 #@hook.sieve

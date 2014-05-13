@@ -1,6 +1,6 @@
 import random
 
-from util import hook, http, web
+from cloudbot import hook, http, web
 
 metadata_url = "http://omnidator.appspot.com/microdata/json/?url={}"
 

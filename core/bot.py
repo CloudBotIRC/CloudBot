@@ -3,7 +3,6 @@ import time
 import logging
 import re
 import os
-import sys
 import gc
 
 from sqlalchemy import create_engine
@@ -25,48 +24,6 @@ def clean_name(n):
     :rtype: str
     """
     return re.sub('[^A-Za-z0-9_]+', '', n.replace(" ", "_"))
-
-
-def get_logger():
-    """create and return a new logger object
-    :rtype: logging.Logger
-    """
-    # create logger
-    logger = logging.getLogger("cloudbot")
-    global logger_initialized
-    if logger_initialized:
-        # Only initialize once
-        return logger
-
-    logger.setLevel(logging.DEBUG)
-
-    # add a file handler
-    file_handler = logging.FileHandler("bot.log")
-    file_handler.setLevel(logging.INFO)
-
-    # add debug file handler
-    debug_file_handler = logging.FileHandler("debug.log")
-    debug_file_handler.setLevel(logging.DEBUG)
-
-    # stdout handler
-    console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setLevel(logging.INFO)
-
-    # create a formatter and set the formatter for the handler.
-    file_formatter = logging.Formatter('%(asctime)s[%(levelname)s] %(message)s', '[%Y-%m-%d][%H:%M:%S]')
-    console_formatter = logging.Formatter('%(asctime)s[%(levelname)s] %(message)s', '[%H:%M:%S]')
-    file_handler.setFormatter(file_formatter)
-    debug_file_handler.setFormatter(file_formatter)
-    console_handler.setFormatter(console_formatter)
-
-    # add the Handlers to the logger
-    logger.addHandler(file_handler)
-    logger.addHandler(debug_file_handler)
-    logger.addHandler(console_handler)
-
-    # be sure to set initialized = True
-    logger_initialized = True
-    return logger
 
 
 class CloudBot:
@@ -105,7 +62,7 @@ class CloudBot:
         self.connections = []
 
         # set up logging
-        self.logger = get_logger()
+        self.logger = logging.getLogger("cloudbot")
         self.logger.debug("Logging system initialised.")
 
         # declare and create data folder
@@ -215,10 +172,6 @@ class CloudBot:
 
             connection.stop()
 
-        if not self.do_restart:
-            # Don't shut down logging if restarting
-            self.logger.debug("Stopping logging engine")
-            logging.shutdown()
         self.running = False
         # We need to make sure that the main loop actually exists after this method is called. This will ensure that the
         # blocking queued_messages.get() method is executed, then the method will stop without processing it because

@@ -1,1 +1,1 @@
-__all__ = ["bot", "config", "connection", "main", "permissions", "plugins"]w
+__all__ = ["bot", "config", "connection", "main", "permissions", "plugins"]

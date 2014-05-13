@@ -1,5 +1,5 @@
 from cloudbot import hook
-from cloudbot.pyexec import eval_py
+from cloudbot.util.pyexec import eval_py
 
 
 @hook.command

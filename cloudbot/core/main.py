@@ -336,20 +336,28 @@ def dispatch(bot, hook, input):
         # before starting this one.
 
         key = (hook.plugin.title, hook.function_name)
-        if key in bot.singlethread_hook_futures:
+        if key in bot.singlethread_hook_queue:
             # This will block this coroutine until the last hook task has completed
-            yield from bot.singlethread_hook_futures[key]
-
-        # Put a new future in bot.single_hook_futures
-        future = asyncio.Future()
-        bot.singlethread_hook_futures[key] = future
+            queue = bot.singlethread_hook_queue[key]
+            assert isinstance(queue, asyncio.Queue)
+            # create a future to represent this task
+            future = asyncio.Future()
+            queue.put_nowait(future)
+            yield from future
+        else:
+            queue = asyncio.Queue()
+            bot.singlethread_hook_queue[key] = queue
 
         # Run the plugin with the message, and wait for it to finish
         result = yield from run(bot, hook, input)
 
-        # Set the future's result, so that the next task for this hook (if any) can continue.
-        del bot.singlethread_hook_futures[key]
-        future.set_result(None)
+        if not queue.empty():
+            # set the result for the next task's future, so they can execute
+            next_future = yield from queue.get()
+            next_future.set_result(None)
+        else:
+            # We're the last task in the queue, we can delete it now.
+            del bot.singlethread_hook_queue[key]
     else:
         # Run the plugin with the message, and wait for it to finish
         result = yield from run(bot, hook, input)

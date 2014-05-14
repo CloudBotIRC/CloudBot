@@ -207,12 +207,6 @@ class PluginManager:
             # this plugin hasn't been loaded, so no need to unload it
             return False
 
-        # stop all currently running instances of hooks from this plugin
-        for key, handler in list(self.bot.handlers.items()):
-            _title, function_name = key
-            if _title == title:
-                yield from handler.stop()
-
         # make sure this plugin is actually loaded
         if not file_name in self.plugins:
             return False

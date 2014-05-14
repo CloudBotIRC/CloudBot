@@ -90,7 +90,7 @@ class CloudBot:
         self.logger.debug("Bot setup completed.")
 
         # Handlers
-        self.handlers = {}
+        self.singlethread_hook_futures = {}
 
         # create bot connections
         self.create_connections()

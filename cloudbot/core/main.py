@@ -306,88 +306,6 @@ def do_sieve(sieve, bot, input, hook):
         return result
 
 
-class Handler:
-    """Runs hooks, ensuring order.
-    :type bot: cloudbot.core.bot.CloudBot
-    :type hook: cloudbot.core.plugins.Hook
-    :type queue: asyncio.Queue[(asyncio.Future, Input)]
-    :type task: asyncio.Future
-    """
-
-    def __init__(self, bot, hook):
-        """
-        :type bot: cloudbot.core.bot.CloudBot
-        :type hook: cloudbot.core.plugins.Hook
-        """
-        self.bot = bot
-        self.hook = hook
-        self.queue = asyncio.Queue(loop=self.bot.loop)
-        # future will be assigned when start() is called
-        self.task = None
-
-    def start(self):
-        self.task = asyncio.Task(self.run(), loop=self.bot.loop)
-
-    @asyncio.coroutine
-    def run(self):
-        while True:
-            # we can just continue forever here, disregarding the bot's state
-            # the event loop will stop anyways if the bot gets stopped, so we don't have to care.
-            try:
-                future, message = self.queue.get_nowait()
-            except asyncio.QueueEmpty:
-                # Handlers are really only useful when there are more than one thing in the queue.
-                # We don't need this one, we can just make another one.
-                self._stopped()
-                return
-            # We do want to stop when we get StopIteration however, because that means the plugin has been unloaded.
-            if message == StopIteration:
-                # Set the future result, to have stop() return
-                future.set_result(StopIteration)
-                return
-
-            # Run the message
-            result = yield from run(self.bot, self.hook, message)
-            # Set the future's result, so that run_message can return.
-            future.set_result(result)
-
-    @asyncio.coroutine
-    def stop(self):
-        """
-        Stops this handler. This method blocks until the handler is truly stopped.
-        """
-        self.task.cancel()
-        while not self.queue.empty():
-            future, message = self.queue.get_nowait()
-            future.cancel()
-
-        stopped_future = asyncio.Future(loop=self.bot.loop)
-        # put StopIteration and the stopped future in the queue
-        yield from self.queue.put((StopIteration, stopped_future))
-        # wait for the handler to signify that it has actually stopped
-        yield from stopped_future
-        self._stopped()
-
-    def _stopped(self):
-        """
-        Method to be called after this Handler has been stopped. This is for internal use only, use stop() to stop.
-        """
-        del self.bot.handlers[(self.hook.plugin.title, self.hook.function_name)]
-
-    @asyncio.coroutine
-    def run_message(self, input):
-        """
-        Runs a given message in this handler. This method will block until the message has been processed.
-        :type input: Input
-        """
-        result_future = asyncio.Future(loop=self.bot.loop)
-        # put the future into the queue
-        yield from self.queue.put((result_future, input))
-        # wait for the message to be processed
-        result = yield from result_future
-        return result
-
-
 @asyncio.coroutine
 def dispatch(bot, hook, input):
     """
@@ -414,16 +332,24 @@ def dispatch(bot, hook, input):
         return False
 
     if hook.single_thread:
-        key = (hook.plugin.title, hook.function_name)
-        handler = bot.handlers.get(key)
-        if handler is None:
-            # If we don't have a handler yet, create one
-            handler = Handler(bot, hook)
-            handler.start()
-            bot.handlers[key] = handler
+        # There should only be one running instance of this hook, so let's wait for the last input to be processed
+        # before starting this one.
 
-        # Give the handler the message, and wait for it to finish running
-        result = yield from handler.run_message(input)
+        key = (hook.plugin.title, hook.function_name)
+        if key in bot.singlethread_hook_futures:
+            # This will block this coroutine until the last hook task has completed
+            yield from bot.singlethread_hook_futures[key]
+
+        # Put a new future in bot.single_hook_futures
+        future = asyncio.Future()
+        bot.singlethread_hook_futures[key] = future
+
+        # Run the plugin with the message, and wait for it to finish
+        result = yield from run(bot, hook, input)
+
+        # Set the future's result, so that the next task for this hook (if any) can continue.
+        del bot.singlethread_hook_futures[key]
+        future.set_result(None)
     else:
         # Run the plugin with the message, and wait for it to finish
         result = yield from run(bot, hook, input)

@@ -13,7 +13,7 @@ from .connection import BotConnection
 from .config import Config
 from .loader import PluginLoader
 from .plugins import PluginManager
-from .main import process
+from .events import Input
 from ..util import botvars
 
 logger_initialized = False
@@ -89,9 +89,6 @@ class CloudBot:
         # Bot initialisation complete
         self.logger.debug("Bot setup completed.")
 
-        # Handlers
-        self.singlethread_hook_queue = {}
-
         # create bot connections
         self.create_connections()
 
@@ -105,34 +102,6 @@ class CloudBot:
         """
         self.loop.run_until_complete(self.main_loop())
         self.loop.close()
-
-    @asyncio.coroutine
-    def main_loop(self):
-        # load plugins
-        yield from self.plugin_manager.load_all(os.path.abspath("modules"))
-        # if we we're stopped while loading plugins, cancel that and just stop
-        if not self.running:
-            return
-        # start plugin reloader
-        self.loader.start()
-        # start connections
-        yield from asyncio.gather(*[conn.connect() for conn in self.connections], loop=self.loop)
-        # run a manual garbage collection cycle, to clean up any unused objects created during initialization
-        gc.collect()
-        # start main loop
-        self.logger.info("Starting main loop")
-        while self.running:
-            # This function will wait until a new message is received.
-            message = yield from self.queued_messages.get()
-
-            if not self.running:
-                # When the bot is stopped, StopIteration is put into the queue to make sure that
-                # self.queued_messages.get() doesn't block this thread forever.
-                # But we don't actually want to process that message, so if we're stopped, just exit.
-                return
-
-            # process the message
-            asyncio.async(process(self, message), loop=self.loop)
 
     def create_connections(self):
         """ Create a BotConnection for all the networks defined in the config """
@@ -183,3 +152,72 @@ class CloudBot:
         """shuts the bot down and restarts it"""
         self.do_restart = True
         self.stop(reason)
+
+    @asyncio.coroutine
+    def main_loop(self):
+        # load plugins
+        yield from self.plugin_manager.load_all(os.path.abspath("modules"))
+        # if we we're stopped while loading plugins, cancel that and just stop
+        if not self.running:
+            return
+        # start plugin reloader
+        self.loader.start()
+        # start connections
+        yield from asyncio.gather(*[conn.connect() for conn in self.connections], loop=self.loop)
+        # run a manual garbage collection cycle, to clean up any unused objects created during initialization
+        gc.collect()
+        # start main loop
+        self.logger.info("Starting main loop")
+        while self.running:
+            # This function will wait until a new message is received.
+            message = yield from self.queued_messages.get()
+
+            if not self.running:
+                # When the bot is stopped, StopIteration is put into the queue to make sure that
+                # self.queued_messages.get() doesn't block this thread forever.
+                # But we don't actually want to process that message, so if we're stopped, just exit.
+                return
+
+            # process the message
+            asyncio.async(self.process(message), loop=self.loop)
+
+    @asyncio.coroutine
+    def process(self, message):
+        """
+        :type self: cloudbot.core.bot.CloudBot
+        :type message: dict[str, cloudbot.core.connection.BotConnection | str | list[str]]
+        """
+        inp = Input(bot=self, **message)
+        command_prefix = message["conn"].config.get('command_prefix', '.')
+
+        # EVENTS
+        if inp.command in self.plugin_manager.raw_triggers:
+            for event_hook in self.plugin_manager.raw_triggers[inp.command]:
+                yield from self.plugin_manager.launch(event_hook, Input(bot=self, **message))
+        for event_hook in self.plugin_manager.catch_all_events:
+            yield from self.plugin_manager.launch(event_hook, Input(bot=self, **message))
+
+        if inp.command == 'PRIVMSG':
+            # COMMANDS
+            if inp.chan == inp.nick:  # private message, no command prefix
+                prefix = '^(?:[{}]?|'.format(command_prefix)
+            else:
+                prefix = '^(?:[{}]|'.format(command_prefix)
+            command_re = prefix + inp.conn.nick
+            command_re += r'[,;:]+\s+)(\w+)(?:$|\s+)(.*)'
+
+            match = re.match(command_re, inp.lastparam)
+
+            if match:
+                command = match.group(1).lower()
+                if command in self.plugin_manager.commands:
+                    command_hook = self.plugin_manager.commands[command]
+                    input = Input(bot=self, text=match.group(2).strip(), trigger=command, **message)
+                    yield from self.plugin_manager.launch(command_hook, input)
+
+            # REGEXES
+            for regex, regex_hook in self.plugin_manager.regex_hooks:
+                match = regex.search(inp.lastparam)
+                if match:
+                    input = Input(bot=self, match=match, **message)
+                    yield from self.plugin_manager.launch(regex_hook, input)

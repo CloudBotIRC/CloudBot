@@ -8,7 +8,7 @@ import re
 
 import sqlalchemy
 
-from . import main
+from . import events
 from ..util import botvars
 
 
@@ -89,6 +89,7 @@ class PluginManager:
         self.catch_all_events = []
         self.regex_hooks = []
         self.sieves = []
+        self._hook_waiting_queues = {}
 
     @asyncio.coroutine
     def load_all(self, plugin_dir):
@@ -143,7 +144,7 @@ class PluginManager:
 
         # run onload hooks
         for onload_hook in plugin.run_on_load:
-            success = yield from main.dispatch(self.bot, onload_hook, main.Input(bot=self.bot))
+            success = yield from self.launch(onload_hook, events.Input(bot=self.bot))
             if not success:
                 self.bot.logger.warning(
                     "Not registering hooks from plugin {}: onload hook errored".format(plugin.title))
@@ -257,6 +258,179 @@ class PluginManager:
         """
         self.bot.logger.info("Loaded {}".format(hook))
         self.bot.logger.debug("Loaded {}".format(repr(hook)))
+
+    def _prepare_parameters(self, hook, input):
+        """
+        Prepares arguments for the given hook
+
+        :type hook: cloudbot.core.pluginmanager.Hook
+        :type input: Input
+        :rtype: list
+        """
+        # Does the command need DB access?
+        uses_db = "db" in hook.required_args
+        parameters = []
+        if uses_db:
+            # create SQLAlchemy session
+            self.bot.logger.debug("Opened database session for {}:{}".format(hook.plugin.title, hook.function_name))
+            input.db = self.bot.db_session()
+
+        for required_arg in hook.required_args:
+            if hasattr(input, required_arg):
+                value = getattr(input, required_arg)
+                parameters.append(value)
+            else:
+                self.bot.logger.error("Plugin {}:{} asked for invalid argument '{}', cancelling execution!"
+                                      .format(hook.plugin.title, hook.function_name, required_arg))
+                return None
+        return uses_db, parameters
+
+    def _execute_hook_threaded(self, hook, input):
+        value = self._prepare_parameters(hook, input)
+        if value is None:
+            return False
+        create_db, parameters = value
+        if create_db:
+            # create SQLAlchemy session
+            self.bot.logger.debug("Opened database session for {}:{}".format(hook.plugin.title, hook.function_name))
+            input.db = input.bot.db_session()
+
+        try:
+            return hook.function(*parameters)
+        finally:
+            # ensure that the database session is closed
+            if create_db:
+                self.bot.logger.debug("Closed database session for {}:{}".format(hook.plugin.title, hook.function_name))
+                input.db.close()
+
+    @asyncio.coroutine
+    def _execute_hook_sync(self, hook, input):
+        value = self._prepare_parameters(hook, input)
+        if value is None:
+            return False
+        create_db, parameters = value
+        if create_db:
+            # create SQLAlchemy session
+            self.bot.logger.debug("Opened database session for {}:{}".format(hook.plugin.title, hook.function_name))
+            input.db = self.bot.db_session()
+
+        try:
+            return hook.function(*parameters)
+        finally:
+            # ensure that the database session is closed
+            if create_db:
+                self.bot.logger.debug("Closed database session for {}:{}".format(hook.plugin.title, hook.function_name))
+                input.db.close()
+
+    @asyncio.coroutine
+    def _execute_hook(self, hook, input):
+        """
+        Runs the specific hook with the given bot and input.
+
+        Returns False if the hook errored, True otherwise.
+
+        :type hook: cloudbot.core.plugins.Hook
+        :type input: Input
+        :rtype: bool
+        """
+        try:
+            # _internal_run_threaded and _internal_run_coroutine prepare the database, and run the hook.
+            # _internal_run_* will prepare parameters and the database session, but won't do any error catching.
+            if hook.threaded:
+                out = yield from self.bot.loop.run_in_executor(None, self._execute_hook_threaded, hook, input)
+            else:
+                out = yield from self._execute_hook_sync(hook, input)
+        except Exception:
+            self.bot.logger.exception("Error in hook {}:{}".format(hook.plugin.title, hook.function_name))
+            return False
+
+        if out is not None:
+            input.reply(str(out))
+        return True
+
+    @asyncio.coroutine
+    def _sieve(self, sieve, input, hook):
+        """
+        :type sieve: cloudbot.core.plugins.Hook
+        :type input: Input
+        :type hook: cloudbot.core.plugins.Hook
+        :rtype: Input
+        """
+        try:
+            if sieve.threaded:
+                result = yield from self.bot.loop.run_in_executor(sieve.function, self.bot, input, hook)
+            else:
+                result = yield from sieve.function(self.bot, input, hook)
+        except Exception:
+            self.bot.logger.exception("Error running sieve {}:{} on {}:{}:".format(
+                sieve.plugin.title, sieve.function_name, hook.plugin.title, hook.function_name))
+            return None
+        else:
+            return result
+
+    @asyncio.coroutine
+    def launch(self, hook, input):
+        """
+        Dispatch a given input to a given hook using a given bot object.
+
+        Returns False if the hook didn't run successfully, and True if it ran successfully.
+
+        :type input: Input
+        :type hook: cloudbot.core.plugins.Hook
+        :rtype: bool
+        """
+        if hook.type != "onload":  # we don't need sieves on onload hooks.
+            for sieve in self.bot.plugin_manager.sieves:
+                input = yield from self._sieve(sieve, input, hook)
+                if input is None:
+                    return False
+
+        if hook.type == "command" and hook.auto_help and not input.text:
+            if hook.doc is not None:
+                input.notice(input.conn.config["command_prefix"] + hook.doc)
+            else:
+                input.notice(input.conn.config["command_prefix"] + hook.name + " requires additional arguments.")
+            return False
+
+        if hook.single_thread:
+            # There should only be one running instance of this hook, so let's wait for the last input to be processed
+            # before starting this one.
+
+            key = (hook.plugin.title, hook.function_name)
+            if key in self._hook_waiting_queues:
+                queue = self._hook_waiting_queues[key]
+                if queue is None:
+                    # there's a hook running, but the queue hasn't been created yet, since there's only one hook
+                    queue = asyncio.Queue()
+                    self._hook_waiting_queues[key] = queue
+                assert isinstance(queue, asyncio.Queue)
+                # create a future to represent this task
+                future = asyncio.Future()
+                queue.put_nowait(future)
+                # wait until the last task is completed
+                yield from future
+            else:
+                # set to None to signify that this hook is running, but there's no need to create a full queue
+                # in case there are no more hooks that will wait
+                self._hook_waiting_queues[key] = None
+
+            # Run the plugin with the message, and wait for it to finish
+            result = yield from self._execute_hook(hook, input)
+
+            queue = self._hook_waiting_queues[key]
+            if queue is None or queue.empty():
+                # We're the last task in the queue, we can delete it now.
+                del self._hook_waiting_queues[key]
+            else:
+                # set the result for the next task's future, so they can execute
+                next_future = yield from queue.get()
+                next_future.set_result(None)
+        else:
+            # Run the plugin with the message, and wait for it to finish
+            result = yield from self._execute_hook(hook, input)
+
+        # Return the result
+        return result
 
 
 class Plugin:

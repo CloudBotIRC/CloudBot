@@ -1,4 +1,5 @@
 import logging
+import os
 import sys
 
 from .core import bot, connection, config, permissions, pluginmanager, events
@@ -13,12 +14,16 @@ def _setup_logger():
 
     logger.setLevel(logging.DEBUG)
 
+    logging_dir = os.path.join(os.path.abspath("."), "logs")
+    if not os.path.exists(logging_dir):
+        os.mkdir(logging_dir)
+
     # add a file handler
-    file_handler = logging.FileHandler("bot.log")
+    file_handler = logging.FileHandler(os.path.join(logging_dir, "bot.log"))
     file_handler.setLevel(logging.INFO)
 
     # add debug file handler
-    debug_file_handler = logging.FileHandler("debug.log")
+    debug_file_handler = logging.FileHandler(os.path.join(logging_dir, "debug.log"))
     debug_file_handler.setLevel(logging.DEBUG)
 
     # stdout handler

@@ -11,15 +11,17 @@ import re
 
 from cloudbot import hook
 
+log_dir = os.path.join(os.path.abspath("."), "logs")
+
 stream_cache = {}  # '{server} {chan}': (filename, fd)
 
 formats = {
     "PRIVMSG": "[{server}:{chan}] <{nick}> {message}",
-    "PART": "[{server}] -!- {nick} [{user}@{host}] has left {chan}",
-    "JOIN": "[{server}] -!- {nick} [{user}@{host}] has joined {param0}",
-    "MODE": "[{server}] -!- mode/{chan} [{param_tail}] by {nick}",
-    "KICK": "[{server}] -!- {param1} was kicked from {chan} by {nick} ({message})",
-    "TOPIC": "[{server}] -!- {nick} changed the topic of {chan} to: {message}",
+    "PART": "[{server}:{chan}] -!- {nick} [{user}@{host}] has left {chan}",
+    "JOIN": "[{server}:{chan}] -!- {nick} [{user}@{host}] has joined {chan}",
+    "MODE": "[{server}:{chan}] -!- mode/{chan} [{param_tail}] by {nick}",
+    "KICK": "[{server}:{chan}] -!- {param1} was kicked from {chan} by {nick} ({message})",
+    "TOPIC": "[{server}:{chan}] -!- {nick} changed the topic of {chan} to: {message}",
     "QUIT": "[{server}] -!- {nick} has quit ({message})",
     "PING": "",
     "NOTICE": "[{server}:{chan}] -{nick}- {message}",
@@ -44,11 +46,9 @@ irc_color_re = re.compile(r"(\x03(\d+,\d+|\d)|[\x0f\x02\x16\x1f])")
 
 
 def get_log_filename(data_dir, server, chan):
-    return os.path.join(data_dir, "log", gmtime('%Y'), server, chan, (gmtime("%%s.%m-%d.log") % chan).lower())
-
-
-def gmtime(time_format):
-    return time.strftime(time_format, time.gmtime())
+    _time = time.gmtime()
+    return os.path.join(log_dir, time.strftime('%Y', _time), server, chan,
+                        (time.strftime("{}.%m-%d.log".format(chan), _time)).lower())
 
 
 def beautify(event):
@@ -94,7 +94,7 @@ def get_log_stream(data_dir, server, chan):
             # already open stream needs to be closed
             log_stream.flush()
             log_stream.close()
-        data_dir = os.path.split(new_filename)[0]
+        data_dir = os.path.dirname(new_filename)
         if not os.path.exists(data_dir):
             os.makedirs(data_dir)
         log_stream = codecs.open(new_filename, "a", "utf-8")
@@ -116,7 +116,7 @@ def log(bot, event):
 
     if human_readable:
         # beautify will return an empty string if event.irc_command is "PING"
-        if event.chan:
+        if event.irc_command in ["PRIVMSG", "PART", "JOIN", "MODE", "TOPIC", "QUIT", "NOTICE"] and event.chan:
             channel = event.chan
             # temporary fix until presence tracking is implemented:
         elif event.irc_command == 'QUIT':

@@ -11,7 +11,7 @@ from sqlalchemy.schema import MetaData
 
 from .connection import BotConnection
 from .config import Config
-from .loader import PluginLoader
+from .reloader import PluginReloader
 from .pluginmanager import PluginManager
 from .events import BaseEvent, CommandEvent, RegexEvent
 from ..util import botvars
@@ -37,12 +37,11 @@ class CloudBot:
     :type data_dir: bytes
     :type config: core.config.Config
     :type plugin_manager: cloudbot.core.pluginmanager.PluginManager
-    :type loader: cloudbot.core.loader.PluginLoader
+    :type reloader: cloudbot.core.reloader.PluginReloader
     :type db_engine: sqlalchemy.engine.Engine
     :type db_factory: sqlalchemy.orm.session.sessionmaker
     :type db_session: sqlalchemy.orm.scoping.scoped_session
     :type db_metadata: sqlalchemy.sql.schema.MetaData
-    :type handlers: dict[(str, str), core.main.Handler]
     """
 
     def __init__(self, loop=asyncio.get_event_loop()):
@@ -88,7 +87,7 @@ class CloudBot:
         # create bot connections
         self.create_connections()
 
-        self.loader = PluginLoader(self)
+        self.reloader = PluginReloader(self)
         self.plugin_manager = PluginManager(self)
 
     def run(self):
@@ -122,8 +121,8 @@ class CloudBot:
         self.logger.debug("Stopping config reloader.")
         self.config.stop()
 
-        self.logger.debug("Stopping plugin loader.")
-        self.loader.stop()
+        self.logger.debug("Stopping plugin reloader.")
+        self.reloader.stop()
 
         for connection in self.connections:
             if not connection.connected:
@@ -157,7 +156,7 @@ class CloudBot:
         if not self.running:
             return
         # start plugin reloader
-        self.loader.start()
+        self.reloader.start(os.path.abspath("plugins"))
         # start connections
         yield from asyncio.gather(*[conn.connect() for conn in self.connections], loop=self.loop)
         # run a manual garbage collection cycle, to clean up any unused objects created during initialization

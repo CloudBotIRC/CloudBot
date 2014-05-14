@@ -119,56 +119,24 @@ class PluginManager:
             self.bot.logger.info("Not loading plugin {}: plugin disabled".format(file_name))
             return
 
-        yield from self._unload(file_path)
+        # make sure to unload the previously loaded plugin from this path, if it was loaded.
+        if file_name in self.plugins:
+            yield from self._unload(file_path)
 
         module_name = "modules.{}".format(title)
         try:
             plugin_module = importlib.import_module(module_name)
+            # if this plugin was loaded before, reload it
             if hasattr(plugin_module, "_cloudbot_loaded"):
-                # if this plugin was loaded before, reload it
                 importlib.reload(plugin_module)
         except Exception:
             self.bot.logger.exception("Error loading {}:".format(file_name))
             return
 
+        # create the plugin
         plugin = Plugin(file_path, file_name, title, plugin_module)
 
-        yield from self._register_hooks(plugin)
-
-    @asyncio.coroutine
-    def _unload(self, path):
-        """
-        Unloads the plugin from the given path, unregistering all hooks from the plugin.
-
-        Returns True if the plugin was unloaded, False if the plugin wasn't loaded in the first place.
-
-        :type path: str
-        :rtype: bool
-        """
-        file_name = os.path.basename(path)
-        title = os.path.splitext(file_name)[0]
-        if "disabled_plugins" in self.bot.config and title in self.bot.config['disabled_plugins']:
-            # this plugin hasn't been loaded, so no need to unload it
-            return False
-
-        # stop all currently running instances of hooks from this plugin
-        for key, handler in list(self.bot.handlers.items()):
-            _title, function_name = key
-            if _title == title:
-                yield from handler.stop()
-
-        return self._unregister_hooks(file_name)
-
-    @asyncio.coroutine
-    def _register_hooks(self, plugin, check_if_exists=True):
-        """
-        Registers all hooks in a given plugin
-
-        :type plugin: Plugin
-        :type check_if_exists: bool
-        """
-        if check_if_exists and plugin.file_name in self.plugins:
-            self._unregister_hooks(plugin.file_name)
+        # proceed to register hooks
 
         # create database tables
         plugin.create_tables(self.bot)
@@ -177,11 +145,12 @@ class PluginManager:
         for onload_hook in plugin.run_on_load:
             success = yield from main.dispatch(self.bot, onload_hook, main.Input(bot=self.bot))
             if not success:
-                self.bot.logger.warning("Not registering hooks from plugin {}: onload hook errored".format(plugin.title))
-                return
+                self.bot.logger.warning(
+                    "Not registering hooks from plugin {}: onload hook errored".format(plugin.title))
 
-        # we don't need this anymore
-        del plugin.run_on_load
+                # unregister databases
+                plugin.unregister_tables(self.bot)
+                return
 
         self.plugins[plugin.file_name] = plugin
 
@@ -219,29 +188,37 @@ class PluginManager:
             self.sieves.append(sieve_hook)
             self._log_hook(sieve_hook)
 
-    def _unregister_hooks(self, plugin):
+        # we don't need this anymore
+        del plugin.run_on_load
+
+    @asyncio.coroutine
+    def _unload(self, path):
         """
-        Unregisters all hooks from a given plugin.
+        Unloads the plugin from the given path, unregistering all hooks from the plugin.
 
-        Returns True if all hooks in the given plugin were unloaded, False if the ignore_not_registered and the plugin
-        wasn't registered in the first place. Raises an AssertionError if ignore_not_registered is false and it wasn't
-        loaded in the first place.
+        Returns True if the plugin was unloaded, False if the plugin wasn't loaded in the first place.
 
-        :param plugin: Plugin to unregister hooks from, or str to lookup via file_name and then unload.
-        :type plugin: Plugin | str
-
+        :type path: str
+        :rtype: bool
         """
-        if isinstance(plugin, str):
-            if not plugin in self.plugins:
-                return False
-            plugin = self.plugins[plugin]
-        else:
-            assert isinstance(plugin, Plugin)
-            if not plugin.file_name in self.plugins:
-                # we don't need to unload a plugin which isn't loaded
-                return False
-            # Make sure people aren't unloading old versions of plugins.
-            assert self.plugins[plugin.file_name] is plugin, "Plugin is stale."
+        file_name = os.path.basename(path)
+        title = os.path.splitext(file_name)[0]
+        if "disabled_plugins" in self.bot.config and title in self.bot.config['disabled_plugins']:
+            # this plugin hasn't been loaded, so no need to unload it
+            return False
+
+        # stop all currently running instances of hooks from this plugin
+        for key, handler in list(self.bot.handlers.items()):
+            _title, function_name = key
+            if _title == title:
+                yield from handler.stop()
+
+        # make sure this plugin is actually loaded
+        if not file_name in self.plugins:
+            return False
+
+        # get the loaded plugin
+        plugin = self.plugins[file_name]
 
         # unregister commands
         for command_hook in plugin.commands:

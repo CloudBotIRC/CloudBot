@@ -4,6 +4,7 @@ gitflow
 *.db
 *.log
 .*.swp
+__pycache__
 *.pyc
 *.orig
 .project

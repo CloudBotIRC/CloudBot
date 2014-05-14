@@ -12,7 +12,7 @@
       },
         "nick": "MyCloudBot",
         "user": "cloudbot",
-      "real_name": "CloudBot - http://git.io/cloudbotirc",
+      "real_name": "CloudBot - http://git.io/refresh",
       "channels": ["#cloudbot", "#cloudbot2"],
       "disabled_commands": [],
       "acls": {},
@@ -59,6 +59,6 @@
     "rdio_key": "",
     "rdio_secret": ""
   },
-    "database": "sqlite:///cloudbot.db",
-    "disabled_plugins": []
+  "database": "sqlite:///cloudbot.db",
+  "disabled_plugins": []
 }

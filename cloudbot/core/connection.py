@@ -6,6 +6,8 @@ from ssl import SSLContext
 
 from .permissions import PermissionManager
 
+from .events import BaseEvent
+
 irc_prefix_re = re.compile(r":([^ ]*) ([^ ]*) (.*)")
 irc_noprefix_re = re.compile(r"([^ ]*) (.*)")
 irc_netmask_re = re.compile(r"([^!@]*)!([^@]*)@(.*)")
@@ -71,7 +73,7 @@ class BotConnection:
         self.vars = {}
         self.history = {}
 
-        self.message_queue = bot.queued_messages  # global parsed message queue, for parsed received messages
+        self.message_queue = bot.queued_events  # global parsed message queue, for parsed received messages
 
         self.input_queue = asyncio.Queue(loop=self.loop)
         self.output_queue = asyncio.Queue(loop=self.loop)
@@ -312,12 +314,10 @@ class IRCProtocol(asyncio.Protocol):
                 netmask_match = irc_netmask_re.match(netmask_prefix)
                 if netmask_match is None:
                     # This isn't in the format of a netmask
-                    # TODO: This nick, user, host & mask behavior is legacy
-                    # What should we actually set them to when netmask_prefix is something like 'irc.znc.in'?
                     nick = netmask_prefix
-                    user = ""
-                    host = ""
-                    mask = "{}!@".format(netmask_prefix)
+                    user = None
+                    host = None
+                    mask = netmask_prefix
                 else:
                     nick = netmask_match.group(1)
                     user = netmask_match.group(2)
@@ -333,12 +333,10 @@ class IRCProtocol(asyncio.Protocol):
                     continue
                 command = noprefix_line_match.group(1)
                 params = noprefix_line_match.group(2)
-                # TODO: This nick, user, host & mask behavior is legacy
-                # What should we do about it?
-                nick = ""
-                user = ""
-                host = ""
-                mask = "!@"
+                nick = None
+                user = None
+                host = None
+                mask = None
 
             param_list = irc_param_re.findall(params)
             if param_list:
@@ -347,20 +345,16 @@ class IRCProtocol(asyncio.Protocol):
                     param_list[-1] = param_list[-1][1:]
                 last_param = param_list[-1]
             else:
-                last_param = ""  # TODO: Should we set this to None?
+                last_param = None
             # Set up parsed message
             # TODO: What do you actually want to send here? Are prefix and params really necessary?
-            message = {
-                "conn": self.botconn, "raw": line, "command": command, "nick": nick, "user": user, "host": host,
-                "mask": mask, "paramlist": param_list, "lastparam": last_param,
-                "params": params, "prefix": prefix,
-            }
-
+            event = BaseEvent(conn=self.botconn, irc_raw=line, irc_prefix=prefix, irc_command=command,
+                              irc_paramlist=param_list, irc_message=last_param, nick=nick, user=user, host=host,
+                              mask=mask)
             # we should also remember to ping the server if they ping us
             if command == "PING":
-                # TODO: Are we assuming that the ':' as been stripped?
-                self.output_queue.put_nowait("PONG :" + param_list[0])
+                self.output_queue.put_nowait("PONG :" + last_param)
 
-                # Put the message into the queue to be handled
+            # Put the message into the queue to be handled
             # TODO: Do we want to directly call the handling method here?
-            self.message_queue.put_nowait(message)
+            self.message_queue.put_nowait(event)

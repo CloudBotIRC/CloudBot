@@ -14,16 +14,16 @@ from cloudbot import hook
 stream_cache = {}  # '{server} {chan}': (filename, fd)
 
 formats = {
-    "PRIVMSG": "[{server}:{chan}] <{nick}> {msg}",
+    "PRIVMSG": "[{server}:{chan}] <{nick}> {message}",
     "PART": "[{server}] -!- {nick} [{user}@{host}] has left {chan}",
     "JOIN": "[{server}] -!- {nick} [{user}@{host}] has joined {param0}",
     "MODE": "[{server}] -!- mode/{chan} [{param_tail}] by {nick}",
-    "KICK": "[{server}] -!- {param1} was kicked from {chan} by {nick} ({msg})",
-    "TOPIC": "[{server}] -!- {nick} changed the topic of {chan} to: {msg}",
-    "QUIT": "[{server}] -!- {nick} has quit ({msg})",
+    "KICK": "[{server}] -!- {param1} was kicked from {chan} by {nick} ({message})",
+    "TOPIC": "[{server}] -!- {nick} changed the topic of {chan} to: {message}",
+    "QUIT": "[{server}] -!- {nick} has quit ({message})",
     "PING": "",
-    "NOTICE": "[{server}:{chan}] -{nick}- {msg}",
-    "default": "[{server}] {raw}"
+    "NOTICE": "[{server}:{chan}] -{nick}- {message}",
+    "default": "[{server}] {irc_raw}"
 }
 
 action_ctcp_format = "[{server}:{chan}] * {nick} {ctcpmsg}"
@@ -51,24 +51,27 @@ def gmtime(time_format):
     return time.strftime(time_format, time.gmtime())
 
 
-def beautify(input):
-    log_format = formats.get(input.command)
+def beautify(event):
+    """
+    :type event: cloudbot.core.events.BaseEvent
+    """
+    log_format = formats.get(event.irc_command)
     if not log_format:
-        return formats["default"].format(server=input.server, raw=input.raw)
+        return formats["default"].format(server=event.conn.readable_name, irc_raw=event.irc_raw)
 
     args = {
-        "server": input.conn.readable_name, "param_tail": " ".join(input.paramlist[1:]),
-        "msg": irc_color_re.sub("", input.msg), "nick": input.nick, "chan": input.chan,
-        "user": input.user, "host": input.host
+        "server": event.conn.readable_name, "param_tail": " ".join(event.irc_paramlist[1:]),
+        "message": irc_color_re.sub("", event.irc_message), "nick": event.nick, "chan": event.chan,
+        "user": event.user, "host": event.host
     }
 
-    _len = len(input.paramlist)
-    for n, p in enumerate(input.paramlist):
+    _len = len(event.irc_paramlist)
+    for n, p in enumerate(event.irc_paramlist):
         args["param" + str(n)] = p
         args["param_" + str(abs(n - _len))] = p
 
-    if input.command == "PRIVMSG" and input.msg.count("\x01") >= 2:
-        ctcp_split = input.msg.split("\x01", 2)[1].split(' ', 1)
+    if event.irc_command == "PRIVMSG" and event.irc_message.count("\x01") >= 2:
+        ctcp_split = event.irc_message.split("\x01", 2)[1].split(' ', 1)
 
         args["ctcpcmd"] = ctcp_split[0]
         if len(ctcp_split) < 2:
@@ -101,36 +104,40 @@ def get_log_stream(data_dir, server, chan):
 
 
 @hook.event("*", singlethread=True)
-def log(bot, input):
+def log(bot, event):
     """
-    :type bot: core.bot.CloudBot
-    :type input: core.main.Input
+    :type bot: cloudbot.core.bot.CloudBot
+    :type event: cloudbot.core.events.BaseEvent
     """
-    raw_log = get_log_stream(bot.data_dir, input.conn.name, "raw")
-    raw_log.write(input.raw + "\n")
+    raw_log = get_log_stream(bot.data_dir, event.conn.name, "raw")
+    raw_log.write(event.irc_raw + "\n")
 
-    human_readable = beautify(input)
+    human_readable = beautify(event)
 
     if human_readable:
-        # beautify will return an empty string if input.command is "PING"
-        if input.chan:
-            channel = input.chan
+        # beautify will return an empty string if event.irc_command is "PING"
+        if event.chan:
+            channel = event.chan
             # temporary fix until presence tracking is implemented:
-        elif input.command == 'QUIT':
+        elif event.irc_command == 'QUIT':
             channel = 'quit'
-        elif input.command == 'NICK':
+        elif event.irc_command == 'NICK':
             channel = 'nick'
         else:
             channel = None
         if channel:
-            channel_log = get_log_stream(bot.data_dir, input.conn.name, channel)
+            channel_log = get_log_stream(bot.data_dir, event.conn.name, channel)
             channel_log.write(human_readable + '\n')
 
 
 # Log console separately to prevent lag
 @hook.event("*", threaded=False)
-def console_log(input, bot):
-    human_readable = beautify(input)
+def console_log(bot, event):
+    """
+    :type bot: cloudbot.core.bot.CloudBot
+    :type event: cloudbot.core.events.BaseEvent
+    """
+    human_readable = beautify(event)
     if human_readable:
-        # beautify will return an empty string if input.command is "PING"
+        # beautify will return an empty string if event.irc_command is "PING"
         bot.logger.info(human_readable)

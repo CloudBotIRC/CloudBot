@@ -25,7 +25,7 @@ def find_hooks(parent, module):
     raw = []
     sieve = []
     onload = []
-    type_lists = {"command": command, "regex": regex, "raw": raw, "sieve": sieve, "onload": onload}
+    type_lists = {"command": command, "regex": regex, "irc_raw": raw, "sieve": sieve, "onload": onload}
     for name, func in module.__dict__.items():
         if hasattr(func, "_cloudbot_hook"):
             # if it has cloudbot hook
@@ -63,8 +63,8 @@ class PluginManager:
 
     Plugins are the lowest level of abstraction in this class. There are four different plugin types:
     - CommandPlugin is for bot commands
-    - RawPlugin hooks onto raw irc lines
-    - RegexPlugin loads a regex parameter, and executes on input lines which match the regex
+    - RawPlugin hooks onto irc_raw irc lines
+    - RegexPlugin loads a regex parameter, and executes on irc lines which match the regex
     - SievePlugin is a catch-all sieve, which all other plugins go through before being executed.
 
     :type bot: cloudbot.core.bot.CloudBot
@@ -144,7 +144,7 @@ class PluginManager:
 
         # run onload hooks
         for onload_hook in plugin.run_on_load:
-            success = yield from self.launch(onload_hook, events.Input(bot=self.bot))
+            success = yield from self.launch(onload_hook, events.BaseEvent(bot=self.bot))
             if not success:
                 self.bot.logger.warning(
                     "Not registering hooks from plugin {}: onload hook errored".format(plugin.title))
@@ -259,12 +259,12 @@ class PluginManager:
         self.bot.logger.info("Loaded {}".format(hook))
         self.bot.logger.debug("Loaded {}".format(repr(hook)))
 
-    def _prepare_parameters(self, hook, input):
+    def _prepare_parameters(self, hook, event):
         """
         Prepares arguments for the given hook
 
         :type hook: cloudbot.core.pluginmanager.Hook
-        :type input: Input
+        :type event: cloudbot.core.events.BaseEvent
         :rtype: list
         """
         # Does the command need DB access?
@@ -273,11 +273,11 @@ class PluginManager:
         if uses_db:
             # create SQLAlchemy session
             self.bot.logger.debug("Opened database session for {}:{}".format(hook.plugin.title, hook.function_name))
-            input.db = self.bot.db_session()
+            event.db = self.bot.db_session()
 
         for required_arg in hook.required_args:
-            if hasattr(input, required_arg):
-                value = getattr(input, required_arg)
+            if hasattr(event, required_arg):
+                value = getattr(event, required_arg)
                 parameters.append(value)
             else:
                 self.bot.logger.error("Plugin {}:{} asked for invalid argument '{}', cancelling execution!"
@@ -285,15 +285,15 @@ class PluginManager:
                 return None
         return uses_db, parameters
 
-    def _execute_hook_threaded(self, hook, input):
-        value = self._prepare_parameters(hook, input)
+    def _execute_hook_threaded(self, hook, event):
+        value = self._prepare_parameters(hook, event)
         if value is None:
             return False
         create_db, parameters = value
         if create_db:
             # create SQLAlchemy session
             self.bot.logger.debug("Opened database session for {}:{}".format(hook.plugin.title, hook.function_name))
-            input.db = input.bot.db_session()
+            event.db = event.bot.db_session()
 
         try:
             return hook.function(*parameters)
@@ -301,18 +301,18 @@ class PluginManager:
             # ensure that the database session is closed
             if create_db:
                 self.bot.logger.debug("Closed database session for {}:{}".format(hook.plugin.title, hook.function_name))
-                input.db.close()
+                event.db.close()
 
     @asyncio.coroutine
-    def _execute_hook_sync(self, hook, input):
-        value = self._prepare_parameters(hook, input)
+    def _execute_hook_sync(self, hook, event):
+        value = self._prepare_parameters(hook, event)
         if value is None:
             return False
         create_db, parameters = value
         if create_db:
             # create SQLAlchemy session
             self.bot.logger.debug("Opened database session for {}:{}".format(hook.plugin.title, hook.function_name))
-            input.db = self.bot.db_session()
+            event.db = self.bot.db_session()
 
         try:
             return hook.function(*parameters)
@@ -320,47 +320,47 @@ class PluginManager:
             # ensure that the database session is closed
             if create_db:
                 self.bot.logger.debug("Closed database session for {}:{}".format(hook.plugin.title, hook.function_name))
-                input.db.close()
+                event.db.close()
 
     @asyncio.coroutine
-    def _execute_hook(self, hook, input):
+    def _execute_hook(self, hook, event):
         """
-        Runs the specific hook with the given bot and input.
+        Runs the specific hook with the given bot and event.
 
         Returns False if the hook errored, True otherwise.
 
         :type hook: cloudbot.core.plugins.Hook
-        :type input: Input
+        :type event: cloudbot.core.events.BaseEvent
         :rtype: bool
         """
         try:
             # _internal_run_threaded and _internal_run_coroutine prepare the database, and run the hook.
             # _internal_run_* will prepare parameters and the database session, but won't do any error catching.
             if hook.threaded:
-                out = yield from self.bot.loop.run_in_executor(None, self._execute_hook_threaded, hook, input)
+                out = yield from self.bot.loop.run_in_executor(None, self._execute_hook_threaded, hook, event)
             else:
-                out = yield from self._execute_hook_sync(hook, input)
+                out = yield from self._execute_hook_sync(hook, event)
         except Exception:
             self.bot.logger.exception("Error in hook {}:{}".format(hook.plugin.title, hook.function_name))
             return False
 
         if out is not None:
-            input.reply(str(out))
+            event.reply(str(out))
         return True
 
     @asyncio.coroutine
-    def _sieve(self, sieve, input, hook):
+    def _sieve(self, sieve, event, hook):
         """
         :type sieve: cloudbot.core.plugins.Hook
-        :type input: Input
+        :type event: cloudbot.core.events.BaseEvent
         :type hook: cloudbot.core.plugins.Hook
-        :rtype: Input
+        :rtype: cloudbot.core.events.BaseEvent
         """
         try:
             if sieve.threaded:
-                result = yield from self.bot.loop.run_in_executor(sieve.function, self.bot, input, hook)
+                result = yield from self.bot.loop.run_in_executor(sieve.function, self.bot, event, hook)
             else:
-                result = yield from sieve.function(self.bot, input, hook)
+                result = yield from sieve.function(self.bot, event, hook)
         except Exception:
             self.bot.logger.exception("Error running sieve {}:{} on {}:{}:".format(
                 sieve.plugin.title, sieve.function_name, hook.plugin.title, hook.function_name))
@@ -369,31 +369,27 @@ class PluginManager:
             return result
 
     @asyncio.coroutine
-    def launch(self, hook, input):
+    def launch(self, hook, event):
         """
-        Dispatch a given input to a given hook using a given bot object.
+        Dispatch a given event to a given hook using a given bot object.
 
         Returns False if the hook didn't run successfully, and True if it ran successfully.
 
-        :type input: Input
-        :type hook: cloudbot.core.plugins.Hook
+        :type event: cloudbot.core.events.BaseEvent | cloudbot.core.events.CommandEvent
+        :type hook: cloudbot.core.plugins.Hook | cloudbot.core.plugins.CommandHook
         :rtype: bool
         """
         if hook.type != "onload":  # we don't need sieves on onload hooks.
             for sieve in self.bot.plugin_manager.sieves:
-                input = yield from self._sieve(sieve, input, hook)
-                if input is None:
+                event = yield from self._sieve(sieve, event, hook)
+                if event is None:
                     return False
 
-        if hook.type == "command" and hook.auto_help and not input.text:
-            if hook.doc is not None:
-                input.notice(input.conn.config["command_prefix"] + hook.doc)
-            else:
-                input.notice(input.conn.config["command_prefix"] + hook.name + " requires additional arguments.")
-            return False
+        if hook.type == "command" and hook.auto_help and not event.text:
+            event.notice_doc()
 
         if hook.single_thread:
-            # There should only be one running instance of this hook, so let's wait for the last input to be processed
+            # There should only be one running instance of this hook, so let's wait for the last event to be processed
             # before starting this one.
 
             key = (hook.plugin.title, hook.function_name)
@@ -415,7 +411,7 @@ class PluginManager:
                 self._hook_waiting_queues[key] = None
 
             # Run the plugin with the message, and wait for it to finish
-            result = yield from self._execute_hook(hook, input)
+            result = yield from self._execute_hook(hook, event)
 
             queue = self._hook_waiting_queues[key]
             if queue is None or queue.empty():
@@ -427,7 +423,7 @@ class PluginManager:
                 next_future.set_result(None)
         else:
             # Run the plugin with the message, and wait for it to finish
-            result = yield from self._execute_hook(hook, input)
+            result = yield from self._execute_hook(hook, event)
 
         # Return the result
         return result
@@ -603,7 +599,7 @@ class RawHook(Hook):
         :type plugin: Plugin
         :type event_hook: cloudbot.util.hook._RawHook
         """
-        super().__init__("raw", plugin, event_hook)
+        super().__init__("irc_raw", plugin, event_hook)
 
         self.triggers = event_hook.triggers
 
@@ -651,7 +647,7 @@ class OnloadHook(Hook):
 _hook_name_to_plugin = {
     "command": CommandHook,
     "regex": RegexHook,
-    "raw": RawHook,
+    "irc_raw": RawHook,
     "sieve": SieveHook,
     "onload": OnloadHook
 }

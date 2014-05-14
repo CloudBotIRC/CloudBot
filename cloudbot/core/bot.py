@@ -13,7 +13,7 @@ from .connection import BotConnection
 from .config import Config
 from .loader import PluginLoader
 from .plugins import PluginManager
-from .events import Input
+from .events import BaseEvent, CommandEvent, RegexEvent
 from ..util import botvars
 
 logger_initialized = False
@@ -53,11 +53,7 @@ class CloudBot:
         self.do_restart = False
 
         # stores all queued messages from all connections
-        self.queued_messages = asyncio.Queue(loop=self.loop)
-        # format: [{
-        #   "conn": BotConnection, "raw": str, "prefix": str, "command": str, "params": str, "nick": str,
-        #   "user": str, "host": str, "mask": str, "paramlist": list[str], "lastparam": str
-        # }]
+        self.queued_events = asyncio.Queue(loop=self.loop)
 
         # stores each bot server connection
         self.connections = []
@@ -144,9 +140,9 @@ class CloudBot:
 
         self.running = False
         # We need to make sure that the main loop actually exists after this method is called. This will ensure that the
-        # blocking queued_messages.get() method is executed, then the method will stop without processing it because
+        # blocking queued_events.get() method is executed, then the method will stop without processing it because
         # self.running = False
-        self.queued_messages.put_nowait(StopIteration)
+        self.queued_events.put_nowait(StopIteration)
 
     def restart(self, reason=None):
         """shuts the bot down and restarts it"""
@@ -170,54 +166,54 @@ class CloudBot:
         self.logger.info("Starting main loop")
         while self.running:
             # This function will wait until a new message is received.
-            message = yield from self.queued_messages.get()
+            event = yield from self.queued_events.get()
 
             if not self.running:
                 # When the bot is stopped, StopIteration is put into the queue to make sure that
-                # self.queued_messages.get() doesn't block this thread forever.
+                # self.queued_events.get() doesn't block this thread forever.
                 # But we don't actually want to process that message, so if we're stopped, just exit.
                 return
 
             # process the message
-            asyncio.async(self.process(message), loop=self.loop)
+            asyncio.async(self.process(event), loop=self.loop)
 
     @asyncio.coroutine
-    def process(self, message):
+    def process(self, event):
         """
         :type self: cloudbot.core.bot.CloudBot
-        :type message: dict[str, cloudbot.core.connection.BotConnection | str | list[str]]
+        :type event: cloudbot.core.events.BaseEvent
         """
-        inp = Input(bot=self, **message)
-        command_prefix = message["conn"].config.get('command_prefix', '.')
+        command_prefix = event.conn.config.get('command_prefix', '.')
 
         # EVENTS
-        if inp.command in self.plugin_manager.raw_triggers:
-            for event_hook in self.plugin_manager.raw_triggers[inp.command]:
-                yield from self.plugin_manager.launch(event_hook, Input(bot=self, **message))
-        for event_hook in self.plugin_manager.catch_all_events:
-            yield from self.plugin_manager.launch(event_hook, Input(bot=self, **message))
+        if event.irc_command in self.plugin_manager.raw_triggers:
+            for raw_hook in self.plugin_manager.raw_triggers[event.irc_command]:
+                yield from self.plugin_manager.launch(raw_hook, BaseEvent(bot=self, base_event=event))
+        for raw_hook in self.plugin_manager.catch_all_events:
+            yield from self.plugin_manager.launch(raw_hook, BaseEvent(bot=self, base_event=event))
 
-        if inp.command == 'PRIVMSG':
+        if event.irc_command == 'PRIVMSG':
             # COMMANDS
-            if inp.chan == inp.nick:  # private message, no command prefix
+            if event.chan == event.nick:  # private message, no command prefix
                 prefix = '^(?:[{}]?|'.format(command_prefix)
             else:
                 prefix = '^(?:[{}]|'.format(command_prefix)
-            command_re = prefix + inp.conn.nick
+            command_re = prefix + event.conn.nick
             command_re += r'[,;:]+\s+)(\w+)(?:$|\s+)(.*)'
 
-            match = re.match(command_re, inp.lastparam)
+            match = re.match(command_re, event.irc_message)
 
             if match:
                 command = match.group(1).lower()
                 if command in self.plugin_manager.commands:
                     command_hook = self.plugin_manager.commands[command]
-                    input = Input(bot=self, text=match.group(2).strip(), trigger=command, **message)
-                    yield from self.plugin_manager.launch(command_hook, input)
+                    command_event = CommandEvent(bot=self, text=match.group(2).strip(),
+                                                 triggered_command=command, base_event=event)
+                    yield from self.plugin_manager.launch(command_hook, command_event)
 
             # REGEXES
             for regex, regex_hook in self.plugin_manager.regex_hooks:
-                match = regex.search(inp.lastparam)
+                match = regex.search(event.irc_message)
                 if match:
-                    input = Input(bot=self, match=match, **message)
-                    yield from self.plugin_manager.launch(regex_hook, input)
+                    regex_event = RegexEvent(bot=self, match=match, base_event=event)
+                    yield from self.plugin_manager.launch(regex_hook, regex_event)

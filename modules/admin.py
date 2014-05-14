@@ -280,7 +280,7 @@ def nick(text, conn, notice):
 
 @hook.command(permissions=["botcontrol"])
 def raw(text, conn, notice):
-    """raw <command> -- Sends a raw IRC command
+    """raw <command> -- Sends a irc_raw IRC command
     :type text: str
     :type conn: core.irc.BotConnection
     """

@@ -1,80 +1,66 @@
-class Input:
+class BaseEvent:
     """
     :type bot: cloudbot.core.bot.CloudBot
     :type conn: cloudbot.core.connection.BotConnection
-    :type raw: str
-    :type prefix: str
-    :type command: str
-    :type params: str
+    :type hook: cloudbot.core.plugins.Hook
+    :type irc_raw: str
+    :type irc_prefix: str
+    :type irc_command: str
+    :type irc_paramlist: str
+    :type irc_message: str
     :type nick: str
     :type user: str
     :type host: str
     :type mask: str
-    :type text: str
-    :type match: re.__Match
-    :type lastparam: str
     """
 
-    def __init__(self, bot=None, conn=None, raw=None, prefix=None, command=None, params=None, nick=None, user=None,
-                 host=None, mask=None, paramlist=None, lastparam=None, text=None, match=None, trigger=None):
+    def __init__(self, bot=None, conn=None, hook=None, base_event=None, irc_raw=None, irc_prefix=None, irc_command=None,
+                 irc_paramlist=None, irc_message=None, nick=None, user=None, host=None, mask=None):
         """
         :type bot: cloudbot.core.bot.CloudBot
         :type conn: cloudbot.core.irc.BotConnection
-        :type raw: str
-        :type prefix: str
-        :type command: str
-        :type params: str
+        :type hook: cloudbot.core.plugins.Hook
+        :type base_event: cloudbot.core.events.BaseEvent
+        :type irc_raw: str
+        :type irc_prefix: str
+        :type irc_command: str
+        :type irc_paramlist: list[str]
+        :type irc_message: str
         :type nick: str
         :type user: str
         :type host: str
         :type mask: str
-        :type paramlist: list[str]
-        :type lastparam: str
-        :type text: str
-        :type match: re.__Match
-        :type trigger: str
         """
         self.bot = bot
         self.conn = conn
-        self.raw = raw
-        self.prefix = prefix
-        self.command = command
-        self.params = params
-        self.nick = nick
-        self.user = user
-        self.host = host
-        self.mask = mask
-        self.paramlist = paramlist
-        self.lastparam = lastparam
-        self.text = text
-        self.match = match
-        self.trigger = trigger
-
-    @property
-    def paraml(self):
-        """
-        :rtype: list[str]
-        """
-        return self.paramlist
-
-    @property
-    def msg(self):
-        """
-        :rtype: str
-        """
-        return self.lastparam
-
-    @property
-    def inp(self):
-        """
-        :rtype str | re.__Match | list[str]
-        """
-        if self.text is not None:
-            return self.text
-        elif self.match is not None:
-            return self.match
+        self.hook = hook
+        if base_event is not None:
+            # We're copying an event
+            if self.bot is None and base_event.bot is not None:
+                self.bot = base_event.bot
+            if self.conn is None and base_event.conn is not None:
+                self.conn = base_event.conn
+            if self.hook is None and base_event.hook is not None:
+                self.hook = base_event.hook
+            self.irc_raw = base_event.irc_raw
+            self.irc_prefix = base_event.irc_prefix
+            self.irc_command = base_event.irc_command
+            self.irc_paramlist = base_event.irc_paramlist
+            self.irc_message = base_event.irc_message
+            self.nick = base_event.nick
+            self.user = base_event.user
+            self.host = base_event.host
+            self.mask = base_event.mask
         else:
-            return self.paramlist
+            self.irc_raw = irc_raw
+            self.irc_prefix = irc_prefix
+            self.irc_command = irc_command
+            self.irc_paramlist = irc_paramlist
+            self.irc_message = irc_message
+            self.nick = nick
+            self.user = user
+            self.host = host
+            self.mask = mask
 
     @property
     def server(self):
@@ -93,15 +79,15 @@ class Input:
         """
         :rtype: str
         """
-        if self.paramlist:
-            return self.paramlist[0].lower()
+        if self.irc_paramlist:
+            return self.irc_paramlist[0].lower()
         else:
             return None
 
     @property
-    def input(self):
+    def event(self):
         """
-        :rtype; cloudbot.core.main.Input
+        :rtype; cloudbot.core.events.BaseEvent
         """
         return self
 
@@ -183,3 +169,78 @@ class Input:
             raise ValueError("has_permission requires mask is not assigned")
         return self.conn.permissions.has_perm_mask(self.mask, permission, notice=notice)
 
+
+class CommandEvent(BaseEvent):
+    """
+    :type hook: cloudbot.core.plugins.CommandHook
+    :type text: str
+    :type triggered_command: str
+    """
+
+    def __init__(self, bot=None, conn=None, text=None, triggered_command=None, hook=None, base_event=None, irc_raw=None,
+                 irc_prefix=None, irc_command=None, irc_paramlist=None, irc_message=None, nick=None, user=None,
+                 host=None, mask=None):
+        """
+        :type bot: cloudbot.core.bot.CloudBot
+        :type conn: cloudbot.core.irc.BotConnection
+        :type hook: cloudbot.core.plugins.CommandHook
+        :type text: str
+        :type triggered_command: str
+        :type base_event: cloudbot.core.events.BaseEvent
+        :type irc_raw: str
+        :type irc_prefix: str
+        :type irc_command: str
+        :type irc_paramlist: list[str]
+        :type irc_message: str
+        :type nick: str
+        :type user: str
+        :type host: str
+        :type mask: str
+        """
+        super().__init__(bot=bot, conn=conn, hook=hook, base_event=base_event, irc_raw=irc_raw, irc_prefix=irc_prefix,
+                         irc_command=irc_command, irc_paramlist=irc_paramlist, irc_message=irc_message, nick=nick,
+                         user=user, host=host, mask=mask)
+        self.hook = hook
+        self.text = text
+        self.triggered_command = triggered_command
+
+    def notice_doc(self, target=None):
+        """sends a notice containing this command's docstring to the current channel/user or a specific channel/user
+        :type target: str
+        """
+        if self.hook.doc is None:
+            message = self.conn.config["command_prefix"] + self.hook.name + " requires additional arguments."
+        else:
+            message = self.conn.config["command_prefix"] + self.hook.name + self.hook.doc
+        self.notice(message, target=target)
+
+
+class RegexEvent(BaseEvent):
+    """
+    :type hook: cloudbot.core.plugins.RegexHook
+    :type match: re.__Match
+    """
+
+    def __init__(self, bot=None, conn=None, match=None, hook=None, base_event=None, irc_raw=None,
+                 irc_prefix=None, irc_command=None, irc_paramlist=None, irc_message=None, nick=None, user=None,
+                 host=None, mask=None):
+        """
+        :type bot: cloudbot.core.bot.CloudBot
+        :type conn: cloudbot.core.irc.BotConnection
+        :type hook: cloudbot.core.plugins.RegexHook
+        :type match: re.__Match
+        :type base_event: cloudbot.core.events.BaseEvent
+        :type irc_raw: str
+        :type irc_prefix: str
+        :type irc_command: str
+        :type irc_paramlist: list[str]
+        :type irc_message: str
+        :type nick: str
+        :type user: str
+        :type host: str
+        :type mask: str
+        """
+        super().__init__(bot=bot, conn=conn, hook=hook, base_event=base_event, irc_raw=irc_raw, irc_prefix=irc_prefix,
+                         irc_command=irc_command, irc_paramlist=irc_paramlist, irc_message=irc_message, nick=nick,
+                         user=user, host=host, mask=mask)
+        self.match = match

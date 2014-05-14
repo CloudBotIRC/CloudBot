@@ -17,36 +17,36 @@ def db_init(db, conn_name):
         db_ready.append(conn_name)
 
 
-def track_seen(input, message_time, db, conn):
+def track_seen(event, message_time, db, conn):
     """ Tracks messages for the .seen command """
     db_init(db, conn)
     # keep private messages private
-    if input.chan[:1] == "#" and not re.findall('^s/.*/.*/$', input.msg.lower()):
+    if event.chan[:1] == "#" and not re.findall('^s/.*/.*/$', event.irc_message.lower()):
         db.execute("insert or replace into seen_user(name, time, quote, chan, host)"
-                   "values(:name,:time,:quote,:chan,:host)", {'name': input.nick.lower(),
+                   "values(:name,:time,:quote,:chan,:host)", {'name': event.nick.lower(),
                                                               'time': time.time(),
-                                                              'quote': input.msg,
-                                                              'chan': input.chan,
-                                                              'host': input.mask})
+                                                              'quote': event.irc_message,
+                                                              'chan': event.chan,
+                                                              'host': event.mask})
         db.commit()
 
 
-def track_history(input, message_time, conn):
+def track_history(event, message_time, conn):
     try:
-        history = conn.history[input.chan]
+        history = conn.history[event.chan]
     except KeyError:
-        conn.history[input.chan] = deque(maxlen=100)
-        history = conn.history[input.chan]
+        conn.history[event.chan] = deque(maxlen=100)
+        history = conn.history[event.chan]
 
-    data = (input.nick, message_time, input.msg)
+    data = (event.nick, message_time, event.irc_message)
     history.append(data)
 
 
 @hook.event('PRIVMSG', ignorebots=False, singlethread=True)
-def chat_tracker(input, db, conn):
+def chat_tracker(event, db, conn):
     message_time = time.time()
-    track_seen(input, message_time, db, conn)
-    track_history(input, message_time, conn)
+    track_seen(event, message_time, db, conn)
+    track_history(event, message_time, conn)
 
 
 @hook.command(autohelp=False)

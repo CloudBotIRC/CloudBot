@@ -8,57 +8,56 @@ buckets = {}
 
 
 @hook.sieve
-def sieve_suite(bot, input, plugin):
+def sieve_suite(bot, event, hook):
     """
-    :type bot: core.bot.CloudBot
-    :type input: core.main.Input
+    :type bot: cloudbot.core.bot.CloudBot
+    :type event: cloudbot.core.events.BaseEvent
     """
-    conn = input.conn
+    conn = event.conn
     # check ignore bots
-    if input.command == 'PRIVMSG' and \
-            input.nick.endswith('bot') and plugin.ignore_bots:
+    if event.irc_command == 'PRIVMSG' and event.nick.endswith('bot') and hook.ignore_bots:
         return None
 
     # check acls
-    acl = conn.config.get('acls', {}).get(plugin.function_name)
+    acl = conn.config.get('acls', {}).get(hook.function_name)
     if acl:
         if 'deny-except' in acl:
             allowed_channels = list(map(str.lower, acl['deny-except']))
-            if input.chan.lower() not in allowed_channels:
+            if event.chan.lower() not in allowed_channels:
                 return None
         if 'allow-except' in acl:
             denied_channels = list(map(str.lower, acl['allow-except']))
-            if input.chan.lower() in denied_channels:
+            if event.chan.lower() in denied_channels:
                 return None
 
     # check disabled_commands
-    if plugin.type == "command":
+    if hook.type == "command":
         disabled_commands = conn.config.get('disabled_commands', [])
-        if input.trigger in disabled_commands:
+        if event.triggered_command in disabled_commands:
             return None
 
     # check permissions
-    allowed_permissions = plugin.permissions
+    allowed_permissions = hook.permissions
     if allowed_permissions:
         allowed = False
         for perm in allowed_permissions:
-            if input.has_permission(perm):
+            if event.has_permission(perm):
                 allowed = True
                 break
 
         if not allowed:
-            input.notice("Sorry, you are not allowed to use this command.")
+            event.notice("Sorry, you are not allowed to use this command.")
             return None
 
     # check command spam tokens
-    if plugin.type == "command":
-        uid = input.chan
+    if hook.type == "command":
+        uid = event.chan
 
         if not uid in buckets:
             _bucket = bucket.TokenBucket(TOKENS, RESTORE_RATE)
             _bucket.consume(MESSAGE_COST)
             buckets[uid] = _bucket
-            return input
+            return event
 
         _bucket = buckets[uid]
         if _bucket.consume(MESSAGE_COST):
@@ -67,4 +66,4 @@ def sieve_suite(bot, input, plugin):
             print("pong!")
             return None
 
-    return input
+    return event

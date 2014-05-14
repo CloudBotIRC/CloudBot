@@ -71,8 +71,8 @@ def add_tell(db, server, sender, target, message):
 
 
 @hook.event('PRIVMSG', singlethread=True)
-def tellinput(input, notice, db, nick, conn):
-    if 'showtells' in input.msg.lower():
+def tellinput(event, notice, db, nick, conn):
+    if 'showtells' in event.irc_message.lower():
         return
 
     tells = get_unread(db, conn.server, nick)

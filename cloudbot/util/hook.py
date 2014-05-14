@@ -113,7 +113,7 @@ class _RawHook(_Hook):
         """
         :type function: function
         """
-        _Hook.__init__(self, function, "raw")
+        _Hook.__init__(self, function, "irc_raw")
         self.triggers = set()
 
     def add_hook(self, event_param, kwargs):
@@ -165,12 +165,12 @@ def _command_hook(func, alias_param=None, **kwargs):
 
 def _raw_hook(func, triggers_param, **kwargs):
     """
-    Internal raw hook
+    Internal irc_raw hook
 
     :type func: function
     :type triggers_param: list[str] | str
     """
-    hook = _get_hook(func, "raw")
+    hook = _get_hook(func, "irc_raw")
     if hook is None:
         hook = _RawHook(func)
         _add_hook(func, hook)
@@ -241,7 +241,7 @@ def event(event_param, **kwargs):
     :type event_param: str | list[str]
     """
     if callable(event_param):  # this decorator is being used directly, which isn't good
-        raise TypeError("@raw() must be used as a function that returns a decorator")
+        raise TypeError("@irc_raw() must be used as a function that returns a decorator")
     else:  # this decorator is being used as a function, so return a decorator
         return lambda func: _raw_hook(func, event_param, **kwargs)
 

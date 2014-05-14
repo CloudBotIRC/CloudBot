@@ -8,7 +8,7 @@ CloudBot Refresh is an updated version of CloudBot, the python IRC bot origially
 
 ### Download 
 
-Get CloudBot at [https://github.com/CloudBotIRC/CloudBot/zipball/refresh](https://github.com/CloudBotIRC/CloudBot/zipball/refresh "Get CloudBot from Github!").
+Get CloudBot at [https://github.com/CloudBotIRC/CloudBot/zipball/3.4-refactoring](https://github.com/CloudBotIRC/CloudBot/zipball/3.4-refactoring "Get CloudBot from Github!").
 
 Unzip the resulting file, and continue to read this document.
 
@@ -17,7 +17,7 @@ Unzip the resulting file, and continue to read this document.
 Before you can run the bot, you need to install a few Python dependencies. lxml, watchdog, sqlalchemy and BeautifulSoup4
 are required by CloudBot. `pyenchant`, `pydns`, `pygeoip`, `tweepy`, `pycrypto` and `pbkdf2` are also required for various plugins.
 
-Make sure you're running python version **3.2** or higher.
+Make sure you're running python version **3.4** or higher.
 
 These can be installed with `pip` (The Python package manager) by running the following command in the bot directory:
 
@@ -50,19 +50,17 @@ Before you run the bot, rename `config.default` to `config.json` and edit it wit
 
 Once you have installed the required dependencies and renamed the config file, you can run the bot! Make sure you are in the correct folder and run the following command:
 
-`python cloudbot.py`
-
-On Windows you can usually just double-click `cloudbot.py` to start the bot, as long as you have Python installed correctly.
+`python3.4 -m cloudbot`
 
 ## Getting help with CloudBot
 
 ### Documentation
 
-To configure your CloudBot, visit the [Config Wiki Page](http://git.io/cloudbotircconfig).
+To configure your CloudBot, visit the [Config Wiki Page](https://github.com/CloudBotIRC/Refresh/wiki/Config).
 
 To write your own modules, visit the [Module Wiki Page](https://github.com/CloudBotIRC/CloudBot/wiki/Writing-Refresh-Modules).
 
-More at the [Wiki Main Page](http://git.io/cloudbotircwiki).
+More at the [Wiki Main Page](https://github.com/CloudBotIRC/Refresh/wiki).
 
 Note that the configuration page, and the main wiki page, are still for CloudBot Develop. The Module Wiki Page has been
 rewriten for refresh, but the other pages are outdated.
@@ -75,7 +73,7 @@ If you think you have found a bug/have a idea/suggestion, please **open a issue*
 
 ### Requirements
 
-CloudBot runs on **Python** *3.2+*. It is currently developed on **Windows** *8* with **Python** *3.2.3*.
+CloudBot runs on **Python** *3.4+*. It is currently developed on **Windows** *8* with **Python** *3.4*.
 
 It **requires the python modules** lxml, watchdog, sqlalchemy and BeautifulSoup4.
 

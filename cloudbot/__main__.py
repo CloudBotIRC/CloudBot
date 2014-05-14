@@ -1,4 +1,3 @@
-#!/usr/bin/env python3.4
 import logging
 import os
 import sys
@@ -78,6 +77,9 @@ def main():
             logger.debug("Restarting - arguments {}".format(args))
             for f in [sys.stdout, sys.stderr]:
                 f.flush()
+            # close logging, and exit the program.
+            logger.debug("Stopping logging engine")
+            logging.shutdown()
             os.execv(sys.executable, [sys.executable] + args)
 
     # close logging, and exit the program.
@@ -85,5 +87,4 @@ def main():
     logging.shutdown()
 
 
-if __name__ == "__main__":
-    main()
+main()

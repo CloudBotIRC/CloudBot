@@ -8,7 +8,7 @@ from watchdog.tricks import Trick
 class PluginLoader(object):
     def __init__(self, bot):
         """
-        :type bot: core.bot.CloudBot
+        :type bot: cloudbot.core.bot.CloudBot
         """
         self.observer = Observer()
         self.module_path = os.path.abspath("modules")

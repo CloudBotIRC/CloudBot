@@ -14,7 +14,7 @@ irc_param_re = re.compile(r"(?:^|(?<= ))(:.*|[^ ]+)")
 
 class BotConnection:
     """ A BotConnection represents each connection the bot makes to an IRC server
-    :type bot: core.bot.CloudBot
+    :type bot: cloudbot.core.bot.CloudBot
     :type name: str
     :type channels: list[str]
     :type config: dict[str, unknown]
@@ -36,7 +36,7 @@ class BotConnection:
     def __init__(self, bot, name, server, nick, port=6667, use_ssl=False, logger=None, channels=None, config=None,
                  readable_name=None):
         """
-        :type bot: core.bot.CloudBot
+        :type bot: cloudbot.core.bot.CloudBot
         :type name: str
         :type server: str
         :type nick: str

@@ -12,21 +12,21 @@ from . import main
 from ..util import botvars
 
 
-def find_hooks(parent, code):
+def find_hooks(parent, module):
     """
     :type parent: Plugin
-    :type code: object
+    :type module: object
     :rtype: (list[CommandHook], list[RegexHook], list[RawHook], list[SieveHook], list[OnloadHook])
     """
-    # set the loaded hook on code, so we'll know we need to reload it to get hooks
-    code._cloudbot_loaded = True
+    # set the loaded flag
+    module._cloudbot_loaded = True
     command = []
     regex = []
     raw = []
     sieve = []
     onload = []
     type_lists = {"command": command, "regex": regex, "raw": raw, "sieve": sieve, "onload": onload}
-    for name, func in code.__dict__.items():
+    for name, func in module.__dict__.items():
         if hasattr(func, "_cloudbot_hook"):
             # if it has cloudbot hook
             func_hooks = func._cloudbot_hook
@@ -67,19 +67,19 @@ class PluginManager:
     - RegexPlugin loads a regex parameter, and executes on input lines which match the regex
     - SievePlugin is a catch-all sieve, which all other plugins go through before being executed.
 
-    :type bot: core.bot.CloudBot
+    :type bot: cloudbot.core.bot.CloudBot
     :type plugins: dict[str, Plugin]
     :type commands: dict[str, CommandHook]
     :type raw_triggers: dict[str, list[RawHook]]
     :type catch_all_events: list[RawHook]
-    :type regex_plugins: list[(re.__Regex, RegexHook)]
+    :type regex_hooks: list[(re.__Regex, RegexHook)]
     :type sieves: list[SieveHook]
     """
 
     def __init__(self, bot):
         """
         Creates a new PluginManager. You generally only need to do this from inside core.bot.CloudBot
-        :type bot: core.bot.CloudBot
+        :type bot: cloudbot.core.bot.CloudBot
         """
         self.bot = bot
 
@@ -87,7 +87,7 @@ class PluginManager:
         self.commands = {}
         self.raw_triggers = {}
         self.catch_all_events = []
-        self.regex_plugins = []
+        self.regex_hooks = []
         self.sieves = []
 
     @asyncio.coroutine
@@ -138,7 +138,7 @@ class PluginManager:
     @asyncio.coroutine
     def _unload(self, path):
         """
-        Unloads the plugin from the given path, unloading all plugins from the plugin.
+        Unloads the plugin from the given path, unregistering all hooks from the plugin.
 
         Returns True if the plugin was unloaded, False if the plugin wasn't loaded in the first place.
 
@@ -151,7 +151,7 @@ class PluginManager:
             # this plugin hasn't been loaded, so no need to unload it
             return False
 
-        # stop all currently running instances of the hooks from this file
+        # stop all currently running instances of hooks from this plugin
         for key, handler in list(self.bot.handlers.items()):
             _title, function_name = key
             if _title == title:
@@ -174,10 +174,10 @@ class PluginManager:
         plugin.create_tables(self.bot)
 
         # run onload hooks
-        for onload_plugin in plugin.run_on_load:
-            success = yield from main.dispatch(self.bot, main.Input(bot=self.bot), onload_plugin)
+        for onload_hook in plugin.run_on_load:
+            success = yield from main.dispatch(self.bot, onload_hook, main.Input(bot=self.bot))
             if not success:
-                self.bot.logger.warning("Not registering plugin {}: onload hook errored".format(plugin.title))
+                self.bot.logger.warning("Not registering hooks from plugin {}: onload hook errored".format(plugin.title))
                 return
 
         # we don't need this anymore
@@ -186,38 +186,38 @@ class PluginManager:
         self.plugins[plugin.file_name] = plugin
 
         # register commands
-        for command in plugin.commands:
-            for alias in command.aliases:
+        for command_hook in plugin.commands:
+            for alias in command_hook.aliases:
                 if alias in self.commands:
                     self.bot.logger.warning(
                         "Plugin {} attempted to register command {} which was already registered by {}. "
                         "Ignoring new assignment.".format(plugin.title, alias, self.commands[alias].plugin.title))
                 else:
-                    self.commands[alias] = command
-            self._log_hook(command)
+                    self.commands[alias] = command_hook
+            self._log_hook(command_hook)
 
         # register events
-        for event_plugin in plugin.raw_triggers:
-            if event_plugin.is_catch_all():
-                self.catch_all_events.append(event_plugin)
+        for raw_hook in plugin.raw_hooks:
+            if raw_hook.is_catch_all():
+                self.catch_all_events.append(raw_hook)
             else:
-                for event_name in event_plugin.triggers:
-                    if event_name in self.raw_triggers:
-                        self.raw_triggers[event_name].append(event_plugin)
+                for trigger in raw_hook.triggers:
+                    if trigger in self.raw_triggers:
+                        self.raw_triggers[trigger].append(raw_hook)
                     else:
-                        self.raw_triggers[event_name] = [event_plugin]
-            self._log_hook(event_plugin)
+                        self.raw_triggers[trigger] = [raw_hook]
+            self._log_hook(raw_hook)
 
         # register regexps
-        for regex_plugin in plugin.regexes:
-            for regex_match in regex_plugin.regexes:
-                self.regex_plugins.append((regex_match, regex_plugin))
-            self._log_hook(regex_plugin)
+        for regex_hook in plugin.regexes:
+            for regex_match in regex_hook.regexes:
+                self.regex_hooks.append((regex_match, regex_hook))
+            self._log_hook(regex_hook)
 
         # register sieves
-        for sieve_plugin in plugin.sieves:
-            self.sieves.append(sieve_plugin)
-            self._log_hook(sieve_plugin)
+        for sieve_hook in plugin.sieves:
+            self.sieves.append(sieve_hook)
+            self._log_hook(sieve_hook)
 
     def _unregister_hooks(self, plugin):
         """
@@ -238,19 +238,20 @@ class PluginManager:
         else:
             assert isinstance(plugin, Plugin)
             if not plugin.file_name in self.plugins:
+                # we don't need to unload a plugin which isn't loaded
                 return False
-            assert self.plugins[plugin.file_name] is plugin
-            # we don't want to be unload a plugin which isn't loaded
+            # Make sure people aren't unloading old versions of plugins.
+            assert self.plugins[plugin.file_name] is plugin, "Plugin is stale."
 
         # unregister commands
-        for command in plugin.commands:
-            for alias in command.aliases:
-                if alias in self.commands and self.commands[alias] == command:
+        for command_hook in plugin.commands:
+            for alias in command_hook.aliases:
+                if alias in self.commands and self.commands[alias] == command_hook:
                     # we need to make sure that there wasn't a conflict, so we don't delete another plugin's command
                     del self.commands[alias]
 
         # unregister events
-        for raw_hook in plugin.raw_triggers:
+        for raw_hook in plugin.raw_hooks:
             if raw_hook.is_catch_all():
                 self.catch_all_events.remove(raw_hook)
             else:
@@ -261,7 +262,7 @@ class PluginManager:
         # unregister regexps
         for regex_hook in plugin.regexes:
             for regex_match in regex_hook.regexes:
-                self.regex_plugins.remove((regex_match, regex_hook))
+                self.regex_hooks.remove((regex_match, regex_hook))
 
         # unregister sieves
         for sieve_hook in plugin.sieves:
@@ -279,7 +280,8 @@ class PluginManager:
 
     def _log_hook(self, hook):
         """
-        Logs registering this plugin.
+        Logs registering a given hook
+
         :type hook: Hook
         """
         self.bot.logger.info("Loaded {}".format(hook))
@@ -288,14 +290,14 @@ class PluginManager:
 
 class Plugin:
     """
-    Each Plugin represents a file, and loads hooks onto itself using find_hooks.
+    Each Plugin represents a plugin file, and contains loaded hooks.
 
     :type file_path: str
     :type file_name: str
     :type title: str
     :type commands: list[CommandHook]
     :type regexes: list[RegexHook]
-    :type raw_triggers: list[RawHook]
+    :type raw_hooks: list[RawHook]
     :type sieves: list[SieveHook]
     :type tables: list[sqlalchemy.Table]
     """
@@ -309,7 +311,7 @@ class Plugin:
         self.file_path = filepath
         self.file_name = filename
         self.title = title
-        self.commands, self.regexes, self.raw_triggers, self.sieves, self.run_on_load = find_hooks(self, code)
+        self.commands, self.regexes, self.raw_hooks, self.sieves, self.run_on_load = find_hooks(self, code)
         # we need to find tables for each plugin so that they can be unloaded from the global metadata when the
         # plugin is reloaded
         self.tables = find_tables(code)
@@ -317,7 +319,8 @@ class Plugin:
     def create_tables(self, bot):
         """
         Creates all sqlalchemy Tables that are registered in this plugin
-        :type bot: core.bot.CloudBot
+
+        :type bot: cloudbot.core.bot.CloudBot
         """
         if self.tables:
             # if there are any tables
@@ -331,7 +334,7 @@ class Plugin:
     def unregister_tables(self, bot):
         """
         Unregisters all sqlalchemy Tables registered to the global metadata by this plugin
-        :type bot: core.bot.CloudBot
+        :type bot: cloudbot.core.bot.CloudBot
         """
         if self.tables:
             # if there are any tables
@@ -343,11 +346,11 @@ class Plugin:
 
 class Hook:
     """
-    Each plugin is specific to one function. This class is never used by itself, it's always extended by CommandPlugin,
-    EventPlugin, RegexPlugin, or SievePlugin
+    Each hook is specific to one function. This class is never used by itself, rather extended.
+
     :type type; str
     :type plugin: Plugin
-    :type function: function
+    :type function: callable
     :type function_name: str
     :type required_args: list[str]
     :type threaded: bool
@@ -404,7 +407,7 @@ class CommandHook(Hook):
     def __init__(self, plugin, cmd_hook):
         """
         :type plugin: Plugin
-        :type cmd_hook: hook._CommandHook
+        :type cmd_hook: cloudbot.util.hook._CommandHook
         """
         self.auto_help = cmd_hook.kwargs.pop("autohelp", True)
 
@@ -431,7 +434,7 @@ class RegexHook(Hook):
     def __init__(self, plugin, regex_hook):
         """
         :type plugin: Plugin
-        :type regex_hook: hook._RegexHook
+        :type regex_hook: cloudbot.util.hook._RegexHook
         """
         self.regexes = regex_hook.regexes
 
@@ -453,7 +456,7 @@ class RawHook(Hook):
     def __init__(self, plugin, event_hook):
         """
         :type plugin: Plugin
-        :type event_hook: util.hook._RawHook
+        :type event_hook: cloudbot.util.hook._RawHook
         """
         super().__init__("raw", plugin, event_hook)
 
@@ -473,7 +476,7 @@ class SieveHook(Hook):
     def __init__(self, plugin, sieve_hook):
         """
         :type plugin: Plugin
-        :type sieve_hook: util.hook._SieveHook
+        :type sieve_hook: cloudbot.util.hook._SieveHook
         """
         # We don't want to thread sieves by default - this is retaining old behavior for compatibility
         super().__init__("sieve", plugin, sieve_hook, default_threaded=False)
@@ -489,7 +492,7 @@ class OnloadHook(Hook):
     def __init__(self, plugin, on_load_hook):
         """
         :type plugin: Plugin
-        :type on_load_hook: util.hook._OnLoadHook
+        :type on_load_hook: cloudbot.util.hook._OnLoadHook
         """
         super().__init__("onload", plugin, on_load_hook)
 

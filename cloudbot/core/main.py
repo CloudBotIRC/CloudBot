@@ -4,8 +4,8 @@ import re
 
 class Input:
     """
-    :type bot: core.bot.CloudBot
-    :type conn: core.connection.BotConnection
+    :type bot: cloudbot.core.bot.CloudBot
+    :type conn: cloudbot.core.connection.BotConnection
     :type raw: str
     :type prefix: str
     :type command: str
@@ -22,8 +22,8 @@ class Input:
     def __init__(self, bot=None, conn=None, raw=None, prefix=None, command=None, params=None, nick=None, user=None,
                  host=None, mask=None, paramlist=None, lastparam=None, text=None, match=None, trigger=None):
         """
-        :type bot: core.bot.CloudBot
-        :type conn: core.irc.BotConnection
+        :type bot: cloudbot.core.bot.CloudBot
+        :type conn: cloudbot.core.irc.BotConnection
         :type raw: str
         :type prefix: str
         :type command: str
@@ -105,7 +105,7 @@ class Input:
     @property
     def input(self):
         """
-        :rtype; core.main.Input
+        :rtype; cloudbot.core.main.Input
         """
         return self
 
@@ -188,36 +188,36 @@ class Input:
         return self.conn.permissions.has_perm_mask(self.mask, permission, notice=notice)
 
 
-def prepare_parameters(bot, plugin, input):
+def _prepare_parameters(bot, hook, input):
     """
-    Prepares arguments for the given plugin
+    Prepares arguments for the given hook
 
-    :type bot: core.bot.CloudBot
-    :type plugin: core.pluginmanager.Hook
+    :type bot: cloudbot.core.bot.CloudBot
+    :type hook: cloudbot.core.pluginmanager.Hook
     :type input: Input
     :rtype: list
     """
     # Does the command need DB access?
-    uses_db = "db" in plugin.required_args
+    uses_db = "db" in hook.required_args
     parameters = []
     if uses_db:
         # create SQLAlchemy session
-        bot.logger.debug("Opened database session for {}:{}".format(plugin.plugin.title, plugin.function_name))
+        bot.logger.debug("Opened database session for {}:{}".format(hook.plugin.title, hook.function_name))
         input.db = bot.db_session()
 
-    for required_arg in plugin.required_args:
+    for required_arg in hook.required_args:
         if hasattr(input, required_arg):  # input.db will be assigned in _internal_run
             value = getattr(input, required_arg)
             parameters.append(value)
         else:
             bot.logger.error("Plugin {}:{} asked for invalid argument '{}', cancelling execution!"
-                             .format(plugin.plugin.title, plugin.function_name, required_arg))
+                             .format(hook.plugin.title, hook.function_name, required_arg))
             return None
     return uses_db, parameters
 
 
-def _internal_run_threaded(bot, hook, input):
-    value = prepare_parameters(bot, hook, input)
+def _run_hook_threaded(bot, hook, input):
+    value = _prepare_parameters(bot, hook, input)
     if value is None:
         return False
     create_db, parameters = value
@@ -236,8 +236,8 @@ def _internal_run_threaded(bot, hook, input):
 
 
 @asyncio.coroutine
-def _internal_run_coroutine(bot, hook, input):
-    value = prepare_parameters(bot, hook, input)
+def _run_hook(bot, hook, input):
+    value = _prepare_parameters(bot, hook, input)
     if value is None:
         return False
     create_db, parameters = value
@@ -256,40 +256,40 @@ def _internal_run_coroutine(bot, hook, input):
 
 
 @asyncio.coroutine
-def run(bot, plugin, input):
+def run(bot, hook, input):
     """
-    Runs the specific plugin with the given bot and input.
+    Runs the specific hook with the given bot and input.
 
-    Returns False if the plugin errored, True otherwise.
+    Returns False if the hook errored, True otherwise.
 
-    :type bot: core.bot.CloudBot
-    :type plugin: Hook
+    :type bot: cloudbot.core.bot.CloudBot
+    :type hook: cloudbot.core.plugins.Hook
     :type input: Input
     :rtype: bool
     """
     try:
-        # _internal_run_threaded and _internal_run_coroutine prepare the database, and run the plugin.
+        # _internal_run_threaded and _internal_run_coroutine prepare the database, and run the hook.
         # _internal_run_* will prepare parameters and the database session, but won't do any error catching.
-        if plugin.threaded:
-            out = yield from bot.loop.run_in_executor(None, _internal_run_threaded, bot, plugin, input)
+        if hook.threaded:
+            out = yield from bot.loop.run_in_executor(None, _run_hook_threaded, bot, hook, input)
         else:
-            out = yield from _internal_run_coroutine(bot, plugin, input)
+            out = yield from _run_hook(bot, hook, input)
     except Exception:
-        bot.logger.exception("Error in plugin {}:{}".format(plugin.plugin.title, plugin.function_name))
+        bot.logger.exception("Error in hook {}:{}".format(hook.plugin.title, hook.function_name))
         return False
-    else:
-        if out is not None:
-            input.reply(str(out))
-        return True
+
+    if out is not None:
+        input.reply(str(out))
+    return True
 
 
 @asyncio.coroutine
 def do_sieve(sieve, bot, input, hook):
     """
-    :type sieve: core.pluginmanager.Hook
-    :type bot: core.bot.CloudBot
+    :type sieve: cloudbot.core.plugins.Hook
+    :type bot: cloudbot.core.bot.CloudBot
     :type input: Input
-    :type hook: core.pluginmanager.Hook
+    :type hook: cloudbot.core.plugins.Hook
     :rtype: Input
     """
     try:
@@ -307,26 +307,26 @@ def do_sieve(sieve, bot, input, hook):
 
 
 class Handler:
-    """Runs plugins in their own threads (ensures order)
-    :type bot: core.bot.CloudBot
-    :type plugin: Hook
+    """Runs hooks, ensuring order.
+    :type bot: cloudbot.core.bot.CloudBot
+    :type hook: cloudbot.core.plugins.Hook
     :type queue: asyncio.Queue[(asyncio.Future, Input)]
-    :type future: asyncio.Future
+    :type task: asyncio.Future
     """
 
-    def __init__(self, bot, plugin):
+    def __init__(self, bot, hook):
         """
-        :type bot: core.bot.CloudBot
-        :type plugin: Hook
+        :type bot: cloudbot.core.bot.CloudBot
+        :type hook: cloudbot.core.plugins.Hook
         """
         self.bot = bot
-        self.plugin = plugin
+        self.hook = hook
         self.queue = asyncio.Queue(loop=self.bot.loop)
         # future will be assigned when start() is called
-        self.future = None
+        self.task = None
 
     def start(self):
-        self.future = asyncio.async(self.run(), loop=self.bot.loop)
+        self.task = asyncio.Task(self.run(), loop=self.bot.loop)
 
     @asyncio.coroutine
     def run(self):
@@ -347,7 +347,7 @@ class Handler:
                 return
 
             # Run the message
-            result = yield from run(self.bot, self.plugin, message)
+            result = yield from run(self.bot, self.hook, message)
             # Set the future's result, so that run_message can return.
             future.set_result(result)
 
@@ -356,7 +356,7 @@ class Handler:
         """
         Stops this handler. This method blocks until the handler is truly stopped.
         """
-        self.future.cancel()
+        self.task.cancel()
         while not self.queue.empty():
             future, message = yield from self.queue.get(block=False)
             future.cancel()
@@ -372,55 +372,53 @@ class Handler:
         """
         Method to be called after this Handler has been stopped. This is for internal use only, use stop() to stop.
         """
-        del self.bot.handlers[(self.plugin.plugin.title, self.plugin.function_name)]
+        del self.bot.handlers[(self.hook.plugin.title, self.hook.function_name)]
 
     @asyncio.coroutine
-    def run_message(self, message):
+    def run_message(self, input):
         """
         Runs a given message in this handler. This method will block until the message has been processed.
-        :type message: Input
+        :type input: Input
         """
         result_future = asyncio.Future(loop=self.bot.loop)
         # put the future into the queue
-        yield from self.queue.put((result_future, message))
+        yield from self.queue.put((result_future, input))
         # wait for the message to be processed
         result = yield from result_future
         return result
 
 
 @asyncio.coroutine
-def dispatch(bot, input, plugin):
+def dispatch(bot, hook, input):
     """
-    Dispatch a given input to a given plugin using a given bot object. This will either run sync or threaded, depending
-    on the plugin's arguments.
+    Dispatch a given input to a given hook using a given bot object.
 
-    Returns False if the plugin isn't threaded, and the plugin didn't run successfully.
-    True if the plugin is threaded, and/or if it ran successfully.
+    Returns False if the hook didn't run successfully, and True if it ran successfully.
 
-    :type bot: core.bot.CloudBot
+    :type bot: cloudbot.core.bot.CloudBot
     :type input: Input
-    :type plugin: core.pluginmanager.Hook
+    :type hook: cloudbot.core.plugins.Hook
     :rtype: bool
     """
-    if plugin.type != "onload":  # we don't need sieves on onload hooks.
+    if hook.type != "onload":  # we don't need sieves on onload hooks.
         for sieve in bot.plugin_manager.sieves:
-            input = yield from do_sieve(sieve, bot, input, plugin)
+            input = yield from do_sieve(sieve, bot, input, hook)
             if input is None:
                 return False
 
-    if plugin.type == "command" and plugin.auto_help and not input.text:
-        if plugin.doc is not None:
-            input.notice(input.conn.config["command_prefix"] + plugin.doc)
+    if hook.type == "command" and hook.auto_help and not input.text:
+        if hook.doc is not None:
+            input.notice(input.conn.config["command_prefix"] + hook.doc)
         else:
-            input.notice(input.conn.config["command_prefix"] + plugin.name + " requires additional arguments.")
+            input.notice(input.conn.config["command_prefix"] + hook.name + " requires additional arguments.")
         return False
 
-    if plugin.single_thread:
-        key = (plugin.plugin.title, plugin.function_name)
+    if hook.single_thread:
+        key = (hook.plugin.title, hook.function_name)
         handler = bot.handlers.get(key)
         if handler is None:
             # If we don't have a handler yet, create one
-            handler = Handler(bot, plugin)
+            handler = Handler(bot, hook)
             handler.start()
             bot.handlers[key] = handler
 
@@ -428,27 +426,27 @@ def dispatch(bot, input, plugin):
         result = yield from handler.run_message(input)
     else:
         # Run the plugin with the message, and wait for it to finish
-        result = yield from run(bot, plugin, input)
+        result = yield from run(bot, hook, input)
 
     # Return the result
     return result
 
 
 @asyncio.coroutine
-def main(bot, input_params):
+def process(bot, input_params):
     """
-    :type bot: core.bot.CloudBot
-    :type input_params: dict[str, core.irc.BotConnection | str | list[str]]
+    :type bot: cloudbot.core.bot.CloudBot
+    :type input_params: dict[str, cloudbot.core.connection.BotConnection | str | list[str]]
     """
     inp = Input(bot=bot, **input_params)
     command_prefix = input_params["conn"].config.get('command_prefix', '.')
 
     # EVENTS
     if inp.command in bot.plugin_manager.raw_triggers:
-        for event_plugin in bot.plugin_manager.raw_triggers[inp.command]:
-            yield from dispatch(bot, Input(bot=bot, **input_params), event_plugin)
-    for event_plugin in bot.plugin_manager.catch_all_events:
-        yield from dispatch(bot, Input(bot=bot, **input_params), event_plugin)
+        for event_hook in bot.plugin_manager.raw_triggers[inp.command]:
+            yield from dispatch(bot, event_hook, Input(bot=bot, **input_params))
+    for event_hook in bot.plugin_manager.catch_all_events:
+        yield from dispatch(bot, event_hook, Input(bot=bot, **input_params))
 
     if inp.command == 'PRIVMSG':
         # COMMANDS
@@ -464,13 +462,13 @@ def main(bot, input_params):
         if match:
             command = match.group(1).lower()
             if command in bot.plugin_manager.commands:
-                plugin = bot.plugin_manager.commands[command]
+                command_hook = bot.plugin_manager.commands[command]
                 input = Input(bot=bot, text=match.group(2).strip(), trigger=command, **input_params)
-                yield from dispatch(bot, input, plugin)
+                yield from dispatch(bot, command_hook, input)
 
         # REGEXES
-        for regex, plugin in bot.plugin_manager.regex_plugins:
+        for regex, regex_hook in bot.plugin_manager.regex_plugins:
             match = regex.search(inp.lastparam)
             if match:
                 input = Input(bot=bot, match=match, **input_params)
-                yield from dispatch(bot, input, plugin)
+                yield from dispatch(bot, regex_hook, input)

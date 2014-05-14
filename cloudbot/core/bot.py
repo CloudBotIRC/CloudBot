@@ -13,7 +13,7 @@ from .connection import BotConnection
 from .config import Config
 from .loader import PluginLoader
 from .plugins import PluginManager
-from .main import main
+from .main import process
 from ..util import botvars
 
 logger_initialized = False
@@ -32,12 +32,12 @@ class CloudBot:
     :type start_time: float
     :type running: bool
     :type do_restart: bool
-    :type connections: list[core.connection.BotConnection]
+    :type connections: list[cloudbot.core.connection.BotConnection]
     :type logger: logging.Logger
     :type data_dir: bytes
     :type config: core.config.Config
-    :type plugin_manager: core.pluginmanager.PluginManager
-    :type loader: core.loader.PluginLoader
+    :type plugin_manager: cloudbot.core.pluginmanager.PluginManager
+    :type loader: cloudbot.core.loader.PluginLoader
     :type db_engine: sqlalchemy.engine.Engine
     :type db_factory: sqlalchemy.orm.session.sessionmaker
     :type db_session: sqlalchemy.orm.scoping.scoped_session
@@ -132,7 +132,7 @@ class CloudBot:
                 return
 
             # process the message
-            asyncio.async(main(self, message), loop=self.loop)
+            asyncio.async(process(self, message), loop=self.loop)
 
     def create_connections(self):
         """ Create a BotConnection for all the networks defined in the config """

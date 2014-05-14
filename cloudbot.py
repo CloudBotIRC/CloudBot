@@ -20,7 +20,7 @@ if os.path.exists(os.path.abspath('lib')):
     sys.path += ['lib']
 
 # import bot
-from cloudbot.core import bot
+from cloudbot.core.bot import CloudBot
 
 
 def main():
@@ -36,7 +36,7 @@ def main():
     original_wd = os.path.realpath(".")
 
     # create the bot
-    cloudbot = bot.CloudBot()
+    cloudbot = CloudBot()
 
     # whether we are killed while restarting
     stopped_while_restarting = False

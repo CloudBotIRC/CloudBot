@@ -14,7 +14,7 @@ class PermissionManager(object):
 
     def __init__(self, conn):
         """
-        :type conn: core.irc.BotConnection
+        :type conn: cloudbot.core.connection.BotConnection
         """
         self.logger = conn.logger
 

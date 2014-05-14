@@ -23,7 +23,6 @@ formats = {
     "KICK": "[{server}:{chan}] -!- {param1} was kicked from {chan} by {nick} ({message})",
     "TOPIC": "[{server}:{chan}] -!- {nick} changed the topic of {chan} to: {message}",
     "QUIT": "[{server}] -!- {nick} has quit ({message})",
-    "PING": "",
     "NOTICE": "[{server}:{chan}] -{nick}- {message}",
     "default": "[{server}] {irc_raw}"
 }
@@ -45,7 +44,7 @@ def get_ctcp_format(ctcpcmd):
 irc_color_re = re.compile(r"(\x03(\d+,\d+|\d)|[\x0f\x02\x16\x1f])")
 
 
-def get_log_filename(data_dir, server, chan):
+def get_log_filename(server, chan):
     _time = time.gmtime()
     return os.path.join(log_dir, time.strftime('%Y', _time), server, chan,
                         (time.strftime("{}.%m-%d.log".format(chan), _time)).lower())
@@ -54,7 +53,15 @@ def get_log_filename(data_dir, server, chan):
 def beautify(event):
     """
     :type event: cloudbot.core.events.BaseEvent
+    :rtype: str
     """
+    if event.bot.config.get("skip_motd", False) and event.irc_command in ["375", "372", "376"]:
+        return None
+    if event.bot.config.get("skip_server_info", False) and event.irc_command in ["003", "005", "250", "251", "252",
+                                                                                 "253", "254", "255", "256"]:
+        return None
+    if event.irc_command == "PING":
+        return None
     log_format = formats.get(event.irc_command)
     if not log_format:
         return formats["default"].format(server=event.conn.readable_name, irc_raw=event.irc_raw)
@@ -84,8 +91,8 @@ def beautify(event):
     return log_format.format(**args)
 
 
-def get_log_stream(data_dir, server, chan):
-    new_filename = get_log_filename(data_dir, server, chan)
+def get_log_stream(server, chan):
+    new_filename = get_log_filename(server, chan)
     cache_key = (server, chan)
     old_filename, log_stream = stream_cache.get(cache_key, (None, None))
 
@@ -104,12 +111,11 @@ def get_log_stream(data_dir, server, chan):
 
 
 @hook.event("*", singlethread=True)
-def log(bot, event):
+def log(event):
     """
-    :type bot: cloudbot.core.bot.CloudBot
     :type event: cloudbot.core.events.BaseEvent
     """
-    raw_log = get_log_stream(bot.data_dir, event.conn.name, "raw")
+    raw_log = get_log_stream(event.conn.name, "raw")
     raw_log.write(event.irc_raw + "\n")
 
     human_readable = beautify(event)
@@ -126,7 +132,7 @@ def log(bot, event):
         else:
             channel = None
         if channel:
-            channel_log = get_log_stream(bot.data_dir, event.conn.name, channel)
+            channel_log = get_log_stream(event.conn.name, channel)
             channel_log.write(human_readable + '\n')
 
 

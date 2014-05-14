@@ -60,5 +60,7 @@
     "rdio_secret": ""
   },
   "database": "sqlite:///cloudbot.db",
-  "disabled_plugins": []
+  "disabled_plugins": [],
+  "skip_motd": false,
+  "skip_server_info": false
 }

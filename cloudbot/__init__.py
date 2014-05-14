@@ -1,6 +1,5 @@
-import logging
+import logging.config
 import os
-import sys
 
 from .core import bot, connection, config, permissions, pluginmanager, events
 from .util import botvars, bucket, formatting, hook, http, pyexec, textgen, timeformat, timesince, urlnorm, web
@@ -8,39 +7,44 @@ from .util import botvars, bucket, formatting, hook, http, pyexec, textgen, time
 __all__ = ["core", "util", "bot", "connection", "config", "permissions", "pluginmanager", "events", "botvars", "bucket",
            "formatting", "hook", "http", "pyexec", "textgen", "timeformat", "timesince", "urlnorm", "web"]
 
-
-def _setup_logger():
-    logger = logging.getLogger("cloudbot")
-
-    logger.setLevel(logging.DEBUG)
-
-    logging_dir = os.path.join(os.path.abspath("."), "logs")
-    if not os.path.exists(logging_dir):
-        os.mkdir(logging_dir)
-
-    # add a file handler
-    file_handler = logging.FileHandler(os.path.join(logging_dir, "bot.log"))
-    file_handler.setLevel(logging.INFO)
-
-    # add debug file handler
-    debug_file_handler = logging.FileHandler(os.path.join(logging_dir, "debug.log"))
-    debug_file_handler.setLevel(logging.DEBUG)
-
-    # stdout handler
-    console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setLevel(logging.INFO)
-
-    # create a formatter and set the formatter for the handler.
-    file_formatter = logging.Formatter('{asctime}[{levelname}] {message}', '[%Y-%m-%d][%H:%M:%S]', '{')
-    console_formatter = logging.Formatter('{asctime}[{levelname}] {message}', '[%H:%M:%S]', '{')
-    file_handler.setFormatter(file_formatter)
-    debug_file_handler.setFormatter(file_formatter)
-    console_handler.setFormatter(console_formatter)
-
-    # add the Handlers to the logger
-    logger.addHandler(file_handler)
-    logger.addHandler(debug_file_handler)
-    logger.addHandler(console_handler)
-
-
-_setup_logger()
+if not os.path.exists(os.path.join(".", "logs")):
+    os.makedirs(os.path.join(".", "logs"))
+logging.config.dictConfig({
+    "version": 1,
+    "formatters": {
+        "brief": {
+            "format": "[%(asctime)s][%(levelname)s] %(message)s",
+            "datefmt": "%H:%M:%S"
+        },
+        "full": {
+            "format": "[%(asctime)s][%(levelname)s] %(message)s",
+            "datefmt": "%Y-%m-%d][%H:%M:%S"
+        }
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "brief",
+            "level": "INFO",
+            "stream": "ext://sys.stdout"
+        },
+        "file": {
+            "class": "logging.FileHandler",
+            "formatter": "full",
+            "level": "INFO",
+            "filename": os.path.join(".", "logs", "bot.log")
+        },
+        "debug_file": {
+            "class": "logging.FileHandler",
+            "formatter": "full",
+            "level": "DEBUG",
+            "filename": os.path.join(".", "logs", "debug.log")
+        }
+    },
+    "loggers": {
+        "cloudbot": {
+            "level": "DEBUG",
+            "handlers": ["console", "file", "debug_file"]
+        }
+    }
+})

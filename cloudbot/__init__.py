@@ -1,11 +1,11 @@
 import logging
 import sys
 
-from .core import bot, connection, config, permissions, plugins
+from .core import bot, connection, config, permissions, pluginmanager, events
 from .util import botvars, bucket, formatting, hook, http, pyexec, textgen, timeformat, timesince, urlnorm, web
 
-__all__ = ["core", "util", "bot", "connection", "config", "permissions", "plugins", "botvars", "bucket", "formatting",
-           "hook", "http", "pyexec", "textgen", "timeformat", "timesince", "urlnorm", "web"]
+__all__ = ["core", "util", "bot", "connection", "config", "permissions", "pluginmanager", "events", "botvars", "bucket",
+           "formatting", "hook", "http", "pyexec", "textgen", "timeformat", "timesince", "urlnorm", "web"]
 
 
 def _setup_logger():

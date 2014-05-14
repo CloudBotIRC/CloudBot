@@ -329,7 +329,7 @@ class PluginManager:
 
         Returns False if the hook errored, True otherwise.
 
-        :type hook: cloudbot.core.plugins.Hook
+        :type hook: cloudbot.core.pluginmanager.Hook
         :type event: cloudbot.core.events.BaseEvent
         :rtype: bool
         """
@@ -351,9 +351,9 @@ class PluginManager:
     @asyncio.coroutine
     def _sieve(self, sieve, event, hook):
         """
-        :type sieve: cloudbot.core.plugins.Hook
+        :type sieve: cloudbot.core.pluginmanager.Hook
         :type event: cloudbot.core.events.BaseEvent
-        :type hook: cloudbot.core.plugins.Hook
+        :type hook: cloudbot.core.pluginmanager.Hook
         :rtype: cloudbot.core.events.BaseEvent
         """
         try:
@@ -376,7 +376,7 @@ class PluginManager:
         Returns False if the hook didn't run successfully, and True if it ran successfully.
 
         :type event: cloudbot.core.events.BaseEvent | cloudbot.core.events.CommandEvent
-        :type hook: cloudbot.core.plugins.Hook | cloudbot.core.plugins.CommandHook
+        :type hook: cloudbot.core.pluginmanager.Hook | cloudbot.core.pluginmanager.CommandHook
         :rtype: bool
         """
         if hook.type != "onload":  # we don't need sieves on onload hooks.

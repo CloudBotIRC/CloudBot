@@ -2,7 +2,7 @@ class BaseEvent:
     """
     :type bot: cloudbot.core.bot.CloudBot
     :type conn: cloudbot.core.connection.BotConnection
-    :type hook: cloudbot.core.plugins.Hook
+    :type hook: cloudbot.core.pluginmanager.Hook
     :type irc_raw: str
     :type irc_prefix: str
     :type irc_command: str
@@ -19,7 +19,7 @@ class BaseEvent:
         """
         :type bot: cloudbot.core.bot.CloudBot
         :type conn: cloudbot.core.irc.BotConnection
-        :type hook: cloudbot.core.plugins.Hook
+        :type hook: cloudbot.core.pluginmanager.Hook
         :type base_event: cloudbot.core.events.BaseEvent
         :type irc_raw: str
         :type irc_prefix: str
@@ -172,7 +172,7 @@ class BaseEvent:
 
 class CommandEvent(BaseEvent):
     """
-    :type hook: cloudbot.core.plugins.CommandHook
+    :type hook: cloudbot.core.pluginmanager.CommandHook
     :type text: str
     :type triggered_command: str
     """
@@ -183,7 +183,7 @@ class CommandEvent(BaseEvent):
         """
         :type bot: cloudbot.core.bot.CloudBot
         :type conn: cloudbot.core.irc.BotConnection
-        :type hook: cloudbot.core.plugins.CommandHook
+        :type hook: cloudbot.core.pluginmanager.CommandHook
         :type text: str
         :type triggered_command: str
         :type base_event: cloudbot.core.events.BaseEvent
@@ -217,7 +217,7 @@ class CommandEvent(BaseEvent):
 
 class RegexEvent(BaseEvent):
     """
-    :type hook: cloudbot.core.plugins.RegexHook
+    :type hook: cloudbot.core.pluginmanager.RegexHook
     :type match: re.__Match
     """
 
@@ -227,7 +227,7 @@ class RegexEvent(BaseEvent):
         """
         :type bot: cloudbot.core.bot.CloudBot
         :type conn: cloudbot.core.irc.BotConnection
-        :type hook: cloudbot.core.plugins.RegexHook
+        :type hook: cloudbot.core.pluginmanager.RegexHook
         :type match: re.__Match
         :type base_event: cloudbot.core.events.BaseEvent
         :type irc_raw: str

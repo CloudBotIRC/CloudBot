@@ -12,7 +12,7 @@ from sqlalchemy.schema import MetaData
 from .connection import BotConnection
 from .config import Config
 from .loader import PluginLoader
-from .plugins import PluginManager
+from .pluginmanager import PluginManager
 from .events import BaseEvent, CommandEvent, RegexEvent
 from ..util import botvars
 

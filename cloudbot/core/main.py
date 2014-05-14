@@ -358,7 +358,7 @@ class Handler:
         """
         self.task.cancel()
         while not self.queue.empty():
-            future, message = yield from self.queue.get(block=False)
+            future, message = self.queue.get_nowait()
             future.cancel()
 
         stopped_future = asyncio.Future(loop=self.bot.loop)

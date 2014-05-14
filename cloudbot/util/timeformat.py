@@ -1,4 +1,4 @@
-from . import formatting
+from cloudbot.util import formatting
 
 
 def format_time(seconds, count=3, accuracy=6, simple=False):

@@ -1,4 +1,4 @@
-from . import web, http
+from cloudbot.util import web, http
 
 
 def eval_py(code, paste_multiline=True):

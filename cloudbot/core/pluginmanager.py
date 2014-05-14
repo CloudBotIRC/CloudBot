@@ -8,8 +8,8 @@ import re
 
 import sqlalchemy
 
-from . import events
-from ..util import botvars
+from cloudbot.core import events
+from cloudbot.util import botvars
 
 
 def find_hooks(parent, module):

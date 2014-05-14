@@ -4,9 +4,9 @@ import re
 import ssl
 from ssl import SSLContext
 
-from .permissions import PermissionManager
+from cloudbot.core.permissions import PermissionManager
 
-from .events import BaseEvent
+from cloudbot.core.events import BaseEvent
 
 irc_prefix_re = re.compile(r":([^ ]*) ([^ ]*) (.*)")
 irc_noprefix_re = re.compile(r"([^ ]*) (.*)")

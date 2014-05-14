@@ -9,12 +9,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.schema import MetaData
 
-from .connection import BotConnection
-from .config import Config
-from .reloader import PluginReloader
-from .pluginmanager import PluginManager
-from .events import BaseEvent, CommandEvent, RegexEvent
-from ..util import botvars
+from cloudbot.core.connection import BotConnection
+from cloudbot.core.config import Config
+from cloudbot.core.reloader import PluginReloader
+from cloudbot.core.pluginmanager import PluginManager
+from cloudbot.core.events import BaseEvent, CommandEvent, RegexEvent
+from cloudbot.util import botvars
 
 logger_initialized = False
 

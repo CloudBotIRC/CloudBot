@@ -1,1 +1,1 @@
-__all__ = ["bot", "config", "connection", "main", "permissions", "plugins"]
+__all__ = ["bot", "config", "connection", "events", "permissions", "pluginmanager"]

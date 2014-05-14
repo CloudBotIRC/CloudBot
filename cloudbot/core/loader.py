@@ -11,7 +11,7 @@ class PluginLoader(object):
         :type bot: cloudbot.core.bot.CloudBot
         """
         self.observer = Observer()
-        self.module_path = os.path.abspath("modules")
+        self.module_path = os.path.abspath("plugins")
         self.bot = bot
 
         self.event_handler = PluginEventHandler(self, patterns=["*.py"])

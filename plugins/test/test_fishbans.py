@@ -1,7 +1,7 @@
 import json
 import pytest
 
-from modules.fishbans import fishbans, bancount
+from plugins.fishbans import fishbans, bancount
 from cloudbot import http
 
 test_user = "notch"

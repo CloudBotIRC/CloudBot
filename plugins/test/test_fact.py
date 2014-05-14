@@ -3,7 +3,7 @@ import urllib.error  # to allow raising urllib.U
 from bs4 import BeautifulSoup
 import pytest
 
-from modules.fact import fact
+from plugins.fact import fact
 from cloudbot import http, web
 
 testpage = """

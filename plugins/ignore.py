@@ -6,7 +6,7 @@ from cloudbot import hook
 #@hook.sieve
 def ignore_sieve(bot, input, plugin):
     """ blocks input from ignored channels/hosts """
-    ignorelist = bot.config["modules"]["ignore"]["ignored"]
+    ignorelist = bot.config["plugins"]["ignore"]["ignored"]
     mask = input.mask.lower()
 
     # don't block input to event hooks
@@ -32,7 +32,7 @@ def ignore_sieve(bot, input, plugin):
 @hook.command(autohelp=False)
 def ignored(notice, bot):
     """ignored -- Lists ignored channels/users."""
-    ignorelist = bot.config["modules"]["ignore"]["ignored"]
+    ignorelist = bot.config["plugins"]["ignore"]["ignored"]
     if ignorelist:
         notice("Ignored channels/users are: {}".format(", ".join(ignorelist)))
     else:
@@ -44,7 +44,7 @@ def ignored(notice, bot):
 def ignore(text, notice, bot):
     """ignore <channel|nick|host> -- Makes the bot ignore <channel|user>."""
     target = text.lower()
-    ignorelist = bot.config["modules"]["ignore"]["ignored"]
+    ignorelist = bot.config["plugins"]["ignore"]["ignored"]
     if target in ignorelist:
         notice("{} is already ignored.".format(target))
     else:
@@ -60,7 +60,7 @@ def unignore(text, notice, bot):
     """unignore <channel|user> -- Makes the bot listen to
     <channel|user>."""
     target = text.lower()
-    ignorelist = bot.config["modules"]["ignore"]["ignored"]
+    ignorelist = bot.config["plugins"]["ignore"]["ignored"]
     if target in ignorelist:
         notice("{} has been unignored.".format(target))
         ignorelist.remove(target)

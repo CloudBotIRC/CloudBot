@@ -23,8 +23,7 @@ from cloudbot.core.bot import CloudBot
 
 
 def main():
-    # Logging optimizations, doing it here because we only want to change this if we're the main file, not if
-    # we're being loaded by anything else.
+    # Logging optimizations, doing it here because we only want to change this if we're the main file
     logging._srcfile = None
     logging.logThreads = 0
     logging.logProcesses = 0

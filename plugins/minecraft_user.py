@@ -68,9 +68,9 @@ def get_profile(name):
 @hook.command("haspaid")
 @hook.command("mcpaid")
 @hook.command
-def mcuser(inp):
+def mcuser(text):
     """mcpaid <username> -- Gets information about the Minecraft user <account>."""
-    user = inp.strip()
+    user = text.strip()
 
     try:
         # get status of name (does it exist?)

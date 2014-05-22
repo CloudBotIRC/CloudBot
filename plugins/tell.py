@@ -98,7 +98,7 @@ def tell(inp, nick='', chan='', db=None, input=None, notice=None, conn=None):
         notice("Thanks for the message, {}!".format(user_from))
         return
 
-    if not re.match("^[A-Za-z0-9_|.\-\]\[]*$", user_to.lower()):
+    if not re.match("^[a-z0-9_|.\-\]\[]*$", user_to.lower()):
         notice("I can't send a message to that user!")
         return
 
@@ -118,4 +118,4 @@ def tell(inp, nick='', chan='', db=None, input=None, notice=None, conn=None):
         notice("Message has already been queued.")
         return
 
-    notice("Your message has been sent!")
+    notice("Your message has been saved, and {} will be notified once they are active.".format(user_to))

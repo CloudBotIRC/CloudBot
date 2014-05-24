@@ -56,12 +56,12 @@ class PluginEventHandler(Trick):
         self.loader = loader
 
     def on_created(self, event):
-        self.loader.reload(event.src_path.decode())
+        self.loader.reload(event.src_path)
 
     def on_modified(self, event):
-        self.loader.reload(event.src_path.decode())
+        self.loader.reload(event.src_path)
 
     def on_moved(self, event):
         # only load if it's moved to a .py file
-        if event.dest_path.endswith(b".py"):
-            self.loader.reload(event.dest_path.decode())
+        if event.dest_path.endswith(".py"):
+            self.loader.reload(event.dest_path)

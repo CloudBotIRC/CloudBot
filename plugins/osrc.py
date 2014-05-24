@@ -5,10 +5,10 @@ user_url = "http://osrc.dfm.io/{}"
 
 
 @hook.command
-def osrc(inp):
+def osrc(text):
     """osrc <github user> -- Gets an Open Source Report Card for <github user>"""
 
-    user_nick = inp.strip()
+    user_nick = text.strip()
     url = user_url.format(user_nick)
 
     try:

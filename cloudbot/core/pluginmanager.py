@@ -129,7 +129,6 @@ class PluginManager:
                     self.bot.logger.info("Not loading plugin {}: plugin blacklisted".format(file_name))
                     return
 
-
         # make sure to unload the previously loaded plugin from this path, if it was loaded.
         if file_name in self.plugins:
             yield from self._unload(file_path)

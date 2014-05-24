@@ -11,7 +11,7 @@ import random
 
 from util import hook
 
-cookies = ['Chocolate Chip', 'Oatmeal', 'Sugar', 'Oatmeal Rasin', 'Macadamia Nut', 'Jam Thumbprint', 'Medican Wedding', 'Biscotti', 'Oatmeal Cranberry', 'Chocolate Fudge', 'Peanut Butter', 'Pumpkin', 'Lemon Bar', 'Chocolate Oatmeal Fudge', 'Toffee Peanut', 'Danish Sugar', 'Tripple Chocolate']
+cookies = ['Chocolate Chip', 'Oatmeal', 'Sugar', 'Oatmeal Rasin', 'Macadamia Nut', 'Jam Thumbprint', 'Medican Wedding', 'Biscotti', 'Oatmeal Cranberry', 'Chocolate Fudge', 'Peanut Butter', 'Pumpkin', 'Lemon Bar', 'Chocolate Oatmeal Fudge', 'Toffee Peanut', 'Danish Sugar', 'Tripple Chocolate', 'Oreo']
 
 @hook.command
 def cookie(inp, action=None):

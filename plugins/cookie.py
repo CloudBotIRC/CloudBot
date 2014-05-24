@@ -3,7 +3,7 @@ cookie.py: A plugin to serve cookies to users
 
 (c) 2014 Techman <michael@techmansworld.com>
 
-Plugin produced under guidiance of the cake plugin. Thanks!
+Plugin produced under guidance of the cake plugin. Thanks!
 """
 # coding=utf-8
 import re

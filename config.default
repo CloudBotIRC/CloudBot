@@ -60,7 +60,11 @@
     "rdio_secret": ""
   },
   "database": "sqlite:///cloudbot.db",
-  "disabled_plugins": [],
+  "plugin_loading": {
+        "use_whitelist": false,
+        "blacklist": [],
+        "whitelist": []
+  }
   "skip_motd": false,
   "skip_server_info": false
 }

@@ -116,9 +116,19 @@ class PluginManager:
         file_path = os.path.abspath(path)
         file_name = os.path.basename(path)
         title = os.path.splitext(file_name)[0]
-        if "disabled_plugins" in self.bot.config and title in self.bot.config['disabled_plugins']:
-            self.bot.logger.info("Not loading plugin {}: plugin disabled".format(file_name))
-            return
+
+        if "plugin_loading" in self.bot.config:
+            pl = self.bot.config.get("plugin_loading")
+
+            if pl.get("use_whitelist", False):
+                if title not in pl.get("whitelist", []):
+                    self.bot.logger.info("Not loading plugin {}: plugin not whitelisted".format(file_name))
+                    return
+            else:
+                if title in pl.get("blacklist", []):
+                    self.bot.logger.info("Not loading plugin {}: plugin blacklisted".format(file_name))
+                    return
+
 
         # make sure to unload the previously loaded plugin from this path, if it was loaded.
         if file_name in self.plugins:

@@ -51,7 +51,7 @@ def memory():
 
     elif os.name == "nt":
         cmd = 'tasklist /FI "PID eq %s" /FO CSV /NH' % os.getpid()
-        out = os.popen(cmd).read().decode()
+        out = os.popen(cmd).read()
         memory = 0
         for amount in re.findall(r'([,0-9]+) K', out):
             memory += float(amount.replace(',', ''))

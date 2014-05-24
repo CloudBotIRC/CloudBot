@@ -1,9 +1,9 @@
 """
-Cookie.py by Techman <michael@techmansworld.com>
+cookie.py: A plugin to serve cookies to users
+
+(c) 2014 Techman <michael@techmansworld.com>
 
 Plugin produced under guidiance of the cake plugin. Thanks!
-
-Produced under the license that accompanies Cloudbot. Enjoy <3!
 """
 # coding=utf-8
 import re

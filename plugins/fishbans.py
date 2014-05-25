@@ -1,6 +1,9 @@
 from urllib.parse import quote_plus
 
-from cloudbot import hook, http, formatting
+import requests
+
+from cloudbot import hook, formatting
+
 
 api_url = "http://api.fishbans.com/stats/{}/"
 
@@ -11,15 +14,21 @@ def fishbans(text):
     user = text.strip()
 
     try:
-        request = http.get_json(api_url.format(quote_plus(user)))
-    except (http.HTTPError, http.URLError) as e:
+        request = requests.get(api_url.format(quote_plus(user)))
+        request.raise_for_status()
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         return "Could not fetch ban data from the Fishbans API: {}".format(e)
 
-    if not request["success"]:
+    try:
+        json = request.json()
+    except ValueError:
+        return "Could not fetch ban data from the Fishbans API: Invalid Response"
+
+    if not json["success"]:
         return "Could not fetch ban data for {}.".format(user)
 
     user_url = "http://fishbans.com/u/{}/".format(user)
-    ban_count = request["stats"]["totalbans"]
+    ban_count = json["stats"]["totalbans"]
 
     if ban_count == 1:
         return "The user \x02{}\x02 has \x021\x02 ban - {}".format(user, user_url)
@@ -35,15 +44,18 @@ def bancount(text):
     user = text.strip()
 
     try:
-        request = http.get_json(api_url.format(quote_plus(user)))
-    except (http.HTTPError, http.URLError) as e:
+        request = requests.get(api_url.format(quote_plus(user)))
+        request.raise_for_status()
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         return "Could not fetch ban data from the Fishbans API: {}".format(e)
 
-    if not request["success"]:
-        return "Could not fetch ban data for {}.".format(user)
+    try:
+        json = request.json()
+    except ValueError:
+        return "Could not fetch ban data from the Fishbans API: Invalid Response"
 
     user_url = "http://fishbans.com/u/{}/".format(user)
-    services = request["stats"]["service"]
+    services = json["stats"]["service"]
 
     out = []
     for service, ban_count in list(services.items()):

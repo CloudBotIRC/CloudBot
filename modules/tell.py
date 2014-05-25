@@ -129,7 +129,7 @@ def tell_cmd(inp, nick, db, notice, conn):
         notice("Invalid nick '{}'.".format(target))
         return
 
-    if not re.match("^[A-Za-z0-9_|.\-\]\[]*$", target.lower()):
+    if not re.match("^[a-z0-9_|.\-\]\[]*$", target.lower()):
         notice("Invalid nick '{}'.".format(target))
         return
 
@@ -139,4 +139,4 @@ def tell_cmd(inp, nick, db, notice, conn):
 
     add_tell(db, conn.server, sender, target, message)
 
-    notice("Your message has been sent!")
+    notice("Your message has been saved, and {} will be notified once they are active.".format(target))

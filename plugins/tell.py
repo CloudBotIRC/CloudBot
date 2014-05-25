@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy import Table, Column, String, Boolean, DateTime
 from sqlalchemy.sql import select
 
-from cloudbot import hook, timesince, botvars
+from util import hook, timesince, botvars
 
 table = Table(
     'tells',
@@ -129,8 +129,9 @@ def tell_cmd(inp, nick, db, notice, conn):
         notice("Invalid nick '{}'.".format(target))
         return
 
-    if not re.match("^[A-Za-z0-9_|.\-\]\[]*$", target.lower()):
+    if not re.match("^[a-z0-9_|.\-\]\[]*$", target.lower()):
         notice("Invalid nick '{}'.".format(target))
+        return
 
     if count_unread(db, conn.server, target) >= 10:
         notice("Sorry, {} has too many messages queued already.".format(target))

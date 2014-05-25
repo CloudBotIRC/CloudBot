@@ -1,6 +1,7 @@
 from urllib.parse import quote_plus
 
 import requests
+import asyncio
 
 from cloudbot import hook, formatting
 
@@ -8,13 +9,14 @@ from cloudbot import hook, formatting
 api_url = "http://api.fishbans.com/stats/{}/"
 
 
-@hook.command(["bans", "fishbans"])
-def fishbans(text):
+@hook.command(["bans", "fishbans"], threaded=False)
+@asyncio.coroutine
+def fishbans(text, loop):
     """fishbans <user> -- Gets information on <user>s minecraft bans from fishbans"""
     user = text.strip()
 
     try:
-        request = requests.get(api_url.format(quote_plus(user)))
+        request = yield from loop.run_in_executor(None, requests.get, api_url.format(quote_plus(user)))
         request.raise_for_status()
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         return "Could not fetch ban data from the Fishbans API: {}".format(e)
@@ -38,13 +40,14 @@ def fishbans(text):
         return "The user \x02{}\x02 has no bans - {}".format(user, user_url)
 
 
-@hook.command
-def bancount(text):
+@hook.command(threaded=False)
+@asyncio.coroutine
+def bancount(text, loop):
     """bancount <user> -- Gets a count of <user>s minecraft bans from fishbans"""
     user = text.strip()
 
     try:
-        request = requests.get(api_url.format(quote_plus(user)))
+        request = yield from loop.run_in_executor(None, requests.get, api_url.format(quote_plus(user)))
         request.raise_for_status()
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         return "Could not fetch ban data from the Fishbans API: {}".format(e)

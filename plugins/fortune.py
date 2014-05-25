@@ -1,5 +1,6 @@
 import os
 import random
+import asyncio
 
 from cloudbot import hook
 
@@ -14,6 +15,7 @@ def load_fortunes(bot):
 
 
 @hook.command(autohelp=False)
+@asyncio.coroutine
 def fortune():
     """fortune -- Fortune cookies on demand."""
     return random.choice(fortunes)

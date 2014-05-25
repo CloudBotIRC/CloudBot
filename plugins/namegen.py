@@ -11,7 +11,7 @@ def get_generator(_json):
 
 
 @hook.command(autohelp=False)
-def namegen(text, bot):
+def namegen(text, bot, notice):
     """namegen [generator] -- Generates some names using the chosen generator.
     :type bot: core.bot.CloudBot
     'namegen list' will display a list of all generators."""
@@ -21,17 +21,14 @@ def namegen(text, bot):
 
     # get a list of available name generators
     files = os.listdir(os.path.join(bot.data_dir, "name_files"))
-    all_modules = []
-    for i in files:
-        if os.path.splitext(i)[1] == ".json":
-            all_modules.append(os.path.splitext(i)[0])
+    all_modules = [os.path.splitext(i)[0] for i in files if os.path.splitext(i)[1] == ".json"]
     all_modules.sort()
 
     # command to return a list of all available generators
     if inp == "list":
         message = "Available generators: "
         message += formatting.get_text_list(all_modules, 'and')
-        input.notice(message)
+        notice(message)
         return
 
     if inp:
@@ -42,7 +39,7 @@ def namegen(text, bot):
 
     # check if the selected module is valid
     if not selected_module in all_modules:
-        return "Invalid name generator :("
+        return "{} is not a valid name generator.".format(inp)
 
     # load the name generator
     with open(os.path.join(bot.data_dir, "name_files", "{}.json".format(selected_module))) as f:

@@ -14,7 +14,7 @@ def load_fortunes(bot):
                     if not line.startswith("//")]
 
 
-@hook.command(autohelp=False)
+@hook.command(autohelp=False, threaded=False)
 @asyncio.coroutine
 def fortune():
     """fortune -- Fortune cookies on demand."""

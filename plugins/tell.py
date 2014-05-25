@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy import Table, Column, String, Boolean, DateTime
 from sqlalchemy.sql import select
 
-from util import hook, timesince, botvars
+from cloudbot import hook, timesince, botvars
 
 table = Table(
     'tells',

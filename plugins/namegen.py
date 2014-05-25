@@ -11,13 +11,13 @@ def get_generator(_json):
 
 
 @hook.command(autohelp=False)
-def namegen(input, bot):
+def namegen(text, bot):
     """namegen [generator] -- Generates some names using the chosen generator.
     :type bot: core.bot.CloudBot
     'namegen list' will display a list of all generators."""
 
     # clean up the input
-    inp = input.text.strip().lower()
+    inp = text.strip().lower()
 
     # get a list of available name generators
     files = os.listdir(os.path.join(bot.data_dir, "name_files"))

@@ -394,7 +394,7 @@ class PluginManager:
                 if event is None:
                     return False
 
-        if hook.type == "command" and hook.auto_help and not event.text:
+        if hook.type == "command" and hook.auto_help and not event.text and hook.doc is not None:
             event.notice_doc()
 
         if hook.single_thread:

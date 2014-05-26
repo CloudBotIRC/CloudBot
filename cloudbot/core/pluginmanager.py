@@ -353,7 +353,7 @@ class PluginManager:
             self.bot.logger.exception("Error in hook {}:{}".format(hook.plugin.title, hook.function_name))
             return False
 
-        if out is not None:
+        if out:
             event.reply(str(out))
         return True
 

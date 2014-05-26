@@ -9,6 +9,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.schema import MetaData
 
+import cloudbot
 from cloudbot.core.connection import BotConnection
 from cloudbot.core.config import Config
 from cloudbot.core.reloader import PluginReloader
@@ -70,6 +71,15 @@ class CloudBot:
         # set up config
         self.config = Config(self)
         self.logger.debug("Config system initialised.")
+
+        # log developer mode
+        self.dev_mode = cloudbot.dev_mode_conf
+        if self.dev_mode.get("reloading"):
+            self.logger.info("Enabling developer mode: reloading.")
+        if self.dev_mode.get("console_debug"):
+            self.logger.info("Enabling developer mode: console debug")
+        if self.dev_mode.get("file_debug"):
+            self.logger.info("Enabling developer mode: file debug")
 
         # setup db
         db_path = self.config.get('database', 'sqlite:///cloudbot.db')
@@ -215,7 +225,6 @@ class CloudBot:
                         if potential_match.startswith(command):
                             potential_matches.append((potential_match, plugin))
                     if potential_matches:
-                        print("Potential match! {}".format(potential_matches))
                         if len(potential_matches) == 1:
                             command_event = CommandEvent(bot=self, text=match.group(2).strip(),
                                                          triggered_command=command, base_event=event)
@@ -223,7 +232,6 @@ class CloudBot:
                         else:
                             event.notice("Possible matches: {}".format(
                                 formatting.get_text_list([command for command, plugin in potential_matches])))
-
 
             # REGEXES
             for regex, regex_hook in self.plugin_manager.regex_hooks:

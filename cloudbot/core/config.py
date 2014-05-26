@@ -11,7 +11,7 @@ import cloudbot
 class Config(dict):
     """
     :type filename: str
-    :type path: bytes
+    :type path: str
     :type bot: cloudbot.core.bot.CloudBot
     :type observer: Observer
     :type event_handler: ConfigEventHandler

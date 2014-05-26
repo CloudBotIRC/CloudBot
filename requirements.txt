@@ -7,5 +7,5 @@ git+https://github.com/rfk/pyenchant.git
 py3dns
 pycrypto
 pbkdf2
-tweepy
-yql
+requests
+psutil

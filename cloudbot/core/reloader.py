@@ -31,8 +31,9 @@ class PluginReloader(object):
 
         :type path: str
         """
+        if isinstance(path, bytes):
+            path = path.decode()
         self.bot.loop.call_soon_threadsafe(lambda: asyncio.async(self._reload(path), loop=self.bot.loop))
-
 
     @asyncio.coroutine
     def _reload(self, path):
@@ -63,5 +64,5 @@ class PluginEventHandler(Trick):
 
     def on_moved(self, event):
         # only load if it's moved to a .py file
-        if event.dest_path.endswith(".py"):
+        if event.dest_path.endswith(".py" if isinstance(event.dest_path, str) else b".py"):
             self.loader.reload(event.dest_path)

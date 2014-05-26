@@ -11,7 +11,7 @@ __all__ = ["core", "util", "bot", "connection", "config", "permissions", "plugin
 
 
 def _setup():
-    default_developer_mode = {"plugin_reloading": False, "config_reloading": False,
+    default_developer_mode = {"plugin_reloading": False, "config_reloading": True,
                               "console_debug": False, "file_debug": True}
     if os.path.exists(os.path.abspath("config.json")):
         with open(os.path.abspath("config.json")) as config_file:

@@ -64,7 +64,7 @@
         "whitelist": []
     },
     "developer_mode": {
-        "config_reloading": false,
+        "config_reloading": true,
         "plugin_reloading": false,
         "console_debug": false,
         "file_debug": true

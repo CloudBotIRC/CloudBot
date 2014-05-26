@@ -291,13 +291,14 @@ class PluginManager:
             else:
                 self.bot.logger.error("Plugin {}:{} asked for invalid argument '{}', cancelling execution!"
                                       .format(hook.plugin.title, hook.function_name, required_arg))
+                self.bot.logger.debug("Valid arguments are: {} ({})".format(dir(event), event))
                 return None
         return uses_db, parameters
 
     def _execute_hook_threaded(self, hook, event):
         value = self._prepare_parameters(hook, event)
         if value is None:
-            return False
+            return None
         create_db, parameters = value
         if create_db:
             # create SQLAlchemy session
@@ -316,7 +317,7 @@ class PluginManager:
     def _execute_hook_sync(self, hook, event):
         value = self._prepare_parameters(hook, event)
         if value is None:
-            return False
+            return None
         create_db, parameters = value
         if create_db:
             # create SQLAlchemy session
@@ -353,7 +354,7 @@ class PluginManager:
             self.bot.logger.exception("Error in hook {}:{}".format(hook.plugin.title, hook.function_name))
             return False
 
-        if out:
+        if out is not None:
             event.reply(str(out))
         return True
 

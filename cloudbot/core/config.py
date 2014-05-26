@@ -5,6 +5,7 @@ import sys
 
 from watchdog.observers import Observer
 from watchdog.tricks import Trick
+import cloudbot
 
 
 class Config(dict):
@@ -32,15 +33,20 @@ class Config(dict):
         # populate self with config data
         self.load_config()
 
-        # Declaring here, to be assigned later
-        self.observer = None
-        self.event_handler = None
-        # start watcher
-        self.watcher()
+        if cloudbot.dev_mode["config_reloading"]:
+            # start watcher
+            self.observer = Observer()
+
+            pattern = "*{}".format(self.filename)
+
+            self.event_handler = ConfigEventHandler(self.bot, self, patterns=[pattern])
+            self.observer.schedule(self.event_handler, path='.', recursive=False)
+            self.observer.start()
 
     def stop(self):
         """shuts down the config reloader"""
-        self.observer.stop()
+        if cloudbot.dev_mode["config_reloading"]:
+            self.observer.stop()
 
     def load_config(self):
         """(re)loads the bot config from the config file"""
@@ -66,16 +72,6 @@ class Config(dict):
         """saves the contents of the config dict to the config file"""
         json.dump(self, open(self.path, 'w'), sort_keys=True, indent=2)
         self.logger.info("Config saved to file.")
-
-    def watcher(self):
-        """starts the watchdog to automatically reload the config when it changes on disk"""
-        self.observer = Observer()
-
-        pattern = "*{}".format(self.filename)
-
-        self.event_handler = ConfigEventHandler(self.bot, self, patterns=[pattern])
-        self.observer.schedule(self.event_handler, path='.', recursive=False)
-        self.observer.start()
 
 
 class ConfigEventHandler(Trick):

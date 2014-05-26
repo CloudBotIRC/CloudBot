@@ -73,13 +73,14 @@ class CloudBot:
         self.logger.debug("Config system initialised.")
 
         # log developer mode
-        self.dev_mode = cloudbot.dev_mode_conf
-        if self.dev_mode.get("reloading"):
-            self.logger.info("Enabling developer mode: reloading.")
-        if self.dev_mode.get("console_debug"):
-            self.logger.info("Enabling developer mode: console debug")
-        if self.dev_mode.get("file_debug"):
-            self.logger.info("Enabling developer mode: file debug")
+        if cloudbot.dev_mode.get("plugin_reloading"):
+            self.logger.info("Enabling developer option: plugin reloading.")
+        if cloudbot.dev_mode.get("config_reloading"):
+            self.logger.info("Enabling developer option: config reloading.")
+        if cloudbot.dev_mode.get("console_debug"):
+            self.logger.info("Enabling developer option: console debug.")
+        if cloudbot.dev_mode.get("file_debug"):
+            self.logger.info("Enabling developer option: file debug")
 
         # setup db
         db_path = self.config.get('database', 'sqlite:///cloudbot.db')
@@ -97,7 +98,9 @@ class CloudBot:
         # create bot connections
         self.create_connections()
 
-        self.reloader = PluginReloader(self)
+        if cloudbot.dev_mode.get("plugin_reloading"):
+            self.reloader = PluginReloader(self)
+
         self.plugin_manager = PluginManager(self)
 
     def run(self):
@@ -128,11 +131,13 @@ class CloudBot:
         """quits all networks and shuts the bot down"""
         self.logger.info("Stopping bot.")
 
-        self.logger.debug("Stopping config reloader.")
-        self.config.stop()
+        if cloudbot.dev_mode.get("config_reloading"):
+            self.logger.debug("Stopping config reloader.")
+            self.config.stop()
 
-        self.logger.debug("Stopping plugin reloader.")
-        self.reloader.stop()
+        if cloudbot.dev_mode.get("plugin_reloading"):
+            self.logger.debug("Stopping plugin reloader.")
+            self.reloader.stop()
 
         for connection in self.connections:
             if not connection.connected:
@@ -165,8 +170,11 @@ class CloudBot:
         # if we we're stopped while loading plugins, cancel that and just stop
         if not self.running:
             return
-        # start plugin reloader
-        self.reloader.start(os.path.abspath("plugins"))
+
+        if cloudbot.dev_mode.get("plugin_reloading"):
+            # start plugin reloader
+            self.reloader.start(os.path.abspath("plugins"))
+
         # start connections
         yield from asyncio.gather(*[conn.connect() for conn in self.connections], loop=self.loop)
         # run a manual garbage collection cycle, to clean up any unused objects created during initialization

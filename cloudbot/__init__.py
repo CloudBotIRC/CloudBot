@@ -7,21 +7,27 @@ from .core import bot, connection, config, permissions, pluginmanager, events
 from .util import botvars, bucket, formatting, hook, http, pyexec, textgen, timeformat, timesince, urlnorm, web
 
 __all__ = ["core", "util", "bot", "connection", "config", "permissions", "pluginmanager", "events", "botvars", "bucket",
-           "formatting", "hook", "http", "pyexec", "textgen", "timeformat", "timesince", "urlnorm", "web",
-           "dev_mode_conf"]
+           "formatting", "hook", "http", "pyexec", "textgen", "timeformat", "timesince", "urlnorm", "web", "dev_mode"]
 
 
 def _setup():
-    with open(os.path.abspath("config.json")) as config_file:
-        json_conf = json.load(config_file)
-    developer_mode = json_conf.get("developer_mode", {"reloading": False, "console_debug": False, "file_debug": True})
+    default_developer_mode = {"plugin_reloading": False, "config_reloading": False,
+                              "console_debug": False, "file_debug": True}
+    if os.path.exists(os.path.abspath("config.json")):
+        with open(os.path.abspath("config.json")) as config_file:
+            json_conf = json.load(config_file)
+        developer_mode = json_conf.get("developer_mode", default_developer_mode)
+    else:
+        developer_mode = default_developer_mode
 
-    if not "reloading" in developer_mode:
-        developer_mode["reloading"] = False
+    if not "config_reloading" in developer_mode:
+        developer_mode["config_reloading"] = default_developer_mode["config_reloading"]
+    if not "plugin_reloading" in developer_mode:
+        developer_mode["plugin_reloading"] = default_developer_mode["plugin_reloading"]
     if not "console_debug" in developer_mode:
-        developer_mode["console_debug"] = False
+        developer_mode["console_debug"] = default_developer_mode["console_debug"]
     if not "file_debug" in developer_mode:
-        developer_mode["file_debug"] = True
+        developer_mode["file_debug"] = default_developer_mode["file_debug"]
 
     _logdir = os.path.join(os.path.abspath(os.path.curdir), "logs")
 
@@ -79,4 +85,4 @@ def _setup():
     return developer_mode
 
 
-dev_mode_conf = _setup()
+dev_mode = _setup()

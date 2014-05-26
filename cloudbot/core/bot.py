@@ -14,7 +14,7 @@ from cloudbot.core.config import Config
 from cloudbot.core.reloader import PluginReloader
 from cloudbot.core.pluginmanager import PluginManager
 from cloudbot.core.events import BaseEvent, CommandEvent, RegexEvent
-from cloudbot.util import botvars
+from cloudbot.util import botvars, formatting
 
 logger_initialized = False
 
@@ -209,6 +209,21 @@ class CloudBot:
                     command_event = CommandEvent(bot=self, text=match.group(2).strip(),
                                                  triggered_command=command, base_event=event)
                     yield from self.plugin_manager.launch(command_hook, command_event)
+                else:
+                    potential_matches = []
+                    for potential_match, plugin in self.plugin_manager.commands.items():
+                        if potential_match.startswith(command):
+                            potential_matches.append((potential_match, plugin))
+                    if potential_matches:
+                        print("Potential match! {}".format(potential_matches))
+                        if len(potential_matches) == 1:
+                            command_event = CommandEvent(bot=self, text=match.group(2).strip(),
+                                                         triggered_command=command, base_event=event)
+                            yield from self.plugin_manager.launch(potential_matches[0][1], command_event)
+                        else:
+                            event.notice("Possible matches: {}".format(
+                                formatting.get_text_list([command for command, plugin in potential_matches])))
+
 
             # REGEXES
             for regex, regex_hook in self.plugin_manager.regex_hooks:

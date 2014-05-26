@@ -65,9 +65,7 @@ def get_profile(name):
     return profile
 
 
-@hook.command("haspaid")
-@hook.command("mcpaid")
-@hook.command
+@hook.command(["mcuser", "mcpaid", "haspaid"])
 def mcuser(text):
     """mcpaid <username> -- Gets information about the Minecraft user <account>."""
     user = text.strip()
@@ -99,4 +97,4 @@ def mcuser(text):
         return "The name \x02{}\x02 contains invalid characters.".format(user)
     else:
         # if you see this, panic
-        return "Unknown Error."
+        return "The account \x02{}\x02 does not exist.".format(user)

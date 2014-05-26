@@ -3,8 +3,8 @@ from cloudbot import hook, http, web
 base_url = "http://api.wunderground.com/api/{}/{}/q/{}.json"
 
 
-@hook.command(autohelp=None)
-def weather(inp, reply=None, db=None, nick=None, bot=None, notice=None):
+@hook.command(autohelp=False)
+def weather(text, reply, db, nick, bot, notice):
     """weather <location> [dontsave] -- Gets weather data
     for <location> from Wunderground."""
 
@@ -17,7 +17,7 @@ def weather(inp, reply=None, db=None, nick=None, bot=None, notice=None):
     db.execute("create table if not exists weather(nick primary key, loc)")
 
     # if there is no input, try getting the users last location from the DB
-    if not inp:
+    if not text:
         location = db.execute("select loc from weather where nick=lower(:nick)",
                               {"nick": nick}).fetchone()
         print(location)
@@ -31,13 +31,13 @@ def weather(inp, reply=None, db=None, nick=None, bot=None, notice=None):
         dontsave = True
     else:
         # see if the input ends with "dontsave"
-        dontsave = inp.endswith(" dontsave")
+        dontsave = text.endswith(" dontsave")
 
         # remove "dontsave" from the input string after checking for it
         if dontsave:
-            loc = inp[:-9].strip().lower()
+            loc = text[:-9].strip().lower()
         else:
-            loc = inp
+            loc = text
 
     location = http.quote_plus(loc)
 

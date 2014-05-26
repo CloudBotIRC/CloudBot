@@ -37,6 +37,6 @@ def xkcd_url(match):
 
 
 @hook.command
-def xkcd(inp):
+def xkcd(text):
     """xkcd <search term> - Search for xkcd comic matching <search term>"""
-    return xkcd_search(inp)
+    return xkcd_search(text)

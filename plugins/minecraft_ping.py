@@ -212,12 +212,11 @@ def format_output(data):
                " players.".format(**data).replace("\n", "\x0f - ")
 
 
-@hook.command
-@hook.command("mcp")
-def mcping(inp):
+@hook.command(["mcping", "mcp"])
+def mcping(text):
     """mcping <server>[:port] - Ping a Minecraft server to check status."""
     try:
-        host, port = parse_input(inp)
+        host, port = parse_input(text)
     except ParseError as e:
         return "Could not parse input ({})".format(e)
 

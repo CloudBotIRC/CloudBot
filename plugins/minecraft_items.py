@@ -48,23 +48,22 @@ with open("./data/itemids.txt") as f:
         ids.append((itemid, name))
 
 
-@hook.command("mcid")
-@hook.command
-def mcitem(inp, reply=None):
+@hook.command(["mcitem", "mcid"])
+def mcitem(text, reply):
     """mcitem <item/id> -- gets the id from an item or vice versa"""
-    inp = inp.lower().strip()
+    text = text.lower().strip()
 
-    if inp == "":
+    if text == "":
         reply("error: no input.")
         return
 
     results = []
 
     for item_id, item_name in ids:
-        if inp == item_id:
+        if text == item_id:
             results = ["\x02[{}]\x02 {}".format(item_id, item_name)]
             break
-        elif inp in item_name.lower():
+        elif text in item_name.lower():
             results.append("\x02[{}]\x02 {}".format(item_id, item_name))
 
     if not results:
@@ -79,14 +78,13 @@ def mcitem(inp, reply=None):
     return out
 
 
-@hook.command("mccraft")
-@hook.command
-def mcrecipe(inp, reply=None):
+@hook.command(["mccraft", "mcrecipe"])
+def mcrecipe(text, reply):
     """mcrecipe <item> -- gets the crafting recipe for an item"""
-    inp = inp.lower().strip()
+    text = text.lower().strip()
 
     results = [recipe.line for recipe in recipelist
-               if inp in recipe.output]
+               if text in recipe.output]
 
     if not results:
         return "No matches found."

@@ -10,9 +10,9 @@ def get_generator(_json, variables):
 
 
 @hook.command
-def slap(inp, action=None, nick=None, conn=None, notice=None):
+def slap(text, action, nick, conn, notice):
     """slap <user> -- Makes the bot slap <user>."""
-    target = inp.strip()
+    target = text.strip()
 
     if " " in target:
         notice("Invalid username!")

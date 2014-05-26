@@ -4,31 +4,31 @@ from cloudbot import hook, http, urlnorm
 
 
 @hook.command
-def down(inp):
+def down(text):
     """down <url> -- Checks if the site at <url> is up or down.
-    :type inp: str
+    :type text: str
     """
 
-    if not inp.startswith("http://"):
-        inp = 'http://' + inp
+    if not text.startswith("http://"):
+        text = 'http://' + text
 
-    inp = 'http://' + urllib.parse.urlparse(inp).netloc
+    text = 'http://' + urllib.parse.urlparse(text).netloc
 
     try:
-        http.get(inp, get_method='HEAD')
-        return '{} seems to be up'.format(inp)
+        http.get(text, get_method='HEAD')
+        return '{} seems to be up'.format(text)
     except http.URLError:
-        return '{} seems to be down'.format(inp)
+        return '{} seems to be down'.format(text)
 
 
 @hook.command
-def isup(inp):
+def isup(text):
     """isup -- uses isup.me to see if a site is up or not
-    :type inp: str
+    :type text: str
     """
 
     # slightly overcomplicated, esoteric URL parsing
-    scheme, auth, path, query, fragment = urllib.parse.urlsplit(inp.strip())
+    scheme, auth, path, query, fragment = urllib.parse.urlsplit(text.strip())
 
     domain = auth or path
     url = urlnorm.normalize(domain, assume_scheme="http")

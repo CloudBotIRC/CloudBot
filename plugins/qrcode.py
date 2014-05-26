@@ -4,13 +4,13 @@ from cloudbot import hook, web, http
 
 @hook.command('qr')
 @hook.command
-def qrcode(inp):
+def qrcode(text):
     """qrcode [link] returns a link for a QR code."""
 
     args = {
         "cht": "qr",  # chart type (QR)
         "chs": "200x200",  # dimensions
-        "chl": inp  # data
+        "chl": text  # data
     }
 
     link = http.prepare_url("http://chart.googleapis.com/chart", args)

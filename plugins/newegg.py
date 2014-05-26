@@ -71,12 +71,12 @@ def newegg_url(match):
 
 
 @hook.command
-def newegg(inp):
+def newegg(text):
     """newegg <item name> -- Searches newegg.com for <item name>"""
 
     # form the search request
     request = {
-        "Keyword": inp,
+        "Keyword": text,
         "Sort": "FEATURED"
     }
 

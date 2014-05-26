@@ -9,14 +9,14 @@ ping_regex = re.compile(r"(\d+.\d+)/(\d+.\d+)/(\d+.\d+)/(\d+.\d+)")
 
 
 @hook.command
-def ping(inp, reply=None):
+def ping(text, reply):
     """ping <host> [count] -- Pings <host> [count] times."""
 
     if os.name == "nt":
         return "Sorry, this command is not supported on Windows systems."
         # TODO: Rewrite this entire command to work on Windows, somehow
 
-    args = inp.split(' ')
+    args = text.split(' ')
     host = args[0]
 
     # check for a second argument and set the ping count

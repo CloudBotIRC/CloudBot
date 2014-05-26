@@ -4,9 +4,9 @@ from cloudbot import hook, http, urlnorm
 
 
 @hook.command
-def title(inp):
+def title(text):
     """title <url> -- gets the title of a web page"""
-    url = urlnorm.normalize(inp, assume_scheme="http")
+    url = urlnorm.normalize(text, assume_scheme="http")
 
     try:
         page = http.open(url)

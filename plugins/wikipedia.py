@@ -11,12 +11,11 @@ search_url = api_prefix + "?action=opensearch&format=xml"
 paren_re = re.compile('\s*\(.*\)$')
 
 
-@hook.command('w')
-@hook.command
-def wiki(inp):
+@hook.command(["wiki", "wikipedia", "w"])
+def wiki(text):
     """wiki <phrase> -- Gets first sentence of Wikipedia article on <phrase>."""
 
-    x = http.get_xml(search_url, search=inp)
+    x = http.get_xml(search_url, search=text)
 
     ns = '{http://opensearch.org/searchsuggest2}'
     items = x.findall(ns + 'Section/' + ns + 'Item')

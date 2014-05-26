@@ -44,27 +44,27 @@ def capitalize(text):
 
 
 @hook.command
-def upper(inp):
+def upper(text):
     """upper <string> -- Convert string to uppercase."""
-    return inp.upper()
+    return text.upper()
 
 
 @hook.command
-def lower(inp):
+def lower(text):
     """lower <string> -- Convert string to lowercase."""
-    return inp.lower()
+    return text.lower()
 
 
 @hook.command
-def titlecase(inp):
+def titlecase(text):
     """title <string> -- Convert string to title case."""
-    return inp.title()
+    return text.title()
 
 
 @hook.command
-def swapcase(inp):
+def swapcase(text):
     """swapcase <string> -- Swaps the capitalization of <string>."""
-    return inp.swapcase()
+    return text.swapcase()
 
 
 # encoding

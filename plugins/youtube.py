@@ -66,13 +66,10 @@ def youtube_url(match):
     return get_video_description(match.group(1))
 
 
-@hook.command('you')
-@hook.command('yt')
-@hook.command('y')
-@hook.command
-def youtube(inp):
+@hook.command(["youtube", "you", "yt", "y"])
+def youtube(text):
     """youtube <query> -- Returns the first YouTube search result for <query>."""
-    request = http.get_json(search_api_url, q=inp)
+    request = http.get_json(search_api_url, q=text)
 
     if 'error' in request:
         return 'error performing search'
@@ -85,8 +82,7 @@ def youtube(inp):
     return get_video_description(video_id) + " - " + video_url % video_id
 
 
-@hook.command('ytime')
-@hook.command
+@hook.command(["youtime", "ytime"])
 def youtime(inp):
     """youtime <query> -- Gets the total run time of the first YouTube search result for <query>."""
     request = http.get_json(search_api_url, q=inp)

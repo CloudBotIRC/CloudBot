@@ -17,18 +17,18 @@ def is_valid(data):
 
 
 @hook.command(autohelp=False)
-def imgur(inp):
+def imgur(text):
     """imgur [subreddit] -- Gets the first page of imgur images from [subreddit] and returns a link to them.
      If [subreddit] is undefined, return any imgur images"""
-    if inp:
+    if text:
         # see if the input ends with "nsfw"
-        show_nsfw = inp.endswith(" nsfw")
+        show_nsfw = text.endswith(" nsfw")
 
         # remove "nsfw" from the input string after checking for it
         if show_nsfw:
-            inp = inp[:-5].strip().lower()
+            text = text[:-5].strip().lower()
 
-        url = base_url.format(inp.strip())
+        url = base_url.format(text.strip())
     else:
         url = "http://www.reddit.com/domain/imgur.com/.json"
         show_nsfw = False

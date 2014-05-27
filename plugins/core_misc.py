@@ -1,6 +1,5 @@
 import asyncio
 import socket
-import time
 
 from cloudbot import hook
 
@@ -12,7 +11,7 @@ socket.setdefaulttimeout(10)
 def invite(paramlist, conn):
     """
     :type paramlist: list[str]
-    :type conn: core.irc.BotConnection
+    :type conn: cloudbot.core.connection.BotConnection
     """
     invite_join = conn.config.get('invite_join', True)
     if invite_join:
@@ -20,11 +19,11 @@ def invite(paramlist, conn):
 
 
 # Identify to NickServ (or other service)
-@hook.event('004')
+@hook.event('004', threaded=False)
 def onjoin(conn, bot):
     """
-    :type conn: core.irc.BotConnection
-    :type bot: core.bot.CloudBot
+    :type conn: cloudbot.core.connection.BotConnection
+    :type bot: cloudbot.core.bot.CloudBot
     """
     bot.logger.info("ONJOIN hook triggered.")
     nickserv = conn.config.get('nickserv')
@@ -42,7 +41,7 @@ def onjoin(conn, bot):
                 conn.msg(nickserv_name, "{} {}".format(nickserv_command, nickserv_password))
             if "censored_strings" in bot.config:
                 bot.config['censored_strings'].append(nickserv_password)
-            time.sleep(1)
+            yield from asyncio.sleep(1)
 
     # Set bot modes
     mode = conn.config.get('mode')
@@ -54,7 +53,7 @@ def onjoin(conn, bot):
     bot.logger.info('Joining channels.')
     for channel in conn.channels:
         conn.join(channel)
-        time.sleep(1)
+        yield from asyncio.sleep(1)
 
     bot.logger.info("ONJOIN hook completed. Bot ready.")
 

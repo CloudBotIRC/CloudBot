@@ -30,7 +30,14 @@ def find_hooks(parent, module):
         if hasattr(func, "_cloudbot_hook"):
             # if it has cloudbot hook
             func_hooks = func._cloudbot_hook
+
+            if "options" in func_hooks:
+                options = func_hooks["options"]
+            else:
+                options = {}
+
             for hook_type, func_hook in func_hooks.items():
+                func_hook.kwargs.update(options)
                 type_lists[hook_type].append(_hook_name_to_plugin[hook_type](parent, func_hook))
 
             # delete the hook to free memory

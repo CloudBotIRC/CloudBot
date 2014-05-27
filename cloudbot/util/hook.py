@@ -133,7 +133,6 @@ class _RawHook(_Hook):
 def _add_hook(func, hook):
     if not hasattr(func, "_cloudbot_hook"):
         func._cloudbot_hook = {}
-        # print("creating cloudbot hook on {}: {}".format(func.__name__, func.__dict__))
     else:
         assert hook.type not in func._cloudbot_hook  # in this case the hook should be using the add_hook method
     func._cloudbot_hook[hook.type] = hook
@@ -146,104 +145,98 @@ def _get_hook(func, hook_type):
     return None
 
 
-def _command_hook(func, alias_param=None, **kwargs):
-    """
-    Internal command hook
+def _process_options(func, kwargs):
+    if not hasattr(func, "_cloudbot_hook"):
+        func._cloudbot_hook = {}
 
-    :type func: function
-    :type alias_param: list[str] | str
-    """
+    if not "options" in func._cloudbot_hook:
+        func._cloudbot_hook["options"] = {}
 
-    hook = _get_hook(func, "command")
-    if hook is None:
-        hook = _CommandHook(func)
-        _add_hook(func, hook)
-
-    hook.add_hook(alias_param, kwargs)
-    return func
+    options = func._cloudbot_hook["options"]
+    if "threaded" in kwargs:
+        options["threaded"] = kwargs["threaded"]
+    if "async" in kwargs:
+        options["threaded"] = not kwargs["async"]
 
 
-def _raw_hook(func, triggers_param, **kwargs):
-    """
-    Internal irc_raw hook
-
-    :type func: function
-    :type triggers_param: list[str] | str
-    """
-    hook = _get_hook(func, "irc_raw")
-    if hook is None:
-        hook = _RawHook(func)
-        _add_hook(func, hook)
-
-    hook.add_hook(triggers_param, kwargs)
-    return func
-
-
-def _regex_hook(func, regex_param, flags, **kwargs):
-    """
-    Internal regex hook
-
-    :type regex_param: str | re.__Regex | list[str | re.__Regex]
-    :type flags: int
+def async(param=None):
+    """External async decorator. Can be used directly as a decorator, or with args to return a decorator.
+    :type param: function
     """
 
-    hook = _get_hook(func, "regex")
-    if hook is None:
-        hook = _RegexHook(func)
-        _add_hook(func, _RegexHook(func))
+    def _async_hook(func):
+        if not hasattr(func, "_cloudbot_hook"):
+            func._cloudbot_hook = {}
+        if not "options" in func._cloudbot_hook:
+            func._cloudbot_hook["options"] = {}
+        options = func._cloudbot_hook["options"]
+        options["threaded"] = False
+        return func
 
-    hook.add_hook(regex_param, flags, kwargs)
-    return func
-
-
-def _sieve_hook(func, **kwargs):
-    """
-    Internal sieve hook
-    """
-    assert len(inspect.getargspec(func).args) == 3, \
-        "Sieve plugin has incorrect argument count. Needs params: bot, input, plugin"
-
-    hook = _get_hook(func, "sieve")
-    if hook is None:
-        hook = _Hook(func, "sieve")  # there's no need to have a specific SieveHook object
-        _add_hook(func, hook)
-
-    hook._add_hook(kwargs)
-    return func
+    if callable(param):  # this decorator is being used directly
+        return _async_hook(param)
+    else:  # this decorator is being used indirectly, so return a decorator function
+        return lambda func: _async_hook(func)
 
 
-def _onload_hook(func, **kwargs):
-    """
-    Internal onload hook
+def threaded(param=None):
+    """External async decorator. Can be used directly as a decorator, or with args to return a decorator.
+    :type param: function
     """
 
-    hook = _get_hook(func, "onload")
-    if hook is None:
-        hook = _Hook(func, "onload")
-        _add_hook(func, hook)
+    def _async_hook(func):
+        if not hasattr(func, "_cloudbot_hook"):
+            func._cloudbot_hook = {}
+        if not "options" in func._cloudbot_hook:
+            func._cloudbot_hook["options"] = {}
+        options = func._cloudbot_hook["options"]
+        options["threaded"] = True
+        return func
 
-    hook._add_hook(kwargs)
-    return func
+    if callable(param):  # this decorator is being used directly
+        return _async_hook(param)
+    else:  # this decorator is being used indirectly, so return a decorator function
+        return lambda func: _async_hook(func)
 
 
 def command(param=None, **kwargs):
     """External command decorator. Can be used directly as a decorator, or with args to return a decorator.
     :type param: str | list[str] | function
     """
+
+    def _command_hook(func, alias_param=None):
+        hook = _get_hook(func, "command")
+        if hook is None:
+            hook = _CommandHook(func)
+            _add_hook(func, hook)
+
+        hook.add_hook(alias_param, kwargs)
+        return func
+
     if callable(param):  # this decorator is being used directly
         return _command_hook(param)
     else:  # this decorator is being used indirectly, so return a decorator function
-        return lambda func: _command_hook(func, alias_param=param, **kwargs)
+        return lambda func: _command_hook(func, alias_param=param)
 
 
-def event(event_param, **kwargs):
+def event(triggers_param, **kwargs):
     """External event decorator. Must be used as a function to return a decorator
-    :type event_param: str | list[str]
+    :type triggers_param: str | list[str]
     """
-    if callable(event_param):  # this decorator is being used directly, which isn't good
+
+    def _raw_hook(func):
+        hook = _get_hook(func, "irc_raw")
+        if hook is None:
+            hook = _RawHook(func)
+            _add_hook(func, hook)
+
+        hook.add_hook(triggers_param, kwargs)
+        return func
+
+    if callable(triggers_param):  # this decorator is being used directly, which isn't good
         raise TypeError("@irc_raw() must be used as a function that returns a decorator")
     else:  # this decorator is being used as a function, so return a decorator
-        return lambda func: _raw_hook(func, event_param, **kwargs)
+        return lambda func: _raw_hook(func)
 
 
 def regex(regex_param, flags=0, **kwargs):
@@ -251,27 +244,60 @@ def regex(regex_param, flags=0, **kwargs):
     :type regex_param: str | re.__Regex | list[str | re.__Regex]
     :type flags: int
     """
+
+    def _regex_hook(func):
+        hook = _get_hook(func, "regex")
+        if hook is None:
+            hook = _RegexHook(func)
+            _add_hook(func, _RegexHook(func))
+
+        hook.add_hook(regex_param, flags, kwargs)
+        return func
+
     if callable(regex_param):  # this decorator is being used directly, which isn't good
         raise TypeError("@regex() hook must be used as a function that returns a decorator")
     else:  # this decorator is being used as a function, so return a decorator
-        return lambda func: _regex_hook(func, regex_param, flags, **kwargs)
+        return lambda func: _regex_hook(func)
 
 
 def sieve(param=None, **kwargs):
     """External sieve decorator. Can be used directly as a decorator, or with args to return a decorator
     :type param: function | None
     """
+
+    def _sieve_hook(func):
+        assert len(inspect.getargspec(func).args) == 3, \
+            "Sieve plugin has incorrect argument count. Needs params: bot, input, plugin"
+
+        hook = _get_hook(func, "sieve")
+        if hook is None:
+            hook = _Hook(func, "sieve")  # there's no need to have a specific SieveHook object
+            _add_hook(func, hook)
+
+        hook._add_hook(kwargs)
+        return func
+
     if callable(param):
-        return _sieve_hook(param, **kwargs)
+        return _sieve_hook(param)
     else:
-        return lambda func: _sieve_hook(func, **kwargs)
+        return lambda func: _sieve_hook(func)
 
 
 def onload(param=None, **kwargs):
     """External onload decorator. Can be used directly as a decorator, or with args to return a decorator
     :type param: function | None
     """
+
+    def _onload_hook(func):
+        hook = _get_hook(func, "onload")
+        if hook is None:
+            hook = _Hook(func, "onload")
+            _add_hook(func, hook)
+
+        hook._add_hook(kwargs)
+        return func
+
     if callable(param):
-        return _onload_hook(param, **kwargs)
+        return _onload_hook(param)
     else:
-        return lambda func: _onload_hook(func, **kwargs)
+        return lambda func: _onload_hook(func)

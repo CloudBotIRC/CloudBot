@@ -1,8 +1,7 @@
 from cloudbot import hook, web, http
 
 
-@hook.command('gfy')
-@hook.command
+@hook.command(["lmgtfy", "gfy"])
 def lmgtfy(text):
     """lmgtfy [phrase] - Posts a google link for the specified phrase"""
 

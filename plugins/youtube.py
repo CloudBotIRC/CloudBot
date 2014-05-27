@@ -83,9 +83,9 @@ def youtube(text):
 
 
 @hook.command(["youtime", "ytime"])
-def youtime(inp):
+def youtime(text):
     """youtime <query> -- Gets the total run time of the first YouTube search result for <query>."""
-    request = http.get_json(search_api_url, q=inp)
+    request = http.get_json(search_api_url, q=text)
 
     if 'error' in request:
         return 'error performing search'

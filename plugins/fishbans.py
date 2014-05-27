@@ -9,7 +9,7 @@ from cloudbot import hook, formatting
 api_url = "http://api.fishbans.com/stats/{}/"
 
 
-@hook.command(["bans", "fishbans"], threaded=False)
+@hook.command(["bans", "fishbans"], async=True)
 @asyncio.coroutine
 def fishbans(text, loop):
     """fishbans <user> -- Gets information on <user>s minecraft bans from fishbans"""
@@ -40,7 +40,7 @@ def fishbans(text, loop):
         return "The user \x02{}\x02 has no bans - {}".format(user, user_url)
 
 
-@hook.command(threaded=False)
+@hook.command(async=True)
 @asyncio.coroutine
 def bancount(text, loop):
     """bancount <user> -- Gets a count of <user>s minecraft bans from fishbans"""

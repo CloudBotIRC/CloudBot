@@ -1,16 +1,22 @@
-from cloudbot import hook, http
+from bs4 import BeautifulSoup
+import requests
+
+from cloudbot import hook
+
 
 fml_cache = []
 
 
 def refresh_cache():
     """ gets a page of random FMLs and puts them into a dictionary """
-    soup = http.get_soup('http://www.fmylife.com/random/')
+    response = requests.get('http://www.fmylife.com/random/')
+    soup = BeautifulSoup(response.text)
 
     for e in soup.find_all('div', {'class': 'post article'}):
         fml_id = int(e['id'])
         text = ''.join(e.find('p').find_all(text=True))
         fml_cache.append((fml_id, text))
+
 
 @hook.onload()
 def initial_refresh():
@@ -18,8 +24,9 @@ def initial_refresh():
     refresh_cache()
 
 
+@hook.async
 @hook.command(autohelp=False)
-def fml(reply):
+def fml(reply, loop):
     """fml -- Gets a random quote from fmyfife.com."""
 
     # grab the last item in the fml cache and remove it
@@ -28,4 +35,4 @@ def fml(reply):
     reply('(#{}) {}'.format(fml_id, text))
     # refresh fml cache if its getting empty
     if len(fml_cache) < 3:
-        refresh_cache()
+        yield from loop.run_in_executor(None, refresh_cache)

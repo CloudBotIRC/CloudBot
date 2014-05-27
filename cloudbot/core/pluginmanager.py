@@ -37,6 +37,8 @@ def find_hooks(parent, module):
                 options = {}
 
             for hook_type, func_hook in func_hooks.items():
+                if hook_type == "options":
+                    continue
                 func_hook.kwargs.update(options)
                 type_lists[hook_type].append(_hook_name_to_plugin[hook_type](parent, func_hook))
 

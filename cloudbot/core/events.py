@@ -80,7 +80,11 @@ class BaseEvent:
         :rtype: str
         """
         if self.irc_paramlist:
-            return self.irc_paramlist[0].lower()
+            if self.irc_paramlist[0].lower() == self.conn.nick.lower():
+                # this is a private message - set the nick to the sender's nick
+                return self.nick.lower()
+            else:
+                return self.irc_paramlist[0].lower()
         else:
             return None
 

@@ -50,10 +50,10 @@ def chat_tracker(event, db, conn):
 
 
 @hook.command(autohelp=False)
-def resethistory(input, conn):
+def resethistory(event, conn):
     """resethistory - Resets chat history for the current channel"""
     try:
-        conn.history[input.chan].clear()
+        conn.history[event.chan].clear()
         return "Reset chat history for current channel."
     except KeyError:
         # wat
@@ -61,10 +61,10 @@ def resethistory(input, conn):
 
 
 @hook.command
-def seen(text, nick, chan, db, input, conn):
+def seen(text, nick, chan, db, event, conn):
     """seen <nick> <channel> -- Tell when a nickname was last in active in one of this bot's channels."""
 
-    if input.conn.nick.lower() == text.lower():
+    if event.conn.nick.lower() == text.lower():
         return "You need to get your eyes checked."
 
     if text.lower() == nick.lower():

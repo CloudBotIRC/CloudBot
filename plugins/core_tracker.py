@@ -23,14 +23,14 @@ def on_kick(irc_paramlist, conn, chan):
 
 
 @hook.event("NICK")
-def on_nick(irc_paramlist, bot, conn, raw):
+def on_nick(irc_paramlist, bot, conn, irc_raw):
     """
     :type irc_paramlist: list[str]
     :type bot: cloudbot.core.bot.CloudBot
     :type conn: cloudbot.core.connection.BotConnection
-    :type raw: str
+    :type irc_raw: str
     """
-    old_nick = nick_re.search(raw).group(1)
+    old_nick = nick_re.search(irc_raw).group(1)
     new_nick = str(irc_paramlist[0])
     if old_nick == conn.nick:
         conn.nick = new_nick

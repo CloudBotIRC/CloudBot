@@ -200,14 +200,16 @@ class CloudBot:
         :type self: cloudbot.core.bot.CloudBot
         :type event: cloudbot.core.events.BaseEvent
         """
+        tasks = []
         command_prefix = event.conn.config.get('command_prefix', '.')
 
         # EVENTS
+        for raw_hook in self.plugin_manager.catch_all_events:
+            # run catch-all events all first
+            yield from self.plugin_manager.launch(raw_hook, BaseEvent(bot=self, base_event=event))
         if event.irc_command in self.plugin_manager.raw_triggers:
             for raw_hook in self.plugin_manager.raw_triggers[event.irc_command]:
-                yield from self.plugin_manager.launch(raw_hook, BaseEvent(bot=self, base_event=event))
-        for raw_hook in self.plugin_manager.catch_all_events:
-            yield from self.plugin_manager.launch(raw_hook, BaseEvent(bot=self, base_event=event))
+                tasks.append(self.plugin_manager.launch(raw_hook, BaseEvent(bot=self, base_event=event)))
 
         if event.irc_command == 'PRIVMSG':
             # COMMANDS
@@ -226,7 +228,7 @@ class CloudBot:
                     command_hook = self.plugin_manager.commands[command]
                     command_event = CommandEvent(bot=self, text=match.group(2).strip(),
                                                  triggered_command=command, base_event=event)
-                    yield from self.plugin_manager.launch(command_hook, command_event)
+                    tasks.append(self.plugin_manager.launch(command_hook, command_event))
                 else:
                     potential_matches = []
                     for potential_match, plugin in self.plugin_manager.commands.items():
@@ -236,7 +238,7 @@ class CloudBot:
                         if len(potential_matches) == 1:
                             command_event = CommandEvent(bot=self, text=match.group(2).strip(),
                                                          triggered_command=command, base_event=event)
-                            yield from self.plugin_manager.launch(potential_matches[0][1], command_event)
+                            tasks.append(self.plugin_manager.launch(potential_matches[0][1], command_event))
                         else:
                             event.notice("Possible matches: {}".format(
                                 formatting.get_text_list([command for command, plugin in potential_matches])))
@@ -246,4 +248,7 @@ class CloudBot:
                 match = regex.search(event.irc_message)
                 if match:
                     regex_event = RegexEvent(bot=self, match=match, base_event=event)
-                    yield from self.plugin_manager.launch(regex_hook, regex_event)
+                    tasks.append(self.plugin_manager.launch(regex_hook, regex_event))
+
+            # wait for all the tasks we've spawned before exiting
+            yield from asyncio.gather(*tasks, loop=self.loop)

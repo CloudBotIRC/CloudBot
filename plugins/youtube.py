@@ -3,8 +3,7 @@ import time
 
 from cloudbot import hook, http, timeformat
 
-youtube_re = (r'(?:youtube.*?(?:v=|/v/)|youtu\.be/|yooouuutuuube.*?id=)'
-              '([-_a-zA-Z0-9]+)', re.I)
+youtube_re = re.compile(r'(?:youtube.*?(?:v=|/v/)|youtu\.be/|yooouuutuuube.*?id=)([-_a-zA-Z0-9]+)', re.I)
 
 base_url = 'http://gdata.youtube.com/feeds/api/'
 api_url = base_url + 'videos/{}?v=2&alt=jsonc'
@@ -61,7 +60,7 @@ def get_video_description(video_id):
     return out
 
 
-@hook.regex(*youtube_re)
+@hook.regex(youtube_re)
 def youtube_url(match):
     return get_video_description(match.group(1))
 

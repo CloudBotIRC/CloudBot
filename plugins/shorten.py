@@ -1,21 +1,22 @@
 from cloudbot import hook, web
 
 
-@hook.command
+@hook.command()
 def shorten(text):
-    """shorten <url> [custom] - Shorten a url."""
+    """<url> [custom] - shortens a url with [custom] as an optional custom shortlink"""
     args = text.split()
     url = args[0]
+    custom = args[1] if len(args) > 1 else None
 
     try:
-        return web.shorten(url)
+        return web.shorten(url, custom=custom)
     except web.ServiceError as e:
         return e.message
 
 
 @hook.command
 def expand(text):
-    """expand <url> - Expand a url."""
+    """<url> - unshortens <url>"""
     args = text.split()
     url = args[0]
 
@@ -25,9 +26,9 @@ def expand(text):
         return e.message
 
 
-@hook.command
+@hook.command()
 def isgd(text):
-    """isgd <url> [custom] - Shorten/unshorten <url> with is.gd. [custom] is an optional custom shortlink."""
+    """<url> [custom] - shortens a url using is.gd with [custom] as an optional custom shortlink, or unshortens <url> if already short"""
     args = text.split()
     url = args[0]
     custom = args[1] if len(args) > 1 else None
@@ -43,7 +44,7 @@ def isgd(text):
 
 @hook.command
 def googl(text):
-    """googl <url> - Shorten/unshorten <url> with goo.gl."""
+    """<url> [custom] - shorten <url> using goo.gl with [custom] as an option custom shortlink, or unshortens <url> if already short"""
     args = text.split()
     url = args[0]
     custom = args[1] if len(args) > 1 else None
@@ -59,7 +60,7 @@ def googl(text):
 
 @hook.command
 def gitio(text):
-    """gitio <url> [custom] -- Shorten/unshorten <url> with git.io. [custom] is an optional custom shortlink."""
+    """<url> [custom] - shortens a github URL <url> using git.io with [custom] as an optional custom shortlink, or unshortens <url> if already short"""
     args = text.split()
     url = args[0]
     custom = args[1] if len(args) > 1 else None

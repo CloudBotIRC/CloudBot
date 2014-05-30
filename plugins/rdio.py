@@ -1,4 +1,5 @@
 import urllib
+import urllib.parse
 import json
 import re
 
@@ -16,14 +17,14 @@ def getdata(inp, types, api_key, api_secret):
     return data
 
 
-@hook.command
-def rdio(inp, bot=None):
-    """ rdio <search term> - alternatives: .rdiot (track), .rdioar (artist), .rdioal (album) """
+@hook.command()
+def rdio(text, bot):
+    """<query> - searches rdio for <query>"""
     api_key = bot.config.get("api_keys", {}).get("rdio_key")
     api_secret = bot.config.get("api_keys", {}).get("rdio_secret")
     if not api_key:
         return "error: no api key set"
-    data = getdata(inp, "Track,Album,Artist", api_key, api_secret)
+    data = getdata(text, "Track,Album,Artist", api_key, api_secret)
     try:
         info = data['result']['results'][0]
     except IndexError:
@@ -46,14 +47,14 @@ def rdio(inp, bot=None):
             return "\x02{}\x02 - {}".format(name, url)
 
 
-@hook.command
-def rdiot(inp, bot=None):
-    """ rdiot <search term> - Search for tracks on rdio """
+@hook.command()
+def rdiot(text, bot):
+    """<query> - searches rdio for tracks matching <query>"""
     api_key = bot.config.get("api_keys", {}).get("rdio_key")
     api_secret = bot.config.get("api_keys", {}).get("rdio_secret")
     if not api_key:
         return "error: no api key set"
-    data = getdata(inp, "Track", api_key, api_secret)
+    data = getdata(text, "Track", api_key, api_secret)
     try:
         info = data['result']['results'][0]
     except IndexError:
@@ -65,14 +66,14 @@ def rdiot(inp, bot=None):
     return "\x02{}\x02 by \x02{}\x02 - {} - {}".format(name, artist, album, url)
 
 
-@hook.command
-def rdioar(inp, bot=None):
-    """ rdioar <search term> - Search for artists on rdio """
+@hook.command()
+def rdioar(text, bot):
+    """<query> - searches rdio for artists matching <query>"""
     api_key = bot.config.get("api_keys", {}).get("rdio_key")
     api_secret = bot.config.get("api_keys", {}).get("rdio_secret")
     if not api_key:
         return "error: no api key set"
-    data = getdata(inp, "Artist", api_key, api_secret)
+    data = getdata(text, "Artist", api_key, api_secret)
     try:
         info = data['result']['results'][0]
     except IndexError:
@@ -82,14 +83,14 @@ def rdioar(inp, bot=None):
     return "\x02{}\x02 - {}".format(name, url)
 
 
-@hook.command
-def rdioal(inp, bot=None):
-    """ rdioal <search term> - Search for albums on rdio """
+@hook.command()
+def rdioal(text, bot):
+    """<query> - searches rdio for albums matching <query>"""
     api_key = bot.config.get("api_keys", {}).get("rdio_key")
     api_secret = bot.config.get("api_keys", {}).get("rdio_secret")
     if not api_key:
         return "error: no api key set"
-    data = getdata(inp, "Album", api_key, api_secret)
+    data = getdata(text, "Album", api_key, api_secret)
     try:
         info = data['result']['results'][0]
     except IndexError:
@@ -104,7 +105,7 @@ rdio_re = (r'(.*:)//(rd.io|www.rdio.com|rdio.com)(:[0-9]+)?(.*)', re.I)
 
 
 @hook.regex(*rdio_re)
-def rdio_url(match, bot=None):
+def rdio_url(match, bot):
     api_key = bot.config.get("api_keys", {}).get("rdio_key")
     api_secret = bot.config.get("api_keys", {}).get("rdio_secret")
     if not api_key:

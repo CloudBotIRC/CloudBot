@@ -53,7 +53,7 @@ def chat_tracker(event, db, conn):
 @asyncio.coroutine
 @hook.command(autohelp=False)
 def resethistory(event, conn):
-    """resethistory - Resets chat history for the current channel"""
+    """- resets chat history for the current channel"""
     try:
         conn.history[event.chan].clear()
         return "Reset chat history for current channel."
@@ -62,9 +62,9 @@ def resethistory(event, conn):
         return "There is no history for this channel."
 
 
-@hook.command
+@hook.command()
 def seen(text, nick, chan, db, event, conn):
-    """seen <nick> <channel> -- Tell when a nickname was last in active in one of this bot's channels."""
+    """<nick> <channel> - tells when a nickname was last in active in one of my channels"""
 
     if event.conn.nick.lower() == text.lower():
         return "You need to get your eyes checked."
@@ -77,8 +77,8 @@ def seen(text, nick, chan, db, event, conn):
 
     db_init(db, conn.name)
 
-    last_seen = db.execute("select name, time, quote from seen_user where name"
-                           " like :name and chan = :chan", {'name': text, 'chan': chan}).fetchone()
+    last_seen = db.execute("select name, time, quote from seen_user where name like :name and chan = :chan",
+                           {'name': text, 'chan': chan}).fetchone()
 
     if last_seen:
         reltime = timesince.timesince(last_seen[1])

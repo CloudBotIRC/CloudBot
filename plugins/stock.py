@@ -1,7 +1,7 @@
 from cloudbot import hook, web
 
 
-@hook.command
+@hook.command()
 def stock(inp):
     """stock <symbol> -- gets stock information"""
     sym = inp.strip().lower()

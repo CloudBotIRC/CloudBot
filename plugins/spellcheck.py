@@ -6,7 +6,7 @@ from cloudbot import hook
 locale = "en_US"
 
 
-@hook.command
+@hook.command()
 def spell(text):
     """spell <word/sentence> -- Check spelling of a word or sentence."""
 

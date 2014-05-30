@@ -63,7 +63,7 @@ def steam_url(match):
     return get_steam_info("http://store.steampowered.com" + match.group(4))
 
 
-@hook.command
+@hook.command()
 def steam(inp):
     """steam [search] - Search for specified game/trailer/DLC"""
     page = http.get("http://store.steampowered.com/search/?term=" + inp)

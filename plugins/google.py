@@ -12,7 +12,7 @@ def api_get(kind, query):
 
 @hook.command(["googleimage", "gis", "image"])
 def googleimage(text):
-    """gis <query> -- Returns first Google Image result for <query>."""
+    """<query> - returns the first google image result for <query>"""
 
     parsed = api_get('images', text)
     if not 200 <= parsed['responseStatus'] < 300:
@@ -24,7 +24,7 @@ def googleimage(text):
 
 @hook.command(["google", "g", "search"])
 def google(text):
-    """google <query> -- Returns first google search result for <query>."""
+    """<query> - returns the first google search result for <query>"""
 
     parsed = api_get('web', text)
     if not 200 <= parsed['responseStatus'] < 300:

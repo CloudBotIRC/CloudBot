@@ -220,7 +220,7 @@ def format_output(data):
 
 @hook.command(["mcping", "mcp"])
 def mcping(text):
-    """mcping <server>[:port] - Ping a Minecraft server to check status."""
+    """<server[:port]> - gets the MOTD of the Minecraft server at <server[:port]>"""
     try:
         host, port = parse_input(text)
     except ParseError as e:

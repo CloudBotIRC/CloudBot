@@ -3,9 +3,9 @@ from cloudbot import hook, http, web
 url = "http://search.azlyrics.com/search.php?q="
 
 
-@hook.command
+@hook.command()
 def lyrics(text):
-    """lyrics <search> - Search AZLyrics.com for song lyrics"""
+    """<search> - search AZLyrics.com for song lyrics"""
     if "pastelyrics" in text:
         dopaste = True
         text = text.replace("pastelyrics", "").strip()

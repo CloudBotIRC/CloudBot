@@ -11,7 +11,7 @@ def init(db):
 
 @hook.command(autohelp=False)
 def horoscope(text, db, notice, nick):
-    """horoscope <sign> -- Get your horoscope."""
+    """<sign> - get your horoscope"""
 
     # check if the user asked us not to save his details
     dontsave = text.endswith(" dontsave")

@@ -31,71 +31,55 @@ def mode_cmd_no_target(mode, text, text_inp, chan, conn, notice):
 
 @hook.command(permissions=["op_ban", "op"])
 def ban(text, conn, chan, notice):
-    """ban [channel] <user> -- Makes the bot ban <user> in [channel].
-    If [channel] is blank the bot will ban <user> in
-    the channel the command was used in."""
+    """[channel] <user> - bans <user> in [channel], or in the caller's channel if no channel is specified"""
     mode_cmd("+b", "ban", text, chan, conn, notice)
 
 
 @hook.command(permissions=["op_ban", "op"])
 def unban(text, conn, chan, notice):
-    """unban [channel] <user> -- Makes the bot unban <user> in [channel].
-    If [channel] is blank the bot will unban <user> in
-    the channel the command was used in."""
+    """[channel] <user> - unbans <user> in [channel], or in the caller's channel if no channel is specified"""
     mode_cmd("-b", "unban", text, chan, conn, notice)
 
 
 @hook.command(permissions=["op_quiet", "op"])
 def quiet(text, conn, chan, notice):
-    """quiet [channel] <user> -- Makes the bot quiet <user> in [channel].
-    If [channel] is blank the bot will quiet <user> in
-    the channel the command was used in."""
+    """[channel] <user> - quiets <user> in [channel], or in the caller's channel if no channel is specified"""
     mode_cmd("+q", "quiet", text, chan, conn, notice)
 
 
 @hook.command(permissions=["op_quiet", "op"])
 def unquiet(text, conn, chan, notice):
-    """unquiet [channel] <user> -- Makes the bot unquiet <user> in [channel].
-    If [channel] is blank the bot will unquiet <user> in
-    the channel the command was used in."""
+    """[channel] <user> - unquiets <user> in [channel], or in the caller's channel if no channel is specified"""
     mode_cmd("-q", "unquiet", text, chan, conn, notice)
 
 
 @hook.command(permissions=["op_voice", "op"])
 def voice(text, conn, chan, notice):
-    """voice [channel] <user> -- Makes the bot voice <user> in [channel].
-    If [channel] is blank the bot will voice <user> in
-    the channel the command was used in."""
+    """[channel] <user> - voices <user> in [channel], or in the caller's channel if no channel is specified"""
     mode_cmd("+v", "voice", text, chan, conn, notice)
 
 
 @hook.command(permissions=["op_voice", "op"])
 def devoice(text, conn, chan, notice):
-    """devoice [channel] <user> -- Makes the bot devoice <user> in [channel].
-    If [channel] is blank the bot will devoice <user> in
-    the channel the command was used in."""
+    """[channel] <user> - devoices <user> in [channel], or in the caller's channel if no channel is specified"""
     mode_cmd("-v", "devoice", text, chan, conn, notice)
 
 
 @hook.command(permissions=["op_op", "op"])
 def op(text, conn, chan, notice):
-    """op [channel] <user> -- Makes the bot op <user> in [channel].
-    If [channel] is blank the bot will op <user> in
-    the channel the command was used in."""
+    """[channel] <user> - ops <user> in [channel], or in the caller's channel if no channel is specified"""
     mode_cmd("+o", "op", text, chan, conn, notice)
 
 
 @hook.command(permissions=["op_op", "op"])
 def deop(text, conn, chan, notice):
-    """deop [channel] <user> -- Makes the bot deop <user> in [channel].
-    If [channel] is blank the bot will deop <user> in
-    the channel the command was used in."""
+    """[channel] <user> - deops <user> in [channel], or in the caller's channel if no channel is specified"""
     mode_cmd("-o", "deop", text, chan, conn, notice)
 
 
 @hook.command(permissions=["op_topic", "op"])
 def topic(text, conn, chan):
-    """topic [channel] <topic> -- Change the topic of a channel."""
+    """[channel] <topic> - changes the topic to <topic> in [channel], or in the caller's channel if no channel is specified"""
     split = text.split(" ")
     if split[0].startswith("#"):
         message = " ".join(split[1:])
@@ -107,9 +91,7 @@ def topic(text, conn, chan):
 
 @hook.command(permissions=["op_kick", "op"])
 def kick(text, chan, conn, notice):
-    """kick [channel] <user> [reason] -- Makes the bot kick <user> in [channel]
-    If [channel] is blank the bot will kick the <user> in
-    the channel the command was used in."""
+    """[channel] <user> - kicks <user> from [channel], or from the caller's channel if no channel is specified"""
     split = text.split(" ")
 
     if split[0].startswith("#"):
@@ -135,7 +117,7 @@ def kick(text, chan, conn, notice):
 
 @hook.command(permissions=["op_rem", "op"])
 def remove(text, chan, conn):
-    """remove [channel] [user] -- Force a user to part from a channel."""
+    """[channel] <user> - force removes <user> from [channel], or in the caller's channel if no channel is specified"""
     split = text.split(" ")
     if split[0].startswith("#"):
         message = " ".join(split[1:])
@@ -149,31 +131,23 @@ def remove(text, chan, conn):
 
 @hook.command(permissions=["op_mute", "op"], autohelp=False)
 def mute(text, conn, chan, notice):
-    """mute [channel] -- Makes the bot mute a channel..
-    If [channel] is blank the bot will mute
-    the channel the command was used in."""
+    """[channel] - mutes [channel], or in the caller's channel if no channel is specified"""
     mode_cmd_no_target("+m", "mute", text, chan, conn, notice)
 
 
 @hook.command(permissions=["op_mute", "op"], autohelp=False)
 def unmute(text, conn, chan, notice):
-    """mute [channel] -- Makes the bot mute a channel..
-    If [channel] is blank the bot will mute
-    the channel the command was used in."""
+    """[channel] - unmutes [channel], or in the caller's channel if no channel is specified"""
     mode_cmd_no_target("-m", "unmute", text, chan, conn, notice)
 
 
 @hook.command(permissions=["op_lock", "op"], autohelp=False)
 def lock(text, conn, chan, notice):
-    """lock [channel] -- Makes the bot lock a channel.
-    If [channel] is blank the bot will mute
-    the channel the command was used in."""
+    """[channel] - locks [channel], or in the caller's channel if no channel is specified"""
     mode_cmd_no_target("+i", "lock", text, chan, conn, notice)
 
 
 @hook.command(permissions=["op_lock", "op"], autohelp=False)
 def unlock(text, conn, chan, notice):
-    """unlock [channel] -- Makes the bot unlock a channel..
-    If [channel] is blank the bot will mute
-    the channel the command was used in."""
+    """[channel] - unlocks [channel], or in the caller's channel if no channel is specified"""
     mode_cmd_no_target("-i", "unlock", text, chan, conn, notice)

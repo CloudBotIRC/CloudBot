@@ -116,7 +116,7 @@ def format_output(data):
 
 @hook.command(["bukget", "plugin"])
 def bukget(text, reply, message):
-    """bukget <slug/name> - Look up a plugin on dev.bukkit.org"""
+    """<slug/name> - gets details on a plugin from dev.bukkit.org"""
     # get the plugin slug using search
     try:
         slug = plugin_search(text)
@@ -138,7 +138,7 @@ def bukget(text, reply, message):
 
 @hook.command(autohelp=None)
 def randomplugin(reply, message):
-    """randomplugin - Gets a random plugin from dev.bukkit.org"""
+    """- gets details on a random plugin from dev.bukkit.org"""
     # get a random plugin slug
     try:
         slug = plugin_random()

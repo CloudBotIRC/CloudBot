@@ -10,7 +10,7 @@ imdb_re = (r'(.*:)//(imdb.com|www.imdb.com)(:[0-9]+)?(.*)', re.I)
 
 @hook.command()
 def imdb(text):
-    """imdb <movie> -- Gets information about <movie> from IMDb."""
+    """imdb <movie> - gets information about <movie> from IMDb"""
 
     strip = text.strip()
 

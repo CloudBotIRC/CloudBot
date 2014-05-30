@@ -32,7 +32,7 @@ def sptfy(inp, sptfy=False):
 
 
 @hook.command('sptrack')
-@hook.command
+@hook.command()
 def spotify(inp):
     """spotify <song> -- Search Spotify for <song>"""
     try:
@@ -50,7 +50,7 @@ def spotify(inp):
                                                   data["tracks"][0]["artists"][0]["name"], url)
 
 
-@hook.command
+@hook.command()
 def spalbum(inp):
     """spalbum <album> -- Search Spotify for <album>"""
     try:
@@ -68,7 +68,7 @@ def spalbum(inp):
                                                   data["albums"][0]["artists"][0]["name"], url)
 
 
-@hook.command
+@hook.command()
 def spartist(inp):
     """spartist <artist> -- Search Spotify for <artist>"""
     try:

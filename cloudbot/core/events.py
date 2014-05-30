@@ -212,10 +212,12 @@ class CommandEvent(BaseEvent):
         """sends a notice containing this command's docstring to the current channel/user or a specific channel/user
         :type target: str
         """
+        if self.triggered_command is None:
+            raise ValueError("Triggered command not set on this event")
         if self.hook.doc is None:
-            message = self.conn.config["command_prefix"] + self.hook.name + " requires additional arguments."
+            message = self.conn.config["command_prefix"] + self.triggered_command + " requires additional arguments."
         else:
-            message = self.conn.config["command_prefix"] + self.hook.name + self.hook.doc
+            message = self.conn.config["command_prefix"] + self.triggered_command + self.hook.doc
         self.notice(message, target=target)
 
 

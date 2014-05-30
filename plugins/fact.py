@@ -3,7 +3,7 @@ from cloudbot import hook, http, web
 
 @hook.command(autohelp=False)
 def fact():
-    """fact -- Gets a random fact from OMGFACTS."""
+    """- gets a random fact from OMGFACTS"""
 
     attempts = 0
 

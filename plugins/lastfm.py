@@ -7,7 +7,7 @@ api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
 
 @hook.command(["lastfm", "l"], autohelp=False)
 def lastfm(text, nick, db, bot, notice):
-    """lastfm [user] [dontsave] -- Displays the now playing (or last played) track of LastFM user [user]."""
+    """[user] [dontsave] - displays the now playing (or last played) track of LastFM user [user]"""
     api_key = bot.config.get("api_keys", {}).get("lastfm")
     if not api_key:
         return "error: no api key set"

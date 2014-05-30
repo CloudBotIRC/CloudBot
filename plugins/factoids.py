@@ -73,7 +73,7 @@ def del_factoid(db, word):
 @asyncio.coroutine
 @hook.command(["r", "remember"], permissions=["addfactoid"])
 def remember(text, nick, db, notice):
-    """remember <word> [+]<data> -- Remembers <data> with <word>. Add + to <data> to append."""
+    """<word> [+]<data> - remembers <data> with <word> - add + to <data> to append"""
 
     append = False
 
@@ -108,7 +108,7 @@ def remember(text, nick, db, notice):
 
 @hook.command(["f", "forget"], permissions=["delfactoid"])
 def forget(text, db, notice):
-    """forget <word> -- Forgets a remembered <word>."""
+    """<word> - forgets previously remembered <word>"""
 
     data = factoid_cache.get(text)
 
@@ -124,7 +124,7 @@ def forget(text, db, notice):
 @asyncio.coroutine
 @hook.command()
 def info(text, notice):
-    """info <factoid> -- Shows the source of a factoid."""
+    """<factoid> - shows the source of a factoid"""
 
     text = text.strip()
 
@@ -137,7 +137,7 @@ def info(text, notice):
 @asyncio.coroutine
 @hook.regex(r'^\? ?(.+)')
 def factoid(inp, input, db, message, action):
-    """?<word> -- Shows what data is associated with <word>."""
+    """<word> - shows what data is associated with <word>"""
 
     # split up the input
     split = inp.group(1).strip().split(" ")
@@ -154,8 +154,8 @@ def factoid(inp, input, db, message, action):
         if data.startswith("<py>"):
             code = data[4:].strip()
             variables = 'input="""{}"""; nick="{}"; chan="{}"; bot_nick="{}";'.format(arguments.replace('"', '\\"'),
-                                                                                      input.nick, input.chan,
-                                                                                      input.conn.nick)
+                                                                                      event.nick, event.chan,
+                                                                                      event.conn.nick)
             result = pyexec.eval_py(variables + code)
         else:
             result = data
@@ -178,16 +178,17 @@ def factoid(inp, input, db, message, action):
 
 @asyncio.coroutine
 @hook.command(autohelp=False, permissions=["listfactoids"])
-def listfactoids(reply):
+def listfactoids(notice):
+    """- lists all available factoids"""
     reply_text = []
     reply_text_length = 0
     for word in factoid_cache.keys():
         added_length = len(word) + 2
         if reply_text_length + added_length > 400:
-            reply(", ".join(reply_text))
+            notice(", ".join(reply_text))
             reply_text = []
             reply_text_length = 0
         else:
             reply_text.append(word)
             reply_text_length += added_length
-    return ", ".join(reply_text)
+    notice(", ".join(reply_text))

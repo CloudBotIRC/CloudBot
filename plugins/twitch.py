@@ -55,7 +55,7 @@ def twitch_url(match):
 
 
 @hook.command('twitchviewers')
-@hook.command
+@hook.command()
 def twviewers(inp):
     inp = inp.split("/")[-1]
     if test(inp):

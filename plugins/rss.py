@@ -2,7 +2,7 @@ from cloudbot import hook, formatting, web
 
 
 @hook.command("feed")
-@hook.command
+@hook.command()
 def rss(text, message):
     """rss <feed> -- Gets the first three items from the RSS feed <feed>."""
     limit = 3

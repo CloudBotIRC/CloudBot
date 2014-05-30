@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from cloudbot import hook, http, urlnorm
 
 
-@hook.command
+@hook.command()
 def title(text):
     """title <url> -- gets the title of a web page"""
     url = urlnorm.normalize(text, assume_scheme="http")

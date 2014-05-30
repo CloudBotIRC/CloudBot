@@ -62,7 +62,7 @@ def get_episode_info(episode, api_key):
     return first_aired, air_date, episode_desc
 
 
-@hook.command
+@hook.command()
 @hook.command('tv')
 def tv_next(inp, bot=None):
     """tv <series> -- Get the next episode of <series>."""
@@ -112,7 +112,7 @@ def tv_next(inp, bot=None):
         return "The next episodes of {}: {}".format(series_name, next_eps)
 
 
-@hook.command
+@hook.command()
 @hook.command('tv_prev')
 def tv_last(inp, bot=None):
     """tv_last <series> -- Gets the most recently aired episode of <series>."""

@@ -32,13 +32,13 @@ def get_sound_info(game, search):
         return "{} (and {} others: {})".format(items[0], len(items) - 1, web.paste("\n".join(items)))
 
 
-@hook.command
+@hook.command()
 def portal2(text):
     """portal2 <quote> - Look up Portal 2 quote. Example: .portal2 demand to see life's manager"""
     return get_sound_info("portal2", text)
 
 
-@hook.command
+@hook.command()
 def portal2dlc(text):
     """portal2dlc <quote> - Look up Portal 2 DLC quote. Example: .portal2dlc1 these exhibits are interactive"""
     return get_sound_info("portal2dlc1", text)
@@ -50,7 +50,7 @@ def portal2dlc2(text):
     return get_sound_info("portal2dlc2", text)
 
 
-@hook.command
+@hook.command()
 def portal2music(text):
     """portal2music <title> - Look up Portal 2 music. Example: .portal2music turret opera"""
     return get_sound_info("portal2music", text)
@@ -74,7 +74,7 @@ def tf2(text):
     return get_sound_info("tf2", text)
 
 
-@hook.command
+@hook.command()
 def tf2music(text):
     """tf2music title - Look up TF2 music lyrics. Example: .tf2music rocket jump waltz"""
     return get_sound_info("tf2music", text)

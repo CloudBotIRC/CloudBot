@@ -20,7 +20,7 @@ def format_domain(domain):
 
 @hook.command(["domain", "domainr"])
 def domainr(text):
-    """domainr <domain> - Use domain.nr's API to search for a domain, and similar domains.
+    """<domain> - uses domain.nr's API to search for a domain, and similar domains
     :type text: str
     """
     try:

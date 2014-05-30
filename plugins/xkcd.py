@@ -36,7 +36,7 @@ def xkcd_url(match):
     return xkcd_info(xkcd_id)
 
 
-@hook.command
+@hook.command()
 def xkcd(text):
     """xkcd <search term> - Search for xkcd comic matching <search term>"""
     return xkcd_search(text)

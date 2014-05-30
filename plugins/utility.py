@@ -35,7 +35,7 @@ def strip(string):
 
 ## TODO: make this capitalize sentences correctly
 @hook.command("capitalise")
-@hook.command
+@hook.command()
 def capitalize(text):
     """capitalize <string> -- Capitalizes <string>.
     :type text: str
@@ -43,25 +43,25 @@ def capitalize(text):
     return ". ".join([sentence.capitalize() for sentence in text.split(". ")])
 
 
-@hook.command
+@hook.command()
 def upper(text):
     """upper <string> -- Convert string to uppercase."""
     return text.upper()
 
 
-@hook.command
+@hook.command()
 def lower(text):
     """lower <string> -- Convert string to lowercase."""
     return text.lower()
 
 
-@hook.command
+@hook.command()
 def titlecase(text):
     """title <string> -- Convert string to title case."""
     return text.title()
 
 
-@hook.command
+@hook.command()
 def swapcase(text):
     """swapcase <string> -- Swaps the capitalization of <string>."""
     return text.swapcase()
@@ -103,14 +103,14 @@ def base64_check(text):
         return "'{}' is a valid base64 encoded string".format(text)
 
 
-@hook.command
+@hook.command()
 def unescape(text):
     """unescape <string> -- Unicode unescapes <string>."""
     decoder = codecs.getdecoder("unicode_escape")
     return decoder(text)[0]
 
 
-@hook.command
+@hook.command()
 def escape(text):
     """escape <string> -- Unicode escapes <string>."""
     encoder = codecs.getencoder("unicode_escape")
@@ -119,7 +119,7 @@ def escape(text):
 # length
 
 
-@hook.command
+@hook.command()
 def length(text):
     """length <string> -- Gets the length of <string>"""
     return "The length of that string is {} characters.".format(len(text))
@@ -128,7 +128,7 @@ def length(text):
 # reverse
 
 
-@hook.command
+@hook.command()
 def reverse(text):
     """reverse <string> -- Reverses <string>."""
     return text[::-1]
@@ -147,7 +147,7 @@ def hash_command(text):
 # novelty
 
 
-@hook.command
+@hook.command()
 def munge(text):
     """munge <text> -- Munges up <text>."""
     return formatting.munge(text)
@@ -156,7 +156,7 @@ def munge(text):
 # colors - based on code by Reece Selwood - <https://github.com/hitzler/homero>
 
 
-@hook.command
+@hook.command()
 def rainbow(text):
     text = str(text)
     text = strip(text)
@@ -171,7 +171,7 @@ def rainbow(text):
     return out
 
 
-@hook.command
+@hook.command()
 def wrainbow(text):
     text = str(text)
     col = list(colors.items())
@@ -183,7 +183,7 @@ def wrainbow(text):
     return ' '.join(out)
 
 
-@hook.command
+@hook.command()
 def usa(text):
     text = strip(text)
     c = [colors['red'], '\x0300', colors['blue']]

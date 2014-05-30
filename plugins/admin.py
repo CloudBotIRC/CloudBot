@@ -7,8 +7,8 @@ from cloudbot import hook
 @asyncio.coroutine
 @hook.command(["groups", "listgroups", "permgroups"], permissions=["permissions_users"], autohelp=False)
 def get_permission_groups(conn):
-    """groups -- lists all valid groups
-    :type conn: core.irc.BotConnection
+    """- lists all valid groups
+    :type conn: cloudbot.core.connection.BotConnection
     """
     return "Valid groups: {}".format(conn.permissions.get_groups())
 
@@ -16,9 +16,9 @@ def get_permission_groups(conn):
 @asyncio.coroutine
 @hook.command("gperms", permissions=["permissions_users"])
 def get_group_permissions(text, conn, notice):
-    """gperms <group> -- lists permissions of a group
+    """<group> - lists permissions given to <group>
     :type text: str
-    :type conn: core.irc.BotConnection
+    :type conn: cloudbot.core.connection.BotConnection
     """
     group = text.strip().lower()
     permission_manager = conn.permissions
@@ -35,9 +35,9 @@ def get_group_permissions(text, conn, notice):
 @asyncio.coroutine
 @hook.command("gusers", permissions=["permissions_users"])
 def get_group_users(text, conn, notice):
-    """gusers <group> -- lists users in a group
+    """<group> - lists users in <group>
     :type text: str
-    :type conn: core.irc.BotConnection
+    :type conn: cloudbot.core.connection.BotConnection
     """
     group = text.strip().lower()
     permission_manager = conn.permissions
@@ -54,9 +54,9 @@ def get_group_users(text, conn, notice):
 @asyncio.coroutine
 @hook.command("uperms", autohelp=False)
 def get_user_permissions(text, conn, mask, has_permission, notice):
-    """uperms [user] -- lists all permissions given to a user, or the current user if none is given
+    """[user] - lists all permissions given to [user], or the caller if no user is specified
     :type text: str
-    :type conn: core.irc.BotConnection
+    :type conn: cloudbot.core.connection.BotConnection
     :type mask: str
     """
     if text:
@@ -79,9 +79,9 @@ def get_user_permissions(text, conn, mask, has_permission, notice):
 @asyncio.coroutine
 @hook.command("ugroups", autohelp=False)
 def get_user_groups(text, conn, mask, has_permission, notice):
-    """uperms [user] -- lists all permissions given to a user, or the current user if none is given
+    """[user] - lists all permissions given to [user], or the caller if no user is specified
     :type text: str
-    :type conn: core.irc.BotConnection
+    :type conn: cloudbot.core.connection.BotConnection
     :type mask: str
     """
     if text:
@@ -104,10 +104,10 @@ def get_user_groups(text, conn, mask, has_permission, notice):
 @asyncio.coroutine
 @hook.command("deluser", permissions=["permissions_users"])
 def remove_permission_user(text, bot, conn, notice, reply):
-    """deluser <user> [group] -- Removes a user from a permission group, or all permission groups if none is specified
+    """<user> [group] - removes <user> from [group], or from all groups if no group is specified
     :type text: str
-    :type bot: core.bot.CloudBot
-    :type conn: core.irc.BotConnection
+    :type bot: cloudbot.core.bot.CloudBot
+    :type conn: cloudbot.core.connection.BotConnection
     """
     split = text.split()
     if len(split) > 2:
@@ -160,10 +160,10 @@ def remove_permission_user(text, bot, conn, notice, reply):
 @asyncio.coroutine
 @hook.command("adduser", permissions=["permissions_users"])
 def add_permissions_user(text, conn, bot, notice, reply):
-    """adduser <user> <group> -- Adds a user to a permission group
+    """<user> <group> - adds <user> to <group>
     :type text: str
-    :type conn: core.irc.BotConnection
-    :type bot: core.bot.CloudBot
+    :type conn: cloudbot.core.connection.BotConnection
+    :type bot: cloudbot.core.bot.CloudBot
     """
     split = text.split()
     if len(split) > 2:
@@ -201,7 +201,7 @@ def add_permissions_user(text, conn, bot, notice, reply):
 
 @hook.command(["stop", "quit"], permissions=["botcontrol"], autohelp=False)
 def stop(text, bot):
-    """stop [reason] -- Stops the bot with [reason] as its quit message.
+    """[reason] - stops me with [reason] as its quit message.
     :type text: str
     :type bot: core.bot.CloudBot
     """
@@ -213,7 +213,7 @@ def stop(text, bot):
 
 @hook.command(permissions=["botcontrol"], autohelp=False)
 def restart(text, bot):
-    """restart [reason] -- Restarts the bot with [reason] as its quit message.
+    """[reason] - restarts me with [reason] as its quit message.
     :type text: str
     :type bot: core.bot.CloudBot
     """
@@ -226,9 +226,9 @@ def restart(text, bot):
 @asyncio.coroutine
 @hook.command(permissions=["botcontrol"])
 def join(text, conn, notice):
-    """join <channel> -- Joins a given channel
+    """<channel> - joins <channel>
     :type text: str
-    :type conn: core.irc.BotConnection
+    :type conn: cloudbot.core.connection.BotConnection
     """
     for target in text.split():
         if not target.startswith("#"):
@@ -240,9 +240,9 @@ def join(text, conn, notice):
 @asyncio.coroutine
 @hook.command(permissions=["botcontrol"], autohelp=False)
 def part(text, conn, chan, notice):
-    """part [channel] -- Leaves a given channel, or the current one if no channel is specified
+    """[#channel] - parts [#channel], or the caller's channel if no channel is specified
     :type text: str
-    :type conn: core.irc.BotConnection
+    :type conn: cloudbot.core.connection.BotConnection
     :type chan: str
     """
     if text:
@@ -259,9 +259,9 @@ def part(text, conn, chan, notice):
 @asyncio.coroutine
 @hook.command(autohelp=False, permissions=["botcontrol"])
 def cycle(text, conn, chan, notice):
-    """cycle <channel> -- Cycles a given channel, or the current one if no channel is specified
+    """[#channel] - cycles [#channel], or the caller's channel if no channel is specified
     :type text: str
-    :type conn: core.irc.BotConnection
+    :type conn: cloudbot.core.connection.BotConnection
     :type chan: str
     """
     if text:
@@ -279,9 +279,9 @@ def cycle(text, conn, chan, notice):
 @asyncio.coroutine
 @hook.command(permissions=["botcontrol"])
 def nick(text, conn, notice):
-    """nick <nick> -- Changes the bot's nickname
+    """<nick> - changes my nickname to <nick>
     :type text: str
-    :type conn: core.irc.BotConnection
+    :type conn: cloudbot.core.connection.BotConnection
     """
     if not re.match("^[a-z0-9_|.-\]\[]*$", text.lower()):
         notice("Invalid username '{}'".format(text))
@@ -293,9 +293,9 @@ def nick(text, conn, notice):
 @asyncio.coroutine
 @hook.command(permissions=["botcontrol"])
 def raw(text, conn, notice):
-    """raw <command> -- Sends a irc_raw IRC command
+    """<command> - sends <command> as a raw IRC command
     :type text: str
-    :type conn: core.irc.BotConnection
+    :type conn: cloudbot.core.connection.BotConnection
     """
     notice("Raw command sent.")
     conn.send(text)
@@ -304,9 +304,9 @@ def raw(text, conn, notice):
 @asyncio.coroutine
 @hook.command(permissions=["botcontrol"])
 def say(text, conn, chan):
-    """say [channel] <message> -- Makes the bot say <message> in [channel], or the current channel if none is specified
+    """[#channel] <message> - says <message> to [#channel], or to the caller's channel if no channel is specified
     :type text: str
-    :type conn: core.irc.BotConnection
+    :type conn: cloudbot.core.connection.BotConnection
     :type chan: str
     """
     text = text.strip()
@@ -321,11 +321,11 @@ def say(text, conn, chan):
 
 
 @asyncio.coroutine
-@hook.command(permissions=["botcontrol"])
+@hook.command(["message", "sayto"], permissions=["botcontrol"])
 def message(text, conn):
-    """message <name> <message> -- Makes the bot say <message> to <name>, <name> may be a #channel or a nickname
+    """<name> <message> - says <message> to <name>
     :type text: str
-    :type conn: core.irc.BotConnection
+    :type conn: cloudbot.core.connection.BotConnection
     """
     split = text.split(None, 1)
     channel = split[0]
@@ -336,9 +336,9 @@ def message(text, conn):
 @asyncio.coroutine
 @hook.command(["me", "act"], permissions=["botcontrol"])
 def me(text, conn, chan):
-    """me [channel] <action> -- Makes the bot act out <action> in a [channel], or the current channel if none is given
+    """[#channel] <action> - acts out <action> in a [#channel], or in the current channel of none is specified
     :type text: str
-    :type conn: core.irc.BotConnection
+    :type conn: cloudbot.core.connection.BotConnection
     :type chan: str
     """
     text = text.strip()

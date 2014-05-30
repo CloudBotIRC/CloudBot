@@ -31,8 +31,7 @@ exchanges = {
 
 @hook.command(["btc", "bitcoin"], autohelp=False)
 def bitcoin(text, notice):
-    """bitcoin <exchange> -- Gets current exchange rate for bitcoins from several exchanges, default is Blockchain.
-    Supports MtGox, Bitpay, Coinbase and BitStamp.
+    """[mtgox|bitpay|coinbase|bitstamp] - gets bitcoin exchange rate using <exchange>, defaulting to blockchain
     :type text: str
     """
     text = text.lower()
@@ -55,7 +54,7 @@ def bitcoin(text, notice):
 
 @hook.command(["ltc", "litecoin"], autohelp=False)
 def litecoin(message):
-    """litecoin -- gets current exchange rate for litecoins from BTC-E"""
+    """- gets litecoin exchange rate from BTC-E"""
     data = http.get_json("https://btc-e.com/api/2/ltc_usd/ticker")
     ticker = data['ticker']
     message("Current: \x0307${:,.2f}\x0f - High: \x0307${:,.2f}\x0f"

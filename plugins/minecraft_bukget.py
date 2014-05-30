@@ -1,3 +1,4 @@
+import json
 import time
 import random
 import requests
@@ -103,8 +104,12 @@ def format_output(data):
     name = data["plugin_name"]
     description = formatting.truncate_str(data['description'], 30)
     url = data['website']
-    authors = data['authors'][0]
-    authors = authors[0] + "\u200b" + authors[1:]
+    if data['authors']:
+        authors = data['authors'][0]
+        authors = authors[0] + "\u200b" + authors[1:]
+    else:
+        authors = "Unknown"
+
     stage = data['stage']
 
     current_version = data['versions'][0]

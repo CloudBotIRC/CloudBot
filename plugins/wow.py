@@ -40,7 +40,7 @@ def armoury(inp):
         return 'The character name is not a valid name. Character names can only contain letters, special characters, and be 18 characters long.'
     
     if not re.match(r"^[a-z' _-]{3,32}$", realm):
-		# Realm names can have spaces in them, use dashes for this.
+        # Realm names can have spaces in them, use dashes for this.
         return 'The realm name is not a valid name. Realm names can only contain letters, dashes, and apostrophes, up to 32 characters'
     
     region_short = wow_region_shortname(region)
@@ -79,7 +79,7 @@ def wow_armoury_format(data, link):
                 .format(data['name'], data['level'], wow_get_gender(data['gender']), wow_get_class(data['class'], True), data['realm'], 
                     data['achievementPoints'], data['totalHonorableKills'], web.isgd(niceurl))
         except Exception as e:
-			return 'Unable to fetch information for {}. Does the realm or character exist? ({})'.format(niceurl, str(e))
+            return 'Unable to fetch information for {}. Does the realm or character exist? ({})'.format(niceurl, str(e))
             
     return 'An unexpected error occured.'
     
@@ -97,7 +97,7 @@ def wow_get_gender(genderid):
 def wow_get_class(classid, colours = False):
     """Formats a class ID to a readable name, data from http://eu.battle.net/api/wow/data/character/classes"""
     if colours:
-		# Format their colours according to class colours.
+        # Format their colours according to class colours.
         classids = {
             1: "\x0305Warrior\x0F", 2: "\x0313Paladin\x0F", 3: "\x0303Hunter\x0F", 4: "\x0308Rogue\x0F", 
             5: "Priest", 6: "\x0304Death Knight\x0F", 7: "\x0310Shaman\x0F", 8: "\x0311Mage\x0F", 

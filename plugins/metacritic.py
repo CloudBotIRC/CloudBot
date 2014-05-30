@@ -6,8 +6,7 @@ from urllib.error import HTTPError
 from cloudbot import hook, http
 
 
-@hook.command('mc')
-@hook.command
+@hook.command(["metacritic", "mc"])
 def metacritic(inp):
     """mc [all|movie|tv|album|x360|ps3|pc|gba|ds|3ds|wii|vita|wiiu|xone|ps4] <title>
     Gets rating for <title> from metacritic on the specified medium."""

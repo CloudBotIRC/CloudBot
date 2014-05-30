@@ -1,3 +1,4 @@
+import asyncio
 import json
 
 from cloudbot import hook, textgen
@@ -9,7 +10,8 @@ def get_generator(_json, variables):
                                  data["parts"], variables=variables)
 
 
-@hook.command
+@asyncio.coroutine
+@hook.command()
 def kill(text, action=None, nick=None, conn=None, notice=None):
     """kill <user> -- Makes the bot kill <user>."""
     target = text.strip()

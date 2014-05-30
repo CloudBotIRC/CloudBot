@@ -31,18 +31,16 @@ def unicode_dictreader(utf8_data, **kwargs):
         yield dict([(key.lower(), str(value, 'utf-8')) for key, value in row.items()])
 
 
-@hook.command('sc')
-@hook.command
-def steamcalc(inp, reply=None):
-    """steamcalc <username> [currency] - Gets value of steam account and
-       total hours played. Uses steamcommunity.com/id/<nickname>. """
+@hook.command(["steamcalc", "sc"])
+def steamcalc(text, reply):
+    """steamcalc <username> [currency] - Gets value of steam account and total hours played. Uses steamcommunity.com/id/<nickname>. """
 
     # check if the user asked us to force reload
-    force_reload = inp.endswith(" forcereload")
+    force_reload = text.endswith(" forcereload")
     if force_reload:
-        name = inp[:-12].strip().lower()
+        name = text[:-12].strip().lower()
     else:
-        name = inp.strip()
+        name = text.strip()
 
     if force_reload:
         try:

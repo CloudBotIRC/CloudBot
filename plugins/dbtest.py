@@ -9,7 +9,7 @@ users = Table(
 )
 
 
-@hook.command
+@hook.command()
 def dbadduser(text, db):
     """
     :type text: str

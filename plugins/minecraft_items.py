@@ -1,6 +1,7 @@
 """ plugin by _303 (?)
 """
 
+import asyncio
 import re
 
 from cloudbot import hook
@@ -48,6 +49,7 @@ with open("./data/itemids.txt") as f:
         ids.append((itemid, name))
 
 
+@asyncio.coroutine
 @hook.command(["mcitem", "mcid"])
 def mcitem(text, reply):
     """mcitem <item/id> -- gets the id from an item or vice versa"""
@@ -78,6 +80,7 @@ def mcitem(text, reply):
     return out
 
 
+@asyncio.coroutine
 @hook.command(["mccraft", "mcrecipe"])
 def mcrecipe(text, reply):
     """mcrecipe <item> -- gets the crafting recipe for an item"""

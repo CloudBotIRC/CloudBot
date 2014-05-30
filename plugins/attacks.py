@@ -1,4 +1,5 @@
 import random
+import asyncio
 import re
 
 from cloudbot import hook
@@ -27,7 +28,8 @@ def is_self(conn, target):
         return False
 
 
-@hook.command
+@asyncio.coroutine
+@hook.command()
 def lart(text, conn, nick, notice, action):
     """lart <user> -- LARTs <user>.
     :type text: str
@@ -50,7 +52,8 @@ def lart(text, conn, nick, notice, action):
     action(phrase.format(user=target))
 
 
-@hook.command
+@asyncio.coroutine
+@hook.command()
 def insult(text, conn, nick, notice, message):
     """insult <user> -- Makes the bot insult <user>.
     :type text: str
@@ -70,7 +73,8 @@ def insult(text, conn, nick, notice, message):
     message("{}, {}".format(target, random.choice(insults)))
 
 
-@hook.command
+@asyncio.coroutine
+@hook.command()
 def flirt(text, conn, nick, notice, message):
     """flirt <user> -- Makes the bot flirt with <user>.
     :type text: str

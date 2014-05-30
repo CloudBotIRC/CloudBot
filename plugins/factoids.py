@@ -1,5 +1,6 @@
 # Written by Scaevolus 2010
 import string
+import asyncio
 import re
 
 from sqlalchemy import Table, Column, String
@@ -26,6 +27,7 @@ table = Table(
     Column("data", String),
     Column("nick", String)
 )
+
 
 @hook.onload()
 def load_cache(db):
@@ -68,6 +70,7 @@ def del_factoid(db, word):
     load_cache(db)
 
 
+@asyncio.coroutine
 @hook.command(["r", "remember"], permissions=["addfactoid"])
 def remember(text, nick, db, notice):
     """remember <word> [+]<data> -- Remembers <data> with <word>. Add + to <data> to append."""
@@ -118,7 +121,8 @@ def forget(text, db, notice):
         return
 
 
-@hook.command
+@asyncio.coroutine
+@hook.command()
 def info(text, notice):
     """info <factoid> -- Shows the source of a factoid."""
 
@@ -130,6 +134,7 @@ def info(text, notice):
         notice("Unknown Factoid.")
 
 
+@asyncio.coroutine
 @hook.regex(r'^\? ?(.+)')
 def factoid(inp, input, db, message, action):
     """?<word> -- Shows what data is associated with <word>."""
@@ -171,6 +176,7 @@ def factoid(inp, input, db, message, action):
             message(result)
 
 
+@asyncio.coroutine
 @hook.command(autohelp=False, permissions=["listfactoids"])
 def listfactoids(reply):
     reply_text = []

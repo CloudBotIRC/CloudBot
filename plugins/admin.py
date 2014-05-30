@@ -1,8 +1,10 @@
+import asyncio
 import re
 
 from cloudbot import hook
 
 
+@asyncio.coroutine
 @hook.command(["groups", "listgroups", "permgroups"], permissions=["permissions_users"], autohelp=False)
 def get_permission_groups(conn):
     """groups -- lists all valid groups
@@ -11,6 +13,7 @@ def get_permission_groups(conn):
     return "Valid groups: {}".format(conn.permissions.get_groups())
 
 
+@asyncio.coroutine
 @hook.command("gperms", permissions=["permissions_users"])
 def get_group_permissions(text, conn, notice):
     """gperms <group> -- lists permissions of a group
@@ -29,6 +32,7 @@ def get_group_permissions(text, conn, notice):
         notice("Unknown group '{}'".format(group))
 
 
+@asyncio.coroutine
 @hook.command("gusers", permissions=["permissions_users"])
 def get_group_users(text, conn, notice):
     """gusers <group> -- lists users in a group
@@ -47,6 +51,7 @@ def get_group_users(text, conn, notice):
         notice("Unknown group '{}'".format(group))
 
 
+@asyncio.coroutine
 @hook.command("uperms", autohelp=False)
 def get_user_permissions(text, conn, mask, has_permission, notice):
     """uperms [user] -- lists all permissions given to a user, or the current user if none is given
@@ -71,6 +76,7 @@ def get_user_permissions(text, conn, mask, has_permission, notice):
         return "User {} has no elevated permissions".format(user)
 
 
+@asyncio.coroutine
 @hook.command("ugroups", autohelp=False)
 def get_user_groups(text, conn, mask, has_permission, notice):
     """uperms [user] -- lists all permissions given to a user, or the current user if none is given
@@ -95,6 +101,7 @@ def get_user_groups(text, conn, mask, has_permission, notice):
         return "User {} is in no permission groups".format(user)
 
 
+@asyncio.coroutine
 @hook.command("deluser", permissions=["permissions_users"])
 def remove_permission_user(text, bot, conn, notice, reply):
     """deluser <user> [group] -- Removes a user from a permission group, or all permission groups if none is specified
@@ -150,6 +157,7 @@ def remove_permission_user(text, bot, conn, notice, reply):
         permission_manager.reload()
 
 
+@asyncio.coroutine
 @hook.command("adduser", permissions=["permissions_users"])
 def add_permissions_user(text, conn, bot, notice, reply):
     """adduser <user> <group> -- Adds a user to a permission group
@@ -215,6 +223,7 @@ def restart(text, bot):
         bot.restart()
 
 
+@asyncio.coroutine
 @hook.command(permissions=["botcontrol"])
 def join(text, conn, notice):
     """join <channel> -- Joins a given channel
@@ -228,6 +237,7 @@ def join(text, conn, notice):
         conn.join(target)
 
 
+@asyncio.coroutine
 @hook.command(permissions=["botcontrol"], autohelp=False)
 def part(text, conn, chan, notice):
     """part [channel] -- Leaves a given channel, or the current one if no channel is specified
@@ -246,6 +256,7 @@ def part(text, conn, chan, notice):
         conn.part(target)
 
 
+@asyncio.coroutine
 @hook.command(autohelp=False, permissions=["botcontrol"])
 def cycle(text, conn, chan, notice):
     """cycle <channel> -- Cycles a given channel, or the current one if no channel is specified
@@ -265,6 +276,7 @@ def cycle(text, conn, chan, notice):
         conn.join(target)
 
 
+@asyncio.coroutine
 @hook.command(permissions=["botcontrol"])
 def nick(text, conn, notice):
     """nick <nick> -- Changes the bot's nickname
@@ -278,6 +290,7 @@ def nick(text, conn, notice):
     conn.set_nick(text)
 
 
+@asyncio.coroutine
 @hook.command(permissions=["botcontrol"])
 def raw(text, conn, notice):
     """raw <command> -- Sends a irc_raw IRC command
@@ -288,6 +301,7 @@ def raw(text, conn, notice):
     conn.send(text)
 
 
+@asyncio.coroutine
 @hook.command(permissions=["botcontrol"])
 def say(text, conn, chan):
     """say [channel] <message> -- Makes the bot say <message> in [channel], or the current channel if none is specified
@@ -306,6 +320,7 @@ def say(text, conn, chan):
     conn.msg(channel, text)
 
 
+@asyncio.coroutine
 @hook.command(permissions=["botcontrol"])
 def message(text, conn):
     """message <name> <message> -- Makes the bot say <message> to <name>, <name> may be a #channel or a nickname
@@ -318,8 +333,8 @@ def message(text, conn):
     conn.msg(channel, text)
 
 
-@hook.command("act", permissions=["botcontrol"])
-@hook.command(permissions=["botcontrol"])
+@asyncio.coroutine
+@hook.command(["me", "act"], permissions=["botcontrol"])
 def me(text, conn, chan):
     """me [channel] <action> -- Makes the bot act out <action> in a [channel], or the current channel if none is given
     :type text: str

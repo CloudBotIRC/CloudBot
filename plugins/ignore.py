@@ -1,3 +1,4 @@
+import asyncio
 from fnmatch import fnmatch
 
 from cloudbot import hook
@@ -21,7 +22,8 @@ def ensure_ignored(bot):
         bot.config.save_config()
 
 
-@hook.sieve
+@asyncio.coroutine
+@hook.sieve()
 def ignore_sieve(bot, event, _hook):
     """ blocks events from ignored channels/hosts
     :type bot: cloudbot.core.bot.CloudBot
@@ -50,6 +52,7 @@ def ignore_sieve(bot, event, _hook):
     return event
 
 
+@asyncio.coroutine
 @hook.command(autohelp=False)
 def ignored(notice, conn):
     """ignored -- Lists ignored channels/users."""

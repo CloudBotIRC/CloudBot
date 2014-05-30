@@ -1,8 +1,10 @@
+import asyncio
 import random
 
 from cloudbot import hook
 
 
+@asyncio.coroutine
 @hook.command(autohelp=False)
 def coin(text, notice, action):
     """coin [amount] -- Flips [amount] of coins.

@@ -7,7 +7,7 @@ api_url = "http://encyclopediadramatica.se/api.php?action=opensearch"
 ed_url = "http://encyclopediadramatica.se/"
 
 
-@hook.command
+@hook.command()
 def drama(text):
     """drama <phrase> -- Gets the first paragraph of
     the Encyclopedia Dramatica article on <phrase>."""

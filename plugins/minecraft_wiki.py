@@ -6,7 +6,7 @@ api_url = "http://minecraft.gamepedia.com/api.php?action=opensearch"
 mc_url = "http://minecraft.gamepedia.com/"
 
 
-@hook.command
+@hook.command()
 def mcwiki(text):
     """mcwiki <phrase> -- Gets the first paragraph of
     the Minecraft Wiki article on <phrase>."""

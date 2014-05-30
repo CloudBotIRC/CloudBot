@@ -8,7 +8,7 @@ id_re = re.compile("tt\d+")
 imdb_re = (r'(.*:)//(imdb.com|www.imdb.com)(:[0-9]+)?(.*)', re.I)
 
 
-@hook.command
+@hook.command()
 def imdb(text):
     """imdb <movie> -- Gets information about <movie> from IMDb."""
 

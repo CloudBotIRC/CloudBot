@@ -32,7 +32,7 @@ def load_regions(bot):
         geo = pygeoip.GeoIP(os.path.join(bot.data_dir, "GeoLiteCity.dat"))
 
 
-@hook.command
+@hook.command()
 def geoip(text):
     """geoip <host/ip> -- Gets the location of <host/ip>"""
 

@@ -73,7 +73,7 @@ def match_language(fragment):
     return None
 
 
-@hook.command
+@hook.command()
 def translate(text, bot):
     """translate [source language [target language]] <sentence> -- translates
     <sentence> from source language (default autodetect) to target

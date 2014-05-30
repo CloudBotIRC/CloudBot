@@ -1,4 +1,5 @@
 import os
+import asyncio
 import random
 
 from cloudbot import hook, formatting
@@ -19,6 +20,7 @@ def load_responses(bot):
                      f.readlines() if not line.startswith("//")]
 
 
+@asyncio.coroutine
 @hook.command(["8ball", "8", "eightball"])
 def eightball(action):
     """8ball <question> -- The all knowing magic eight ball, in electronic form. Ask and it shall be answered!"""

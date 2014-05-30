@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+import asyncio
 import requests
 
 from cloudbot import hook
@@ -24,7 +25,7 @@ def initial_refresh():
     refresh_cache()
 
 
-@hook.async
+@asyncio.coroutine
 @hook.command(autohelp=False)
 def fml(reply, loop):
     """fml -- Gets a random quote from fmyfife.com."""

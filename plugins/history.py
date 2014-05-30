@@ -1,5 +1,6 @@
 from collections import deque
 import time
+import asyncio
 import re
 
 from cloudbot import hook, timesince
@@ -49,6 +50,7 @@ def chat_tracker(event, db, conn):
     track_history(event, message_time, conn)
 
 
+@asyncio.coroutine
 @hook.command(autohelp=False)
 def resethistory(event, conn):
     """resethistory - Resets chat history for the current channel"""

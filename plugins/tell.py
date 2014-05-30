@@ -108,9 +108,9 @@ def showtells(nick, notice, db, conn):
 
 
 @hook.command("tell")
-def tell_cmd(inp, nick, db, notice, conn):
+def tell_cmd(text, nick, db, notice, conn):
     """tell <nick> <message> -- Relay <message> to <nick> when <nick> is around."""
-    query = inp.split(' ', 1)
+    query = text.split(' ', 1)
 
     if len(query) != 2:
         notice(conn.config("command_prefix") + tell_cmd.__doc__)

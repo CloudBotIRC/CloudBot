@@ -1,9 +1,11 @@
 from operator import attrgetter
+import asyncio
 import re
 
 from cloudbot import hook
 
 
+@asyncio.coroutine
 @hook.command("help", autohelp=False)
 def help_command(text, conn, bot, notice, has_permission):
     """help  -- Gives a list of commands/help for a command.

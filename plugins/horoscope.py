@@ -3,7 +3,7 @@
 from cloudbot import hook, http, formatting
 
 
-@hook.onload
+@hook.onload()
 def init(db):
     db.execute("create table if not exists horoscope(nick primary key, sign)")
     db.commit()

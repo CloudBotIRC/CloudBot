@@ -24,7 +24,7 @@ def issues(text):
         user         = j["user"]["login"]
         title        = j["title"]
         summary      = textutils.truncate(j["body"])
-        if j["state"] is "open":
+        if j["state"] == "open":
             state    = "\x033\x02OPEN\x02\x0f"
         else:
             state    = "\x034\x02CLOSED\x02\x0f by {}".format(j["closed_by"]["login"])

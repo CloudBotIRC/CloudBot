@@ -406,6 +406,7 @@ class PluginManager:
 
         if hook.type == "command" and hook.auto_help and not event.text and hook.doc is not None:
             event.notice_doc()
+            return False
 
         if hook.single_thread:
             # There should only be one running instance of this hook, so let's wait for the last event to be processed

@@ -1,4 +1,4 @@
-from cloudbot import hook, web, textutils
+from cloudbot import hook, web, formatting
 
 import requests
 
@@ -23,7 +23,7 @@ def issues(text):
         number       = j["number"]
         user         = j["user"]["login"]
         title        = j["title"]
-        summary      = textutils.truncate(j["body"])
+        summary      = formatting.truncate_str(j["body"].split('\n')[0], 25)
         if j["state"] == "open":
             state    = "\x033\x02OPEN\x02\x0f"
         else:

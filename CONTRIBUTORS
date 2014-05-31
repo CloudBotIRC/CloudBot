@@ -1,7 +1,8 @@
 Thanks to everyone who has contributed to CloudBot! Come in IRC and ping me if I forgot anyone.
 
 Luke Rogers (lukeroge)
-Neersighted
+neersighted
+daboross
 blha303
 cybojenix
 KsaRedFx
@@ -17,9 +18,7 @@ Spudstabber
 frozenMC
 frdmn
 
-
-
-We are using code from the following projects:
+We are using code (*borrowed*) from the following projects:
 ./plugins/mlia.py - https://github.com/infinitylabs/UguuBot
 ./plugins/horoscope.py - https://github.com/infinitylabs/UguuBot
 color section in ./plugins/utility.py - https://github.com/hitzler/homero

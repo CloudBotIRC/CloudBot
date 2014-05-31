@@ -8,7 +8,7 @@ armoury, armory: Request data from the armoury API and format it into something 
 """
 
 import re
-import json
+import requests
 from util import hook, http, web
 
 @hook.command('armory')
@@ -55,7 +55,7 @@ def armoury(inp):
 def wow_armoury_data(link):
     """Sends the API request, and returns the data accordingly (in json if raw, nicely formatted if not)."""
     try:
-        data = http.get_json(link)
+        data = requests.get(link)
     except Exception as e:
         return 'Unable to fetch information for {}. Does the realm or character exist? ({})'.format(link, str(e))
 
@@ -63,6 +63,15 @@ def wow_armoury_data(link):
 
 def wow_armoury_format(data, link):
     """Format armoury data into a human readable string"""
+
+    if data.status_code != 200 and data.status_code != 404:
+        # The page returns 404 if the character or realm is not found.
+        try:
+            data.raise_for_status()
+        except Exception as e:
+            return 'An error occured while trying to fetch the data. ({})'.format(str(e))
+
+    data = data.json()
 
     if len(data) == 0:
         return 'Could not find any results.'

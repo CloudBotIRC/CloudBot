@@ -1,63 +1,52 @@
-""" web.py - handy functions for web services """
+""" web.py - web services and more """
 
-import json
-import urllib.request
-import urllib.parse
-import urllib.error
-
-from cloudbot.util import urlnorm, http
-
-short_url = "http://is.gd/create.php"
-paste_url = "http://hastebin.com"
-
+import requests
 
 class ShortenError(Exception):
-    def __init__(self, code, text):
-        self.code = code
-        self.text = text
+    def __init__(self, message, request):
+        self.message = message
+        self.request = request
 
     def __str__(self):
-        return self.text
+        return "[HTTP {}] {}".format(self.request.status_code, self.message)
+        
+class Shortener:
+    def shorten(self, url, custom=None):
+        return url
+    
+    def try_shorten(self, url, custom=None):
+        try:
+            return self.shorten(url, custom)
+        except ShortenError as e:
+            return url
 
+class Isgd(Shortener):
+    def shorten(self, url, custom=None):
+        p = {'url': url, 'shorturl': custom, 'format': 'json'}
+        r = requests.get('http://is.gd/create.php', params=p)
+        
+        j = r.json()
+        if 'shorturl' in j:
+            return j['shorturl']
+        else:
+            raise ShortenError(j['errormessage'], r)
+        
+class Gitio(Shortener):
+    def shorten(self, url, custom=None):
+        p = {'url': url, 'code': custom}
+        r = requests.post('http://git.io', data=p)
 
-def isgd(url):
-    """
-    Shortens a URL with the is.gd API.
-    :type url: str
-    :rtype: str
-    """
-    url = urlnorm.normalize(url, assume_scheme='http')
-    params = urllib.parse.urlencode({'format': 'json', 'url': url})
-    request = http.get_json("http://is.gd/create.php?{}".format(params))
+        if r.status_code == requests.codes.created:
+            s = r.headers['location']
+            if custom and not custom in s:
+                raise ShortenError("That URL is already in use.", r)
+            else:
+                return s
+        else:
+            raise ShortenError("Unknown Error", r)
 
-    if "errorcode" in request:
-        raise ShortenError(request["errorcode"], request["errormessage"])
-    else:
-        return request["shorturl"]
+def haste(data, ext='txt', server='http://hastebin.com'):
+    r = requests.post(server + '/documents', data=data)
+    j = r.json()
 
-
-def try_isgd(url):
-    """
-    Attempts to shorten a URL with the is.gd API, or returns the original URL if shortening failed.
-    :type url: str
-    :rtype: str
-    """
-    try:
-        out = isgd(url)
-    except (ShortenError, http.HTTPError):
-        out = url
-    return out
-
-
-def haste(text, ext='txt'):
-    """
-    Pastes text to a hastebin server.
-    :type text: str
-    :type ext: str
-    :rtype: str
-    """
-    if isinstance(text, str):
-        text = text.encode('utf-8')
-    page = http.get(paste_url + "/documents", post_data=text)
-    data = json.loads(page)
-    return "{}/{}.{}".format(paste_url, data['key'], ext)
+    return "{}/{}.{}".format(server, j['key'], ext)

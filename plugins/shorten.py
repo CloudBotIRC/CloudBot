@@ -1,11 +1,27 @@
-from cloudbot import hook, http, web
-
+from cloudbot import hook, web
 
 @hook.command
-def shorten(text):
-    """shorten <url> - Makes an is.gd shortlink to the url provided."""
-
+def isgd(text):
+    """isgd <url> [custom] - Shorten a url with is.gd. [custom] is an optional custom shortlink."""
+    args   = text.split()
+    url    = args[0]
+    custom = args[1] if len(args) > 1 else None
+    
+    isgd = web.Isgd()
     try:
-        return web.isgd(text)
-    except (web.ShortenError, http.HTTPError) as error:
-        return error
+        return isgd.shorten(url, custom)
+    except web.ShortenError as e:
+        return e.message
+
+@hook.command
+def gitio(text):
+    """gitio <url> [custom] -- Shorten a Github url with git.io. [custom] is an optional custom shortlink."""
+    args   = text.split()
+    url    = args[0]
+    custom = args[1] if len(args) > 1 else None
+    
+    gitio = web.Gitio()
+    try:
+        return gitio.shorten(url, custom)
+    except web.ShortenError as e:
+        return e.message

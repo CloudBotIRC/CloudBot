@@ -5,7 +5,7 @@ from datetime import datetime
 import tweepy
 from cloudbot import hook, timesince
 
-TWITTER_RE = (r"(?:(?:www.twitter.com|twitter.com)/(?:[-_a-zA-Z0-9]+)/status/)([0-9]+)", re.I)
+TWITTER_RE = re.compile(r"(?:(?:www.twitter.com|twitter.com)/(?:[-_a-zA-Z0-9]+)/status/)([0-9]+)", re.I)
 
 
 def get_api(bot):
@@ -24,7 +24,7 @@ def get_api(bot):
     return tweepy.API(auth)
 
 
-@hook.regex(*TWITTER_RE)
+@hook.regex(TWITTER_RE)
 def twitter_url(match, bot=None):
     # Find the tweet ID from the URL
     tweet_id = match.group(1)

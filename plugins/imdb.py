@@ -5,7 +5,7 @@ import re
 from cloudbot import hook, http, formatting
 
 id_re = re.compile("tt\d+")
-imdb_re = (r'(.*:)//(imdb.com|www.imdb.com)(:[0-9]+)?(.*)', re.I)
+imdb_re = re.compile(r'(.*:)//(imdb.com|www.imdb.com)(:[0-9]+)?(.*)', re.I)
 
 
 @hook.command()
@@ -36,7 +36,7 @@ def imdb(text):
         return 'Unknown error.'
 
 
-@hook.regex(*imdb_re)
+@hook.regex(imdb_re)
 def imdb_url(match):
     imdb_id = match.group(4).split('/')[-1]
     if imdb_id == "":

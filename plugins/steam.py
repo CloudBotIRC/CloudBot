@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup, NavigableString, Tag
 from cloudbot import hook, http, web
 from cloudbot.util.formatting import truncate_str
 
-steam_re = (r'(.*:)//(store.steampowered.com)(:[0-9]+)?(.*)', re.I)
+steam_re = re.compile(r'(.*:)//(store.steampowered.com)(:[0-9]+)?(.*)', re.I)
 
 
 def get_steam_info(url):
@@ -58,7 +58,7 @@ def get_steam_info(url):
            " \x02Price\x02: {price}".format(**data)
 
 
-@hook.regex(*steam_re)
+@hook.regex(steam_re)
 def steam_url(match):
     return get_steam_info("http://store.steampowered.com" + match.group(4))
 
@@ -69,4 +69,4 @@ def steam(inp):
     page = http.get("http://store.steampowered.com/search/?term=" + inp)
     soup = BeautifulSoup(page, 'lxml', from_encoding="utf-8")
     result = soup.find('a', {'class': 'search_result_row'})
-    return get_steam_info(result['href']) + " - " + web.isgd(result['href'])
+    return get_steam_info(result['href']) + " - " + web.try_shorten(result['href'])

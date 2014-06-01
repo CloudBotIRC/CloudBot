@@ -4,9 +4,9 @@ from urllib.parse import urlencode
 from cloudbot import hook, http, web
 from cloudbot import formatting
 
-sc_re = (r'(.*:)//(www.)?(soundcloud.com)(.*)', re.I)
+sc_re = re.compile(r'(.*:)//(www.)?(soundcloud.com)(.*)', re.I)
 api_url = "http://api.soundcloud.com"
-sndsc_re = (r'(.*:)//(www.)?(snd.sc)(.*)', re.I)
+sndsc_re = re.compile(r'(.*:)//(www.)?(snd.sc)(.*)', re.I)
 
 
 def soundcloud(url, api_key):
@@ -28,7 +28,7 @@ def soundcloud(url, api_key):
         data['comment_count'], url)
 
 
-@hook.regex(*sc_re)
+@hook.regex(sc_re)
 def soundcloud_url(match, bot=None):
     api_key = bot.config.get("api_keys", {}).get("soundcloud")
     if not api_key:
@@ -39,7 +39,7 @@ def soundcloud_url(match, bot=None):
     return soundcloud(url, api_key)
 
 
-@hook.regex(*sndsc_re)
+@hook.regex(sndsc_re)
 def sndsc_url(match, bot=None):
     api_key = bot.config.get("api_keys", {}).get("soundcloud")
     if not api_key:

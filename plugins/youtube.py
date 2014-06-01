@@ -114,10 +114,10 @@ def youtime(text):
                                             total_text)
 
 
-ytpl_re = (r'(.*:)//(www.youtube.com/playlist|youtube.com/playlist)(:[0-9]+)?(.*)', re.I)
+ytpl_re = re.compile(r'(.*:)//(www.youtube.com/playlist|youtube.com/playlist)(:[0-9]+)?(.*)', re.I)
 
 
-@hook.regex(*ytpl_re)
+@hook.regex(ytpl_re)
 def ytplaylist_url(match):
     location = match.group(4).split("=")[-1]
     try:

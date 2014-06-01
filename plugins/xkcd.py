@@ -2,7 +2,7 @@ import re
 
 from cloudbot import hook, http
 
-xkcd_re = (r'(.*:)//(www.xkcd.com|xkcd.com)(.*)', re.I)
+xkcd_re = re.compile(r'(.*:)//(www.xkcd.com|xkcd.com)(.*)', re.I)
 months = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 7: 'July', 8: 'August',
           9: 'September', 10: 'October', 11: 'November', 12: 'December'}
 
@@ -30,7 +30,7 @@ def xkcd_search(term):
         return "No results found!"
 
 
-@hook.regex(*xkcd_re)
+@hook.regex(xkcd_re)
 def xkcd_url(match):
     xkcd_id = match.group(3).split(" ")[0].split("/")[1]
     return xkcd_info(xkcd_id)

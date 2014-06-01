@@ -78,7 +78,7 @@ class _RegexHook(_Hook):
         _Hook.__init__(self, function, "regex")
         self.regexes = []
 
-    def add_hook(self, regex_param, regex_flags, kwargs):
+    def add_hook(self, regex_param, kwargs):
         """
         :type regex_param: Iterable[str | re.__Regex] | str | re.__Regex
         :type kwargs: dict[str, unknown]
@@ -87,7 +87,7 @@ class _RegexHook(_Hook):
         # add all regex_parameters to valid regexes
         if isinstance(regex_param, str):
             # if the parameter is a string, compile and add
-            self.regexes.append(re.compile(regex_param, regex_flags))
+            self.regexes.append(re.compile(regex_param))
         elif hasattr(regex_param, "search"):
             # if the parameter is an re.__Regex, just add it
             # we only use regex.search anyways, so this is a good determiner
@@ -97,7 +97,7 @@ class _RegexHook(_Hook):
             # if the parameter is a list, add each one
             for re_to_match in regex_param:
                 if isinstance(re_to_match, str):
-                    re_to_match = re.compile(re_to_match, regex_flags)
+                    re_to_match = re.compile(re_to_match)
                 else:
                     # make sure that the param is either a compiled regex, or has a search attribute.
                     assert hasattr(regex_param, "search")
@@ -185,7 +185,7 @@ def irc_raw(triggers_param, **kwargs):
         return lambda func: _raw_hook(func)
 
 
-def regex(regex_param, flags=0, **kwargs):
+def regex(regex_param, **kwargs):
     """External regex decorator. Must be used as a function to return a decorator.
     :type regex_param: str | re.__Regex | list[str | re.__Regex]
     :type flags: int
@@ -195,9 +195,9 @@ def regex(regex_param, flags=0, **kwargs):
         hook = _get_hook(func, "regex")
         if hook is None:
             hook = _RegexHook(func)
-            _add_hook(func, _RegexHook(func))
+            _add_hook(func, hook)
 
-        hook.add_hook(regex_param, flags, kwargs)
+        hook.add_hook(regex_param, kwargs)
         return func
 
     if callable(regex_param):  # this decorator is being used directly, which isn't good

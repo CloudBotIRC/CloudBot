@@ -3,8 +3,8 @@ from html.parser import HTMLParser
 
 from cloudbot import hook, http
 
-twitch_re = (r'(.*:)//(twitch.tv|www.twitch.tv)(:[0-9]+)?(.*)', re.I)
-multitwitch_re = (r'(.*:)//(www.multitwitch.tv|multitwitch.tv)/(.*)', re.I)
+twitch_re = re.compile(r'(.*:)//(twitch.tv|www.twitch.tv)(:[0-9]+)?(.*)', re.I)
+multitwitch_re = re.compile(r'(.*:)//(www.multitwitch.tv|multitwitch.tv)/(.*)', re.I)
 
 
 def test(s):
@@ -29,7 +29,7 @@ def truncate(msg):
         return out + "..."
 
 
-@hook.regex(*multitwitch_re)
+@hook.regex(multitwitch_re)
 def multitwitch_url(match):
     usernames = match.group(3).split("/")
     out = ""
@@ -44,7 +44,7 @@ def multitwitch_url(match):
     return out
 
 
-@hook.regex(*twitch_re)
+@hook.regex(twitch_re)
 def twitch_url(match):
     bit = match.group(4).split("#")[0]
     location = "/".join(bit.split("/")[1:])

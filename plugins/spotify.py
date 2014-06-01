@@ -6,9 +6,9 @@ from cloudbot import hook, http, web
 gateway = 'http://open.spotify.com/{}/{}'  # http spotify gw address
 spuri = 'spotify:{}:{}'
 
-spotify_re = (r'(spotify:(track|album|artist|user):([a-zA-Z0-9]+))', re.I)
-http_re = (r'(open\.spotify\.com\/(track|album|artist|user)\/'
-           '([a-zA-Z0-9]+))', re.I)
+spotify_re = re.compile(r'(spotify:(track|album|artist|user):([a-zA-Z0-9]+))', re.I)
+http_re = re.compile(r'(open\.spotify\.com\/(track|album|artist|user)\/'
+                     '([a-zA-Z0-9]+))', re.I)
 
 
 def sptfy(inp, sptfy=False):
@@ -85,8 +85,8 @@ def spartist(inp):
     return "\x02{}\x02 - {}".format(data["artists"][0]["name"], url)
 
 
-@hook.regex(*http_re)
-@hook.regex(*spotify_re)
+@hook.regex(http_re)
+@hook.regex(spotify_re)
 def spotify_url(match):
     type = match.group(2)
     spotify_id = match.group(3)

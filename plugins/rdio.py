@@ -101,10 +101,10 @@ def rdioal(text, bot):
     return "\x02{}\x02 by \x02{}\x02 - {}".format(name, artist, url)
 
 
-rdio_re = (r'(.*:)//(rd.io|www.rdio.com|rdio.com)(:[0-9]+)?(.*)', re.I)
+rdio_re = re.compile(r'(.*:)//(rd.io|www.rdio.com|rdio.com)(:[0-9]+)?(.*)', re.I)
 
 
-@hook.regex(*rdio_re)
+@hook.regex(rdio_re)
 def rdio_url(match, bot):
     api_key = bot.config.get("api_keys", {}).get("rdio_key")
     api_secret = bot.config.get("api_keys", {}).get("rdio_secret")

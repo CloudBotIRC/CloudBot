@@ -2,7 +2,7 @@ import re
 
 from cloudbot import hook, http
 
-newgrounds_re = (r'(.*:)//(www.newgrounds.com|newgrounds.com)(:[0-9]+)?(.*)', re.I)
+newgrounds_re = re.compile(r'(.*:)//(www.newgrounds.com|newgrounds.com)(:[0-9]+)?(.*)', re.I)
 valid = set('0123456789')
 
 
@@ -10,7 +10,7 @@ def test(s):
     return set(s) <= valid
 
 
-@hook.regex(*newgrounds_re)
+@hook.regex(newgrounds_re)
 def newgrounds_url(match):
     location = match.group(4).split("/")[-1]
     if not test(location):

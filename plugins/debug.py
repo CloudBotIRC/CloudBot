@@ -1,7 +1,9 @@
 import os
+
 import psutil
 
 from cloudbot import hook
+
 
 @hook.command
 def debug():

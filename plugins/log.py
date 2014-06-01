@@ -4,7 +4,6 @@ log.py: written by Scaevolus 2009
 edited 2014
 """
 import asyncio
-
 import os
 import codecs
 import time

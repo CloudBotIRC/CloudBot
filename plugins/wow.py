@@ -8,11 +8,13 @@ armoury, armory: Request data from the armoury API and format it into something 
 """
 
 import re
-import requests
-from util import hook, http, web
 
-@hook.command('armory')
-@hook.command
+import requests
+
+from cloudbot import hook, web
+
+
+@hook.command(["armory", "armoury"])
 def armoury(inp):
     """armoury  [realm] [character name] [region = EU] - Look up character and returns API data."""
 
@@ -52,6 +54,7 @@ def armoury(inp):
 
     return wow_armoury_data(link)
 
+
 def wow_armoury_data(link):
     """Sends the API request, and returns the data accordingly (in json if raw, nicely formatted if not)."""
     try:
@@ -60,6 +63,7 @@ def wow_armoury_data(link):
         return 'Unable to fetch information for {}. Does the realm or character exist? ({})'.format(link, str(e))
 
     return wow_armoury_format(data, link)
+
 
 def wow_armoury_format(data, link):
     """Format armoury data into a human readable string"""
@@ -85,12 +89,14 @@ def wow_armoury_format(data, link):
 
         try:
             return '{0} is a level \x0307{1}\x0F {2} {3} on {4} with \x0307{5}\x0F achievement points and \x0307{6}\x0F honourable kills. Armoury Profile: {7}' \
-                .format(data['name'], data['level'], wow_get_gender(data['gender']), wow_get_class(data['class'], True), data['realm'],
-                    data['achievementPoints'], data['totalHonorableKills'], web.isgd(niceurl))
+                .format(data['name'], data['level'], wow_get_gender(data['gender']), wow_get_class(data['class'], True),
+                        data['realm'],
+                        data['achievementPoints'], data['totalHonorableKills'], web.isgd(niceurl))
         except Exception as e:
             return 'Unable to fetch information for {}. Does the realm or character exist? ({})'.format(niceurl, str(e))
 
     return 'An unexpected error occured.'
+
 
 def wow_get_gender(genderid):
     """Formats a gender ID to a readable gender name"""
@@ -103,7 +109,8 @@ def wow_get_gender(genderid):
 
     return gender
 
-def wow_get_class(classid, colours = False):
+
+def wow_get_class(classid, colours=False):
     """Formats a class ID to a readable name, data from http://eu.battle.net/api/wow/data/character/classes"""
     if colours:
         # Format their colours according to class colours.
@@ -119,11 +126,11 @@ def wow_get_class(classid, colours = False):
             11: "Druid"
         }
 
-
     if classid in classids:
         return classids[classid]
     else:
         return 'unknown'
+
 
 def wow_get_race(raceid):
     """Formats a race ID to a readable race name, data from http://eu.battle.net/api/wow/data/character/races"""
@@ -137,6 +144,7 @@ def wow_get_race(raceid):
         return raceids[raceid]
     else:
         return 'unknown'
+
 
 def wow_region_shortname(region):
     """Returns a short region name, which functions as battle.net their subdomain (i.e. eu.battle.net)"""

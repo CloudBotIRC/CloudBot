@@ -4,6 +4,7 @@ import re
 from cloudbot import hook, http, formatting, web
 
 
+
 ## CONSTANTS
 
 ITEM_URL = "http://www.newegg.com/Product/Product.aspx?Item={}"

@@ -1,9 +1,9 @@
-from bs4 import BeautifulSoup
 import asyncio
+
+from bs4 import BeautifulSoup
 import requests
 
 from cloudbot import hook
-
 
 fml_cache = []
 

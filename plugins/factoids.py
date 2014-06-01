@@ -5,7 +5,7 @@ import re
 
 from sqlalchemy import Table, Column, String
 
-from cloudbot import botvars, hook, http, formatting, pyexec
+from cloudbot import botvars, hook, http, formatting, web
 
 re_lineends = re.compile(r'[\r\n]*')
 
@@ -136,7 +136,7 @@ def info(text, notice):
 
 @asyncio.coroutine
 @hook.regex(r'^\? ?(.+)')
-def factoid(inp, input, db, message, action):
+def factoid(inp, event, db, message, action):
     """<word> - shows what data is associated with <word>"""
 
     # split up the input
@@ -156,7 +156,7 @@ def factoid(inp, input, db, message, action):
             variables = 'input="""{}"""; nick="{}"; chan="{}"; bot_nick="{}";'.format(arguments.replace('"', '\\"'),
                                                                                       event.nick, event.chan,
                                                                                       event.conn.nick)
-            result = pyexec.eval_py(variables + code)
+            result = web.pyeval(variables + code)
         else:
             result = data
 

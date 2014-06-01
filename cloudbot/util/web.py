@@ -11,6 +11,25 @@ DEFAULT_PASTEBIN = 'hastebin'
 
 HASTEBIN_SERVER = 'http://hastebin.com'
 
+# Python eval
+
+def pyeval(code, pastebin=True):
+    p = {'input': code}
+    r = requests.post('http://pyeval.appspot.com/exec', data=p)
+
+    p = {'id': r.text}
+    r = requests.get('http://pyeval.appspot.com/exec', params=p)
+    j = r.json()
+
+    output = j['output'].rstrip('\n')
+    if '\n' in output and pastebin:
+        return paste(output)
+    else:
+        return output
+
+
+# Shortening / pasting
+
 # Public API
 
 
@@ -41,7 +60,7 @@ def expand(url, service=None):
 
 
 def paste(data, ext='txt', service=DEFAULT_PASTEBIN):
-    impl = shorteners[service]
+    impl = pastebins[service]
     return impl.paste(data, ext)
 
 
@@ -173,6 +192,6 @@ class Hastebin(Pastebin):
         j = r.json()
 
         if r.status_code is requests.codes.ok:
-            return '{}/{}.{}'.format(HASTEBIN_SERVER + '/documents', j['key'], ext)
+            return '{}/{}.{}'.format(HASTEBIN_SERVER, j['key'], ext)
         else:
             raise ServiceError(j['message'], r)

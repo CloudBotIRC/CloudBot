@@ -26,7 +26,7 @@ def lyrics(inp):
             newsoup = http.get_soup(link)
             try:
                 lyrics = newsoup.find('div', {'style': 'margin-left:10px;margin-right:10px;'}).text.strip()
-                pasteurl = " " + web.haste(lyrics)
+                pasteurl = " " + web.paste(lyrics)
             except Exception as e:
                 pasteurl = " (\x02Unable to paste lyrics\x02 [{}])".format(str(e))
         else:

@@ -369,7 +369,7 @@ class PluginManager:
         """
         try:
             if sieve.threaded:
-                result = yield from self.bot.loop.run_in_executor(sieve.function, self.bot, event, hook)
+                result = yield from self.bot.loop.run_in_executor(None, sieve.function, self.bot, event, hook)
             else:
                 result = yield from sieve.function(self.bot, event, hook)
         except Exception:

@@ -8,9 +8,9 @@ from cloudbot import hook
 ping_regex = re.compile(r"(\d+.\d+)/(\d+.\d+)/(\d+.\d+)/(\d+.\d+)")
 
 
-@hook.command
+@hook.command()
 def ping(text, reply):
-    """ping <host> [count] -- Pings <host> [count] times."""
+    """<host> [count] - pings <host> [count] times"""
 
     if os.name == "nt":
         return "Sorry, this command is not supported on Windows systems."

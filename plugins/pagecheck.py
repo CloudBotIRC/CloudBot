@@ -3,9 +3,9 @@ import urllib.parse
 from cloudbot import hook, http, urlnorm
 
 
-@hook.command
+@hook.command(["down", "offline", "up"])
 def down(text):
-    """down <url> -- Checks if the site at <url> is up or down.
+    """<url> - checks if <url> is online or offline
     :type text: str
     """
 
@@ -21,9 +21,9 @@ def down(text):
         return '{} seems to be down'.format(text)
 
 
-@hook.command
+@hook.command()
 def isup(text):
-    """isup -- uses isup.me to see if a site is up or not
+    """<url> - uses isup.me to check if <url> is online or offline
     :type text: str
     """
 

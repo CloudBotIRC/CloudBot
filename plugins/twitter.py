@@ -54,7 +54,7 @@ def twitter_url(match, bot=None):
 
 @hook.command("tw")
 @hook.command("twatter")
-@hook.command
+@hook.command()
 def twitter(inp, bot=None):
     """twitter <user> [n] -- Gets last/[n]th tweet from <user>"""
 
@@ -139,7 +139,7 @@ def twitter(inp, bot=None):
 
 
 @hook.command("twinfo")
-@hook.command
+@hook.command()
 def twuser(inp, bot=None):
     """twuser <user> -- Get info on the Twitter user <user>"""
 

@@ -90,12 +90,12 @@ def db_search(db, nick, query):
 
 
 @hook.command(["note", "notes"])
-def note(inp, nick, db, notice):
-    """note(s) <add|del|list|search> args -- Manipulates your list of notes."""
+def note(text, nick, db, notice):
+    """<add|del|list|search> args - manipulates your list of notes"""
 
     db_init(db)
 
-    parts = inp.split()
+    parts = text.split()
     cmd = parts[0].lower()
 
     args = parts[1:]

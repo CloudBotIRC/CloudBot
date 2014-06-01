@@ -3,9 +3,9 @@ from cloudbot import hook, web, http
 
 
 @hook.command('qr')
-@hook.command
+@hook.command()
 def qrcode(text):
-    """qrcode [link] returns a link for a QR code."""
+    """[link] - returns a link to a QR code image for [link]"""
 
     args = {
         "cht": "qr",  # chart type (QR)

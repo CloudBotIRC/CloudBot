@@ -5,21 +5,19 @@ from cloudbot import hook, http, timesince
 api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
 
 
-@hook.command('l', autohelp=False)
-@hook.command(autohelp=False)
-def lastfm(inp, nick='', db=None, bot=None, notice=None):
-    """lastfm [user] [dontsave] -- Displays the now playing (or last played)
-     track of LastFM user [user]."""
+@hook.command(["lastfm", "l"], autohelp=False)
+def lastfm(text, nick, db, bot, notice):
+    """[user] [dontsave] - displays the now playing (or last played) track of LastFM user [user]"""
     api_key = bot.config.get("api_keys", {}).get("lastfm")
     if not api_key:
         return "error: no api key set"
 
     # check if the user asked us not to save his details
-    dontsave = inp.endswith(" dontsave")
+    dontsave = text.endswith(" dontsave")
     if dontsave:
-        user = inp[:-9].strip().lower()
+        user = text[:-9].strip().lower()
     else:
-        user = inp
+        user = text
 
     db.execute("create table if not exists lastfm(nick primary key, acc)")
 
@@ -74,9 +72,9 @@ def lastfm(inp, nick='', db=None, bot=None, notice=None):
     # append ending based on what type it was
     out += ending
 
-    if inp and not dontsave:
-        db.execute("insert or replace into lastfm(nick, acc) values "
-                   "(:nick, :account)", {'nick': nick.lower(), 'account': user})
+    if text and not dontsave:
+        db.execute("insert or replace into lastfm(nick, acc) values (:nick, :account)",
+                   {'nick': nick.lower(), 'account': user})
         db.commit()
 
     return out

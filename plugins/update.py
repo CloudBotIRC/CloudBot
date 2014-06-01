@@ -3,7 +3,7 @@ from git import Repo
 from cloudbot import hook, web
 
 
-@hook.command
+@hook.command()
 def update():
     repo = Repo()
     git = repo.git
@@ -17,7 +17,7 @@ def update():
         return pull
 
 
-@hook.command
+@hook.command()
 def version():
     repo = Repo()
 

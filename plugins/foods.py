@@ -1,4 +1,5 @@
 import re
+import asyncio
 import random
 
 from cloudbot import hook
@@ -46,9 +47,10 @@ potatoes = ['AC Belmont', 'AC Blue Pride', 'AC Brador', 'AC Chaleur', 'AC Domino
             'Yukon Gold']
 
 
-@hook.command
-def potato(text, action=None):
-    """potato <user> - Makes <user> a tasty little potato."""
+@asyncio.coroutine
+@hook.command()
+def potato(text, action):
+    """<user> - makes <user> a tasty little potato"""
     text = text.strip()
 
     if not re.match("^[A-Za-z0-9_|.-\]\[]*$", text.lower()):
@@ -63,9 +65,10 @@ def potato(text, action=None):
     action("{} a {} {} {} potato for {} and serves it with a small {}!".format(method, flavor, size, potato_type, text,
                                                                                side_dish))
 
-@hook.command
+@asyncio.coroutine
+@hook.command()
 def cake(text, action):
-    """cake <user> - Gives <user> an awesome cake."""
+    """<user> - gives <user> an awesome cake"""
     text = text.strip()
 
     if not re.match("^[A-Za-z0-9_|.-\]\[]*$", text.lower()):
@@ -82,9 +85,10 @@ def cake(text, action):
                                                                          side_dish))
 
 
-@hook.command
+@asyncio.coroutine
+@hook.command()
 def cookie(text, action):
-    """cookie <user> - Gives <user> a cookie"""
+    """<user> - gives <user> a cookie"""
     text = text.strip()
 
     if not re.match("^[A-Za-z0-9_|.-\]\[]*$", text.lower()):

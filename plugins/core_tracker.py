@@ -1,5 +1,6 @@
 # plugin to keep track of bot state
 
+import asyncio
 import re
 
 from cloudbot import hook
@@ -7,6 +8,7 @@ from cloudbot import hook
 nick_re = re.compile(":(.+?)!")
 
 
+@asyncio.coroutine
 @hook.event("KICK")
 def on_kick(irc_paramlist, conn, chan):
     """
@@ -22,6 +24,7 @@ def on_kick(irc_paramlist, conn, chan):
             conn.join(irc_paramlist[0])
 
 
+@asyncio.coroutine
 @hook.event("NICK")
 def on_nick(irc_paramlist, bot, conn, irc_raw):
     """

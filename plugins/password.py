@@ -14,8 +14,7 @@ with open("data/password_words.txt") as f:
 
 @hook.command(autohelp=False)
 def password(text, notice):
-    """password <length> [types] -- Generates a password of <length> (default 10).
-    [types] can include 'alpha', 'no caps', 'numeric', 'symbols' or any combination of the inp, eg. 'numbers symbols'"""
+    """[length [types]] - generates a password of <length> (default 10). [types] can include 'alpha', 'no caps', 'numeric', 'symbols' or any combination: eg. 'numbers symbols'"""
     okay = []
 
     # find the length needed for the password
@@ -58,7 +57,7 @@ def password(text, notice):
 
 @hook.command(["rpass", "rpassword", "readablepassword"], autohelp=False)
 def readable_password(text, notice):
-    """rpass [length]  -- Generates an easy to remember password with [length] (default 4) commonly used words."""
+    """[length] - generates an easy to remember password with [length] (default 4) commonly used words"""
     if text:
         try:
             length = int(text)

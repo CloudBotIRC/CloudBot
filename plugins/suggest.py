@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from cloudbot import hook, http, formatting
 
 
-@hook.command
+@hook.command()
 def suggest(text):
     """suggest <phrase> -- Gets suggested phrases for a google search"""
 

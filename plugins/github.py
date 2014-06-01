@@ -7,9 +7,9 @@ shortcuts = {
 }
 
 
-@hook.command
+@hook.command()
 def issues(text):
-    """issues <repo> [issue] - Get issues for <repo>. If [issue] is specified, summarize that issue."""
+    """<username|repo> [number] - gets issue [number]'s summary, or the open issue count if no issue is specified"""
     args = text.split()
     repo = args[0] if args[0] not in shortcuts else shortcuts[args[0]]
     issue = args[1] if len(args) > 1 else None

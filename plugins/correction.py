@@ -1,3 +1,4 @@
+import asyncio
 import re
 
 from cloudbot import hook
@@ -5,6 +6,7 @@ from cloudbot import hook
 correction_re = re.compile(r"^[sS]/([^/]*)/([^/]*)(/.*)?\s*$")
 
 
+@asyncio.coroutine
 @hook.regex(correction_re)
 def correction(match, conn, chan, message):
     """

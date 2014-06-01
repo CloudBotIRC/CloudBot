@@ -16,7 +16,7 @@ def hulu_url(match):
 
 @hook.command('hulu')
 def hulu_search(text):
-    """hulu <search> - Search Hulu"""
+    """<query> - searches Hulu for <query>"""
     result = http.get_soup(
         "http://m.hulu.com/search?dp_identifier=hulu&{}&items_per_page=1&page=1".format(urlencode({'query': text})))
     data = result.find('results').find('videos').find('video')

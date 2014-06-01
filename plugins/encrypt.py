@@ -1,6 +1,7 @@
 import os
 import base64
 import hashlib
+import asyncio
 import traceback
 
 from pbkdf2 import PBKDF2
@@ -60,9 +61,10 @@ def get_salt(bot):
     return bot.config.get("random_salt")
 
 
-@hook.command
+@asyncio.coroutine
+@hook.command()
 def encrypt(text, bot, db, notice):
-    """encrypt <pass> <string> -- Encrypts <string> with <pass>. (<string> can only be decrypted using this bot)
+    """<pass> <string> - encrypts <string> with <pass>. (<string> can only be decrypted using this bot)
     :type text: str
     :type bot: core.bot.CloudBot
     :type db: sqlalchemy.orm.session.Session
@@ -98,10 +100,11 @@ def encrypt(text, bot, db, notice):
     return encoded.decode()
 
 
-@hook.command
+@asyncio.coroutine
+@hook.command()
 def decrypt(text, bot, db, notice):
-    """decrypt <pass> <string> -- Decrypts <string> with <pass>. (can only decrypt strings encrypted on this bot)
-    :type bot: core.bot.CloudBot
+    """<pass> <string> - decrypts <string> with <pass>. (can only decrypt strings encrypted on this bot)
+    :type bot: cloudbot.core.bot.CloudBot
     :type db: sqlalchemy.orm.session.Session
     """
 

@@ -73,11 +73,9 @@ def match_language(fragment):
     return None
 
 
-@hook.command
+@hook.command()
 def translate(text, bot):
-    """translate [source language [target language]] <sentence> -- translates
-    <sentence> from source language (default autodetect) to target
-    language (default English) using Google Translate"""
+    """[source language [target language]] <sentence> - translates <sentence> from source language (default autodetect) to target language (default English) using Google Translate"""
 
     api_key = bot.config.get("api_keys", {}).get("googletranslate", None)
     if not api_key:

@@ -1,7 +1,8 @@
 from urllib.parse import quote_plus
+import asyncio
 
 import requests
-import asyncio
+import requests.exceptions
 
 from cloudbot import hook, formatting
 
@@ -9,10 +10,10 @@ from cloudbot import hook, formatting
 api_url = "http://api.fishbans.com/stats/{}/"
 
 
-@hook.command(["bans", "fishbans"], async=True)
 @asyncio.coroutine
+@hook.command(["bans", "fishbans"])
 def fishbans(text, loop):
-    """fishbans <user> -- Gets information on <user>s minecraft bans from fishbans"""
+    """<user> - gets information on <user>'s minecraft bans from fishbans"""
     user = text.strip()
 
     try:
@@ -40,10 +41,10 @@ def fishbans(text, loop):
         return "The user \x02{}\x02 has no bans - {}".format(user, user_url)
 
 
-@hook.command(async=True)
 @asyncio.coroutine
+@hook.command()
 def bancount(text, loop):
-    """bancount <user> -- Gets a count of <user>s minecraft bans from fishbans"""
+    """<user> - gets a count of <user>'s minecraft bans from fishbans"""
     user = text.strip()
 
     try:

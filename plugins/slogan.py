@@ -7,7 +7,7 @@ with open("./data/slogans.txt") as f:
                if not line.startswith("//")]
 
 
-@hook.command
+@hook.command()
 def slogan(text):
     """slogan <word> -- Makes a slogan for <word>."""
     out = random.choice(slogans)

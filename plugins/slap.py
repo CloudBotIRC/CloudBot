@@ -9,7 +9,7 @@ def get_generator(_json, variables):
                                  data["parts"], variables=variables)
 
 
-@hook.command
+@hook.command()
 def slap(text, action, nick, conn, notice):
     """slap <user> -- Makes the bot slap <user>."""
     target = text.strip()

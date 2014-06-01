@@ -67,7 +67,7 @@ def get_profile(name):
 
 @hook.command(["mcuser", "mcpaid", "haspaid"])
 def mcuser(text):
-    """mcpaid <username> -- Gets information about the Minecraft user <account>."""
+    """<username> - gets information about the Minecraft user <account>"""
     user = text.strip()
 
     try:

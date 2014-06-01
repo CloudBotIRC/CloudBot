@@ -4,6 +4,7 @@ import re
 from cloudbot import hook, http, formatting, web
 
 
+
 ## CONSTANTS
 
 ITEM_URL = "http://www.newegg.com/Product/Product.aspx?Item={}"
@@ -70,9 +71,9 @@ def newegg_url(match):
     return format_item(item, show_url=False)
 
 
-@hook.command
+@hook.command()
 def newegg(text):
-    """newegg <item name> -- Searches newegg.com for <item name>"""
+    """newegg <item name> - searches newegg.com for <item name>"""
 
     # form the search request
     request = {

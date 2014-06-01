@@ -3,7 +3,7 @@
 from cloudbot import hook, http, formatting
 
 
-@hook.onload
+@hook.onload()
 def init(db):
     db.execute("create table if not exists horoscope(nick primary key, sign)")
     db.commit()
@@ -11,7 +11,7 @@ def init(db):
 
 @hook.command(autohelp=False)
 def horoscope(text, db, notice, nick):
-    """horoscope <sign> -- Get your horoscope."""
+    """<sign> - get your horoscope"""
 
     # check if the user asked us not to save his details
     dontsave = text.endswith(" dontsave")

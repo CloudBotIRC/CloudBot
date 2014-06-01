@@ -43,7 +43,7 @@ def get_data(url):
 
 @hook.command(autohelp=False)
 def recipe(text):
-    """recipe [term] - Gets a recipe for [term], or ets a random recipe if [term] is not provided"""
+    """[term] - gets a recipe for [term], or gets a random recipe if no term is specified"""
     if text:
         # get the recipe URL by searching
         try:
@@ -85,7 +85,7 @@ def recipe(text):
 
 @hook.command(autohelp=False)
 def dinner():
-    """dinner - WTF IS FOR DINNER"""
+    """- gets a random dinner from whatthefuckshouldimakefordinner.com"""
     try:
         page = http.open(random_url)
     except (http.HTTPError, http.URLError) as e:

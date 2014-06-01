@@ -3,15 +3,15 @@ from cloudbot import hook, http, web
 url = "http://search.azlyrics.com/search.php?q="
 
 
-@hook.command
-def lyrics(inp):
-    """lyrics <search> - Search AZLyrics.com for song lyrics"""
-    if "pastelyrics" in inp:
+@hook.command()
+def lyrics(text):
+    """<search> - search AZLyrics.com for song lyrics"""
+    if "pastelyrics" in text:
         dopaste = True
-        inp = inp.replace("pastelyrics", "").strip()
+        text = text.replace("pastelyrics", "").strip()
     else:
         dopaste = False
-    soup = http.get_soup(url + inp.replace(" ", "+"))
+    soup = http.get_soup(url + text.replace(" ", "+"))
     if "Try to compose less restrictive search query" in soup.find('div', {'id': 'inn'}).text:
         return "No results. Check spelling."
     div = None
@@ -40,4 +40,4 @@ def lyrics(inp):
         return "\x02{}\x02 by \x02{}\x02 {}{} - {}".format(title, artist, web.try_shorten(link), pasteurl,
                                                            lyricsum[:-3])
     else:
-        return "No song results. " + url + inp.replace(" ", "+")
+        return "No song results. " + url + text.replace(" ", "+")

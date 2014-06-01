@@ -32,9 +32,9 @@ def load_regions(bot):
         geo = pygeoip.GeoIP(os.path.join(bot.data_dir, "GeoLiteCity.dat"))
 
 
-@hook.command
+@hook.command()
 def geoip(text):
-    """geoip <host/ip> -- Gets the location of <host/ip>"""
+    """<host/ip> - gets the location of <host/ip>"""
 
     try:
         record = geo.record_by_name(text)
@@ -48,7 +48,7 @@ def geoip(text):
         # it's a lazy patch, but it should do the job
         try:
             data["region"] = ", " + regions[record["country_code"]][record["region_name"]]
-        except:
+        except Exception:
             data["region"] = ""
     else:
         data["region"] = ""
@@ -56,4 +56,5 @@ def geoip(text):
     data["cc"] = record["country_code"] or "N/A"
     data["country"] = record["country_name"] or "Unknown"
     data["city"] = record["city"] or "Unknown"
+
     return "\x02Country:\x02 {country} ({cc}), \x02City:\x02 {city}{region}".format(**data)

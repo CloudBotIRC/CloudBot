@@ -1,3 +1,4 @@
+import asyncio
 from fnmatch import fnmatch
 
 from cloudbot import hook
@@ -21,7 +22,8 @@ def ensure_ignored(bot):
         bot.config.save_config()
 
 
-@hook.sieve
+@asyncio.coroutine
+@hook.sieve()
 def ignore_sieve(bot, event, _hook):
     """ blocks events from ignored channels/hosts
     :type bot: cloudbot.core.bot.CloudBot
@@ -50,9 +52,10 @@ def ignore_sieve(bot, event, _hook):
     return event
 
 
+@asyncio.coroutine
 @hook.command(autohelp=False)
 def ignored(notice, conn):
-    """ignored -- Lists ignored channels/users."""
+    """- lists all channels and users I'm ignoring"""
     ignorelist = conn.config["plugins"]["ignore"]["ignored"]
     if ignorelist:
         notice("Ignored channels/users are: {}".format(", ".join(ignorelist)))
@@ -63,7 +66,7 @@ def ignored(notice, conn):
 
 @hook.command(permissions=["ignore"])
 def ignore(text, bot, conn, notice):
-    """ignore <channel|nick|host> -- Makes the bot ignore <channel|user>."""
+    """<channel|nick|usermask> - adds <channel|nick> to my ignore list"""
     target = text.lower()
     if "!" not in target or "@" not in target:
         target = "{}!*@*".format(target)
@@ -80,7 +83,7 @@ def ignore(text, bot, conn, notice):
 
 @hook.command(permissions=["ignore"])
 def unignore(text, bot, conn, notice):
-    """unignore <channel|user> -- Makes the bot listen to <channel|user>."""
+    """<channel|nick|usermask> - removes <channel|nick|usermask> from my ignore list"""
     target = text.lower()
     if "!" not in target or "@" not in target:
         target = "{}!*@*".format(target)

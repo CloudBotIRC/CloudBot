@@ -1,7 +1,7 @@
 from cloudbot import hook, web, formatting
 
 
-@hook.command
+@hook.command()
 def answer(text):
     """answer <query> -- find the answer to a question on Yahoo! Answers"""
 

@@ -26,13 +26,13 @@ def reddit_url(match):
 
 
 @hook.command(autohelp=False)
-def reddit(inp):
-    """reddit <subreddit> [n] -- Gets a random post from <subreddit>, or gets the [n]th post in the subreddit."""
+def reddit(text):
+    """<subreddit> [n] - gets a random post from <subreddit>, or gets the [n]th post in the subreddit"""
     id_num = None
 
-    if inp:
+    if text:
         # clean and split the input
-        parts = inp.lower().strip().split()
+        parts = text.lower().strip().split()
 
         # find the requested post number (if any)
         if len(parts) > 1:

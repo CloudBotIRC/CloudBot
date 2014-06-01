@@ -3,7 +3,7 @@ log.py: written by Scaevolus 2009
 
 edited 2014
 """
-
+import asyncio
 import os
 import codecs
 import time
@@ -137,7 +137,8 @@ def log(event):
 
 
 # Log console separately to prevent lag
-@hook.event("*", threaded=False)
+@asyncio.coroutine
+@hook.event("*")
 def console_log(bot, event):
     """
     :type bot: cloudbot.core.bot.CloudBot

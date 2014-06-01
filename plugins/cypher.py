@@ -1,4 +1,5 @@
 import base64
+import asyncio
 import binascii
 
 from cloudbot import hook
@@ -35,9 +36,10 @@ def decode(password, encoded, notice):
     return "".join(dec)
 
 
-@hook.command
+@asyncio.coroutine
+@hook.command()
 def cypher(text, notice):
-    """cypher <pass> <string> -- Cyphers <string> with <password>.
+    """<pass> <string> - cyphers <string> with <password>
     :type text: str
     """
     split = text.split(None, 1)
@@ -49,9 +51,10 @@ def cypher(text, notice):
     return encode(password, plaintext)
 
 
-@hook.command
+@asyncio.coroutine
+@hook.command()
 def decypher(text, notice):
-    """decypher <pass> <string> -- Decyphers <string> with <password>.
+    """<pass> <string> - decyphers <string> with <password>
     :type text: str
     """
     split = text.split(None, 1)

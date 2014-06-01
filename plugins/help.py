@@ -1,15 +1,17 @@
 from operator import attrgetter
+import asyncio
 import re
 
 from cloudbot import hook
 
 
+@asyncio.coroutine
 @hook.command("help", autohelp=False)
 def help_command(text, conn, bot, notice, has_permission):
-    """help  -- Gives a list of commands/help for a command.
+    """[command] - gives help for [command], or lists all available commands if no command is specified
     :type text: str
-    :type conn: core.irc.BotConnection
-    :type bot: core.bot.CloudBot
+    :type conn: cloudbot.core.connection.BotConnection
+    :type bot: cloudbot.core.bot.CloudBot
     """
     if text:
         searching_for = text.lower().strip()

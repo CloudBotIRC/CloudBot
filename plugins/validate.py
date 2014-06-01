@@ -7,8 +7,7 @@ by Vladi
 from cloudbot import hook, http
 
 
-@hook.command('w3c')
-@hook.command
+@hook.command(["validate", "w3c"])
 def validate(text):
     """validate <url> -- Runs url through the w3c markup validator."""
 

@@ -5,11 +5,11 @@ from cloudbot import hook, http
 search_url = "http://search.atomz.com/search/?sp_a=00062d45-sp00000000"
 
 
-@hook.command
-def snopes(inp):
+@hook.command()
+def snopes(text):
     """snopes <topic> -- Searches snopes for an urban legend about <topic>."""
 
-    search_page = http.get_html(search_url, sp_q=inp, sp_c="1")
+    search_page = http.get_html(search_url, sp_q=text, sp_c="1")
     result_urls = search_page.xpath("//a[@target='_self']/@href")
 
     if not result_urls:

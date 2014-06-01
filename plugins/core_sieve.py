@@ -1,3 +1,4 @@
+import asyncio
 from cloudbot import bucket, hook
 
 TOKENS = 10
@@ -7,19 +8,21 @@ MESSAGE_COST = 5
 buckets = {}
 
 
+@asyncio.coroutine
 @hook.sieve
-def sieve_suite(bot, event, hook):
+def sieve_suite(bot, event, _hook):
     """
     :type bot: cloudbot.core.bot.CloudBot
     :type event: cloudbot.core.events.BaseEvent
+    :type _hook: cloudbot.core.pluginmanager.Hook
     """
     conn = event.conn
     # check ignore bots
-    if event.irc_command == 'PRIVMSG' and event.nick.endswith('bot') and hook.ignore_bots:
+    if event.irc_command == 'PRIVMSG' and event.nick.endswith('bot') and _hook.ignore_bots:
         return None
 
     # check acls
-    acl = conn.config.get('acls', {}).get(hook.function_name)
+    acl = conn.config.get('acls', {}).get(_hook.function_name)
     if acl:
         if 'deny-except' in acl:
             allowed_channels = list(map(str.lower, acl['deny-except']))
@@ -31,13 +34,13 @@ def sieve_suite(bot, event, hook):
                 return None
 
     # check disabled_commands
-    if hook.type == "command":
+    if _hook.type == "command":
         disabled_commands = conn.config.get('disabled_commands', [])
         if event.triggered_command in disabled_commands:
             return None
 
     # check permissions
-    allowed_permissions = hook.permissions
+    allowed_permissions = _hook.permissions
     if allowed_permissions:
         allowed = False
         for perm in allowed_permissions:
@@ -50,7 +53,7 @@ def sieve_suite(bot, event, hook):
             return None
 
     # check command spam tokens
-    if hook.type == "command":
+    if _hook.type == "command":
         uid = event.chan
 
         if not uid in buckets:

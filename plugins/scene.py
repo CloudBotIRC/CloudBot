@@ -4,7 +4,7 @@ from cloudbot import hook, http, timesince
 
 
 @hook.command("scene")
-@hook.command
+@hook.command()
 def pre(inp):
     """pre <query> -- searches scene releases using orlydb.com"""
 

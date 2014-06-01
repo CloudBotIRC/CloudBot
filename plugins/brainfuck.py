@@ -2,6 +2,7 @@
 http://brainfuck.sourceforge.net/brain.py"""
 
 import re
+import asyncio
 import random
 
 from cloudbot import hook
@@ -10,9 +11,10 @@ BUFFER_SIZE = 5000
 MAX_STEPS = 1000000
 
 
+@asyncio.coroutine
 @hook.command(["brainfuck", "bf"])
 def bf(text):
-    """bf <prog> -- Executes <prog> as Brainfuck code.
+    """<prog> - executes <prog> as Brainfuck code
     :type text: str
     """
 

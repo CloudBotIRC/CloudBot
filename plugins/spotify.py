@@ -28,7 +28,7 @@ def sptfy(inp, sptfy=False):
                 'class': 'messagebox_text'}).find('p').text.split("<br/>")[0])
             return message
     else:
-        return web.try_isgd(inp)
+        return web.try_shorten(inp)
 
 
 @hook.command('sptrack')

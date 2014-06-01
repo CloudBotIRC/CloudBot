@@ -76,6 +76,6 @@ def imgur(text):
         return "No images found (use .imgur <subreddit> nsfw to show explicit content)"
 
     if show_nsfw:
-        return "{} \x02NSFW\x02".format(web.isgd("http://imgur.com/" + ','.join(items)))
+        return "{} \x02NSFW\x02".format(web.try_shorten("http://imgur.com/" + ','.join(items)))
     else:
-        return web.isgd("http://imgur.com/" + ','.join(items))
+        return web.try_shorten("http://imgur.com/" + ','.join(items))

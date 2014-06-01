@@ -22,6 +22,6 @@ def osrc(text):
     # string to remove the trailing full stop.
     report = " ".join(report.split())[:-1]
 
-    short_url = web.try_isgd(url)
+    short_url = web.try_shorten(url)
 
     return "{} - {}".format(report, short_url)

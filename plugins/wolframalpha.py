@@ -18,7 +18,7 @@ def wolframalpha(text, bot):
     # get the URL for a user to view this query in a browser
     query_url = "http://www.wolframalpha.com/input/?i=" + \
                 http.quote_plus(text.encode('utf-8'))
-    short_url = web.try_isgd(query_url)
+    short_url = web.try_shorten(query_url)
 
     pod_texts = []
     for pod in result.xpath("//pod[@primary='true']"):

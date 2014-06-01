@@ -27,10 +27,7 @@ def rss(text, message):
 
     for row in result.rows:
         title = formatting.truncate_str(row["title"], 100)
-        try:
-            link = web.isgd(row["link"])
-        except (web.ShortenError, http.HTTPError, http.URLError):
-            link = row["link"]
+        link = web.try_shorten(row["link"])
         message("{} - {}".format(title, link))
 
 

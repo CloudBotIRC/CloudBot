@@ -80,7 +80,7 @@ def recipe(text):
         return "Could not parse recipe: {}".format(e)
 
     name = data["name"].strip()
-    return "Try eating \x02{}!\x02 - {}".format(name, web.try_isgd(url))
+    return "Try eating \x02{}!\x02 - {}".format(name, web.try_shorten(url))
 
 
 @hook.command(autohelp=False)
@@ -103,4 +103,4 @@ def dinner():
     if censor:
         text = text.replace("FUCK", "F**K")
 
-    return "{} - {}".format(text, web.try_isgd(url))
+    return "{} - {}".format(text, web.try_shorten(url))

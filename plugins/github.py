@@ -18,7 +18,7 @@ def issues(text):
         r = requests.get('https://api.github.com/repos/{}/issues/{}'.format(repo, issue))
         j = r.json()
 
-        url = web.shorten(j['html_url'], service='git.io')
+        url = web.try_shorten(j['html_url'], service='git.io')
         number = j['number']
         title = j['title']
         summary = formatting.truncate_str(j['body'].split('\n')[0], 25)

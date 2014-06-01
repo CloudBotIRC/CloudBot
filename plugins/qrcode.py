@@ -15,4 +15,4 @@ def qrcode(text):
 
     link = http.prepare_url("http://chart.googleapis.com/chart", args)
 
-    return web.try_isgd(link)
+    return web.try_shorten(link)

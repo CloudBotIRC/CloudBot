@@ -99,7 +99,7 @@ def format_output(data):
     version_number = data['versions'][0]['version']
 
     bukkit_versions = ", ".join(current_version['game_versions'])
-    link = web.try_isgd(current_version['link'])
+    link = web.try_shorten(current_version['link'])
 
     if description:
         line_a = "\x02{}\x02, by \x02{}\x02 - {} - ({}) \x02{}".format(name, authors, description, stage, url)

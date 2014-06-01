@@ -32,6 +32,6 @@ def fact():
                 attempts += 1
                 continue
 
-    url = web.try_isgd(link)
+    url = web.try_shorten(link)
 
     return "{} - {}".format(fact_data, url)

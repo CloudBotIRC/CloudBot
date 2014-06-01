@@ -1,36 +1,152 @@
 """ web.py - web services and more """
 
+import json
+
 import requests
 
-class ShortenError(Exception):
+# Constants
+
+DEFAULT_SHORTENER = 'is.gd'
+DEFAULT_PASTEBIN = 'hastebin'
+
+HASTEBIN_SERVER = 'http://hastebin.com'
+
+# Public API
+
+
+def shorten(url, custom=None, service=DEFAULT_SHORTENER):
+    impl = shorteners[service]
+    return impl.shorten(url, custom)
+
+
+def try_shorten(url, custom=None, service=DEFAULT_SHORTENER):
+    impl = shorteners[service]
+    return impl.try_shorten(url, custom)
+
+
+def expand(url, service=None):
+    if service:
+            impl = shorteners[service]
+    else:
+        for name in shorteners:
+            if name in url:
+                impl = shorteners[name]
+                break
+            impl = Shortener()
+    return impl.expand(url)
+
+
+def paste(data, ext='txt', service=DEFAULT_PASTEBIN):
+    impl = shorteners[service]
+    return impl.paste(data, ext)
+
+
+class ServiceError(Exception):
     def __init__(self, message, request):
         self.message = message
         self.request = request
 
     def __str__(self):
-        return "[HTTP {}] {}".format(self.request.status_code, self.message)
-        
+        return '[HTTP {}] {}'.format(self.request.status_code, self.message)
+
+
 class Shortener:
+    def __init__(self):
+        pass
+
     def shorten(self, url, custom=None):
         return url
-    
+
     def try_shorten(self, url, custom=None):
         try:
             return self.shorten(url, custom)
-        except ShortenError as e:
+        except ServiceError:
             return url
 
+    def expand(self, url):
+        r = requests.get(url)
+
+        if r.url != url:
+            return r.url
+        else:
+            raise ServiceError('That URL does not exist', r)
+
+
+class Pastebin:
+    def __init__(self):
+        pass
+
+    def paste(self, data, ext):
+        raise NotImplementedError
+
+# Internal Implementations
+
+shorteners = {}
+pastebins = {}
+
+
+def _shortener(name):
+    def _decorate(impl):
+        shorteners[name] = impl()
+
+    return _decorate
+
+
+def _pastebin(name):
+    def _decorate(impl):
+        pastebins[name] = impl()
+
+    return _decorate
+
+
+@_shortener('is.gd')
 class Isgd(Shortener):
     def shorten(self, url, custom=None):
         p = {'url': url, 'shorturl': custom, 'format': 'json'}
         r = requests.get('http://is.gd/create.php', params=p)
-        
         j = r.json()
+
         if 'shorturl' in j:
             return j['shorturl']
         else:
-            raise ShortenError(j['errormessage'], r)
-        
+            raise ServiceError(j['errormessage'], r)
+
+    def expand(self, url):
+        p = {'shorturl': url, 'format': 'json'}
+        r = requests.get('http://is.gd/forward.php', params=p)
+        j = r.json()
+
+        if 'url' in j:
+            return j['url']
+        else:
+            raise ServiceError(j['errormessage'], r)
+
+
+@_shortener('goo.gl')
+class Googl(Shortener):
+    def shorten(self, url, custom=None):
+        h = {'content-type': 'application/json'}
+        p = {'longUrl': url}
+        r = requests.post('https://www.googleapis.com/urlshortener/v1/url', data=json.dumps(p), headers=h)
+        j = r.json()
+
+        if 'error' not in j:
+            return j['id']
+        else:
+            raise ServiceError(j['error']['message'], r)
+
+    def expand(self, url):
+        p = {'shortUrl': url}
+        r = requests.get('https://www.googleapis.com/urlshortener/v1/url', params=p)
+        j = r.json()
+
+        if 'error' not in j:
+            return j['longUrl']
+        else:
+            raise ServiceError(j['error']['message'], r)
+
+
+@_shortener('git.io')
 class Gitio(Shortener):
     def shorten(self, url, custom=None):
         p = {'url': url, 'code': custom}
@@ -39,14 +155,20 @@ class Gitio(Shortener):
         if r.status_code == requests.codes.created:
             s = r.headers['location']
             if custom and not custom in s:
-                raise ShortenError("That URL is already in use.", r)
+                raise ServiceError('That URL is already in use', r)
             else:
                 return s
         else:
-            raise ShortenError("Unknown Error", r)
+            raise ServiceError(r.text, r)
 
-def haste(data, ext='txt', server='http://hastebin.com'):
-    r = requests.post(server + '/documents', data=data)
-    j = r.json()
 
-    return "{}/{}.{}".format(server, j['key'], ext)
+@_pastebin('hastebin')
+class Hastebin(Pastebin):
+    def paste(self, data, ext):
+        r = requests.post(HASTEBIN_SERVER + '/documents', data=data)
+        j = r.json()
+
+        if r.status_code is requests.codes.ok:
+            return '{}/{}.{}'.format(HASTEBIN_SERVER + '/documents', j['key'], ext)
+        else:
+            raise ServiceError(j['message'], r)

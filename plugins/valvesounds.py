@@ -29,7 +29,7 @@ def get_sound_info(game, search):
     if len(items) == 1:
         return items[0]
     else:
-        return "{} (and {} others: {})".format(items[0], len(items) - 1, web.haste("\n".join(items)))
+        return "{} (and {} others: {})".format(items[0], len(items) - 1, web.paste("\n".join(items)))
 
 
 @hook.command

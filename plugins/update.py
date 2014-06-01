@@ -12,7 +12,7 @@ def update():
     except Exception as e:
         return e
     if "\n" in pull:
-        return web.haste(pull)
+        return web.paste(pull)
     else:
         return pull
 

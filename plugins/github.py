@@ -1,42 +1,40 @@
-from cloudbot import hook, web, formatting
-
 import requests
+
+from cloudbot import hook, web, formatting
 
 shortcuts = {
     'cloudbot': 'CloudBotIRC/Refresh'
 }
+
 
 @hook.command
 def issues(text):
     """issues <repo> [issue] - Get issues for <repo>. If [issue] is specified, summarize that issue."""
     args = text.split()
     repo = args[0] if args[0] not in shortcuts else shortcuts[args[0]]
-    issue = args[1] if len(args) > 1 else None   
+    issue = args[1] if len(args) > 1 else None
 
     if issue:
-        r = requests.get("https://api.github.com/repos/{}/issues/{}".format(repo, issue))
+        r = requests.get('https://api.github.com/repos/{}/issues/{}'.format(repo, issue))
         j = r.json()
-        
-        gitio = web.Gitio()
 
-        url          = gitio.shorten(j["html_url"])
-        number       = j["number"]
-        user         = j["user"]["login"]
-        title        = j["title"]
-        summary      = formatting.truncate_str(j["body"].split('\n')[0], 25)
-        if j["state"] == "open":
-            state    = "\x033\x02OPEN\x02\x0f"
+        url = web.shorten(j['html_url'], service='git.io')
+        number = j['number']
+        title = j['title']
+        summary = formatting.truncate_str(j['body'].split('\n')[0], 25)
+        if j['state'] == 'open':
+            state = '\x033\x02Opened\x02\x0f by {}'.format(j['user']['login'])
         else:
-            state    = "\x034\x02CLOSED\x02\x0f by {}".format(j["closed_by"]["login"])
+            state = '\x034\x02Closed\x02\x0f by {}'.format(j['closed_by']['login'])
 
-        return "Issue: #{} ({}) by {}: {} | {} {}".format(number, state, user, title, summary, url)
+        return 'Issue #{} ({}): {} | {}: {}'.format(number, state, url, title, summary)
     else:
-        r = requests.get("https://api.github.com/repos/{}/issues".format(repo))
+        r = requests.get('https://api.github.com/repos/{}/issues'.format(repo))
         j = r.json()
-        
+
         count = len(j)
         if count is 0:
-            return "Repository has no open issues."
+            return 'Repository has no open issues.'
         else:
-            return "Repository has {} open issues.".format(count)
+            return 'Repository has {} open issues.'.format(count)
 

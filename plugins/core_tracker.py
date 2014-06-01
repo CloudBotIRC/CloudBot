@@ -9,7 +9,7 @@ nick_re = re.compile(":(.+?)!")
 
 
 @asyncio.coroutine
-@hook.irc_raw("KICK")
+@hook.event("KICK")
 def on_kick(irc_paramlist, conn, chan):
     """
     :type irc_paramlist: list[str]
@@ -25,7 +25,7 @@ def on_kick(irc_paramlist, conn, chan):
 
 
 @asyncio.coroutine
-@hook.irc_raw("NICK")
+@hook.event("NICK")
 def on_nick(irc_paramlist, bot, conn, irc_raw):
     """
     :type irc_paramlist: list[str]

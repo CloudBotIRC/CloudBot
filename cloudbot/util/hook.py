@@ -165,8 +165,8 @@ def command(param=None, **kwargs):
         return lambda func: _command_hook(func, alias_param=param)
 
 
-def irc_raw(triggers_param, **kwargs):
-    """External raw decorator. Must be used as a function to return a decorator
+def event(triggers_param, **kwargs):
+    """External event decorator. Must be used as a function to return a decorator
     :type triggers_param: str | list[str]
     """
 

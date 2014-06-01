@@ -4,7 +4,8 @@ import re
 
 from sqlalchemy import Table, Column, String
 
-from cloudbot import botvars, hook, http, formatting, pyexec
+from cloudbot import botvars, hook, http, formatting
+from cloudbot.util import web
 
 re_lineends = re.compile(r'[\r\n]*')
 
@@ -151,7 +152,7 @@ def factoid(inp, input, db, message, action):
             variables = 'input="""{}"""; nick="{}"; chan="{}"; bot_nick="{}";'.format(arguments.replace('"', '\\"'),
                                                                                       input.nick, input.chan,
                                                                                       input.conn.nick)
-            result = pyexec.eval_py(variables + code)
+            result = web.pyeval(variables + code)
         else:
             result = data
 

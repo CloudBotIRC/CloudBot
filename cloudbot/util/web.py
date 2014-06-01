@@ -25,6 +25,8 @@ def try_shorten(url, custom=None, service=DEFAULT_SHORTENER):
 
 
 def expand(url, service=None):
+    impl = None
+
     if service:
             impl = shorteners[service]
     else:
@@ -32,13 +34,29 @@ def expand(url, service=None):
             if name in url:
                 impl = shorteners[name]
                 break
-            impl = Shortener()
+    if impl is None:
+        impl = Shortener()
     return impl.expand(url)
 
 
 def paste(data, ext='txt', service=DEFAULT_PASTEBIN):
-    impl = shorteners[service]
+    impl = pastebins[service]
     return impl.paste(data, ext)
+
+
+def pyeval(code, pastebin=True):
+    p = {'input': code}
+    r = requests.post('http://pyeval.appspot.com/exec', data=p)
+
+    p = {'id': r.text}
+    r = requests.get('http://pyeval.appspot.com/exec', params=p)
+    j = r.json()
+
+    output = j['output'].rstrip('\n')
+    if '\n' in output and pastebin:
+        return paste(output)
+    else:
+        return output
 
 
 class ServiceError(Exception):
@@ -48,36 +66,6 @@ class ServiceError(Exception):
 
     def __str__(self):
         return '[HTTP {}] {}'.format(self.request.status_code, self.message)
-
-
-class Shortener:
-    def __init__(self):
-        pass
-
-    def shorten(self, url, custom=None):
-        return url
-
-    def try_shorten(self, url, custom=None):
-        try:
-            return self.shorten(url, custom)
-        except ServiceError:
-            return url
-
-    def expand(self, url):
-        r = requests.get(url)
-
-        if r.url != url:
-            return r.url
-        else:
-            raise ServiceError('That URL does not exist', r)
-
-
-class Pastebin:
-    def __init__(self):
-        pass
-
-    def paste(self, data, ext):
-        raise NotImplementedError
 
 # Internal Implementations
 
@@ -98,6 +86,33 @@ def _pastebin(name):
 
     return _decorate
 
+class Shortener:
+    def __init__(self):
+        pass
+
+    def shorten(self, url, custom=None):
+        return url
+
+    def try_shorten(self, url, custom=None):
+        try:
+            return self.shorten(url, custom)
+        except ServiceError:
+            return url
+
+    def expand(self, url):
+        r = requests.get(url, allow_redirects=False)
+
+        if 'location' in r.headers:
+            return r.headers['location']
+        else:
+            raise ServiceError('That URL does not exist', r)
+
+class Pastebin:
+    def __init__(self):
+        pass
+
+    def paste(self, data, ext):
+        raise NotImplementedError
 
 @_shortener('is.gd')
 class Isgd(Shortener):
@@ -169,6 +184,6 @@ class Hastebin(Pastebin):
         j = r.json()
 
         if r.status_code is requests.codes.ok:
-            return '{}/{}.{}'.format(HASTEBIN_SERVER + '/documents', j['key'], ext)
+            return '{}/{}.{}'.format(HASTEBIN_SERVER, j['key'], ext)
         else:
             raise ServiceError(j['message'], r)

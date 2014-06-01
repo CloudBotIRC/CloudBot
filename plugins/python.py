@@ -1,9 +1,18 @@
 from cloudbot import hook
-from cloudbot.util.pyexec import eval_py
+from cloudbot.util import web
 
 
 @hook.command
 def python(text):
-    """python <prog> -- Executes <prog> as Python code."""
+    """python <input> -- Executes <input> as Python code."""
 
-    return eval_py(text)
+    output = web.pyeval(text, pastebin=False)
+
+    if '\n' in output:
+        if 'Traceback (most recent call last):' in output:
+            status = 'Error: '
+        else:
+            status = 'Success: '
+        return status + web.paste(output)
+    else:
+        return output

@@ -145,20 +145,6 @@ def _get_hook(func, hook_type):
     return None
 
 
-def _process_options(func, kwargs):
-    if not hasattr(func, "_cloudbot_hook"):
-        func._cloudbot_hook = {}
-
-    if not "options" in func._cloudbot_hook:
-        func._cloudbot_hook["options"] = {}
-
-    options = func._cloudbot_hook["options"]
-    if "threaded" in kwargs:
-        options["threaded"] = kwargs.pop("threaded")
-    if "async" in kwargs:
-        options["threaded"] = not kwargs.pop("async")
-
-
 def async(param=None):
     """External async decorator. Can be used directly as a decorator, or with args to return a decorator.
     :type param: function
@@ -205,7 +191,6 @@ def command(param=None, **kwargs):
     """
 
     def _command_hook(func, alias_param=None):
-        _process_options(func, kwargs)
         hook = _get_hook(func, "command")
         if hook is None:
             hook = _CommandHook(func)
@@ -226,7 +211,6 @@ def event(triggers_param, **kwargs):
     """
 
     def _raw_hook(func):
-        _process_options(func, kwargs)
         hook = _get_hook(func, "irc_raw")
         if hook is None:
             hook = _RawHook(func)
@@ -248,7 +232,6 @@ def regex(regex_param, flags=0, **kwargs):
     """
 
     def _regex_hook(func):
-        _process_options(func, kwargs)
         hook = _get_hook(func, "regex")
         if hook is None:
             hook = _RegexHook(func)
@@ -269,7 +252,6 @@ def sieve(param=None, **kwargs):
     """
 
     def _sieve_hook(func):
-        _process_options(func, kwargs)
         assert len(inspect.getargspec(func).args) == 3, \
             "Sieve plugin has incorrect argument count. Needs params: bot, input, plugin"
 
@@ -293,7 +275,6 @@ def onload(param=None, **kwargs):
     """
 
     def _onload_hook(func):
-        _process_options(func, kwargs)
         hook = _get_hook(func, "onload")
         if hook is None:
             hook = _Hook(func, "onload")

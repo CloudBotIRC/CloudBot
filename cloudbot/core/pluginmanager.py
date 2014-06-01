@@ -31,15 +31,7 @@ def find_hooks(parent, module):
             # if it has cloudbot hook
             func_hooks = func._cloudbot_hook
 
-            if "options" in func_hooks:
-                options = func_hooks["options"]
-            else:
-                options = {}
-
             for hook_type, func_hook in func_hooks.items():
-                if hook_type == "options":
-                    continue
-                func_hook.kwargs.update(options)
                 type_lists[hook_type].append(_hook_name_to_plugin[hook_type](parent, func_hook))
 
             # delete the hook to free memory
@@ -520,7 +512,7 @@ class Hook:
     :type single_thread: bool
     """
 
-    def __init__(self, _type, plugin, func_hook, default_threaded=True):
+    def __init__(self, _type, plugin, func_hook):
         """
         :type _type: str
         :type plugin: Plugin
@@ -535,13 +527,10 @@ class Hook:
         if self.required_args is None:
             self.required_args = []
 
-        if func_hook.kwargs.pop("threaded", default_threaded) and \
-                not (asyncio.iscoroutine(self.function) or asyncio.iscoroutinefunction(self.function)):
-            self.threaded = True
-        else:
+        if asyncio.iscoroutine(self.function) or asyncio.iscoroutinefunction(self.function):
             self.threaded = False
-            if not asyncio.iscoroutine(self.function):
-                self.function = asyncio.coroutine(self.function)
+        else:
+            self.threaded = True
 
         self.ignore_bots = func_hook.kwargs.pop("ignorebots", False)
         self.permissions = func_hook.kwargs.pop("permissions", [])
@@ -641,7 +630,7 @@ class SieveHook(Hook):
         :type sieve_hook: cloudbot.util.hook._SieveHook
         """
         # We don't want to thread sieves by default - this is retaining old behavior for compatibility
-        super().__init__("sieve", plugin, sieve_hook, default_threaded=False)
+        super().__init__("sieve", plugin, sieve_hook)
 
     def __repr__(self):
         return "Sieve[{}]".format(Hook.__repr__(self))

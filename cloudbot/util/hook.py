@@ -116,18 +116,18 @@ class _RawHook(_Hook):
         _Hook.__init__(self, function, "irc_raw")
         self.triggers = set()
 
-    def add_hook(self, event_param, kwargs):
+    def add_hook(self, trigger_param, kwargs):
         """
-        :type event_param: list[str] | str
+        :type trigger_param: list[str] | str
         :type kwargs: dict[str, unknown]
         """
         self._add_hook(kwargs)
 
-        if isinstance(event_param, str):
-            self.triggers.add(event_param)
+        if isinstance(trigger_param, str):
+            self.triggers.add(trigger_param)
         else:
-            assert isinstance(event_param, list)
-            self.triggers.update(event_param)
+            assert isinstance(trigger_param, list)
+            self.triggers.update(trigger_param)
 
 
 def _add_hook(func, hook):
@@ -143,46 +143,6 @@ def _get_hook(func, hook_type):
         return func._cloudbot_hook[hook_type]
 
     return None
-
-
-def async(param=None):
-    """External async decorator. Can be used directly as a decorator, or with args to return a decorator.
-    :type param: function
-    """
-
-    def _async_hook(func):
-        if not hasattr(func, "_cloudbot_hook"):
-            func._cloudbot_hook = {}
-        if not "options" in func._cloudbot_hook:
-            func._cloudbot_hook["options"] = {}
-        options = func._cloudbot_hook["options"]
-        options["threaded"] = False
-        return func
-
-    if callable(param):  # this decorator is being used directly
-        return _async_hook(param)
-    else:  # this decorator is being used indirectly, so return a decorator function
-        return lambda func: _async_hook(func)
-
-
-def threaded(param=None):
-    """External async decorator. Can be used directly as a decorator, or with args to return a decorator.
-    :type param: function
-    """
-
-    def _async_hook(func):
-        if not hasattr(func, "_cloudbot_hook"):
-            func._cloudbot_hook = {}
-        if not "options" in func._cloudbot_hook:
-            func._cloudbot_hook["options"] = {}
-        options = func._cloudbot_hook["options"]
-        options["threaded"] = True
-        return func
-
-    if callable(param):  # this decorator is being used directly
-        return _async_hook(param)
-    else:  # this decorator is being used indirectly, so return a decorator function
-        return lambda func: _async_hook(func)
 
 
 def command(param=None, **kwargs):
@@ -205,8 +165,8 @@ def command(param=None, **kwargs):
         return lambda func: _command_hook(func, alias_param=param)
 
 
-def event(triggers_param, **kwargs):
-    """External event decorator. Must be used as a function to return a decorator
+def irc_raw(triggers_param, **kwargs):
+    """External raw decorator. Must be used as a function to return a decorator
     :type triggers_param: str | list[str]
     """
 

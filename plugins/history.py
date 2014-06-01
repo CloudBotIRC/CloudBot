@@ -43,7 +43,7 @@ def track_history(event, message_time, conn):
     history.append(data)
 
 
-@hook.event('PRIVMSG', ignorebots=False, singlethread=True)
+@hook.irc_raw('PRIVMSG', ignorebots=False, singlethread=True)
 def chat_tracker(event, db, conn):
     message_time = time.time()
     track_seen(event, message_time, db, conn)

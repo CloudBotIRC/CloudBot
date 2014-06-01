@@ -70,7 +70,7 @@ def add_tell(db, server, sender, target, message):
     db.commit()
 
 
-@hook.event('PRIVMSG', singlethread=True)
+@hook.irc_raw('PRIVMSG', singlethread=True)
 def tellinput(event, notice, db, nick, conn):
     if 'showtells' in event.irc_message.lower():
         return

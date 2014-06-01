@@ -110,7 +110,7 @@ def get_log_stream(server, chan):
     return log_stream
 
 
-@hook.event("*", singlethread=True)
+@hook.irc_raw("*", singlethread=True)
 def log(event):
     """
     :type event: cloudbot.core.events.BaseEvent
@@ -138,7 +138,7 @@ def log(event):
 
 # Log console separately to prevent lag
 @asyncio.coroutine
-@hook.event("*")
+@hook.irc_raw("*")
 def console_log(bot, event):
     """
     :type bot: cloudbot.core.bot.CloudBot

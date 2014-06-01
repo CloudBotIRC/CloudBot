@@ -535,7 +535,8 @@ class Hook:
         if self.required_args is None:
             self.required_args = []
 
-        if func_hook.kwargs.pop("threaded", default_threaded) and not asyncio.iscoroutine(self.function):
+        if func_hook.kwargs.pop("threaded", default_threaded) and \
+                not (asyncio.iscoroutine(self.function) or asyncio.iscoroutinefunction(self.function)):
             self.threaded = True
         else:
             self.threaded = False

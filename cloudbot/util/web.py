@@ -26,13 +26,17 @@ def try_shorten(url, custom=None, service=DEFAULT_SHORTENER):
 
 def expand(url, service=None):
     if service:
-            impl = shorteners[service]
+        impl = shorteners[service]
     else:
+        impl = None
         for name in shorteners:
             if name in url:
                 impl = shorteners[name]
                 break
+
+        if impl is None:
             impl = Shortener()
+
     return impl.expand(url)
 
 
@@ -64,10 +68,10 @@ class Shortener:
             return url
 
     def expand(self, url):
-        r = requests.get(url)
+        r = requests.get(url, allow_redirects=False)
 
-        if r.url != url:
-            return r.url
+        if 'location' in r.headers:
+            return r.headers['location']
         else:
             raise ServiceError('That URL does not exist', r)
 

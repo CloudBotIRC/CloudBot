@@ -1,7 +1,11 @@
 # Plugin by GhettoWizard and Scaevolus
+
 import re
 
-from cloudbot import hook, http
+import requests
+from lxml import html
+
+from cloudbot import hook
 
 
 def format_output(h, definition, show_examples):
@@ -50,7 +54,11 @@ def define(text):
 
     url = 'http://ninjawords.com/'
 
-    h = http.get_html(url + http.quote_plus(text))
+    response = requests.get(url + text)
+    if response.status_code != requests.codes.ok:
+        return "Error reaching ninjawords.com: {}".format(response.status_code)
+
+    h = html.fromstring(response.text)
 
     definition = h.xpath('//dd[@class="article"] | '
                          '//div[@class="definition"] |'
@@ -78,7 +86,11 @@ def etymology(text):
 
     url = 'http://www.etymonline.com/index.php'
 
-    h = http.get_html(url, term=text)
+    response = requests.get(url, params={"term": text})
+    if response.status_code != requests.codes.ok:
+        return "Error reaching etymonline.com: {}".format(response.status_code)
+
+    h = html.fromstring(response.text)
 
     etym = h.xpath('//dl')
 

@@ -1,9 +1,13 @@
 import re
 from urllib import parse
 
-from cloudbot import hook, http, formatting
+from lxml import html
 
-api_url = "http://encyclopediadramatica.se/api.php?action=opensearch"
+import requests
+
+from cloudbot import hook, formatting
+
+api_url = "http://encyclopediadramatica.se/api.php"
 ed_url = "http://encyclopediadramatica.se/"
 
 
@@ -11,14 +15,25 @@ ed_url = "http://encyclopediadramatica.se/"
 def drama(text):
     """<phrase> - gets the first paragraph of the Encyclopedia Dramatica article on <phrase>"""
 
-    data = http.get_json(api_url, search=text)
+    search_response = requests.get(api_url, params={"action": "opensearch", "search": text})
+
+    if search_response.status_code != requests.codes.ok:
+        return "Error searching: {}".format(search_response.status_code)
+
+    data = search_response.json()
 
     if not data[1]:
         return "No results found."
     article_name = data[1][0].replace(' ', '_')
 
     url = ed_url + parse.quote(article_name, '')
-    page = http.get_html(url)
+
+    page_response = requests.get(url)
+
+    if page_response.status_code != requests.codes.ok:
+        return "Error getting page: {}".format(search_response.status_code)
+
+    page = html.fromstring(page_response.text)
 
     for p in page.xpath('//div[@id="bodyContent"]/p'):
         if p.text_content():

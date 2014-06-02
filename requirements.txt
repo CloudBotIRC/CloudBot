@@ -9,3 +9,4 @@ pycrypto
 pbkdf2
 requests
 psutil
+twitter

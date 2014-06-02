@@ -254,5 +254,5 @@ class CloudBot:
                     regex_event = RegexEvent(bot=self, hook=regex_hook, match=match, base_event=event)
                     tasks.append(self.plugin_manager.launch(regex_hook, regex_event))
 
-            # wait for all the tasks we've spawned before exiting
-            yield from asyncio.gather(*tasks, loop=self.loop)
+        # wait for all the tasks we've spawned before exiting
+        yield from asyncio.gather(*tasks, loop=self.loop)

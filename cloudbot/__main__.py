@@ -12,7 +12,13 @@ if sys.version_info < (3, 4, 0):
 print('CloudBot3 <http://git.io/refresh>')
 
 # set up environment
-os.chdir(sys.path[0] or '.')  # do stuff relative to the install directory
+
+# we need to make sure we are in the install directory
+path0 = os.path.realpath(sys.path[0] or '.')
+cloudbot_dir = os.path.realpath(os.path.dirname(__file__))
+if path0 == cloudbot_dir:
+    sys.path[0] = path0 = os.path.dirname(cloudbot_dir)
+os.chdir(path0)
 
 # add 'lib' to path for libraries (currently unused)
 if os.path.exists(os.path.abspath('lib')):

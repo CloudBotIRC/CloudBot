@@ -18,8 +18,9 @@ sudo pip3 install -r /vagrant/requirements.txt
 ln -sf /vagrant /home/vagrant/bot
 
 # create start.sh script
-cat > /home/vagrant/start.sh << EOF
-#!/usr/bin/env bash
-cd /home/vagrant/bot
-python3 -m cloudbot
-EOF
+cat > /usr/local/bin/start-bot <<- _EOF_
+    #!/usr/bin/env bash
+    cd /home/vagrant/bot
+    python3 -m cloudbot
+_EOF_
+chmod +x /usr/local/bin/start-bot

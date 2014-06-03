@@ -4,12 +4,15 @@
 sudo apt-get update
 
 # install things:
-# pip               so we can install rependencies
+# python3.4-dev     so we can install things with pip
 # git               so pip can clone from repository
-# libenchant-dev    so python-enchant can use it
-# python3-lxml      so we can use precompiled binaries instead of compiling them
+# libenchant1c2a    so python-enchant can use it
+# libxml2-dev       python-lxml dependency
+# lib-xslt-dev      python-lxml dependency
+# zlib1g-dev        python-lxml dependency
+sudo apt-get install -y python3-pip git libenchant1c2a libxml2-dev lib-xslt-dev zlib1g-dev
 
-sudo apt-get install -y python3-pip git libenchant-dev python3-lxml
+curl -Ls https://bootstrap.pypa.io/get-pip.py | python3.4
 
 # install requirements using pip
 sudo pip3 install -r /vagrant/requirements.txt

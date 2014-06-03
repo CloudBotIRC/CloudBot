@@ -43,6 +43,7 @@ class CloudBot:
     :type db_factory: sqlalchemy.orm.session.sessionmaker
     :type db_session: sqlalchemy.orm.scoping.scoped_session
     :type db_metadata: sqlalchemy.sql.schema.MetaData
+    :type loop: asyncio.events.AbstractEventLoop
     """
 
     def __init__(self, loop=asyncio.get_event_loop()):

@@ -154,7 +154,7 @@ class PluginManager:
 
         # run onload hooks
         for onload_hook in plugin.run_on_load:
-            success = yield from self.launch(onload_hook, events.BaseEvent(bot=self.bot))
+            success = yield from self.launch(onload_hook, events.BaseEvent(bot=self.bot, hook=onload_hook))
             if not success:
                 self.bot.logger.warning(
                     "Not registering hooks from plugin {}: onload hook errored".format(plugin.title))
@@ -277,14 +277,7 @@ class PluginManager:
         :type event: cloudbot.core.events.BaseEvent
         :rtype: list
         """
-        # Does the command need DB access?
-        uses_db = "db" in hook.required_args
         parameters = []
-        if uses_db:
-            # create SQLAlchemy session
-            self.bot.logger.debug("Opened database session for {}".format(hook.description))
-            event.db = self.bot.db_session()
-
         for required_arg in hook.required_args:
             if hasattr(event, required_arg):
                 value = getattr(event, required_arg)
@@ -294,44 +287,40 @@ class PluginManager:
                                       .format(hook.description, required_arg))
                 self.bot.logger.debug("Valid arguments are: {} ({})".format(dir(event), event))
                 return None
-        return uses_db, parameters
+        return parameters
 
     def _execute_hook_threaded(self, hook, event):
-        value = self._prepare_parameters(hook, event)
-        if value is None:
+        """
+        :type hook: Hook
+        :type event: cloudbot.core.events.BaseEvent
+        """
+        event.prepare_threaded()
+
+        parameters = self._prepare_parameters(hook, event)
+        if parameters is None:
             return None
-        create_db, parameters = value
-        if create_db:
-            # create SQLAlchemy session
-            self.bot.logger.debug("Opened database session for {}".format(hook.description))
-            event.db = event.bot.db_session()
 
         try:
             return hook.function(*parameters)
         finally:
-            # ensure that the database session is closed
-            if create_db:
-                self.bot.logger.debug("Closed database session for {}".format(hook.description))
-                event.db.close()
+            event.close_threaded()
 
     @asyncio.coroutine
     def _execute_hook_sync(self, hook, event):
-        value = self._prepare_parameters(hook, event)
-        if value is None:
+        """
+        :type hook: Hook
+        :type event: cloudbot.core.events.BaseEvent
+        """
+        yield from event.prepare()
+
+        parameters = self._prepare_parameters(hook, event)
+        if parameters is None:
             return None
-        create_db, parameters = value
-        if create_db:
-            # create SQLAlchemy session
-            self.bot.logger.debug("Opened database session for {}".format(hook.description))
-            event.db = self.bot.db_session()
 
         try:
-            return hook.function(*parameters)
+            return (yield from hook.function(*parameters))
         finally:
-            # ensure that the database session is closed
-            if create_db:
-                self.bot.logger.debug("Closed database session for {}".format(hook.description))
-                event.db.close()
+            yield from event.close()
 
     @asyncio.coroutine
     def _execute_hook(self, hook, event):
@@ -468,6 +457,7 @@ class Plugin:
         # plugin is reloaded
         self.tables = find_tables(code)
 
+    @asyncio.coroutine
     def create_tables(self, bot):
         """
         Creates all sqlalchemy Tables that are registered in this plugin
@@ -480,8 +470,8 @@ class Plugin:
             bot.logger.info("Registering tables for {}".format(self.title))
 
             for table in self.tables:
-                if not table.exists(bot.db_engine):
-                    table.create(bot.db_engine)
+                if not (yield from bot.loop.run_in_executor(None, table.exists, bot.db_engine)):
+                    yield from bot.loop.run_in_executor(None, table.create, bot.db_engine)
 
     def unregister_tables(self, bot):
         """

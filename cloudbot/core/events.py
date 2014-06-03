@@ -1,3 +1,7 @@
+import asyncio
+import concurrent.futures
+
+
 class BaseEvent:
     """
     :type bot: cloudbot.core.bot.CloudBot
@@ -12,6 +16,8 @@ class BaseEvent:
     :type user: str
     :type host: str
     :type mask: str
+    :type db: sqlalchemy.orm.Session
+    :type db_executor: concurrent.futures.ThreadPoolExecutor
     """
 
     def __init__(self, bot=None, conn=None, hook=None, base_event=None, irc_raw=None, irc_prefix=None, irc_command=None,
@@ -31,6 +37,8 @@ class BaseEvent:
         :type host: str
         :type mask: str
         """
+        self.db = None
+        self.db_executor = None
         self.bot = bot
         self.conn = conn
         self.hook = hook
@@ -42,6 +50,10 @@ class BaseEvent:
                 self.conn = base_event.conn
             if self.hook is None and base_event.hook is not None:
                 self.hook = base_event.hook
+            if self.db is None and base_event.db is not None:
+                self.db = base_event.db
+            if self.db_executor is None and base_event.db_executor is not None:
+                self.db_executor = base_event.db_executor
             self.irc_raw = base_event.irc_raw
             self.irc_prefix = base_event.irc_prefix
             self.irc_command = base_event.irc_command
@@ -61,6 +73,81 @@ class BaseEvent:
             self.user = user
             self.host = host
             self.mask = mask
+
+    @asyncio.coroutine
+    def prepare(self):
+        """
+        Initializes this event to be run through it's hook
+
+        Mainly, initializes a database object on this event, if the hook requires it.
+
+        This method is for when the hook is *not* threaded (event.hook.threaded is False).
+        If you need to add a db to a threaded hook, use prepare_threaded.
+        """
+
+        if self.hook is None:
+            raise ValueError("event.hook is required to prepare an event")
+
+        if "db" in self.hook.required_args:
+            self.bot.logger.debug("Opening database session for {}:threaded=False".format(self.hook.description))
+
+            # we're running a coroutine hook with a db, so initialise an executor pool
+            self.db_executor = concurrent.futures.ThreadPoolExecutor(1)
+            # be sure to initialize the db in the database executor, so it will be accesssible in that thread.
+            self.db = yield from self.async(self.bot.db_session)
+
+    def prepare_threaded(self):
+        """
+        Initializes this event to be run through it's hook
+
+        Mainly, initializes the database object on this event, if the hook requires it.
+
+        This method is for when the hook is threaded (event.hook.threaded is True).
+        If you need to add a db to a coroutine hook, use prepare.
+        """
+
+        if self.hook is None:
+            raise ValueError("event.hook is required to prepare an event")
+
+        if "db" in self.hook.required_args:
+            self.bot.logger.debug("Opening database session for {}:threaded=True".format(self.hook.description))
+
+            self.db = self.bot.db_session()
+
+    @asyncio.coroutine
+    def close(self):
+        """
+        Closes this event after running it through it's hook.
+
+        Mainly, closes the database connection attached to this event (if any).
+
+        This method is for when the hook is *not* threaded (event.hook.threaded is False).
+        If you need to add a db to a threaded hook, use close_threaded.
+        """
+        if self.hook is None:
+            raise ValueError("event.hook is required to close an event")
+
+        if self.db is not None:
+            self.bot.logger.debug("Closing database session for {}:threaded=False".format(self.hook.description))
+            # be sure the close the database in the database executor, as it is only accessable in that one thread
+            yield from self.async(self.db.close)
+            self.db = None
+
+    def close_threaded(self):
+        """
+        Closes this event after running it through it's hook.
+
+        Mainly, closes the database connection attached to this event (if any).
+
+        This method is for when the hook is threaded (event.hook.threaded is True).
+        If you need to add a db to a coroutine hook, use close.
+        """
+        if self.hook is None:
+            raise ValueError("event.hook is required to close an event")
+        if self.db is not None:
+            self.bot.logger.debug("Closing database session for {}:threaded=True".format(self.hook.description))
+            self.db.close()
+            self.db = None
 
     @property
     def server(self):
@@ -98,7 +185,7 @@ class BaseEvent:
     @property
     def loop(self):
         """
-        :rtype: asyncio.BaseEventLoop
+        :rtype: asyncio.events.AbstractEventLoop
         """
         return self.bot.loop
 
@@ -172,6 +259,18 @@ class BaseEvent:
         if not self.mask:
             raise ValueError("has_permission requires mask is not assigned")
         return self.conn.permissions.has_perm_mask(self.mask, permission, notice=notice)
+
+    @asyncio.coroutine
+    def async(self, function, *args, **kwargs):
+        if self.db_executor is not None:
+            executor = self.db_executor
+        else:
+            executor = None
+        if kwargs:
+            result = yield from self.loop.run_in_executor(executor, function, *args)
+        else:
+            result = yield from self.loop.run_in_executor(executor, lambda: function(*args, **kwargs))
+        return result
 
 
 class CommandEvent(BaseEvent):

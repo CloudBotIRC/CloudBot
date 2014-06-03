@@ -2,86 +2,53 @@
 
 ## About
 
-CloudBot Refresh is an updated version of CloudBot, the python IRC bot origially based on [Skybot](http://git.io/skybot) by [rmmh](http://git.io/rmmh).
+CloudBotRefresh is the newest generation of CloudBot, the python IRC bot originally based on [Skybot](http://git.io/skybot).
 
-## Getting and using CloudBot
+## Installing CloudBot
 
-### Download 
+To install CloudBotRefresh on *Unix, see [docs/installing-unix.md](https://github.com/CloudBotIRC/CloudBotRefresh/blob/python3.4/docs/installing-unix.md)
 
-Get CloudBot at [https://github.com/CloudBotIRC/CloudBot/zipball/3.4-refactoring](https://github.com/CloudBotIRC/CloudBot/zipball/3.4-refactoring "Get CloudBot from Github!").
+To install CloudBotRefresh on Windows, see [docs/installing-windows.md](https://github.com/CloudBotIRC/CloudBotRefresh/blob/python3.4/docs/installing-windows.md)
 
-Unzip the resulting file, and continue to read this document.
+If you're going to be actively developing on CloudBotRefresh, and submitting PRs back, we recommend running CloudBotRefresh inside Vagrant. This allows everyone to have an identical development environment.
 
-### Install
-
-Before you can run the bot, you need to install a few Python dependencies. lxml, watchdog, sqlalchemy and BeautifulSoup4
-are required by CloudBot. `pyenchant`, `pydns`, `pygeoip`, `tweepy`, `pycrypto` and `pbkdf2` are also required for various plugins.
-
-Make sure you're running python version **3.4** or higher.
-
-These can be installed with `pip` (The Python package manager) by running the following command in the bot directory:
-
-    pip install -r requirements.txt
-
-**Note:** If you use `pip`, you will also need the following packages on linux or `pip` will fail to install the requirements.
-
-```
-python, python-dev, libenchant-dev, libenchant1c2a, libxslt-dev, libxml2-dev.
-```
-
-(this can be done using your package manager (eg: *apt-get* or *yum*)
-
-#### How to install `pip`
-
-You can usually install pip on linux by installing the `python-pip` package using your package manager (eg. *apt-get install python-pip* or *yum install python-pip* as root), or you can try the below code to download and install it manually.
-
-    curl -O http://python-distribute.org/distribute_setup.py # or download with your browser on windows
-    python distribute_setup.py
-    easy_install pip
-
-If you need help installing pip on Windows, follow [this guide](http://simpledeveloper.com/how-to-install-easy_install/) and then run `easy_install pip` on the command line.
+To install CloudBotRefresh in Vagrant (both *Unix and Windows), see [docs/installing-vagrant.md](https://github.com/CloudBotIRC/CloudBotRefresh/blob/python3.4/docs/installing-vagrant.md)
 
 
-Note for **Windows** users: Windows compatibility some modules is **broken** (such as ping), but we do intend to add it, eventually.
+### Running CloudBot
 
-### Run
-
-Before you run the bot, rename `config.default` to `config.json` and edit it with your preferred settings. You can check if your JSON is valid on [this site](http://jsonlint.com/)!
+Before you run the bot, rename `config.default` to `config.json` and edit it with your preferred settings. You can check if your JSON is valid using [jsonlint.com](http://jsonlint.com/)!
 
 Once you have installed the required dependencies and renamed the config file, you can run the bot! Make sure you are in the correct folder and run the following command:
 
-`python3.4 -m cloudbot`
+```
+python3.4 -m cloudbot
+```
+
+Note that you can also run the `cloudbot/__main__.py` file directly, which will work from any directory.
+```
+python3.4 CloudBotRefresh/cloudbot/__main__.py
+```
+Specify the path as /path/to/repository/cloudbot/__main__.py, where `cloudbot` is inside the repository directory.
 
 ## Getting help with CloudBot
 
 ### Documentation
 
-To configure your CloudBot, visit the [Config Wiki Page](https://github.com/CloudBotIRC/Refresh/wiki/Config).
+To configure your CloudBot, visit the [Config Wiki Page](https://github.com/CloudBotIRC/CloudBotRefresh/wiki/Config).
 
-To write your own modules, visit the [Module Wiki Page](https://github.com/CloudBotIRC/CloudBot/wiki/Writing-Refresh-Modules).
+To write your own modules, visit the [Module Wiki Page](https://github.com/CloudBotIRC/CloudBotRefresh/wiki/Writing-Refresh-Modules).
 
-More at the [Wiki Main Page](https://github.com/CloudBotIRC/Refresh/wiki).
+More at the [Wiki Main Page](https://github.com/CloudBotIRC/CloudBotRefresh/wiki).
 
 Note that the configuration page, and the main wiki page, are still for CloudBot Develop. The Module Wiki Page has been
-rewriten for refresh, but the other pages are outdated.
+rewritten for refresh, but the other pages are outdated.
 
 ### Support
 
 The developers reside in [#CloudBot](irc://irc.esper.net/cloudbot) on [EsperNet](http://esper.net) and would be glad to help you.
 
 If you think you have found a bug/have a idea/suggestion, please **open a issue** here on Github and contact us on IRC!
-
-### Requirements
-
-CloudBot runs on **Python** *3.4+*. It is currently developed on **Windows** *8* with **Python** *3.4*.
-
-It **requires the python modules** lxml, watchdog, sqlalchemy and BeautifulSoup4.
-
-Besides that, `pyenchant` is needed for spellcheck plugin, `pydns` is required for srv lookups in the minecraftping
-plugin, `pygeoip` is required for the geoip plugin, `tweepy` is required for the twitter plugin, and `pycrypto` and
-`pbkdf2` are required for the encrypt plugin.
-
-**Windows** users: Windows compatibility some plugins is **broken** (such as ping), but we do intend to add it. Eventually.
 
 ## Example CloudBots
 

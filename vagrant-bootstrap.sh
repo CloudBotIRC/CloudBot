@@ -8,9 +8,9 @@ sudo apt-get update
 # git               so pip can clone from repository
 # libenchant1c2a    so python-enchant can use it
 # libxml2-dev       python-lxml dependency
-# lib-xslt-dev      python-lxml dependency
+# libxslt-dev       python-lxml dependency
 # zlib1g-dev        python-lxml dependency
-sudo apt-get install -y python3-pip git libenchant1c2a libxml2-dev lib-xslt-dev zlib1g-dev
+sudo apt-get install -y python3-pip git libenchant1c2a libxml2-dev libxslt-dev zlib1g-dev
 
 curl -Ls https://bootstrap.pypa.io/get-pip.py | python3.4
 

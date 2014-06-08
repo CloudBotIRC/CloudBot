@@ -1,6 +1,9 @@
+from bs4 import BeautifulSoup
+import requests
+import requests.exceptions
 import urllib.parse
 
-from cloudbot import hook, http, urlnorm
+from cloudbot import hook, urlnorm
 
 
 @hook.command(["down", "offline", "up"])
@@ -9,16 +12,17 @@ def down(text):
     :type text: str
     """
 
-    if not text.startswith("http://"):
+    if not "://" in text:
         text = 'http://' + text
 
     text = 'http://' + urllib.parse.urlparse(text).netloc
 
     try:
-        http.get(text, get_method='HEAD')
-        return '{} seems to be up'.format(text)
-    except http.URLError:
+        requests.get(text)
+    except requests.exceptions.ConnectionError:
         return '{} seems to be down'.format(text)
+    else:
+        return '{} seems to be up'.format(text)
 
 
 @hook.command()
@@ -32,11 +36,14 @@ def isup(text):
 
     domain = auth or path
     url = urlnorm.normalize(domain, assume_scheme="http")
-
     try:
-        soup = http.get_soup('http://isup.me/' + domain)
-    except http.HTTPError:
+        response = requests.get('http://isup.me/' + domain)
+    except requests.exceptions.ConnectionError:
         return "Failed to get status."
+    if response.status_code != requests.codes.ok:
+        return "Failed to get status."
+
+    soup = BeautifulSoup(response.text, 'lxml')
 
     content = soup.find('div').text.strip()
 

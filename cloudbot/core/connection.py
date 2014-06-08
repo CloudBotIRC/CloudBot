@@ -27,9 +27,7 @@ class BotConnection:
     :type nick: str
     :type vars: dict
     :type history: dict[str, list[tuple]]
-    :type message_queue: queue.Queue
-    :type input_queue: queue.Queue
-    :type output_queue: queue.Queue
+    :type output_queue: asyncio.Queue
     :type connection: IRCConnection
     :type permissions: PermissionManager
     :type connected: bool
@@ -73,9 +71,6 @@ class BotConnection:
         self.vars = {}
         self.history = {}
 
-        self.message_queue = bot.queued_events  # global parsed message queue, for parsed received messages
-
-        self.input_queue = asyncio.Queue(loop=self.loop)
         self.output_queue = asyncio.Queue(loop=self.loop)
 
         # create permissions manager
@@ -181,7 +176,6 @@ class IRCConnection:
     :type port: int
     :type use_ssl: bool
     :type output_queue: asyncio.Queue
-    :type message_queue: asyncio.Queue
     :type botconn: BotConnection
     :type ignore_cert_errors: bool
     :type timeout: int
@@ -198,7 +192,6 @@ class IRCConnection:
         self.port = conn.port
         self.use_ssl = conn.ssl
         self.output_queue = conn.output_queue  # lines to be sent out
-        self.message_queue = conn.message_queue  # global queue for parsed lines that were received
         self.loop = conn.loop
         self.botconn = conn
 
@@ -258,7 +251,7 @@ class IRCProtocol(asyncio.Protocol):
         self.describe_server = lambda: ircconn.describe_server()
         self.botconn = ircconn.botconn
         self.output_queue = ircconn.output_queue
-        self.message_queue = ircconn.message_queue
+        self.bot = ircconn.botconn.bot
         # input buffer
         self._input_buffer = b""
         # connected
@@ -355,6 +348,5 @@ class IRCProtocol(asyncio.Protocol):
             if command == "PING":
                 self.output_queue.put_nowait("PONG :" + last_param)
 
-            # Put the message into the queue to be handled
-            # TODO: Do we want to directly call the handling method here?
-            self.message_queue.put_nowait(event)
+            # handle the message, async
+            asyncio.async(self.bot.process(event))

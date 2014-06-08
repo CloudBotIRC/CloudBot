@@ -17,6 +17,7 @@ from cloudbot.core.pluginmanager import PluginManager
 from cloudbot.core.events import BaseEvent, CommandEvent, RegexEvent
 from cloudbot.util import botvars, formatting
 
+
 logger_initialized = False
 
 
@@ -44,6 +45,8 @@ class CloudBot:
     :type db_session: sqlalchemy.orm.scoping.scoped_session
     :type db_metadata: sqlalchemy.sql.schema.MetaData
     :type loop: asyncio.events.AbstractEventLoop
+    :type stopped_future: asyncio.Future
+    :param: stopped_future: Future that will be given a result when the bot has stopped.
     """
 
     def __init__(self, loop=asyncio.get_event_loop()):
@@ -51,10 +54,9 @@ class CloudBot:
         self.loop = loop
         self.start_time = time.time()
         self.running = True
+        # future which will be called when the bot stops
+        self.stopped_future = asyncio.Future(loop=self.loop)
         self.do_restart = False
-
-        # stores all queued messages from all connections
-        self.queued_events = asyncio.Queue(loop=self.loop)
 
         # stores each bot server connection
         self.connections = []
@@ -109,7 +111,10 @@ class CloudBot:
         Starts CloudBot.
         This will first load plugins, then connect to IRC, then start the main loop for processing input.
         """
-        self.loop.run_until_complete(self.main_loop())
+        # Initializes the bot, plugins and connections
+        self.loop.run_until_complete(self._init_routine())
+        # Wait till the bot stops.
+        self.loop.run_until_complete(self.stopped_future)
         self.loop.close()
 
     def create_connections(self):
@@ -154,10 +159,8 @@ class CloudBot:
             connection.stop()
 
         self.running = False
-        # We need to make sure that the main loop actually exists after this method is called. This will ensure that the
-        # blocking queued_events.get() method is executed, then the method will stop without processing it because
-        # self.running = False
-        self.queued_events.put_nowait(StopIteration)
+        # Give the stopped_future a result, so that run() will exit
+        self.stopped_future.set_result(None)
 
     def restart(self, reason=None):
         """shuts the bot down and restarts it"""
@@ -165,35 +168,37 @@ class CloudBot:
         self.stop(reason)
 
     @asyncio.coroutine
-    def main_loop(self):
-        # load plugins
+    def _load_plugins(self):
+        """
+        Initialization routine - loads plugins
+        """
         yield from self.plugin_manager.load_all(os.path.abspath("plugins"))
+
+    @asyncio.coroutine
+    def _connect(self):
+        """
+        Initialization routine - starts connections
+        """
+        yield from asyncio.gather(*[conn.connect() for conn in self.connections], loop=self.loop)
+
+    @asyncio.coroutine
+    def _init_routine(self):
+        yield from self._load_plugins()
+
         # if we we're stopped while loading plugins, cancel that and just stop
         if not self.running:
+            # set the stopped_future result so that the run() method will exit right away
+            self.stopped_future.set_result(None)
             return
 
         if cloudbot.dev_mode.get("plugin_reloading"):
             # start plugin reloader
             self.reloader.start(os.path.abspath("plugins"))
 
-        # start connections
-        yield from asyncio.gather(*[conn.connect() for conn in self.connections], loop=self.loop)
+        yield from self._connect()
+
         # run a manual garbage collection cycle, to clean up any unused objects created during initialization
         gc.collect()
-        # start main loop
-        self.logger.info("Starting main loop")
-        while self.running:
-            # This function will wait until a new message is received.
-            event = yield from self.queued_events.get()
-
-            if not self.running:
-                # When the bot is stopped, StopIteration is put into the queue to make sure that
-                # self.queued_events.get() doesn't block this thread forever.
-                # But we don't actually want to process that message, so if we're stopped, just exit.
-                return
-
-            # process the message
-            asyncio.async(self.process(event), loop=self.loop)
 
     @asyncio.coroutine
     def process(self, event):

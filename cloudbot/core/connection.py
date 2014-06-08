@@ -5,8 +5,8 @@ import ssl
 from ssl import SSLContext
 
 from cloudbot.core.permissions import PermissionManager
-
 from cloudbot.core.events import BaseEvent
+
 
 irc_prefix_re = re.compile(r":([^ ]*) ([^ ]*) (.*)")
 irc_noprefix_re = re.compile(r"([^ ]*) (.*)")
@@ -27,7 +27,6 @@ class BotConnection:
     :type nick: str
     :type vars: dict
     :type history: dict[str, list[tuple]]
-    :type output_queue: asyncio.Queue
     :type connection: IRCConnection
     :type permissions: PermissionManager
     :type connected: bool
@@ -70,8 +69,6 @@ class BotConnection:
         self.nick = nick
         self.vars = {}
         self.history = {}
-
-        self.output_queue = asyncio.Queue(loop=self.loop)
 
         # create permissions manager
         self.permissions = PermissionManager(self)
@@ -156,14 +153,15 @@ class BotConnection:
         else:
             self.send(command)
 
-    def send(self, string):
+    def send(self, line):
         """
-        :type string: str
+        Sends a raw IRC line
+        :type line: str
         """
         if not self.connected:
             raise ValueError("Connection must be connected to irc server to use send")
-        self.logger.info("[{}] >> {}".format(self.readable_name, string))
-        self.loop.call_soon_threadsafe(asyncio.async, self.output_queue.put(string))
+        self.logger.info("[{}] >> {}".format(self.readable_name, line))
+        self.loop.call_soon_threadsafe(asyncio.async, self.connection.send(line))
 
 
 class IRCConnection:
@@ -175,11 +173,11 @@ class IRCConnection:
     :type host: str
     :type port: int
     :type use_ssl: bool
-    :type output_queue: asyncio.Queue
     :type botconn: BotConnection
     :type ignore_cert_errors: bool
     :type timeout: int
     :type _connected: bool
+    :type _protocol: IRCProtocol
     """
 
     def __init__(self, conn, ignore_cert_errors=True, timeout=300):
@@ -191,7 +189,6 @@ class IRCConnection:
         self.host = conn.server
         self.port = conn.port
         self.use_ssl = conn.ssl
-        self.output_queue = conn.output_queue  # lines to be sent out
         self.loop = conn.loop
         self.botconn = conn
 
@@ -233,6 +230,15 @@ class IRCConnection:
             lambda: IRCProtocol(self), host=self.host, port=self.port, ssl=self.ssl_context,
         )
 
+    @asyncio.coroutine
+    def send(self, line):
+        """
+        Sends a raw IRC line to the connected server. If we aren't currently connected to the server, this method will
+        pause until we connect.
+        :param line: Line to send
+        """
+        yield from self._protocol.send(line)
+
     def stop(self):
         if not self._connected:
             return
@@ -250,7 +256,6 @@ class IRCProtocol(asyncio.Protocol):
         self.readable_name = ircconn.readable_name
         self.describe_server = lambda: ircconn.describe_server()
         self.botconn = ircconn.botconn
-        self.output_queue = ircconn.output_queue
         self.bot = ircconn.botconn.bot
         # input buffer
         self._input_buffer = b""
@@ -260,13 +265,20 @@ class IRCProtocol(asyncio.Protocol):
         # transport
         self.transport = None
 
+        # Future that waits until we are connected
+        self._connected_future = asyncio.Future()
+
     def connection_made(self, transport):
         self.transport = transport
         self._connected = True
-        asyncio.async(self.send_loop(), loop=self.loop)
+        self._connected_future.set_result(None)
+        # we don't need the _connected_future, everything uses it will check _connected first.
+        del self._connected_future
 
     def connection_lost(self, exc):
         self._connected = False
+        # create a new connected_future for when we are connected.
+        self._connected_future = asyncio.Future()
         if exc is None:
             # we've been closed intentionally, so don't reconnect
             return
@@ -275,17 +287,20 @@ class IRCProtocol(asyncio.Protocol):
 
     def eof_received(self):
         self._connected = False
+        # create a new connected_future for when we are connected.
+        self._connected_future = asyncio.Future()
         self.logger.info("[{}] EOF Received, reconnecting.".format(self.readable_name))
         asyncio.async(self.botconn.connect(), loop=self.loop)
         return True
 
     @asyncio.coroutine
-    def send_loop(self):
-        while self._connected:
-            to_send = yield from self.output_queue.get()
-            line = to_send.splitlines()[0][:500] + "\r\n"
-            data = line.encode("utf-8", "replace")
-            self.transport.write(data)
+    def send(self, line):
+        # make sure we are connected before sending
+        if not self._connected:
+            yield from self._connected_future
+        line = line.splitlines()[0][:500] + "\r\n"
+        data = line.encode("utf-8", "replace")
+        self.transport.write(data)
 
     def data_received(self, data):
         self._input_buffer += data
@@ -346,7 +361,7 @@ class IRCProtocol(asyncio.Protocol):
                               mask=mask)
             # we should also remember to ping the server if they ping us
             if command == "PING":
-                self.output_queue.put_nowait("PONG :" + last_param)
+                asyncio.async(self.send("PONG :" + last_param))
 
             # handle the message, async
             asyncio.async(self.bot.process(event))

@@ -18,7 +18,7 @@ mc_colors = [('\xa7f', '\x0300'), ('\xa70', '\x0301'), ('\xa71', '\x0302'), ('\x
              ('\xa7r', '\x0f'), ('\xa7n', '\x15')]
 
 
-## EXCEPTIONS
+# EXCEPTIONS
 
 
 class PingError(Exception):
@@ -126,7 +126,7 @@ def mcping_legacy(host, port):
 
     try:
         sock.connect((host, port))
-        sock.send('\xfe\x01')
+        sock.send(b'\xfe\x01')
         response = sock.recv(1)
     except socket.gaierror:
         raise PingError("Invalid hostname")

@@ -4,7 +4,6 @@ import logging
 import re
 import os
 import gc
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.schema import MetaData
@@ -206,6 +205,7 @@ class CloudBot:
         :type self: CloudBot
         :type event: BaseEvent
         """
+        run_before_tasks = []
         tasks = []
         command_prefix = event.conn.config.get('command_prefix', '.')
 
@@ -213,7 +213,8 @@ class CloudBot:
         for raw_hook in self.plugin_manager.catch_all_events:
             # run catch-all events that are asyncio all first
             if not raw_hook.threaded:
-                yield from self.plugin_manager.launch(raw_hook, BaseEvent(bot=self, hook=raw_hook, base_event=event))
+                run_before_tasks.append(
+                    self.plugin_manager.launch(raw_hook, BaseEvent(bot=self, hook=raw_hook, base_event=event)))
             else:
                 tasks.append(self.plugin_manager.launch(raw_hook, BaseEvent(bot=self, hook=raw_hook, base_event=event)))
         if event.irc_command in self.plugin_manager.raw_triggers:
@@ -260,5 +261,6 @@ class CloudBot:
                     regex_event = RegexEvent(bot=self, hook=regex_hook, match=match, base_event=event)
                     tasks.append(self.plugin_manager.launch(regex_hook, regex_event))
 
-        # wait for all the tasks we've spawned before exiting
+        # run all the tasks we've created
+        yield from asyncio.gather(*run_before_tasks, loop=self.loop)
         yield from asyncio.gather(*tasks, loop=self.loop)

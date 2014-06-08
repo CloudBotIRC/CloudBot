@@ -33,12 +33,12 @@ class CloudBot:
     :type start_time: float
     :type running: bool
     :type do_restart: bool
-    :type connections: list[cloudbot.core.connection.BotConnection]
+    :type connections: list[BotConnection]
     :type logger: logging.Logger
     :type data_dir: bytes
     :type config: core.config.Config
-    :type plugin_manager: cloudbot.core.pluginmanager.PluginManager
-    :type reloader: cloudbot.core.reloader.PluginReloader
+    :type plugin_manager: PluginManager
+    :type reloader: PluginReloader
     :type db_engine: sqlalchemy.engine.Engine
     :type db_factory: sqlalchemy.orm.session.sessionmaker
     :type db_session: sqlalchemy.orm.scoping.scoped_session
@@ -198,8 +198,8 @@ class CloudBot:
     @asyncio.coroutine
     def process(self, event):
         """
-        :type self: cloudbot.core.bot.CloudBot
-        :type event: cloudbot.core.events.BaseEvent
+        :type self: CloudBot
+        :type event: BaseEvent
         """
         tasks = []
         command_prefix = event.conn.config.get('command_prefix', '.')

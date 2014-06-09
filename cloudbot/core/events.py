@@ -189,6 +189,10 @@ class BaseEvent:
         """
         return self.bot.loop
 
+    @property
+    def logger(self):
+        return self.bot.logger
+
     def message(self, message, target=None):
         """sends a message to a specific or current channel/user
         :type message: str

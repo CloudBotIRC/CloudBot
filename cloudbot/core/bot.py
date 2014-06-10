@@ -14,7 +14,7 @@ from cloudbot.core.connection import BotConnection
 from cloudbot.core.config import Config
 from cloudbot.core.reloader import PluginReloader
 from cloudbot.core.pluginmanager import PluginManager
-from cloudbot.core.events import BaseEvent, CommandEvent, RegexEvent
+from cloudbot.core.events import BaseEvent, CommandEvent, RegexEvent, EventType
 from cloudbot.util import botvars, formatting
 
 logger = logging.getLogger("cloudbot")
@@ -203,28 +203,27 @@ class CloudBot:
             # run catch-all coroutine hooks before all others - TODO: Make this a plugin argument
             if not raw_hook.threaded:
                 run_before_tasks.append(
-                    self.plugin_manager.launch(raw_hook, BaseEvent(bot=self, hook=raw_hook, base_event=event)))
+                    self.plugin_manager.launch(raw_hook, BaseEvent(hook=raw_hook, base_event=event)))
             else:
-                tasks.append(self.plugin_manager.launch(raw_hook, BaseEvent(bot=self, hook=raw_hook, base_event=event)))
+                tasks.append(self.plugin_manager.launch(raw_hook, BaseEvent(hook=raw_hook, base_event=event)))
         if event.irc_command in self.plugin_manager.raw_triggers:
             for raw_hook in self.plugin_manager.raw_triggers[event.irc_command]:
-                tasks.append(self.plugin_manager.launch(raw_hook, BaseEvent(bot=self, hook=raw_hook, base_event=event)))
+                tasks.append(self.plugin_manager.launch(raw_hook, BaseEvent(hook=raw_hook, base_event=event)))
 
-        if event.irc_command == 'PRIVMSG':
+        if event.type is EventType.message:
             # Commands
             if event.chan.lower() == event.nick.lower():  # private message, no command prefix
                 command_re = r'(?i)^(?:[{}]?|{}[,;:]+\s+)(\w+)(?:$|\s+)(.*)'.format(command_prefix, event.conn.nick)
             else:
                 command_re = r'(?i)^(?:[{}]|{}[,;:]+\s+)(\w+)(?:$|\s+)(.*)'.format(command_prefix, event.conn.nick)
 
-            match = re.match(command_re, event.irc_message)
+            match = re.match(command_re, event.content)
 
             if match:
                 command = match.group(1).lower()
                 if command in self.plugin_manager.commands:
                     command_hook = self.plugin_manager.commands[command]
-                    command_event = CommandEvent(bot=self, hook=command_hook, text=match.group(2).strip(),
-                                                 triggered_command=command, base_event=event)
+                    command_event = CommandEvent(hook=command_hook, text=match.group(2).strip(), triggered_command=command, base_event=event)
                     tasks.append(self.plugin_manager.launch(command_hook, command_event))
                 else:
                     potential_matches = []
@@ -234,8 +233,7 @@ class CloudBot:
                     if potential_matches:
                         if len(potential_matches) == 1:
                             command_hook = potential_matches[0][1]
-                            command_event = CommandEvent(bot=self, hook=command_hook, text=match.group(2).strip(),
-                                                         triggered_command=command, base_event=event)
+                            command_event = CommandEvent(hook=command_hook, text=match.group(2).strip(), triggered_command=command, base_event=event)
                             tasks.append(self.plugin_manager.launch(command_hook, command_event))
                         else:
                             event.notice("Possible matches: {}".format(
@@ -243,9 +241,9 @@ class CloudBot:
 
             # Regex hooks
             for regex, regex_hook in self.plugin_manager.regex_hooks:
-                match = regex.search(event.irc_message)
+                match = regex.search(event.content)
                 if match:
-                    regex_event = RegexEvent(bot=self, hook=regex_hook, match=match, base_event=event)
+                    regex_event = RegexEvent(hook=regex_hook, match=match, base_event=event)
                     tasks.append(self.plugin_manager.launch(regex_hook, regex_event))
 
         # Run the tasks

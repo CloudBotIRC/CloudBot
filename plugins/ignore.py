@@ -2,6 +2,7 @@ import asyncio
 from fnmatch import fnmatch
 
 from cloudbot import hook
+from cloudbot.core.events import EventType
 
 
 @hook.onload
@@ -35,7 +36,7 @@ def ignore_sieve(bot, event, _hook):
         return event
 
     # don't block an event that could be unignoring
-    if event.irc_command == "PRIVMSG" and event.irc_message[1:] == "unignore":
+    if event.type is EventType.message and event.content[1:] == "unignore":
         return event
 
     if event.mask is None:

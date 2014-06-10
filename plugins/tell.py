@@ -77,7 +77,7 @@ def tellinput(event, conn, db, nick, notice):
     :type conn: cloudbot.core.connection.BotConnection
     :type db: sqlalchemy.orm.Session
     """
-    if 'showtells' in event.irc_message.lower():
+    if 'showtells' in event.content.lower():
         return
 
     tells = get_unread(db, conn.server, nick)

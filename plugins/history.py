@@ -27,13 +27,9 @@ def track_seen(event, db, conn):
     """
     db_init(db, conn)
     # keep private messages private
-    if event.chan[:1] == "#" and not re.findall('^s/.*/.*/$', event.irc_message.lower()):
-        db.execute("insert or replace into seen_user(name, time, quote, chan, host)"
-                   "values(:name,:time,:quote,:chan,:host)", {'name': event.nick.lower(),
-                                                              'time': time.time(),
-                                                              'quote': event.irc_message,
-                                                              'chan': event.chan,
-                                                              'host': event.mask})
+    if event.chan[:1] == "#" and not re.findall('^s/.*/.*/$', event.content.lower()):
+        db.execute("insert or replace into seen_user(name, time, quote, chan, host) values(:name,:time,:quote,:chan,:host)",
+                   {'name': event.nick.lower(), 'time': time.time(), 'quote': event.content, 'chan': event.chan, 'host': event.mask})
         db.commit()
 
 
@@ -48,7 +44,7 @@ def track_history(event, message_time, conn):
         conn.history[event.chan] = deque(maxlen=100)
         history = conn.history[event.chan]
 
-    data = (event.nick, message_time, event.irc_message)
+    data = (event.nick, message_time, event.content)
     history.append(data)
 
 

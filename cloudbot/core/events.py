@@ -1,8 +1,21 @@
 import asyncio
+import enum
 import logging
 import concurrent.futures
 
 logger = logging.getLogger("cloudbot")
+
+
+@enum.unique
+class EventType(enum.Enum):
+    message = 0
+    action = 1
+    # TODO: Do we actually want to have a 'notice' event type? Should the NOTICE command be a 'message' type?
+    notice = 2
+    join = 3
+    part = 4
+    kick = 5
+    other = 6
 
 
 class BaseEvent:
@@ -10,29 +23,41 @@ class BaseEvent:
     :type bot: cloudbot.core.bot.CloudBot
     :type conn: cloudbot.core.connection.BotConnection
     :type hook: cloudbot.core.pluginmanager.Hook
+    :type type: EventType
+    :type content: str
+    :type target: str
+    :type chan: str
     :type nick: str
     :type user: str
     :type host: str
     :type mask: str
     :type db: sqlalchemy.orm.Session
     :type db_executor: concurrent.futures.ThreadPoolExecutor
-    :type irc_message: str
     :type irc_raw: str
     :type irc_prefix: str
     :type irc_command: str
     :type irc_paramlist: str
+    :type irc_ctcp_text: str
     """
 
-    def __init__(self, *, bot=None, hook=None, conn=None, base_event=None, irc_message=None, nick=None, user=None,
-                 host=None, mask=None, irc_raw=None, irc_prefix=None, irc_command=None, irc_paramlist=None):
+    def __init__(self, *, bot=None, hook=None, conn=None, base_event=None, event_type=EventType.other, content=None,
+                 target=None, channel=None, nick=None, user=None, host=None, mask=None, irc_raw=None, irc_prefix=None,
+                 irc_command=None, irc_paramlist=None, irc_ctcp_text=None):
         """
-        All of these parameters except for *bot* and *hook* are optional, *bot* may be left out when using base_event.
+        All of these parameters except for `bot` and `hook` are optional.
+        The irc_* parameters should only be specified for IRC events.
+
+        Note that the `bot` argument may be left out if you specify a `base_event`.
 
         :param bot: The CloudBot instance this event was triggered from
         :param conn: The Connection instance this event was triggered from
         :param hook: The hook this event will be passed to
         :param base_event: The base event that this event is based on. If this parameter is not None, then nick, user,
                             host, mask, and irc_* arguments are ignored
+        :param event_type: The type of the event
+        :param content: The content of the message, or the reason for an join or part
+        :param target: The target of the action, for example the user being kicked, or invited
+        :param channel: The channel that this action took place in
         :param nick: The nickname of the sender that triggered this event
         :param user: The user of the sender that triggered this event
         :param host: The host of the sender that triggered this event
@@ -42,20 +67,23 @@ class BaseEvent:
         :param irc_command: The IRC command
         :param irc_paramlist: The list of params for the IRC command. If the last param is a content param, the ':'
                                 should be removed from the front.
-        :param irc_message: The content of the message, or the reason for an join or part
+        :param irc_ctcp_text: CTCP text if this message is a CTCP command
         :type bot: cloudbot.core.bot.CloudBot
         :type conn: cloudbot.core.connection.BotConnection
         :type hook: cloudbot.core.pluginmanager.Hook
         :type base_event: cloudbot.core.events.BaseEvent
+        :type content: str
+        :type target: str
+        :type event_type: EventType
         :type nick: str
         :type user: str
         :type host: str
         :type mask: str
-        :type irc_message: str
         :type irc_raw: str
         :type irc_prefix: str
         :type irc_command: str
         :type irc_paramlist: list[str]
+        :type irc_ctcp_text: str
         """
         self.db = None
         self.db_executor = None
@@ -71,27 +99,37 @@ class BaseEvent:
             if self.hook is None and base_event.hook is not None:
                 self.hook = base_event.hook
 
-            # inherit nick/usr/host/mask/irc_* without checking internal values, as we always want to inherit these
+            # If base_event is provided, don't check these parameters, just inherit
+            self.type = base_event.type
+            self.content = base_event.content
+            self.target = base_event.target
+            self.chan = base_event.chan
             self.nick = base_event.nick
             self.user = base_event.user
             self.host = base_event.host
             self.mask = base_event.mask
-            self.irc_message = base_event.irc_message
+            # irc-specific parameters
             self.irc_raw = base_event.irc_raw
             self.irc_prefix = base_event.irc_prefix
             self.irc_command = base_event.irc_command
             self.irc_paramlist = base_event.irc_paramlist
+            self.irc_ctcp_text = base_event.irc_ctcp_text
         else:
-            # if we're not inheriting an event, we can take these parameters
-            self.irc_message = irc_message
-            self.irc_raw = irc_raw
-            self.irc_prefix = irc_prefix
-            self.irc_command = irc_command
-            self.irc_paramlist = irc_paramlist
+            # Since base_event wasn't provided, we can take these parameters
+            self.type = event_type
+            self.content = content
+            self.target = target
+            self.chan = channel
             self.nick = nick
             self.user = user
             self.host = host
             self.mask = mask
+            # irc-specific parameters
+            self.irc_raw = irc_raw
+            self.irc_prefix = irc_prefix
+            self.irc_command = irc_command
+            self.irc_paramlist = irc_paramlist
+            self.irc_ctcp_text = irc_ctcp_text
 
     @asyncio.coroutine
     def prepare(self):
@@ -167,30 +205,6 @@ class BaseEvent:
             logger.debug("Closing database session for {}:threaded=True".format(self.hook.description))
             self.db.close()
             self.db = None
-
-    @property
-    def server(self):
-        """
-        :rtype: str
-        """
-        if self.conn is not None:
-            return self.conn.server
-        else:
-            return None
-
-    @property
-    def chan(self):
-        """
-        :rtype: str
-        """
-        if self.irc_paramlist:
-            if self.irc_paramlist[0].lower() == self.conn.nick.lower():
-                # this is a private message - set the nick to the sender's nick
-                return self.nick.lower()
-            else:
-                return self.irc_paramlist[0].lower()
-        else:
-            return None
 
     @property
     def event(self):
@@ -301,18 +315,18 @@ class CommandEvent(BaseEvent):
     :type triggered_command: str
     """
 
-    def __init__(self, *, bot=None, hook, text, triggered_command, conn=None, base_event=None, irc_message=None,
-                 nick=None, user=None, host=None, mask=None, irc_raw=None, irc_prefix=None, irc_command=None,
-                 irc_paramlist=None):
+    def __init__(self, *, bot=None, hook, text, triggered_command, conn=None, base_event=None, event_type=None,
+                 content=None, target=None, channel=None, nick=None, user=None, host=None, mask=None, irc_raw=None,
+                 irc_prefix=None, irc_command=None, irc_paramlist=None):
         """
         :param text: The arguments for the command
         :param triggered_command: The command that was triggered
         :type text: str
         :type triggered_command: str
         """
-        super().__init__(bot=bot, hook=hook, conn=conn, base_event=base_event, nick=nick, user=user, host=host,
-                         mask=mask, irc_message=irc_message, irc_raw=irc_raw, irc_prefix=irc_prefix,
-                         irc_command=irc_command, irc_paramlist=irc_paramlist)
+        super().__init__(bot=bot, hook=hook, conn=conn, base_event=base_event, event_type=event_type, content=content,
+                         target=target, channel=channel, nick=nick, user=user, host=host, mask=mask, irc_raw=irc_raw,
+                         irc_prefix=irc_prefix, irc_command=irc_command, irc_paramlist=irc_paramlist)
         self.hook = hook
         self.text = text
         self.triggered_command = triggered_command
@@ -343,13 +357,14 @@ class RegexEvent(BaseEvent):
     :type match: re.__Match
     """
 
-    def __init__(self, *, bot=None, hook, match, conn=None, base_event=None, irc_message=None, nick=None, user=None,
-                 host=None, mask=None, irc_raw=None, irc_prefix=None, irc_command=None, irc_paramlist=None):
+    def __init__(self, *, bot=None, hook, match, conn=None, base_event=None, event_type=None, content=None, target=None,
+                 channel=None, nick=None, user=None, host=None, mask=None, irc_raw=None, irc_prefix=None,
+                 irc_command=None, irc_paramlist=None):
         """
         :param: match: The match objected returned by the regex search method
         :type match: re.__Match
         """
-        super().__init__(bot=bot, conn=conn, hook=hook, base_event=base_event, nick=nick, user=user, host=host,
-                         mask=mask, irc_message=irc_message, irc_raw=irc_raw, irc_prefix=irc_prefix,
-                         irc_command=irc_command, irc_paramlist=irc_paramlist)
+        super().__init__(bot=bot, conn=conn, hook=hook, base_event=base_event, event_type=event_type, content=content,
+                         target=target, channel=channel, nick=nick, user=user, host=host, mask=mask, irc_raw=irc_raw,
+                         irc_prefix=irc_prefix, irc_command=irc_command, irc_paramlist=irc_paramlist)
         self.match = match

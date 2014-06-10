@@ -21,7 +21,7 @@
       <div class="inner">
         <h1>CloudBotRefresh</h1>
         <h2>The easy to use, open source Python IRC Bot!</h2>
-        <a href="https://github.com/CloudBotIRC/Refresh" class="button"><small>View project on</small>GitHub</a>
+        <a href="https://github.com/CloudBotIRC/CloudBotRefresh" class="button"><small>View project on</small>GitHub</a>
       </div>
     </header>
 
@@ -34,63 +34,35 @@
 <h2>
 <a name="about" class="anchor" href="#about"><span class="octicon octicon-link"></span></a>About</h2>
 
-<p>CloudBot Refresh is an updated version of CloudBot, the python IRC bot origially based on <a href="http://git.io/skybot">Skybot</a> by <a href="http://git.io/rmmh">rmmh</a>.</p>
+<p>CloudBotRefresh is the newest generation of CloudBot, the python IRC bot originally based on <a href="http://git.io/skybot">Skybot</a>.</p>
 
 <h2>
-<a name="getting-and-using-cloudbot" class="anchor" href="#getting-and-using-cloudbot"><span class="octicon octicon-link"></span></a>Getting and using CloudBot</h2>
+<a name="installing-cloudbot" class="anchor" href="#installing-cloudbot"><span class="octicon octicon-link"></span></a>Installing CloudBot</h2>
+
+<p>To install CloudBotRefresh on *Unix, see <a href="https://github.com/CloudBotIRC/CloudBotRefresh/blob/possible-documentation-changes/docs/installing-linux.md">docs/installing-unix.md</a></p>
+
+<p>To install CloudBotRefresh on Windows, see <a href="https://github.com/CloudBotIRC/CloudBotRefresh/blob/possible-documentation-changes/docs/installing-windows.md">docs/installing-windows.md</a></p>
+
+<p>If you're going to be actively developing on CloudBotRefresh, and submitting PRs back, we recommend running CloudBotRefresh inside Vagrant. This allows everyone to have an identical development environment.</p>
+
+<p>To install CloudBotRefresh in Vagrant (both *Unix and Windows), see <a href="https://github.com/CloudBotIRC/CloudBotRefresh/blob/possible-documentation-changes/docs/installing-vagrant.md">docs/installing-vagrant.md</a></p>
 
 <h3>
-<a name="download" class="anchor" href="#download"><span class="octicon octicon-link"></span></a>Download</h3>
+<a name="running-cloudbot" class="anchor" href="#running-cloudbot"><span class="octicon octicon-link"></span></a>Running CloudBot</h3>
 
-<p>Get CloudBot at <a href="https://github.com/CloudBotIRC/CloudBot/zipball/refresh" title="Get CloudBot from Github!">https://github.com/CloudBotIRC/CloudBot/zipball/refresh</a>.</p>
-
-<p>Unzip the resulting file, and continue to read this document.</p>
-
-<h3>
-<a name="install" class="anchor" href="#install"><span class="octicon octicon-link"></span></a>Install</h3>
-
-<p>Before you can run the bot, you need to install a few Python dependencies. lxml, watchdog, sqlalchemy and BeautifulSoup4
-are required by CloudBot. <code>pyenchant</code>, <code>pydns</code>, <code>pygeoip</code>, <code>tweepy</code>, <code>pycrypto</code> and <code>pbkdf2</code> are also required for various plugins.</p>
-
-<p>Make sure you're running python version <strong>3.2</strong> or higher.</p>
-
-<p>These can be installed with <code>pip</code> (The Python package manager) by running the following command in the bot directory:</p>
-
-<pre><code>pip install -r requirements.txt
-</code></pre>
-
-<p><strong>Note:</strong> If you use <code>pip</code>, you will also need the following packages on linux or <code>pip</code> will fail to install the requirements.</p>
-
-<pre><code>python, python-dev, libenchant-dev, libenchant1c2a, libxslt-dev, libxml2-dev.
-</code></pre>
-
-<p>(this can be done using your package manager (eg: <em>apt-get</em> or <em>yum</em>)</p>
-
-<h4>
-<a name="how-to-install-pip" class="anchor" href="#how-to-install-pip"><span class="octicon octicon-link"></span></a>How to install <code>pip</code>
-</h4>
-
-<p>You can usually install pip on linux by installing the <code>python-pip</code> package using your package manager (eg. <em>apt-get install python-pip</em> or <em>yum install python-pip</em> as root), or you can try the below code to download and install it manually.</p>
-
-<pre><code>curl -O http://python-distribute.org/distribute_setup.py # or download with your browser on windows
-python distribute_setup.py
-easy_install pip
-</code></pre>
-
-<p>If you need help installing pip on Windows, follow <a href="http://simpledeveloper.com/how-to-install-easy_install/">this guide</a> and then run <code>easy_install pip</code> on the command line.</p>
-
-<p>Note for <strong>Windows</strong> users: Windows compatibility some modules is <strong>broken</strong> (such as ping), but we do intend to add it, eventually.</p>
-
-<h3>
-<a name="run" class="anchor" href="#run"><span class="octicon octicon-link"></span></a>Run</h3>
-
-<p>Before you run the bot, rename <code>config.default</code> to <code>config.json</code> and edit it with your preferred settings. You can check if your JSON is valid on <a href="http://jsonlint.com/">this site</a>!</p>
+<p>Before you run the bot, rename <code>config.default</code> to <code>config.json</code> and edit it with your preferred settings. You can check if your JSON is valid using <a href="http://jsonlint.com/">jsonlint.com</a>!</p>
 
 <p>Once you have installed the required dependencies and renamed the config file, you can run the bot! Make sure you are in the correct folder and run the following command:</p>
 
-<p><code>python cloudbot.py</code></p>
+<pre><code>python3.4 -m cloudbot
+</code></pre>
 
-<p>On Windows you can usually just double-click <code>cloudbot.py</code> to start the bot, as long as you have Python installed correctly.</p>
+<p>Note that you can also run the <code>cloudbot/__main__.py</code> file directly, which will work from any directory.</p>
+
+<pre><code>python3.4 CloudBotRefresh/cloudbot/__main__.py
+</code></pre>
+
+<p>Specify the path as /path/to/repository/cloudbot/<strong>main</strong>.py, where <code>cloudbot</code> is inside the repository directory.</p>
 
 <h2>
 <a name="getting-help-with-cloudbot" class="anchor" href="#getting-help-with-cloudbot"><span class="octicon octicon-link"></span></a>Getting help with CloudBot</h2>
@@ -98,39 +70,26 @@ easy_install pip
 <h3>
 <a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h3>
 
-<p>To configure your CloudBot, visit the <a href="http://git.io/cloudbotircconfig">Config Wiki Page</a>.</p>
+<p>To configure your CloudBot, visit the <a href="https://github.com/CloudBotIRC/CloudBotRefresh/wiki/Config">Config Wiki Page</a>.</p>
 
-<p>To write your own modules, visit the <a href="https://github.com/CloudBotIRC/CloudBot/wiki/Writing-Refresh-Modules">Module Wiki Page</a>.</p>
+<p>To write your own modules, visit the <a href="https://github.com/CloudBotIRC/CloudBotRefresh/wiki/Writing-Refresh-Modules">Module Wiki Page</a>.</p>
 
-<p>More at the <a href="http://git.io/cloudbotircwiki">Wiki Main Page</a>.</p>
+<p>More at the <a href="https://github.com/CloudBotIRC/CloudBotRefresh/wiki">Wiki Main Page</a>.</p>
 
 <p>Note that the configuration page, and the main wiki page, are still for CloudBot Develop. The Module Wiki Page has been
-rewriten for refresh, but the other pages are outdated.</p>
+rewritten for refresh, but the other pages are outdated.</p>
 
 <h3>
 <a name="support" class="anchor" href="#support"><span class="octicon octicon-link"></span></a>Support</h3>
 
-<p>The developers reside in <a>#CloudBot</a> on <a href="http://esper.net">EsperNet</a> and would be glad to help you.</p>
+<p>The developers reside in #CloudBot on <a href="http://esper.net">EsperNet</a> and would be glad to help you.</p>
 
 <p>If you think you have found a bug/have a idea/suggestion, please <strong>open a issue</strong> here on Github and contact us on IRC!</p>
-
-<h3>
-<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h3>
-
-<p>CloudBot runs on <strong>Python</strong> <em>3.2+</em>. It is currently developed on <strong>Windows</strong> <em>8</em> with <strong>Python</strong> <em>3.2.3</em>.</p>
-
-<p>It <strong>requires the python modules</strong> lxml, watchdog, sqlalchemy and BeautifulSoup4.</p>
-
-<p>Besides that, <code>pyenchant</code> is needed for spellcheck plugin, <code>pydns</code> is required for srv lookups in the minecraftping
-plugin, <code>pygeoip</code> is required for the geoip plugin, <code>tweepy</code> is required for the twitter plugin, and <code>pycrypto</code> and
-<code>pbkdf2</code> are required for the encrypt plugin.</p>
-
-<p><strong>Windows</strong> users: Windows compatibility some plugins is <strong>broken</strong> (such as ping), but we do intend to add it. Eventually.</p>
 
 <h2>
 <a name="example-cloudbots" class="anchor" href="#example-cloudbots"><span class="octicon octicon-link"></span></a>Example CloudBots</h2>
 
-<p>You can find a number of example bots in <a title="Connect via IRC to #CloudBot on irc.esper.net">#CloudBot</a>.</p>
+<p>You can find a number of example bots in #CloudBot.</p>
 
 <h2>
 <a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
@@ -139,7 +98,7 @@ plugin, <code>pygeoip</code> is required for the geoip plugin, <code>tweepy</cod
 
 <pre><code>CloudBot
 
-Copyright © 2011-2014 Luke Rogers
+Copyright © 2011-2014 Luke Rogers and CloudBot Contributors
 
 CloudBot is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -157,22 +116,32 @@ along with CloudBot.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
         </section>
 
         <aside id="sidebar">
-          <a href="https://github.com/CloudBotIRC/Refresh/zipball/master" class="button">
+          <a href="https://github.com/CloudBotIRC/CloudBotRefresh/zipball/master" class="button">
             <small>Download</small>
             .zip file
           </a>
-          <a href="https://github.com/CloudBotIRC/Refresh/tarball/master" class="button">
+          <a href="https://github.com/CloudBotIRC/CloudBotRefresh/tarball/master" class="button">
             <small>Download</small>
             .tar.gz file
           </a>
 
-          <p class="repo-owner"><a href="https://github.com/CloudBotIRC/Refresh"></a> is maintained by <a href="https://github.com/CloudBotIRC">CloudBotIRC</a>.</p>
+          <p class="repo-owner"><a href="https://github.com/CloudBotIRC/CloudBotRefresh"></a> is maintained by <a href="https://github.com/CloudBotIRC">CloudBotIRC</a>.</p>
 
           <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
         </aside>
       </div>
     </div>
 
-  
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-51460524-3");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
   </body>
 </html>

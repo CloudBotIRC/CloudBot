@@ -7,7 +7,6 @@ from ssl import SSLContext
 from cloudbot.core.permissions import PermissionManager
 from cloudbot.core.events import BaseEvent
 
-
 irc_prefix_re = re.compile(r":([^ ]*) ([^ ]*) (.*)")
 irc_noprefix_re = re.compile(r"([^ ]*) (.*)")
 irc_netmask_re = re.compile(r"([^!@]*)!([^@]*)@(.*)")
@@ -289,7 +288,7 @@ class IRCProtocol(asyncio.Protocol):
         self._connected = False
         # create a new connected_future for when we are connected.
         self._connected_future = asyncio.Future()
-        self.logger.info("[{}] EOF Received, reconnecting.".format(self.readable_name))
+        self.logger.info("[{}] EOF received.".format(self.readable_name))
         asyncio.async(self.botconn.connect(), loop=self.loop)
         return True
 
@@ -346,22 +345,25 @@ class IRCProtocol(asyncio.Protocol):
                 host = None
                 mask = None
 
-            param_list = irc_param_re.findall(params)
-            if param_list:
-                # TODO: What the heck?
-                if param_list[-1].startswith(":"):
-                    param_list[-1] = param_list[-1][1:]
-                last_param = param_list[-1]
+            command_params = irc_param_re.findall(params)
+
+            if command_params:
+                # If the last param is in the format of `:message text` remove the `:` from it, so that it is just the content.
+                if command_params[-1].startswith(":"):
+                    command_params[-1] = command_params[-1][1:]
+                irc_message_content = command_params[-1]
             else:
-                last_param = None
-            # Set up parsed message
-            # TODO: What do you actually want to send here? Are prefix and params really necessary?
-            event = BaseEvent(conn=self.botconn, irc_raw=line, irc_prefix=prefix, irc_command=command,
-                              irc_paramlist=param_list, irc_message=last_param, nick=nick, user=user, host=host,
-                              mask=mask)
-            # we should also remember to ping the server if they ping us
+                irc_message_content = None
+
+            # Reply to pings immediately
             if command == "PING":
-                asyncio.async(self.send("PONG :" + last_param))
+                asyncio.async(self.send("PONG :" + irc_message_content))
+
+            # Set up parsed message
+            # TODO: Do we really want to send the raw `prefix` and `command_params` here?
+            event = BaseEvent(conn=self.botconn, irc_raw=line, irc_prefix=prefix, irc_command=command,
+                              irc_paramlist=command_params, irc_message=irc_message_content, nick=nick, user=user, host=host,
+                              mask=mask)
 
             # handle the message, async
             asyncio.async(self.bot.process(event))

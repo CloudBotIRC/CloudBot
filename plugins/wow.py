@@ -46,10 +46,10 @@ def wow_armoury_format(data, link):
         niceurl = link.replace('/api/wow/', '/wow/en/') + '/simple'
 
         try:
-            return '{0} is a level \x0307{1}\x0F {2} {3} on {4} with \x0307{5}\x0F achievement points and \x0307{6}\x0F honourable kills. Armoury Profile: {7}' \
+            return '{0} is a level \x0307{1}\x0F {2} {3} on {4} with \x0307{5}\x0F achievement points and \x0307{6}' \
+                   '\x0F honourable kills. Armoury Profile: {7}' \
                 .format(data['name'], data['level'], wow_get_gender(data['gender']), wow_get_class(data['class'], True),
-                        data['realm'],
-                        data['achievementPoints'], data['totalHonorableKills'], web.isgd(niceurl))
+                        data['realm'], data['achievementPoints'], data['totalHonorableKills'], web.isgd(niceurl))
         except Exception as e:
             return 'Unable to fetch information for {}. Does the realm or character exist? ({})'.format(niceurl, str(e))
 

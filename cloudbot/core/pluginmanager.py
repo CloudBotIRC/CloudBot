@@ -161,8 +161,7 @@ class PluginManager:
         for onload_hook in plugin.run_on_load:
             success = yield from self.launch(onload_hook, events.BaseEvent(bot=self.bot, hook=onload_hook))
             if not success:
-                logger.warning(
-                    "Not registering hooks from plugin {}: onload hook errored".format(plugin.title))
+                logger.warning("Not registering hooks from plugin {}: onload hook errored".format(plugin.title))
 
                 # unregister databases
                 plugin.unregister_tables(self.bot)
@@ -280,7 +279,8 @@ class PluginManager:
         # remove last reference to plugin
         del self.plugins[plugin.file_name]
 
-        logger.info("Unloaded all plugins from {}".format(plugin.title))
+        if self.bot.config.get("logging", {}).get("show_plugin_loading", True):
+            logger.info("Unloaded all plugins from {}".format(plugin.title))
 
         return True
 
@@ -290,8 +290,9 @@ class PluginManager:
 
         :type hook: Hook
         """
-        logger.info("Loaded {}".format(hook))
-        logger.debug("Loaded {}".format(repr(hook)))
+        if self.bot.config.get("logging", {}).get("show_plugin_loading", True):
+            logger.info("Loaded {}".format(hook))
+            logger.debug("Loaded {}".format(repr(hook)))
 
     def _prepare_parameters(self, hook, event):
         """
@@ -643,7 +644,7 @@ class RawHook(Hook):
         return "Raw[triggers: {}, {}]".format(list(self.triggers), Hook.__repr__(self))
 
     def __str__(self):
-        return "events {} ({}) from {}".format(self.function_name, ",".join(self.triggers), self.plugin.file_name)
+        return "irc raw {} ({}) from {}".format(self.function_name, ",".join(self.triggers), self.plugin.file_name)
 
 
 class SieveHook(Hook):

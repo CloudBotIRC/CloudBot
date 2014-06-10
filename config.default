@@ -69,6 +69,9 @@
         "console_debug": false,
         "file_debug": true
     },
-    "skip_motd": false,
-    "skip_server_info": false
+    "logging": {
+        "show_plugin_loading": true,
+        "show_motd": true,
+        "show_server_info": true
+    }
 }

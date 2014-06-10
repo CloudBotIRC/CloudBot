@@ -56,10 +56,10 @@ def beautify(event):
     :type event: cloudbot.core.events.BaseEvent
     :rtype: str
     """
-    if event.bot.config.get("skip_motd", False) and event.irc_command in ["375", "372", "376"]:
+    logging = event.bot.config.get("logging", {})
+    if event.irc_command in ("375", "372", "376") and not logging.get("show_motd", True):
         return None
-    if event.bot.config.get("skip_server_info", False) and event.irc_command in ["003", "005", "250", "251", "252",
-                                                                                 "253", "254", "255", "256"]:
+    if event.irc_command in ("003", "005", "250", "251", "252", "253", "254", "255", "256") and not logging.get("show_server_info", True):
         return None
     if event.irc_command == "PING":
         return None

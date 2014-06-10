@@ -2,13 +2,14 @@ import asyncio
 import time
 
 from cloudbot import hook
+import cloudbot
 
 
 # CTCP responses
 @asyncio.coroutine
 @hook.regex(r'^\x01VERSION\x01$')
 def ctcp_version(notice):
-    notice('\x01VERSION: CloudBot - http://git.io/cloudbotirc')
+    notice("\x01VERSION: CloudBotRefresh v{} - https://github.com/CloudBotIRC/CloudBotRefresh".format(cloudbot.__version__))
 
 
 @asyncio.coroutine

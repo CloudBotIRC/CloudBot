@@ -56,57 +56,57 @@ def wow_armoury_format(data, link):
     return 'An unexpected error occured.'
 
 
-def wow_get_gender(genderid):
+def wow_get_gender(gender_id):
     """Formats a gender ID to a readable gender name"""
     gender = 'unknown'
 
-    if genderid == 0:
+    if gender_id == 0:
         gender = 'male'
-    elif genderid == 1:
+    elif gender_id == 1:
         gender = 'female'
 
     return gender
 
 
-def wow_get_class(classid, colours=False):
+def wow_get_class(class_id, colours=False):
     """Formats a class ID to a readable name, data from http://eu.battle.net/api/wow/data/character/classes"""
     if colours:
         # Format their colours according to class colours.
-        classids = {
+        class_ids = {
             1: "\x0305Warrior\x0F", 2: "\x0313Paladin\x0F", 3: "\x0303Hunter\x0F", 4: "\x0308Rogue\x0F",
             5: "Priest", 6: "\x0304Death Knight\x0F", 7: "\x0310Shaman\x0F", 8: "\x0311Mage\x0F",
             9: "\x0306Warlock\x0F", 10: "\x0309Monk\x0F", 11: "\x0307Druid\x0F"
         }
     else:
-        classids = {
+        class_ids = {
             1: "Warrior", 2: "Paladin", 3: "Hunter", 4: "Rogue", 5: "Priest",
             6: "Death Knight", 7: "Shaman", 8: "Mage", 9: "Warlock", 10: "Monk",
             11: "Druid"
         }
 
-    if classid in classids:
-        return classids[classid]
+    if class_id in class_ids:
+        return class_ids[class_id]
     else:
         return 'unknown'
 
 
-def wow_get_race(raceid):
+def wow_get_race(race_id):
     """Formats a race ID to a readable race name, data from http://eu.battle.net/api/wow/data/character/races"""
-    raceids = {
+    race_ids = {
         1: "Human", 2: "Orc", 3: "Dwarf", 4: "Night Elf", 5: "Undead", 6: "Tauren", 7: "Gnome",
         8: "Troll", 9: "Goblin", 10: "Blood Elf", 11: "Draenei", 22: "Worgen",
         24: "Pandaren (neutral)", 25: "Pandaren (alliance)", 26: "Pandaren (horde)"
     }
 
-    if raceid in raceids:
-        return raceids[raceid]
+    if race_id in race_ids:
+        return race_ids[race_id]
     else:
         return 'unknown'
 
 
 def wow_region_shortname(region):
     """Returns a short region name, which functions as battle.net their subdomain (i.e. eu.battle.net)"""
-    validregions = {
+    valid_regions = {
         'eu': 'eu', 'europe': 'eu',
         'us': 'us',
         'sea': 'sea', 'asia': 'sea',
@@ -114,8 +114,8 @@ def wow_region_shortname(region):
         'tw': 'tw', 'taiwan': 'tw'
     }
 
-    if region in validregions:
-        return validregions[region]
+    if region in valid_regions:
+        return valid_regions[region]
     else:
         return False
 
@@ -132,7 +132,7 @@ def armoury(inp):
         return 'armoury [realm] [character name] [region = EU] - Look up character and returns API data.'
 
     realm = splitinput[0].replace('_', '-')
-    charname = splitinput[1]
+    char_name = splitinput[1]
 
     # Sets the default region to EU if none specified.
     if len(splitinput) < 3:
@@ -143,7 +143,7 @@ def armoury(inp):
     if not re.match(r"^[a-z]{1,3}$", region):
         return 'The region specified is not a valid region. Valid regions: eu, us, sea, kr, tw.'
 
-    if re.match(r"^[^\d]$", charname) or len(charname) > 18:
+    if re.match(r"^[^\d]$", char_name) or len(char_name) > 18:
         # May not contain digits, repeat the same letter three times, or contain non-word characters.
         # Special characters are permitted, such as áéíóßø.
         return 'The character name is not a valid name. Character names can only contain letters, special characters,' \
@@ -159,7 +159,7 @@ def armoury(inp):
     if not region_short:
         return 'The region \'{}\' does not exist.'.format(region)
 
-    link = "http://{0}.battle.net/api/wow/character/{1}/{2}".format(region, realm, charname)
+    link = "http://{0}.battle.net/api/wow/character/{1}/{2}".format(region, realm, char_name)
 
     return wow_armoury_data(link)
 

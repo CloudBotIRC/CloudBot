@@ -14,7 +14,7 @@ from util import hook, http, web
 @hook.command('armory')
 @hook.command
 def armoury(inp):
-    """armoury  [realm] [character name] [region = EU] - Look up character and returns API data."""
+    """armoury [realm] [character name] [region = EU] - Look up character and returns API data."""
 
     # Splits the input, builds the API url, and returns the formatted data to user.
     splitinput = inp.lower().split()

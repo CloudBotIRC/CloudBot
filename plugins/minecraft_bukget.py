@@ -130,10 +130,7 @@ def bukget(text, reply, message):
         return e
 
     # format the final message and send it to IRC
-    line_a, line_b = format_output(data)
-
-    reply(line_a)
-    message(line_b)
+    return format_output(data)
 
 
 @hook.command(autohelp=None)
@@ -152,7 +149,5 @@ def randomplugin(reply, message):
         return e
 
     # format the final message and send it to IRC
-    line_a, line_b = format_output(data)
+    return format_output(data)
 
-    reply(line_a)
-    message(line_b)

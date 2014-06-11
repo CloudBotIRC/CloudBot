@@ -8,6 +8,7 @@ import os
 import codecs
 import time
 import re
+import sys
 
 from cloudbot import hook
 

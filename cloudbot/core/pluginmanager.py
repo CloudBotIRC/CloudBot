@@ -345,7 +345,13 @@ class PluginManager:
             return False
 
         if out is not None:
-            event.reply(str(out))
+            # if there are multiple items in the response, return them on multiple lines
+            if isinstance(out, (list, tuple)):
+                event.reply(out[0])
+                for line in out[1:]:
+                    event.message(line)
+            else:
+                event.reply(str(out))
         return True
 
     @asyncio.coroutine

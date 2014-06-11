@@ -1,10 +1,12 @@
 import time
+import bs4
 import random
+import requests
 
 from cloudbot import hook, http, web
 
 
-## CONSTANTS
+# # CONSTANTS
 from cloudbot import formatting
 
 base_url = "http://api.bukget.org/3/"
@@ -17,19 +19,14 @@ details_url = base_url + "plugins/bukkit/{}"
 @hook.onload()
 def load_categories():
     global categories, count_total, count_categories
-    categories = http.get_json("http://api.bukget.org/3/categories")
+    categories = requests.get("http://api.bukget.org/3/categories").json()
 
     count_total = sum([cat["count"] for cat in categories])
     count_categories = {cat["name"].lower(): int(cat["count"]) for cat in categories}  # dict comps!
 
 
 class BukgetError(Exception):
-    def __init__(self, code, text):
-        self.code = code
-        self.text = text
-
-    def __str__(self):
-        return self.text
+    pass
 
 
 ## DATA FUNCTIONS
@@ -41,12 +38,18 @@ def plugin_search(term):
     search_term = http.quote_plus(term)
 
     try:
-        results = http.get_json(search_url.format(search_term))
-    except (http.HTTPError, http.URLError) as e:
-        raise BukgetError(500, "Error Fetching Search Page: {}".format(e))
+        request = requests.get(search_url.format(search_term))
+        request.raise_for_status()
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+        raise BukgetError("Error Fetching Search Page: {}".format(e))
+
+    try:
+        results = request.json()
+    except ValueError:
+        raise BukgetError("Error Parsing Search Page")
 
     if not results:
-        raise BukgetError(404, "No Results Found")
+        raise BukgetError("No Results Found")
 
     for result in results:
         if result["slug"] == term:
@@ -63,9 +66,15 @@ def plugin_random():
         plugin_number = random.randint(1, count_total)
         print("trying {}".format(plugin_number))
         try:
-            results = http.get_json(random_url.format(plugin_number))
-        except (http.HTTPError, http.URLError) as e:
-            raise BukgetError(500, "Error Fetching Search Page: {}".format(e))
+            request = requests.get(random_url.format(plugin_number))
+            request.raise_for_status()
+        except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+            raise BukgetError("Error Fetching Search Page: {}".format(e))
+
+        try:
+            results = request.json()
+        except ValueError:
+            raise BukgetError("Error Parsing Search Page")
 
     return results[0]["slug"]
 
@@ -75,9 +84,16 @@ def plugin_details(slug):
     slug = slug.lower().strip()
 
     try:
-        details = http.get_json(details_url.format(slug))
-    except (http.HTTPError, http.URLError) as e:
-        raise BukgetError(500, "Error Fetching Details: {}".format(e))
+        request = requests.get(details_url.format(slug))
+        request.raise_for_status()
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+        raise BukgetError("Error Fetching Details: {}".format(e))
+
+    try:
+        details = request.json()
+    except ValueError:
+        raise BukgetError("Error Parsing Details")
+
     return details
 
 

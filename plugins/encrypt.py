@@ -4,15 +4,18 @@ import hashlib
 import asyncio
 import traceback
 
+# noinspection PyUnresolvedReferences
 from pbkdf2 import PBKDF2
+# noinspection PyUnresolvedReferences
 from Crypto import Random
+# noinspection PyUnresolvedReferences
 from Crypto.Cipher import AES
 
-from cloudbot import hook
+import cloudbot
 
 BS = AES.block_size
 
-# helper functions to pad and unpad a string to a specified block size
+# helper functions to pad and un-pad a string to a specified block size
 # <http://stackoverflow.com/questions/12524994/encrypt-decrypt-using-pycrypto-aes-256>
 
 
@@ -41,7 +44,7 @@ def decode_aes(c, s):
         return "Invalid password for the given message (couldn't encode result as utf-8)"
 
 
-@hook.onload()
+@cloudbot.hook.onload()
 def create_db(db):
     """check to see that our db has the the encryption table.
     :type db: sqlalchemy.orm.session.Session
@@ -62,7 +65,7 @@ def get_salt(bot):
 
 
 @asyncio.coroutine
-@hook.command()
+@cloudbot.hook.command()
 def encrypt(text, bot, db, notice):
     """<pass> <string> - encrypts <string> with <pass>. (<string> can only be decrypted using this bot)
     :type text: str
@@ -101,7 +104,7 @@ def encrypt(text, bot, db, notice):
 
 
 @asyncio.coroutine
-@hook.command()
+@cloudbot.hook.command()
 def decrypt(text, bot, db, notice):
     """<pass> <string> - decrypts <string> with <pass>. (can only decrypt strings encrypted on this bot)
     :type bot: cloudbot.core.bot.CloudBot

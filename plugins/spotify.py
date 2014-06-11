@@ -7,7 +7,7 @@ gateway = 'http://open.spotify.com/{}/{}'  # http spotify gw address
 spuri = 'spotify:{}:{}'
 
 spotify_re = re.compile(r'(spotify:(track|album|artist|user):([a-zA-Z0-9]+))', re.I)
-http_re = re.compile(r'(open\.spotify\.com\/(track|album|artist|user)\/'
+http_re = re.compile(r'(open\.spotify\.com/(track|album|artist|user)/'
                      '([a-zA-Z0-9]+))', re.I)
 
 

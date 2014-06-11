@@ -14,7 +14,7 @@ PAID_URL = "http://www.minecraft.net/haspaid.jsp"
 
 
 # enums - "because I can"
-NameStatus = Enum('NameStatus', 'free taken invalid')
+NameStatus = Enum('NameStatus', "free taken invalid")
 
 
 class McuError(Exception):

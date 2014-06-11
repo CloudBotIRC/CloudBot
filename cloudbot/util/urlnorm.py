@@ -95,18 +95,18 @@ def normalize(url, assume_scheme=False):
     # Prevent dot-segments appearing in non-relative URI paths.
     if scheme in ["", "http", "https", "ftp", "file"]:
         output = []
-        for input in path.split('/'):
-            if input == "":
+        for i in path.split('/'):
+            if i == "":
                 if not output:
-                    output.append(input)
-            elif input == ".":
+                    output.append(i)
+            elif i == ".":
                 pass
-            elif input == "..":
+            elif i == "..":
                 if len(output) > 1:
                     output.pop()
             else:
-                output.append(input)
-        if input in ["", ".", ".."]:
+                output.append(i)
+        if i in ["", ".", ".."]:
             output.append("")
         path = '/'.join(output)
 

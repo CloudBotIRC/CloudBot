@@ -5,7 +5,8 @@ from cloudbot import hook
 
 @hook.command(autohelp=False)
 def googleurl(text, db, nick):
-    """[nickname] - converts Google urls (google.com/url) to normal urls where possible, [nickname]'s last message, defaulting to the caller's last message if no nickname is specified"""
+    """[nickname] - converts Google urls (google.com/url) to normal urls where possible, [nickname]'s last message,
+     defaulting to the caller's last message if no nickname is specified"""
     if not text:
         text = nick
     last_message = db.execute("select name, quote from seen_user where name"

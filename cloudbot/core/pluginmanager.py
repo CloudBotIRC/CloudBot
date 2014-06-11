@@ -150,7 +150,7 @@ class PluginManager:
         # proceed to register hooks
 
         # create database tables
-        plugin.create_tables(self.bot)
+        yield from plugin.create_tables(self.bot)
 
         # run onload hooks
         for onload_hook in plugin.run_on_load:

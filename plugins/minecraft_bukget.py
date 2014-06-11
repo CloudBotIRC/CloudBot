@@ -5,7 +5,7 @@ from cloudbot import hook, http, web
 
 
 ## CONSTANTS
-from cloudbot import text
+from cloudbot import formatting
 
 base_url = "http://api.bukget.org/3/"
 
@@ -86,7 +86,7 @@ def plugin_details(slug):
 def format_output(data):
     """ takes plugin data and returns two strings representing information about that plugin """
     name = data["plugin_name"]
-    description = text.truncate_str(data['description'], 30)
+    description = formatting.truncate_str(data['description'], 30)
     url = data['website']
     authors = data['authors'][0]
     authors = authors[0] + "\u200b" + authors[1:]

@@ -1,7 +1,7 @@
 import json
 import os
 
-from cloudbot import hook, text, textgen
+from cloudbot import hook, formatting, textgen
 
 
 def get_generator(_json):
@@ -27,7 +27,7 @@ def namegen(text, bot, notice):
     # command to return a list of all available generators
     if inp == "list":
         message = "Available generators: "
-        message += text.get_text_list(all_modules, 'and')
+        message += formatting.get_text_list(all_modules, 'and')
         notice(message)
         return
 
@@ -52,4 +52,4 @@ def namegen(text, bot, notice):
     name_list = generator.generate_strings(10)
 
     # and finally return the final message :D
-    return "Some names to ponder: {}.".format(text.get_text_list(name_list, 'and'))
+    return "Some names to ponder: {}.".format(formatting.get_text_list(name_list, 'and'))

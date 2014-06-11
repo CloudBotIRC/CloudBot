@@ -1,4 +1,4 @@
-from cloudbot import hook, web, text
+from cloudbot import hook, web, formatting
 
 
 @hook.command()
@@ -11,6 +11,6 @@ def answer(text):
     short_url = web.try_shorten(result["Link"])
 
     # we split the answer and .join() it to remove newlines/extra spaces
-    answer_text = text.truncate_str(' '.join(result["ChosenAnswer"].split()), 80)
+    answer_text = formatting.truncate_str(' '.join(result["ChosenAnswer"].split()), 80)
 
     return '\x02{}\x02 "{}" - {}'.format(result["Subject"], answer_text, short_url)

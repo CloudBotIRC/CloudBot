@@ -3,7 +3,7 @@ Scaevolus 2009"""
 
 import re
 
-from cloudbot import hook, http, text
+from cloudbot import hook, http, formatting
 
 api_prefix = "http://en.wikipedia.org/w/api.php"
 search_url = api_prefix + "?action=opensearch&format=xml"
@@ -42,6 +42,6 @@ def wiki(text):
 
     desc = ' '.join(desc.split())  # remove excess spaces
 
-    desc = text.truncate_str(desc, 200)
+    desc = formatting.truncate_str(desc, 200)
 
     return '{} :: {}'.format(desc, http.quote(url, ':/'))

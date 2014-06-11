@@ -5,7 +5,7 @@ import collections
 import re
 import binascii
 
-from cloudbot import hook, text
+from cloudbot import hook, formatting
 
 colors = collections.OrderedDict([
     ('red', '\x0304'),
@@ -150,7 +150,7 @@ def hash_command(text):
 @hook.command()
 def munge(text):
     """munge <text> -- Munges up <text>."""
-    return text.munge(text)
+    return formatting.munge(text)
 
 
 # colors - based on code by Reece Selwood - <https://github.com/hitzler/homero>

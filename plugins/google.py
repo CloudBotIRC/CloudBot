@@ -1,6 +1,6 @@
 import random
 
-from cloudbot import hook, http, text
+from cloudbot import hook, http, formatting
 
 
 def api_get(kind, query):
@@ -35,13 +35,13 @@ def google(text):
     result = parsed['responseData']['results'][0]
 
     title = http.unescape(result['titleNoFormatting'])
-    title = text.truncate_str(title, 60)
+    title = formatting.truncate_str(title, 60)
     content = http.unescape(result['content'])
 
     if not content:
         content = "No description available."
     else:
         content = http.html.fromstring(content).text_content()
-        content = text.truncate_str(content, 150)
+        content = formatting.truncate_str(content, 150)
 
     return '{} -- \x02{}\x02: "{}"'.format(result['unescapedUrl'], title, content)

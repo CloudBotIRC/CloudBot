@@ -2,7 +2,7 @@ import re
 from urllib.parse import urlencode
 
 from cloudbot import hook, http, web
-from cloudbot import text
+from cloudbot import formatting
 
 sc_re = re.compile(r'(.*:)//(www.)?(soundcloud.com)(.*)', re.I)
 api_url = "http://api.soundcloud.com"
@@ -13,7 +13,7 @@ def soundcloud(url, api_key):
     data = http.get_json(api_url + '/resolve.json?' + urlencode({'url': url, 'client_id': api_key}))
 
     if data['description']:
-        desc = ": {} ".format(text.truncate_str(data['description'], 50))
+        desc = ": {} ".format(formatting.truncate_str(data['description'], 50))
     else:
         desc = ""
     if data['genre']:

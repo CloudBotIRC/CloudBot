@@ -1,4 +1,4 @@
-from cloudbot.util import text
+from cloudbot.util import formatting
 
 
 def format_time(seconds, count=3, accuracy=6, simple=False):
@@ -64,4 +64,4 @@ def format_time(seconds, count=3, accuracy=6, simple=False):
     if simple:
         return " ".join(strings)
     else:
-        return text.get_text_list(strings, "and")
+        return formatting.get_text_list(strings, "and")

@@ -4,7 +4,7 @@ import asyncio
 import requests
 import requests.exceptions
 
-from cloudbot import hook, text
+from cloudbot import hook, formatting
 
 
 api_url = "http://api.fishbans.com/stats/{}/"
@@ -71,4 +71,4 @@ def bancount(text, loop):
     if not out:
         return "The user \x02{}\x02 has no bans - {}".format(user, user_url)
     else:
-        return "Bans for \x02{}\x02: {} - {}".format(user, text.get_text_list(out, "and"), user_url)
+        return "Bans for \x02{}\x02: {} - {}".format(user, formatting.get_text_list(out, "and"), user_url)

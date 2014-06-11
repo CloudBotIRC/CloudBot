@@ -1,4 +1,4 @@
-from cloudbot import hook, text, web
+from cloudbot import hook, formatting, web
 
 
 @hook.command("feed")
@@ -26,7 +26,7 @@ def rss(text, message):
         return "Could not find/read RSS feed."
 
     for row in result.rows:
-        title = text.truncate_str(row["title"], 100)
+        title = formatting.truncate_str(row["title"], 100)
         link = web.try_shorten(row["link"])
         message("{} - {}".format(title, link))
 

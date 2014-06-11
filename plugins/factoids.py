@@ -109,7 +109,7 @@ def remember(text, nick, db, notice, async):
 
 
 @asyncio.coroutine
-@hook.command(["f", "forget"], permissions=["delfactoid"])
+@hook.command("f", "forget", , permissions=["delfactoid"])
 def forget(text, db, async, notice):
     """<word> - forgets previously remembered <word>"""
 

@@ -62,13 +62,13 @@ def portal(text):
     return get_sound_info("portal1", text)
 
 
-@hook.command(["portalmusic", "portal1music"])
+@hook.command("portalmusic", "portal1music")
 def portalmusic(text):
     """portalmusic <title> - Look up Portal music. Example: .portalmusic still alive"""
     return get_sound_info("portal1music", text)
 
 
-@hook.command(["tf2sound", "tf2"])
+@hook.command("tf2sound", "tf2")
 def tf2(text):
     """tf2 [who - ]<quote> - Look up TF2 quote. Example: .tf2 may i borrow your earpiece"""
     return get_sound_info("tf2", text)

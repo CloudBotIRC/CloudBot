@@ -81,7 +81,7 @@ def mcuser(text):
     except McuError as e:
         return e
 
-    if status == NameStatus.taken:
+    if status is NameStatus.taken:
         try:
             # get information about user
             profile = get_profile(user)
@@ -96,9 +96,9 @@ def mcuser(text):
         else:
             return "The account \x02{name}\x02 ({id}{lt}) exists. It \x034\x02is NOT\x02\x0f a paid" \
                    " account.".format(**profile)
-    elif status == NameStatus.free:
+    elif status is NameStatus.free:
         return "The account \x02{}\x02 does not exist.".format(user)
-    elif status == NameStatus.invalid:
+    elif status is NameStatus.invalid:
         return "The name \x02{}\x02 contains invalid characters.".format(user)
     else:
         # if you see this, panic

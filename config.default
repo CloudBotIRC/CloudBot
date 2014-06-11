@@ -60,7 +60,7 @@
     "database": "sqlite:///cloudbot.db",
     "plugin_loading": {
         "use_whitelist": false,
-        "blacklist": [],
+        "blacklist": ["update", "spellcheck"],
         "whitelist": []
     },
     "developer_mode": {

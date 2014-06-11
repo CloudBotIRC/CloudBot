@@ -58,7 +58,6 @@ def get_profile(name):
     except ValueError:
         raise McuError("Could not parse profile status")
 
-    print(results)
 
     user = results["profiles"][0]
     profile["name"] = user["name"]

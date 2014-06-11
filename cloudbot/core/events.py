@@ -21,7 +21,7 @@ class EventType(enum.Enum):
 class BaseEvent:
     """
     :type bot: cloudbot.core.bot.CloudBot
-    :type conn: cloudbot.core.connection.BotConnection
+    :type conn: cloudbot.core.connection.Connection
     :type hook: cloudbot.core.pluginmanager.Hook
     :type type: EventType
     :type content: str
@@ -69,7 +69,7 @@ class BaseEvent:
                                 should be removed from the front.
         :param irc_ctcp_text: CTCP text if this message is a CTCP command
         :type bot: cloudbot.core.bot.CloudBot
-        :type conn: cloudbot.core.connection.BotConnection
+        :type conn: cloudbot.core.connection.Connection
         :type hook: cloudbot.core.pluginmanager.Hook
         :type base_event: cloudbot.core.events.BaseEvent
         :type content: str
@@ -233,7 +233,7 @@ class BaseEvent:
             if self.chan is None:
                 raise ValueError("Target must be specified when chan is not assigned")
             target = self.chan
-        self.conn.msg(target, message)
+        self.conn.message(target, message)
 
     def reply(self, message, target=None):
         """sends a message to the current channel/user with a prefix
@@ -246,9 +246,9 @@ class BaseEvent:
             target = self.chan
 
         if target == self.nick:
-            self.conn.msg(target, message)
+            self.conn.message(target, message)
         else:
-            self.conn.msg(target, "({}) {}".format(self.nick, message))
+            self.conn.message(target, "({}) {}".format(self.nick, message))
 
     def action(self, message, target=None):
         """sends an action to the current channel/user or a specific channel/user
@@ -260,7 +260,7 @@ class BaseEvent:
                 raise ValueError("Target must be specified when chan is not assigned")
             target = self.chan
 
-        self.conn.ctcp(target, "ACTION", message)
+        self.conn.action(target, message)
 
     def ctcp(self, message, ctcp_type, target=None):
         """sends an ctcp to the current channel/user or a specific channel/user
@@ -272,6 +272,9 @@ class BaseEvent:
             if self.chan is None:
                 raise ValueError("Target must be specified when chan is not assigned")
             target = self.chan
+        if not hasattr(self.conn, "ctcp"):
+            raise ValueError("CTCP can only be used on IRC connections")
+        # noinspection PyUnresolvedReferences
         self.conn.ctcp(target, ctcp_type, message)
 
     def notice(self, message, target=None):
@@ -284,7 +287,7 @@ class BaseEvent:
                 raise ValueError("Target must be specified when nick is not assigned")
             target = self.nick
 
-        self.conn.cmd('NOTICE', [target, message])
+        self.conn.notice(target, message)
 
     def has_permission(self, permission, notice=True):
         """ returns whether or not the current user has a given permission

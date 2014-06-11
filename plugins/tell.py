@@ -74,7 +74,7 @@ def add_tell(db, server, sender, target, message):
 def tellinput(event, conn, db, nick, notice):
     """
     :type event: cloudbot.core.events.BaseEvent
-    :type conn: cloudbot.core.connection.BotConnection
+    :type conn: cloudbot.core.connection.IrcConnection
     :type db: sqlalchemy.orm.Session
     """
     if 'showtells' in event.content.lower():

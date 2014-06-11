@@ -286,7 +286,7 @@ class PluginManager:
                 parameters.append(value)
             else:
                 logger.error("Plugin {} asked for invalid argument '{}', cancelling execution!"
-                                      .format(hook.description, required_arg))
+                             .format(hook.description, required_arg))
                 logger.debug("Valid arguments are: {} ({})".format(dir(event), event))
                 return None
         return parameters

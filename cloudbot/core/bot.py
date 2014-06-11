@@ -10,7 +10,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.schema import MetaData
 
 import cloudbot
-from cloudbot.core.connection import BotConnection
+from cloudbot.core.connection import Connection, IrcConnection
 from cloudbot.core.config import Config
 from cloudbot.core.reloader import PluginReloader
 from cloudbot.core.pluginmanager import PluginManager
@@ -32,7 +32,7 @@ class CloudBot:
     """
     :type start_time: float
     :type running: bool
-    :type connections: list[BotConnection]
+    :type connections: list[Connection | IrcConnection]
     :type data_dir: bytes
     :type config: core.config.Config
     :type plugin_manager: PluginManager
@@ -125,10 +125,9 @@ class CloudBot:
             server = conf['connection']['server']
             port = conf['connection'].get('port', 6667)
 
-            self.connections.append(BotConnection(self, name, server, nick, config=conf,
-                                                  port=port, channels=conf['channels'],
-                                                  use_ssl=conf['connection'].get('ssl', False),
-                                                  readable_name=readable_name))
+            self.connections.append(IrcConnection(self, name, nick, config=conf, channels=conf['channels'],
+                                                  readable_name=readable_name, server=server, port=port,
+                                                  use_ssl=conf['connection'].get('ssl', False)))
             logger.debug("[{}] Created connection.".format(readable_name))
 
     @asyncio.coroutine
@@ -223,7 +222,8 @@ class CloudBot:
                 command = match.group(1).lower()
                 if command in self.plugin_manager.commands:
                     command_hook = self.plugin_manager.commands[command]
-                    command_event = CommandEvent(hook=command_hook, text=match.group(2).strip(), triggered_command=command, base_event=event)
+                    command_event = CommandEvent(hook=command_hook, text=match.group(2).strip(),
+                                                 triggered_command=command, base_event=event)
                     tasks.append(self.plugin_manager.launch(command_hook, command_event))
                 else:
                     potential_matches = []
@@ -233,7 +233,8 @@ class CloudBot:
                     if potential_matches:
                         if len(potential_matches) == 1:
                             command_hook = potential_matches[0][1]
-                            command_event = CommandEvent(hook=command_hook, text=match.group(2).strip(), triggered_command=command, base_event=event)
+                            command_event = CommandEvent(hook=command_hook, text=match.group(2).strip(),
+                                                         triggered_command=command, base_event=event)
                             tasks.append(self.plugin_manager.launch(command_hook, command_event))
                         else:
                             event.notice("Possible matches: {}".format(

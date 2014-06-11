@@ -12,7 +12,7 @@ socket.setdefaulttimeout(10)
 def invite(irc_paramlist, conn):
     """
     :type irc_paramlist: list[str]
-    :type conn: cloudbot.core.connection.BotConnection
+    :type conn: cloudbot.core.connection.Connection
     """
     invite_join = conn.config.get('invite_join', True)
     if invite_join:
@@ -24,7 +24,7 @@ def invite(irc_paramlist, conn):
 @hook.irc_raw('004')
 def onjoin(conn, bot):
     """
-    :type conn: cloudbot.core.connection.BotConnection
+    :type conn: cloudbot.core.connection.IrcConnection
     :type bot: cloudbot.core.bot.CloudBot
     """
     bot.logger.info("ONJOIN hook triggered.")
@@ -38,9 +38,9 @@ def onjoin(conn, bot):
             if "censored_strings" in bot.config and nickserv_password in bot.config['censored_strings']:
                 bot.config['censored_strings'].remove(nickserv_password)
             if nickserv_account_name:
-                conn.msg(nickserv_name, "{} {} {}".format(nickserv_command, nickserv_account_name, nickserv_password))
+                conn.message(nickserv_name, "{} {} {}".format(nickserv_command, nickserv_account_name, nickserv_password))
             else:
-                conn.msg(nickserv_name, "{} {}".format(nickserv_command, nickserv_password))
+                conn.message(nickserv_name, "{} {}".format(nickserv_command, nickserv_password))
             if "censored_strings" in bot.config:
                 bot.config['censored_strings'].append(nickserv_password)
             yield from asyncio.sleep(1)
@@ -49,7 +49,7 @@ def onjoin(conn, bot):
     mode = conn.config.get('mode')
     if mode:
         bot.logger.info('Setting bot mode: "{}"'.format(mode))
-        conn.cmd('MODE', [conn.nick, mode])
+        conn.cmd('MODE', conn.nick, mode)
 
     # Join config-defined channels
     bot.logger.info('Joining channels.')
@@ -64,10 +64,10 @@ def onjoin(conn, bot):
 @hook.irc_raw('004')
 def keep_alive(conn):
     """
-    :type conn: cloudbot.core.connection.BotConnection
+    :type conn: cloudbot.core.connection.IrcConnection
     """
     keepalive = conn.config.get('keep_alive', False)
     if keepalive:
         while True:
-            conn.cmd('PING', [conn.nick])
+            conn.cmd('PING', conn.nick)
             yield from asyncio.sleep(60)

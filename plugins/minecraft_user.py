@@ -117,6 +117,7 @@ def mcuser(text):
         if not user:
             return "Could not find an account using the UUID"
 
+    # TODO: re-write this to skip the status check to make the command faster
     try:
         # get status of name (does it exist?)
         status = get_status(user)

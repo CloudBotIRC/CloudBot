@@ -78,7 +78,7 @@ def define(text):
     return result
 
 
-@hook.command(["e", "etymology"])
+@hook.command("e", "etymology")
 def etymology(text):
     """<word> - retrieves the etymology of <word>
     :type text: str

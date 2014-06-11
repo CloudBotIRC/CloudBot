@@ -125,7 +125,7 @@ def twitter(text):
     return format_tweet(tweet)
 
 
-@hook.command(["twuser", "twinfo"])
+@hook.command("twuser", "twinfo")
 def twuser(text):
     """<user> - gets info on the Twitter user <user>"""
 

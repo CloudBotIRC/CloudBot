@@ -81,7 +81,7 @@ def youtube(text):
     return get_video_description(video_id) + " - " + video_url % video_id
 
 
-@hook.command(["youtime", "ytime"])
+@hook.command("youtime", "ytime")
 def youtime(text):
     """youtime <query> -- Gets the total run time of the first YouTube search result for <query>."""
     request = http.get_json(search_api_url, q=text)

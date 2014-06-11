@@ -1,5 +1,4 @@
 import time
-import bs4
 import random
 import requests
 

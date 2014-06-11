@@ -1,9 +1,14 @@
 import json
 
 from cloudbot import hook, http
+from enum import Enum
 
 NAME_URL = "https://account.minecraft.net/buy/frame/checkName/{}"
 PAID_URL = "http://www.minecraft.net/haspaid.jsp"
+
+
+# enums - "because I can"
+NameStatus = Enum('free', 'taken', 'invalid')
 
 
 class McuError(Exception):
@@ -19,11 +24,11 @@ def get_status(name):
         raise McuError("Could not get name status: {}".format(e))
 
     if "OK" in response:
-        return "free"
+        return NameStatus.free
     elif "TAKEN" in response:
-        return "taken"
+        return NameStatus.taken
     elif "invalid characters" in response:
-        return "invalid"
+        return NameStatus.invalid
 
 
 def get_profile(name):
@@ -72,11 +77,11 @@ def mcuser(text):
 
     try:
         # get status of name (does it exist?)
-        name_status = get_status(user)
+        status = get_status(user)
     except McuError as e:
         return e
 
-    if name_status == "taken":
+    if status == NameStatus.taken:
         try:
             # get information about user
             profile = get_profile(user)
@@ -91,9 +96,9 @@ def mcuser(text):
         else:
             return "The account \x02{name}\x02 ({id}{lt}) exists. It \x034\x02is NOT\x02\x0f a paid" \
                    " account.".format(**profile)
-    elif name_status == "free":
+    elif status == NameStatus.free:
         return "The account \x02{}\x02 does not exist.".format(user)
-    elif name_status == "invalid":
+    elif status == NameStatus.invalid:
         return "The name \x02{}\x02 contains invalid characters.".format(user)
     else:
         # if you see this, panic

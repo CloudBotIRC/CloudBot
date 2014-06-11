@@ -7,7 +7,7 @@ import requests
 
 from sqlalchemy import Table, Column, String
 
-from cloudbot import botvars, hook, formatting, web
+from cloudbot import botvars, hook, text, web
 
 re_lineends = re.compile(r'[\r\n]*')
 
@@ -164,7 +164,7 @@ def factoid(match, async, event, message, action):
             result = data
 
         # factoid postprocessors
-        result = formatting.multiword_replace(result, shortcodes)
+        result = text.multiword_replace(result, shortcodes)
 
         if result.startswith("<act>"):
             result = result[5:].strip()

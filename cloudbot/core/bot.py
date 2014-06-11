@@ -14,7 +14,7 @@ from cloudbot.core.config import Config
 from cloudbot.core.reloader import PluginReloader
 from cloudbot.core.pluginmanager import PluginManager
 from cloudbot.core.events import BaseEvent, CommandEvent, RegexEvent
-from cloudbot.util import botvars, formatting
+from cloudbot.util import botvars, text
 
 
 logger_initialized = False
@@ -252,7 +252,7 @@ class CloudBot:
                             tasks.append(self.plugin_manager.launch(command_hook, command_event))
                         else:
                             event.notice("Possible matches: {}".format(
-                                formatting.get_text_list([command for command, plugin in potential_matches])))
+                                text.get_text_list([command for command, plugin in potential_matches])))
 
             # REGEXES
             for regex, regex_hook in self.plugin_manager.regex_hooks:

@@ -1,6 +1,6 @@
 import re
 
-from cloudbot import hook, http, web, formatting
+from cloudbot import hook, http, web, text
 
 
 @hook.command(["wa", "calc", "math", "wolframalpha"])
@@ -47,7 +47,7 @@ def wolframalpha(text, bot):
 
     ret = re.sub(r'\\:([0-9a-z]{4})', unicode_sub, ret)
 
-    ret = formatting.truncate_str(ret, 250)
+    ret = text.truncate_str(ret, 250)
 
     if not ret:
         return 'No results.'

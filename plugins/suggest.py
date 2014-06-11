@@ -2,7 +2,7 @@ import json
 
 from bs4 import BeautifulSoup
 
-from cloudbot import hook, http, formatting
+from cloudbot import hook, http, text
 
 
 @hook.command()
@@ -25,4 +25,4 @@ def suggest(text):
     soup = BeautifulSoup(out)
     out = soup.get_text()
 
-    return formatting.truncate_str(out, 200)
+    return text.truncate_str(out, 200)

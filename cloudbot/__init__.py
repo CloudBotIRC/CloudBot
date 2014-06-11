@@ -4,12 +4,12 @@ import logging
 import os
 
 from .core import bot, connection, config, permissions, pluginmanager, events
-from .util import botvars, bucket, formatting, hook, http, textgen, timeformat, timesince, urlnorm, web
+from .util import botvars, bucket, text, hook, http, textgen, timeformat, timesince, urlnorm, web
 
 __version__ = "0.1.1.dev0"
 
 __all__ = ["core", "util", "bot", "connection", "config", "permissions", "pluginmanager", "events", "botvars", "bucket",
-           "formatting", "hook", "http", "textgen", "timeformat", "timesince", "urlnorm", "web", "dev_mode"]
+           "text.py", "hook", "http", "textgen", "timeformat", "timesince", "urlnorm", "web", "dev_mode"]
 
 
 def _setup():

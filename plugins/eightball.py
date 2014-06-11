@@ -2,7 +2,7 @@ import os
 import asyncio
 import random
 
-from cloudbot import hook, formatting
+from cloudbot import hook, text
 
 color_codes = {
     "<r>": "\x02\x0305",
@@ -25,5 +25,5 @@ def load_responses(bot):
 def eightball(action):
     """<question> - asks the all knowing magic electronic eight ball <question>"""
 
-    magic = formatting.multiword_replace(random.choice(responses), color_codes)
+    magic = text.multiword_replace(random.choice(responses), color_codes)
     action("shakes the magic 8 ball... {}".format(magic))

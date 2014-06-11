@@ -5,7 +5,7 @@ from lxml import html
 
 import requests
 
-from cloudbot import hook, formatting
+from cloudbot import hook, text
 
 api_url = "http://encyclopediadramatica.se/api.php"
 ed_url = "http://encyclopediadramatica.se/"
@@ -39,7 +39,7 @@ def drama(text):
         if p.text_content():
             summary = " ".join(p.text_content().splitlines())
             summary = re.sub("\[\d+\]", "", summary)
-            summary = formatting.truncate_str(summary, 220)
+            summary = text.truncate_str(summary, 220)
             return "{} - {}".format(summary, url)
 
     return "Unknown Error."

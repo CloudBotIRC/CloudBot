@@ -1,14 +1,18 @@
+from enum import Enum
+
+import requests
 import json
 
 from cloudbot import hook, http
-from enum import Enum
+
 
 NAME_URL = "https://account.minecraft.net/buy/frame/checkName/{}"
+PROFILE_URL = "https://api.mojang.com/profiles/page/1"
 PAID_URL = "http://www.minecraft.net/haspaid.jsp"
 
 
 # enums - "because I can"
-NameStatus = Enum('free', 'taken', 'invalid')
+NameStatus = Enum('NameStatus', 'free taken invalid')
 
 
 class McuError(Exception):
@@ -19,15 +23,16 @@ def get_status(name):
     """ takes a name and returns status """
     try:
         name_encoded = http.quote_plus(name)
-        response = http.get(NAME_URL.format(name_encoded))
-    except (http.URLError, http.HTTPError) as e:
+        request = requests.get(NAME_URL.format(name_encoded))
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         raise McuError("Could not get name status: {}".format(e))
 
-    if "OK" in response:
+    # return status as an enum
+    if "OK" in request.text:
         return NameStatus.free
-    elif "TAKEN" in response:
+    elif "TAKEN" in request.text:
         return NameStatus.taken
-    elif "invalid characters" in response:
+    elif "invalid characters" in request.text:
         return NameStatus.invalid
 
 
@@ -35,7 +40,7 @@ def get_profile(name):
     profile = {}
 
     # form the profile request
-    request = {
+    payload = {
         "name": name,
         "agent": "minecraft"
     }
@@ -43,26 +48,31 @@ def get_profile(name):
     # submit the profile request
     try:
         headers = {"Content-Type": "application/json"}
-        r = http.get_json(
-            'https://api.mojang.com/profiles/page/1',
-            post_data=json.dumps(request).encode('utf-8'),
-            headers=headers
-        )
-    except (http.URLError, http.HTTPError) as e:
+        request = requests.post(PROFILE_URL, data=json.dumps(payload).encode('utf-8'), headers=headers)
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         raise McuError("Could not get profile status: {}".format(e))
 
-    user = r["profiles"][0]
+    # get the JSON data
+    try:
+        results = request.json()
+    except ValueError:
+        raise McuError("Could not parse profile status")
+
+    print(results)
+
+    user = results["profiles"][0]
     profile["name"] = user["name"]
     profile["id"] = user["id"]
 
     profile["legacy"] = user.get("legacy", False)
 
     try:
-        response = http.get(PAID_URL, user=name)
-    except (http.URLError, http.HTTPError) as e:
+        params = {'user': name}
+        response = requests.get(PAID_URL, params=params)
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         raise McuError("Could not get payment status: {}".format(e))
 
-    if "true" in response:
+    if "true" in response.text:
         profile["paid"] = True
     else:
         profile["paid"] = False
@@ -101,5 +111,4 @@ def mcuser(text):
     elif status is NameStatus.invalid:
         return "The name \x02{}\x02 contains invalid characters.".format(user)
     else:
-        # if you see this, panic
         return "The account \x02{}\x02 does not exist.".format(user)

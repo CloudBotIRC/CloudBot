@@ -2,11 +2,13 @@ from enum import Enum
 
 import requests
 import json
+import re
 
 from cloudbot import hook, http
 
 
-NAME_URL = "https://account.minecraft.net/buy/frame/checkName/{}"
+STATUS_URL = "https://account.minecraft.net/buy/frame/checkName/{}"
+UUID_URL = "https://sessionserver.mojang.com/session/minecraft/profile/{}"
 PROFILE_URL = "https://api.mojang.com/profiles/page/1"
 PAID_URL = "http://www.minecraft.net/haspaid.jsp"
 
@@ -21,9 +23,10 @@ class McuError(Exception):
 
 def get_status(name):
     """ takes a name and returns status """
+    name_encoded = http.quote_plus(name)
+
     try:
-        name_encoded = http.quote_plus(name)
-        request = requests.get(NAME_URL.format(name_encoded))
+        request = requests.get(STATUS_URL.format(name_encoded))
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         raise McuError("Could not get name status: {}".format(e))
 
@@ -34,6 +37,29 @@ def get_status(name):
         return NameStatus.taken
     elif "invalid characters" in request.text:
         return NameStatus.invalid
+
+
+def get_name(uuid):
+    """ takes a UUID and finds the associated name """
+    uuid_encoded = http.quote_plus(uuid)
+
+    try:
+        request = requests.get(UUID_URL.format(uuid_encoded))
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+        raise McuError("Could not get name from UUID: {}".format(e))
+
+    # get the JSON data
+    try:
+        results = request.json()
+    except ValueError:
+        raise McuError("Could not get name from UUID")
+
+    print(results)
+    # check for errors
+    if "error" in results:
+        return False
+    else:
+        return results["name"]
 
 
 def get_profile(name):
@@ -57,7 +83,6 @@ def get_profile(name):
         results = request.json()
     except ValueError:
         raise McuError("Could not parse profile status")
-
 
     user = results["profiles"][0]
     profile["name"] = user["name"]
@@ -84,6 +109,14 @@ def mcuser(text):
     """<username> - gets information about the Minecraft user <account>"""
     user = text.strip()
 
+    cleaned = user.replace('-', '')
+    if re.search(r'[0-9a-f]{32}\Z', cleaned, re.I):
+        user = get_name(cleaned)
+
+        # UUID could not be matched
+        if not user:
+            return "Could not find an account using the UUID"
+
     try:
         # get status of name (does it exist?)
         status = get_status(user)
@@ -100,11 +133,11 @@ def mcuser(text):
         profile["lt"] = ", legacy" if profile["legacy"] else ""
 
         if profile["paid"]:
-            return "The account \x02{name}\x02 ({id}{lt}) exists. It is a \x02paid\x02" \
-                   " account.".format(**profile)
+            return 'The account \x02{name}\x02 ({id}{lt}) exists. It is a \x02paid\x02' \
+                   ' account.'.format(**profile)
         else:
-            return "The account \x02{name}\x02 ({id}{lt}) exists. It \x034\x02is NOT\x02\x0f a paid" \
-                   " account.".format(**profile)
+            return 'The account \x02{name}\x02 ({id}{lt}) exists. It \x034\x02is NOT\x02\x0f a paid' \
+                   ' account.'.format(**profile)
     elif status is NameStatus.free:
         return "The account \x02{}\x02 does not exist.".format(user)
     elif status is NameStatus.invalid:

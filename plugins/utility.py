@@ -83,7 +83,7 @@ def base64_encode(text):
     return base64.b64encode(text.encode()).decode()
 
 
-@hook.command(["debase64", "unbase64"])
+@hook.command("debase64", "unbase64")
 def base64_decode(text, notice):
     """unbase64 <string> -- Decode <string> with base64."""
     try:
@@ -92,7 +92,7 @@ def base64_decode(text, notice):
         notice("Invalid base64 string '{}'".format(text))
 
 
-@hook.command(["isbase64", "checkbase64"])
+@hook.command("isbase64", "checkbase64")
 def base64_check(text):
     """isbase64 <string> -- Checks if <string> is a valid base64 encoded string"""
     try:

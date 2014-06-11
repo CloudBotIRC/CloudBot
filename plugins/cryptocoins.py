@@ -30,7 +30,7 @@ exchanges = {
 
 ## HOOK FUNCTIONS
 
-@hook.command(["btc", "bitcoin"], autohelp=False)
+@hook.command("btc", "bitcoin", autohelp=False)
 def bitcoin(text, notice):
     """[mtgox|bitpay|coinbase|bitstamp] - gets bitcoin exchange rate using <exchange>, defaulting to blockchain
     :type text: str

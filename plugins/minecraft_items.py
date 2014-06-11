@@ -50,7 +50,7 @@ with open("./data/itemids.txt") as f:
 
 
 @asyncio.coroutine
-@hook.command(["mcitem", "mcid"])
+@hook.command("mcitem", "mcid")
 def mcitem(text, reply):
     """<item/id> - gets the id for <item> or the item name for <id>"""
     text = text.lower().strip()
@@ -81,7 +81,7 @@ def mcitem(text, reply):
 
 
 @asyncio.coroutine
-@hook.command(["mccraft", "mcrecipe"])
+@hook.command("mccraft", "mcrecipe")
 def mcrecipe(text, reply):
     """<item> -- gets the crafting recipe for <item>"""
     text = text.lower().strip()

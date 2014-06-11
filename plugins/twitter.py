@@ -57,7 +57,7 @@ def twitter_url(match):
     return format_tweet(tweet)
 
 
-@hook.command(["twitter", "tw", "twatter"])
+@hook.command("twitter", "tw", "twatter")
 def twitter(text):
     """<user> [n] - gets the last/[n]th tweet from <user>"""
 

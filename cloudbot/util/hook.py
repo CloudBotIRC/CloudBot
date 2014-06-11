@@ -145,7 +145,7 @@ def _get_hook(func, hook_type):
     return None
 
 
-def command(param=None, **kwargs):
+def command(*args, **kwargs):
     """External command decorator. Can be used directly as a decorator, or with args to return a decorator.
     :type param: str | list[str] | function
     """
@@ -159,10 +159,10 @@ def command(param=None, **kwargs):
         hook.add_hook(alias_param, kwargs)
         return func
 
-    if callable(param):  # this decorator is being used directly
-        return _command_hook(param)
+    if len(args) == 1 and callable(args[0]):  # this decorator is being used directly
+        return _command_hook(args[0])
     else:  # this decorator is being used indirectly, so return a decorator function
-        return lambda func: _command_hook(func, alias_param=param)
+        return lambda func: _command_hook(func, alias_param=args)
 
 
 def irc_raw(triggers_param, **kwargs):

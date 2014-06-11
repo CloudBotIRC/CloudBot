@@ -65,7 +65,7 @@ def get_profile(name):
     return profile
 
 
-@hook.command(["mcuser", "mcpaid", "haspaid"])
+@hook.command("mcuser", "mcpaid", "haspaid")
 def mcuser(text):
     """<username> - gets information about the Minecraft user <account>"""
     user = text.strip()

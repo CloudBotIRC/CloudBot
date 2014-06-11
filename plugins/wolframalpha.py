@@ -3,7 +3,7 @@ import re
 from cloudbot import hook, http, web, formatting
 
 
-@hook.command(["wa", "calc", "math", "wolframalpha"])
+@hook.command("wa", "calc", "math", "wolframalpha")
 def wolframalpha(text, bot):
     """wa <query> -- Computes <query> using Wolfram Alpha."""
     api_key = bot.config.get("api_keys", {}).get("wolframalpha", None)

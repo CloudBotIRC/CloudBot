@@ -11,7 +11,7 @@ api_url = "http://api.fishbans.com/stats/{}/"
 
 
 @asyncio.coroutine
-@hook.command(["bans", "fishbans"])
+@hook.command("bans", "fishbans")
 def fishbans(text, loop):
     """<user> - gets information on <user>'s minecraft bans from fishbans"""
     user = text.strip()

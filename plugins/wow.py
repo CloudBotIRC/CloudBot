@@ -120,7 +120,7 @@ def wow_region_shortname(region):
         return False
 
 
-@hook.command(['armory', 'armoury'])
+@hook.command('armory', 'armoury')
 def armoury(text):
     """armoury [realm] [character name] [region = EU] - Look up character and returns API data."""
 

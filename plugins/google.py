@@ -10,7 +10,7 @@ def api_get(kind, query):
     return http.get_json(url % kind, q=query)
 
 
-@hook.command(["googleimage", "gis", "image"])
+@hook.command("googleimage", "gis", "image")
 def googleimage(text):
     """<query> - returns the first google image result for <query>"""
 

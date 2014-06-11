@@ -2,7 +2,7 @@ from cloudbot import hook
 from cloudbot.util import web
 
 
-@hook.command(["python", "py"])
+@hook.command("python", "py")
 def python(text):
     """<python code> - executes <python code> using eval.appspot.com"""
 

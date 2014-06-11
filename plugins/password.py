@@ -55,7 +55,7 @@ def password(text, notice):
     notice(pw)
 
 
-@hook.command(["rpass", "rpassword", "readablepassword"], autohelp=False)
+@hook.command("rpass", "rpassword", "readablepassword", autohelp=False)
 def readable_password(text, notice):
     """[length] - generates an easy to remember password with [length] (default 4) commonly used words"""
     if text:

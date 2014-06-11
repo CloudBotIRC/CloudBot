@@ -218,7 +218,7 @@ def format_output(data):
                " players.".format(**data).replace("\n", "\x0f - ")
 
 
-@hook.command(["mcping", "mcp"])
+@hook.command("mcping", "mcp")
 def mcping(text):
     """<server[:port]> - gets the MOTD of the Minecraft server at <server[:port]>"""
     try:

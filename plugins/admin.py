@@ -5,7 +5,7 @@ from cloudbot import hook
 
 
 @asyncio.coroutine
-@hook.command(["groups", "listgroups", "permgroups"], permissions=["permissions_users"], autohelp=False)
+@hook.command("groups", "listgroups", "permgroups", permissions=["permissions_users"], autohelp=False)
 def get_permission_groups(conn):
     """- lists all valid groups
     :type conn: cloudbot.core.connection.BotConnection

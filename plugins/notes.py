@@ -89,7 +89,7 @@ def db_search(db, nick, query):
     """, (query, nick))
 
 
-@hook.command(["note", "notes"])
+@hook.command("note", "notes")
 def note(text, nick, db, notice):
     """<add|del|list|search> args - manipulates your list of notes"""
 

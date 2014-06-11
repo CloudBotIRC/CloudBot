@@ -6,7 +6,7 @@ import urllib.parse
 from cloudbot import hook, urlnorm
 
 
-@hook.command(["down", "offline", "up"])
+@hook.command("down", "offline", "up")
 def down(text):
     """<url> - checks if <url> is online or offline
     :type text: str

@@ -21,7 +21,7 @@ def load_responses(bot):
 
 
 @asyncio.coroutine
-@hook.command(["8ball", "8", "eightball"])
+@hook.command("8ball", "8", "eightball")
 def eightball(action):
     """<question> - asks the all knowing magic electronic eight ball <question>"""
 

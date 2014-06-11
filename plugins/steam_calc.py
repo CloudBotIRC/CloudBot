@@ -31,7 +31,7 @@ def unicode_dictreader(utf8_data, **kwargs):
         yield dict([(key.lower(), str(value, 'utf-8')) for key, value in row.items()])
 
 
-@hook.command(["steamcalc", "sc"])
+@hook.command("steamcalc", "sc")
 def steamcalc(text, reply):
     """steamcalc <username> [currency] - Gets value of steam account and total hours played. Uses steamcommunity.com/id/<nickname>. """
 

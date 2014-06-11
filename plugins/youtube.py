@@ -65,7 +65,7 @@ def youtube_url(match):
     return get_video_description(match.group(1))
 
 
-@hook.command(["youtube", "you", "yt", "y"])
+@hook.command("youtube", "you", "yt", "y")
 def youtube(text):
     """youtube <query> -- Returns the first YouTube search result for <query>."""
     request = http.get_json(search_api_url, q=text)

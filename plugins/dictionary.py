@@ -46,7 +46,7 @@ def format_output(h, definition, show_examples):
     return result
 
 
-@hook.command(["dictionary", "define"])
+@hook.command("dictionary", "define")
 def define(text):
     """<word> - fetches definition of <word>
     :type text: str

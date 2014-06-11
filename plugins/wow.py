@@ -125,19 +125,19 @@ def armoury(text):
     """armoury [realm] [character name] [region = EU] - Look up character and returns API data."""
 
     # Splits the input, builds the API url, and returns the formatted data to user.
-    spitinput = text.lower().split()
+    splitinput = text.lower().split()
 
-    if len(spitinput) < 2:
+    if len(splitinput) < 2:
         return 'armoury [realm] [character name] [region = EU] - Look up character and returns API data.'
 
-    realm = spitinput[0].replace('_', '-')
-    char_name = spitinput[1]
+    realm = splitinput[0].replace('_', '-')
+    char_name = splitinput[1]
 
     # Sets the default region to EU if none specified.
-    if len(spitinput) < 3:
+    if len(splitinput) < 3:
         region = 'eu'
     else:
-        region = spitinput[2]
+        region = splitinput[2]
 
     if not re.match(r"^[a-z]{1,3}$", region):
         return 'The region specified is not a valid region. Valid regions: eu, us, sea, kr, tw.'
@@ -158,6 +158,6 @@ def armoury(text):
     if not region_short:
         return 'The region \'{}\' does not exist.'.format(region)
 
-    link = "http://{0}.battle.net/api/wow/character/{1}/{2}".format(region, realm, char_name)
+    link = "http://{}.battle.net/api/wow/character/{}/{}".format(region, realm, char_name)
 
     return wow_armoury_data(link)

@@ -1,8 +1,9 @@
 import random
+import microdata
+import requests
 
 from cloudbot import hook, http, web
 
-metadata_url = "http://omnidator.appspot.com/microdata/json/?url={}"
 
 base_url = "http://www.cookstr.com"
 search_url = base_url + "/searches"
@@ -27,18 +28,19 @@ class ParseError(Exception):
 
 
 def get_data(url):
-    """ Uses the omnidator API to parse the metadata from the provided URL """
+    """ Uses the metadata module to parse the metadata from the provided URL """
     try:
-        omni = http.get_json(metadata_url.format(url))
-    except (http.HTTPError, http.URLError) as e:
+        request = requests.get(url)
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         raise ParseError(e)
-    schemas = omni["@"]
-    for d in schemas:
-        if d["a"] == "<http://schema.org/Recipe>":
-            data = {clean_key(key): value for (key, value) in d.items()
-                    if key.startswith("http://schema.org/Recipe")}
-            return data
-    raise ParseError("No recipe data found")
+
+    items = microdata.get_items(request.text)
+
+    for item in items:
+        if item.itemtype == [microdata.URI("http://schema.org/Recipe")]:
+            return item
+
+    ParseError("No recipe data found")
 
 
 @hook.command(autohelp=False)
@@ -79,7 +81,7 @@ def recipe(text):
     except ParseError as e:
         return "Could not parse recipe: {}".format(e)
 
-    name = data["name"].strip()
+    name = data.name.strip()
     return "Try eating \x02{}!\x02 - {}".format(name, web.try_shorten(url))
 
 
@@ -97,7 +99,7 @@ def dinner():
     except ParseError as e:
         return "Could not parse recipe: {}".format(e)
 
-    name = data["name"].strip().upper()
+    name = data.name.strip().upper()
     text = random.choice(phrases).format(name)
 
     if censor:

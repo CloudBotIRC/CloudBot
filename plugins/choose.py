@@ -6,7 +6,7 @@ from cloudbot import hook
 
 
 @asyncio.coroutine
-@hook.command()
+@hook.command
 def choose(text, notice):
     """<choice1>, [choice2], [choice3], etc. - randomly picks one of the given choices
     :type text: str

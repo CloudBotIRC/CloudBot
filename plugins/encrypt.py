@@ -11,7 +11,7 @@ from Crypto import Random
 # noinspection PyUnresolvedReferences
 from Crypto.Cipher import AES
 
-import cloudbot
+from cloudbot import hook
 
 BS = AES.block_size
 
@@ -44,7 +44,7 @@ def decode_aes(c, s):
         return "Invalid password for the given message (couldn't encode result as utf-8)"
 
 
-@cloudbot.hook.onload()
+@hook.onload
 def create_db(db):
     """check to see that our db has the the encryption table.
     :type db: sqlalchemy.orm.session.Session
@@ -65,7 +65,7 @@ def get_salt(bot):
 
 
 @asyncio.coroutine
-@cloudbot.hook.command()
+@hook.command
 def encrypt(text, bot, db, notice):
     """<pass> <string> - encrypts <string> with <pass>. (<string> can only be decrypted using this bot)
     :type text: str
@@ -104,7 +104,7 @@ def encrypt(text, bot, db, notice):
 
 
 @asyncio.coroutine
-@cloudbot.hook.command()
+@hook.command
 def decrypt(text, bot, db, notice):
     """<pass> <string> - decrypts <string> with <pass>. (can only decrypt strings encrypted on this bot)
     :type bot: cloudbot.core.bot.CloudBot

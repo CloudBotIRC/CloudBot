@@ -199,7 +199,7 @@ def add_permissions_user(text, conn, bot, notice, reply):
         permission_manager.reload()
 
 
-@hook.command("stop", "quit", , permissions=["botcontrol"], autohelp=False)
+@hook.command("stop", "quit", permissions=["botcontrol"], autohelp=False)
 def stop(text, bot):
     """[reason] - stops me with [reason] as its quit message.
     :type text: str
@@ -321,7 +321,7 @@ def say(text, conn, chan):
 
 
 @asyncio.coroutine
-@hook.command("message", "sayto", , permissions=["botcontrol"])
+@hook.command("message", "sayto", permissions=["botcontrol"])
 def message(text, conn):
     """<name> <message> - says <message> to <name>
     :type text: str
@@ -334,7 +334,7 @@ def message(text, conn):
 
 
 @asyncio.coroutine
-@hook.command("me", "act", , permissions=["botcontrol"])
+@hook.command("me", "act", permissions=["botcontrol"])
 def me(text, conn, chan):
     """[#channel] <action> - acts out <action> in a [#channel], or in the current channel of none is specified
     :type text: str

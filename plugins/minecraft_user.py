@@ -7,36 +7,16 @@ import re
 from cloudbot import hook, http
 
 
-STATUS_URL = "https://account.minecraft.net/buy/frame/checkName/{}"
+# I need TREE apis, all on separate domains, to get basic account info
+# what the fuck, mojang?
 UUID_URL = "https://sessionserver.mojang.com/session/minecraft/profile/{}"
 PROFILE_URL = "https://api.mojang.com/profiles/page/1"
 PAID_URL = "http://www.minecraft.net/haspaid.jsp"
 
 
-# enums - "because I can"
-NameStatus = Enum('NameStatus', "free taken invalid")
-
 
 class McuError(Exception):
     pass
-
-
-def get_status(name):
-    """ takes a name and returns status """
-    name_encoded = http.quote_plus(name)
-
-    try:
-        request = requests.get(STATUS_URL.format(name_encoded))
-    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
-        raise McuError("Could not get name status: {}".format(e))
-
-    # return status as an enum
-    if "OK" in request.text:
-        return NameStatus.free
-    elif "TAKEN" in request.text:
-        return NameStatus.taken
-    elif "invalid characters" in request.text:
-        return NameStatus.invalid
 
 
 def get_name(uuid):
@@ -84,6 +64,9 @@ def get_profile(name):
     except ValueError:
         raise McuError("Could not parse profile status")
 
+    if results["size"] == 0:
+        return False
+
     user = results["profiles"][0]
     profile["name"] = user["name"]
     profile["id"] = user["id"]
@@ -117,31 +100,20 @@ def mcuser(text):
         if not user:
             return "Could not find an account using the UUID"
 
-    # TODO: re-write this to skip the status check to make the command faster
     try:
-        # get status of name (does it exist?)
-        status = get_status(user)
+        # get information about user
+        profile = get_profile(user)
     except McuError as e:
-        return e
+        return "Error: {}".format(e)
 
-    if status is NameStatus.taken:
-        try:
-            # get information about user
-            profile = get_profile(user)
-        except McuError as e:
-            return "Error: {}".format(e)
-
-        profile["lt"] = ", legacy" if profile["legacy"] else ""
-
-        if profile["paid"]:
-            return 'The account \x02{name}\x02 ({id}{lt}) exists. It is a \x02paid\x02' \
-                   ' account.'.format(**profile)
-        else:
-            return 'The account \x02{name}\x02 ({id}{lt}) exists. It \x034\x02is NOT\x02\x0f a paid' \
-                   ' account.'.format(**profile)
-    elif status is NameStatus.free:
+    if not profile:
         return "The account \x02{}\x02 does not exist.".format(user)
-    elif status is NameStatus.invalid:
-        return "The name \x02{}\x02 contains invalid characters.".format(user)
+
+    profile["lt"] = ", legacy" if profile["legacy"] else ""
+
+    if profile["paid"]:
+        return 'The account \x02{name}\x02 ({id}{lt}) exists. It is a \x02paid\x02' \
+               ' account.'.format(**profile)
     else:
-        return "The account \x02{}\x02 does not exist.".format(user)
+        return 'The account \x02{name}\x02 ({id}{lt}) exists. It \x034\x02is NOT\x02\x0f a paid' \
+               ' account.'.format(**profile)

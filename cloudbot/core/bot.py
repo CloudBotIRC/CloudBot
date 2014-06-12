@@ -60,6 +60,9 @@ class CloudBot:
         # stores each bot server connection
         self.connections = []
 
+        # for plugins
+        self.logger = logger
+
         # declare and create data folder
         self.data_dir = os.path.abspath('data')
         if not os.path.exists(self.data_dir):

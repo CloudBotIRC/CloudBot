@@ -87,7 +87,7 @@ def recipe(text):
 
 @hook.command(autohelp=False)
 def dinner():
-    """- gets a random dinner from whatthefuckshouldimakefordinner.com"""
+    """- TELLS YOU WHAT THE F**K YOU SHOULD EAT FOR DINNER"""
     try:
         page = http.open(random_url)
     except (http.HTTPError, http.URLError) as e:

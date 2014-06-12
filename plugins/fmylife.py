@@ -11,7 +11,7 @@ fml_cache = []
 def refresh_cache(loop):
     """ gets a page of random FMLs and puts them into a dictionary """
     response = yield from loop.run_in_executor(None, requests.get, 'http://www.fmylife.com/random/')
-    soup = BeautifulSoup(response.text)
+    soup = BeautifulSoup(response.text, "lxml")
 
     for e in soup.find_all('div', {'class': 'post article'}):
         fml_id = int(e['id'])

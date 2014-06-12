@@ -40,7 +40,7 @@ def get_data(url):
         if item.itemtype == [microdata.URI("http://schema.org/Recipe")]:
             return item
 
-    ParseError("No recipe data found")
+    raise ParseError("No recipe data found")
 
 
 @hook.command(autohelp=False)
@@ -87,7 +87,7 @@ def recipe(text):
 
 @hook.command(autohelp=False)
 def dinner():
-    """- TELLS YOU WHAT THE F**K YOU SHOULD EAT FOR DINNER"""
+    """- TELLS YOU WHAT THE F**K YOU SHOULD MAKE FOR DINNER"""
     try:
         page = http.open(random_url)
     except (http.HTTPError, http.URLError) as e:

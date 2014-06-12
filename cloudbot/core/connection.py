@@ -25,7 +25,6 @@ class BotConnection:
     :type ssl: bool
     :type server: str
     :type port: int
-    :type logger: logging.Logger
     :type nick: str
     :type vars: dict
     :type history: dict[str, list[tuple]]

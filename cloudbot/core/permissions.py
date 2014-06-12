@@ -6,7 +6,6 @@ logger = logging.getLogger("cloudbot")
 
 class PermissionManager(object):
     """
-    :type logger: logging.Logger
     :type name: str
     :type readable_name: str
     :type config: dict[str, ?]

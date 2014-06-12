@@ -123,11 +123,11 @@ class PluginManager:
 
             if pl.get("use_whitelist", False):
                 if title not in pl.get("whitelist", []):
-                    self.bot.logger.info("Not loading plugin {}: plugin not whitelisted".format(file_name))
+                    self.bot.logger.info("Not loading plugin module {}: plugin not whitelisted".format(file_name))
                     return
             else:
                 if title in pl.get("blacklist", []):
-                    self.bot.logger.info("Not loading plugin {}: plugin blacklisted".format(file_name))
+                    self.bot.logger.info("Not loading plugin module {}: plugin blacklisted".format(file_name))
                     return
 
         # make sure to unload the previously loaded plugin from this path, if it was loaded.

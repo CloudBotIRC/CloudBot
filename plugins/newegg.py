@@ -92,5 +92,3 @@ def newegg(text):
         return format_item(r["ProductListItems"][0])
     else:
         return "No results found."
-
-

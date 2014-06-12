@@ -19,27 +19,15 @@ mc_colors = [('\xa7f', '\x0300'), ('\xa70', '\x0301'), ('\xa71', '\x0302'), ('\x
 
 
 # EXCEPTIONS
-
-
 class PingError(Exception):
-    def __init__(self, text):
-        self.text = text
-
-    def __str__(self):
-        return self.text
+    pass
 
 
 class ParseError(Exception):
-    def __init__(self, text):
-        self.text = text
-
-    def __str__(self):
-        return self.text
+    pass
 
 
 ## MISC
-
-
 def unpack_varint(s):
     d = 0
     i = 0

@@ -11,6 +11,8 @@ import sqlalchemy
 from cloudbot.core import events
 from cloudbot.util import botvars
 
+logger = logging.getLogger("cloudbot")
+
 
 def find_hooks(parent, module):
     """
@@ -123,11 +125,11 @@ class PluginManager:
 
             if pl.get("use_whitelist", False):
                 if title not in pl.get("whitelist", []):
-                    self.bot.logger.info("Not loading plugin module {}: plugin not whitelisted".format(file_name))
+                    logger.info('Not loading plugin module "{}": plugin not whitelisted'.format(file_name))
                     return
             else:
                 if title in pl.get("blacklist", []):
-                    self.bot.logger.info("Not loading plugin module {}: plugin blacklisted".format(file_name))
+                    logger.info('Not loading plugin module "{}": plugin blacklisted'.format(file_name))
                     return
 
         # make sure to unload the previously loaded plugin from this path, if it was loaded.
@@ -141,7 +143,7 @@ class PluginManager:
             if hasattr(plugin_module, "_cloudbot_loaded"):
                 importlib.reload(plugin_module)
         except Exception:
-            self.bot.logger.exception("Error loading {}:".format(file_name))
+            logger.exception("Error loading {}:".format(file_name))
             return
 
         # create the plugin
@@ -156,7 +158,7 @@ class PluginManager:
         for onload_hook in plugin.run_on_load:
             success = yield from self.launch(onload_hook, events.BaseEvent(bot=self.bot, hook=onload_hook))
             if not success:
-                self.bot.logger.warning(
+                logger.warning(
                     "Not registering hooks from plugin {}: onload hook errored".format(plugin.title))
 
                 # unregister databases
@@ -169,7 +171,7 @@ class PluginManager:
         for command_hook in plugin.commands:
             for alias in command_hook.aliases:
                 if alias in self.commands:
-                    self.bot.logger.warning(
+                    logger.warning(
                         "Plugin {} attempted to register command {} which was already registered by {}. "
                         "Ignoring new assignment.".format(plugin.title, alias, self.commands[alias].plugin.title))
                 else:
@@ -256,7 +258,7 @@ class PluginManager:
         # remove last reference to plugin
         del self.plugins[plugin.file_name]
 
-        self.bot.logger.info("Unloaded all plugins from {}".format(plugin.title))
+        logger.info("Unloaded all plugins from {}".format(plugin.title))
 
         return True
 
@@ -266,8 +268,8 @@ class PluginManager:
 
         :type hook: Hook
         """
-        self.bot.logger.info("Loaded {}".format(hook))
-        self.bot.logger.debug("Loaded {}".format(repr(hook)))
+        logger.info("Loaded {}".format(hook))
+        logger.debug("Loaded {}".format(repr(hook)))
 
     def _prepare_parameters(self, hook, event):
         """
@@ -283,9 +285,9 @@ class PluginManager:
                 value = getattr(event, required_arg)
                 parameters.append(value)
             else:
-                self.bot.logger.error("Plugin {} asked for invalid argument '{}', cancelling execution!"
+                logger.error("Plugin {} asked for invalid argument '{}', cancelling execution!"
                                       .format(hook.description, required_arg))
-                self.bot.logger.debug("Valid arguments are: {} ({})".format(dir(event), event))
+                logger.debug("Valid arguments are: {} ({})".format(dir(event), event))
                 return None
         return parameters
 
@@ -341,7 +343,7 @@ class PluginManager:
             else:
                 out = yield from self._execute_hook_sync(hook, event)
         except Exception:
-            self.bot.logger.exception("Error in hook {}".format(hook.description))
+            logger.exception("Error in hook {}".format(hook.description))
             return False
 
         if out is not None:
@@ -368,7 +370,7 @@ class PluginManager:
             else:
                 result = yield from sieve.function(self.bot, event, hook)
         except Exception:
-            self.bot.logger.exception("Error running sieve {} on {}:".format(sieve.description, hook.description))
+            logger.exception("Error running sieve {} on {}:".format(sieve.description, hook.description))
             return None
         else:
             return result

@@ -2,10 +2,13 @@ from _ssl import PROTOCOL_SSLv23
 import asyncio
 import re
 import ssl
+import logging
 from ssl import SSLContext
 
 from cloudbot.core.permissions import PermissionManager
 from cloudbot.core.events import BaseEvent
+
+logger = logging.getLogger("cloudbot")
 
 irc_prefix_re = re.compile(r":([^ ]*) ([^ ]*) (.*)")
 irc_noprefix_re = re.compile(r"([^ ]*) (.*)")
@@ -31,7 +34,7 @@ class BotConnection:
     :type connected: bool
     """
 
-    def __init__(self, bot, name, server, nick, port=6667, use_ssl=False, logger=None, channels=None, config=None,
+    def __init__(self, bot, name, server, nick, port=6667, use_ssl=False, channels=None, config=None,
                  readable_name=None):
         """
         :type bot: cloudbot.core.bot.CloudBot
@@ -40,7 +43,6 @@ class BotConnection:
         :type nick: str
         :type port: int
         :type use_ssl: bool
-        :type logger: logging.Logger
         :type channels: list[str]
         :type config: dict[str, unknown]
         """
@@ -64,7 +66,6 @@ class BotConnection:
         self.ssl = use_ssl
         self.server = server
         self.port = port
-        self.logger = logger
         self.nick = nick
         self.vars = {}
         self.history = {}
@@ -159,7 +160,7 @@ class BotConnection:
         """
         if not self.connected:
             raise ValueError("Connection must be connected to irc server to use send")
-        self.logger.info("[{}] >> {}".format(self.readable_name, line))
+        logger.info("[{}] >> {}".format(self.readable_name, line))
         self.loop.call_soon_threadsafe(asyncio.async, self.connection.send(line))
 
 
@@ -183,7 +184,6 @@ class IRCConnection:
         """
         :type conn: BotConnection
         """
-        self.logger = conn.logger
         self.readable_name = conn.readable_name
         self.host = conn.server
         self.port = conn.port
@@ -219,11 +219,11 @@ class IRCConnection:
         Connects to the irc server
         """
         if self._connected:
-            self.logger.info("[{}] Reconnecting".format(self.readable_name))
+            logger.info("[{}] Reconnecting".format(self.readable_name))
             self._transport.close()
         else:
             self._connected = True
-            self.logger.info("[{}] Connecting".format(self.readable_name))
+            logger.info("[{}] Connecting".format(self.readable_name))
 
         self._transport, self._protocol = yield from self.loop.create_connection(
             lambda: IRCProtocol(self), host=self.host, port=self.port, ssl=self.ssl_context,
@@ -251,7 +251,6 @@ class IRCProtocol(asyncio.Protocol):
         :type ircconn: IRCConnection
         """
         self.loop = ircconn.loop
-        self.logger = ircconn.logger
         self.readable_name = ircconn.readable_name
         self.describe_server = lambda: ircconn.describe_server()
         self.botconn = ircconn.botconn
@@ -281,14 +280,14 @@ class IRCProtocol(asyncio.Protocol):
         if exc is None:
             # we've been closed intentionally, so don't reconnect
             return
-        self.logger.exception("[{}] Connection lost.".format(self.readable_name))
+        logger.exception("[{}] Connection lost.".format(self.readable_name))
         asyncio.async(self.botconn.connect(), loop=self.loop)
 
     def eof_received(self):
         self._connected = False
         # create a new connected_future for when we are connected.
         self._connected_future = asyncio.Future()
-        self.logger.info("[{}] EOF received.".format(self.readable_name))
+        logger.info("[{}] EOF received.".format(self.readable_name))
         asyncio.async(self.botconn.connect(), loop=self.loop)
         return True
 
@@ -311,7 +310,7 @@ class IRCProtocol(asyncio.Protocol):
             if line.startswith(":"):
                 prefix_line_match = irc_prefix_re.match(line)
                 if prefix_line_match is None:
-                    self.logger.critical("[{}] Received invalid IRC line '{}' from {}".format(
+                    logger.critical("[{}] Received invalid IRC line '{}' from {}".format(
                         self.readable_name, line, self.describe_server()
                     ))
                     continue
@@ -334,7 +333,7 @@ class IRCProtocol(asyncio.Protocol):
                 prefix = None
                 noprefix_line_match = irc_noprefix_re.match(line)
                 if noprefix_line_match is None:
-                    self.logger.critical("[{}] Received invalid IRC line '{}' from {}".format(
+                    logger.critical("[{}] Received invalid IRC line '{}' from {}".format(
                         self.readable_name, line, self.describe_server()
                     ))
                     continue

@@ -2,10 +2,13 @@ import json
 import os
 import time
 import sys
+import logging
 
 from watchdog.observers import Observer
 from watchdog.tricks import Trick
 import cloudbot
+
+logger = logging.getLogger("cloudbot")
 
 
 class Config(dict):
@@ -27,7 +30,6 @@ class Config(dict):
         self.filename = "config.json"
         self.path = os.path.abspath(self.filename)
         self.bot = bot
-        self.logger = bot.logger
         self.update(*args, **kwargs)
 
         # populate self with config data
@@ -52,7 +54,7 @@ class Config(dict):
         """(re)loads the bot config from the config file"""
         if not os.path.exists(self.path):
             # if there is no config, show an error and die
-            self.logger.critical("No config file found, bot shutting down!")
+            logger.critical("No config file found, bot shutting down!")
             print("No config file found! Bot shutting down in five seconds.")
             print("Copy 'config.default' to 'config.json' for defaults.")
             print("For help, see http://git.io/cloudbotirc. Thank you for using CloudBot!")
@@ -61,7 +63,7 @@ class Config(dict):
 
         with open(self.path) as f:
             self.update(json.load(f))
-            self.logger.debug("Config loaded from file.")
+            logger.debug("Config loaded from file.")
 
         # reload permissions
         if self.bot.connections:
@@ -71,7 +73,7 @@ class Config(dict):
     def save_config(self):
         """saves the contents of the config dict to the config file"""
         json.dump(self, open(self.path, 'w'), sort_keys=True, indent=4)
-        self.logger.info("Config saved to file.")
+        logger.info("Config saved to file.")
 
 
 class ConfigEventHandler(Trick):
@@ -88,10 +90,10 @@ class ConfigEventHandler(Trick):
         """
         self.bot = bot
         self.config = config
-        self.logger = config.logger
+        logger = config.logger
         Trick.__init__(self, *args, **kwargs)
 
     def on_any_event(self, event):
         if self.bot.running:
-            self.logger.info("Config changed, triggering reload.")
+            logger.info("Config changed, triggering reload.")
             self.config.load_config()

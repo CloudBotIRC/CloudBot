@@ -199,28 +199,29 @@ def add_permissions_user(text, conn, bot, notice, reply):
         permission_manager.reload()
 
 
+@asyncio.coroutine
 @hook.command("stop", "quit", permissions=["botcontrol"], autohelp=False)
 def stop(text, bot):
     """[reason] - stops me with [reason] as its quit message.
     :type text: str
-    :type bot: core.bot.CloudBot
+    :type bot: cloudbot.core.bot.CloudBot
     """
     if text:
-        bot.stop(reason=text)
+        yield from bot.stop(reason=text)
     else:
-        bot.stop()
+        yield from bot.stop()
 
-
+@asyncio.coroutine
 @hook.command(permissions=["botcontrol"], autohelp=False)
 def restart(text, bot):
     """[reason] - restarts me with [reason] as its quit message.
     :type text: str
-    :type bot: core.bot.CloudBot
+    :type bot: cloudbot.core.bot.CloudBot
     """
     if text:
-        bot.restart(reason=text)
+        yield from bot.restart(reason=text)
     else:
-        bot.restart()
+        yield from bot.restart()
 
 
 @asyncio.coroutine

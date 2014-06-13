@@ -4,6 +4,7 @@ import logging
 import re
 import os
 import gc
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.schema import MetaData
@@ -131,6 +132,7 @@ class CloudBot:
                                                   readable_name=readable_name))
             logger.debug("[{}] Created connection.".format(readable_name))
 
+    @asyncio.coroutine
     def stop(self, reason=None):
         """quits all networks and shuts the bot down"""
         logger.info("Stopping bot.")
@@ -149,21 +151,22 @@ class CloudBot:
                 continue
             logger.debug("[{}] Closing connection.".format(connection.readable_name))
 
-            if reason:
-                connection.cmd("QUIT", [reason])
-            else:
-                connection.cmd("QUIT")
+            connection.quit(reason)
 
-            connection.stop()
+        yield from asyncio.sleep(0.1)  # wait for 'QUIT' calls to take affect
+
+        for connection in self.connections:
+            connection.close()
 
         self.running = False
         # Give the stopped_future a result, so that run() will exit
         self.stopped_future.set_result(None)
 
+    @asyncio.coroutine
     def restart(self, reason=None):
         """shuts the bot down and restarts it"""
         self.do_restart = True
-        self.stop(reason)
+        yield from self.stop(reason)
 
     @asyncio.coroutine
     def _load_plugins(self):

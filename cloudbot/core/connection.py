@@ -76,12 +76,18 @@ class BotConnection:
         self.connection = IRCConnection(self)
 
         self.connected = False
+        # if we've quit
+        self._quit = False
 
     @asyncio.coroutine
     def connect(self):
         """
         Connects to the IRC server. This by itself doesn't start receiving or sending data.
         """
+        if self._quit:
+            # we've quit, so close instead (because this has probably been called because of EOF received)
+            self.connection.close()
+            return
         # connect to the irc server
         yield from self.connection.connect()
 
@@ -93,8 +99,17 @@ class BotConnection:
         self.cmd("USER", [self.config.get('user', 'cloudbot'), "3", "*",
                           self.config.get('realname', 'CloudBot - http://git.io/cloudbot')])
 
-    def stop(self):
-        self.connection.stop()
+    def quit(self, reason=None):
+        if self._quit:
+            return
+        self._quit = True
+        if reason:
+            self.cmd("QUIT", [reason])
+        else:
+            self.cmd("QUIT")
+
+    def close(self):
+        self.connection.close()
 
     def set_pass(self, password):
         """
@@ -237,7 +252,7 @@ class IRCConnection:
         """
         yield from self._protocol.send(line)
 
-    def stop(self):
+    def close(self):
         if not self._connected:
             return
         self._transport.close()
@@ -360,7 +375,8 @@ class IRCProtocol(asyncio.Protocol):
             # Set up parsed message
             # TODO: Do we really want to send the raw `prefix` and `command_params` here?
             event = BaseEvent(conn=self.botconn, irc_raw=line, irc_prefix=prefix, irc_command=command,
-                              irc_paramlist=command_params, irc_message=irc_message_content, nick=nick, user=user, host=host,
+                              irc_paramlist=command_params, irc_message=irc_message_content, nick=nick, user=user,
+                              host=host,
                               mask=mask)
 
             # handle the message, async

@@ -1,3 +1,10 @@
+import sys
+
+# check python version
+if sys.version_info < (3, 4, 0):
+    print("CloudBot3 requires Python 3.4 or newer.")
+    sys.exit(1)
+
 import json
 import logging.config
 import logging

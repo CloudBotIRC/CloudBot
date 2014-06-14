@@ -5,11 +5,6 @@ import sys
 import time
 import signal
 
-if sys.version_info < (3, 4, 0):
-    # check python version
-    print("CloudBot3 requires Python 3.4 or newer.")
-    sys.exit(1)
-
 print('CloudBot3 <http://git.io/refresh>')
 
 # set up environment

@@ -182,7 +182,6 @@ class IRCConnection:
     """
     Handles an IRC Connection to a specific IRC server.
 
-    :type logger: logging.Logger
     :type readable_name: str
     :type host: str
     :type port: int

@@ -13,7 +13,7 @@ def get_generator(_json):
 @hook.command(autohelp=False)
 def namegen(text, bot, notice):
     """[generator|list] - generates some names using the chosen generator, or lists all generators if 'list' is specified
-    :type bot: core.bot.CloudBot
+    :type bot: cloudbot.core.bot.CloudBot
     """
 
     # clean up the input

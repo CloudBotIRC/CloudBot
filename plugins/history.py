@@ -9,17 +9,22 @@ db_ready = []
 
 
 def db_init(db, conn_name):
-    """check to see that our db has the the seen table (connection name is for caching the result per connection)"""
+    """check to see that our db has the the seen table (connection name is for caching the result per connection)
+    :type db: sqlalchemy.orm.Session
+    """
     global db_ready
     if db_ready.count(conn_name) < 1:
-        db.execute("create table if not exists seen_user(name, time, quote, chan, host, "
-                   "primary key(name, chan))")
+        db.execute("create table if not exists seen_user(name, time, quote, chan, host, primary key(name, chan))")
         db.commit()
         db_ready.append(conn_name)
 
 
-def track_seen(event, message_time, db, conn):
-    """ Tracks messages for the .seen command """
+def track_seen(event, db, conn):
+    """ Tracks messages for the .seen command
+    :type event: cloudbot.core.events.BaseEvent
+    :type db: sqlalchemy.orm.Session
+    :type conn: cloudbot.core.connection.BotConnection
+    """
     db_init(db, conn)
     # keep private messages private
     if event.chan[:1] == "#" and not re.findall('^s/.*/.*/$', event.irc_message.lower()):
@@ -33,6 +38,10 @@ def track_seen(event, message_time, db, conn):
 
 
 def track_history(event, message_time, conn):
+    """
+    :type event: cloudbot.core.events.BaseEvent
+    :type conn: cloudbot.core.connection.BotConnection
+    """
     try:
         history = conn.history[event.chan]
     except KeyError:
@@ -45,15 +54,23 @@ def track_history(event, message_time, conn):
 
 @hook.irc_raw('PRIVMSG', ignorebots=False, singlethread=True)
 def chat_tracker(event, db, conn):
+    """
+    :type db: sqlalchemy.orm.Session
+    :type event: cloudbot.core.events.BaseEvent
+    :type conn: cloudbot.core.connection.BotConnection
+    """
     message_time = time.time()
-    track_seen(event, message_time, db, conn)
+    track_seen(event, db, conn)
     track_history(event, message_time, conn)
 
 
 @asyncio.coroutine
 @hook.command(autohelp=False)
 def resethistory(event, conn):
-    """- resets chat history for the current channel"""
+    """- resets chat history for the current channel
+    :type event: cloudbot.core.events.BaseEvent
+    :type conn: cloudbot.core.connection.BotConnection
+    """
     try:
         conn.history[event.chan].clear()
         return "Reset chat history for current channel."
@@ -64,7 +81,11 @@ def resethistory(event, conn):
 
 @hook.command()
 def seen(text, nick, chan, db, event, conn):
-    """<nick> <channel> - tells when a nickname was last in active in one of my channels"""
+    """<nick> <channel> - tells when a nickname was last in active in one of my channels
+    :type db: sqlalchemy.orm.Session
+    :type event: cloudbot.core.events.BaseEvent
+    :type conn: cloudbot.core.connection.BotConnection
+    """
 
     if event.conn.nick.lower() == text.lower():
         return "You need to get your eyes checked."

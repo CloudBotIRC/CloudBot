@@ -7,7 +7,7 @@ from cloudbot import hook, web
 def plpaste(text, bot):
     """<command> - pastes the plugin file that contains <command>
     :type text: str
-    :type bot: core.bot.CloudBot
+    :type bot: cloudbot.core.bot.CloudBot
     """
     if text in bot.plugin_manager.commands:
         file_path = bot.plugin_manager.commands[text].plugin.file_path

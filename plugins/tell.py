@@ -71,7 +71,12 @@ def add_tell(db, server, sender, target, message):
 
 
 @hook.irc_raw('PRIVMSG', singlethread=True)
-def tellinput(event, notice, db, nick, conn):
+def tellinput(event, conn, db, nick, notice):
+    """
+    :type event: cloudbot.core.events.BaseEvent
+    :type conn: cloudbot.core.connection.BotConnection
+    :type db: sqlalchemy.orm.Session
+    """
     if 'showtells' in event.irc_message.lower():
         return
 

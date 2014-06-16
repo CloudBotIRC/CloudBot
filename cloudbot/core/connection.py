@@ -158,6 +158,8 @@ class BotConnection:
 
     def cmd(self, command, params=None):
         """
+        :param command: The IRC command to send
+        :param params: The params to the IRC command
         :type command: str
         :type params: list[str]
         """

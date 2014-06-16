@@ -17,7 +17,6 @@ from cloudbot.core.pluginmanager import PluginManager
 from cloudbot.core.events import BaseEvent, CommandEvent, RegexEvent
 from cloudbot.util import botvars, formatting
 
-
 logger = logging.getLogger("cloudbot")
 
 
@@ -212,13 +211,11 @@ class CloudBot:
                 tasks.append(self.plugin_manager.launch(raw_hook, BaseEvent(bot=self, hook=raw_hook, base_event=event)))
 
         if event.irc_command == 'PRIVMSG':
-            # COMMANDS
-            if event.chan == event.nick:  # private message, no command prefix
-                prefix = '^(?:[{}]?|'.format(command_prefix)
+            # Commands
+            if event.chan.lower() == event.nick.lower():  # private message, no command prefix
+                command_re = r'(?i)^(?:[{}]?|{}[,;:]+\s+)(\w+)(?:$|\s+)(.*)'.format(command_prefix, event.conn.nick)
             else:
-                prefix = '^(?:[{}]|'.format(command_prefix)
-            command_re = prefix + event.conn.nick
-            command_re += r'[,;:]+\s+)(\w+)(?:$|\s+)(.*)'
+                command_re = r'(?i)^(?:[{}]|{}[,;:]+\s+)(\w+)(?:$|\s+)(.*)'.format(command_prefix, event.conn.nick)
 
             match = re.match(command_re, event.irc_message)
 

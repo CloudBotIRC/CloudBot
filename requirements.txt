@@ -10,4 +10,4 @@ pbkdf2
 requests
 psutil
 twitter
-git+https://github.com/rfk/pyenchant.git#egg=pyenchant
+pyenchant

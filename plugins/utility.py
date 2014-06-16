@@ -190,3 +190,17 @@ def usa(text):
     for i, t in enumerate(text):
         out += c[i % l] + t
     return out
+
+
+@hook.command
+def superscript(text):
+    regular = "abcdefghijklmnoprstuvwxyzABDEGHIJKLMNOPRTUVW0123456789+-=()"
+    super_script = "ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖʳˢᵗᵘᵛʷˣʸᶻᴬᴮᴰᴱᴳᴴᴵᴶᴷᴸᴹᴺᴼᴾᴿᵀᵁⱽᵂ⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾"
+    result = []
+    for char in text:
+        index = regular.find(char)
+        if index != -1:
+            result.append(super_script[index])
+        else:
+            result.append(char)
+    return "".join(result)

@@ -5,8 +5,7 @@ sudo apt-get update
 
 # install things:
 # python3.4-dev     so we can install things with pip
-# git               so pip can clone from repository
-# libenchant1c2a    so python-enchant can use it
+# libenchant1c2a    pyenchant dependency
 # libxml2-dev       python-lxml dependency
 # libxslt-dev       python-lxml dependency
 # zlib1g-dev        python-lxml dependency

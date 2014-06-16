@@ -33,7 +33,6 @@ def strip(string):
 # basic text tools
 
 
-## TODO: make this capitalize sentences correctly
 @hook.command("capitalise", "capitalize")
 def capitalize(text):
     """capitalize <string> -- Capitalizes <string>.
@@ -113,6 +112,7 @@ def escape(text):
     """escape <string> -- Unicode escapes <string>."""
     encoder = codecs.getencoder("unicode_escape")
     return encoder(text)[0].decode()
+
 
 # length
 

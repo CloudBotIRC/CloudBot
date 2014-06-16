@@ -33,9 +33,7 @@ class CloudBot:
     """
     :type start_time: float
     :type running: bool
-    :type do_restart: bool
     :type connections: list[BotConnection]
-    :type logger: logging.Logger
     :type data_dir: bytes
     :type config: core.config.Config
     :type plugin_manager: PluginManager
@@ -56,7 +54,6 @@ class CloudBot:
         self.running = True
         # future which will be called when the bot stops
         self.stopped_future = asyncio.Future(loop=self.loop)
-        self.do_restart = False
 
         # stores each bot server connection
         self.connections = []
@@ -108,13 +105,16 @@ class CloudBot:
     def run(self):
         """
         Starts CloudBot.
-        This will first load plugins, then connect to IRC, then start the main loop for processing input.
+        This will load plugins, connect to IRC, and process input.
+        :return: True if CloudBot should be restarted, False otherwise
+        :rtype: bool
         """
         # Initializes the bot, plugins and connections
         self.loop.run_until_complete(self._init_routine())
-        # Wait till the bot stops.
-        self.loop.run_until_complete(self.stopped_future)
+        # Wait till the bot stops. The stopped_future will be set to True to restart, False otherwise
+        restart = self.loop.run_until_complete(self.stopped_future)
         self.loop.close()
+        return restart
 
     def create_connections(self):
         """ Create a BotConnection for all the networks defined in the config """
@@ -133,7 +133,7 @@ class CloudBot:
             logger.debug("[{}] Created connection.".format(readable_name))
 
     @asyncio.coroutine
-    def stop(self, reason=None):
+    def stop(self, reason=None, *, restart=False):
         """quits all networks and shuts the bot down"""
         logger.info("Stopping bot.")
 
@@ -147,64 +147,52 @@ class CloudBot:
 
         for connection in self.connections:
             if not connection.connected:
-                # Don't close a connection that hasn't connected
+                # Don't quit a connection that hasn't connected
                 continue
             logger.debug("[{}] Closing connection.".format(connection.readable_name))
 
             connection.quit(reason)
 
-        yield from asyncio.sleep(0.1)  # wait for 'QUIT' calls to take affect
+        yield from asyncio.sleep(1.0)  # wait for 'QUIT' calls to take affect
 
         for connection in self.connections:
+            if not connection.connected:
+                # Don't close a connection that hasn't connected
+                continue
             connection.close()
 
         self.running = False
         # Give the stopped_future a result, so that run() will exit
-        self.stopped_future.set_result(None)
+        self.stopped_future.set_result(restart)
 
     @asyncio.coroutine
     def restart(self, reason=None):
         """shuts the bot down and restarts it"""
-        self.do_restart = True
-        yield from self.stop(reason)
-
-    @asyncio.coroutine
-    def _load_plugins(self):
-        """
-        Initialization routine - loads plugins
-        """
-        yield from self.plugin_manager.load_all(os.path.abspath("plugins"))
-
-    @asyncio.coroutine
-    def _connect(self):
-        """
-        Initialization routine - starts connections
-        """
-        yield from asyncio.gather(*[conn.connect() for conn in self.connections], loop=self.loop)
+        yield from self.stop(reason=reason, restart=True)
 
     @asyncio.coroutine
     def _init_routine(self):
-        yield from self._load_plugins()
+        # Load plugins
+        yield from self.plugin_manager.load_all(os.path.abspath("plugins"))
 
-        # if we we're stopped while loading plugins, cancel that and just stop
+        # If we we're stopped while loading plugins, cancel that and just stop
         if not self.running:
-            # set the stopped_future result so that the run() method will exit right away
-            self.stopped_future.set_result(None)
+            logger.info("Killed while loading, exiting")
             return
 
         if cloudbot.dev_mode.get("plugin_reloading"):
             # start plugin reloader
             self.reloader.start(os.path.abspath("plugins"))
 
-        yield from self._connect()
+        # Connect to servers
+        yield from asyncio.gather(*[conn.connect() for conn in self.connections], loop=self.loop)
 
-        # run a manual garbage collection cycle, to clean up any unused objects created during initialization
+        # Run a manual garbage collection cycle, to clean up any unused objects created during initialization
         gc.collect()
 
     @asyncio.coroutine
     def process(self, event):
         """
-        :type self: CloudBot
         :type event: BaseEvent
         """
         run_before_tasks = []
@@ -213,7 +201,7 @@ class CloudBot:
 
         # EVENTS
         for raw_hook in self.plugin_manager.catch_all_events:
-            # run catch-all events that are asyncio all first
+            # run catch-all coroutine hooks before all others - TODO: Make this a plugin argument
             if not raw_hook.threaded:
                 run_before_tasks.append(
                     self.plugin_manager.launch(raw_hook, BaseEvent(bot=self, hook=raw_hook, base_event=event)))
@@ -256,13 +244,13 @@ class CloudBot:
                             event.notice("Possible matches: {}".format(
                                 formatting.get_text_list([command for command, plugin in potential_matches])))
 
-            # REGEXES
+            # Regex hooks
             for regex, regex_hook in self.plugin_manager.regex_hooks:
                 match = regex.search(event.irc_message)
                 if match:
                     regex_event = RegexEvent(bot=self, hook=regex_hook, match=match, base_event=event)
                     tasks.append(self.plugin_manager.launch(regex_hook, regex_event))
 
-        # run all the tasks we've created
+        # Run the tasks
         yield from asyncio.gather(*run_before_tasks, loop=self.loop)
         yield from asyncio.gather(*tasks, loop=self.loop)

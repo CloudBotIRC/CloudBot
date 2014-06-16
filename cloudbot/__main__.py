@@ -60,10 +60,11 @@ def main():
 
     # start the bot master
 
-    cloudbot.run()
+    # CloudBot.run() will return True if it should restart, False otherwise
+    restart = cloudbot.run()
 
     # the bot has stopped, do we want to restart?
-    if cloudbot.do_restart:
+    if restart:
         # remove reference to cloudbot, so exit_gracefully won't try to stop it
         cloudbot = None
         # sleep one second for timeouts

@@ -16,7 +16,7 @@ from .util import botvars, bucket, formatting, hook, http, textgen, timeformat, 
 __version__ = "0.1.1.dev0"
 
 __all__ = ["core", "util", "bot", "connection", "config", "permissions", "pluginmanager", "events", "botvars", "bucket",
-           "formatting", "hook", "http", "textgen", "timeformat", "timesince", "urlnorm", "web", "dev_mode"]
+           "formatting", "hook", "http", "textgen", "timeformat", "timesince", "urlnorm", "web", "dev_mode", "log_dir"]
 
 
 def _setup():
@@ -38,10 +38,11 @@ def _setup():
     if not "file_debug" in developer_mode:
         developer_mode["file_debug"] = default_developer_mode["file_debug"]
 
-    _logdir = os.path.join(os.path.abspath(os.path.curdir), "logs")
+    global log_dir
+    log_dir = os.path.join(os.path.abspath(os.path.curdir), "logs")
 
-    if not os.path.exists(_logdir):
-        os.makedirs(_logdir)
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
 
     dict_config = {
         "version": 1,
@@ -66,7 +67,7 @@ def _setup():
                 "class": "logging.FileHandler",
                 "formatter": "full",
                 "level": "INFO",
-                "filename": os.path.join(_logdir, "bot.log")
+                "filename": os.path.join(log_dir, "bot.log")
             }
         },
         "loggers": {
@@ -85,7 +86,7 @@ def _setup():
             "class": "logging.FileHandler",
             "formatter": "full",
             "level": "DEBUG",
-            "filename": os.path.join(_logdir, "debug.log")
+            "filename": os.path.join(log_dir, "debug.log")
         }
         dict_config["loggers"]["cloudbot"]["handlers"].append("debug_file")
 

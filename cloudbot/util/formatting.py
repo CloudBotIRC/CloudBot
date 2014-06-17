@@ -145,6 +145,19 @@ def truncate_words(content, length=10, suffix='...'):
         return out + suffix
 
 
+irc_color_re = re.compile(r"(\x03(\d+,\d+|\d)|[\x0f\x02\x16\x1f])")
+
+
+def strip_colors(text):
+    """
+    :param text: Text to strip
+    :return: Text stripped of IRC colors
+    :type text: str
+    :rtype: str
+    """
+    return irc_color_re.sub('', text)
+
+
 # from <http://stackoverflow.com/questions/250357/smart-truncate-in-python>
 def truncate_str(content, length=100, suffix='...'):
     """Truncates a string after a certain number of chars.

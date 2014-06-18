@@ -5,6 +5,7 @@ from sqlalchemy import Table, Column, String, Boolean, DateTime
 from sqlalchemy.sql import select
 
 from cloudbot import hook, timesince, botvars
+from cloudbot.core.events import EventType
 
 table = Table(
     'tells',
@@ -70,11 +71,11 @@ def add_tell(db, server, sender, target, message):
     db.commit()
 
 
-@hook.irc_raw('PRIVMSG', singlethread=True)
+@hook.event(EventType.message, singlethread=True)
 def tellinput(event, conn, db, nick, notice):
     """
     :type event: cloudbot.core.events.BaseEvent
-    :type conn: cloudbot.core.connection.IrcConnection
+    :type conn: cloudbot.core.connection.Connection
     :type db: sqlalchemy.orm.Session
     """
     if 'showtells' in event.content.lower():

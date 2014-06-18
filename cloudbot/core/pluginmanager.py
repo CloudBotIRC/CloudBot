@@ -18,7 +18,7 @@ def find_hooks(parent, module):
     """
     :type parent: Plugin
     :type module: object
-    :rtype: (list[CommandHook], list[RegexHook], list[RawHook], list[SieveHook], list[OnloadHook])
+    :rtype: (list[CommandHook], list[RegexHook], list[RawHook], list[SieveHook], List[EventHook], list[OnloadHook])
     """
     # set the loaded flag
     module._cloudbot_loaded = True
@@ -26,8 +26,9 @@ def find_hooks(parent, module):
     regex = []
     raw = []
     sieve = []
+    event = []
     onload = []
-    type_lists = {"command": command, "regex": regex, "irc_raw": raw, "sieve": sieve, "onload": onload}
+    type_lists = {"command": command, "regex": regex, "irc_raw": raw, "sieve": sieve, "event": event, "onload": onload}
     for name, func in module.__dict__.items():
         if hasattr(func, "_cloudbot_hook"):
             # if it has cloudbot hook
@@ -39,7 +40,7 @@ def find_hooks(parent, module):
             # delete the hook to free memory
             del func._cloudbot_hook
 
-    return command, regex, raw, sieve, onload
+    return command, regex, raw, sieve, event, onload
 
 
 def find_tables(code):
@@ -74,14 +75,15 @@ class PluginManager:
     :type plugins: dict[str, Plugin]
     :type commands: dict[str, CommandHook]
     :type raw_triggers: dict[str, list[RawHook]]
-    :type catch_all_events: list[RawHook]
+    :type catch_all_triggers: list[RawHook]
+    :type event_type_hooks: dict[cloudbot.core.events.EventType, list[EventHook]]
     :type regex_hooks: list[(re.__Regex, RegexHook)]
     :type sieves: list[SieveHook]
     """
 
     def __init__(self, bot):
         """
-        Creates a new PluginManager. You generally only need to do this from inside core.bot.CloudBot
+        Creates a new PluginManager. You generally only need to do this from inside cloudbot.core.bot.CloudBot
         :type bot: cloudbot.core.bot.CloudBot
         """
         self.bot = bot
@@ -89,7 +91,8 @@ class PluginManager:
         self.plugins = {}
         self.commands = {}
         self.raw_triggers = {}
-        self.catch_all_events = []
+        self.catch_all_triggers = []
+        self.event_type_hooks = {}
         self.regex_hooks = []
         self.sieves = []
         self._hook_waiting_queues = {}
@@ -178,10 +181,10 @@ class PluginManager:
                     self.commands[alias] = command_hook
             self._log_hook(command_hook)
 
-        # register events
+        # register raw hooks
         for raw_hook in plugin.raw_hooks:
             if raw_hook.is_catch_all():
-                self.catch_all_events.append(raw_hook)
+                self.catch_all_triggers.append(raw_hook)
             else:
                 for trigger in raw_hook.triggers:
                     if trigger in self.raw_triggers:
@@ -189,6 +192,15 @@ class PluginManager:
                     else:
                         self.raw_triggers[trigger] = [raw_hook]
             self._log_hook(raw_hook)
+
+        # register events
+        for event_hook in plugin.events:
+            for event_type in event_hook.types:
+                if event_type in self.event_type_hooks:
+                    self.event_type_hooks[event_type].append(event_hook)
+                else:
+                    self.event_type_hooks[event_type] = [event_hook]
+            self._log_hook(event_hook)
 
         # register regexps
         for regex_hook in plugin.regexes:
@@ -234,14 +246,24 @@ class PluginManager:
                     # we need to make sure that there wasn't a conflict, so we don't delete another plugin's command
                     del self.commands[alias]
 
-        # unregister events
+        # unregister raw hooks
         for raw_hook in plugin.raw_hooks:
             if raw_hook.is_catch_all():
-                self.catch_all_events.remove(raw_hook)
+                self.catch_all_triggers.remove(raw_hook)
             else:
-                for event_name in raw_hook.triggers:
-                    assert event_name in self.raw_triggers  # this can't be not true
-                    self.raw_triggers[event_name].remove(raw_hook)
+                for trigger in raw_hook.triggers:
+                    assert trigger in self.raw_triggers  # this can't be not true
+                    self.raw_triggers[trigger].remove(raw_hook)
+                    if not self.raw_triggers[trigger]:  # if that was the last hook for this trigger
+                        del self.raw_triggers[trigger]
+
+        # unregister events
+        for event_hook in plugin.events:
+            for event_type in event_hook.types:
+                assert event_type in self.event_type_hooks  # this can't be not true
+                self.event_type_hooks[event_type].remove(event_hook)
+                if not self.event_type_hooks[event_type]:  # if that was the last hook for this event type
+                    del self.event_type_hooks[event_type]
 
         # unregister regexps
         for regex_hook in plugin.regexes:
@@ -448,6 +470,7 @@ class Plugin:
     :type regexes: list[RegexHook]
     :type raw_hooks: list[RawHook]
     :type sieves: list[SieveHook]
+    :type events: list[EventHook]
     :type tables: list[sqlalchemy.Table]
     """
 
@@ -460,7 +483,7 @@ class Plugin:
         self.file_path = filepath
         self.file_name = filename
         self.title = title
-        self.commands, self.regexes, self.raw_hooks, self.sieves, self.run_on_load = find_hooks(self, code)
+        self.commands, self.regexes, self.raw_hooks, self.sieves, self.events, self.run_on_load = find_hooks(self, code)
         # we need to find tables for each plugin so that they can be unloaded from the global metadata when the
         # plugin is reloaded
         self.tables = find_tables(code)
@@ -604,20 +627,20 @@ class RawHook(Hook):
     :type triggers: set[str]
     """
 
-    def __init__(self, plugin, event_hook):
+    def __init__(self, plugin, irc_raw_hook):
         """
         :type plugin: Plugin
-        :type event_hook: cloudbot.util.hook._RawHook
+        :type irc_raw_hook: cloudbot.util.hook._RawHook
         """
-        super().__init__("irc_raw", plugin, event_hook)
+        super().__init__("irc_raw", plugin, irc_raw_hook)
 
-        self.triggers = event_hook.triggers
+        self.triggers = irc_raw_hook.triggers
 
     def is_catch_all(self):
         return "*" in self.triggers
 
     def __repr__(self):
-        return "Raw[events: {}, {}]".format(list(self.triggers), Hook.__repr__(self))
+        return "Raw[triggers: {}, {}]".format(list(self.triggers), Hook.__repr__(self))
 
     def __str__(self):
         return "events {} ({}) from {}".format(self.function_name, ",".join(self.triggers), self.plugin.file_name)
@@ -637,6 +660,28 @@ class SieveHook(Hook):
 
     def __str__(self):
         return "sieve {} from {}".format(self.function_name, self.plugin.file_name)
+
+
+class EventHook(Hook):
+    """
+    :type types: set[cloudbot.core.events.EventType]
+    """
+
+    def __init__(self, plugin, event_hook):
+        """
+        :type plugin: Plugin
+        :type event_hook: cloudbot.util.hook._EventHook
+        """
+        super().__init__("event", plugin, event_hook)
+
+        self.types = event_hook.types
+
+    def __repr__(self):
+        return "Event[types: {}, {}]".format(list(self.types), Hook.__repr__(self))
+
+    def __str__(self):
+        return "event {} ({}) from {}".format(self.function_name, ",".join(str(t) for t in self.types),
+                                              self.plugin.file_name)
 
 
 class OnloadHook(Hook):
@@ -659,5 +704,6 @@ _hook_name_to_plugin = {
     "regex": RegexHook,
     "irc_raw": RawHook,
     "sieve": SieveHook,
+    "event": EventHook,
     "onload": OnloadHook
 }

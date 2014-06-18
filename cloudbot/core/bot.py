@@ -4,8 +4,8 @@ import logging
 import re
 import os
 import gc
-
 from sqlalchemy import create_engine
+
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.schema import MetaData
 
@@ -197,8 +197,8 @@ class CloudBot:
         tasks = []
         command_prefix = event.conn.config.get('command_prefix', '.')
 
-        # EVENTS
-        for raw_hook in self.plugin_manager.catch_all_events:
+        # Raw IRC hook
+        for raw_hook in self.plugin_manager.catch_all_triggers:
             # run catch-all coroutine hooks before all others - TODO: Make this a plugin argument
             if not raw_hook.threaded:
                 run_before_tasks.append(
@@ -208,6 +208,11 @@ class CloudBot:
         if event.irc_command in self.plugin_manager.raw_triggers:
             for raw_hook in self.plugin_manager.raw_triggers[event.irc_command]:
                 tasks.append(self.plugin_manager.launch(raw_hook, BaseEvent(hook=raw_hook, base_event=event)))
+
+        # Event hooks
+        if event.type in self.plugin_manager.event_type_hooks:
+            for event_hook in self.plugin_manager.event_type_hooks[event.type]:
+                tasks.append(self.plugin_manager.launch(event_hook, BaseEvent(hook=event_hook, base_event=event)))
 
         if event.type is EventType.message:
             # Commands

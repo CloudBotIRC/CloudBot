@@ -1,6 +1,7 @@
 import inspect
 import re
 import collections
+from cloudbot.core.events import EventType
 
 valid_command_re = re.compile(r"^\w+$")
 
@@ -126,8 +127,34 @@ class _RawHook(_Hook):
         if isinstance(trigger_param, str):
             self.triggers.add(trigger_param)
         else:
-            assert isinstance(trigger_param, list)
+            # it's a list
             self.triggers.update(trigger_param)
+
+
+class _EventHook(_Hook):
+    """
+    :type types: set[cloudbot.core.events.EventType]
+    """
+
+    def __init__(self, function):
+        """
+        :type function: function
+        """
+        _Hook.__init__(self, function, "event")
+        self.types = set()
+
+    def add_hook(self, trigger_param, kwargs):
+        """
+        :type trigger_param: cloudbot.core.events.EventType | list[cloudbot.core.events.EventType]
+        :type kwargs: dict[str, unknown]
+        """
+        self._add_hook(kwargs)
+
+        if isinstance(trigger_param, EventType):
+            self.types.add(trigger_param)
+        else:
+            # it's a list
+            self.types.update(trigger_param)
 
 
 def _add_hook(func, hook):
@@ -183,6 +210,26 @@ def irc_raw(triggers_param, **kwargs):
         raise TypeError("@irc_raw() must be used as a function that returns a decorator")
     else:  # this decorator is being used as a function, so return a decorator
         return lambda func: _raw_hook(func)
+
+
+def event(types_param, **kwargs):
+    """External event decorator. Must be used as a function to return a decorator
+    :type types_param: cloudbot.core.events.EventType | list[cloudbot.core.events.EventType]
+    """
+
+    def _event_hook(func):
+        hook = _get_hook(func, "event")
+        if hook is None:
+            hook = _EventHook(func)
+            _add_hook(func, hook)
+
+        hook.add_hook(types_param, kwargs)
+        return func
+
+    if callable(types_param):  # this decorator is being used directly, which isn't good
+        raise TypeError("@irc_raw() must be used as a function that returns a decorator")
+    else:  # this decorator is being used as a function, so return a decorator
+        return lambda func: _event_hook(func)
 
 
 def regex(regex_param, **kwargs):

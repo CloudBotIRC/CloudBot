@@ -4,6 +4,7 @@ import asyncio
 import re
 
 from cloudbot import hook, timesince
+from cloudbot.core.events import EventType
 
 db_ready = []
 
@@ -48,7 +49,7 @@ def track_history(event, message_time, conn):
     history.append(data)
 
 
-@hook.irc_raw('PRIVMSG', ignorebots=False, singlethread=True)
+@hook.event(EventType.message, ignorebots=False, singlethread=True)
 def chat_tracker(event, db, conn):
     """
     :type db: sqlalchemy.orm.Session

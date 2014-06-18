@@ -11,7 +11,7 @@
             },
             "nick": "MyCloudBot",
             "user": "cloudbot",
-            "real_name": "CloudBot - http://git.io/refresh",
+            "real_name": "CloudBotRefresh - http://cloudbot.pw",
             "channels": ["#cloudbot", "#cloudbot2"],
             "disabled_commands": [],
             "acls": {},

@@ -91,7 +91,7 @@ def tellinput(event, conn, db, nick, notice):
         if len(tells) > 1:
             reply += " (+{} more, {}showtells to view)".format(len(tells) - 1, conn.config["command_prefix"])
 
-        read_tell(db, conn.server, nick, message)
+        read_tell(db, conn.name, nick, message)
         notice(reply)
 
 
@@ -99,7 +99,7 @@ def tellinput(event, conn, db, nick, notice):
 def showtells(nick, notice, db, conn):
     """showtells -- View all pending tell messages (sent in a notice)."""
 
-    tells = get_unread(db, conn.server, nick)
+    tells = get_unread(db, conn.name, nick)
 
     if not tells:
         notice("You have no pending messages.")
@@ -110,7 +110,7 @@ def showtells(nick, notice, db, conn):
         past = timesince.timesince(time_sent)
         notice("{} sent you a message {} ago: {}".format(sender, past, message))
 
-    read_all_tells(db, conn.server, nick)
+    read_all_tells(db, conn.name, nick)
 
 
 @hook.command("tell")
@@ -139,10 +139,10 @@ def tell_cmd(text, nick, db, notice, conn):
         notice("Invalid nick '{}'.".format(target))
         return
 
-    if count_unread(db, conn.server, target) >= 10:
+    if count_unread(db, conn.name, target) >= 10:
         notice("Sorry, {} has too many messages queued already.".format(target))
         return
 
-    add_tell(db, conn.server, sender, target, message)
+    add_tell(db, conn.name, sender, target, message)
 
     notice("Your message has been saved, and {} will be notified once they are active.".format(target))

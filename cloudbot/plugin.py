@@ -8,7 +8,7 @@ import re
 
 import sqlalchemy
 
-from cloudbot.core import events
+from cloudbot import events
 from cloudbot.util import botvars
 
 logger = logging.getLogger("cloudbot")

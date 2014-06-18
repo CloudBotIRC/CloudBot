@@ -12,7 +12,7 @@ socket.setdefaulttimeout(10)
 def invite(irc_paramlist, conn):
     """
     :type irc_paramlist: list[str]
-    :type conn: cloudbot.core.connection.Connection
+    :type conn: cloudbot.core.connection.Client
     """
     invite_join = conn.config.get('invite_join', True)
     if invite_join:
@@ -24,7 +24,7 @@ def invite(irc_paramlist, conn):
 @hook.irc_raw('004')
 def onjoin(conn, bot):
     """
-    :type conn: cloudbot.core.connection.IrcConnection
+    :type conn: cloudbot.core.connection.IrcClient
     :type bot: cloudbot.core.bot.CloudBot
     """
     bot.logger.info("ONJOIN hook triggered.")
@@ -64,7 +64,7 @@ def onjoin(conn, bot):
 @hook.irc_raw('004')
 def keep_alive(conn):
     """
-    :type conn: cloudbot.core.connection.IrcConnection
+    :type conn: cloudbot.core.connection.IrcClient
     """
     keepalive = conn.config.get('keep_alive', False)
     if keepalive:

@@ -16,7 +16,7 @@ class PermissionManager(object):
 
     def __init__(self, conn):
         """
-        :type conn: cloudbot.core.connection.Connection
+        :type conn: cloudbot.core.connection.Client
         """
         logger.info("[{}] Created permission manager for {}.".format(conn.readable_name, conn.name))
 

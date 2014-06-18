@@ -5,7 +5,8 @@ import time
 
 import cloudbot
 from cloudbot import hook
-from cloudbot.core.events import EventType
+from cloudbot.event import EventType
+
 
 
 

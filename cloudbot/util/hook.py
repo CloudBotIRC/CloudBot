@@ -1,7 +1,9 @@
 import inspect
 import re
 import collections
-from cloudbot.core.events import EventType
+
+from cloudbot.event import EventType
+
 
 valid_command_re = re.compile(r"^\w+$")
 

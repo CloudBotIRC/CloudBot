@@ -2,7 +2,7 @@ import asyncio
 from fnmatch import fnmatch
 
 from cloudbot import hook
-from cloudbot.core.events import EventType
+from cloudbot.event import EventType
 
 
 @hook.onload

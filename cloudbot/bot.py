@@ -4,18 +4,19 @@ import logging
 import re
 import os
 import gc
-from sqlalchemy import create_engine
 
+from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.schema import MetaData
 
 import cloudbot
-from cloudbot.core.connection import Connection, IrcConnection
-from cloudbot.core.config import Config
-from cloudbot.core.reloader import PluginReloader
-from cloudbot.core.pluginmanager import PluginManager
-from cloudbot.core.events import BaseEvent, CommandEvent, RegexEvent, EventType
+from cloudbot.config import Config
+from cloudbot.reloader import PluginReloader
+from cloudbot.plugin import PluginManager
+from cloudbot.event import BaseEvent, CommandEvent, RegexEvent, EventType
+from cloudbot.dialect.irc.client import IrcClient
 from cloudbot.util import botvars, formatting
+
 
 logger = logging.getLogger("cloudbot")
 
@@ -32,7 +33,7 @@ class CloudBot:
     """
     :type start_time: float
     :type running: bool
-    :type connections: list[Connection | IrcConnection]
+    :type connections: list[Connection | IrcClient]
     :type data_dir: bytes
     :type config: core.config.Config
     :type plugin_manager: PluginManager
@@ -125,7 +126,7 @@ class CloudBot:
             server = conf['connection']['server']
             port = conf['connection'].get('port', 6667)
 
-            self.connections.append(IrcConnection(self, name, nick, config=conf, channels=conf['channels'],
+            self.connections.append(IrcClient(self, name, nick, config=conf, channels=conf['channels'],
                                                   readable_name=readable_name, server=server, port=port,
                                                   use_ssl=conf['connection'].get('ssl', False)))
             logger.debug("[{}] Created connection.".format(readable_name))

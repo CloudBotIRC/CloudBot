@@ -21,7 +21,7 @@ if os.path.exists(os.path.abspath('lib')):
     sys.path += ['lib']
 
 # import bot
-from cloudbot.core.bot import CloudBot
+from cloudbot.bot import CloudBot
 
 
 def main():

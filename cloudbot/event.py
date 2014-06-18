@@ -21,7 +21,7 @@ class EventType(enum.Enum):
 class BaseEvent:
     """
     :type bot: cloudbot.core.bot.CloudBot
-    :type conn: cloudbot.core.connection.Connection
+    :type conn: cloudbot.core.connection.Client
     :type hook: cloudbot.core.pluginmanager.Hook
     :type type: EventType
     :type content: str
@@ -50,7 +50,7 @@ class BaseEvent:
         Note that the `bot` argument may be left out if you specify a `base_event`.
 
         :param bot: The CloudBot instance this event was triggered from
-        :param conn: The Connection instance this event was triggered from
+        :param conn: The Client instance this event was triggered from
         :param hook: The hook this event will be passed to
         :param base_event: The base event that this event is based on. If this parameter is not None, then nick, user,
                             host, mask, and irc_* arguments are ignored
@@ -69,7 +69,7 @@ class BaseEvent:
                                 should be removed from the front.
         :param irc_ctcp_text: CTCP text if this message is a CTCP command
         :type bot: cloudbot.core.bot.CloudBot
-        :type conn: cloudbot.core.connection.Connection
+        :type conn: cloudbot.core.connection.Client
         :type hook: cloudbot.core.pluginmanager.Hook
         :type base_event: cloudbot.core.events.BaseEvent
         :type content: str

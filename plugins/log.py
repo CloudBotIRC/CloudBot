@@ -66,7 +66,7 @@ ctcp_unknown_with_message = ("[{server}:{channel}] {nick} [{user}@{host}] "
 def format_event(event):
     """
     Format an event
-    :type event: cloudbot.core.events.BaseEvent
+    :type event: cloudbot.core.events.Event
     :rtype: str
     """
 
@@ -220,7 +220,7 @@ def get_raw_log_stream(server):
 @hook.irc_raw("*", singlethread=True)
 def log_raw(event):
     """
-    :type event: cloudbot.core.events.BaseEvent
+    :type event: cloudbot.core.events.Event
     """
     logging_config = event.bot.config.get("logging", {})
     if not logging_config.get("raw_file_log", False):
@@ -232,7 +232,7 @@ def log_raw(event):
 @hook.irc_raw("*", singlethread=True)
 def log(event):
     """
-    :type event: cloudbot.core.events.BaseEvent
+    :type event: cloudbot.core.events.Event
     """
     text = format_event(event)
 
@@ -247,7 +247,7 @@ def log(event):
 def console_log(bot, event):
     """
     :type bot: cloudbot.core.bot.CloudBot
-    :type event: cloudbot.core.events.BaseEvent
+    :type event: cloudbot.core.events.Event
     """
     text = format_event(event)
     if text is not None:

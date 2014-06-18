@@ -75,7 +75,7 @@ def add_tell(db, server, sender, target, message):
 @hook.event(EventType.message, singlethread=True)
 def tellinput(event, conn, db, nick, notice):
     """
-    :type event: cloudbot.core.events.BaseEvent
+    :type event: cloudbot.core.events.Event
     :type conn: cloudbot.core.connection.Client
     :type db: sqlalchemy.orm.Session
     """

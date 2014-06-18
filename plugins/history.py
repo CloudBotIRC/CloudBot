@@ -23,7 +23,7 @@ def db_init(db, conn_name):
 
 def track_seen(event, db, conn):
     """ Tracks messages for the .seen command
-    :type event: cloudbot.core.events.BaseEvent
+    :type event: cloudbot.core.events.Event
     :type db: sqlalchemy.orm.Session
     :type conn: cloudbot.core.connection.Client
     """
@@ -37,7 +37,7 @@ def track_seen(event, db, conn):
 
 def track_history(event, message_time, conn):
     """
-    :type event: cloudbot.core.events.BaseEvent
+    :type event: cloudbot.core.events.Event
     :type conn: cloudbot.core.connection.Client
     """
     try:
@@ -54,7 +54,7 @@ def track_history(event, message_time, conn):
 def chat_tracker(event, db, conn):
     """
     :type db: sqlalchemy.orm.Session
-    :type event: cloudbot.core.events.BaseEvent
+    :type event: cloudbot.core.events.Event
     :type conn: cloudbot.core.connection.Client
     """
     message_time = time.time()
@@ -66,7 +66,7 @@ def chat_tracker(event, db, conn):
 @hook.command(autohelp=False)
 def resethistory(event, conn):
     """- resets chat history for the current channel
-    :type event: cloudbot.core.events.BaseEvent
+    :type event: cloudbot.core.events.Event
     :type conn: cloudbot.core.connection.Client
     """
     try:
@@ -81,7 +81,7 @@ def resethistory(event, conn):
 def seen(text, nick, chan, db, event, conn):
     """<nick> <channel> - tells when a nickname was last in active in one of my channels
     :type db: sqlalchemy.orm.Session
-    :type event: cloudbot.core.events.BaseEvent
+    :type event: cloudbot.core.events.Event
     :type conn: cloudbot.core.connection.Client
     """
 

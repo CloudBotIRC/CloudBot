@@ -13,7 +13,7 @@ import cloudbot
 from cloudbot.config import Config
 from cloudbot.reloader import PluginReloader
 from cloudbot.plugin import PluginManager
-from cloudbot.event import BaseEvent, CommandEvent, RegexEvent, EventType
+from cloudbot.event import Event, CommandEvent, RegexEvent, EventType
 from cloudbot.dialect.irc.client import IrcClient
 from cloudbot.util import botvars, formatting
 
@@ -192,7 +192,7 @@ class CloudBot:
     @asyncio.coroutine
     def process(self, event):
         """
-        :type event: BaseEvent
+        :type event: Event
         """
         run_before_tasks = []
         tasks = []
@@ -203,17 +203,17 @@ class CloudBot:
             # run catch-all coroutine hooks before all others - TODO: Make this a plugin argument
             if not raw_hook.threaded:
                 run_before_tasks.append(
-                    self.plugin_manager.launch(raw_hook, BaseEvent(hook=raw_hook, base_event=event)))
+                    self.plugin_manager.launch(raw_hook, Event(hook=raw_hook, base_event=event)))
             else:
-                tasks.append(self.plugin_manager.launch(raw_hook, BaseEvent(hook=raw_hook, base_event=event)))
+                tasks.append(self.plugin_manager.launch(raw_hook, Event(hook=raw_hook, base_event=event)))
         if event.irc_command in self.plugin_manager.raw_triggers:
             for raw_hook in self.plugin_manager.raw_triggers[event.irc_command]:
-                tasks.append(self.plugin_manager.launch(raw_hook, BaseEvent(hook=raw_hook, base_event=event)))
+                tasks.append(self.plugin_manager.launch(raw_hook, Event(hook=raw_hook, base_event=event)))
 
         # Event hooks
         if event.type in self.plugin_manager.event_type_hooks:
             for event_hook in self.plugin_manager.event_type_hooks[event.type]:
-                tasks.append(self.plugin_manager.launch(event_hook, BaseEvent(hook=event_hook, base_event=event)))
+                tasks.append(self.plugin_manager.launch(event_hook, Event(hook=event_hook, base_event=event)))
 
         if event.type is EventType.message:
             # Commands

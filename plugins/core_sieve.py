@@ -13,7 +13,7 @@ buckets = {}
 def sieve_suite(bot, event, _hook):
     """
     :type bot: cloudbot.core.bot.CloudBot
-    :type event: cloudbot.core.events.BaseEvent
+    :type event: cloudbot.core.events.Event
     :type _hook: cloudbot.core.pluginmanager.Hook
     """
     conn = event.conn

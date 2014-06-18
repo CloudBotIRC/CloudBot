@@ -8,7 +8,7 @@ import re
 
 import sqlalchemy
 
-from cloudbot import events
+from cloudbot import event
 from cloudbot.util import botvars
 
 logger = logging.getLogger("cloudbot")
@@ -159,7 +159,7 @@ class PluginManager:
 
         # run onload hooks
         for onload_hook in plugin.run_on_load:
-            success = yield from self.launch(onload_hook, events.BaseEvent(bot=self.bot, hook=onload_hook))
+            success = yield from self.launch(onload_hook, event.Event(bot=self.bot, hook=onload_hook))
             if not success:
                 logger.warning("Not registering hooks from plugin {}: onload hook errored".format(plugin.title))
 
@@ -299,7 +299,7 @@ class PluginManager:
         Prepares arguments for the given hook
 
         :type hook: cloudbot.core.pluginmanager.Hook
-        :type event: cloudbot.core.events.BaseEvent
+        :type event: cloudbot.core.events.Event
         :rtype: list
         """
         parameters = []
@@ -317,7 +317,7 @@ class PluginManager:
     def _execute_hook_threaded(self, hook, event):
         """
         :type hook: Hook
-        :type event: cloudbot.core.events.BaseEvent
+        :type event: cloudbot.core.events.Event
         """
         event.prepare_threaded()
 
@@ -334,7 +334,7 @@ class PluginManager:
     def _execute_hook_sync(self, hook, event):
         """
         :type hook: Hook
-        :type event: cloudbot.core.events.BaseEvent
+        :type event: cloudbot.core.events.Event
         """
         yield from event.prepare()
 
@@ -355,7 +355,7 @@ class PluginManager:
         Returns False if the hook errored, True otherwise.
 
         :type hook: cloudbot.core.pluginmanager.Hook
-        :type event: cloudbot.core.events.BaseEvent
+        :type event: cloudbot.core.events.Event
         :rtype: bool
         """
         try:
@@ -383,9 +383,9 @@ class PluginManager:
     def _sieve(self, sieve, event, hook):
         """
         :type sieve: cloudbot.core.pluginmanager.Hook
-        :type event: cloudbot.core.events.BaseEvent
+        :type event: cloudbot.core.events.Event
         :type hook: cloudbot.core.pluginmanager.Hook
-        :rtype: cloudbot.core.events.BaseEvent
+        :rtype: cloudbot.core.events.Event
         """
         try:
             if sieve.threaded:
@@ -405,7 +405,7 @@ class PluginManager:
 
         Returns False if the hook didn't run successfully, and True if it ran successfully.
 
-        :type event: cloudbot.core.events.BaseEvent | cloudbot.core.events.CommandEvent
+        :type event: cloudbot.core.events.Event | cloudbot.core.events.CommandEvent
         :type hook: cloudbot.core.pluginmanager.Hook | cloudbot.core.pluginmanager.CommandHook
         :rtype: bool
         """

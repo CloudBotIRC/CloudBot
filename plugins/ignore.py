@@ -28,7 +28,7 @@ def ensure_ignored(bot):
 def ignore_sieve(bot, event, _hook):
     """ blocks events from ignored channels/hosts
     :type bot: cloudbot.core.bot.CloudBot
-    :type event: cloudbot.core.events.BaseEvent
+    :type event: cloudbot.core.events.Event
     :type _hook: cloudbot.core.pluginmanager.Hook
     """
     # don't block event hooks

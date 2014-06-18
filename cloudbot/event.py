@@ -18,7 +18,7 @@ class EventType(enum.Enum):
     other = 6
 
 
-class BaseEvent:
+class Event:
     """
     :type bot: cloudbot.core.bot.CloudBot
     :type conn: cloudbot.core.connection.Client
@@ -71,7 +71,7 @@ class BaseEvent:
         :type bot: cloudbot.core.bot.CloudBot
         :type conn: cloudbot.core.connection.Client
         :type hook: cloudbot.core.pluginmanager.Hook
-        :type base_event: cloudbot.core.events.BaseEvent
+        :type base_event: cloudbot.core.events.Event
         :type content: str
         :type target: str
         :type event_type: EventType
@@ -209,7 +209,7 @@ class BaseEvent:
     @property
     def event(self):
         """
-        :rtype; cloudbot.core.events.BaseEvent
+        :rtype; cloudbot.core.events.Event
         """
         return self
 
@@ -311,7 +311,7 @@ class BaseEvent:
         return result
 
 
-class CommandEvent(BaseEvent):
+class CommandEvent(Event):
     """
     :type hook: cloudbot.core.pluginmanager.CommandHook
     :type text: str
@@ -354,7 +354,7 @@ class CommandEvent(BaseEvent):
         self.notice(message, target=target)
 
 
-class RegexEvent(BaseEvent):
+class RegexEvent(Event):
     """
     :type hook: cloudbot.core.pluginmanager.RegexHook
     :type match: re.__Match

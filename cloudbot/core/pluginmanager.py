@@ -475,7 +475,7 @@ class Plugin:
         if self.tables:
             # if there are any tables
 
-            bot.logger.info("Registering tables for {}".format(self.title))
+            logger.info("Registering tables for {}".format(self.title))
 
             for table in self.tables:
                 if not (yield from bot.loop.run_in_executor(None, table.exists, bot.db_engine)):
@@ -488,7 +488,7 @@ class Plugin:
         """
         if self.tables:
             # if there are any tables
-            bot.logger.info("Unregistering tables for {}".format(self.title))
+            logger.info("Unregistering tables for {}".format(self.title))
 
             for table in self.tables:
                 bot.db_metadata.remove(table)
@@ -535,8 +535,7 @@ class Hook:
 
         if func_hook.kwargs:
             # we should have popped all the args, so warn if there are any left
-            logging.getLogger("cloudbot").warning("Ignoring extra args {} from {}".format(
-                func_hook.kwargs, self.description))
+            logger.warning("Ignoring extra args {} from {}".format(func_hook.kwargs, self.description))
 
     @property
     def description(self):
@@ -593,8 +592,8 @@ class RegexHook(Hook):
         super().__init__("regex", plugin, regex_hook)
 
     def __repr__(self):
-        return "Regex[regexes: {}, {}]".format([regex.pattern for regex in self.regexes],
-                                               Hook.__repr__(self))
+        return "Regex[regexes: [{}], {}]".format(", ".join(regex.pattern for regex in self.regexes),
+                                                 Hook.__repr__(self))
 
     def __str__(self):
         return "regex {} from {}".format(self.function_name, self.plugin.file_name)

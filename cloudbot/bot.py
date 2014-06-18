@@ -14,7 +14,7 @@ from cloudbot.config import Config
 from cloudbot.reloader import PluginReloader
 from cloudbot.plugin import PluginManager
 from cloudbot.event import Event, CommandEvent, RegexEvent, EventType
-from cloudbot.dialect.irc.client import IrcClient
+from cloudbot.dialect.irc.client import IRCClient
 from cloudbot.util import botvars, formatting
 
 
@@ -33,7 +33,7 @@ class CloudBot:
     """
     :type start_time: float
     :type running: bool
-    :type connections: list[Connection | IrcClient]
+    :type connections: list[Connection | IRCClient]
     :type data_dir: bytes
     :type config: core.config.Config
     :type plugin_manager: PluginManager
@@ -126,7 +126,7 @@ class CloudBot:
             server = conf['connection']['server']
             port = conf['connection'].get('port', 6667)
 
-            self.connections.append(IrcClient(self, name, nick, config=conf, channels=conf['channels'],
+            self.connections.append(IRCClient(self, name, nick, config=conf, channels=conf['channels'],
                                                   readable_name=readable_name, server=server, port=port,
                                                   use_ssl=conf['connection'].get('ssl', False)))
             logger.debug("[{}] Created connection.".format(readable_name))

@@ -24,7 +24,7 @@ def invite(irc_paramlist, conn):
 @hook.irc_raw('004')
 def onjoin(conn, bot):
     """
-    :type conn: cloudbot.core.connection.IrcClient
+    :type conn: cloudbot.core.connection.IRCClient
     :type bot: cloudbot.core.bot.CloudBot
     """
     bot.logger.info("ONJOIN hook triggered.")
@@ -64,7 +64,7 @@ def onjoin(conn, bot):
 @hook.irc_raw('004')
 def keep_alive(conn):
     """
-    :type conn: cloudbot.core.connection.IrcClient
+    :type conn: cloudbot.core.connection.IRCClient
     """
     keepalive = conn.config.get('keep_alive', False)
     if keepalive:

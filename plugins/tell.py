@@ -81,7 +81,7 @@ def tellinput(event, conn, db, nick, notice):
     if 'showtells' in event.content.lower():
         return
 
-    tells = get_unread(db, conn.server, nick)
+    tells = get_unread(db, conn.name, nick)
 
     if tells:
         user_from, message, time_sent = tells[0]

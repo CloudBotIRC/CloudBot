@@ -52,13 +52,16 @@ def track_history(event, message_time, conn):
     history.append(data)
 
 
-@hook.event(EventType.message, ignorebots=False, singlethread=True)
+@hook.event([EventType.message, EventType.action], ignorebots=False, singlethread=True)
 def chat_tracker(event, db, conn):
     """
     :type db: sqlalchemy.orm.Session
     :type event: cloudbot.event.Event
     :type conn: cloudbot.client.Client
     """
+    if event.type is EventType.action:
+        event.content = "\x01ACTION {}\x01".format(event.content)
+
     message_time = time.time()
     track_seen(event, db, conn)
     track_history(event, message_time, conn)
@@ -106,8 +109,7 @@ def seen(text, nick, chan, db, event, conn):
         if last_seen[0] != text.lower():  # for glob matching
             text = last_seen[0]
         if last_seen[2][0:1] == "\x01":
-            return '{} was last seen {} ago: * {} {}'.format(text, reltime, text,
-                                                             last_seen[2][8:-1])
+            return '{} was last seen {} ago: * {} {}'.format(text, reltime, text, last_seen[2][8:-1])
         else:
             return '{} was last seen {} ago saying: {}'.format(text, reltime, last_seen[2])
     else:

@@ -22,7 +22,8 @@ try:
 except ImportError:
     objgraph = None
 
-from cloudbot import hook, web
+from cloudbot import hook
+from cloudbot.util import web
 
 
 def get_name(thread_id):

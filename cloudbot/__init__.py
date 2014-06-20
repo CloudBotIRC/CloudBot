@@ -10,12 +10,9 @@ import logging.config
 import logging
 import os
 
-from .util import botvars, bucket, formatting, hook, http, textgen, timeformat, timesince, urlnorm, web
-
 __version__ = "0.1.1.dev0"
 
-__all__ = ["core", "util", "bot", "config", "permissions", "pluginmanager", "events", "botvars", "bucket",
-           "formatting", "hook", "http", "textgen", "timeformat", "timesince", "urlnorm", "web", "dev_mode", "log_dir"]
+__all__ = ["util", "bot", "connection", "config", "permissions", "plugin", "event", "hook", "dev_mode", "log_dir"]
 
 
 def _setup():

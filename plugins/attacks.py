@@ -12,7 +12,7 @@ from cloudbot.util import textgen
 @hook.onload()
 def load_attacks(bot):
     """
-    :type bot: cloudbot.core.bot.CloudBot
+    :type bot: cloudbot.bot.CloudBot
     """
     global larts, insults, flirts, kills
 
@@ -31,7 +31,7 @@ def load_attacks(bot):
 
 def is_self(conn, target):
     """
-    :type conn: cloudbot.core.connection.Client
+    :type conn: cloudbot.client.Client
     :type target: str
     """
     if re.search("(^..?.?.?self|{})".format(re.escape(conn.nick.lower())), target.lower()):
@@ -45,7 +45,7 @@ def is_self(conn, target):
 def lart(text, conn, nick, notice, action):
     """<user> - LARTs <user>
     :type text: str
-    :type conn: cloudbot.core.connection.Client
+    :type conn: cloudbot.client.Client
     :type nick: str
     """
     target = text.strip()
@@ -69,7 +69,7 @@ def lart(text, conn, nick, notice, action):
 def insult(text, conn, nick, notice, message):
     """<user> - insults <user>
     :type text: str
-    :type conn: cloudbot.core.connection.Client
+    :type conn: cloudbot.client.Client
     :type nick: str
     """
     target = text.strip()
@@ -90,7 +90,7 @@ def insult(text, conn, nick, notice, message):
 def flirt(text, conn, nick, notice, message):
     """<user> - flirts with <user>
     :type text: str
-    :type conn: cloudbot.core.connection.Client
+    :type conn: cloudbot.client.Client
     :type nick: str
     """
     target = text.strip()
@@ -111,7 +111,7 @@ def flirt(text, conn, nick, notice, message):
 def kill(text, conn, nick, notice, action):
     """<user> - kills <user>
     :type text: str
-    :type conn: cloudbot.core.connection.Client
+    :type conn: cloudbot.client.Client
     :type nick: str
     """
     target = text.strip()

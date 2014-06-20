@@ -10,8 +10,8 @@ from cloudbot import hook
 def help_command(text, conn, bot, notice, has_permission):
     """[command] - gives help for [command], or lists all available commands if no command is specified
     :type text: str
-    :type conn: cloudbot.core.connection.Client
-    :type bot: cloudbot.core.bot.CloudBot
+    :type conn: cloudbot.client.Client
+    :type bot: cloudbot.bot.CloudBot
     """
     if text:
         searching_for = text.lower().strip()

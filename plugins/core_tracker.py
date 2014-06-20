@@ -15,7 +15,7 @@ nick_re = re.compile(":(.+?)!")
 @hook.irc_raw("KICK")
 def on_kick(conn, chan, nick):
     """
-    :type conn: cloudbot.core.connection.Client
+    :type conn: cloudbot.client.Client
     :type chan: str
     :type nick: str
     """
@@ -32,7 +32,7 @@ def on_kick(conn, chan, nick):
 def on_nick(irc_paramlist, conn, irc_raw):
     """
     :type irc_paramlist: list[str]
-    :type conn: cloudbot.core.connection.Client
+    :type conn: cloudbot.client.Client
     :type irc_raw: str
     """
     old_nick = nick_re.search(irc_raw).group(1)
@@ -48,7 +48,7 @@ def on_nick(irc_paramlist, conn, irc_raw):
 @hook.irc_raw("JOIN")
 def on_join(conn, chan, nick):
     """
-    :type conn: cloudbot.core.connection.Client
+    :type conn: cloudbot.client.Client
     :type chan: str
     :type nick: str
     """

@@ -3,7 +3,8 @@ import requests
 import requests.exceptions
 import urllib.parse
 
-from cloudbot import hook, urlnorm
+from cloudbot import hook
+from cloudbot.util import urlnorm
 
 
 @hook.command("down", "offline", "up")

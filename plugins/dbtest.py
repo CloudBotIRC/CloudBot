@@ -1,6 +1,7 @@
 from sqlalchemy import Table, Column, String
 
-from cloudbot import hook, botvars
+from cloudbot import hook
+from cloudbot.util import botvars
 
 users = Table(
     'user_table', botvars.metadata,

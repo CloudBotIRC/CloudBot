@@ -1,4 +1,5 @@
-from cloudbot import hook, http
+from cloudbot import hook
+from cloudbot.util import http
 
 formats = {
     "taken": "\x034{domain}\x0f{path}",

@@ -5,7 +5,8 @@ from datetime import datetime
 from twitter import Twitter, OAuth
 from twitter.api import TwitterHTTPError
 
-from cloudbot import hook, timesince
+from cloudbot import hook
+from cloudbot.util import timesince
 
 
 @hook.onload()

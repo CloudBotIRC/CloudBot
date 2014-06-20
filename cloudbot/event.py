@@ -20,9 +20,9 @@ class EventType(enum.Enum):
 
 class Event:
     """
-    :type bot: cloudbot.core.bot.CloudBot
-    :type conn: cloudbot.core.connection.Client
-    :type hook: cloudbot.core.pluginmanager.Hook
+    :type bot: cloudbot.bot.CloudBot
+    :type conn: cloudbot.client.Client
+    :type hook: cloudbot.plugin.Hook
     :type type: EventType
     :type content: str
     :type target: str
@@ -68,10 +68,10 @@ class Event:
         :param irc_paramlist: The list of params for the IRC command. If the last param is a content param, the ':'
                                 should be removed from the front.
         :param irc_ctcp_text: CTCP text if this message is a CTCP command
-        :type bot: cloudbot.core.bot.CloudBot
-        :type conn: cloudbot.core.connection.Client
-        :type hook: cloudbot.core.pluginmanager.Hook
-        :type base_event: cloudbot.core.events.Event
+        :type bot: cloudbot.bot.CloudBot
+        :type conn: cloudbot.client.Client
+        :type hook: cloudbot.plugin.Hook
+        :type base_event: cloudbot.event.Event
         :type content: str
         :type target: str
         :type event_type: EventType
@@ -209,7 +209,7 @@ class Event:
     @property
     def event(self):
         """
-        :rtype; cloudbot.core.events.Event
+        :rtype: Event
         """
         return self
 
@@ -313,7 +313,7 @@ class Event:
 
 class CommandEvent(Event):
     """
-    :type hook: cloudbot.core.pluginmanager.CommandHook
+    :type hook: cloudbot.plugin.CommandHook
     :type text: str
     :type triggered_command: str
     """
@@ -356,7 +356,7 @@ class CommandEvent(Event):
 
 class RegexEvent(Event):
     """
-    :type hook: cloudbot.core.pluginmanager.RegexHook
+    :type hook: cloudbot.plugin.RegexHook
     :type match: re.__Match
     """
 

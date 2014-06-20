@@ -1,7 +1,8 @@
 import json
 import re
 
-from cloudbot import hook, http, formatting, web
+from cloudbot import hook
+from cloudbot.util import http, formatting, web
 
 
 

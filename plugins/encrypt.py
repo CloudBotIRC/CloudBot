@@ -56,7 +56,7 @@ def create_db(db):
 
 def get_salt(bot):
     """generate an encryption salt if none exists, then returns the salt
-    :type bot: cloudbot.core.bot.CloudBot
+    :type bot: cloudbot.bot.CloudBot
     """
     if not bot.config.get("random_salt", False):
         bot.config["random_salt"] = hashlib.md5(os.urandom(16)).hexdigest()
@@ -69,7 +69,7 @@ def get_salt(bot):
 def encrypt(text, bot, db, notice):
     """<pass> <string> - encrypts <string> with <pass>. (<string> can only be decrypted using this bot)
     :type text: str
-    :type bot: cloudbot.core.bot.CloudBot
+    :type bot: cloudbot.bot.CloudBot
     :type db: sqlalchemy.orm.session.Session
     """
 
@@ -107,7 +107,7 @@ def encrypt(text, bot, db, notice):
 @hook.command
 def decrypt(text, bot, db, notice):
     """<pass> <string> - decrypts <string> with <pass>. (can only decrypt strings encrypted on this bot)
-    :type bot: cloudbot.core.bot.CloudBot
+    :type bot: cloudbot.bot.CloudBot
     :type db: sqlalchemy.orm.session.Session
     """
 

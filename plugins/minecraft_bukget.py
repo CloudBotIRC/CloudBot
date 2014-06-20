@@ -3,11 +3,11 @@ import time
 import random
 import requests
 
-from cloudbot import hook, http, web
+from cloudbot import hook
+from cloudbot.util import http, web, formatting
 
 
 # # CONSTANTS
-from cloudbot import formatting
 
 base_url = "http://api.bukget.org/3/"
 

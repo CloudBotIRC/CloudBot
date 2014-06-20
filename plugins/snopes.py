@@ -1,6 +1,7 @@
 import re
 
-from cloudbot import hook, http
+from cloudbot import hook
+from cloudbot.util import http
 
 search_url = "http://search.atomz.com/search/?sp_a=00062d45-sp00000000"
 

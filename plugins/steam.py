@@ -2,7 +2,8 @@ import re
 
 from bs4 import BeautifulSoup, NavigableString, Tag
 
-from cloudbot import hook, http, web
+from cloudbot import hook
+from cloudbot.util import http, web
 from cloudbot.util.formatting import truncate_str
 
 steam_re = re.compile(r'(.*:)//(store.steampowered.com)(:[0-9]+)?(.*)', re.I)

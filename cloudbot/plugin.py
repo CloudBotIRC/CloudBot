@@ -8,7 +8,7 @@ import re
 
 import sqlalchemy
 
-from cloudbot import event
+from cloudbot.event import Event
 from cloudbot.util import botvars
 
 logger = logging.getLogger("cloudbot")
@@ -71,20 +71,20 @@ class PluginManager:
     - RegexPlugin loads a regex parameter, and executes on irc lines which match the regex
     - SievePlugin is a catch-all sieve, which all other plugins go through before being executed.
 
-    :type bot: cloudbot.core.bot.CloudBot
+    :type bot: cloudbot.bot.CloudBot
     :type plugins: dict[str, Plugin]
     :type commands: dict[str, CommandHook]
     :type raw_triggers: dict[str, list[RawHook]]
     :type catch_all_triggers: list[RawHook]
-    :type event_type_hooks: dict[cloudbot.core.events.EventType, list[EventHook]]
+    :type event_type_hooks: dict[cloudbot.event.EventType, list[EventHook]]
     :type regex_hooks: list[(re.__Regex, RegexHook)]
     :type sieves: list[SieveHook]
     """
 
     def __init__(self, bot):
         """
-        Creates a new PluginManager. You generally only need to do this from inside cloudbot.core.bot.CloudBot
-        :type bot: cloudbot.core.bot.CloudBot
+        Creates a new PluginManager. You generally only need to do this from inside cloudbot.bot.CloudBot
+        :type bot: cloudbot.bot.CloudBot
         """
         self.bot = bot
 
@@ -159,7 +159,7 @@ class PluginManager:
 
         # run onload hooks
         for onload_hook in plugin.run_on_load:
-            success = yield from self.launch(onload_hook, event.Event(bot=self.bot, hook=onload_hook))
+            success = yield from self.launch(onload_hook, Event(bot=self.bot, hook=onload_hook))
             if not success:
                 logger.warning("Not registering hooks from plugin {}: onload hook errored".format(plugin.title))
 
@@ -298,8 +298,8 @@ class PluginManager:
         """
         Prepares arguments for the given hook
 
-        :type hook: cloudbot.core.pluginmanager.Hook
-        :type event: cloudbot.core.events.Event
+        :type hook: cloudbot.plugin.Hook
+        :type event: cloudbot.event.Event
         :rtype: list
         """
         parameters = []
@@ -317,7 +317,7 @@ class PluginManager:
     def _execute_hook_threaded(self, hook, event):
         """
         :type hook: Hook
-        :type event: cloudbot.core.events.Event
+        :type event: cloudbot.event.Event
         """
         event.prepare_threaded()
 
@@ -334,7 +334,7 @@ class PluginManager:
     def _execute_hook_sync(self, hook, event):
         """
         :type hook: Hook
-        :type event: cloudbot.core.events.Event
+        :type event: cloudbot.event.Event
         """
         yield from event.prepare()
 
@@ -354,8 +354,8 @@ class PluginManager:
 
         Returns False if the hook errored, True otherwise.
 
-        :type hook: cloudbot.core.pluginmanager.Hook
-        :type event: cloudbot.core.events.Event
+        :type hook: cloudbot.plugin.Hook
+        :type event: cloudbot.event.Event
         :rtype: bool
         """
         try:
@@ -382,10 +382,10 @@ class PluginManager:
     @asyncio.coroutine
     def _sieve(self, sieve, event, hook):
         """
-        :type sieve: cloudbot.core.pluginmanager.Hook
-        :type event: cloudbot.core.events.Event
-        :type hook: cloudbot.core.pluginmanager.Hook
-        :rtype: cloudbot.core.events.Event
+        :type sieve: cloudbot.plugin.Hook
+        :type event: cloudbot.event.Event
+        :type hook: cloudbot.plugin.Hook
+        :rtype: cloudbot.event.Event
         """
         try:
             if sieve.threaded:
@@ -405,8 +405,8 @@ class PluginManager:
 
         Returns False if the hook didn't run successfully, and True if it ran successfully.
 
-        :type event: cloudbot.core.events.Event | cloudbot.core.events.CommandEvent
-        :type hook: cloudbot.core.pluginmanager.Hook | cloudbot.core.pluginmanager.CommandHook
+        :type event: cloudbot.event.Event | cloudbot.event.CommandEvent
+        :type hook: cloudbot.plugin.Hook | cloudbot.plugin.CommandHook
         :rtype: bool
         """
         if hook.type != "onload":  # we don't need sieves on onload hooks.
@@ -494,7 +494,7 @@ class Plugin:
         """
         Creates all sqlalchemy Tables that are registered in this plugin
 
-        :type bot: cloudbot.core.bot.CloudBot
+        :type bot: cloudbot.bot.CloudBot
         """
         if self.tables:
             # if there are any tables
@@ -508,7 +508,7 @@ class Plugin:
     def unregister_tables(self, bot):
         """
         Unregisters all sqlalchemy Tables registered to the global metadata by this plugin
-        :type bot: cloudbot.core.bot.CloudBot
+        :type bot: cloudbot.bot.CloudBot
         """
         if self.tables:
             # if there are any tables
@@ -665,7 +665,7 @@ class SieveHook(Hook):
 
 class EventHook(Hook):
     """
-    :type types: set[cloudbot.core.events.EventType]
+    :type types: set[cloudbot.event.EventType]
     """
 
     def __init__(self, plugin, event_hook):

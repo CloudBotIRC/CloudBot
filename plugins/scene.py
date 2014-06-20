@@ -1,6 +1,7 @@
 import datetime
 
-from cloudbot import hook, http, timesince
+from cloudbot import hook
+from cloudbot.util import http, timesince
 
 
 @hook.command("scene")

@@ -1,6 +1,7 @@
 import json
 
-from cloudbot import hook, textgen
+from cloudbot import hook
+from cloudbot.util import textgen
 
 
 def get_generator(_json, variables):

@@ -4,7 +4,8 @@ import requests
 import json
 import re
 
-from cloudbot import hook, http
+from cloudbot import hook
+from cloudbot.util import http
 
 
 # I need TREE apis, all on separate domains, to get basic account info

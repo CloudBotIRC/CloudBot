@@ -4,9 +4,9 @@ from datetime import datetime
 from sqlalchemy import Table, Column, String, Boolean, DateTime
 from sqlalchemy.sql import select
 
-from cloudbot import hook, timesince, botvars
+from cloudbot import hook
+from cloudbot.util import timesince, botvars
 from cloudbot.event import EventType
-
 
 table = Table(
     'tells',
@@ -75,8 +75,8 @@ def add_tell(db, server, sender, target, message):
 @hook.event(EventType.message, singlethread=True)
 def tellinput(event, conn, db, nick, notice):
     """
-    :type event: cloudbot.core.events.Event
-    :type conn: cloudbot.core.connection.Client
+    :type event: cloudbot.event.Event
+    :type conn: cloudbot.client.Client
     :type db: sqlalchemy.orm.Session
     """
     if 'showtells' in event.content.lower():

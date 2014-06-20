@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from cloudbot import hook, http, timesince
+from cloudbot import hook
+from cloudbot.util import http, timesince
 
 api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
 

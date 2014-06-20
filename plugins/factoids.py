@@ -7,7 +7,8 @@ import requests
 
 from sqlalchemy import Table, Column, String
 
-from cloudbot import botvars, hook, formatting, web
+from cloudbot import hook
+from cloudbot.util import botvars, formatting, web
 
 re_lineends = re.compile(r'[\r\n]*')
 

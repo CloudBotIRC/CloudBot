@@ -1,7 +1,8 @@
 import re
 from urllib.parse import urlencode
 
-from cloudbot import hook, http, timeformat
+from cloudbot import hook
+from cloudbot.util import http, timeformat
 
 hulu_re = re.compile(r'(.*://)(www.hulu.com|hulu.com)(.*)', re.I)
 

@@ -1,7 +1,8 @@
 import re
 import random
 
-from cloudbot import hook, http, web
+from cloudbot import hook
+from cloudbot.util import http, web
 
 base_url = "http://reddit.com/r/{}/.json"
 imgur_re = re.compile(r'http://(?:i\.)?imgur\.com/(a/)?(\w+\b(?!/))\.?\w?')

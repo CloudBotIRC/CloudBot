@@ -6,6 +6,7 @@ import logging
 
 from watchdog.observers import Observer
 from watchdog.tricks import Trick
+
 import cloudbot
 
 logger = logging.getLogger("cloudbot")
@@ -15,14 +16,14 @@ class Config(dict):
     """
     :type filename: str
     :type path: str
-    :type bot: cloudbot.core.bot.CloudBot
+    :type bot: cloudbot.bot.CloudBot
     :type observer: Observer
     :type event_handler: ConfigEventHandler
     """
 
     def __init__(self, bot, *args, **kwargs):
         """
-        :type bot: cloudbot.core.bot.CloudBot
+        :type bot: cloudbot.bot.CloudBot
         :type args: list
         :type kwargs: dict
         """
@@ -78,19 +79,18 @@ class Config(dict):
 
 class ConfigEventHandler(Trick):
     """
-    :type bot: cloudbot.core.bot.CloudBot
+    :type bot: cloudbot.bot.CloudBot
     :type config: core.config.Config
     :type logger: logging.Logger
     """
 
     def __init__(self, bot, config, *args, **kwargs):
         """
-        :type bot: cloudbot.core.bot.CloudBot
+        :type bot: cloudbot.bot.CloudBot
         :type config: Config
         """
         self.bot = bot
         self.config = config
-        logger = config.logger
         Trick.__init__(self, *args, **kwargs)
 
     def on_any_event(self, event):

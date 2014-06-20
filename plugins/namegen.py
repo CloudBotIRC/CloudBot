@@ -1,7 +1,8 @@
 import json
 import os
 
-from cloudbot import hook, formatting, textgen
+from cloudbot import hook
+from cloudbot.util import formatting, textgen
 
 
 def get_generator(_json):
@@ -13,7 +14,7 @@ def get_generator(_json):
 @hook.command(autohelp=False)
 def namegen(text, bot, notice):
     """[generator|list] - generates some names using the chosen generator, or lists all generators if 'list' is specified
-    :type bot: cloudbot.core.bot.CloudBot
+    :type bot: cloudbot.bot.CloudBot
     """
 
     # clean up the input

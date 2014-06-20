@@ -2,7 +2,8 @@
 
 import random
 
-from cloudbot import hook, http
+from cloudbot import hook
+from cloudbot.util import http
 
 mlia_cache = []
 

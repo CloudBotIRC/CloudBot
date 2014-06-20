@@ -5,7 +5,8 @@ import collections
 import re
 import binascii
 
-from cloudbot import hook, formatting
+from cloudbot import hook
+from cloudbot.util import formatting
 
 colors = collections.OrderedDict([
     ('red', '\x0304'),

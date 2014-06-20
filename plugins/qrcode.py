@@ -1,5 +1,6 @@
 # Plugin by https://github.com/Mu5tank05
-from cloudbot import hook, web, http
+from cloudbot import hook
+from cloudbot.util import web, http
 
 
 @hook.command('qr')

@@ -1,7 +1,7 @@
 import time
 
-from cloudbot import hook, http
-from cloudbot.util.formatting import capitalize_first
+from cloudbot import hook
+from cloudbot.util import http, formatting
 
 api_url = 'http://api.wolframalpha.com/v2/query?format=plaintext'
 
@@ -25,7 +25,7 @@ def time_command(inp, bot=None):
         if inp.lower() == "unix":
             place = "Unix Epoch"
         else:
-            place = capitalize_first(" ".join(request.xpath("//pod[@"
+            place = formatting.capitalize_first(" ".join(request.xpath("//pod[@"
                                                             "title='Input interpretation']/subpod/plaintext/text()"))[
                                      16:])
         return "{} - \x02{}\x02".format(current_time, place)

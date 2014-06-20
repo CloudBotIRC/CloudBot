@@ -1,6 +1,7 @@
 import requests
 
-from cloudbot import hook, web, formatting
+from cloudbot import hook
+from cloudbot.util import web, formatting
 
 shortcuts = {
     'cloudbot': 'CloudBotIRC/Refresh'

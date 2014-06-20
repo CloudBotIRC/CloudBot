@@ -4,7 +4,6 @@ import collections
 
 from cloudbot.event import EventType
 
-
 valid_command_re = re.compile(r"^\w+$")
 
 
@@ -135,7 +134,7 @@ class _RawHook(_Hook):
 
 class _EventHook(_Hook):
     """
-    :type types: set[cloudbot.core.events.EventType]
+    :type types: set[cloudbot.event.EventType]
     """
 
     def __init__(self, function):
@@ -147,7 +146,7 @@ class _EventHook(_Hook):
 
     def add_hook(self, trigger_param, kwargs):
         """
-        :type trigger_param: cloudbot.core.events.EventType | list[cloudbot.core.events.EventType]
+        :type trigger_param: cloudbot.event.EventType | list[cloudbot.event.EventType]
         :type kwargs: dict[str, unknown]
         """
         self._add_hook(kwargs)
@@ -216,7 +215,7 @@ def irc_raw(triggers_param, **kwargs):
 
 def event(types_param, **kwargs):
     """External event decorator. Must be used as a function to return a decorator
-    :type types_param: cloudbot.core.events.EventType | list[cloudbot.core.events.EventType]
+    :type types_param: cloudbot.event.EventType | list[cloudbot.event.EventType]
     """
 
     def _event_hook(func):

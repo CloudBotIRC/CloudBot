@@ -1,4 +1,5 @@
-from cloudbot import hook, web, http
+from cloudbot import hook
+from cloudbot.util import web, http
 
 
 @hook.command("lmgtfy", "gfy")

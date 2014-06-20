@@ -2,7 +2,8 @@
 
 import re
 
-from cloudbot import hook, http, formatting
+from cloudbot import hook
+from cloudbot.util import http, formatting
 
 id_re = re.compile("tt\d+")
 imdb_re = re.compile(r'(.*:)//(imdb.com|www.imdb.com)(:[0-9]+)?(.*)', re.I)

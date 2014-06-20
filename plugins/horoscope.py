@@ -1,6 +1,7 @@
 # Plugin by Infinity - <https://github.com/infinitylabs/UguuBot>
 
-from cloudbot import hook, http, formatting
+from cloudbot import hook
+from cloudbot.util import http, formatting
 
 
 @hook.onload()

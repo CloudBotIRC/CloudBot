@@ -1,5 +1,6 @@
 import asyncio
-from cloudbot import bucket, hook
+from cloudbot import hook
+from cloudbot.util import bucket
 
 TOKENS = 10
 RESTORE_RATE = 2
@@ -12,9 +13,9 @@ buckets = {}
 @hook.sieve
 def sieve_suite(bot, event, _hook):
     """
-    :type bot: cloudbot.core.bot.CloudBot
-    :type event: cloudbot.core.events.Event
-    :type _hook: cloudbot.core.pluginmanager.Hook
+    :type bot: cloudbot.bot.CloudBot
+    :type event: cloudbot.event.Event
+    :type _hook: cloudbot.plugin.Hook
     """
     conn = event.conn
     # check ignore bots

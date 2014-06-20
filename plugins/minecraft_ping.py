@@ -58,9 +58,9 @@ def mcping_modern(host, port):
         except socket.timeout:
             raise PingError("Request timed out")
         except ConnectionRefusedError:
-            raise PingError("Client refused")
+            raise PingError("Connection refused")
         except ConnectionError:
-            raise PingError("Client error")
+            raise PingError("Connection error")
 
         # send handshake + status request
         s.send(pack_data(b"\x00\x00" + pack_data(host.encode('utf8')) + pack_port(port) + b"\x01"))
@@ -121,9 +121,9 @@ def mcping_legacy(host, port):
     except socket.timeout:
         raise PingError("Request timed out")
     except ConnectionRefusedError:
-        raise PingError("Client refused")
+        raise PingError("Connection refused")
     except ConnectionError:
-        raise PingError("Client error")
+        raise PingError("Connection error")
 
     if response[0] != '\xff':
         raise PingError("Invalid response")

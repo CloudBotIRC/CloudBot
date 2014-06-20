@@ -2,7 +2,8 @@ import os
 import asyncio
 import random
 
-from cloudbot import hook, formatting
+from cloudbot import hook
+from cloudbot.util import formatting
 
 color_codes = {
     "<r>": "\x02\x0305",

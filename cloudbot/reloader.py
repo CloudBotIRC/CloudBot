@@ -7,7 +7,7 @@ from watchdog.tricks import Trick
 class PluginReloader(object):
     def __init__(self, bot):
         """
-        :type bot: cloudbot.core.bot.CloudBot
+        :type bot: cloudbot.bot.CloudBot
         """
         self.observer = Observer()
         self.bot = bot

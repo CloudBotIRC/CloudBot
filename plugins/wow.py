@@ -10,7 +10,8 @@ armoury, armory: Request data from the armoury API and format it into something 
 import re
 import requests
 
-from cloudbot import hook, web
+from cloudbot import hook
+from cloudbot.util import web
 
 
 def wow_armoury_data(link):

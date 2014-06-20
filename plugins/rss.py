@@ -1,4 +1,5 @@
-from cloudbot import hook, formatting, web
+from cloudbot import hook
+from cloudbot.util import formatting, web
 
 
 @hook.command("feed")

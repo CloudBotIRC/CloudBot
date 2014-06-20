@@ -1,8 +1,8 @@
 import re
 from urllib.parse import urlencode
 
-from cloudbot import hook, http, web
-from cloudbot import formatting
+from cloudbot import hook
+from cloudbot.util import http, web, formatting
 
 sc_re = re.compile(r'(.*:)//(www.)?(soundcloud.com)(.*)', re.I)
 api_url = "http://api.soundcloud.com"

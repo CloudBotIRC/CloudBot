@@ -1,4 +1,5 @@
-from cloudbot import hook, http, web
+from cloudbot import hook
+from cloudbot.util import http, web
 
 
 user_url = "http://osrc.dfm.io/{}"

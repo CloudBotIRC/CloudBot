@@ -11,7 +11,7 @@ correction_re = re.compile(r"^[sS]/([^/]*)/([^/]*)(/.*)?\s*$")
 def correction(match, conn, chan, message):
     """
     :type match: re.__Match
-    :type conn: cloudbot.core.connection.Client
+    :type conn: cloudbot.client.Client
     :type chan: str
     """
     print(match.groups())

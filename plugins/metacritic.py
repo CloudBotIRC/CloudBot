@@ -3,7 +3,8 @@
 import re
 from urllib.error import HTTPError
 
-from cloudbot import hook, http
+from cloudbot import hook
+from cloudbot.util import http
 
 
 @hook.command("metacritic", "mc")

@@ -28,7 +28,7 @@ def password(text, notice):
     # add alpha characters
     if "alpha" in text or "letter" in text:
         okay = okay + list(string.ascii_lowercase)
-        #adds capital characters if not told not to
+        # adds capital characters if not told not to
         if "no caps" not in text:
             okay = okay + list(string.ascii_uppercase)
 

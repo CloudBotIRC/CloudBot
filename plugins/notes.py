@@ -102,7 +102,7 @@ def note(text, nick, db, notice):
 
     # code to allow users to access each others factoids and a copy of help
     # ".note (add|del|list|search) [@user] args -- Manipulates your list of todos."
-    #if len(args) and args[0].startswith("@"):
+    # if len(args) and args[0].startswith("@"):
     #    nick = args[0][1:]
     #    args = args[1:]
 

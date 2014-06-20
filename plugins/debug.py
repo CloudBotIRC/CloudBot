@@ -4,6 +4,7 @@ import psutil
 
 from cloudbot import hook
 
+
 @hook.command(autohelp=False)
 def debug():
     # get a Process object for the bot using psutil

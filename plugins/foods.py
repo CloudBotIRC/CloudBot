@@ -65,6 +65,7 @@ def potato(text, action):
     action("{} a {} {} {} potato for {} and serves it with a small {}!".format(method, flavor, size, potato_type, text,
                                                                                side_dish))
 
+
 @asyncio.coroutine
 @hook.command()
 def cake(text, action):

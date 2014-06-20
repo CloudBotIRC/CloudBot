@@ -7,6 +7,7 @@ from cloudbot import hook
 
 fml_cache = []
 
+
 @asyncio.coroutine
 def refresh_cache(loop):
     """ gets a page of random FMLs and puts them into a dictionary """

@@ -1,8 +1,7 @@
-from enum import Enum
-
-import requests
 import json
 import re
+
+import requests
 
 from cloudbot import hook
 from cloudbot.util import http
@@ -13,7 +12,6 @@ from cloudbot.util import http
 UUID_URL = "https://sessionserver.mojang.com/session/minecraft/profile/{}"
 PROFILE_URL = "https://api.mojang.com/profiles/page/1"
 PAID_URL = "http://www.minecraft.net/haspaid.jsp"
-
 
 
 class McuError(Exception):

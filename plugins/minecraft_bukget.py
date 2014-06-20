@@ -1,6 +1,6 @@
-import json
 import time
 import random
+
 import requests
 
 from cloudbot import hook

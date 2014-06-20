@@ -1,6 +1,5 @@
 import re
 from urllib import parse
-
 from lxml import html
 
 import requests

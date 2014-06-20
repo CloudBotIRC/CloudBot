@@ -1,9 +1,9 @@
 # Plugin by GhettoWizard and Scaevolus
 
 import re
+from lxml import html
 
 import requests
-from lxml import html
 
 from cloudbot import hook
 

@@ -1,5 +1,7 @@
 import requests
+
 from cloudbot import hook
+
 
 ## CONSTANTS
 

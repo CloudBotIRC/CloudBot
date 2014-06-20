@@ -1,10 +1,10 @@
 import random
+
 import microdata
 import requests
 
 from cloudbot import hook
 from cloudbot.util import http, web
-
 
 base_url = "http://www.cookstr.com"
 search_url = base_url + "/searches"

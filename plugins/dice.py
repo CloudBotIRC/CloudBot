@@ -34,7 +34,7 @@ def n_rolls(count, n):
                                                (.5 * (1 + n)) ** 2) * count) ** .5))]
 
 
-#@hook.regex(valid_diceroll, re.I)
+# @hook.regex(valid_diceroll, re.I)
 @asyncio.coroutine
 @hook.command("roll", "dice")
 def dice(text, notice):

@@ -8,7 +8,6 @@ from cloudbot import hook
 from cloudbot.event import EventType
 
 
-
 # +---------+
 # | Formats |
 # +---------+

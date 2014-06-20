@@ -26,8 +26,8 @@ def time_command(inp, bot=None):
             place = "Unix Epoch"
         else:
             place = formatting.capitalize_first(" ".join(request.xpath("//pod[@"
-                                                            "title='Input interpretation']/subpod/plaintext/text()"))[
-                                     16:])
+                                                                       "title='Input interpretation']/subpod/plaintext/text()"))[
+                                                16:])
         return "{} - \x02{}\x02".format(current_time, place)
     else:
         return "Could not get the time for '{}'.".format(inp)

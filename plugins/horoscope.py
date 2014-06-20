@@ -38,7 +38,7 @@ def horoscope(text, db, notice, nick):
     horoscope_text = soup.find('div', {'class': 'fontdef1'})
     result = "\x02{}\x02 {}".format(title, horoscope_text)
     result = formatting.strip_html(result)
-    #result = unicode(result, "utf8").replace('flight ','')
+    # result = unicode(result, "utf8").replace('flight ','')
 
     if not title:
         return "Could not get the horoscope for {}.".format(text)

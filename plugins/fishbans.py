@@ -7,7 +7,6 @@ import requests.exceptions
 from cloudbot import hook
 from cloudbot.util import formatting
 
-
 api_url = "http://api.fishbans.com/stats/{}/"
 
 

@@ -211,6 +211,7 @@ def stop(text, bot):
     else:
         yield from bot.stop()
 
+
 @asyncio.coroutine
 @hook.command(permissions=["botcontrol"], autohelp=False)
 def restart(text, bot):

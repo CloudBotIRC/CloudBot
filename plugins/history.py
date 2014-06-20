@@ -30,8 +30,10 @@ def track_seen(event, db, conn):
     db_init(db, conn)
     # keep private messages private
     if event.chan[:1] == "#" and not re.findall('^s/.*/.*/$', event.content.lower()):
-        db.execute("insert or replace into seen_user(name, time, quote, chan, host) values(:name,:time,:quote,:chan,:host)",
-                   {'name': event.nick.lower(), 'time': time.time(), 'quote': event.content, 'chan': event.chan, 'host': event.mask})
+        db.execute(
+            "insert or replace into seen_user(name, time, quote, chan, host) values(:name,:time,:quote,:chan,:host)",
+            {'name': event.nick.lower(), 'time': time.time(), 'quote': event.content, 'chan': event.chan,
+             'host': event.mask})
         db.commit()
 
 

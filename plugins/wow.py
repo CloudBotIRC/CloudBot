@@ -8,6 +8,7 @@ armoury, armory: Request data from the armoury API and format it into something 
 """
 
 import re
+
 import requests
 
 from cloudbot import hook

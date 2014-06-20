@@ -142,7 +142,7 @@ def tv_last(inp, bot=None):
         (first_aired, air_date, episode_desc) = ep_info
 
         if air_date < today:
-            #iterating in reverse order, so the first episode encountered
+            # iterating in reverse order, so the first episode encountered
             #before today was the most recently aired
             prev_ep = '{} ({})'.format(first_aired, episode_desc)
             break

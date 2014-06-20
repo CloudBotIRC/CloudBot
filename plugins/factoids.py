@@ -2,10 +2,9 @@
 import string
 import asyncio
 import re
+from sqlalchemy import Table, Column, String
 
 import requests
-
-from sqlalchemy import Table, Column, String
 
 from cloudbot import hook
 from cloudbot.util import botvars, formatting, web

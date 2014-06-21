@@ -22,7 +22,7 @@ def eval_py(code, paste_multiline=True):
     if "Traceback (most recent call last):" in output:
         status = "Python error: "
     else:
-        status = "Code executed sucessfully: "
+        status = "Code executed successfully: "
 
     if "\n" in output and paste_multiline:
         return status + web.paste(output, 'py')

@@ -174,7 +174,7 @@ def get_log_stream(server, chan):
 def get_raw_log_filename(server):
     current_time = time.gmtime()
     folder_name = time.strftime(folder_format, current_time)
-    file_name = time.strftime(file_format.format(server=server), current_time).lower()
+    file_name = time.strftime(raw_file_format.format(server=server), current_time).lower()
     return os.path.join(cloudbot.log_dir, "raw", folder_name, file_name)
 
 

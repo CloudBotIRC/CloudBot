@@ -72,6 +72,7 @@
     "logging": {
         "show_plugin_loading": true,
         "show_motd": true,
-        "show_server_info": true
+        "show_server_info": true,
+        "raw_file_log": false
     }
 }

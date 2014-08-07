@@ -21,9 +21,9 @@ class HookType(enum.Enum):
     on_start = 6,
     on_stop = 7
 
+
 # cloudbot.hook imports plugin.HookType, so to not cause a circular import error, we import cloudbot.hook after defining
 # the HookType enum. TODO: is there *any* better way to do this?
-import cloudbot.hook
 
 
 def find_hooks(parent, module):
@@ -295,72 +295,6 @@ class PluginManager:
             logger.info("Loaded {}".format(hook))
             logger.debug("Loaded {}".format(repr(hook)))
 
-    # TODO: create remove_hook() method
-    def add_hook(self, hook_type, function, *args, **kwargs):
-        """
-        Add an internal hook, like a plugin @hook.X, but for methods in the core. Kind of like an internal event system.
-        :param hook_type: The type of the hook (command, regex, event, sieve, or irc_raw)
-        :param function: The function to call
-        :param args: Arguments to pass to the hook, dependent on the hook type
-        :param kwargs: Keyword arguments to pass to the hook, dependent on the hook type
-        :type hook_type: HookType
-        """
-        # Get the plugin, or create it - we want one unique plugin for each core file.
-        file = inspect.getmodule(function).__file__
-        # filename is used as the unique key for the plugin.
-        # we prepend internal/ so that this isn't confused with internal plugins.
-        # We *do* assume here that no core files will have the same basename, even if they are in different directories.
-        # I think that is a sane assumption.
-        filename = "internal/" + os.path.basename(file)
-        if filename in self.plugins:
-            plugin = self.plugins[filename]
-        else:
-            filepath = os.path.abspath(file)
-            title = os.path.splitext(filename)[0]
-            plugin = Plugin(filepath, filename, title)
-            self.plugins[filename] = plugin
-
-        # we don't allow on_start or command hooks for internal. We don't have to check a valid type otherwise, because
-        # the _hook_name_to_hook[hook_type] call will raise a KeyError already.
-        if hook_type is HookType.on_start:
-            raise ValueError("on_start hooks not allowed")
-        #
-        if hook_type is HookType.command:
-            raise ValueError("command hooks not allowed")
-
-        # this might seem a little hacky, but I think it's a good design choice.
-        # hook.py is in charge of argument processing, so it should process them here to
-        _processing_hook = cloudbot.hook._hook_name_to_hook[hook_type](function)
-        _processing_hook.add_hook(*args, **kwargs)
-        # create the *Hook object
-        hook = _hook_type_to_plugin[hook_type](plugin, _processing_hook)
-
-        # Register the hook.
-        # I *think* this is the best way to do this, there might be a more pythonic way though, not sure.
-        if hook_type is HookType.irc_raw:
-            if hook.is_catch_all():
-                self.catch_all_triggers.append(hook)
-            else:
-                for trigger in hook.triggers:
-                    if trigger in self.raw_triggers:
-                        self.raw_triggers[trigger].append(hook)
-                    else:
-                        self.raw_triggers[trigger] = [hook]
-        elif hook_type is HookType.event:
-            for event_type in hook.types:
-                if event_type in self.event_type_hooks:
-                    self.event_type_hooks[event_type].append(hook)
-                else:
-                    self.event_type_hooks[event_type] = [hook]
-        elif hook_type is HookType.regex:
-            for regex_match in hook.regexes:
-                self.regex_hooks.append((regex_match, hook))
-        elif hook_type is HookType.sieve:
-            self.sieves.append(hook)
-
-        # Log the hook. TODO: Do we want to do this for internal hooks?
-        self._log_hook(hook)
-
     @asyncio.coroutine
     def _execute_hook(self, hook, event):
         """
@@ -500,7 +434,7 @@ class Plugin:
     :type events: list[EventHook]
     """
 
-    def __init__(self, filepath, filename, title, code=None):
+    def __init__(self, filepath, filename, title, code):
         """
         :param code: Optional code argument, should be specified for all *actual* plugins.
                         If provided, all hooks will be retrieved and attached to this plugin from the code.
@@ -511,10 +445,9 @@ class Plugin:
         self.file_path = filepath
         self.file_name = filename
         self.title = title
-        if code is not None:
-            self.commands, self.regexes, self.raw_hooks, self.sieves, self.events, self.on_start, self.on_stop = (
-                find_hooks(self, code)
-            )
+
+        self.commands, self.regexes, self.raw_hooks, self.sieves, self.events, self.on_start, self.on_stop = (
+            find_hooks(self, code))
 
 
 class Hook:

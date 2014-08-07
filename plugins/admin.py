@@ -52,7 +52,7 @@ def get_group_users(text, conn, notice):
 
 
 @asyncio.coroutine
-@hook.command("uperms", autohelp=False)
+@hook.command("uperms", autohelp=False, permissions=["permissions.view", "permissions.view.self"])
 def get_user_permissions(text, conn, mask, has_permission, notice):
     """[user] - lists all permissions given to [user], or the caller if no user is specified
     :type text: str
@@ -77,7 +77,7 @@ def get_user_permissions(text, conn, mask, has_permission, notice):
 
 
 @asyncio.coroutine
-@hook.command("ugroups", autohelp=False)
+@hook.command("ugroups", autohelp=False, permissions=["permissions.view", "permissions.view.self"])
 def get_user_groups(text, conn, mask, has_permission, notice):
     """[user] - lists all permissions given to [user], or the caller if no user is specified
     :type text: str

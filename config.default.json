@@ -30,7 +30,7 @@
                     "users": ["examplec!user@example.com"]
                 },
                 "trusted": {
-                    "perms": ["ignored.view"],
+                    "perms": ["ignored.view", "permissions.view.self"],
                     "users": ["exampled!user@example.com"]
                 }
             },

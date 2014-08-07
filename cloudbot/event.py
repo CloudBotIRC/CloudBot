@@ -137,10 +137,6 @@ class Event:
     def db(self):
         return self.bot.db
 
-    @property
-    def logger(self):
-        return logger
-
     def message(self, message, target=None):
         """sends a message to a specific or current channel/user
         :type message: str

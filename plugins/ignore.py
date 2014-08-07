@@ -20,11 +20,11 @@ def ignore_sieve(event):
     if event.mask is None:
         return event
 
-    # don't block an event that could be unignoring
+    # don't block an event that could be un-ignoring
     if event.hook.type is HookType.command and event.hook.function_name == 'unignore':
         return event
 
-    ignore_list = yield from event.async(bot.db.smembers, "plugins:ignore:ignored")
+    ignore_list = yield from event.async(bot.db.smembers, 'plugins:ignore:ignored')
 
     mask = event.mask.lower()
     for pattern in ignore_list:
@@ -36,7 +36,7 @@ def ignore_sieve(event):
 
 
 @asyncio.coroutine
-@hook.command(autohelp=False, permissions=["ignored.view"])
+@hook.command(autohelp=False, permissions=['ignored.view'])
 def ignored(notice, async, db):
     """- lists all channels and users I'm ignoring"""
 
@@ -51,7 +51,7 @@ def ignored(notice, async, db):
 @asyncio.coroutine
 @hook.command(permissions=['ignored.manage'])
 def ignore(text, async, db):
-    """<nick|usermask> - adds <channel|nick> to my ignore list
+    """<nick|user-mask> - adds <channel|nick> to my ignore list
     :type db: redis.StrictRedis
     """
     target = text.lower()
@@ -69,7 +69,7 @@ def ignore(text, async, db):
 @asyncio.coroutine
 @hook.command(permissions=['ignored.manage'])
 def unignore(text, async, db):
-    """<nick|usermask> - removes <nick|usermask> from my ignore list
+    """<nick|user-mask> - removes <nick|user-mask> from my ignore list
     :type db: redis.StrictRedis
     """
     target = text.lower()

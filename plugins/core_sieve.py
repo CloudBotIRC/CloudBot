@@ -28,7 +28,7 @@ def sieve_suite(event):
                 break
 
         if not allowed:
-            event.notice("Sorry, you are not allowed to use this command.")
+            event.notice("Sorry, you don't have access to this command.")
             return None
 
     # check command spam tokens

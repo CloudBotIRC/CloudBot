@@ -1,18 +1,19 @@
 import asyncio
+import logging
 
 from cloudbot import hook
 
+logger = logging.getLogger('cloudbot')
 
 # Identify to NickServ (or other service)
 @asyncio.coroutine
 @hook.irc_raw('004')
-def onjoin(conn, logger):
+def onjoin(conn):
     """
     :type conn: cloudbot.clients.irc.IrcClient
-    :type logger: logging.Logger
     """
     nickserv = conn.config.get('nickserv')
-    if nickserv and nickserv.get("enabled", True):
+    if nickserv and nickserv.get('enabled', True):
         nickserv_password = nickserv.get('nickserv_password', '')
         nickserv_name = nickserv.get('nickserv_name', 'nickserv')
         nickserv_account_name = nickserv.get('nickserv_user', '')
@@ -30,11 +31,11 @@ def onjoin(conn, logger):
     # Set bot modes
     mode = conn.config.get('mode')
     if mode:
-        logger.info('Setting bot mode: "{}"'.format(mode))
+        logger.info("Setting bot mode: '{}'".format(mode))
         conn.cmd('MODE', conn.nick, mode)
 
     # Join config-defined channels
-    logger.info('Joining channels.')
+    logger.info("Joining channels.")
     for channel in conn.channels:
         conn.join(channel)
         yield from asyncio.sleep(1)

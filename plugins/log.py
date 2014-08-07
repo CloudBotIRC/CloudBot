@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import os
 import codecs
 import time
@@ -8,6 +9,8 @@ import itertools
 import cloudbot
 from cloudbot import hook
 from cloudbot.event import EventType
+
+logger = logging.getLogger('cloudbot')
 
 irc_color_re = re.compile(r"(\x03(\d+,\d+|\d)|[\x0f\x02\x16\x1f])")
 
@@ -229,10 +232,9 @@ def log(event):
 # Log console separately to prevent lag
 @asyncio.coroutine
 @hook.irc_raw("*", run_first=True)
-def console_log(event, logger):
+def console_log(event):
     """
     :type event: cloudbot.event.Event
-    :type logger: logging.Logger
     """
     text = format_event(event)
     if text is not None:

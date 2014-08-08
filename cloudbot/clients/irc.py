@@ -5,7 +5,7 @@ import ssl
 import logging
 from ssl import SSLContext
 
-from cloudbot.client import Client
+from cloudbot.connection import Connection
 from cloudbot.event import Event, EventType
 
 logger = logging.getLogger("cloudbot")
@@ -23,9 +23,9 @@ irc_command_to_event_type = {
 }
 
 
-class IrcClient(Client):
+class IrcConnection(Connection):
     """
-    An implementation of Client for IRC.
+    An implementation of Connection for IRC.
     :type use_ssl: bool
     :type server: str
     :type port: int
@@ -187,7 +187,7 @@ class IrcClient(Client):
         :type line: str
         """
         if not self._connected:
-            raise ValueError("Client must be connected to irc server to use send")
+            raise ValueError("Connection must be connected to irc server to use send")
         self.loop.call_soon_threadsafe(self._send, line, log_hide)
 
     def _send(self, line, log_hide):
@@ -205,11 +205,31 @@ class IrcClient(Client):
     def connected(self):
         return self._connected
 
+    @asyncio.coroutine
+    def process_waiting_regex_searches(self, event):
+        if event.type is not EventType.message:
+            return
+        for nick, chan, regex, future in self.waiting_messages:
+            if nick is not None:
+                if event.nick.lower() != nick:
+                    continue
+            if chan is not None:
+                if event.chan.lower() != chan:
+                    continue
+
+            try:
+                match = regex.search(event.content)
+            except Exception as exc:
+                future.set_exception(exc)
+            else:
+                if match:
+                    future.set_result(match)
+
 
 class _IrcProtocol(asyncio.Protocol):
     """
     :type loop: asyncio.events.AbstractEventLoop
-    :type conn: IrcClient
+    :type conn: IrcConnection
     :type bot: cloudbot.bot.CloudBot
     :type _input_buffer: bytes
     :type _connected: bool
@@ -219,7 +239,7 @@ class _IrcProtocol(asyncio.Protocol):
 
     def __init__(self, conn):
         """
-        :type conn: IrcClient
+        :type conn: IrcConnection
         """
         self.loop = conn.loop
         self.bot = conn.bot
@@ -251,10 +271,7 @@ class _IrcProtocol(asyncio.Protocol):
         if exc is None:
             # we've been closed intentionally, so don't reconnect
             return
-        if exc is None:
-            logger.info("[{}] Connection lost.".format(self.conn.readable_name))
-        else:
-            logger.exception("[{}] Connection lost.".format(self.conn.readable_name))
+        logger.info("[{}] Connection lost.".format(self.conn.readable_name))
         asyncio.async(self.conn.connect(), loop=self.loop)
 
     def eof_received(self):
@@ -380,3 +397,4 @@ class _IrcProtocol(asyncio.Protocol):
 
             # handle the message, async
             asyncio.async(self.bot.process(event), loop=self.loop)
+            asyncio.async(self.conn.process_waiting_regex_searches(event), loop=self.loop)

@@ -5,7 +5,7 @@ import collections
 from cloudbot.event import EventType
 from cloudbot.plugin import HookType
 
-valid_command_re = re.compile(r"^\w+$")
+valid_command_re = re.compile(r"^[\w-]+$")
 
 
 class _Hook():

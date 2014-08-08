@@ -10,7 +10,7 @@ logger = logging.getLogger('cloudbot')
 @hook.irc_raw('004')
 def onjoin(conn):
     """
-    :type conn: cloudbot.clients.irc.IrcClient
+    :type conn: cloudbot.clients.irc.IrcConnection
     """
     nickserv = conn.config.get('nickserv')
     if nickserv and nickserv.get('enabled', True):
@@ -37,6 +37,8 @@ def onjoin(conn):
     # Join config-defined channels
     logger.info("Joining channels.")
     for channel in conn.channels:
+        if channel is None:
+            continue
         conn.join(channel)
         yield from asyncio.sleep(1)
 
@@ -47,7 +49,7 @@ def onjoin(conn):
 @hook.irc_raw('004')
 def keep_alive(conn):
     """
-    :type conn: cloudbot.clients.irc.IrcClient
+    :type conn: cloudbot.clients.irc.IrcConnection
     """
 
     if not conn.config.get('keep_alive', False):

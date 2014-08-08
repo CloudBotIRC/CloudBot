@@ -18,7 +18,7 @@ class EventType(enum.Enum):
 class Event:
     """
     :type bot: cloudbot.bot.CloudBot
-    :type conn: cloudbot.client.Client
+    :type conn: cloudbot.connection.Connection
     :type hook: cloudbot.plugin.Hook
     :type type: EventType
     :type content: str
@@ -44,7 +44,7 @@ class Event:
         Note that the `bot` argument may be left out if you specify a `base_event`.
 
         :param bot: The CloudBot instance this event was triggered from
-        :param conn: The Client instance this event was triggered from
+        :param conn: The Connection instance this event was triggered from
         :param hook: The hook this event will be passed to
         :param base_event: The base event that this event is based on. If this parameter is not None, then nick, user,
                             host, mask, and irc_* arguments are ignored
@@ -62,7 +62,7 @@ class Event:
                                 should be removed from the front.
         :param irc_ctcp_text: CTCP text if this message is a CTCP command
         :type bot: cloudbot.bot.CloudBot
-        :type conn: cloudbot.client.Client
+        :type conn: cloudbot.connection.Connection
         :type hook: cloudbot.plugin.Hook
         :type base_event: cloudbot.event.Event
         :type content: str
@@ -136,6 +136,10 @@ class Event:
     @property
     def db(self):
         return self.bot.db
+
+    # @asyncio.coroutine This just returns the coroutine from conn.wait_for
+    def wait_for_message(self, message=None, nick=None, chan=None):
+        return self.conn.wait_for(message, nick=nick, chan=chan)
 
     def message(self, message, target=None):
         """sends a message to a specific or current channel/user

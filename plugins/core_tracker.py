@@ -16,7 +16,7 @@ nick_re = re.compile(":(.+?)!")
 @hook.event(EventType.kick)
 def on_kick(conn, chan, nick):
     """
-    :type conn: cloudbot.client.Client
+    :type conn: cloudbot.connection.Connection
     :type chan: str
     :type nick: str
     """
@@ -32,7 +32,7 @@ def on_kick(conn, chan, nick):
 @hook.event(EventType.join)
 def on_join(conn, chan, nick):
     """
-    :type conn: cloudbot.client.Client
+    :type conn: cloudbot.connection.Connection
     :type chan: str
     :type nick: str
     """
@@ -45,7 +45,7 @@ def on_join(conn, chan, nick):
 @hook.irc_raw("NICK")
 def on_nick(conn, irc_raw, content):
     """
-    :type conn: cloudbot.client.Client
+    :type conn: cloudbot.connection.Connection
     :type irc_raw: str
     :type content: str
     """

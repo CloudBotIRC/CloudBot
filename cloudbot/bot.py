@@ -8,11 +8,11 @@ import gc
 import redis
 
 import cloudbot
-from cloudbot.client import Client
+from cloudbot.connection import Connection
 from cloudbot.config import Config
 from cloudbot.plugin import PluginManager
 from cloudbot.event import Event, CommandEvent, RegexEvent, EventType
-from cloudbot.clients.irc import IrcClient
+from cloudbot.clients.irc import IrcConnection
 
 logger = logging.getLogger("bot")
 
@@ -29,7 +29,7 @@ class CloudBot:
     """
     :type start_time: float
     :type running: bool
-    :type connections: list[Client | IrcClient]
+    :type connections: list[Connection | IrcConnection]
     :type config: core.config.Config
     :type plugin_manager: PluginManager
     :type db: redis.StrictRedis
@@ -100,7 +100,7 @@ class CloudBot:
             server = config['connection']['server']
             port = config['connection'].get('port', 6667)
 
-            self.connections.append(IrcClient(self, name, nick, config=config, channels=config.get('channels', []),
+            self.connections.append(IrcConnection(self, name, nick, config=config, channels=config.get('channels', []),
                                               readable_name=readable_name, server=server, port=port,
                                               use_ssl=config['connection'].get('ssl', False)))
             logger.debug("[{}] Created connection.".format(readable_name))
@@ -187,9 +187,9 @@ class CloudBot:
         if event.type is EventType.message:
             # Commands
             if event.chan.lower() == event.nick.lower():  # private message, no command prefix
-                command_re = r'(?i)^(?:[{}]?|{}[,;:]+\s+)(\w+)(?:$|\s+)(.*)'.format(command_prefix, event.conn.nick)
+                command_re = r'(?i)^(?:[{}]?|{}[,;:]+\s+)([\w-]+)(?:$|\s+)(.*)'.format(command_prefix, event.conn.nick)
             else:
-                command_re = r'(?i)^(?:[{}]|{}[,;:]+\s+)(\w+)(?:$|\s+)(.*)'.format(command_prefix, event.conn.nick)
+                command_re = r'(?i)^(?:[{}]|{}[,;:]+\s+)([\w-]+)(?:$|\s+)(.*)'.format(command_prefix, event.conn.nick)
 
             match = re.match(command_re, event.content)
 

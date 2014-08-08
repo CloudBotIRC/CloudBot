@@ -2,15 +2,16 @@ import asyncio
 from collections import deque
 import datetime
 import logging
+import re
 
 from cloudbot.permissions import PermissionManager
 
 logger = logging.getLogger("cloudbot")
 
 
-class Client:
+class Connection:
     """
-    A Client representing each connection the bot makes to a single server
+    A Connection representing each connection the bot makes to a single server
     :type bot: cloudbot.bot.CloudBot
     :type loop: asyncio.events.AbstractEventLoop
     :type name: str
@@ -21,6 +22,7 @@ class Client:
     :type vars: dict
     :type history: dict[str, list[tuple]]
     :type permissions: PermissionManager
+    :type waiting_messages: list[(str, str, re.__Regex, asyncio.Future)]
     """
 
     def __init__(self, bot, name, nick, *, readable_name, channels=None, config=None):
@@ -53,6 +55,8 @@ class Client:
         # create permissions manager
         self.permissions = PermissionManager(self)
 
+        self.waiting_messages = []
+
     def describe_server(self):
         raise NotImplementedError
 
@@ -71,7 +75,7 @@ class Client:
 
     def close(self):
         """
-        Disconnects from the server, only for use when this Client object will *not* ever be connected again
+        Disconnects from the server, only for use when this Connection object will *not* ever be connected again
         """
         raise NotImplementedError
 
@@ -123,6 +127,26 @@ class Client:
     @property
     def connected(self):
         raise NotImplementedError
+
+    @asyncio.coroutine
+    def wait_for(self, message, nick=None, chan=None):
+        """
+        Waits for a message matching a specific regex
+        :type nick: str
+        :type message: str | re.__Regex
+        """
+        if nick is not None:
+            nick = nick.lower()
+        future = asyncio.Future(loop=self.bot.loop)
+        if not hasattr(message, "search"):
+            message = re.compile(message)
+
+        key = (nick, chan, message, future)
+
+        self.waiting_messages.append(key)
+        result = yield from future
+        self.waiting_messages.remove(key)
+        return result
 
 
 # TODO: Tracking of user 'mode' in channels

@@ -4,8 +4,6 @@ import time
 import sys
 import logging
 
-from watchdog.observers import Observer
-
 logger = logging.getLogger("cloudbot")
 
 

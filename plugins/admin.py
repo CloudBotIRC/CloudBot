@@ -241,16 +241,16 @@ def join(text, conn, notice):
 
 @asyncio.coroutine
 @hook.command(permissions=["bot.manage"], autohelp=False)
-def part(text, conn, chan, notice):
+def part(text, conn, chan_name, notice):
     """[#channel] - parts [#channel], or the caller's channel if no channel is specified
     :type text: str
     :type conn: cloudbot.connection.Connection
-    :type chan: str
+    :type chan_name: str
     """
     if text:
         targets = text
     else:
-        targets = chan
+        targets = chan_name
     for target in targets.split():
         if not target.startswith("#"):
             target = "#{}".format(target)
@@ -260,16 +260,16 @@ def part(text, conn, chan, notice):
 
 @asyncio.coroutine
 @hook.command(autohelp=False, permissions=["bot.manage"])
-def cycle(text, conn, chan, notice):
+def cycle(text, conn, chan_name, notice):
     """[#channel] - cycles [#channel], or the caller's channel if no channel is specified
     :type text: str
     :type conn: cloudbot.connection.Connection
-    :type chan: str
+    :type chan_name: str
     """
     if text:
         targets = text
     else:
-        targets = chan
+        targets = chan_name
     for target in targets.split():
         if not target.startswith("#"):
             target = "#{}".format(target)
@@ -305,11 +305,11 @@ def raw(text, conn, notice):
 
 @asyncio.coroutine
 @hook.command(permissions=["bot.control"])
-def say(text, conn, chan):
+def say(text, conn, chan_name):
     """[#channel] <message> - says <message> to [#channel], or to the caller's channel if no channel is specified
     :type text: str
     :type conn: cloudbot.connection.Connection
-    :type chan: str
+    :type chan_name: str
     """
     text = text.strip()
     if text.startswith("#"):
@@ -317,7 +317,7 @@ def say(text, conn, chan):
         channel = split[0]
         text = split[1]
     else:
-        channel = chan
+        channel = chan_name
         text = text
     conn.message(channel, text)
 
@@ -337,11 +337,11 @@ def message(text, conn):
 
 @asyncio.coroutine
 @hook.command("act", permissions=["bot.control"])
-def me(text, conn, chan):
+def me(text, conn, chan_name):
     """[#channel] <action> - acts out <action> in a [#channel], or in the current channel of none is specified
     :type text: str
     :type conn: cloudbot.connection.Connection
-    :type chan: str
+    :type chan_name: str
     """
     text = text.strip()
     if text.startswith("#"):
@@ -349,6 +349,6 @@ def me(text, conn, chan):
         channel = split[0]
         text = split[1]
     else:
-        channel = chan
+        channel = chan_name
         text = text
     conn.action(channel, text)

@@ -5,7 +5,7 @@ import ssl
 import logging
 from ssl import SSLContext
 
-from cloudbot.connection import Connection
+from cloudbot.connection import Connection, Channel
 from cloudbot.event import Event, EventType
 
 logger = logging.getLogger("cloudbot")
@@ -19,7 +19,8 @@ irc_command_to_event_type = {
     "PRIVMSG": EventType.message,
     "JOIN": EventType.join,
     "PART": EventType.part,
-    "KICK": EventType.kick
+    "KICK": EventType.kick,
+    "332": EventType.topic
 }
 
 
@@ -33,14 +34,13 @@ class IrcConnection(Connection):
     :type _ignore_cert_errors: bool
     """
 
-    def __init__(self, bot, name, nick, *, readable_name, channels=None, config=None,
-                 server, port=6667, use_ssl=False, ignore_cert_errors=True, timeout=300):
+    def __init__(self, bot, name, bot_nick, *, readable_name, config, server, port=6667, use_ssl=False,
+                 ignore_cert_errors=True, timeout=300):
         """
         :type bot: cloudbot.bot.CloudBot
         :type name: str
         :type readable_name: str
-        :type nick: str
-        :type channels: list[str]
+        :type bot_nick: str
         :type config: dict[str, unknown]
         :type server: str
         :type port: int
@@ -48,7 +48,7 @@ class IrcConnection(Connection):
         :type ignore_cert_errors: bool
         :type timeout: int
         """
-        super().__init__(bot, name, nick, readable_name=readable_name, channels=channels, config=config)
+        super().__init__(bot, name, bot_nick, readable_name=readable_name, config=config)
 
         self.use_ssl = use_ssl
         self._ignore_cert_errors = ignore_cert_errors
@@ -104,7 +104,7 @@ class IrcConnection(Connection):
 
         # send the password, nick, and user
         self.set_pass(self.config["connection"].get("password"))
-        self.set_nick(self.nick)
+        self.set_nick(self.bot_nick)
         self.cmd("USER", self.config.get('user', 'cloudbot'), "3", "*",
                  self.config.get('real_name', 'CloudBot'))
 
@@ -140,16 +140,14 @@ class IrcConnection(Connection):
         self.cmd("NICK", nick)
 
     def join(self, channel):
-        channel = channel.lower()
-        self.cmd("JOIN", channel)
         if channel not in self.channels:
-            self.channels.append(channel)
+            self.cmd("JOIN", channel)
+            self.channels[channel] = Channel(channel)
 
     def part(self, channel):
-        channel = channel.lower()
-        self.cmd("PART", channel)
         if channel in self.channels:
-            self.channels.remove(channel)
+            self.cmd("PART", channel)
+            del self.channels[channel]
 
     def set_pass(self, password):
         if not password:
@@ -206,7 +204,8 @@ class IrcConnection(Connection):
         return self._connected
 
     @asyncio.coroutine
-    def process_waiting_regex_searches(self, event):
+    def pre_process_event(self, event):
+        yield from super().pre_process_event(event)
         if event.type is not EventType.message:
             return
         for nick, chan, regex, future in self.waiting_messages:
@@ -307,7 +306,6 @@ class _IrcProtocol(asyncio.Protocol):
                     continue
 
                 netmask_prefix, command, params = prefix_line_match.groups()
-                prefix = ":" + netmask_prefix  # TODO: Do we need to know this?
                 netmask_match = irc_netmask_re.match(netmask_prefix)
                 if netmask_match is None:
                     # This isn't in the format of a netmask
@@ -321,7 +319,6 @@ class _IrcProtocol(asyncio.Protocol):
                     host = netmask_match.group(3)
                     mask = netmask_prefix
             else:
-                prefix = None
                 noprefix_line_match = irc_noprefix_re.match(line)
                 if noprefix_line_match is None:
                     logger.critical("[{}] Received invalid IRC line '{}' from {}".format(
@@ -356,13 +353,6 @@ class _IrcProtocol(asyncio.Protocol):
             else:
                 event_type = EventType.other
 
-            # Target (for KICK, INVITE)
-            if event_type is EventType.kick:
-                target = command_params[1]
-            elif command == "INVITE":
-                target = command_params[0]
-            else:
-                target = None
 
             # Parse for CTCP
             if event_type is EventType.message and content.count("\x01") >= 2 and content.startswith("\x01"):
@@ -380,21 +370,44 @@ class _IrcProtocol(asyncio.Protocol):
                 ctcp_text = None
 
             # Channel
-            if command_params and (len(command_params) > 2 or not command_params[0].startswith(":")):
+            if command == "353":
+                # 353 format is `:network.name 353 bot_nick = #channel :user1 user2`, if we just used the below,
+                # we would think the channel was the bot_nick
+                channel = command_params[2].lower()
+            elif command_params and (len(command_params) > 2 or not command_params[0].startswith(":")):
 
-                if command_params[0].lower() == self.conn.nick.lower():
+                if command_params[0].lower() == self.conn.bot_nick.lower():
                     # this is a private message - set the channel to the sender's nick
                     channel = nick.lower()
                 else:
                     channel = command_params[0].lower()
+            elif command == "JOIN":
+                channel = content
             else:
                 channel = None
 
+            # Target (for KICK, INVITE)
+            if event_type is EventType.kick:
+                target = command_params[1]
+            elif command == "INVITE":
+                target = command_params[0]
+            elif command == "MODE":
+                if len(command_params) > 2:
+                    target = command_params[2]
+                else:
+                    target = command_params[0]
+                    channel = None
+            else:
+                target = None
+
             # Set up parsed message
             event = Event(bot=self.bot, conn=self.conn, event_type=event_type, content=content, target=target,
-                          channel=channel, nick=nick, user=user, host=host, mask=mask, irc_raw=line,
-                          irc_command=command, irc_paramlist=command_params, irc_ctcp_text=ctcp_text)
+                          channel_name=channel, nick=nick, user=user, host=host, mask=mask, irc_raw=line,
+                          irc_command=command, irc_command_params=command_params, irc_ctcp_text=ctcp_text)
+            asyncio.async(self.process(event))
 
-            # handle the message, async
-            asyncio.async(self.bot.process(event), loop=self.loop)
-            asyncio.async(self.conn.process_waiting_regex_searches(event), loop=self.loop)
+    @asyncio.coroutine
+    def process(self, event):
+        # handle the message, async
+        yield from self.conn.pre_process_event(event)
+        asyncio.async(self.bot.process(event), loop=self.loop)

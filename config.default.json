@@ -42,11 +42,9 @@
         "port": 6379,
         "database": 0
     },
-    "developer_mode": {
-        "console_debug": false,
-        "file_debug": true
-    },
     "logging": {
+        "console_debug": false,
+        "file_debug": true,
         "show_plugin_loading": true,
         "show_motd": true,
         "show_server_info": true,

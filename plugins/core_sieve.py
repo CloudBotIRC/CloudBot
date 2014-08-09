@@ -33,13 +33,13 @@ def sieve_suite(event):
 
     # check command spam tokens
     if event.hook.type is HookType.command:
-        if not event.chan in channel_buckets:
+        if not event.chan_name in channel_buckets:
             _bucket = bucket.TokenBucket(TOKENS, RESTORE_RATE)
             _bucket.consume(MESSAGE_COST)
-            channel_buckets[event.chan] = _bucket
+            channel_buckets[event.chan_name] = _bucket
             return event
 
-        _bucket = channel_buckets[event.chan]
+        _bucket = channel_buckets[event.chan_name]
         if not _bucket.consume(MESSAGE_COST):
             event.notice("Command rate-limited, please try again in a few seconds.")
             return None

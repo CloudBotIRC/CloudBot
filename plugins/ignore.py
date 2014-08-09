@@ -29,7 +29,7 @@ def ignore_sieve(event):
     mask = event.mask.lower()
     for pattern in ignore_list:
         pattern = pattern.decode()
-        if (pattern.startswith('#') and fnmatch(pattern, event.chan)) or fnmatch(mask, pattern):
+        if (pattern.startswith('#') and fnmatch(pattern, event.chan_name)) or fnmatch(mask, pattern):
             return None
 
     return event

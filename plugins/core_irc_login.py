@@ -32,15 +32,13 @@ def onjoin(conn):
     mode = conn.config.get('mode')
     if mode:
         logger.info("Setting bot mode: '{}'".format(mode))
-        conn.cmd('MODE', conn.nick, mode)
+        conn.cmd('MODE', conn.bot_nick, mode)
 
     # Join config-defined channels
     logger.info("Joining channels.")
-    for channel in conn.channels:
-        if channel is None:
-            continue
+    for channel in conn.config.get('channels', []):
         conn.join(channel)
-        yield from asyncio.sleep(1)
+        yield from asyncio.sleep(0.5)
 
     logger.info("Startup complete. Bot ready.")
 
@@ -56,5 +54,5 @@ def keep_alive(conn):
         return
 
     while True:
-        conn.cmd('PING', conn.nick)
+        conn.cmd('PING', conn.bot_nick)
         yield from asyncio.sleep(60)

@@ -39,9 +39,10 @@ base_formats = {
 
 irc_formats = {
     "MODE": "[{server}:{channel}] -!- mode/{channel} [{param_tail}] by {nick}",
+    "MODE2": "[{server}] -!- mode/{target} [{param_tail}] by {nick}",
     "TOPIC": "[{server}:{channel}] -!- {nick} has changed the topic to: {content}",
     "QUIT": "[{server}] -!- {nick} has quit ({content})",
-    "INVITE": "[{server}] -!- {nick} has invited {target} to {chan}",
+    "INVITE": "[{server}] -!- {nick} has invited {target} to {content}",
     "NICK": "[{server}] {nick} is now known as {content}",
     "NOTICE": "[{server}:{channel}] -{nick}- {content}",
 }
@@ -67,7 +68,7 @@ def format_event(event):
     # Setup arguments
 
     args = {
-        "server": event.conn.readable_name, "target": event.target, "channel": event.chan, "nick": event.nick,
+        "server": event.conn.readable_name, "target": event.target, "channel": event.chan_name, "nick": event.nick,
         "user": event.user, "host": event.host
     }
 
@@ -90,19 +91,21 @@ def format_event(event):
 def format_irc_event(event, args):
     """
     Format an IRC event
+    :type event: cloudbot.event.Event
     :param event: The event to format
     :param args: The pre-created arguments
-    :return:
     """
 
     # Setup arguments
 
     # Add the IRC-specific param_tail argument to the generic arguments
-    args["param_tail"] = " ".join(event.irc_paramlist[1:])
+    args["param_tail"] = " ".join(event.irc_command_params[1:])
 
     # Try formatting with the IRC command
 
     if event.irc_command in irc_formats:
+        if event.irc_command == "MODE" and event.chan_name is None:
+            return irc_formats["MODE2"].format(**args)  # special mode case
         return irc_formats[event.irc_command].format(**args)
 
     # Try formatting with the CTCP command
@@ -225,8 +228,8 @@ def log(event):
     text = format_event(event)
 
     if text is not None:
-        if event.irc_command in ["PRIVMSG", "PART", "JOIN", "MODE", "TOPIC", "QUIT", "NOTICE"] and event.chan:
-            get_log_stream(event.conn.name, event.chan).write(text + '\n')
+        if event.irc_command in ["PRIVMSG", "PART", "JOIN", "MODE", "TOPIC", "QUIT", "NOTICE"] and event.chan_name:
+            get_log_stream(event.conn.name, event.chan_name).write(text + '\n')
 
 
 # Log console separately to prevent lag

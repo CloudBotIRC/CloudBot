@@ -8,7 +8,7 @@ import cloudbot
 @asyncio.coroutine
 @hook.regex(r'^\x01VERSION\x01$')
 def ctcp_version(notice):
-    notice("\x01VERSION: Obr v{}".format(cloudbot.__version__))
+    notice("\x01VERSION: Obr v{} - https://github.com/cloudbot/bot-clean".format(cloudbot.__version__))
 
 
 @asyncio.coroutine

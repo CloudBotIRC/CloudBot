@@ -20,6 +20,7 @@ irc_command_to_event_type = {
     "JOIN": EventType.join,
     "PART": EventType.part,
     "KICK": EventType.kick,
+    "NICK": EventType.nick,
     "332": EventType.topic
 }
 

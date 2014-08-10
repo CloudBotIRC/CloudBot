@@ -13,7 +13,8 @@ class EventType(enum.Enum):
     part = 3
     kick = 4
     topic = 5
-    other = 6
+    nick = 6
+    other = 7
 
 
 class Event:

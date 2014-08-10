@@ -214,7 +214,7 @@ class IrcConnection(Connection):
                 if event.nick.lower() != nick:
                     continue
             if chan is not None:
-                if event.chan.lower() != chan:
+                if event.chan_name.lower() != chan:
                     continue
 
             try:

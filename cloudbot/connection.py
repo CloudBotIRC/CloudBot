@@ -5,7 +5,6 @@ import logging
 import re
 
 from cloudbot.event import EventType
-
 from cloudbot.permissions import PermissionManager
 from cloudbot.util.dictionaries import CaseInsensitiveDict
 
@@ -149,8 +148,13 @@ class Connection:
 
     @asyncio.coroutine
     def pre_process_event(self, event):
+
+        if event.type is EventType.nick and event.nick.lower() == self.bot_nick.lower():
+            logger.info("[{}] Bot nick changed from {} to {}.".format(self.readable_name, self.bot_nick, event.content))
+            self.bot_nick = event.content
+
         if event.chan_name is None or event.chan_name.lower() == event.nick.lower():
-            return  # this method just prepares the channel
+            return  # the rest of this just process on channels
         channel = self.channels.get(event.chan_name)
         if channel is None:
             if event.type is not EventType.join:

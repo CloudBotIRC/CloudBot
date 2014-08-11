@@ -59,11 +59,10 @@ def system():
 
 
 @hook.command(autohelp=False)
-def about():
-    return (
-        "Hi, I'm cloudbot version {}\n"
-        "I'm maintained and created by Dabo\n"
-        "My backend is powered by redis!\n"
-    ).format(
-        cloudbot.__version__
-    )
+def about(event):
+    """Gives information about cloudbot
+    :type event: cloudbot.event.Event
+    """
+    event.message("Hi, I'm cloudbot version {}".format(cloudbot.__version__),
+                  "I'm maintained and created by Dabo",
+                  "My backend is powered by redis!")

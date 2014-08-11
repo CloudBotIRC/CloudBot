@@ -6,6 +6,7 @@ from datetime import timedelta
 import psutil
 
 from cloudbot import hook
+import cloudbot
 
 
 def format_bytes(num):
@@ -54,4 +55,15 @@ def system():
         thread_count,
         cpu_usage,
         memory_usage,
+    )
+
+
+@hook.command(autohelp=False)
+def about():
+    return (
+        "Hi, I'm cloudbot version {}\n"
+        "I'm maintained and created by Dabo\n"
+        "My backend is powered by redis!\n"
+    ).format(
+        cloudbot.__version__
     )

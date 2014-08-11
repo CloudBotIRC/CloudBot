@@ -16,12 +16,13 @@ irc_netmask_re = re.compile(r"([^!@]*)!([^@]*)@(.*)")
 irc_param_re = re.compile(r"(?:^|(?<= ))(:.*|[^ ]+)")
 
 irc_command_to_event_type = {
-    "PRIVMSG": EventType.message,
-    "JOIN": EventType.join,
-    "PART": EventType.part,
-    "KICK": EventType.kick,
-    "NICK": EventType.nick,
-    "332": EventType.topic
+    'PRIVMSG': EventType.message,
+    'JOIN': EventType.join,
+    'PART': EventType.part,
+    'KICK': EventType.kick,
+    'NICK': EventType.nick,
+    'QUIT': EventType.quit,
+    '332': EventType.topic
 }
 
 

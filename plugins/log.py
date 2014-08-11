@@ -35,6 +35,7 @@ base_formats = {
     EventType.join: "[{server}:{channel}] -!- {nick} [{user}@{host}] has joined",
     EventType.part: "[{server}:{channel}] -!- {nick} [{user}@{host}] has left ({content})",
     EventType.kick: "[{server}:{channel}] -!- {nick} has kicked {target} ({content})",
+    EventType.nick: "[{server}] {nick} is now known as {content}"
 }
 
 irc_formats = {
@@ -43,7 +44,6 @@ irc_formats = {
     "TOPIC": "[{server}:{channel}] -!- {nick} has changed the topic to: {content}",
     "QUIT": "[{server}] -!- {nick} has quit ({content})",
     "INVITE": "[{server}] -!- {nick} has invited {target} to {content}",
-    "NICK": "[{server}] {nick} is now known as {content}",
     "NOTICE": "[{server}:{channel}] -{nick}- {content}",
 }
 
@@ -228,8 +228,12 @@ def log(event):
     text = format_event(event)
 
     if text is not None:
-        if event.irc_command in ["PRIVMSG", "PART", "JOIN", "MODE", "TOPIC", "QUIT", "NOTICE"] and event.chan_name:
+        if event.irc_command in ["PRIVMSG", "PART", "JOIN", "MODE", "TOPIC", "NOTICE"] and event.chan_name:
             get_log_stream(event.conn.name, event.chan_name).write(text + '\n')
+        elif event.irc_command in ["QUIT", "NICK"] and event.channels:
+            for channel in event.channels:
+                chan_name = channel.name.lower()
+                get_log_stream(event.conn.name, chan_name).write(text + '\n')
 
 
 # Log console separately to prevent lag

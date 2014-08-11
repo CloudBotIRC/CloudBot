@@ -162,26 +162,23 @@ class Connection:
                 future.cancel()
 
     @asyncio.coroutine
-    def pre_process_event(self, event):
-
-        if event.type is EventType.nick and event.nick.lower() == self.bot_nick.lower():
-            logger.info("[{}] Bot nick changed from {} to {}.".format(self.readable_name, self.bot_nick, event.content))
-            self.bot_nick = event.content
-
+    def _process_channel(self, event):
         if event.chan_name is None or event.chan_name.lower() == event.nick.lower():
             return  # the rest of this just process on channels
+
         channel = self.channels.get(event.chan_name)
         if channel is None:
-            if event.type is not EventType.join:
-                logger.warning("First mention of channel {} was from event type {}".format(event.chan_name, event.type))
-            elif event.type is EventType.part and event.nick.lower() == self.bot_nick.lower():
+            if event.type is EventType.part and event.nick.lower() == self.bot_nick.lower():
                 return  # no need to create a channel when we're just leaving it
+            elif event.type is not EventType.join:
+                logger.warning("First mention of channel {} was from event type {}".format(event.chan_name, event.type))
             elif event.nick.lower() != self.bot_nick.lower():
                 logger.warning("First join of channel {} was {}".format(event.chan_name, event.nick))
             channel = Channel(event.chan_name)
             self.channels[event.chan_name] = channel
 
         event.channel = channel
+        event.channels = [channel]
 
         if event.type is EventType.part:
             if event.nick.lower() == self.bot_nick.lower():
@@ -200,14 +197,45 @@ class Connection:
             channel.track_part(event)
         elif event.type is EventType.kick:
             channel.track_kick(event)
-        elif event.type is EventType.nick:
-            channel.track_nick(event)
         elif event.type is EventType.topic:
             channel.track_topic(event)
         elif event.irc_command == 'MODE':
             channel.track_mode(event)
         elif event.irc_command == '353':
             channel.track_353_channel_list(event)
+
+    @asyncio.coroutine
+    def _process_nick(self, event):
+        if event.type is not EventType.nick:
+            return
+
+        event.channels.clear()  # We will re-set all relevant channels below
+        for channel in self.channels.values():
+            if event.nick in channel.users:
+                channel.track_nick(event)
+                event.channels.append(channel)
+
+    @asyncio.coroutine
+    def _process_quit(self, event):
+        if event.type is not EventType.quit:
+            return
+
+        event.channels.clear()  # We will re-set all relevant channels below
+        for channel in self.channels.values():
+            if event.nick in channel.users:
+                channel.track_quit(event)
+                event.channels.append(channel)
+
+    @asyncio.coroutine
+    def pre_process_event(self, event):
+
+        if event.type is EventType.nick and event.nick.lower() == self.bot_nick.lower():
+            logger.info("[{}] Bot nick changed from {} to {}.".format(self.readable_name, self.bot_nick, event.content))
+            self.bot_nick = event.content
+
+        yield from self._process_channel(event)
+        yield from self._process_nick(event)
+        yield from self._process_quit(event)
 
 
 class User:
@@ -279,6 +307,13 @@ class Channel:
         """
         del self.users[event.nick]
         self.history.append((EventType.part, event.nick, datetime.datetime.now(), event.content))
+
+    def track_quit(self, event):
+        """
+        :type event: cloudbot.event.Event
+        """
+        del self.users[event.nick]
+        self.history.append((EventType.quit, event.nick, datetime.datetime.now(), event.content))
 
     def track_kick(self, event):
         """

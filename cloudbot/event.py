@@ -14,7 +14,8 @@ class EventType(enum.Enum):
     kick = 4
     topic = 5
     nick = 6
-    other = 7
+    quit = 7
+    other = 8
 
 
 class Event:
@@ -26,7 +27,8 @@ class Event:
     :type content: str
     :type target: str
     :type chan_name: str
-    :type channel; cloudbot.connection.Channel
+    :type channel: cloudbot.connection.Channel
+    :type channels: list(cloudbot.connection.Channel)
     :type nick: str
     :type user: str
     :type host: str
@@ -35,12 +37,13 @@ class Event:
     :type irc_command: str
     :type irc_command_params: str
     :type irc_ctcp_text: str
+    :param: channels: A list of channels which the event affects. Only used for events which affect multiple channels,
+            such as NICK or QUIT events.
     """
 
     def __init__(self, *, bot=None, hook=None, conn=None, base_event=None, event_type=EventType.other, content=None,
                  target=None, channel_name=None, nick=None, user=None, host=None, mask=None, irc_raw=None,
-                 irc_command=None,
-                 irc_command_params=None, irc_ctcp_text=None):
+                 irc_command=None, irc_command_params=None, irc_ctcp_text=None):
         """
         All of these parameters except for `bot` and `hook` are optional.
         The irc_* parameters should only be specified for IRC events.
@@ -103,6 +106,7 @@ class Event:
             self.host = base_event.host
             self.mask = base_event.mask
             self.channel = base_event.channel
+            self.channels = base_event.channel
             # irc-specific parameters
             self.irc_raw = base_event.irc_raw
             self.irc_command = base_event.irc_command
@@ -118,7 +122,9 @@ class Event:
             self.user = user
             self.host = host
             self.mask = mask
+            # channel and channels are assigned in Connection.pre_process_event
             self.channel = None
+            self.channels = []
             # irc-specific parameters
             self.irc_raw = irc_raw
             self.irc_command = irc_command

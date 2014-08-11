@@ -143,10 +143,6 @@ class Event:
     def db(self):
         return self.bot.db
 
-    # @asyncio.coroutine This just returns the coroutine from conn.wait_for
-    def wait_for_message(self, message=None, nick=None, chan=None):
-        return self.conn.wait_for(message, nick=nick, chan=chan)
-
     def message(self, *messages, target=None):
         """sends a message to a specific or current channel/user
         :type message: list[str]

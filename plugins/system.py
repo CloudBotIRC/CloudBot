@@ -65,4 +65,4 @@ def about(event):
     """
     event.message("Hi, I'm cloudbot version {}".format(cloudbot.__version__),
                   "I'm maintained and created by Dabo",
-                  "My backend is powered by redis!")
+                  "Backend powered by Redis!")

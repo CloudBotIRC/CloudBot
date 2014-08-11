@@ -187,6 +187,8 @@ class Connection:
             channel.track_part(event)
         elif event.type is EventType.kick:
             channel.track_kick(event)
+        elif event.type is EventType.nick:
+            channel.track_nick(event)
         elif event.type is EventType.topic:
             channel.track_topic(event)
         elif event.irc_command == 'MODE':
@@ -272,6 +274,19 @@ class Channel:
         del self.users[event.target]
         # TODO: Better way of storing both kicker and target in history
         self.history.append((EventType.kick, event.nick, datetime.datetime.now(), (event.target, event.content)))
+
+    def track_nick(self, event):
+        user = self.users[event.nick.lower()]
+
+        if not user.mask_known:
+            user.ident = event.user
+            user.host = event.host
+            user.mask = event.mask
+
+        user.nick = event.content
+        self.users[event.content] = user
+
+        del self.users[event.nick]
 
     def track_topic(self, event):
         """

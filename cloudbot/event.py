@@ -147,16 +147,16 @@ class Event:
     def wait_for_message(self, message=None, nick=None, chan=None):
         return self.conn.wait_for(message, nick=nick, chan=chan)
 
-    def message(self, message, target=None):
+    def message(self, *messages, target=None):
         """sends a message to a specific or current channel/user
-        :type message: str
+        :type message: list[str]
         :type target: str
         """
         if target is None:
             if self.chan_name is None:
                 raise ValueError("Target must be specified when chan is not assigned")
             target = self.chan_name
-        self.conn.message(target, message)
+        self.conn.message(target, *messages)
 
     def reply(self, *messages, target=None):
         """sends a message to the current channel/user with a prefix

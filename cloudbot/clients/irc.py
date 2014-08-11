@@ -209,21 +209,30 @@ class IrcConnection(Connection):
         yield from super().pre_process_event(event)
         if event.type is not EventType.message:
             return
-        for nick, chan, regex, future in self.waiting_messages:
-            if nick is not None:
-                if event.nick.lower() != nick:
-                    continue
-            if chan is not None:
-                if event.chan_name.lower() != chan:
-                    continue
+        finished = []
+        for (nick, chan, regex), futures in self.waiting_messages.items():
+            if all(future.done() for future in futures):
+                finished += (nick, chan, regex)
+                continue
+            if nick is not None and event.nick.lower() != nick:
+                continue
+            if chan is not None and event.chan_name.lower() != chan:
+                continue
 
             try:
                 match = regex.search(event.content)
             except Exception as exc:
-                future.set_exception(exc)
+                for future in futures:
+                    future.set_exception(exc)
+                finished += (nick, chan, regex)
             else:
                 if match:
-                    future.set_result(match)
+                    for future in futures:
+                        future.set_result(match)
+                    finished += (nick, chan, regex)
+
+        for key in finished:
+            del self.waiting_messages[key]
 
 
 class _IrcProtocol(asyncio.Protocol):

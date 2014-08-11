@@ -29,7 +29,7 @@ class Connection:
     :type config: dict[str, str | dict | list]
     :type bot_nick: str
     :type permissions: PermissionManager
-    :type waiting_messages: list[(str, str, re.__Regex, asyncio.Future)]
+    :type waiting_messages: dict[(str, str, re.__Regex), list(asyncio.Future)]
     """
 
     def __init__(self, bot, name, bot_nick, *, readable_name, config):
@@ -53,7 +53,7 @@ class Connection:
         # create permissions manager
         self.permissions = PermissionManager(self)
 
-        self.waiting_messages = []
+        self.waiting_messages = dict()
 
     def describe_server(self):
         raise NotImplementedError
@@ -126,10 +126,10 @@ class Connection:
     def connected(self):
         raise NotImplementedError
 
-    @asyncio.coroutine
     def wait_for(self, message, nick=None, chan=None):
         """
         Waits for a message matching a specific regex
+        This returns a future, so it should be treated like a coroutine
         :type nick: str
         :type message: str | re.__Regex
         """
@@ -141,12 +141,25 @@ class Connection:
         if not hasattr(message, "search"):
             message = re.compile(message)
 
-        key = (nick, chan, message, future)
+        key = (nick, chan, message)
 
-        self.waiting_messages.append(key)
-        result = yield from future
-        self.waiting_messages.remove(key)
-        return result
+        if key in self.waiting_messages:
+            # what?
+            self.waiting_messages[key].append(future)
+
+        self.waiting_messages[key] = [future]
+        return future
+
+    @asyncio.coroutine
+    def cancel_wait(self, message, nick=None, chan=None):
+        if nick is not None:
+            nick = nick.lower()
+        if chan is not None:
+            chan = chan.lower()
+
+        for test_nick, test_chan, test_message, future in self.waiting_messages:
+            if test_nick == nick and test_chan == chan and test_message == message:
+                future.cancel()
 
     @asyncio.coroutine
     def pre_process_event(self, event):

@@ -135,6 +135,8 @@ class Connection:
         """
         if nick is not None:
             nick = nick.lower()
+        if chan is not None:
+            chan = chan.lower()
         future = asyncio.Future(loop=self.bot.loop)
         if not hasattr(message, "search"):
             message = re.compile(message)

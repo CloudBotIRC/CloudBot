@@ -63,6 +63,5 @@ def about(event):
     """Gives information about cloudbot
     :type event: cloudbot.event.Event
     """
-    event.message("Hi, I'm cloudbot version {}".format(cloudbot.__version__),
-                  "I'm maintained and created by Dabo",
-                  "Backend powered by Redis!")
+    event.message("Hi, I'm cloudbot version {} - Created by Dabo - Powered by Redis!".format(cloudbot.__version__),
+                  "Source code is located at https://github.com/cloudbot/bot-clean")

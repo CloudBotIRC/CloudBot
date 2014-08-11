@@ -212,7 +212,7 @@ class IrcConnection(Connection):
         finished = []
         for (nick, chan, regex), futures in self.waiting_messages.items():
             if all(future.done() for future in futures):
-                finished += (nick, chan, regex)
+                finished.append((nick, chan, regex))
                 continue
             if nick is not None and event.nick.lower() != nick:
                 continue
@@ -224,12 +224,12 @@ class IrcConnection(Connection):
             except Exception as exc:
                 for future in futures:
                     future.set_exception(exc)
-                finished += (nick, chan, regex)
+                finished.append((nick, chan, regex))
             else:
                 if match:
                     for future in futures:
                         future.set_result(match)
-                    finished += (nick, chan, regex)
+                    finished.append((nick, chan, regex))
 
         for key in finished:
             del self.waiting_messages[key]

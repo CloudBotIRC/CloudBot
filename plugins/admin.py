@@ -3,6 +3,11 @@ import re
 
 from cloudbot import hook
 
+plugin_info = {
+    "plugin_category": "core",
+    "command_category_name": "Administration"
+}
+
 
 @asyncio.coroutine
 @hook.command("groups", permissions=["permissions.view"], autohelp=False)

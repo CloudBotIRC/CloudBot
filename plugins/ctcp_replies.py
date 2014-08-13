@@ -4,6 +4,10 @@ import time
 from cloudbot import hook
 import cloudbot
 
+plugin_info = {
+    "plugin_category": "core"
+}
+
 
 @asyncio.coroutine
 @hook.regex(r'^\x01VERSION\x01$')

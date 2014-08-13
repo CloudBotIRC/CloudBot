@@ -10,6 +10,10 @@ import cloudbot
 from cloudbot import hook
 from cloudbot.event import EventType
 
+plugin_info = {
+    "plugin_category": "core"
+}
+
 logger = logging.getLogger('cloudbot')
 
 irc_color_re = re.compile(r"(\x03(\d+,\d+|\d)|[\x0f\x02\x16\x1f])")
@@ -208,7 +212,7 @@ def get_raw_log_stream(server):
     return log_stream
 
 
-@hook.irc_raw("*", singlethread=True)
+@hook.irc_raw("*", single_instance=True)
 def log_raw(event):
     """
     :type event: cloudbot.event.Event
@@ -220,7 +224,7 @@ def log_raw(event):
     get_raw_log_stream(event.conn.name).write(event.irc_raw + "\n")
 
 
-@hook.irc_raw("*", singlethread=True)
+@hook.irc_raw("*", single_instance=True)
 def log(event):
     """
     :type event: cloudbot.event.Event

@@ -8,6 +8,11 @@ import psutil
 from cloudbot import hook
 import cloudbot
 
+plugin_info = {
+    "plugin_category": "obr",
+    "command_category_name": "Informational"
+}
+
 
 def format_bytes(num):
     for x in ['bytes', 'kb', 'mb', 'gb']:
@@ -15,6 +20,15 @@ def format_bytes(num):
             return "%3.1f%s" % (num, x)
         num /= 1024.0
     return "%3.1f%s" % (num, 'TB')
+
+
+@hook.command(autohelp=False)
+def about(event):
+    """Gives information about cloudbot
+    :type event: cloudbot.event.Event
+    """
+    event.message("Hi, I'm obr version {} - Created by Dabo - Powered by Redis!".format(cloudbot.__version__),
+                  "Source code is located at https://github.com/cloudbot/bot-clean")
 
 
 @hook.command(autohelp=False)
@@ -56,12 +70,3 @@ def system():
         cpu_usage,
         memory_usage,
     )
-
-
-@hook.command(autohelp=False)
-def about(event):
-    """Gives information about cloudbot
-    :type event: cloudbot.event.Event
-    """
-    event.message("Hi, I'm cloudbot version {} - Created by Dabo - Powered by Redis!".format(cloudbot.__version__),
-                  "Source code is located at https://github.com/cloudbot/bot-clean")

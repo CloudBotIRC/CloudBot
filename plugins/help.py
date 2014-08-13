@@ -4,6 +4,11 @@ import re
 
 from cloudbot import hook
 
+plugin_info = {
+    "plugin_category": "core",
+    "command_category_name": "Informational"
+}
+
 
 @asyncio.coroutine
 @hook.command("help", autohelp=False)

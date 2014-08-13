@@ -4,6 +4,11 @@ from fnmatch import fnmatch
 from cloudbot import hook
 from cloudbot.plugin import HookType
 
+plugin_info = {
+    "plugin_category": "core",
+    "command_category_name": "Administration"
+}
+
 
 @asyncio.coroutine
 @hook.sieve()

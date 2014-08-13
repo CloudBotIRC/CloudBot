@@ -209,6 +209,10 @@ class Connection:
         if event.type is not EventType.nick:
             return
 
+        if event.nick.lower() == self.bot_nick.lower():
+            logger.info("[{}] Bot nick changed from {} to {}.".format(self.readable_name, self.bot_nick, event.content))
+            self.bot_nick = event.content
+
         event.channels.clear()  # We will re-set all relevant channels below
         for channel in self.channels.values():
             if event.nick in channel.users:
@@ -228,10 +232,6 @@ class Connection:
 
     @asyncio.coroutine
     def pre_process_event(self, event):
-
-        if event.type is EventType.nick and event.nick.lower() == self.bot_nick.lower():
-            logger.info("[{}] Bot nick changed from {} to {}.".format(self.readable_name, self.bot_nick, event.content))
-            self.bot_nick = event.content
 
         yield from self._process_channel(event)
         yield from self._process_nick(event)

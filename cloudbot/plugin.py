@@ -6,6 +6,7 @@ import inspect
 import logging
 import os
 import re
+import itertools
 
 from cloudbot.event import Event
 
@@ -13,49 +14,39 @@ logger = logging.getLogger("cloudbot")
 
 
 class HookType(enum.Enum):
-    command = 1,
-    regex = 2,
-    event = 3,
-    irc_raw = 4,
-    sieve = 5,
-    on_start = 6,
-    on_stop = 7
-
-
-# cloudbot.hook imports plugin.HookType, so to not cause a circular import error, we import cloudbot.hook after defining
-# the HookType enum. TODO: is there *any* better way to do this?
+    on_start = 1,
+    on_stop = 2,
+    sieve = 3,
+    event = 4,
+    regex = 5,
+    command = 6,
+    irc_raw = 7,
 
 
 def find_hooks(parent, module):
     """
     :type parent: Plugin
     :type module: object
-    :rtype: (list[CommandHook], list[RegexHook], list[RawHook], list[SieveHook], List[EventHook], list[OnStartHook],
-        list[OnStopHook])
+    :rtype: dict[HookType, list[Hook]
     """
     # set the loaded flag
     module._plugins_loaded = True
-    command = []
-    regex = []
-    raw = []
-    sieve = []
-    event = []
-    on_start = []
-    on_stop = []
-    type_lists = {HookType.command: command, HookType.regex: regex, HookType.irc_raw: raw, HookType.sieve: sieve,
-                  HookType.event: event, HookType.on_start: on_start, HookType.on_stop: on_stop}
+    hooks_dict = dict()
+    for hook_type in HookType:
+        hooks_dict[hook_type] = list()
+
     for name, func in module.__dict__.items():
         if hasattr(func, "plugin_hook"):
             # if it has cloudbot hook
             func_hooks = func.plugin_hook
 
             for hook_type, func_hook in func_hooks.items():
-                type_lists[hook_type].append(_hook_type_to_plugin[hook_type](parent, func_hook))
+                hooks_dict[hook_type].append(_hook_type_to_plugin[hook_type](parent, func_hook))
 
             # delete the hook to free memory
             del func.plugin_hook
 
-    return command, regex, raw, sieve, event, on_start, on_stop
+    return hooks_dict
 
 
 def _prepare_parameters(hook, event):
@@ -117,14 +108,12 @@ class PluginManager:
         self.event_type_hooks = {}
         self.regex_hooks = []
         self.sieves = []
-        self._hook_waiting_queues = {}
+        self._hook_locks = {}
 
     @asyncio.coroutine
     def load_all(self, plugin_dir):
         """
         Load a plugin from each *.py file in the given directory.
-
-        Won't load any plugins listed in "disabled_plugins".
 
         :type plugin_dir: str
         """
@@ -137,16 +126,13 @@ class PluginManager:
         """
         Loads a plugin from the given path and plugin object, then registers all hooks from that plugin.
 
-        Won't load any plugins listed in "disabled_plugins".
-
         :type path: str
         """
         file_path = os.path.abspath(path)
-        file_name = os.path.basename(path)
-        title = os.path.splitext(file_name)[0]
+        title = os.path.splitext(os.path.basename(path))[0]
 
         # make sure to unload the previously loaded plugin from this path, if it was loaded.
-        if file_name in self.plugins:
+        if file_path in self.plugins:
             yield from self._unload(file_path)
 
         module_name = "plugins.{}".format(title)
@@ -156,11 +142,11 @@ class PluginManager:
             if hasattr(plugin_module, "_plugins_loaded"):
                 importlib.reload(plugin_module)
         except Exception:
-            logger.exception("Error loading {}:".format(file_name))
+            logger.exception("Error loading {}:".format(file_path))
             return
 
         # create the plugin
-        plugin = Plugin(file_path, file_name, title, plugin_module)
+        plugin = Plugin(file_path, title, plugin_module)
 
         # proceed to register hooks
 
@@ -171,7 +157,16 @@ class PluginManager:
                 logger.warning("Not registering hooks from plugin {}: on_start hook errored".format(plugin.title))
                 return
 
-        self.plugins[plugin.file_name] = plugin
+        self.plugins[plugin.file_path] = plugin
+
+        # register events
+        for event_hook in plugin.events:
+            for event_type in event_hook.types:
+                if event_type in self.event_type_hooks:
+                    self.event_type_hooks[event_type].append(event_hook)
+                else:
+                    self.event_type_hooks[event_type] = [event_hook]
+            self._log_hook(event_hook)
 
         # register commands
         for command_hook in plugin.commands:
@@ -196,16 +191,7 @@ class PluginManager:
                         self.raw_triggers[trigger] = [raw_hook]
             self._log_hook(raw_hook)
 
-        # register events
-        for event_hook in plugin.events:
-            for event_type in event_hook.types:
-                if event_type in self.event_type_hooks:
-                    self.event_type_hooks[event_type].append(event_hook)
-                else:
-                    self.event_type_hooks[event_type] = [event_hook]
-            self._log_hook(event_hook)
-
-        # register regexps
+        # register regex hooks
         for regex_hook in plugin.regexes:
             for regex_match in regex_hook.regexes:
                 self.regex_hooks.append((regex_match, regex_hook))
@@ -229,18 +215,14 @@ class PluginManager:
         :type path: str
         :rtype: bool
         """
-        file_name = os.path.basename(path)
-        title = os.path.splitext(file_name)[0]
-        if "disabled_plugins" in self.bot.config and title in self.bot.config['disabled_plugins']:
-            # this plugin hasn't been loaded, so no need to unload it
-            return False
+        file_path = os.path.abspath(path)
 
         # make sure this plugin is actually loaded
-        if not file_name in self.plugins:
+        if not file_path in self.plugins:
             return False
 
         # get the loaded plugin
-        plugin = self.plugins[file_name]
+        plugin = self.plugins[file_path]
 
         # unregister commands
         for command_hook in plugin.commands:
@@ -260,7 +242,7 @@ class PluginManager:
                     if not self.raw_triggers[trigger]:  # if that was the last hook for this trigger
                         del self.raw_triggers[trigger]
 
-        # unregister events
+        # unregister event hooks
         for event_hook in plugin.events:
             for event_type in event_hook.types:
                 assert event_type in self.event_type_hooks  # this can't be not true
@@ -268,7 +250,7 @@ class PluginManager:
                 if not self.event_type_hooks[event_type]:  # if that was the last hook for this event type
                     del self.event_type_hooks[event_type]
 
-        # unregister regexps
+        # unregister regex hooks
         for regex_hook in plugin.regexes:
             for regex_match in regex_hook.regexes:
                 self.regex_hooks.remove((regex_match, regex_hook))
@@ -278,7 +260,7 @@ class PluginManager:
             self.sieves.remove(sieve_hook)
 
         # remove last reference to plugin
-        del self.plugins[plugin.file_name]
+        del self.plugins[plugin.file_path]
 
         if self.bot.config.get("logging", {}).get("show_plugin_loading", True):
             logger.info("Unloaded all plugins from {}".format(plugin.title))
@@ -371,38 +353,14 @@ class PluginManager:
             return False
 
         if hook.single_thread:
-            # There should only be one running instance of this hook, so let's wait for the last event to be processed
-            # before starting this one.
-
+            # There should only be once instance of this hook running at a time, so let's use a lock for it.
             key = (hook.plugin.title, hook.function_name)
-            if key in self._hook_waiting_queues:
-                queue = self._hook_waiting_queues[key]
-                if queue is None:
-                    # there's a hook running, but the queue hasn't been created yet, since there's only one hook
-                    queue = asyncio.Queue()
-                    self._hook_waiting_queues[key] = queue
-                assert isinstance(queue, asyncio.Queue)
-                # create a future to represent this task
-                future = asyncio.Future()
-                queue.put_nowait(future)
-                # wait until the last task is completed
-                yield from future
-            else:
-                # set to None to signify that this hook is running, but there's no need to create a full queue
-                # in case there are no more hooks that will wait
-                self._hook_waiting_queues[key] = None
+            if key not in self._hook_locks:
+                self._hook_locks[key] = asyncio.Lock(loop=self.bot.loop)
 
             # Run the plugin with the message, and wait for it to finish
-            result = yield from self._execute_hook(hook, event)
-
-            queue = self._hook_waiting_queues[key]
-            if queue is None or queue.empty():
-                # We're the last task in the queue, we can delete it now.
-                del self._hook_waiting_queues[key]
-            else:
-                # set the result for the next task's future, so they can execute
-                next_future = yield from queue.get()
-                next_future.set_result(None)
+            with (yield from self._hook_locks[key]):
+                result = yield from self._execute_hook(hook, event)
         else:
             # Run the plugin with the message, and wait for it to finish
             result = yield from self._execute_hook(hook, event)
@@ -425,8 +383,6 @@ class Plugin:
     Each Plugin represents a plugin file, and contains loaded hooks.
 
     :type file_path: str
-    :type file_name: str
-    :type title: str
     :type commands: list[CommandHook]
     :type regexes: list[RegexHook]
     :type raw_hooks: list[RawHook]
@@ -434,20 +390,24 @@ class Plugin:
     :type events: list[EventHook]
     """
 
-    def __init__(self, filepath, filename, title, code):
+    def __init__(self, file_path, title, code):
         """
         :param code: Optional code argument, should be specified for all *actual* plugins.
                         If provided, all hooks will be retrieved and attached to this plugin from the code.
-        :type filepath: str
-        :type filename: str
+        :type file_path: str
         :type code: object
         """
-        self.file_path = filepath
-        self.file_name = filename
+        self.file_path = file_path
         self.title = title
 
-        self.commands, self.regexes, self.raw_hooks, self.sieves, self.events, self.on_start, self.on_stop = (
-            find_hooks(self, code))
+        hooks = find_hooks(self, code)
+        self.on_start = hooks[HookType.on_start]
+        self.on_start = hooks[HookType.on_stop]
+        self.events = hooks[HookType.event]
+        self.sieves = hooks[HookType.sieve]
+        self.regexes = hooks[HookType.regex]
+        self.commands = hooks[HookType.command]
+        self.raw_hooks = hooks[HookType.irc_raw]
 
 
 class Hook:
@@ -485,7 +445,7 @@ class Hook:
             self.threaded = True
 
         self.permissions = func_hook.kwargs.pop("permissions", [])
-        self.single_thread = func_hook.kwargs.pop("singlethread", False)
+        self.single_thread = func_hook.kwargs.pop("single_instance", False)
         self.run_first = func_hook.kwargs.pop("run_first", False)
 
         if func_hook.kwargs:
@@ -496,9 +456,13 @@ class Hook:
     def description(self):
         return "{}:{}".format(self.plugin.title, self.function_name)
 
-    def __repr__(self):
-        return "type: {}, plugin: {}, permissions: {}, ensure_first: {}, single_thread: {}, threaded: {}".format(
+    def __repr__(self, **kwargs):
+        result = "type: {}, plugin: {}, permissions: {}, ensure_first: {}, single_thread: {}, threaded: {}".format(
             self.type.name, self.plugin.title, self.permissions, self.run_first, self.single_thread, self.threaded)
+        if kwargs:
+            result = ", ".join(itertools.chain(("{}: {}".format(*item) for item in kwargs.items()), (result,)))
+
+        return "{}[{}]".format(type(self).__name__, result)
 
 
 class CommandHook(Hook):
@@ -526,10 +490,10 @@ class CommandHook(Hook):
         super().__init__(plugin, cmd_hook)
 
     def __repr__(self):
-        return "Command[name: {}, aliases: {}, {}]".format(self.name, self.aliases[1:], Hook.__repr__(self))
+        return super().__repr__(name=self.name, aliases=self.aliases[1:])
 
     def __str__(self):
-        return "command {} from {}".format("/".join(self.aliases), self.plugin.file_name)
+        return "command {} from {}".format("/".join(self.aliases), self.plugin.title)
 
 
 class RegexHook(Hook):
@@ -548,11 +512,10 @@ class RegexHook(Hook):
         super().__init__(plugin, regex_hook)
 
     def __repr__(self):
-        return "Regex[regexes: [{}], {}]".format(", ".join(regex.pattern for regex in self.regexes),
-                                                 Hook.__repr__(self))
+        return super().__repr__(triggers=", ".join(regex.pattern for regex in self.regexes))
 
     def __str__(self):
-        return "regex {} from {}".format(self.function_name, self.plugin.file_name)
+        return "regex {} from {}".format(self.function_name, self.plugin.title)
 
 
 class RawHook(Hook):
@@ -574,10 +537,10 @@ class RawHook(Hook):
         return "*" in self.triggers
 
     def __repr__(self):
-        return "Raw[triggers: {}, {}]".format(list(self.triggers), Hook.__repr__(self))
+        return super().__repr__(triggers=self.triggers)
 
     def __str__(self):
-        return "irc raw {} ({}) from {}".format(self.function_name, ",".join(self.triggers), self.plugin.file_name)
+        return "irc raw {} ({}) from {}".format(self.function_name, ",".join(self.triggers), self.plugin.title)
 
 
 class SieveHook(Hook):
@@ -590,11 +553,8 @@ class SieveHook(Hook):
         """
         super().__init__(plugin, sieve_hook)
 
-    def __repr__(self):
-        return "Sieve[{}]".format(Hook.__repr__(self))
-
     def __str__(self):
-        return "sieve {} from {}".format(self.function_name, self.plugin.file_name)
+        return "sieve {} from {}".format(self.function_name, self.plugin.title)
 
 
 class EventHook(Hook):
@@ -612,12 +572,9 @@ class EventHook(Hook):
 
         self.types = event_hook.types
 
-    def __repr__(self):
-        return "Event[types: {}, {}]".format(list(self.types), Hook.__repr__(self))
-
     def __str__(self):
         return "event {} ({}) from {}".format(self.function_name, ",".join(str(t) for t in self.types),
-                                              self.plugin.file_name)
+                                              self.plugin.title)
 
 
 class OnStartHook(Hook):
@@ -630,11 +587,8 @@ class OnStartHook(Hook):
         """
         super().__init__(plugin, on_load_hook)
 
-    def __repr__(self):
-        return "OnStart[{}]".format(Hook.__repr__(self))
-
     def __str__(self):
-        return "on_start {} from {}".format(self.function_name, self.plugin.file_name)
+        return "on_start {} from {}".format(self.function_name, self.plugin.title)
 
 
 class OnStopHook(Hook):
@@ -647,11 +601,8 @@ class OnStopHook(Hook):
         """
         super().__init__(plugin, on_load_hook)
 
-    def __repr__(self):
-        return "OnStop[{}]".format(Hook.__repr__(self))
-
     def __str__(self):
-        return "on_stop {} from {}".format(self.function_name, self.plugin.file_name)
+        return "on_stop {} from {}".format(self.function_name, self.plugin.title)
 
 
 _hook_type_to_plugin = {

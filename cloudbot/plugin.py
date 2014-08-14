@@ -301,6 +301,7 @@ class PluginManager:
                 out = yield from hook.function(*parameters)
         except Exception:
             logger.exception("Error in hook {}".format(hook.description))
+            event.message("Error in plugin '{}'.".format(hook.plugin.title))
             return False
 
         if out is not None:

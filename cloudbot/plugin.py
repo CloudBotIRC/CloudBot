@@ -402,7 +402,7 @@ class Plugin:
 
         hooks = find_hooks(self, code)
         self.on_start = hooks[HookType.on_start]
-        self.on_start = hooks[HookType.on_stop]
+        self.on_stop = hooks[HookType.on_stop]
         self.events = hooks[HookType.event]
         self.sieves = hooks[HookType.sieve]
         self.regexes = hooks[HookType.regex]

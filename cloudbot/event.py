@@ -174,7 +174,7 @@ class Event:
             return
 
         if target == self.nick:
-            self.conn.message(target, messages)
+            self.conn.message(target, *messages)
         else:
             self.conn.message(target, "({}) {}".format(self.nick, messages[0]), *messages[1:])
 

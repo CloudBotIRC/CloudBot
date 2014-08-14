@@ -1,16 +1,16 @@
 from cloudbot import hook
 from cloudbot.util import http
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 
 
 @hook.command(autohelp=False)
 def word(text):
-    "<word> - Gets the word of the day."
+    "<word> - Gets the word of the day from http://www.merriam-webster.com/word-of-theday"
     page = http.get('http://merriam-webster.com/word-of-the-day')
 
     soup = BeautifulSoup(page)
 
-    word = soup.find('strong', {'class': 'main_entry_word'}).renderContents()
-    function = soup.find('p', {'class': 'word_function'}).renderContents()
+    word = soup.find('strong', {'class': 'main_entry_word'}).string
+    function = soup.find('p', {'class': 'word_function'}).string
 
     return "The word of the day is: \x02{}\x02 ({})".format(word, function)

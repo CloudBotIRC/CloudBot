@@ -13,4 +13,4 @@ def word(text):
     word = soup.find('strong', {'class': 'main_entry_word'}).renderContents()
     function = soup.find('p', {'class': 'word_function'}).renderContents()
 
-    return "The word of the day is: \x02{}\x02 ({})".format(word, function))
+    return "The word of the day is: \x02{}\x02 ({})".format(word, function)

@@ -362,4 +362,4 @@ def me(text, conn, chan_name):
 @asyncio.coroutine
 @hook.command("eval", permissions=["bot.manage"])
 def eval_command(bot, conn, event, text):
-    return eval(text, globals(), {"bot": bot, "conn": conn, "event": event})
+    return str(eval(text, globals(), {"bot": bot, "conn": conn, "event": event}))

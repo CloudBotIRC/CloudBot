@@ -3,6 +3,7 @@ from collections import deque
 import datetime
 import logging
 import re
+import itertools
 
 from cloudbot.event import EventType
 from cloudbot.permissions import PermissionManager
@@ -17,6 +18,15 @@ symbol_to_mode = {
     # TODO: more of these, for half-op and stuff
 }
 
+history_key = "cloudbot:connections:{}:channels:{}:history"
+
+
+def grouper(iterable, n, fillvalue=None):
+    "Collect data into fixed-length chunks or blocks"
+    # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx"
+    args = [iter(iterable)] * n
+    return itertools.zip_longest(*args, fillvalue=fillvalue)
+
 
 class Connection:
     """
@@ -24,7 +34,6 @@ class Connection:
     :type bot: cloudbot.bot.CloudBot
     :type loop: asyncio.events.AbstractEventLoop
     :type name: str
-    :type readable_name: str
     :type channels: dict[str, Channel]
     :type config: dict[str, str | dict | list]
     :type bot_nick: str
@@ -32,11 +41,10 @@ class Connection:
     :type waiting_messages: dict[(str, str, re.__Regex), list(asyncio.Future)]
     """
 
-    def __init__(self, bot, name, bot_nick, *, readable_name, config):
+    def __init__(self, bot, name, bot_nick, *, config):
         """
         :type bot: cloudbot.bot.CloudBot
         :type name: str
-        :type readable_name: str
         :type bot_nick: str
         :type config: dict[str, unknown]
         """
@@ -44,7 +52,6 @@ class Connection:
         self.loop = bot.loop
         self.name = name
         self.bot_nick = bot_nick
-        self.readable_name = readable_name
 
         self.channels = CaseInsensitiveDict()
 
@@ -174,7 +181,7 @@ class Connection:
                 logger.warning("First mention of channel {} was from event type {}".format(event.chan_name, event.type))
             elif event.nick.lower() != self.bot_nick.lower():
                 logger.warning("First join of channel {} was {}".format(event.chan_name, event.nick))
-            channel = Channel(event.chan_name)
+            channel = Channel(self.name, event.chan_name)
             self.channels[event.chan_name] = channel
 
         event.channel = channel
@@ -190,15 +197,15 @@ class Connection:
                 return
 
         if event.type is EventType.message:
-            channel.track_message(event)
+            yield from channel.track_message(event)
         elif event.type is EventType.join:
-            channel.track_join(event)
+            yield from channel.track_join(event)
         elif event.type is EventType.part:
-            channel.track_part(event)
+            yield from channel.track_part(event)
         elif event.type is EventType.kick:
-            channel.track_kick(event)
+            yield from channel.track_kick(event)
         elif event.type is EventType.topic:
-            channel.track_topic(event)
+            yield from channel.track_topic(event)
         elif event.irc_command == 'MODE':
             channel.track_mode(event)
         elif event.irc_command == '353':
@@ -210,7 +217,7 @@ class Connection:
             return
 
         if event.nick.lower() == self.bot_nick.lower():
-            logger.info("[{}] Bot nick changed from {} to {}.".format(self.readable_name, self.bot_nick, event.content))
+            logger.info("[{}] Bot nick changed from {} to {}.".format(self.name, self.bot_nick, event.content))
             self.bot_nick = event.content
 
         event.channels.clear()  # We will re-set all relevant channels below
@@ -262,69 +269,122 @@ class User:
         self.mode = mode
 
 
+def _parse_history_data(data, score=None):
+    split = data.decode().split("\n")
+    try:
+        event_type = getattr(EventType, split[0])
+    except AttributeError:
+        event_type = EventType.other
+    if score:
+        return (score, event_type,) + tuple(split[1:])
+    else:
+        return (event_type,) + tuple(split[1:])
+
+
 class Channel:
     """
     name: the name of this channel
     users: A dict from nickname to User in this channel
     user_modes: A dict from User to an str containing all of the user's modes in this channel
     history: A list of (User, timestamp, message content)
+    :type connection: str
     :type name: str
     :type users: dict[str, User]
     :type user_modes: dict[User, str]
-    :type history: deque[(User, datetime, str)]
     """
 
-    def __init__(self, name):
+    def __init__(self, connection, name):
+        self.connection = connection
         self.name = name
         self.users = CaseInsensitiveDict()
         self.user_modes = {}
         self.history = deque(maxlen=100)
         self.topic = ""
 
+    @property
+    def _db_key(self):
+        return history_key.format(self.connection.lower(), self.name.lower())
+
+    @asyncio.coroutine
+    def _add_history(self, event, *variables):
+        """
+        Adds an event to this channels history
+        :type event: cloudbot.event.Event
+        """
+        to_store = '\n'.join(itertools.chain((event.type.name,), (str(v) for v in variables)))
+        score = (datetime.datetime.utcnow() - datetime.datetime.utcfromtimestamp(0)).total_seconds()
+        yield from event.async(event.db.zadd, self._db_key, **{to_store: score})
+
+    @asyncio.coroutine
+    def get_history(self, event, min_time, with_timestamps=False):
+        """
+        :type event: cloudbot.event.Event
+        :type min_time: datetime.datetime
+        :rtype: [(EventType, str, str)] | [(datetime.datetime, EventType, str, str)]
+        :param event: An event to access database from
+        :param min_time: The minimum time to get history from
+        :return: List of (Type, nickname, other data),
+                    or list of (timestamp, nickname, other data) if with_timestamps=True
+        """
+        min_score = (min_time - datetime.datetime.utcfromtimestamp(0)).total_seconds()
+        max_score = "+inf"
+        raw_result = yield from event.async(event.db.zrangebyscore, self._db_key, min_score, max_score,
+                                            withscores=with_timestamps)
+
+        if with_timestamps:
+            return [_parse_history_data(data, score) for data, score in grouper(raw_result, 2)]
+        else:
+            return [_parse_history_data(data) for data in raw_result]
+
+    @asyncio.coroutine
     def track_message(self, event):
         """
         Adds a message to this channel's history, adding user info from the message as well
         :type event: cloudbot.event.Event
         """
-        user = self.users[event.nick.lower()]
+        user = self.users[event.nick]
         if not user.mask_known:
             user.ident = event.user
             user.host = event.host
             user.mask = event.mask
+        yield from self._add_history(event, user.nick, event.content)
+        self.history.append((EventType.message, user.nick, datetime.datetime.utcnow(), event.content))
 
-        self.history.append((EventType.message, user.nick, datetime.datetime.now(), event.content))
-
+    @asyncio.coroutine
     def track_join(self, event):
         """
         :type event: cloudbot.event.Event
         """
         self.users[event.nick] = User(event.nick, ident=event.user, host=event.host, mask=event.mask, mode='')
-        self.history.append((EventType.join, event.nick, datetime.datetime.now(), None))
+        yield from self._add_history(event, event.nick)
 
+    @asyncio.coroutine
     def track_part(self, event):
         """
         :type event: cloudbot.event.Event
         """
         del self.users[event.nick]
-        self.history.append((EventType.part, event.nick, datetime.datetime.now(), event.content))
+        yield from self._add_history(event, event.nick, event.content)
 
+    @asyncio.coroutine
     def track_quit(self, event):
         """
         :type event: cloudbot.event.Event
         """
         del self.users[event.nick]
-        self.history.append((EventType.quit, event.nick, datetime.datetime.now(), event.content))
+        yield from self._add_history(event, event.nick, event.content)
 
+    @asyncio.coroutine
     def track_kick(self, event):
         """
         :type event: cloudbot.event.Event
         """
         del self.users[event.target]
-        # TODO: Better way of storing both kicker and target in history
-        self.history.append((EventType.kick, event.nick, datetime.datetime.now(), (event.target, event.content)))
+        yield from self._add_history(event, event.nick, event.target, event.content)
 
+    @asyncio.coroutine
     def track_nick(self, event):
-        user = self.users[event.nick.lower()]
+        user = self.users[event.nick]
 
         if not user.mask_known:
             user.ident = event.user
@@ -336,12 +396,18 @@ class Channel:
 
         del self.users[event.nick]
 
+    @asyncio.coroutine
     def track_topic(self, event):
         """
         :type event: cloudbot.event.Event
         """
+        user = self.users[event.nick]
+        if not user.mask_known:
+            user.ident = event.user
+            user.host = event.host
+            user.mask = event.mask
         self.topic = event.content
-        self.history.append((EventType.topic, event.nick, datetime.datetime.now(), event.content))
+        yield from self._add_history(event, user.nick, event.content)
 
     def track_mode(self, event):
         """

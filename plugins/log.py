@@ -72,7 +72,7 @@ def format_event(event):
     # Setup arguments
 
     args = {
-        "server": event.conn.readable_name, "target": event.target, "channel": event.chan_name, "nick": event.nick,
+        "server": event.conn.name, "target": event.target, "channel": event.chan_name, "nick": event.nick,
         "user": event.user, "host": event.host
     }
 
@@ -140,7 +140,7 @@ def format_irc_event(event, args):
 
     # Format using the default raw format
 
-    return irc_default.format(server=event.conn.readable_name, irc_raw=event.irc_raw)
+    return irc_default.format(server=event.conn.name, irc_raw=event.irc_raw)
 
 # +--------------+
 # | File logging |

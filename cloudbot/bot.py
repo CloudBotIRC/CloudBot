@@ -21,7 +21,7 @@ def clean_name(n):
     :type n: str
     :rtype: str
     """
-    return re.sub('[^A-Za-z0-9_]+', '', n.replace(" ", "_"))
+    return re.sub('\s+', '', n.lower())
 
 
 class CloudBot:
@@ -87,16 +87,15 @@ class CloudBot:
         """ Create a BotConnection for all the networks defined in the config """
         for config in self.config['connections']:
             # strip all spaces and capitalization from the connection name
-            readable_name = config['name']
-            name = clean_name(readable_name)
+            name = clean_name(config['name'])
             nick = config['nick']
             server = config['connection']['server']
             port = config['connection'].get('port', 6667)
 
-            self.connections.append(IrcConnection(self, name, nick, config=config, readable_name=readable_name,
+            self.connections.append(IrcConnection(self, name, nick, config=config,
                                                   server=server, port=port,
                                                   use_ssl=config['connection'].get('ssl', False)))
-            logger.debug("[{}] Created connection.".format(readable_name))
+            logger.debug("[{}] Created connection.".format(name))
 
     @asyncio.coroutine
     def stop(self, reason=None, *, restart=False):
@@ -107,7 +106,7 @@ class CloudBot:
             if not connection.connected:
                 # Don't quit a connection that hasn't connected
                 continue
-            logger.debug("[{}] Closing connection.".format(connection.readable_name))
+            logger.debug("[{}] Closing connection.".format(connection.name))
 
             connection.quit(reason)
 

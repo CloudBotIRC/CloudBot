@@ -36,12 +36,11 @@ class IrcConnection(Connection):
     :type _ignore_cert_errors: bool
     """
 
-    def __init__(self, bot, name, bot_nick, *, readable_name, config, server, port=6667, use_ssl=False,
+    def __init__(self, bot, name, bot_nick, *, config, server, port=6667, use_ssl=False,
                  ignore_cert_errors=True, timeout=300):
         """
         :type bot: cloudbot.bot.CloudBot
         :type name: str
-        :type readable_name: str
         :type bot_nick: str
         :type config: dict[str, unknown]
         :type server: str
@@ -50,7 +49,7 @@ class IrcConnection(Connection):
         :type ignore_cert_errors: bool
         :type timeout: int
         """
-        super().__init__(bot, name, bot_nick, readable_name=readable_name, config=config)
+        super().__init__(bot, name, bot_nick, config=config)
 
         self.use_ssl = use_ssl
         self._ignore_cert_errors = ignore_cert_errors
@@ -95,11 +94,11 @@ class IrcConnection(Connection):
             return
 
         if self._connected:
-            logger.info("[{}] Reconnecting".format(self.readable_name))
+            logger.info("[{}] Reconnecting".format(self.name))
             self._transport.close()
         else:
             self._connected = True
-            logger.info("[{}] Connecting".format(self.readable_name))
+            logger.info("[{}] Connecting".format(self.name))
 
         self._transport, self._protocol = yield from self.loop.create_connection(
             lambda: _IrcProtocol(self), host=self.server, port=self.port, ssl=self.ssl_context)
@@ -144,7 +143,7 @@ class IrcConnection(Connection):
     def join(self, channel):
         if channel not in self.channels:
             self.cmd("JOIN", channel)
-            self.channels[channel] = Channel(channel)
+            self.channels[channel] = Channel(self.name, channel)
 
     def part(self, channel):
         if channel in self.channels:
@@ -196,9 +195,9 @@ class IrcConnection(Connection):
         :type line: str
         """
         if log_hide is not None:
-            logger.info("[{}] >> {}".format(self.readable_name, line.replace(log_hide, "<hidden>")))
+            logger.info("[{}] >> {}".format(self.name, line.replace(log_hide, "<hidden>")))
         else:
-            logger.info("[{}] >> {}".format(self.readable_name, line))
+            logger.info("[{}] >> {}".format(self.name, line))
         asyncio.async(self._protocol.send(line), loop=self.loop)
 
     @property
@@ -281,14 +280,14 @@ class _IrcProtocol(asyncio.Protocol):
         if exc is None:
             # we've been closed intentionally, so don't reconnect
             return
-        logger.info("[{}] Connection lost.".format(self.conn.readable_name))
+        logger.info("[{}] Connection lost.".format(self.conn.name))
         asyncio.async(self.conn.connect(), loop=self.loop)
 
     def eof_received(self):
         self._connected = False
         # create a new connected_future for when we are connected.
         self._connected_future = asyncio.Future(loop=self.loop)
-        logger.info("[{}] EOF received.".format(self.conn.readable_name))
+        logger.info("[{}] EOF received.".format(self.conn.name))
         asyncio.async(self.conn.connect(), loop=self.loop)
         return False
 
@@ -313,7 +312,7 @@ class _IrcProtocol(asyncio.Protocol):
                 prefix_line_match = irc_prefix_re.match(line)
                 if prefix_line_match is None:
                     logger.critical("[{}] Received invalid IRC line '{}' from {}".format(
-                        self.conn.readable_name, line, self.conn.describe_server()))
+                        self.conn.name, line, self.conn.describe_server()))
                     continue
 
                 netmask_prefix, command, params = prefix_line_match.groups()
@@ -333,7 +332,7 @@ class _IrcProtocol(asyncio.Protocol):
                 noprefix_line_match = irc_noprefix_re.match(line)
                 if noprefix_line_match is None:
                     logger.critical("[{}] Received invalid IRC line '{}' from {}".format(
-                        self.conn.readable_name, line, self.conn.describe_server()))
+                        self.conn.name, line, self.conn.describe_server()))
                     continue
                 command = noprefix_line_match.group(1)
                 params = noprefix_line_match.group(2)

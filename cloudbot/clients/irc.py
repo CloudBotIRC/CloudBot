@@ -118,6 +118,10 @@ class IrcConnection(Connection):
         else:
             self.cmd("QUIT")
 
+        # Log ourselves quitting
+        quit_event = Event(bot=self.bot, conn=self, event_type=EventType.quit, nick=self.bot_nick)
+        yield from self._process_quit(quit_event)
+
     def close(self):
         if not self._quit:
             self.quit()

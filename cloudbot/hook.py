@@ -32,6 +32,8 @@ class _DecoratorClass():
             # noinspection PyUnresolvedReferences
             function.bot_hooks = [self]
 
+        return function
+
 
 class OnStartDecorator(_DecoratorClass):
     """

@@ -138,7 +138,7 @@ class CommandDecorator(_DecoratorClass):
             self.main_alias = None
 
     def __call__(self, function):
-        super().__call__(function)
+        result = super().__call__(function)
 
         if self.triggers is None:
             trigger = function.__name__
@@ -149,6 +149,8 @@ class CommandDecorator(_DecoratorClass):
             self.doc = function.__doc__.split('\n', 1)[0]
         else:
             self.doc = None
+
+        return result  # Return the result of super().__call__(function)
 
 
 class IrcRawDecorator(_DecoratorClass):

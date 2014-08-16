@@ -38,7 +38,6 @@ def find_hooks(title, module):
     for name, func in module.__dict__.items():
         if hasattr(func, "bot_hooks"):
             # if it has cloudbot hook
-
             for hook in func.bot_hooks:
                 hook_type = hook.type
                 hook_class = _hook_classes[hook_type]
@@ -320,13 +319,12 @@ class Hook:
     """
     type = None  # to be assigned in subclasses
 
-    def __init__(self, plugin, func_hook):
+    def __init__(self, plugin, hook_decorator):
         """
         :type plugin: str
-        :type func_hook: hook._Hook
         """
         self.plugin = plugin
-        self.function = func_hook.function
+        self.function = hook_decorator.function
         self.function_name = self.function.__name__
 
         self.required_args = inspect.getargspec(self.function)[0]
@@ -338,13 +336,13 @@ class Hook:
         else:
             self.threaded = True
 
-        self.permissions = func_hook.kwargs.pop("permissions", [])
-        self.single_thread = func_hook.kwargs.pop("single_instance", False)
-        self.run_first = func_hook.kwargs.pop("run_first", False)
+        self.permissions = hook_decorator.kwargs.pop("permissions", [])
+        self.single_thread = hook_decorator.kwargs.pop("single_instance", False)
+        self.run_first = hook_decorator.kwargs.pop("run_first", False)
 
-        if func_hook.kwargs:
+        if hook_decorator.kwargs:
             # we should have popped all the args, so warn if there are any left
-            logger.warning("Ignoring extra args {} from {}".format(func_hook.kwargs, self.description))
+            logger.warning("Ignoring extra args {} from {}".format(hook_decorator.kwargs, self.description))
 
     @property
     def description(self):
@@ -368,20 +366,20 @@ class CommandHook(Hook):
     """
     type = HookType.command
 
-    def __init__(self, plugin, cmd_hook):
+    def __init__(self, plugin, decorator):
         """
         :type plugin: str
-        :type cmd_hook: cloudbot.hook._CommandHook
+        :type decorator: cloudbot.hook.CommandDecorator
         """
-        self.auto_help = cmd_hook.kwargs.pop("autohelp", True)
+        self.auto_help = decorator.kwargs.pop("autohelp", True)
 
-        self.name = cmd_hook.main_alias
-        self.aliases = list(cmd_hook.aliases)  # turn the set into a list
+        self.name = decorator.main_alias
+        self.aliases = list(decorator.triggers)  # turn the set into a list
         self.aliases.remove(self.name)
         self.aliases.insert(0, self.name)  # make sure the name, or 'main alias' is in position 0
-        self.doc = cmd_hook.doc
+        self.doc = decorator.doc
 
-        super().__init__(plugin, cmd_hook)
+        super().__init__(plugin, decorator)
 
     def __repr__(self):
         return super().__repr__(name=self.name, aliases=self.aliases[1:])
@@ -393,14 +391,14 @@ class RegexHook(Hook):
     """
     type = HookType.regex
 
-    def __init__(self, plugin, regex_hook):
+    def __init__(self, plugin, decorator):
         """
         :type plugin: Plugin
-        :type regex_hook: cloudbot.hook._RegexHook
+        :type decorator: cloudbot.hook.RegexDecorator
         """
-        self.regexes = regex_hook.regexes
+        self.regexes = decorator.triggers
 
-        super().__init__(plugin, regex_hook)
+        super().__init__(plugin, decorator)
 
     def __repr__(self):
         return super().__repr__(triggers=", ".join(regex.pattern for regex in self.regexes))
@@ -412,14 +410,14 @@ class RawHook(Hook):
     """
     type = HookType.irc_raw
 
-    def __init__(self, plugin, irc_raw_hook):
+    def __init__(self, plugin, decorator):
         """
         :type plugin: Plugin
-        :type irc_raw_hook: cloudbot.hook._RawHook
+        :type decorator: cloudbot.hook.IrcRawDecorator
         """
-        self.triggers = irc_raw_hook.triggers
+        self.triggers = decorator.triggers
 
-        super().__init__(plugin, irc_raw_hook)
+        super().__init__(plugin, decorator)
 
     def is_catch_all(self):
         return "*" in self.triggers
@@ -434,14 +432,14 @@ class EventHook(Hook):
     """
     type = HookType.event
 
-    def __init__(self, plugin, event_hook):
+    def __init__(self, plugin, decorator):
         """
         :type plugin: Plugin
-        :type event_hook: cloudbot.hook._EventHook
+        :type decorator: cloudbot.hook.EventDecorator
         """
-        self.types = event_hook.types
+        self.types = decorator.triggers
 
-        super().__init__(plugin, event_hook)
+        super().__init__(plugin, decorator)
 
 
 class SieveHook(Hook):

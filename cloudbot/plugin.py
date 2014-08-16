@@ -203,7 +203,6 @@ class PluginManager:
         :type hook: Hook
         """
         if self.bot.config.get("logging", {}).get("show_plugin_loading", True):
-            logger.info("Loaded {}".format(hook))
             logger.debug("Loaded {}".format(repr(hook)))
 
     @asyncio.coroutine
@@ -351,7 +350,7 @@ class Hook:
         return "{}:{}".format(self.plugin, self.function_name)
 
     def __repr__(self, **kwargs):
-        result = "type: {}, plugin: {}, permissions: {}, ensure_first: {}, single_thread: {}, threaded: {}".format(
+        result = "type: {}, plugin: {}, permissions: {}, run_first: {}, single_instance: {}, threaded: {}".format(
             self.type.name, self.plugin, self.permissions, self.run_first, self.single_thread, self.threaded)
         if kwargs:
             result = ", ".join(itertools.chain(("{}: {}".format(*item) for item in kwargs.items()), (result,)))
@@ -371,7 +370,7 @@ class CommandHook(Hook):
     def __init__(self, plugin, cmd_hook):
         """
         :type plugin: str
-        :type cmd_hook: cloudbot.util.hook._CommandHook
+        :type cmd_hook: cloudbot.hook._CommandHook
         """
         self.auto_help = cmd_hook.kwargs.pop("autohelp", True)
 
@@ -386,9 +385,6 @@ class CommandHook(Hook):
     def __repr__(self):
         return super().__repr__(name=self.name, aliases=self.aliases[1:])
 
-    def __str__(self):
-        return "command {} from {}".format("/".join(self.aliases), self.plugin)
-
 
 class RegexHook(Hook):
     """
@@ -399,7 +395,7 @@ class RegexHook(Hook):
     def __init__(self, plugin, regex_hook):
         """
         :type plugin: Plugin
-        :type regex_hook: cloudbot.util.hook._RegexHook
+        :type regex_hook: cloudbot.hook._RegexHook
         """
         self.regexes = regex_hook.regexes
 
@@ -407,9 +403,6 @@ class RegexHook(Hook):
 
     def __repr__(self):
         return super().__repr__(triggers=", ".join(regex.pattern for regex in self.regexes))
-
-    def __str__(self):
-        return "regex {} from {}".format(self.function_name, self.plugin)
 
 
 class RawHook(Hook):
@@ -421,34 +414,17 @@ class RawHook(Hook):
     def __init__(self, plugin, irc_raw_hook):
         """
         :type plugin: Plugin
-        :type irc_raw_hook: cloudbot.util.hook._RawHook
+        :type irc_raw_hook: cloudbot.hook._RawHook
         """
-        super().__init__(plugin, irc_raw_hook)
-
         self.triggers = irc_raw_hook.triggers
+
+        super().__init__(plugin, irc_raw_hook)
 
     def is_catch_all(self):
         return "*" in self.triggers
 
     def __repr__(self):
         return super().__repr__(triggers=self.triggers)
-
-    def __str__(self):
-        return "irc raw {} ({}) from {}".format(self.function_name, ",".join(self.triggers), self.plugin)
-
-
-class SieveHook(Hook):
-    type = HookType.sieve
-
-    def __init__(self, plugin, sieve_hook):
-        """
-        :type plugin: Plugin
-        :type sieve_hook: cloudbot.util.hook._SieveHook
-        """
-        super().__init__(plugin, sieve_hook)
-
-    def __str__(self):
-        return "sieve {} from {}".format(self.function_name, self.plugin)
 
 
 class EventHook(Hook):
@@ -460,43 +436,23 @@ class EventHook(Hook):
     def __init__(self, plugin, event_hook):
         """
         :type plugin: Plugin
-        :type event_hook: cloudbot.util.hook._EventHook
+        :type event_hook: cloudbot.hook._EventHook
         """
-        super().__init__(plugin, event_hook)
-
         self.types = event_hook.types
 
-    def __str__(self):
-        return "event {} ({}) from {}".format(self.function_name, ",".join(str(t) for t in self.types),
-                                              self.plugin)
+        super().__init__(plugin, event_hook)
+
+
+class SieveHook(Hook):
+    type = HookType.sieve
 
 
 class OnStartHook(Hook):
     type = HookType.on_start
 
-    def __init__(self, plugin, on_load_hook):
-        """
-        :type plugin: Plugin
-        :type on_load_hook: cloudbot.util.hook._OnStartHook
-        """
-        super().__init__(plugin, on_load_hook)
-
-    def __str__(self):
-        return "on_start {} from {}".format(self.function_name, self.plugin)
-
 
 class OnStopHook(Hook):
     type = HookType.on_stop
-
-    def __init__(self, plugin, on_load_hook):
-        """
-        :type plugin: Plugin
-        :type on_load_hook: cloudbot.util.hook._OnStartHook
-        """
-        super().__init__(plugin, on_load_hook)
-
-    def __str__(self):
-        return "on_stop {} from {}".format(self.function_name, self.plugin)
 
 
 _hook_type_to_plugin = {

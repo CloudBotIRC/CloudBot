@@ -44,7 +44,7 @@ def find_hooks(title, module):
                 hooks_dict[hook_type].append(hook_class(title, hook))
 
             # delete the hook to free memory
-            del func.plugin_hook
+            del func.bot_hooks
 
     return hooks_dict
 

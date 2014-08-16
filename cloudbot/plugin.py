@@ -299,8 +299,8 @@ class PluginManager:
 
     @asyncio.coroutine
     def run_shutdown_hooks(self):
-        yield from asyncio.gather((self.launch(hook, Event(bot=self.bot, hook=hook)) for hook in self.shutdown_hooks),
-                                  loop=self.bot.loop)
+        tasks = (self.launch(hook, Event(bot=self.bot, hook=hook)) for hook in self.shutdown_hooks)
+        yield from asyncio.gather(*tasks, loop=self.bot.loop)
 
 
 class Hook:

@@ -357,6 +357,53 @@ class Hook:
         return "{}[{}]".format(type(self).__name__, result)
 
 
+class OnStartHook(Hook):
+    type = HookType.on_start
+
+
+class OnStopHook(Hook):
+    type = HookType.on_stop
+
+
+class SieveHook(Hook):
+    type = HookType.sieve
+
+
+class EventHook(Hook):
+    """
+    :type types: set[cloudbot.event.EventType]
+    """
+    type = HookType.event
+
+    def __init__(self, plugin, decorator):
+        """
+        :type plugin: Plugin
+        :type decorator: cloudbot.hook.EventDecorator
+        """
+        self.types = decorator.triggers
+
+        super().__init__(plugin, decorator)
+
+
+class RegexHook(Hook):
+    """
+    :type regexes: set[re.__Regex]
+    """
+    type = HookType.regex
+
+    def __init__(self, plugin, decorator):
+        """
+        :type plugin: Plugin
+        :type decorator: cloudbot.hook.RegexDecorator
+        """
+        self.regexes = decorator.triggers
+
+        super().__init__(plugin, decorator)
+
+    def __repr__(self):
+        return super().__repr__(triggers=", ".join(regex.pattern for regex in self.regexes))
+
+
 class CommandHook(Hook):
     """
     :type name: str
@@ -385,25 +432,6 @@ class CommandHook(Hook):
         return super().__repr__(name=self.name, aliases=self.aliases[1:])
 
 
-class RegexHook(Hook):
-    """
-    :type regexes: set[re.__Regex]
-    """
-    type = HookType.regex
-
-    def __init__(self, plugin, decorator):
-        """
-        :type plugin: Plugin
-        :type decorator: cloudbot.hook.RegexDecorator
-        """
-        self.regexes = decorator.triggers
-
-        super().__init__(plugin, decorator)
-
-    def __repr__(self):
-        return super().__repr__(triggers=", ".join(regex.pattern for regex in self.regexes))
-
-
 class RawHook(Hook):
     """
     :type triggers: set[str]
@@ -426,40 +454,12 @@ class RawHook(Hook):
         return super().__repr__(triggers=self.triggers)
 
 
-class EventHook(Hook):
-    """
-    :type types: set[cloudbot.event.EventType]
-    """
-    type = HookType.event
-
-    def __init__(self, plugin, decorator):
-        """
-        :type plugin: Plugin
-        :type decorator: cloudbot.hook.EventDecorator
-        """
-        self.types = decorator.triggers
-
-        super().__init__(plugin, decorator)
-
-
-class SieveHook(Hook):
-    type = HookType.sieve
-
-
-class OnStartHook(Hook):
-    type = HookType.on_start
-
-
-class OnStopHook(Hook):
-    type = HookType.on_stop
-
-
 _hook_classes = {
-    HookType.command: CommandHook,
-    HookType.regex: RegexHook,
-    HookType.irc_raw: RawHook,
-    HookType.sieve: SieveHook,
-    HookType.event: EventHook,
     HookType.on_start: OnStartHook,
     HookType.on_stop: OnStopHook,
+    HookType.sieve: SieveHook,
+    HookType.event: EventHook,
+    HookType.regex: RegexHook,
+    HookType.command: CommandHook,
+    HookType.irc_raw: RawHook,
 }

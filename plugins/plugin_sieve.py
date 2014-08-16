@@ -16,7 +16,7 @@ channel_buckets = {}
 
 
 @asyncio.coroutine
-@hook.sieve
+@hook.sieve()
 def sieve_suite(event):
     """
     :type event: cloudbot.event.Event

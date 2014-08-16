@@ -36,12 +36,13 @@ def find_hooks(title, module):
         hooks_dict[hook_type] = list()
 
     for name, func in module.__dict__.items():
-        if hasattr(func, "plugin_hook"):
+        if hasattr(func, "bot_hooks"):
             # if it has cloudbot hook
-            func_hooks = func.plugin_hook
 
-            for hook_type, func_hook in func_hooks.items():
-                hooks_dict[hook_type].append(_hook_type_to_plugin[hook_type](title, func_hook))
+            for hook in func.bot_hooks:
+                hook_type = hook.type
+                hook_class = _hook_classes[hook_type]
+                hooks_dict[hook_type].append(hook_class(title, hook))
 
             # delete the hook to free memory
             del func.plugin_hook
@@ -455,7 +456,7 @@ class OnStopHook(Hook):
     type = HookType.on_stop
 
 
-_hook_type_to_plugin = {
+_hook_classes = {
     HookType.command: CommandHook,
     HookType.regex: RegexHook,
     HookType.irc_raw: RawHook,

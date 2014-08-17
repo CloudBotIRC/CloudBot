@@ -182,7 +182,7 @@ class PluginManager:
 
         # register regex hooks
         for regex_hook in hooks[HookType.regex]:
-            for regex_match in regex_hook.regexes:
+            for regex_match in regex_hook.triggers:
                 self.regex_hooks.append((regex_match, regex_hook))
             self._log_hook(regex_hook)
 
@@ -343,6 +343,7 @@ class Hook:
         if hook_decorator.kwargs:
             # we should have popped all the args, so warn if there are any left
             logger.warning("Ignoring extra args {} from {}".format(hook_decorator.kwargs, self.description))
+        logger.info("{} created".format(repr(self)))
 
     @property
     def description(self):
@@ -387,7 +388,7 @@ class EventHook(Hook):
 
 class RegexHook(Hook):
     """
-    :type regexes: set[re.__Regex]
+    :type triggers: set[re.__Regex]
     """
     type = HookType.regex
 
@@ -396,12 +397,12 @@ class RegexHook(Hook):
         :type plugin: Plugin
         :type decorator: cloudbot.hook.RegexDecorator
         """
-        self.regexes = decorator.triggers
+        self.triggers = decorator.triggers
 
         super().__init__(plugin, decorator)
 
     def __repr__(self):
-        return super().__repr__(triggers=", ".join(regex.pattern for regex in self.regexes))
+        return super().__repr__(triggers=", ".join(regex.pattern for regex in self.triggers))
 
 
 class CommandHook(Hook):

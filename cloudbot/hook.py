@@ -104,14 +104,15 @@ class RegexDecorator(_DecoratorClass):
             raise ValueError("Must provide at least one trigger")
 
         # Compile all string regex triggers
-        triggers = (re.compile(text) for text in triggers if isinstance(text, str))
+        compiled_triggers = []
+        for trigger in triggers:
+            if isinstance(trigger, str):
+                trigger = re.compile(trigger)
+            if not hasattr(trigger, "search"):
+                raise ValueError("Invalid regex trigger '{}'".format(trigger))
+            compiled_triggers.append(trigger)
 
-        # Ensure all triggers are valid
-        for regex_trigger in triggers:
-            if not hasattr(regex_trigger, "search"):
-                raise ValueError("Invalid regex trigger '{}'".format(regex_trigger))
-
-        self.triggers = triggers
+        self.triggers = tuple(compiled_triggers)
         self.kwargs = kwargs
 
 

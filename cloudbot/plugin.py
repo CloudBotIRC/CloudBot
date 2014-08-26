@@ -182,8 +182,8 @@ class PluginManager:
 
         # register regex hooks
         for regex_hook in hooks[HookType.regex]:
-            for regex_match in regex_hook.triggers:
-                self.regex_hooks.append((regex_match, regex_hook))
+            for regex in regex_hook.triggers:
+                self.regex_hooks.append((regex, regex_hook))
             self._log_hook(regex_hook)
 
         # register sieves
@@ -343,7 +343,6 @@ class Hook:
         if hook_decorator.kwargs:
             # we should have popped all the args, so warn if there are any left
             logger.warning("Ignoring extra args {} from {}".format(hook_decorator.kwargs, self.description))
-        logger.info("{} created".format(repr(self)))
 
     @property
     def description(self):

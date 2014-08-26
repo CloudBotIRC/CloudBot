@@ -1,5 +1,6 @@
 import asyncio
 from fnmatch import fnmatch
+import logging
 
 from cloudbot import hook
 from cloudbot.plugin import HookType
@@ -8,6 +9,8 @@ plugin_info = {
     "plugin_category": "core",
     "command_category_name": "Administration"
 }
+
+logger = logging.getLogger("cloudbot")
 
 
 @asyncio.coroutine
@@ -34,8 +37,14 @@ def ignore_sieve(event):
     mask = event.mask.lower()
     for pattern in ignore_list:
         pattern = pattern.decode()
-        if (pattern.startswith('#') and fnmatch(pattern, event.chan_name)) or fnmatch(mask, pattern):
-            return None
+        if pattern.startswith('#'):
+            if fnmatch(event.chan_name, pattern):
+                logger.info("Ignoring {}: Skipping hook {}".format(event.chan_name, event.hook.description))
+                return None
+        else:
+            if fnmatch(mask, pattern):
+                logger.info("Ignoring {}: Skipping hook {}".format(event.mask, event.hook.description))
+                return None
 
     return event
 

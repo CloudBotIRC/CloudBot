@@ -367,7 +367,6 @@ class _IrcProtocol(asyncio.Protocol):
             else:
                 event_type = EventType.other
 
-
             # Parse for CTCP
             if event_type is EventType.message and content.count("\x01") >= 2 and content.startswith("\x01"):
                 # Remove the first \x01, then rsplit to remove the last one, and ignore text after the last \x01

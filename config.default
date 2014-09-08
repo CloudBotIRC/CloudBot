@@ -7,7 +7,9 @@
                 "port": 6667,
                 "ssl": false,
                 "ignore_cert": true,
-                "password": ""
+                "password": "",
+                "bind_addr": "0.0.0.0",
+                "bind_port": 0
             },
             "nick": "MyCloudBot",
             "user": "cloudbot",

@@ -35,7 +35,7 @@ class IrcClient(Client):
     """
 
     def __init__(self, bot, name, nick, *, readable_name, channels=None, config=None,
-                 server, port=6667, use_ssl=False, ignore_cert_errors=True, timeout=300):
+                 server, port=6667, use_ssl=False, ignore_cert_errors=True, timeout=300, local_bind=("0.0.0.0", 0)):
         """
         :type bot: cloudbot.bot.CloudBot
         :type name: str
@@ -56,7 +56,7 @@ class IrcClient(Client):
         self._timeout = timeout
         self.server = server
         self.port = port
-
+        self.local_bind = local_bind
         # create SSL context
         if self.use_ssl:
             self.ssl_context = SSLContext(PROTOCOL_SSLv23)
@@ -101,7 +101,7 @@ class IrcClient(Client):
             logger.info("[{}] Connecting".format(self.readable_name))
 
         self._transport, self._protocol = yield from self.loop.create_connection(
-            lambda: _IrcProtocol(self), host=self.server, port=self.port, ssl=self.ssl_context)
+            lambda: _IrcProtocol(self), host=self.server, port=self.port, ssl=self.ssl_context, local_addr=self.local_bind)
 
         # send the password, nick, and user
         self.set_pass(self.config["connection"].get("password"))

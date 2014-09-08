@@ -125,10 +125,11 @@ class CloudBot:
             nick = conf['nick']
             server = conf['connection']['server']
             port = conf['connection'].get('port', 6667)
+            local_bind = (conf['connection'].get('bind_addr', '0.0.0.0'), conf['connection'].get('bind_port', 0))
 
             self.connections.append(IrcClient(self, name, nick, config=conf, channels=conf['channels'],
                                               readable_name=readable_name, server=server, port=port,
-                                              use_ssl=conf['connection'].get('ssl', False)))
+                                              use_ssl=conf['connection'].get('ssl', False), local_bind=local_bind))
             logger.debug("[{}] Created connection.".format(readable_name))
 
     @asyncio.coroutine

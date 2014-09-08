@@ -24,14 +24,13 @@ def correction(match, conn, chan, message):
             # don't correct corrections, it gets really confusing
             continue
         if find_re.search(msg):
-            act_stripped = False
             if "\x01ACTION" in msg:
-                msg = msg.replace("\x01ACTION ", "/me ").replace("\x01", "")
-                act_stripped = True
-            new_msg = find_re.sub("\x02" + replacement + "\x02", msg, count=int(not "g" in flags))
-            message("Correction, <{}> {}".format(nick, new_msg))
+                mod_msg = msg.replace("\x01ACTION ", "/me ").replace("\x01", "")
+            mod_msg = find_re.sub("\x02" + replacement + "\x02", msg, count=int(not "g" in flags))
+            message("Correction, <{}> {}".format(nick, mod_msg))
+            # append to end of history file
             msg = find_re.sub(replacement, msg, count=int(not "g" in flags))
-            conn.history[chan].append((nick, timestamp, "\x01ACTION{}\x01".format(msg) if act_stripped else msg))
+            conn.history[chan].append((nick, timestamp, msg))
             return
         else:
             continue

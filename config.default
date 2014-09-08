@@ -8,7 +8,7 @@
                 "ssl": false,
                 "ignore_cert": true,
                 "password": "",
-                "bind_addr": "0.0.0.0",
+                "bind_addr": "",
                 "bind_port": 0
             },
             "nick": "MyCloudBot",

@@ -29,9 +29,8 @@ def find_plugins(plugin_directories):
     :rtype: collections.Iterable[str]
     """
     for directory_pattern in plugin_directories:
-        logger.info("Matching against directory {}".format(directory_pattern))
         for directory in glob.iglob(directory_pattern):
-            logger.info("Found directory {}".format(directory))
+            logger.info("Loading plugins from {}".format(directory))
             if not os.path.exists(os.path.join(directory, "__init__.py")):
                 with open(os.path.join(directory, "__init__.py"), 'w') as file:
                     file.write('\n') # create blank __init__.py file if none exists

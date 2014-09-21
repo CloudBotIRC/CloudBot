@@ -143,16 +143,19 @@ class PluginManager:
         :type path: str
         """
         file_path = os.path.abspath(path)
-        title = os.path.splitext(os.path.basename(path))[0]
+        relative_path = os.path.relpath(file_path, os.path.curdir)
 
-        module_name = "plugins.{}".format(title)
+        module_name = os.path.splitext(relative_path)[0].replace(os.path.sep, '.')
+        if os.path.altsep:
+            module_name = module_name.replace(os.path.altsep, '.')
+
         try:
             plugin_module = importlib.import_module(module_name)
         except Exception:
             logger.exception("Error loading {}:".format(file_path))
             return
 
-        hooks = find_hooks(title, plugin_module)
+        hooks = find_hooks(module_name, plugin_module)
 
         # proceed to register hooks
 
@@ -160,7 +163,7 @@ class PluginManager:
         for on_start_hook in hooks[HookType.on_start]:
             success = yield from self.launch(on_start_hook, Event(bot=self.bot, hook=on_start_hook))
             if not success:
-                logger.warning("Not registering hooks from plugin {}: on_start hook errored".format(title))
+                logger.warning("Not registering hooks from plugin {}: on_start hook errored".format(module_name))
                 return
 
         # register events
@@ -178,7 +181,7 @@ class PluginManager:
                 if alias in self.commands:
                     logger.warning(
                         "Plugin {} attempted to register command {} which was already registered by {}. "
-                        "Ignoring new assignment.".format(title, alias, self.commands[alias].plugin))
+                        "Ignoring new assignment.".format(module_name, alias, self.commands[alias].plugin))
                 else:
                     self.commands[alias] = command_hook
             self._log_hook(command_hook)

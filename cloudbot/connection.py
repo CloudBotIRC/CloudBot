@@ -290,14 +290,12 @@ class Channel:
     :type connection: str
     :type name: str
     :type users: dict[str, User]
-    :type user_modes: dict[User, str]
     """
 
     def __init__(self, connection, name):
         self.connection = connection
         self.name = name
         self.users = CaseInsensitiveDict()
-        self.user_modes = {}
         self.history = deque(maxlen=100)
         self.topic = ""
 

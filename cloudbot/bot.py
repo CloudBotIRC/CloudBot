@@ -132,7 +132,7 @@ class CloudBot:
     @asyncio.coroutine
     def _init_routine(self):
         # Load plugins
-        yield from self.plugin_manager.load_all(os.path.abspath("plugins"))
+        yield from self.plugin_manager.load_all(self.config.get("plugin_directories", ["plugins"]))
 
         # If we we're stopped while loading plugins, cancel that and just stop
         if not self.running:

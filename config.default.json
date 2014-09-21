@@ -38,10 +38,14 @@
         }
     ],
     "database": {
+        "database": 0,
         "host": "localhost",
-        "port": 6379,
-        "database": 0
+        "port": 6379
     },
+    "plugin_directories": [
+        "plugins",
+        "plugins-*"
+    ],
     "logging": {
         "console_debug": false,
         "file_debug": true,

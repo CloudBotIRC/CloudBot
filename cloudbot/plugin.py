@@ -23,6 +23,21 @@ class HookType(enum.Enum):
     irc_raw = 7,
 
 
+def find_plugins(plugin_directories):
+    """
+    :type plugin_directories: collections.Iterable[str]
+    :rtype: collections.Iterable[str]
+    """
+    for directory_pattern in plugin_directories:
+        logger.info("Matching against directory {}".format(directory_pattern))
+        for directory in glob.iglob(directory_pattern):
+            logger.info("Found directory {}".format(directory))
+            if not os.path.exists(os.path.join(directory, "__init__.py")):
+                with open(os.path.join(directory, "__init__.py"), 'w') as file:
+                    file.write('\n') # create blank __init__.py file if none exists
+            for plugin in glob.iglob(os.path.join(directory, '*.py')):
+                yield plugin
+
 def find_hooks(title, module):
     """
     :type title: str
@@ -110,15 +125,15 @@ class PluginManager:
         self._hook_locks = {}
 
     @asyncio.coroutine
-    def load_all(self, plugin_dir):
+    def load_all(self, plugin_directories):
         """
         Load a plugin from each *.py file in the given directory.
 
-        :type plugin_dir: str
+        :type plugin_directories: collections.Iterable[str]
         """
-        path_list = glob.iglob(os.path.join(plugin_dir, '*.py'))
+        path_list = find_plugins(plugin_directories)
         # Load plugins asynchronously :O
-        yield from asyncio.gather(*[self.load_plugin(path) for path in path_list], loop=self.bot.loop)
+        yield from asyncio.gather(*(self.load_plugin(path) for path in path_list), loop=self.bot.loop)
 
     @asyncio.coroutine
     def load_plugin(self, path):

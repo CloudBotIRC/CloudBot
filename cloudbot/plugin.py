@@ -149,7 +149,7 @@ class PluginManager:
             module_name = module_name.replace(os.path.altsep, '.')
 
         title = module_name
-        if module_name.startswith('plugins.'): # if it is in the default plugin dir, don't prepend plugins. to title
+        if module_name.startswith('plugins.'):  # if it is in the default plugin dir, don't prepend plugins. to title
             title = title[len('plugins.'):]
 
         try:

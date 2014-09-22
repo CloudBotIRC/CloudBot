@@ -223,7 +223,7 @@ class Connection:
         event.channels.clear()  # We will re-set all relevant channels below
         for channel in self.channels.values():
             if event.nick in channel.users:
-                channel.track_nick(event)
+                yield from channel.track_nick(event)
                 event.channels.append(channel)
 
     @asyncio.coroutine

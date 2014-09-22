@@ -354,18 +354,21 @@ class _IrcProtocol(asyncio.Protocol):
 
             # Parse the command and params
 
-            # Content
-            if command_params and command_params[-1].startswith(":"):
-                # If the last param is in the format of `:content` remove the `:` from it, and set content from it
-                content = command_params[-1][1:]
-            else:
-                content = None
-
             # Event type
             if command in irc_command_to_event_type:
                 event_type = irc_command_to_event_type[command]
             else:
                 event_type = EventType.other
+
+            # Content
+            if command_params and command_params[-1].startswith(":"):
+                # If the last param is in the format of `:content` remove the `:` from it, and set content from it
+                content = command_params[-1][1:]
+            elif event_type is EventType.nick:
+                content = command_params[0]
+            else:
+                content = None
+
 
             # Parse for CTCP
             if event_type is EventType.message and content.count("\x01") >= 2 and content.startswith("\x01"):
@@ -387,7 +390,8 @@ class _IrcProtocol(asyncio.Protocol):
                 # 353 format is `:network.name 353 bot_nick = #channel :user1 user2`, if we just used the below,
                 # we would think the channel was the bot_nick
                 channel = command_params[2].lower()
-            elif command_params and (len(command_params) > 2 or not command_params[0].startswith(":")):
+            elif (command_params and (len(command_params) > 2 or not command_params[0].startswith(":"))
+                  and event_type is not EventType.nick):
 
                 if command_params[0].lower() == self.conn.bot_nick.lower():
                     # this is a private message - set the channel to the sender's nick

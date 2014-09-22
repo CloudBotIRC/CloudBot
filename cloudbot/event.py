@@ -106,7 +106,7 @@ class Event:
             self.host = base_event.host
             self.mask = base_event.mask
             self.channel = base_event.channel
-            self.channels = base_event.channel
+            self.channels = base_event.channels
             # irc-specific parameters
             self.irc_raw = base_event.irc_raw
             self.irc_command = base_event.irc_command

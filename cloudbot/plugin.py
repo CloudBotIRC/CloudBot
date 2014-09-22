@@ -150,7 +150,7 @@ class PluginManager:
 
         title = module_name
         if module_name.startswith('plugins.'): # if it is in the default plugin dir, don't prepend plugins. to title
-            title = title[len('plugins.')]
+            title = title[len('plugins.'):]
 
         try:
             plugin_module = importlib.import_module(module_name)

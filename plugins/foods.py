@@ -2,7 +2,7 @@ import re
 import asyncio
 import random
 
-from cloudbot import hook
+from util import hook
 
 cakes = ['Chocolate', 'Ice Cream', 'Angel', 'Boston Cream', 'Birthday', 'Bundt', 'Carrot', 'Coffee', 'Devils', 'Fruit',
          'Gingerbread', 'Pound', 'Red Velvet', 'Stack', 'Welsh', 'Yokan']

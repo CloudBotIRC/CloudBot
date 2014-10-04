@@ -35,7 +35,7 @@ class IrcClient(Client):
     """
 
     def __init__(self, bot, name, nick, *, readable_name, channels=None, config=None,
-                 server, port=6667, use_ssl=False, ignore_cert_errors=True, timeout=300, local_bind=('', 0)):
+                 server, port=6667, use_ssl=False, ignore_cert_errors=True, timeout=300, local_bind=('*', 0)):
         """
         :type bot: cloudbot.bot.CloudBot
         :type name: str

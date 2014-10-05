@@ -125,7 +125,9 @@ class CloudBot:
             nick = conf['nick']
             server = conf['connection']['server']
             port = conf['connection'].get('port', 6667)
-            local_bind = (conf['connection'].get('bind_addr', '*'), conf['connection'].get('bind_port', 0))
+            local_bind = (conf['connection'].get('bind_addr', False), conf['connection'].get('bind_port', 0))
+            if local_bind[0] is False:
+                local_bind = False
 
             self.connections.append(IrcClient(self, name, nick, config=conf, channels=conf['channels'],
                                               readable_name=readable_name, server=server, port=port,

@@ -2,7 +2,6 @@ import asyncio
 import time
 import logging
 import re
-import os
 import gc
 
 import redis
@@ -10,7 +9,7 @@ import redis
 from cloudbot.connection import Connection
 from cloudbot.config import Config
 from cloudbot.plugin import PluginManager
-from cloudbot.event import Event, CommandEvent, RegexEvent, EventType
+from cloudbot.event import Event, CommandHookEvent, RegexHookEvent, EventType
 from cloudbot.clients.irc import IrcConnection
 
 logger = logging.getLogger("bot")
@@ -154,27 +153,27 @@ class CloudBot:
         tasks = []
         command_prefix = event.conn.config.get('command_prefix', '.')
 
-        # Raw IRC hook
-        for raw_hook in self.plugin_manager.catch_all_triggers:
-            # run catch-all coroutine hooks before all others - TODO: Make this a plugin argument
-            if raw_hook.run_first:
-                first.append(self.plugin_manager.launch(raw_hook, Event(hook=raw_hook, base_event=event)))
-            else:
-                tasks.append(self.plugin_manager.launch(raw_hook, Event(hook=raw_hook, base_event=event)))
-        if event.irc_command in self.plugin_manager.raw_triggers:
-            for raw_hook in self.plugin_manager.raw_triggers[event.irc_command]:
+        if hasattr(event, 'irc_command'):
+            # Raw IRC hook
+            for raw_hook in self.plugin_manager.catch_all_triggers:
                 if raw_hook.run_first:
-                    first.append(self.plugin_manager.launch(raw_hook, Event(hook=raw_hook, base_event=event)))
+                    first.append(self.plugin_manager.launch(raw_hook, event))
                 else:
-                    tasks.append(self.plugin_manager.launch(raw_hook, Event(hook=raw_hook, base_event=event)))
+                    tasks.append(self.plugin_manager.launch(raw_hook, event))
+            if event.irc_command in self.plugin_manager.raw_triggers:
+                for raw_hook in self.plugin_manager.raw_triggers[event.irc_command]:
+                    if raw_hook.run_first:
+                        first.append(self.plugin_manager.launch(raw_hook, event))
+                    else:
+                        tasks.append(self.plugin_manager.launch(raw_hook, event))
 
         # Event hooks
         if event.type in self.plugin_manager.event_type_hooks:
             for event_hook in self.plugin_manager.event_type_hooks[event.type]:
                 if event_hook.run_first:
-                    first.append(self.plugin_manager.launch(event_hook, Event(hook=event_hook, base_event=event)))
+                    first.append(self.plugin_manager.launch(event_hook, event))
                 else:
-                    tasks.append(self.plugin_manager.launch(event_hook, Event(hook=event_hook, base_event=event)))
+                    tasks.append(self.plugin_manager.launch(event_hook, event))
 
         if event.type is EventType.message:
             # Commands
@@ -191,22 +190,22 @@ class CloudBot:
                 command = match.group(1).lower()
                 if command in self.plugin_manager.commands:
                     command_hook = self.plugin_manager.commands[command]
-                    command_event = CommandEvent(hook=command_hook, text=match.group(2).strip(),
-                                                 triggered_command=command, base_event=event)
+                    command_event = CommandHookEvent(hook=command_hook, text=match.group(2).strip(),
+                                                     triggered_command=command, base_event=event)
                     if command_hook.run_first:
-                        first.append(self.plugin_manager.launch(command_hook, command_event))
+                        first.append(self.plugin_manager.launch(command_hook, event, command_event))
                     else:
-                        tasks.append(self.plugin_manager.launch(command_hook, command_event))
+                        tasks.append(self.plugin_manager.launch(command_hook, event, command_event))
 
             # Regex hooks
             for regex, regex_hook in self.plugin_manager.regex_hooks:
                 match = regex.search(event.content)
                 if match:
-                    regex_event = RegexEvent(hook=regex_hook, match=match, base_event=event)
+                    regex_event = RegexHookEvent(hook=regex_hook, match=match, base_event=event)
                     if regex_hook.run_first:
-                        first.append(self.plugin_manager.launch(regex_hook, regex_event))
+                        first.append(self.plugin_manager.launch(regex_hook, event, regex_event))
                     else:
-                        tasks.append(self.plugin_manager.launch(regex_hook, regex_event))
+                        tasks.append(self.plugin_manager.launch(regex_hook, event, regex_event))
 
         # Run the tasks
         yield from asyncio.gather(*first, loop=self.loop)

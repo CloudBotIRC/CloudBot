@@ -8,7 +8,7 @@ import os
 import re
 import itertools
 
-from cloudbot.event import Event
+from cloudbot.event import Event, HookEvent
 
 logger = logging.getLogger("cloudbot")
 
@@ -33,9 +33,10 @@ def find_plugins(plugin_directories):
             logger.info("Loading plugins from {}".format(directory))
             if not os.path.exists(os.path.join(directory, "__init__.py")):
                 with open(os.path.join(directory, "__init__.py"), 'w') as file:
-                    file.write('\n') # create blank __init__.py file if none exists
+                    file.write('\n')  # create blank __init__.py file if none exists
             for plugin in glob.iglob(os.path.join(directory, '*.py')):
                 yield plugin
+
 
 def find_hooks(title, module):
     """
@@ -63,23 +64,27 @@ def find_hooks(title, module):
     return hooks_dict
 
 
-def _prepare_parameters(hook, event):
+def _prepare_parameters(hook, base_event, hook_event):
     """
     Prepares arguments for the given hook
 
     :type hook: cloudbot.plugin.Hook
-    :type event: cloudbot.event.Event
+    :type base_event: cloudbot.event.Event
+    :type hook_event: cloudbot.event.HookEvent
     :rtype: list
     """
     parameters = []
     for required_arg in hook.required_args:
-        if hasattr(event, required_arg):
-            value = getattr(event, required_arg)
+        if hasattr(base_event, required_arg):
+            value = getattr(base_event, required_arg)
+            parameters.append(value)
+        elif hasattr(hook_event, required_arg):
+            value = getattr(hook_event, required_arg)
             parameters.append(value)
         else:
             logger.warning("Plugin {} asked for invalid argument '{}', cancelling execution!"
                            .format(hook.description, required_arg))
-            logger.debug("Valid arguments are: {}".format(dir(event)))
+            logger.debug("Valid arguments are: {}".format(dir(base_event) + dir(hook_event)))
             return None
     return parameters
 
@@ -163,8 +168,9 @@ class PluginManager:
         # proceed to register hooks
 
         # run on_start hooks
+        on_start_event = Event(bot=self.bot)
         for on_start_hook in hooks[HookType.on_start]:
-            success = yield from self.launch(on_start_hook, Event(bot=self.bot, hook=on_start_hook))
+            success = yield from self.launch(on_start_hook, on_start_event)
             if not success:
                 logger.warning("Not registering hooks from plugin {}: on_start hook errored".format(title))
                 return
@@ -227,17 +233,18 @@ class PluginManager:
             logger.debug("Loaded {}".format(repr(hook)))
 
     @asyncio.coroutine
-    def _execute_hook(self, hook, event):
+    def _execute_hook(self, hook, base_event, hook_event):
         """
         Runs the specific hook with the given bot and event.
 
         Returns False if the hook errored, True otherwise.
 
         :type hook: cloudbot.plugin.Hook
-        :type event: cloudbot.event.Event
+        :type base_event: cloudbot.event.Event
+        :type hook_event: cloudbot.event.HookEvent
         :rtype: bool
         """
-        parameters = _prepare_parameters(hook, event)
+        parameters = _prepare_parameters(hook, base_event, hook_event)
         if parameters is None:
             return False
 
@@ -250,56 +257,61 @@ class PluginManager:
                 out = yield from hook.function(*parameters)
         except Exception:
             logger.exception("Error in hook {}".format(hook.description))
-            event.message("Error in plugin '{}'.".format(hook.plugin))
+            base_event.message("Error in plugin '{}'.".format(hook.plugin))
             return False
 
         if out is not None:
             if isinstance(out, (list, tuple)):
                 # if there are multiple items in the response, return them on multiple lines
-                event.reply(*out)
+                base_event.reply(*out)
             else:
-                event.reply(*str(out).split('\n'))
+                base_event.reply(*str(out).split('\n'))
 
         return True
 
     @asyncio.coroutine
-    def _sieve(self, sieve, event, hook):
+    def _sieve(self, sieve, event, hook_event):
         """
         :type sieve: cloudbot.plugin.Hook
         :type event: cloudbot.event.Event
-        :type hook: cloudbot.plugin.Hook
+        :type hook_event: cloudbot.event.HookEvent
         :rtype: cloudbot.event.Event
         """
         try:
             if sieve.threaded:
-                result = yield from self.bot.loop.run_in_executor(None, sieve.function, event)
+                result = yield from self.bot.loop.run_in_executor(None, sieve.function, event, hook_event)
             else:
-                result = yield from sieve.function(event)
+                result = yield from sieve.function(event, hook_event)
         except Exception:
-            logger.exception("Error running sieve {} on {}:".format(sieve.description, hook.description))
+            logger.exception("Error running sieve {} on {}:".format(sieve.description, hook_event.hook.description))
             return None
         else:
             return result
 
     @asyncio.coroutine
-    def launch(self, hook, event):
+    def launch(self, hook, base_event, hevent=None):
         """
         Dispatch a given event to a given hook using a given bot object.
 
         Returns False if the hook didn't run successfully, and True if it ran successfully.
 
-        :type event: cloudbot.event.Event | cloudbot.event.CommandEvent
+        :type base_event: cloudbot.event.Event
+        :type hevent: cloudbot.event.HookEvent | cloudbot.event.CommandHookEvent
         :type hook: cloudbot.plugin.Hook | cloudbot.plugin.CommandHook
         :rtype: bool
         """
+
+        if hevent is None:
+            hevent = HookEvent(base_event=base_event, hook=hook)
+
         if hook.type not in (HookType.on_start, HookType.on_stop):  # we don't need sieves on on_start or on_stop hooks.
             for sieve in self.bot.plugin_manager.sieves:
-                event = yield from self._sieve(sieve, event, hook)
-                if event is None:
+                base_event = yield from self._sieve(sieve, base_event, hevent)
+                if base_event is None:
                     return False
 
-        if hook.type is HookType.command and hook.auto_help and not event.text and hook.doc is not None:
-            event.notice_doc()
+        if hook.type is HookType.command and hook.auto_help and not hevent.text and hook.doc is not None:
+            hevent.notice_doc()
             return False
 
         if hook.single_thread:
@@ -310,17 +322,18 @@ class PluginManager:
 
             # Run the plugin with the message, and wait for it to finish
             with (yield from self._hook_locks[key]):
-                result = yield from self._execute_hook(hook, event)
+                result = yield from self._execute_hook(hook, base_event, hevent)
         else:
             # Run the plugin with the message, and wait for it to finish
-            result = yield from self._execute_hook(hook, event)
+            result = yield from self._execute_hook(hook, base_event, hevent)
 
         # Return the result
         return result
 
     @asyncio.coroutine
     def run_shutdown_hooks(self):
-        tasks = (self.launch(hook, Event(bot=self.bot, hook=hook)) for hook in self.shutdown_hooks)
+        shutdown_event = Event(bot=self.bot)
+        tasks = (self.launch(hook, shutdown_event) for hook in self.shutdown_hooks)
         yield from asyncio.gather(*tasks, loop=self.bot.loop)
 
 

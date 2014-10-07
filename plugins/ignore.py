@@ -15,13 +15,14 @@ logger = logging.getLogger("cloudbot")
 
 @asyncio.coroutine
 @hook.sieve()
-def ignore_sieve(event):
+def ignore_sieve(event, hook_event):
     """ blocks events from ignored channels/hosts
     :type event: cloudbot.event.Event
+    :type hook_event: cloudbot.event.HookEvent
     """
     bot = event.bot
     # don't block event hooks
-    if event.hook.type is HookType.event or event.hook.type is HookType.irc_raw:
+    if hook_event.hook.type is HookType.event or hook_event.hook.type is HookType.irc_raw:
         return event
 
     # don't block server messages
@@ -29,7 +30,7 @@ def ignore_sieve(event):
         return event
 
     # don't block an event that could be un-ignoring
-    if event.hook.type is HookType.command and event.hook.function_name == 'unignore':
+    if hook_event.hook.type is HookType.command and hook_event.hook.function_name == 'unignore':
         return event
 
     ignore_list = yield from event.async(bot.db.smembers, 'plugins:ignore:ignored')
@@ -39,11 +40,11 @@ def ignore_sieve(event):
         pattern = pattern.decode()
         if pattern.startswith('#'):
             if fnmatch(event.chan_name, pattern):
-                logger.info("Ignoring {}: Skipping hook {}".format(event.chan_name, event.hook.description))
+                logger.info("Ignoring {}: Skipping hook {}".format(event.chan_name, hook_event.hook.description))
                 return None
         else:
             if fnmatch(mask, pattern):
-                logger.info("Ignoring {}: Skipping hook {}".format(event.mask, event.hook.description))
+                logger.info("Ignoring {}: Skipping hook {}".format(event.mask, hook_event.hook.description))
                 return None
 
     return event

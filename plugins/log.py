@@ -65,7 +65,7 @@ ctcp_known_with_message = ("[{server}:{channel}] {nick} [{user}@{host}] "
 def format_event(event):
     """
     Format an event
-    :type event: cloudbot.event.Event
+    :type event: cloudbot.event.Event | cloudbot.event.IrcEvent
     :rtype: str
     """
 
@@ -88,14 +88,14 @@ def format_event(event):
         return base_formats[event.type].format(**args)
 
     # Try formatting with IRC-formats, if this is an IRC event
-    if event.irc_command is not None:
+    if hasattr(event, 'irc_command'):
         return format_irc_event(event, args)
 
 
 def format_irc_event(event, args):
     """
     Format an IRC event
-    :type event: cloudbot.event.Event
+    :type event: cloudbot.event.IrcEvent
     :param event: The event to format
     :param args: The pre-created arguments
     """
@@ -215,7 +215,7 @@ def get_raw_log_stream(server):
 @hook.irc_raw("*", single_instance=True)
 def log_raw(event):
     """
-    :type event: cloudbot.event.Event
+    :type event: cloudbot.event.IrcEvent
     """
     logging_config = event.bot.config.get('logging', {})
     if not logging_config.get("raw_file_log", False):
@@ -227,7 +227,7 @@ def log_raw(event):
 @hook.irc_raw("*", single_instance=True)
 def log(event):
     """
-    :type event: cloudbot.event.Event
+    :type event: cloudbot.event.IrcEvent
     """
     text = format_event(event)
 

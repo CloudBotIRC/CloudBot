@@ -17,13 +17,14 @@ channel_buckets = {}
 
 @asyncio.coroutine
 @hook.sieve()
-def sieve_suite(event):
+def sieve_suite(event, hook_event):
     """
     :type event: cloudbot.event.Event
+    :type hook_event: cloudbot.event.HookEvent
     """
 
     # check permissions
-    allowed_permissions = event.hook.permissions
+    allowed_permissions = hook_event.hook.permissions
     if allowed_permissions:
         for perm in allowed_permissions:
             if event.has_permission(perm):
@@ -33,7 +34,7 @@ def sieve_suite(event):
             return None
 
     # check command spam tokens
-    if event.hook.type is HookType.command:
+    if hook_event.hook.type is HookType.command:
         if not event.chan_name in channel_buckets:
             _bucket = bucket.TokenBucket(command_limiting_initial_tokens, command_limiting_restore_rate)
             channel_buckets[event.chan_name] = _bucket

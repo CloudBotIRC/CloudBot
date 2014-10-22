@@ -3,9 +3,9 @@ from cloudbot.util import web
 
 
 @hook.command()
-def stock(inp):
+def stock(text):
     """stock <symbol> -- gets stock information"""
-    sym = inp.strip().lower()
+    sym = text.strip().lower()
 
     query = "SELECT * FROM yahoo.finance.quote WHERE symbol=@symbol LIMIT 1"
     quote = web.query(query, {"symbol": sym}).one()

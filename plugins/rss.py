@@ -10,10 +10,7 @@ def rss(text, message):
 
     # preset news feeds
     strip = text.lower().strip()
-    if strip == "bukkit":
-        feed = "http://dl.bukkit.org/downloads/craftbukkit/feeds/latest-rb.rss"
-        limit = 1
-    elif strip == "xkcd":
+    if strip == "xkcd":
         feed = "http://xkcd.com/rss.xml"
     elif strip == "ars":
         feed = "http://feeds.arstechnica.com/arstechnica/index"
@@ -30,9 +27,3 @@ def rss(text, message):
         title = formatting.truncate_str(row["title"], 100)
         link = web.try_shorten(row["link"])
         message("{} - {}".format(title, link))
-
-
-@hook.command(autohelp=False)
-def rb(message):
-    """rb -- Shows the latest Craftbukkit recommended build"""
-    rss("bukkit", message)

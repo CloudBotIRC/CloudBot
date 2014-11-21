@@ -1,18 +1,18 @@
 import re
 from html.parser import HTMLParser
-
+ 
 from cloudbot import hook
 from cloudbot.util import http
-
+ 
 twitch_re = re.compile(r'(.*:)//(twitch.tv|www.twitch.tv)(:[0-9]+)?(.*)', re.I)
 multitwitch_re = re.compile(r'(.*:)//(www.multitwitch.tv|multitwitch.tv)/(.*)', re.I)
-
-
+ 
+ 
 def test(s):
     valid = set('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_/')
     return set(s) <= valid
-
-
+ 
+ 
 def truncate(msg):
     nmsg = msg.split(" ")
     out = None
@@ -28,8 +28,8 @@ def truncate(msg):
         return out
     else:
         return out + "..."
-
-
+ 
+ 
 @hook.regex(multitwitch_re)
 def multitwitch_url(match):
     usernames = match.group(3).split("/")
@@ -43,8 +43,8 @@ def multitwitch_url(match):
         else:
             out = out + " \x02|\x02 " + twitch_lookup(i)
     return out
-
-
+ 
+ 
 @hook.regex(twitch_re)
 def twitch_url(match):
     bit = match.group(4).split("#")[0]
@@ -53,8 +53,8 @@ def twitch_url(match):
         print("Not a valid username")
         return None
     return twitch_lookup(location)
-
-
+ 
+ 
 @hook.command('twitchviewers')
 @hook.command()
 def twviewers(inp):
@@ -64,8 +64,8 @@ def twviewers(inp):
     else:
         return "Not a valid channel name."
     return twitch_lookup(location).split("(")[-1].split(")")[0].replace("Online now! ", "")
-
-
+ 
+ 
 def twitch_lookup(location):
     locsplit = location.split("/")
     if len(locsplit) > 1 and len(locsplit) == 3:
@@ -94,22 +94,11 @@ def twitch_lookup(location):
             views = views + "s" if not views[0:2] == "1 " else views
             return h.unescape(fmt.format(title, channel, playing, views))
     else:
-        data = http.get_json("http://api.justin.tv/api/stream/list.json?channel=" + channel)
+        data = http.get_json("https://api.twitch.tv/kraken/channels/" + channel)
         if data and len(data) >= 1:
-            data = data[0]
-            title = data['title']
-            playing = data['meta_game']
-            viewers = "\x033\x02Online now!\x02\x0f " + str(data["channel_count"]) + " viewer"
-            print(viewers)
-            viewers = viewers + "s" if not " 1 view" in viewers else viewers
-            print(viewers)
-            return h.unescape(fmt.format(title, channel, playing, viewers))
-        else:
-            try:
-                data = http.get_json("https://api.twitch.tv/kraken/channels/" + channel)
-            except:
-                return
             title = data['status']
             playing = data['game']
             viewers = "\x034\x02Offline\x02\x0f"
             return h.unescape(fmt.format(title, channel, playing, viewers))
+        else:
+            return

@@ -9,5 +9,6 @@ pycrypto
 pbkdf2
 requests
 psutil
-twitter
+requests-oauthlib
+tweepy
 pyenchant

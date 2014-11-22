@@ -3,6 +3,7 @@ from lxml import html
 import re
 import random
 import requests
+import asyncio
 
 from cloudbot import hook
 from cloudbot.util import urlnorm, timesince, formatting
@@ -29,8 +30,9 @@ def reddit_url(match):
         title, author, timeago, upvotes, downvotes, comments)
 
 
+@asyncio.coroutine
 @hook.command(autohelp=False)
-def reddit(text):
+def reddit(text, loop):
     """<subreddit> [n] - gets a random post from <subreddit>, or gets the [n]th post in the subreddit"""
     id_num = None
 
@@ -51,7 +53,8 @@ def reddit(text):
         url = "http://reddit.com/.json"
 
     try:
-        data = requests.get(url).json()
+        request = yield from loop.run_in_executor(None, requests.get, url)
+        data = request.json()
     except Exception as e:
         return "Error: " + str(e)
     data = data["data"]["children"]

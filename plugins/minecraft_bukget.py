@@ -126,7 +126,7 @@ def format_output(data):
     else:
         line_a = "\x02{}\x02, by \x02{}\x02 ({}) \x02{}".format(name, authors, stage, url)
 
-    line_b = "Last release: \x02v{}\x02 for \x02{}\x02 at {} \x02{}\x02".format(version_number, bukkit_versions,
+    line_b = "Last release: \x02v{}\x02 for \x02{}\x02 at {} {}".format(version_number, bukkit_versions,
                                                                                 last_update, link)
 
     return line_a, line_b

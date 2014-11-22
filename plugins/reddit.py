@@ -29,24 +29,26 @@ def reddit_url(match):
         title, author, timeago, upvotes, downvotes, comments)
 
 
-@hook.command()
+@hook.command(autohelp=False)
 def reddit(text):
     """<subreddit> [n] - gets a random post from <subreddit>, or gets the [n]th post in the subreddit"""
     id_num = None
 
+    if text:
+        # clean and split the input
+        parts = text.lower().strip().split()
 
-    # clean and split the input
-    parts = text.lower().strip().split()
-
-    # find the requested post number (if any)
-    if len(parts) > 1:
-        url = base_url.format(parts[0].strip())
-        try:
-            id_num = int(parts[1]) - 1
-        except ValueError:
-            return "Invalid post number."
+        # find the requested post number (if any)
+        if len(parts) > 1:
+            url = base_url.format(parts[0].strip())
+            try:
+                id_num = int(parts[1]) - 1
+            except ValueError:
+                return "Invalid post number."
+        else:
+            url = base_url.format(parts[0].strip())
     else:
-        url = base_url.format(parts[0].strip())
+        url = "http://reddit.com/.json"
 
     try:
         data = requests.get(url).json()

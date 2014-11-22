@@ -4,7 +4,6 @@ from cloudbot import hook
 from cloudbot.util import http
 
 base_url = "http://thetvdb.com/api/"
-api_key = "469B73127CA0C411"
 
 
 def get_episodes_for_series(series_name, api_key):

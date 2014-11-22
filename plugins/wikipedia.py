@@ -28,7 +28,7 @@ def wiki(text):
             return 'No results found.'
 
     def extract(item):
-        return [item.find(ns + x).text for x in
+        return [item.find(ns + i).text for i in
                 ('Text', 'Description', 'Url')]
 
     title, desc, url = extract(items[0])

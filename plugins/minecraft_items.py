@@ -25,14 +25,14 @@ class Recipe(object):
 
 
 with open("./data/recipes.txt") as f:
-    for line in f.readlines():
-        if line.startswith("//"):
+    for _line in f.readlines():
+        if _line.startswith("//"):
             continue
-        line = line.strip()
-        match = pattern.match(line)
+        _line = _line.strip()
+        match = pattern.match(_line)
         if not match:
             continue
-        recipelist.append(Recipe(line=line,
+        recipelist.append(Recipe(line=_line,
                                  output=match.group("name").lower(),
                                  ingredients=match.group("ingredients"),
                                  count=match.group("count")))
@@ -40,10 +40,10 @@ with open("./data/recipes.txt") as f:
 ids = []
 
 with open("./data/itemids.txt") as f:
-    for line in f.readlines():
-        if line.startswith("//"):
+    for _line in f.readlines():
+        if _line.startswith("//"):
             continue
-        parts = line.strip().split()
+        parts = _line.strip().split()
         itemid = parts[0]
         name = " ".join(parts[1:])
         ids.append((itemid, name))

@@ -19,7 +19,8 @@ def is_valid(data):
 
 @hook.command(autohelp=False)
 def imgur(text):
-    """[subreddit] - returns a link to the first page of imgur images from [subreddit], or the first page of all imgur images if no subreddit is provided"""
+    """[subreddit] - returns a link to the first page of imgur images from [subreddit],
+     or the first page of all imgur images if no subreddit is provided"""
     if text:
         # see if the input ends with "nsfw"
         show_nsfw = text.endswith(" nsfw")

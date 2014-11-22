@@ -1,9 +1,11 @@
 from datetime import datetime
+from lxml import html
 import re
 import random
+import requests
 
 from cloudbot import hook
-from cloudbot.util import http, timesince, formatting
+from cloudbot.util import urlnorm, timesince, formatting
 
 reddit_re = re.compile(r'.*(((www\.)?reddit\.com/r|redd\.it)[^ ]+)', re.I)
 
@@ -13,7 +15,8 @@ short_url = "http://redd.it/{}"
 
 @hook.regex(reddit_re)
 def reddit_url(match):
-    thread = http.get_html(match.group(1))
+    r = requests.get(urlnorm.normalize(match.group(1), assume_scheme="http"))
+    thread = html.fromstring(r.text)
 
     title = thread.xpath('//title/text()')[0]
     upvotes = thread.xpath("//span[@class='upvotes']/span[@class='number']/text()")[0]
@@ -26,29 +29,27 @@ def reddit_url(match):
         title, author, timeago, upvotes, downvotes, comments)
 
 
-@hook.command(autohelp=False)
+@hook.command()
 def reddit(text):
     """<subreddit> [n] - gets a random post from <subreddit>, or gets the [n]th post in the subreddit"""
     id_num = None
 
-    if text:
-        # clean and split the input
-        parts = text.lower().strip().split()
 
-        # find the requested post number (if any)
-        if len(parts) > 1:
-            url = base_url.format(parts[0].strip())
-            try:
-                id_num = int(parts[1]) - 1
-            except ValueError:
-                return "Invalid post number."
-        else:
-            url = base_url.format(parts[0].strip())
+    # clean and split the input
+    parts = text.lower().strip().split()
+
+    # find the requested post number (if any)
+    if len(parts) > 1:
+        url = base_url.format(parts[0].strip())
+        try:
+            id_num = int(parts[1]) - 1
+        except ValueError:
+            return "Invalid post number."
     else:
-        url = "http://reddit.com/.json"
+        url = base_url.format(parts[0].strip())
 
     try:
-        data = http.get_json(url, user_agent=http.ua_chrome)
+        data = requests.get(url).json()
     except Exception as e:
         return "Error: " + str(e)
     data = data["data"]["children"]
@@ -75,5 +76,5 @@ def reddit(text):
         item["warning"] = ""
 
     return "\x02{title} : {subreddit}\x02 - posted by \x02{author}\x02" \
-           " {timesince} ago - {ups} upvotes, {downs} downvotes -" \
+           " {timesince} ago - {score} karma -" \
            " {link}{warning}".format(**item)

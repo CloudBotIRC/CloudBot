@@ -1,4 +1,5 @@
-""" web.py - web services and more """
+""" web.py - web services and more
+    wot is this overbuilt thing even """
 
 import json
 

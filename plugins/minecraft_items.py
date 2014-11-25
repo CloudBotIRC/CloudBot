@@ -37,48 +37,6 @@ with open("./data/recipes.txt") as f:
                                  ingredients=match.group("ingredients"),
                                  count=match.group("count")))
 
-ids = []
-
-with open("./data/itemids.txt") as f:
-    for _line in f.readlines():
-        if _line.startswith("//"):
-            continue
-        parts = _line.strip().split()
-        itemid = parts[0]
-        name = " ".join(parts[1:])
-        ids.append((itemid, name))
-
-
-@asyncio.coroutine
-@hook.command("mcitem", "mcid")
-def mcitem(text, reply):
-    """<item/id> - gets the id for <item> or the item name for <id>"""
-    text = text.lower().strip()
-
-    if text == "":
-        reply("error: no input.")
-        return
-
-    results = []
-
-    for item_id, item_name in ids:
-        if text == item_id:
-            results = ["\x02[{}]\x02 {}".format(item_id, item_name)]
-            break
-        elif text in item_name.lower():
-            results.append("\x02[{}]\x02 {}".format(item_id, item_name))
-
-    if not results:
-        return "No matches found."
-
-    if len(results) > 12:
-        reply("There are too many options, please narrow your search. ({})".format(str(len(results))))
-        return
-
-    out = ", ".join(results)
-
-    return out
-
 
 @asyncio.coroutine
 @hook.command("mccraft", "mcrecipe")

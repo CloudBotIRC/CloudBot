@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 
 @hook.command(autohelp=False)
-def word(text):
+def word():
     """<word> - Gets the word of the day from http://www.merriam-webster.com/word-of-theday"""
     page = http.get('http://merriam-webster.com/word-of-the-day')
 

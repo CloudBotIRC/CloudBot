@@ -91,8 +91,8 @@ def pympler_summary():
     if pympler is None:
         return "pympler not installed / not enabled"
     all_objects = pympler.muppy.get_objects()
-    sum = pympler.summary.summarize(all_objects)
-    pympler.summary.print_(sum)
+    summ = pympler.summary.summarize(all_objects)
+    pympler.summary.print_(summ)
     return "Printed to console"
 
 

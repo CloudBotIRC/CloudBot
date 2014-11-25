@@ -1,14 +1,13 @@
 import datetime
-import requests
 
+import requests
 from lxml import html
 
 from cloudbot import hook
 from cloudbot.util import timesince
 
 
-@hook.command("scene")
-@hook.command()
+@hook.command("pre", "scene")
 def pre(text):
     """pre <query> -- searches scene releases using orlydb.com"""
 

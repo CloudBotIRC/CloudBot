@@ -1,7 +1,7 @@
 import asyncio
 
 from cloudbot import hook
-from cloudbot.util import bucket
+from cloudbot.util.tokenbucket import TokenBucket
 
 TOKENS = 15
 RESTORE_RATE = 2.5
@@ -60,20 +60,20 @@ def sieve_suite(bot, event, _hook):
         uid = event.chan
 
         if uid not in buckets:
-            _bucket = bucket.TokenBucket(TOKENS, RESTORE_RATE)
-            _bucket.consume(MESSAGE_COST)
-            buckets[uid] = _bucket
+            bucket = TokenBucket(TOKENS, RESTORE_RATE)
+            bucket.consume(MESSAGE_COST)
+            buckets[uid] = bucket
             return event
 
-        _bucket = buckets[uid]
-        if _bucket.consume(MESSAGE_COST):
+        bucket = buckets[uid]
+        if bucket.consume(MESSAGE_COST):
             pass
         else:
             # bad person loses all tokens
             #_bucket.empty()
             bot.logger.info("[{}] Refused command from {}. Entity has {} tokens, needs {}.".format(conn.readable_name,
                                                                                                    uid,
-                                                                                                   _bucket.tokens,
+                                                                                                   bucket.tokens,
                                                                                                    MESSAGE_COST))
             return None
 

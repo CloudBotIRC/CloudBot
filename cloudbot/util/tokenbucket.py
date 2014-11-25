@@ -1,3 +1,4 @@
+# modified from http://code.activestate.com/recipes/511490-implementation-of-the-token-bucket-algorithm/
 from time import time
 
 
@@ -27,7 +28,6 @@ class TokenBucket(object):
         else:
             return False
         return True
-
 
     def refill(self):
         self._tokens = self.capacity

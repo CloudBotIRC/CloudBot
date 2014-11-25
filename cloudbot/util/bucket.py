@@ -28,8 +28,12 @@ class TokenBucket(object):
             return False
         return True
 
+
     def refill(self):
         self._tokens = self.capacity
+
+    def empty(self):
+        self._tokens = float(0)
 
     def get_tokens(self):
         now = time()

@@ -56,9 +56,10 @@ def sieve_suite(bot, event, _hook):
 
     # check command spam tokens
     if _hook.type == "command":
+        # right now ratelimiting is per-channel, but this can be changed
         uid = event.chan
 
-        if not uid in buckets:
+        if uid not in buckets:
             _bucket = bucket.TokenBucket(TOKENS, RESTORE_RATE)
             _bucket.consume(MESSAGE_COST)
             buckets[uid] = _bucket
@@ -68,7 +69,12 @@ def sieve_suite(bot, event, _hook):
         if _bucket.consume(MESSAGE_COST):
             pass
         else:
-            print("pong!")
+            # bad person loses all tokens
+            #_bucket.empty()
+            bot.logger.info("[{}] Refused command from {}. Entity has {} tokens, needs {}.".format(conn.readable_name,
+                                                                                                   uid,
+                                                                                                   _bucket.tokens,
+                                                                                                   MESSAGE_COST))
             return None
 
     return event

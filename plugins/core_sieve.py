@@ -3,8 +3,8 @@ import asyncio
 from cloudbot import hook
 from cloudbot.util import bucket
 
-TOKENS = 10
-RESTORE_RATE = 2
+TOKENS = 15
+RESTORE_RATE = 2.5
 MESSAGE_COST = 5
 
 buckets = {}

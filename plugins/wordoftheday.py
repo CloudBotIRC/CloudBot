@@ -15,8 +15,11 @@ def wordoftheday():
 
     soup = BeautifulSoup(request.text)
 
-    word = soup.find('strong', {'class': 'main_entry_word'}).text
-    function = soup.find('p', {'class': 'word_function'}).text
+    try:
+        word = soup.find('strong', {'class': 'main_entry_word'}).text
+        function = soup.find('p', {'class': 'word_function'}).text
+    except AttributeError:
+        return "Could not parse word of the day."
 
     # here be demons
     try:

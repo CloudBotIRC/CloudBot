@@ -102,7 +102,7 @@ def recipe(text):
 
 
 # inspired by http://whatthefuckshouldimakefordinner.com/ <3
-@hook.command(autohelp=False)
+@hook.command("dinner", "wtfsimfd", autohelp=False)
 def dinner():
     """- TELLS YOU WHAT THE F**K YOU SHOULD MAKE FOR DINNER"""
     try:

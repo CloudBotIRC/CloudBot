@@ -24,7 +24,10 @@ phrases = [
     "COOK UP SOME FUCKING \x02{}\x02",
     "CURE YOUR MOUTH'S POST TRAUMATIC STRESS DISORDER WITH SOME FUCKING \x02{}\x02",
     "PROCURE SOME CHILD LABOR TO COOK UP SOME FUCKING \x02{}\x02",
-    "YOUR INDECISION IS FAR LESS APPETIZING THAN SOME FUCKING \x02{}\x02"
+    "YOUR INDECISION IS FAR LESS APPETIZING THAN SOME FUCKING \x02{}\x02",
+    "PROBABLY FUCK UP SOME FUCKING \x02{}\x02",
+    "LESSEN YOUR MOTHER'S SHAME WITH SOME FUCKING \x02{}\x02",
+    "EAT SHIT, OR IF YOU DON'T LIKE THAT, SOME FUCKING \x02{}\x02"
 ]
 
 clean_key = lambda i: i.split("#")[1]
@@ -98,6 +101,7 @@ def recipe(text):
     return "Try eating \x02{}!\x02 - {}".format(name, web.try_shorten(url))
 
 
+# inspired by http://whatthefuckshouldimakefordinner.com/ <3
 @hook.command(autohelp=False)
 def dinner():
     """- TELLS YOU WHAT THE F**K YOU SHOULD MAKE FOR DINNER"""

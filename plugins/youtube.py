@@ -21,12 +21,12 @@ def plural(num=0, text=''):
 
 
 def get_video_description(video_id):
-    r = requests.get(api_url.format(video_id)).json()
+    json = requests.get(api_url.format(video_id)).json()
 
-    if r.get('error'):
+    if json.get('error'):
         return
 
-    data = r['data']
+    data = json['data']
 
     out = '\x02{}\x02'.format(data['title'])
 
@@ -50,8 +50,8 @@ def get_video_description(video_id):
         out += ' - \x02{:,}\x02 view{}'.format(views, "s"[views == 1:])
 
     try:
-        r = requests.get(base_url + "users/{}?alt=json".format(data["uploader"])).json()
-        uploader = r["entry"]["author"][0]["name"][
+        json = requests.get(base_url + "users/{}?alt=json".format(data["uploader"])).json()
+        uploader = json["entry"]["author"][0]["name"][
             "$t"]
     except:
         uploader = data["uploader"]
@@ -74,15 +74,15 @@ def youtube_url(match):
 @hook.command("youtube", "you", "yt", "y")
 def youtube(text):
     """youtube <query> -- Returns the first YouTube search result for <query>."""
-    r = requests.get(search_api_url, params={"q": "text"}).json()
+    json = requests.get(search_api_url, params={"q": text}).json()
 
-    if 'error' in r:
+    if 'error' in json:
         return 'error performing search'
 
-    if r['data']['totalItems'] == 0:
+    if json['data']['totalItems'] == 0:
         return 'no results found'
 
-    video_id = r['data']['items'][0]['id']
+    video_id = json['data']['items'][0]['id']
 
     return get_video_description(video_id) + " - " + video_url % video_id
 
@@ -90,20 +90,20 @@ def youtube(text):
 @hook.command("youtime", "ytime")
 def youtime(text):
     """youtime <query> -- Gets the total run time of the first YouTube search result for <query>."""
-    r = requests.get(search_api_url, params={"q": "text"}).json()
+    json = requests.get(search_api_url, params={"q": text}).json()
 
-    if 'error' in r:
+    if 'error' in json:
         return 'error performing search'
 
-    if r['data']['totalItems'] == 0:
+    if json['data']['totalItems'] == 0:
         return 'no results found'
 
-    video_id = r['data']['items'][0]['id']
-    r = requests.get(api_url.format(video_id)).json()
+    video_id = json['data']['items'][0]['id']
+    json = requests.get(api_url.format(video_id)).json()
 
-    if r.get('error'):
+    if json.get('error'):
         return
-    data = r['data']
+    data = json['data']
 
     if not data.get('duration'):
         return
@@ -127,8 +127,8 @@ ytpl_re = re.compile(r'(.*:)//(www.youtube.com/playlist|youtube.com/playlist)(:[
 def ytplaylist_url(match):
     location = match.group(4).split("=")[-1]
     try:
-        page = requests.get("https://www.youtube.com/playlist?list=" + location)
-        soup = bs4.BeautifulSoup(page, 'lxml')
+        request = requests.get("https://www.youtube.com/playlist?list=" + location)
+        soup = bs4.BeautifulSoup(request.text, 'lxml')
     except Exception:
         return "\x034\x02Invalid response."
     title = soup.find('title').text.split('-')[0].strip()

@@ -1,8 +1,12 @@
 import re
 import time
 
+import bs4
+import requests
+
 from cloudbot import hook
-from cloudbot.util import http, timeformat
+from cloudbot.util import timeformat
+
 
 youtube_re = re.compile(r'(?:youtube.*?(?:v=|/v/)|youtu\.be/|yooouuutuuube.*?id=)([-_a-zA-Z0-9]+)', re.I)
 
@@ -17,12 +21,12 @@ def plural(num=0, text=''):
 
 
 def get_video_description(video_id):
-    request = http.get_json(api_url.format(video_id))
+    r = requests.get(api_url.format(video_id)).json()
 
-    if request.get('error'):
+    if r.get('error'):
         return
 
-    data = request['data']
+    data = r['data']
 
     out = '\x02{}\x02'.format(data['title'])
 
@@ -46,7 +50,8 @@ def get_video_description(video_id):
         out += ' - \x02{:,}\x02 view{}'.format(views, "s"[views == 1:])
 
     try:
-        uploader = http.get_json(base_url + "users/{}?alt=json".format(data["uploader"]))["entry"]["author"][0]["name"][
+        r = requests.get(base_url + "users/{}?alt=json".format(data["uploader"])).json()
+        uploader = r["entry"]["author"][0]["name"][
             "$t"]
     except:
         uploader = data["uploader"]
@@ -69,15 +74,15 @@ def youtube_url(match):
 @hook.command("youtube", "you", "yt", "y")
 def youtube(text):
     """youtube <query> -- Returns the first YouTube search result for <query>."""
-    request = http.get_json(search_api_url, q=text)
+    r = requests.get(search_api_url, params={"q": "text"}).json()
 
-    if 'error' in request:
+    if 'error' in r:
         return 'error performing search'
 
-    if request['data']['totalItems'] == 0:
+    if r['data']['totalItems'] == 0:
         return 'no results found'
 
-    video_id = request['data']['items'][0]['id']
+    video_id = r['data']['items'][0]['id']
 
     return get_video_description(video_id) + " - " + video_url % video_id
 
@@ -85,20 +90,20 @@ def youtube(text):
 @hook.command("youtime", "ytime")
 def youtime(text):
     """youtime <query> -- Gets the total run time of the first YouTube search result for <query>."""
-    request = http.get_json(search_api_url, q=text)
+    r = requests.get(search_api_url, params={"q": "text"}).json()
 
-    if 'error' in request:
+    if 'error' in r:
         return 'error performing search'
 
-    if request['data']['totalItems'] == 0:
+    if r['data']['totalItems'] == 0:
         return 'no results found'
 
-    video_id = request['data']['items'][0]['id']
-    request = http.get_json(api_url.format(video_id))
+    video_id = r['data']['items'][0]['id']
+    r = requests.get(api_url.format(video_id)).json()
 
-    if request.get('error'):
+    if r.get('error'):
         return
-    data = request['data']
+    data = r['data']
 
     if not data.get('duration'):
         return
@@ -122,7 +127,8 @@ ytpl_re = re.compile(r'(.*:)//(www.youtube.com/playlist|youtube.com/playlist)(:[
 def ytplaylist_url(match):
     location = match.group(4).split("=")[-1]
     try:
-        soup = http.get_soup("https://www.youtube.com/playlist?list=" + location)
+        page = requests.get("https://www.youtube.com/playlist?list=" + location)
+        soup = bs4.BeautifulSoup(page, 'lxml')
     except Exception:
         return "\x034\x02Invalid response."
     title = soup.find('title').text.split('-')[0].strip()

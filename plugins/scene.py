@@ -1,18 +1,24 @@
 import datetime
+import requests
+
+from lxml import html
 
 from cloudbot import hook
-from cloudbot.util import http, timesince
+from cloudbot.util import timesince
 
 
 @hook.command("scene")
 @hook.command()
-def pre(inp):
+def pre(text):
     """pre <query> -- searches scene releases using orlydb.com"""
 
     try:
-        h = http.get_html("http://orlydb.com/", q=inp)
-    except http.HTTPError as e:
+        request = requests.get("http://orlydb.com/", params={"q": text})
+        request.raise_for_status()
+    except requests.exceptions.HTTPError as e:
         return 'Unable to fetch results: {}'.format(e)
+
+    h = html.fromstring(request.text)
 
     results = h.xpath("//div[@id='releases']/div/span[@class='release']/..")
 

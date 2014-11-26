@@ -3,9 +3,13 @@ import asyncio
 from cloudbot import hook
 from cloudbot.util.tokenbucket import TokenBucket
 
-TOKENS = 15
+TOKENS = 17.5
 RESTORE_RATE = 2.5
 MESSAGE_COST = 5
+
+# when STRICT is enabled, every time a user gets ratelimted it wipes
+# their tokens so they have to wait at least X seconds to regen
+STRICT = True
 
 buckets = {}
 
@@ -69,8 +73,9 @@ def sieve_suite(bot, event, _hook):
         if bucket.consume(MESSAGE_COST):
             pass
         else:
-            # bad person loses all tokens
-            #_bucket.empty()
+            if STRICT:
+                # bad person loses all tokens
+                bucket.empty()
             bot.logger.info("[{}] Refused command from {}. Entity has {} tokens, needs {}.".format(conn.readable_name,
                                                                                                    uid,
                                                                                                    bucket.tokens,

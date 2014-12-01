@@ -3,8 +3,7 @@ from cloudbot import hook
 from cloudbot.util import web, http
 
 
-@hook.command('qr')
-@hook.command()
+@hook.command("qrcode", "qr")
 def qrcode(text):
     """[link] - returns a link to a QR code image for [link]"""
 
@@ -15,5 +14,4 @@ def qrcode(text):
     }
 
     link = http.prepare_url("http://chart.googleapis.com/chart", args)
-
     return web.try_shorten(link)

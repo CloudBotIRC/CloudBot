@@ -1,3 +1,4 @@
+# modified from http://code.activestate.com/recipes/511490-implementation-of-the-token-bucket-algorithm/
 from time import time
 
 
@@ -30,6 +31,9 @@ class TokenBucket(object):
 
     def refill(self):
         self._tokens = self.capacity
+
+    def empty(self):
+        self._tokens = float(0)
 
     def get_tokens(self):
         now = time()

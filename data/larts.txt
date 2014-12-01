@@ -29,6 +29,7 @@ throws all of {user}'s diamond gear into lava.
 uses {user} as a biological warfare study.
 uses the 'Customer Appreciation Bat' on {user}.
 puts {user} in the Total Perspective Vortex.
+saves all of {user}'s files on a Magical Chinese Looping Hard Drive.
 casts {user} into the fires of Mt. Doom.
 gives {user} a melvin.
 turns {user} over to the Fun Police.

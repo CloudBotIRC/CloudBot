@@ -3,11 +3,15 @@ import asyncio
 from time import time
 
 from cloudbot import hook
-from cloudbot.util import bucket
+from cloudbot.util.tokenbucket import TokenBucket
 
-TOKENS = 10
-RESTORE_RATE = 2
+TOKENS = 17.5
+RESTORE_RATE = 2.5
 MESSAGE_COST = 5
+
+# when STRICT is enabled, every time a user gets ratelimted it wipes
+# their tokens so they have to wait at least X seconds to regen
+STRICT = True
 
 buckets = {}
 
@@ -58,19 +62,26 @@ def sieve_suite(bot, event, _hook):
 
     # check command spam tokens
     if _hook.type == "command":
+        # right now ratelimiting is per-channel, but this can be changed
         uid = event.chan
 
-        if not uid in buckets:
-            _bucket = bucket.TokenBucket(TOKENS, RESTORE_RATE)
-            _bucket.consume(MESSAGE_COST)
-            buckets[uid] = _bucket
+        if uid not in buckets:
+            bucket = TokenBucket(TOKENS, RESTORE_RATE)
+            bucket.consume(MESSAGE_COST)
+            buckets[uid] = bucket
             return event
 
-        _bucket = buckets[uid]
-        if _bucket.consume(MESSAGE_COST):
+        bucket = buckets[uid]
+        if bucket.consume(MESSAGE_COST):
             pass
         else:
-            print("pong!")
+            if STRICT:
+                # bad person loses all tokens
+                bucket.empty()
+            bot.logger.info("[{}] Refused command from {}. Entity has {} tokens, needs {}.".format(conn.readable_name,
+                                                                                                   uid,
+                                                                                                   bucket.tokens,
+                                                                                                   MESSAGE_COST))
             return None
 
     return event

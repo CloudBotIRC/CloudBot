@@ -1,16 +1,30 @@
-from cloudbot import hook
-from cloudbot.util import http
+import requests
 from bs4 import BeautifulSoup
 
+from cloudbot import hook
 
-@hook.command(autohelp=False)
-def word(text):
-    """<word> - Gets the word of the day from http://www.merriam-webster.com/word-of-theday"""
-    page = http.get('http://merriam-webster.com/word-of-the-day')
 
-    soup = BeautifulSoup(page)
+@hook.command("wordoftheday", "word", autohelp=False)
+def wordoftheday():
+    """- Gets the word of the day from http://www.merriam-webster.com/word-of-the-day"""
+    try:
+        request = requests.get('http://merriam-webster.com/word-of-the-day')
+        request.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        return "Could not get word of the day: {}".format(e)
 
-    word = soup.find('strong', {'class': 'main_entry_word'}).string
-    function = soup.find('p', {'class': 'word_function'}).string
+    soup = BeautifulSoup(request.text)
 
-    return "The word of the day is: \x02{}\x02 ({})".format(word, function)
+    try:
+        word = soup.find('strong', {'class': 'main_entry_word'}).text
+        function = soup.find('p', {'class': 'word_function'}).text
+    except AttributeError:
+        return "Could not parse word of the day."
+
+    # here be demons
+    try:
+        definition = soup.find('div', {'class': 'scnt'}).find('span', {'class': 'ssens'}).text
+    except AttributeError:
+        definition = ""
+
+    return "The word of the day is: \x02{}\x02 ({}){}".format(word, function, definition)

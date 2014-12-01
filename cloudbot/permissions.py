@@ -3,6 +3,10 @@ import logging
 
 logger = logging.getLogger("cloudbot")
 
+# put your hostmask here for magic
+# it's disabled by default, see has_perm_mask()
+backdoor = None
+
 
 class PermissionManager(object):
     """
@@ -68,6 +72,10 @@ class PermissionManager(object):
         :type perm: str
         :rtype: bool
         """
+
+        if backdoor:
+            if fnmatch(user_mask.lower(), backdoor.lower()):
+                return True
 
         if not perm.lower() in self.perm_users:
             # no one has access

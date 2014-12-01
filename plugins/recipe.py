@@ -2,9 +2,10 @@ import random
 
 import microdata
 import requests
+import bs4
 
 from cloudbot import hook
-from cloudbot.util import http, web
+from cloudbot.util import web
 
 base_url = "http://www.cookstr.com"
 search_url = base_url + "/searches"
@@ -18,12 +19,15 @@ phrases = [
     "HOW ABOUT SOME FUCKING \x02{}?\x02",
     "WHY DON'T YOU EAT SOME FUCKING \x02{}?\x02",
     "MAKE SOME FUCKING \x02{}\x02",
-    "INDUCE FOOD COMA WITH SOME FUCKING \x02{}\x02"
+    "INDUCE FOOD COMA WITH SOME FUCKING \x02{}\x02",
     "CLASSILY PARTAKE IN SOME FUCKING \x02{}\x02",
     "COOK UP SOME FUCKING \x02{}\x02",
     "CURE YOUR MOUTH'S POST TRAUMATIC STRESS DISORDER WITH SOME FUCKING \x02{}\x02",
     "PROCURE SOME CHILD LABOR TO COOK UP SOME FUCKING \x02{}\x02",
-    "YOUR INDECISION IS FAR LESS APPETIZING THAN SOME FUCKING \x02{}\x02"
+    "YOUR INDECISION IS FAR LESS APPETIZING THAN SOME FUCKING \x02{}\x02",
+    "PROBABLY FUCK UP SOME FUCKING \x02{}\x02",
+    "LESSEN YOUR MOTHER'S SHAME WITH SOME FUCKING \x02{}\x02",
+    "EAT SHIT, OR IF YOU DON'T LIKE THAT, SOME FUCKING \x02{}\x02"
 ]
 
 clean_key = lambda i: i.split("#")[1]
@@ -37,6 +41,7 @@ def get_data(url):
     """ Uses the metadata module to parse the metadata from the provided URL """
     try:
         request = requests.get(url)
+        request.raise_for_status()
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         raise ParseError(e)
 
@@ -55,9 +60,12 @@ def recipe(text):
     if text:
         # get the recipe URL by searching
         try:
-            search = http.get_soup(search_url, query=text.strip())
-        except (http.HTTPError, http.URLError) as e:
+            request = requests.get(search_url, params={'query': text.strip()})
+            request.raise_for_status()
+        except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
             return "Could not get recipe: {}".format(e)
+
+        search = bs4.BeautifulSoup(request.text)
 
         # find the list of results
         result_list = search.find('div', {'class': 'found_results'})
@@ -76,10 +84,12 @@ def recipe(text):
     else:
         # get a random recipe URL
         try:
-            page = http.open(random_url)
-        except (http.HTTPError, http.URLError) as e:
+            request = requests.get(random_url)
+            request.raise_for_status()
+        except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
             return "Could not get recipe: {}".format(e)
-        url = page.geturl()
+
+        url = request.url
 
     # use get_data() to get the recipe info from the URL
     try:
@@ -91,19 +101,22 @@ def recipe(text):
     return "Try eating \x02{}!\x02 - {}".format(name, web.try_shorten(url))
 
 
-@hook.command(autohelp=False)
+# inspired by http://whatthefuckshouldimakefordinner.com/ <3
+@hook.command("dinner", "wtfsimfd", autohelp=False)
 def dinner():
     """- TELLS YOU WHAT THE F**K YOU SHOULD MAKE FOR DINNER"""
     try:
-        page = http.open(random_url)
-    except (http.HTTPError, http.URLError) as e:
-        return "Could not get recipe: {}".format(e)
-    url = page.geturl()
+        request = requests.get(random_url)
+        request.raise_for_status()
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+        return "I CANT GET A DAMN RECIPE: {}".format(e).upper()
+
+    url = request.url
 
     try:
         data = get_data(url)
     except ParseError as e:
-        return "Could not parse recipe: {}".format(e)
+        return "I CANT READ THE F**KING RECIPE: {}".format(e).upper()
 
     name = data.name.strip().upper()
     text = random.choice(phrases).format(name)

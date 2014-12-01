@@ -1,4 +1,5 @@
 import random
+import requests
 
 from cloudbot import hook
 from cloudbot.util import http, formatting
@@ -6,9 +7,9 @@ from cloudbot.util import http, formatting
 
 def api_get(kind, query):
     """Use the RESTful Google Search API"""
-    url = 'http://ajax.googleapis.com/ajax/services/search/%s?' \
+    url = 'http://ajax.googleapis.com/ajax/services/search/{}?' \
           'v=1.0&safe=moderate'
-    return http.get_json(url % kind, q=query)
+    return requests.get(url.format(kind), params={"q": query}).json()
 
 
 @hook.command("googleimage", "gis", "image")

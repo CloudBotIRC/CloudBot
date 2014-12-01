@@ -1,6 +1,7 @@
 import os.path
 import json
 import gzip
+import requests
 from io import BytesIO
 
 import pygeoip
@@ -8,7 +9,7 @@ import pygeoip
 from cloudbot import hook
 from cloudbot.util import http
 
-# TODO: This is awful
+# TODO: This is VERY awful
 @hook.onload()
 def load_regions(bot):
     global regions, geo
@@ -21,7 +22,8 @@ def load_regions(bot):
         geo = pygeoip.GeoIP(os.path.join(bot.data_dir, "GeoLiteCity.dat"))
     else:
         print("Downloading GeoIP database")
-        download = http.get("http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz", decode=False)
+        request = requests.get("http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz")
+        download = request.raw
         print("Download complete")
         bytes_io = BytesIO(download)
         geoip_file = gzip.GzipFile(fileobj=bytes_io, mode='rb')

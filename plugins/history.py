@@ -46,6 +46,8 @@ def track_history(event, message_time, conn):
         history = conn.history[event.chan]
     except KeyError:
         conn.history[event.chan] = deque(maxlen=100)
+        # what are we doing here really
+        # really really
         history = conn.history[event.chan]
 
     data = (event.nick, message_time, event.content)

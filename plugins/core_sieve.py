@@ -1,5 +1,7 @@
 import asyncio
 
+from time import time
+
 from cloudbot import hook
 from cloudbot.util import bucket
 
@@ -72,3 +74,13 @@ def sieve_suite(bot, event, _hook):
             return None
 
     return event
+
+@hook.command
+def clearbuckets():
+    """temporary!"""
+
+    # clear ratelimiting tokens that have not been accessed in
+    # the last 10 minutes
+    for uid, _bucket in buckets:
+        if (time() - _bucket.timestamp) > 600:
+            del buckets[uid]

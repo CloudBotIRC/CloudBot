@@ -1,15 +1,9 @@
-import json
 import re
 
 import requests
 
-from enum import Enum
-
 from cloudbot import hook
-from cloudbot.util import http
 
-
-LOOKUP_TYPE = Enum('uuid', 'username')
 
 PROFILE_URL = "http://api.goender.net/api/hist/{}/mojang"
 PAID_URL = "http://www.minecraft.net/haspaid.jsp"
@@ -22,13 +16,10 @@ class McuError(Exception):
 def get_profile(name):
     profile = {}
 
-    # form the profile request
-    payload = [name]
-
     # submit the profile request
     try:
         headers = {"Content-Type": "application/json"}
-        request = requests.post(PROFILE_URL, data=json.dumps(payload).encode('utf-8'), headers=headers)
+        request = requests.get(PROFILE_URL.format(name), headers=headers)
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         raise McuError("Could not get profile status: {}".format(e))
 
@@ -38,14 +29,12 @@ def get_profile(name):
     except ValueError:
         raise McuError("Could not parse profile status")
 
-    if results["size"] == 0:
+    if not results:
         return False
 
-    user = results["profiles"][0]
+    user = results[0]
     profile["name"] = user["name"]
-    profile["id"] = user["id"]
-
-    profile["legacy"] = user.get("legacy", False)
+    profile["id"] = user["id"][0]
 
     try:
         params = {'user': name}
@@ -79,11 +68,9 @@ def mcuser(text):
     if not profile:
         return "The account \x02{}\x02 does not exist.".format(user)
 
-    profile["lt"] = ", legacy" if profile["legacy"] else ""
-
     if profile["paid"]:
-        return 'The account \x02{name}\x02 ({id}{lt}) exists. It is a \x02paid\x02' \
+        return 'The account \x02{name}\x02 ({id}) exists. It is a \x02paid\x02' \
                ' account.'.format(**profile)
     else:
-        return 'The account \x02{name}\x02 ({id}{lt}) exists. It \x034\x02is NOT\x02\x0f a paid' \
+        return 'The account \x02{name}\x02 ({id}) exists. It \x034\x02is NOT\x02\x0f a paid' \
                ' account.'.format(**profile)

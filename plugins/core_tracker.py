@@ -3,6 +3,7 @@
 import asyncio
 import logging
 import re
+import functools
 
 from cloudbot import hook
 
@@ -13,18 +14,19 @@ nick_re = re.compile(":(.+?)!")
 
 @asyncio.coroutine
 @hook.irc_raw("KICK")
-def on_kick(conn, chan, nick, loop):
+def on_kick(conn, chan, target, loop):
     """
     :type conn: cloudbot.client.Client
     :type chan: str
     :type nick: str
     """
     # if the bot has been kicked, remove from the channel list
-    if nick == conn.nick:
+    if target == conn.nick:
         if chan in conn.channels:
             conn.channels.remove(chan)
         if conn.config.get('auto_rejoin', False):
             loop.call_later(5, conn.join, chan)
+            loop.call_later(5, logger.info, "Bot was kicked from {}, rejoining channel.".format(chan))
 
 
 @asyncio.coroutine
@@ -46,12 +48,12 @@ def on_nick(irc_paramlist, conn, irc_raw):
 # mostly when using a BNC which saves channels
 @asyncio.coroutine
 @hook.irc_raw("JOIN")
-def on_join(conn, chan, nick):
+def on_join(conn, chan, target):
     """
     :type conn: cloudbot.client.Client
     :type chan: str
     :type nick: str
     """
-    if nick == conn.nick:
+    if target == conn.nick:
         if chan not in conn.channels:
             conn.channels.append(chan)

@@ -13,7 +13,7 @@ nick_re = re.compile(":(.+?)!")
 
 @asyncio.coroutine
 @hook.irc_raw("KICK")
-def on_kick(conn, chan, nick):
+def on_kick(conn, chan, nick, loop):
     """
     :type conn: cloudbot.client.Client
     :type chan: str
@@ -24,7 +24,7 @@ def on_kick(conn, chan, nick):
         if chan in conn.channels:
             conn.channels.remove(chan)
         if conn.config.get('auto_rejoin', False):
-            conn.join(chan)
+            loop.call_later(5, conn.join, chan)
 
 
 @asyncio.coroutine

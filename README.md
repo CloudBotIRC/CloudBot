@@ -2,7 +2,7 @@
 
 ## About
 
-CloudBotRefresh is the newest generation of CloudBot, the python IRC bot originally based on [Skybot](http://git.io/skybot).
+CloudBotRefresh is the newest generation of CloudBot, the fun, fast, extendable Python IRC bot!
 
 ## Installing CloudBot
 

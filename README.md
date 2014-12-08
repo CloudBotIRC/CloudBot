@@ -6,7 +6,7 @@ CloudBotRefresh is the newest generation of CloudBot, the python IRC bot origina
 
 ## Installing CloudBot
 
-To install CloudBotRefresh on *Unix, see [docs/installing-unix.md](https://github.com/CloudBotIRC/CloudBotRefresh/blob/python3.4/docs/installing-unix.md)
+To install CloudBotRefresh on *nix (linux, etc), see [docs/installing-unix.md](https://github.com/CloudBotIRC/CloudBotRefresh/blob/python3.4/docs/installing-unix.md)
 
 To install CloudBotRefresh on Windows, see [docs/installing-windows.md](https://github.com/CloudBotIRC/CloudBotRefresh/blob/python3.4/docs/installing-windows.md)
 
@@ -60,7 +60,7 @@ CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
 
     CloudBot
 
-    Copyright © 2011-2014 Luke Rogers and CloudBot Contributors
+    Copyright © 2011-2015 Luke Rogers and CloudBot Contributors
 
     CloudBot is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

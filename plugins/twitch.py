@@ -1,5 +1,5 @@
 import re
-from html.parser import HTMLParser
+import html
  
 from cloudbot import hook
 from cloudbot.util import http
@@ -76,7 +76,6 @@ def twitch_lookup(location):
         channel = locsplit[0]
         type = None
         id = None
-    h = HTMLParser()
     fmt = "{}: {} playing {} ({})"  # Title: nickname playing Game (x views)
     if type and id:
         if type == "b":  # I haven't found an API to retrieve broadcast info
@@ -85,20 +84,20 @@ def twitch_lookup(location):
             playing = soup.find('a', {'class': 'game js-game'}).text
             views = soup.find('span', {'id': 'views-count'}).text + " view"
             views = views + "s" if not views[0:2] == "1 " else views
-            return h.unescape(fmt.format(title, channel, playing, views))
+            return html.unescape(fmt.format(title, channel, playing, views))
         elif type == "c":
             data = http.get_json("https://api.twitch.tv/kraken/videos/" + type + id)
             title = data['title']
             playing = data['game']
             views = str(data['views']) + " view"
             views = views + "s" if not views[0:2] == "1 " else views
-            return h.unescape(fmt.format(title, channel, playing, views))
+            return html.unescape(fmt.format(title, channel, playing, views))
     else:
         data = http.get_json("https://api.twitch.tv/kraken/channels/" + channel)
         if data and len(data) >= 1:
             title = data['status']
             playing = data['game']
             viewers = "\x034\x02Offline\x02\x0f"
-            return h.unescape(fmt.format(title, channel, playing, viewers))
+            return html.unescape(fmt.format(title, channel, playing, viewers))
         else:
             return

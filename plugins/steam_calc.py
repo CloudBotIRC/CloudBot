@@ -1,118 +1,66 @@
-import csv
-import io
+import requests
+import bs4
 
 from cloudbot import hook
-from cloudbot.util import http
-
-gauge_url = "http://www.mysteamgauge.com/search?username={}"
-
-api_url = "http://mysteamgauge.com/user/{}.csv"
-steam_api_url = "http://steamcommunity.com/id/{}/?xml=1"
+from cloudbot.util import web
 
 
-def refresh_data(name):
-    http.get(gauge_url.format(name), timeout=25, get_method='HEAD')
+class SteamError(Exception):
+    pass
 
 
-def get_data(name):
-    return http.get(api_url.format(name))
+CALC_URL = "https://steamdb.info/calculator/"
 
 
-def is_number(s):
-    try:
-        float(s)
-        return True
-    except ValueError:
-        return False
-
-
-def unicode_dictreader(utf8_data, **kwargs):
-    csv_reader = csv.DictReader(utf8_data, **kwargs)
-    for row in csv_reader:
-        yield dict([(key.lower(), str(value, 'utf-8')) for key, value in row.items()])
-
-
-@hook.command("steamcalc", "sc")
-def steamcalc(text, reply):
-    """steamcalc <username> [currency] - Gets value of steam account and total hours played. Uses steamcommunity.com/id/<nickname>. """
-
-    # check if the user asked us to force reload
-    force_reload = text.endswith(" forcereload")
-    if force_reload:
-        name = text[:-12].strip().lower()
-    else:
-        name = text.strip()
-
-    if force_reload:
-        try:
-            reply("Collecting data, this may take a while.")
-            refresh_data(name)
-            request = get_data(name)
-            do_refresh = False
-        except (http.HTTPError, http.URLError):
-            return "Could not get data for this user."
-    else:
-        try:
-            request = get_data(name)
-            do_refresh = True
-        except (http.HTTPError, http.URLError):
-            try:
-                reply("Collecting data, this may take a while.")
-                refresh_data(name)
-                request = get_data(name)
-                do_refresh = False
-            except (http.HTTPError, http.URLError):
-                return "Could not get data for this user."
-
-    csv_data = io.StringIO(request)  # we use StringIO because CSV can't read a string
-    reader = unicode_dictreader(csv_data)
-
-    # put the games in a list
-    games = []
-    for row in reader:
-        games.append(row)
-
+def get_data(user, currency="us"):
+    """
+    takes a steam user ID and returns a dict containing info about the games the user owns
+    :type user: str
+    :type currency: str
+    :return: dict
+    """
     data = {}
 
-    # basic information
-    steam_profile = http.get_xml(steam_api_url.format(name))
+    # form the request
+    params = {'player': user, 'currency': currency}
+
+    # get the page
     try:
-        data["name"] = steam_profile.find('steamID').text
-        online_state = steam_profile.find('stateMessage').text
+        request = requests.get(CALC_URL, params=params)
+        request.raise_for_status()
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+        raise SteamError("Could not get user info: {}".format(e))
+
+    # parse that page!
+    soup = bs4.BeautifulSoup(request.text)
+
+    # get all the data we need
+    try:
+        data["name"] = soup.find("h1", {"class": "header-title"}).find("a").text
+        data["url"] = request.url
+
+        data["value"] = soup.find("h1", {"class": "calculator-price"}).text
+        data["value_sales"] = soup.find("h1", {"class": "calculator-price-lowest"}).text
+
+        data["count"] = soup.find("div",
+                                  {"class": "pull-right price-container"}).find("p").find("span", {"class":
+                                                                                                       "number"}).text
     except AttributeError:
-        return "Could not get data for this user."
+        raise SteamError("Could not read info, does this user exist?")
 
-    online_state = online_state.replace("<br/>", ": ")  # will make this pretty later
-    data["state"] = text.strip_html(online_state)
+    return data
 
-    # work out the average metascore for all games
-    ms = [float(game["metascore"]) for game in games if is_number(game["metascore"])]
-    metascore = float(sum(ms)) / len(ms) if len(ms) > 0 else float('nan')
-    data["average_metascore"] = "{0:.1f}".format(metascore)
 
-    # work out the totals
-    data["games"] = len(games)
+@hook.command()
+def steamcalc(text):
+    user = text.strip().lower()
 
-    total_value = sum([float(game["value"]) for game in games if is_number(game["value"])])
-    data["value"] = str(int(round(total_value)))
+    try:
+        data = get_data(user)
+    except SteamError as e:
+        return "{}".format(e)
 
-    # work out the total size
-    total_size = 0.0
+    data["short_url"] = web.try_shorten(data["url"])
 
-    for game in games:
-        if not is_number(game["size"]):
-            continue
-
-        if game["unit"] == "GB":
-            total_size += float(game["size"])
-        else:
-            total_size += float(game["size"]) / 1024
-
-    data["size"] = "{0:.1f}".format(total_size)
-
-    reply("{name} ({state}) has {games} games with a total value of ${value}"
-          " and a total size of {size}GB! The average metascore for these"
-          " games is {average_metascore}.".format(**data))
-
-    if do_refresh:
-        refresh_data(name)
+    return "\x02{name}\x02 has \x02{count}\x02 games with a total value of \x02{value}\x02!" \
+           " (\x02{value_sales}\x02 during sales) - {short_url}".format(**data)

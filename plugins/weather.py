@@ -1,3 +1,5 @@
+import requests
+
 from cloudbot import hook
 from cloudbot.util import http, web
 
@@ -21,7 +23,6 @@ def weather(text, reply, db, nick, bot, notice):
     if not text:
         location = db.execute("select loc from weather where nick=lower(:nick)",
                               {"nick": nick}).fetchone()
-        print(location)
         if not location:
             # no location saved in the database, send the user help text
             notice(weather.__doc__)
@@ -43,7 +44,14 @@ def weather(text, reply, db, nick, bot, notice):
     location = http.quote_plus(loc)
 
     request_url = base_url.format(api_key, "geolookup/forecast/conditions", location)
-    response = http.get_json(request_url)
+
+    try:
+        request = requests.get(request_url)
+        request.raise_for_status()
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+        return "Could not get weather data: {}".format(e)
+
+    response = request.json()
 
     if 'location' not in response:
         try:
@@ -53,7 +61,7 @@ def weather(text, reply, db, nick, bot, notice):
 
         # get the weather again, using the closest match
         request_url = base_url.format(api_key, "geolookup/forecast/conditions", "zmw:" + location_id)
-        response = http.get_json(request_url)
+        response = requests.get(request_url).json()
 
     if response['location']['state']:
         place_name = "\x02{}\x02, \x02{}\x02 (\x02{}\x02)".format(response['location']['city'],

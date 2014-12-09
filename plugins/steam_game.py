@@ -54,9 +54,10 @@ def get_steam_info(url):
                     continue
 
     data["price"] = soup.find('div', {'class': 'game_purchase_price price'}).text.strip()
+    data["genre"] = data["genre"].lower()
 
-    return "\x02{name}\x02: {desc}, \x02Genre\x02: {genre}, \x02Release Date\x02: {release date}," \
-           " \x02Price\x02: {price}".format(**data)
+    return "\x02{name}\x02 - {desc} - \x02{genre}\x02 - released \x02{release date}\x02" \
+           " - \x02{price}\x02".format(**data)
 
 
 @hook.regex(steam_re)
@@ -65,9 +66,9 @@ def steam_url(match):
 
 
 @hook.command()
-def steam(inp):
+def steam(text):
     """steam [search] - Search for specified game/trailer/DLC"""
-    page = http.get("http://store.steampowered.com/search/?term=" + inp)
+    page = http.get("http://store.steampowered.com/search/?term=" + text)
     soup = BeautifulSoup(page, 'lxml', from_encoding="utf-8")
     result = soup.find('a', {'class': 'search_result_row'})
     return get_steam_info(result['href']) + " - " + web.try_shorten(result['href'])

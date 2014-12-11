@@ -18,3 +18,4 @@ def debug():
     return "CPU Usage: \x02{:.2f}%\x02, Memory Usage: \x02{:.2f} MB\x02," \
            " Threads: \x02{}\x02".format(cpu, mem, thread)
 
+

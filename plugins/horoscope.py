@@ -1,7 +1,10 @@
 # Plugin by Infinity - <https://github.com/infinitylabs/UguuBot>
 
+import requests
+from bs4 import BeautifulSoup
+
 from cloudbot import hook
-from cloudbot.util import http, formatting
+from cloudbot.util import formatting
 
 
 @hook.onload()
@@ -32,13 +35,19 @@ def horoscope(text, db, notice, nick):
         sign = sign[0]
 
     url = "http://my.horoscope.com/astrology/free-daily-horoscope-{}.html".format(sign)
-    soup = http.get_soup(url)
+
+    try:
+        request = requests.get(url)
+        request.raise_for_status()
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+        return "Could not get horoscope: {}.".format(e)
+
+    soup = BeautifulSoup(request.text)
 
     title = soup.find_all('h1', {'class': 'h1b'})[1]
     horoscope_text = soup.find('div', {'class': 'fontdef1'})
     result = "\x02{}\x02 {}".format(title, horoscope_text)
     result = formatting.strip_html(result)
-    # result = unicode(result, "utf8").replace('flight ','')
 
     if not title:
         return "Could not get the horoscope for {}.".format(text)

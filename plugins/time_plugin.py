@@ -1,37 +1,6 @@
 import time
 
 from cloudbot import hook
-from cloudbot.util import http, formatting
-
-api_url = 'http://api.wolframalpha.com/v2/query?format=plaintext'
-
-
-@hook.command("time")
-def time_command(text, bot=None):
-    """time <area> -- Gets the time in <area>"""
-
-    query = "current time in {}".format(text)
-
-    api_key = bot.config.get("api_keys", {}).get("wolframalpha", None)
-    if not api_key:
-        return "error: no wolfram alpha api key set"
-
-    request = http.get_xml(api_url, input=query, appid=api_key)
-    current_time = " ".join(request.xpath("//pod[@title='Result']/subpod/plaintext/text()"))
-    current_time = current_time.replace("  |  ", ", ")
-
-    if current_time:
-        # nice place name for UNIX time
-        if text.lower() == "unix":
-            place = "Unix Epoch"
-        else:
-            place = formatting.capitalize_first(" ".join(request.xpath("//pod[@"
-                                                                       "title='Input interpretation']/subpod/plaintext/text()"))[
-                                                16:])
-        return "{} - \x02{}\x02".format(current_time, place)
-    else:
-        return "Could not get the time for '{}'.".format(text)
-
 
 @hook.command(autohelp=False)
 def beats(text):

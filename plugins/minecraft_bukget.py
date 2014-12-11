@@ -4,7 +4,7 @@ import random
 import requests
 
 from cloudbot import hook
-from cloudbot.util import http, web, formatting
+from cloudbot.util import web, formatting
 
 
 # # CONSTANTS

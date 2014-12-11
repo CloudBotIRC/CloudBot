@@ -1,8 +1,16 @@
 import random
 import requests
 
+from lxml import html
+
 from cloudbot import hook
-from cloudbot.util import http, formatting
+from cloudbot.util import formatting
+
+
+def unescape(s):
+    if not s.strip():
+        return s
+    return html.fromstring(s).text_content()
 
 
 def api_get(kind, query):
@@ -36,14 +44,14 @@ def google(text):
 
     result = parsed['responseData']['results'][0]
 
-    title = http.unescape(result['titleNoFormatting'])
+    title = unescape(result['titleNoFormatting'])
     title = formatting.truncate_str(title, 60)
-    content = http.unescape(result['content'])
+    content = unescape(result['content'])
 
     if not content:
         content = "No description available."
     else:
-        content = http.html.fromstring(content).text_content()
+        content = html.fromstring(content).text_content()
         content = formatting.truncate_str(content, 150)
 
     return '{} -- \x02{}\x02: "{}"'.format(result['unescapedUrl'], title, content)

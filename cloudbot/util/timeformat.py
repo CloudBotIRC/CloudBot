@@ -51,6 +51,16 @@ def timesince(d, now=None, count=2, accuracy=6, simple=False):
     return format_time(since, count, accuracy, simple)
 
 
+def timeuntil(d, now=None, count=2, accuracy=6, simple=False):
+    """
+    Like timesince, but returns a string measuring the time until
+    the given time.
+    """
+    if not now:
+        now = datetime.datetime.now()
+    return timesince(now, d, count=3, accuracy=6, simple=False)
+
+
 def format_time(seconds, count=3, accuracy=6, simple=False):
     """
     Takes a length of time in seconds and returns a string describing that length of time.

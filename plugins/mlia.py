@@ -14,7 +14,7 @@ def refresh_cache(loop):
     """ gets a page of random MLIAs and puts them into a dictionary """
     url = 'http://mylifeisaverage.com/{}'.format(random.randint(1, 11000))
     request = yield from loop.run_in_executor(None, requests.get, url)
-    soup = BeautifulSoup(request.text, "lxml")
+    soup = BeautifulSoup(request.text)
 
     for story in soup.find_all('div', {'class': 'story '}):
         mlia_id = story.find('span', {'class': 'left'}).a.text

@@ -1,17 +1,26 @@
 import json
+import requests
 
 from bs4 import BeautifulSoup
 
 from cloudbot import hook
-from cloudbot.util import http, formatting
+from cloudbot.util import formatting
 
 
 @hook.command()
 def suggest(text):
     """suggest <phrase> -- Gets suggested phrases for a google search"""
+    params = {'output': 'json', 'client': 'hp', 'q': text}
 
-    page = http.get('http://google.com/complete/search',
-                    output='json', client='hp', q=text)
+    try:
+            request = requests.get('http://google.com/complete/search',
+                                   params=params)
+            request.raise_for_status()
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+        return "Could not get suggestions: {}".format(e)
+
+    page = request.text
+
     page_json = page.split('(', 1)[1][:-1]
 
     suggestions = json.loads(page_json)[1]

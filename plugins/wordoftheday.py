@@ -10,7 +10,7 @@ def wordoftheday():
     try:
         request = requests.get('http://merriam-webster.com/word-of-the-day')
         request.raise_for_status()
-    except requests.exceptions.HTTPError as e:
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         return "Could not get word of the day: {}".format(e)
 
     soup = BeautifulSoup(request.text)

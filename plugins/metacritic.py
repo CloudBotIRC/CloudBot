@@ -1,15 +1,16 @@
-# metacritic.com scraper
-
 import re
-from urllib.error import HTTPError
+
+import requests
+from lxml import html
 
 from cloudbot import hook
-from cloudbot.util import http
+from cloudbot.util import web
 
 
 @hook.command("metacritic", "mc")
 def metacritic(text):
-    """[all|movie|tv|album|x360|ps3|pc|gba|ds|3ds|wii|vita|wiiu|xone|ps4] <title> - gets rating for <title> from metacritic on the specified medium"""
+    """[all|movie|tv|album|x360|ps3|pc|gba|ds|3ds|wii|vita|wiiu|xone|ps4] <title> - gets rating for <title> from
+     metacritic on the specified medium"""
 
     args = text.strip()
 
@@ -31,14 +32,24 @@ def metacritic(text):
 
     cat = 'game' if plat in game_platforms else plat
 
-    title_safe = http.quote_plus(title)
+    title_safe = requests.utils.quote(title)
 
     url = 'http://www.metacritic.com/search/{}/{}/results'.format(cat, title_safe)
 
+    # metacritic thinks it's so damn smart blocking my crawler
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                      'Chrome/39.0.2171.71 Safari/537.36',
+        'Referer':  'http://www.metacritic.com/'
+    }
+
     try:
-        doc = http.get_html(url)
-    except HTTPError:
-        return 'error fetching results'
+        request = requests.get(url, headers=headers)
+        request.raise_for_status()
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+        return "Could not get Metacritic info: {}".format(e)
+
+    doc = html.fromstring(request.text)
 
     # get the proper result element we want to pull data from
     result = None
@@ -76,7 +87,7 @@ def metacritic(text):
                 result = res
                 break
 
-    if not result:
+    if result is None:
         return 'No results found.'
 
     # get the name, release date, and score from the result

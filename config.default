@@ -24,7 +24,7 @@
             },
             "permissions": {
                 "admins": {
-                    "perms": ["adminonly", "addfactoid", "delfactoid", "ignore", "botcontrol", "plpaste", "permissions_users", "op"],
+                    "perms": ["addfactoid", "delfactoid", "ignore", "botcontrol", "plpaste", "permissions_users", "op"],
                     "users": ["examplea!user@example.com", "exampleb!user@example.com"]
                 },
                 "moderators": {

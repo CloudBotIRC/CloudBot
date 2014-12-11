@@ -238,7 +238,7 @@ def console_log(bot, event):
 # TODO: @hook.onstop() for when unloaded
 @hook.command("flushlog", permissions=["adminonly"])
 def flush_log():
-    for stream in stream_cache.values():
+    for name, stream in stream_cache.values():
         stream.flush()
-    for stream in raw_cache.values():
+    for name, stream in raw_cache.values():
         stream.flush()

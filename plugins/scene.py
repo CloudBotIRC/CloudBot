@@ -4,7 +4,7 @@ import requests
 from lxml import html
 
 from cloudbot import hook
-from cloudbot.util import timesince
+from cloudbot.util import timeformat
 
 
 @hook.command("pre", "scene")
@@ -33,7 +33,7 @@ def pre(text):
     # parse date/time
     date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
     date_string = date.strftime("%d %b %Y")
-    since = timesince.timesince(date)
+    since = timeformat.timesince(date)
 
     size = result.xpath("span[@class='inforight']//text()")
     if size:

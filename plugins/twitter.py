@@ -5,7 +5,7 @@ from datetime import datetime
 import tweepy
 from cloudbot import hook
 
-from cloudbot.util import timesince
+from cloudbot.util import timeformat
 
 TWITTER_RE = re.compile(r"(?:(?:www.twitter.com|twitter.com)/(?:[-_a-zA-Z0-9]+)/status/)([0-9]+)", re.I)
 
@@ -53,7 +53,7 @@ def twitter_url(match, bot=None):
     else:
         prefix = ""
 
-    time = timesince.timesince(tweet.created_at, datetime.utcnow())
+    time = timeformat.timesince(tweet.created_at, datetime.utcnow())
 
     return "{}@\x02{}\x02 ({}): {} ({} ago)".format(prefix, user.screen_name, user.name, text, time)
 
@@ -136,7 +136,7 @@ def twitter(text):
     else:
         prefix = ""
 
-    time = timesince.timesince(tweet.created_at, datetime.utcnow())
+    time = timeformat.timesince(tweet.created_at, datetime.utcnow())
 
     return "{}@\x02{}\x02 ({}): {} ({} ago)".format(prefix, user.screen_name, user.name, text, time)
 

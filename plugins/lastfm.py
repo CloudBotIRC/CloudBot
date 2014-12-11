@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from cloudbot import hook
-from cloudbot.util import http, timesince
+from cloudbot.util import http, timeformat
 
 api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
 
@@ -54,7 +54,7 @@ def lastfm(text, nick, db, bot, notice):
         status = 'last listened to'
         # lets see how long ago they listened to it
         time_listened = datetime.fromtimestamp(int(track["date"]["uts"]))
-        time_since = timesince.timesince(time_listened)
+        time_since = timeformat.timesince(time_listened)
         ending = ' ({} ago)'.format(time_since)
 
     else:

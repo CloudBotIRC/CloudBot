@@ -4,7 +4,7 @@ import asyncio
 import re
 
 from cloudbot import hook
-from cloudbot.util import timesince
+from cloudbot.util import timeformat
 from cloudbot.event import EventType
 
 db_ready = []
@@ -107,7 +107,7 @@ def seen(text, nick, chan, db, event, conn):
                            {'name': text, 'chan': chan}).fetchone()
 
     if last_seen:
-        reltime = timesince.timesince(last_seen[1])
+        reltime = timeformat.timesince(last_seen[1])
         if last_seen[0] != text.lower():  # for glob matching
             text = last_seen[0]
         if last_seen[2][0:1] == "\x01":

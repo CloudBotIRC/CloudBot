@@ -5,7 +5,7 @@ from sqlalchemy import Table, Column, String, Boolean, DateTime
 from sqlalchemy.sql import select
 
 from cloudbot import hook
-from cloudbot.util import timesince, botvars
+from cloudbot.util import timeformat, botvars
 from cloudbot.event import EventType
 
 table = Table(
@@ -86,12 +86,12 @@ def tellinput(event, conn, db, nick, notice):
 
     if tells:
         user_from, message, time_sent = tells[0]
-        reltime = timesince.timesince(time_sent)
+        reltime = timeformat.timesince(time_sent)
 
         if reltime == 0:
-            reltime_formatted = ""
+            reltime_formatted = "just a moment"
 
-        reply = "{} sent you a message {} ago: {}".format(user_from, reltime, message)
+        reply = "{} sent you a message {} ago: {}".format(user_from, reltime_formatted, message)
         if len(tells) > 1:
             reply += " (+{} more, {}showtells to view)".format(len(tells) - 1, conn.config["command_prefix"])
 
@@ -111,7 +111,7 @@ def showtells(nick, notice, db, conn):
 
     for tell in tells:
         sender, message, time_sent = tell
-        past = timesince.timesince(time_sent)
+        past = timeformat.timesince(time_sent)
         notice("{} sent you a message {} ago: {}".format(sender, past, message))
 
     read_all_tells(db, conn.name, nick)

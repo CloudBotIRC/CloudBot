@@ -7,7 +7,7 @@ import asyncio
 import urllib.parse
 
 from cloudbot import hook
-from cloudbot.util import timesince, formatting
+from cloudbot.util import timeformat, formatting
 
 reddit_re = re.compile(r'.*(((www\.)?reddit\.com/r|redd\.it)[^ ]+)', re.I)
 
@@ -79,7 +79,7 @@ def reddit(text, loop):
     item["link"] = short_url.format(item["id"])
 
     raw_time = datetime.fromtimestamp(int(item["created_utc"]))
-    item["timesince"] = timesince.timesince(raw_time)
+    item["timesince"] = timeformat.timesince(raw_time)
 
     if item["over_18"]:
         item["warning"] = " \x02NSFW\x02"

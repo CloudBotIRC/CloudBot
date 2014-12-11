@@ -88,6 +88,9 @@ def tellinput(event, conn, db, nick, notice):
         user_from, message, time_sent = tells[0]
         reltime = timesince.timesince(time_sent)
 
+        if reltime == 0:
+            reltime_formatted = ""
+
         reply = "{} sent you a message {} ago: {}".format(user_from, reltime, message)
         if len(tells) > 1:
             reply += " (+{} more, {}showtells to view)".format(len(tells) - 1, conn.config["command_prefix"])

@@ -1,7 +1,7 @@
 import json
+import requests
 
 from cloudbot import hook
-from cloudbot.util import http
 
 
 @hook.command(autohelp=False)
@@ -9,12 +9,13 @@ def mcstatus():
     """- gets the status of various Mojang (Minecraft) servers"""
 
     try:
-        request = http.get("http://status.mojang.com/check")
-    except (http.URLError, http.HTTPError) as e:
+        request = requests.get("http://status.mojang.com/check")
+        request.raise_for_status()
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         return "Unable to get Minecraft server status: {}".format(e)
 
     # lets just reformat this data to get in a nice format
-    data = json.loads(request.replace("}", "").replace("{", "").replace("]", "}").replace("[", "{"))
+    data = json.loads(request.text.replace("}", "").replace("{", "").replace("]", "}").replace("[", "{"))
 
     out = []
 

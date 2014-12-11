@@ -35,7 +35,7 @@ def plugin_search(term):
     """ searches for a plugin with the bukget API and returns the slug """
     term = term.lower().strip()
 
-    search_term = http.quote_plus(term)
+    search_term = requests.utils.quote(term)
 
     try:
         request = requests.get(search_url.format(search_term))

@@ -1,8 +1,9 @@
 import json
+import requests
 import re
 
 from cloudbot import hook
-from cloudbot.util import http, formatting, web
+from cloudbot.util import formatting, web
 
 
 ## CONSTANTS
@@ -67,7 +68,7 @@ def format_item(item, show_url=True):
 @hook.regex(NEWEGG_RE)
 def newegg_url(match):
     item_id = match.group(1)
-    item = http.get_json(API_PRODUCT.format(item_id))
+    item = requests.get(API_PRODUCT.format(item_id)).json()
     return format_item(item, show_url=False)
 
 
@@ -81,11 +82,24 @@ def newegg(text):
         "Sort": "FEATURED"
     }
 
+    # newegg thinks it's so damn smart blocking my scraper
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) '
+                      'Version/5.1 Mobile/9A334 Safari/7534.48.3',
+        'Referer':  'http://www.newegg.com/'
+    }
+
     # submit the search request
-    r = http.get_json(
-        'http://www.ows.newegg.com/Search.egg/Advanced',
-        post_data=json.dumps(request).encode('utf-8')
-    )
+    try:
+        request = requests.post(
+            'http://www.ows.newegg.com/Search.egg/Advanced',
+            data=json.dumps(request).encode('utf-8'),
+            headers=headers
+        )
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+        return "Unable to find product: {}".format(e)
+
+    r = request.json()
 
     # get the first result
     if r["ProductListItems"]:

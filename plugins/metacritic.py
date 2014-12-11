@@ -36,7 +36,7 @@ def metacritic(text):
 
     url = 'http://www.metacritic.com/search/{}/{}/results'.format(cat, title_safe)
 
-    # metacritic thinks it's so damn smart blocking my crawler
+    # metacritic thinks it's so damn smart blocking my scraper
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) '
                       'Chrome/39.0.2171.71 Safari/537.36',

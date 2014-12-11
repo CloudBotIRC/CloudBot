@@ -1,5 +1,8 @@
+import requests
+from bs4 import BeautifulSoup
+
 from cloudbot import hook
-from cloudbot.util import http, web
+from cloudbot.util import web
 
 user_url = "http://osrc.dfm.io/{}"
 
@@ -12,9 +15,12 @@ def osrc(text):
     url = user_url.format(user_nick)
 
     try:
-        soup = http.get_soup(url)
-    except (http.HTTPError, http.URLError):
+        request = requests.get(url)
+        request.raise_for_status()
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError):
         return "Couldn't find any stats for this user."
+
+    soup = BeautifulSoup(request.text)
 
     report = soup.find("div", {"id": "description"}).find("p").get_text()
 

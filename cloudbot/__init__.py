@@ -25,13 +25,13 @@ def _setup():
     else:
         developer_mode = default_developer_mode
 
-    if not "config_reloading" in developer_mode:
+    if "config_reloading" not in developer_mode:
         developer_mode["config_reloading"] = default_developer_mode["config_reloading"]
-    if not "plugin_reloading" in developer_mode:
+    if "plugin_reloading" not in developer_mode:
         developer_mode["plugin_reloading"] = default_developer_mode["plugin_reloading"]
-    if not "console_debug" in developer_mode:
+    if "console_debug" not in developer_mode:
         developer_mode["console_debug"] = default_developer_mode["console_debug"]
-    if not "file_debug" in developer_mode:
+    if "file_debug" not in developer_mode:
         developer_mode["file_debug"] = default_developer_mode["file_debug"]
 
     global log_dir

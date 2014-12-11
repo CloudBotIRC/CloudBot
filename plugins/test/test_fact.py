@@ -6,6 +6,7 @@ import pytest
 from plugins.fact import fact
 from cloudbot import http, web
 
+# noinspection PyPep8
 testpage = """
 <html>
 <body>

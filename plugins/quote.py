@@ -123,7 +123,8 @@ def get_quote_by_chan(db, chan, num=False):
 @hook.command('q')
 @hook.command()
 def quote(text, nick='', chan='', db=None, notice=None):
-    """[#chan] [nick] [#n] OR add <nick> <message> - gets the [#n]th quote by <nick> (defaulting to random) OR adds <message> as a quote for <nick> in the caller's channel"""
+    """[#chan] [nick] [#n] OR add <nick> <message> - gets the [#n]th quote by <nick> (defaulting to random)
+    OR adds <message> as a quote for <nick> in the caller's channel"""
     create_table_if_not_exists(db)
 
     add = re.match(r"add[^\w@]+(\S+?)>?\s+(.*)", text, re.I)

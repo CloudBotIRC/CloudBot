@@ -2,6 +2,7 @@ import time
 
 from cloudbot import hook
 
+
 @hook.command(autohelp=False)
 def beats(text):
     """beats -- Gets the current time in .beats (Swatch Internet Time). """

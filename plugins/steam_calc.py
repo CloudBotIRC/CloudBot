@@ -44,7 +44,7 @@ def get_data(user, currency="us"):
 
         data["count"] = soup.find("div",
                                   {"class": "pull-right price-container"}).find("p").find("span", {"class":
-                                                                                                       "number"}).text
+                                                                                          "number"}).text
     except AttributeError:
         raise SteamError("Could not read info, does this user exist?")
 

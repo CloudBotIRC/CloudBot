@@ -6,7 +6,7 @@ from cloudbot import hook
 from cloudbot.util import formatting, web
 
 
-## CONSTANTS
+# CONSTANTS
 
 ITEM_URL = "http://www.newegg.com/Product/Product.aspx?Item={}"
 
@@ -16,7 +16,7 @@ API_SEARCH = "http://www.ows.newegg.com/Search.egg/Advanced"
 NEWEGG_RE = re.compile(r"(?:(?:www.newegg.com|newegg.com)/Product/Product\.aspx\?Item=)([-_a-zA-Z0-9]+)", re.I)
 
 
-## OTHER FUNCTIONS
+# OTHER FUNCTIONS
 
 def format_item(item, show_url=True):
     """ takes a newegg API item object and returns a description """
@@ -63,7 +63,7 @@ def format_item(item, show_url=True):
                                                   tag_text)
 
 
-## HOOK FUNCTIONS
+# HOOK FUNCTIONS
 
 @hook.regex(NEWEGG_RE)
 def newegg_url(match):

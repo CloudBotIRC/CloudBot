@@ -9,13 +9,13 @@ from cloudbot.event import EventType
 def ensure_ignored(bot):
     changed = False
     for conn_config in bot.config["connections"]:
-        if not "plugins" in conn_config:
+        if "plugins" not in conn_config:
             conn_config["plugins"] = {"ignore": {"ignored": []}}
             changed = True
-        elif not "ignore" in conn_config["plugins"]:
+        elif "ignore" not in conn_config["plugins"]:
             conn_config["plugins"]["ignore"] = {"ignored": []}
             changed = True
-        elif not "ignored" in conn_config["plugins"]["ignore"]:
+        elif "ignored" not in conn_config["plugins"]["ignore"]:
             conn_config["plugins"]["ignore"]["ignored"] = []
             changed = True
 

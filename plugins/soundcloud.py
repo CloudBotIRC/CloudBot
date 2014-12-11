@@ -35,7 +35,7 @@ def soundcloud_url(match, bot=None):
         print("Error: no api key set")
         return None
     url = match.group(1).split(' ')[-1] + "//" + (match.group(2) if match.group(2) else "") + match.group(3) + \
-          match.group(4).split(' ')[0]
+        match.group(4).split(' ')[0]
     return soundcloud(url, api_key)
 
 
@@ -46,5 +46,5 @@ def sndsc_url(match, bot=None):
         print("Error: no api key set")
         return None
     url = match.group(1).split(' ')[-1] + "//" + (match.group(2) if match.group(2) else "") + match.group(3) + \
-          match.group(4).split(' ')[0]
+        match.group(4).split(' ')[0]
     return soundcloud(http.open(url).url, api_key)

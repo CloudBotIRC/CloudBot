@@ -38,7 +38,8 @@ def onjoin(conn, bot):
             if "censored_strings" in bot.config and nickserv_password in bot.config['censored_strings']:
                 bot.config['censored_strings'].remove(nickserv_password)
             if nickserv_account_name:
-                conn.message(nickserv_name, "{} {} {}".format(nickserv_command, nickserv_account_name, nickserv_password))
+                conn.message(nickserv_name, "{} {} {}".format(nickserv_command,
+                                                              nickserv_account_name, nickserv_password))
             else:
                 conn.message(nickserv_name, "{} {}".format(nickserv_command, nickserv_password))
             if "censored_strings" in bot.config:

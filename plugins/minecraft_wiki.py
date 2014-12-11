@@ -24,7 +24,7 @@ def mcwiki(text):
     # we remove items with a '/' in the name, because
     # gamepedia uses sub-pages for different languages
     # for some stupid reason
-    items = [item for item in j[1] if not "/" in item]
+    items = [item for item in j[1] if "/" not in item]
 
     if items:
         article_name = items[0].replace(' ', '_').encode('utf8')

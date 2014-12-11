@@ -16,7 +16,8 @@ def correction(match, conn, chan, message):
     """
     find, replacement, flags = tuple([b.replace("\/", "/") for b in re.split(r"(?<!\\)/", match.groups()[0])])
 
-    find_re = re.compile("{}{}".format("(?{})".format(flags.replace("g", "")) if flags.replace("g", "") != "" else "", find))
+    find_re = re.compile("{}{}".format("(?{})".format(flags.replace("g", ""))
+                                       if flags.replace("g", "") != "" else "", find))
 
     for item in conn.history[chan].__reversed__():
         nick, timestamp, msg = item
@@ -26,10 +27,10 @@ def correction(match, conn, chan, message):
         if find_re.search(msg):
             if "\x01ACTION" in msg:
                 mod_msg = msg.replace("\x01ACTION ", "/me ").replace("\x01", "")
-            mod_msg = find_re.sub("\x02" + replacement + "\x02", msg, count=int(not "g" in flags))
+            mod_msg = find_re.sub("\x02" + replacement + "\x02", msg, count=int("g" not in flags))
             message("Correction, <{}> {}".format(nick, mod_msg))
             # append to end of history file
-            msg = find_re.sub(replacement, msg, count=int(not "g" in flags))
+            msg = find_re.sub(replacement, msg, count=int("g not" in flags))
             conn.history[chan].append((nick, timestamp, msg))
             return
         else:

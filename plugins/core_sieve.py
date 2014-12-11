@@ -86,6 +86,7 @@ def sieve_suite(bot, event, _hook):
 
     return event
 
+
 @hook.command
 def clearbuckets():
     """temporary!"""

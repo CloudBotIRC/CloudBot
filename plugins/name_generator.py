@@ -39,7 +39,7 @@ def namegen(text, bot, notice):
         selected_module = "fantasy"
 
     # check if the selected module is valid
-    if not selected_module in all_modules:
+    if selected_module not in all_modules:
         return "{} is not a valid name generator.".format(inp)
 
     # load the name generator

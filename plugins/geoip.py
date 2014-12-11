@@ -9,6 +9,7 @@ import pygeoip
 from cloudbot import hook
 from cloudbot.util import http
 
+
 # TODO: This is VERY awful
 @hook.onload()
 def load_regions(bot):

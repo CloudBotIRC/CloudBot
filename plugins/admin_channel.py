@@ -79,7 +79,8 @@ def deop(text, conn, chan, notice):
 
 @hook.command(permissions=["op_topic", "op"])
 def topic(text, conn, chan):
-    """[channel] <topic> - changes the topic to <topic> in [channel], or in the caller's channel if no channel is specified"""
+    """[channel] <topic> - changes the topic to <topic> in [channel], or in the caller's channel
+     if no channel is specified"""
     split = text.split(" ")
     if split[0].startswith("#"):
         message = " ".join(split[1:])

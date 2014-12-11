@@ -3,7 +3,7 @@ import requests
 from cloudbot import hook
 
 
-## CONSTANTS
+# CONSTANTS
 
 exchanges = {
     "blockchain": {
@@ -30,7 +30,7 @@ exchanges = {
 }
 
 
-## HOOK FUNCTIONS
+# HOOK FUNCTIONS
 
 @hook.command("btc", "bitcoin", autohelp=False)
 def bitcoin(text, notice):

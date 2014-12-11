@@ -27,7 +27,7 @@ class ParseError(Exception):
     pass
 
 
-## MISC
+# MISC
 def unpack_varint(s):
     d = 0
     i = 0
@@ -42,7 +42,7 @@ def unpack_varint(s):
 pack_data = lambda d: struct.pack('>b', len(d)) + d
 pack_port = lambda i: struct.pack('>H', i)
 
-## DATA FUNCTIONS
+# DATA FUNCTIONS
 
 
 def mcping_modern(host, port):
@@ -154,7 +154,7 @@ def mcping_legacy(host, port):
     return output
 
 
-## FORMATTING/PARSING FUNCTIONS
+# FORMATTING/PARSING FUNCTIONS
 
 def check_srv(domain):
     """ takes a domain and finds minecraft SRV records """

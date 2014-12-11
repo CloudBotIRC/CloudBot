@@ -52,9 +52,9 @@ def goog_trans(api_key, text, slang, tlang):
     else:
         parsed = http.get_json(url, key=api_key, q=text, target=tlang, format="text")
 
-        #if not 200 <= parsed['responseStatus'] < 300:
-        #   raise IOError('error with the translation server: %d: %s' % (
-        #           parsed['responseStatus'], parsed['responseDetails']))
+        # if not 200 <= parsed['responseStatus'] < 300:
+        #    raise IOError('error with the translation server: %d: %s' % (
+        #            parsed['responseStatus'], parsed['responseDetails']))
     if not slang:
         return unescape('(%(detectedSourceLanguage)s) %(translatedText)s' %
                         (parsed['data']['translations'][0]))

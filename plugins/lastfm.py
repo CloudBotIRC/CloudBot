@@ -1,7 +1,9 @@
 from datetime import datetime
 
+import requests
+
 from cloudbot import hook
-from cloudbot.util import http, timeformat
+from cloudbot.util import timeformat
 
 api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
 
@@ -30,8 +32,10 @@ def lastfm(text, nick, db, bot, notice):
             return
         user = user[0]
 
-    response = http.get_json(api_url, method="user.getrecenttracks",
-                             api_key=api_key, user=user, limit=1)
+    params = {'method': 'user.getrecenttracks', 'api_key': api_key, 'user': user, 'limit': 1}
+    request = requests.get(api_url, params=params)
+
+    response = request.json()
 
     if 'error' in response:
         return "Error: {}.".format(response["message"])
@@ -79,3 +83,4 @@ def lastfm(text, nick, db, bot, notice):
         db.commit()
 
     return out
+

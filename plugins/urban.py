@@ -1,7 +1,10 @@
 import random
 
+import requests
+
 from cloudbot import hook
-from cloudbot.util import http, formatting
+from cloudbot.util import formatting
+
 
 base_url = 'http://api.urbandictionary.com/v0'
 define_url = base_url + "/define"
@@ -11,6 +14,10 @@ random_url = base_url + "/random"
 @hook.command("urban", "u", autohelp=False)
 def urban(text):
     """urban <phrase> [id] -- Looks up <phrase> on urbandictionary.com."""
+
+    headers = {
+        "Referer": "http://m.urbandictionary.com"
+    }
 
     if text:
         # clean and split the input
@@ -27,13 +34,26 @@ def urban(text):
             id_num = 1
 
         # fetch the definitions
-        page = http.get_json(define_url, term=text, referer="http://m.urbandictionary.com")
+        try:
+            params = {"term": text}
+            request = requests.get(define_url, params=params, headers=headers)
+            request.raise_for_status()
+        except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+            return "Could not get definition: {}".format(e)
+
+        page = request.json()
 
         if page['result_type'] == 'no_results':
             return 'Not found.'
     else:
         # get a random definition!
-        page = http.get_json(random_url, referer="http://m.urbandictionary.com")
+        try:
+            request = requests.get(random_url, headers=headers)
+            request.raise_for_status()
+        except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+            return "Could not get definition: {}".format(e)
+
+        page = request.json()
         id_num = None
 
     definitions = page['list']
@@ -50,7 +70,7 @@ def urban(text):
 
         url = definition['permalink']
 
-        output = "[{}/{}] {} :: {}".format(id_num, len(definitions), def_text, url)
+        output = "[{}/{}] {} - {}".format(id_num, len(definitions), def_text, url)
 
     else:
         definition = random.choice(definitions)
@@ -60,6 +80,6 @@ def urban(text):
 
         name = definition['word']
         url = definition['permalink']
-        output = "\x02{}\x02: {} :: {}".format(name, def_text, url)
+        output = "\x02{}\x02: {} - {}".format(name, def_text, url)
 
     return output

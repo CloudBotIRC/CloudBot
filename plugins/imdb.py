@@ -3,7 +3,6 @@ import re
 import requests
 
 from cloudbot import hook
-from cloudbot.util import formatting
 
 
 id_re = re.compile("tt\d+")

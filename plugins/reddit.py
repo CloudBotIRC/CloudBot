@@ -4,9 +4,10 @@ import re
 import random
 import requests
 import asyncio
+import urllib.parse
 
 from cloudbot import hook
-from cloudbot.util import urlnorm, timesince, formatting
+from cloudbot.util import timesince, formatting
 
 reddit_re = re.compile(r'.*(((www\.)?reddit\.com/r|redd\.it)[^ ]+)', re.I)
 
@@ -16,7 +17,12 @@ short_url = "http://redd.it/{}"
 
 @hook.regex(reddit_re)
 def reddit_url(match):
-    r = requests.get(urlnorm.normalize(match.group(1), assume_scheme="http"))
+
+    url = match.group(1)
+    if not urllib.parse.urlparse(url).scheme:
+        url = "http://" + url
+
+    r = requests.get(url)
     thread = html.fromstring(r.text)
 
     title = thread.xpath('//title/text()')[0]

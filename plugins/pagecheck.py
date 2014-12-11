@@ -5,7 +5,6 @@ import requests
 import requests.exceptions
 
 from cloudbot import hook
-from cloudbot.util import urlnorm
 
 
 @hook.command("down", "offline", "up")
@@ -32,12 +31,13 @@ def isup(text):
     """<url> - uses isup.me to check if <url> is online or offline
     :type text: str
     """
+    url = text.strip()
 
     # slightly overcomplicated, esoteric URL parsing
-    scheme, auth, path, query, fragment = urllib.parse.urlsplit(text.strip())
+    scheme, auth, path, query, fragment = urllib.parse.urlsplit(url)
 
     domain = auth or path
-    url = urlnorm.normalize(domain, assume_scheme="http")
+
     try:
         response = requests.get('http://isup.me/' + domain)
     except requests.exceptions.ConnectionError:

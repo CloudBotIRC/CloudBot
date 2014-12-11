@@ -15,8 +15,8 @@ split_re = re.compile(r'([\d+-]*)d?(F|\d*)', re.I)
 
 def n_rolls(count, n):
     """roll an n-sided die count times
-    :type count: int | str
-    :type n: int
+    :type count: int
+    :type n: int | str
     """
     if n == "F":
         return [random.randint(-1, 1) for x in range(min(count, 100))]

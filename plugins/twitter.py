@@ -31,7 +31,7 @@ def load_api(bot):
 
 
 @hook.regex(TWITTER_RE)
-def twitter_url(match, bot=None):
+def twitter_url(match):
     # Find the tweet ID from the URL
     tweet_id = match.group(1)
 

@@ -29,7 +29,7 @@ def soundcloud(url, api_key):
 
 
 @hook.regex(sc_re)
-def soundcloud_url(match, bot=None):
+def soundcloud_url(match, bot):
     api_key = bot.config.get("api_keys", {}).get("soundcloud")
     if not api_key:
         print("Error: no api key set")
@@ -40,7 +40,7 @@ def soundcloud_url(match, bot=None):
 
 
 @hook.regex(sndsc_re)
-def sndsc_url(match, bot=None):
+def sndsc_url(match, bot):
     api_key = bot.config.get("api_keys", {}).get("soundcloud")
     if not api_key:
         print("Error: no api key set")

@@ -90,6 +90,8 @@ def tellinput(event, conn, db, nick, notice):
 
         if reltime == 0:
             reltime_formatted = "just a moment"
+        else:
+            reltime_formatted = reltime
 
         reply = "{} sent you a message {} ago: {}".format(user_from, reltime_formatted, message)
         if len(tells) > 1:

@@ -1,16 +1,23 @@
 import re
+import requests
 
 from bs4 import BeautifulSoup, NavigableString, Tag
 
 from cloudbot import hook
-from cloudbot.util import http, web
+from cloudbot.util import web
 from cloudbot.util.formatting import truncate_str
 
 steam_re = re.compile(r'(.*:)//(store.steampowered.com)(:[0-9]+)?(.*)', re.I)
 
 
+# TODO: this should really just return a info dict and have the formatting in another function
 def get_steam_info(url):
-    page = http.get(url)
+    """
+    takes a URL to a steam store page and returns a formatted info string
+    :param url: string
+    :return: string
+    """
+    page = requests.get(url).text
     soup = BeautifulSoup(page, 'lxml', from_encoding="utf-8")
 
     data = {"name": soup.find('div', {'class': 'apphub_AppName'}).text,
@@ -68,7 +75,7 @@ def steam_url(match):
 @hook.command()
 def steam(text):
     """steam [search] - Search for specified game/trailer/DLC"""
-    page = http.get("http://store.steampowered.com/search/?term=" + text)
+    page = requests.get("http://store.steampowered.com/search/?term=" + text).text
     soup = BeautifulSoup(page, 'lxml', from_encoding="utf-8")
     result = soup.find('a', {'class': 'search_result_row'})
     return get_steam_info(result['href']) + " - " + web.try_shorten(result['href'])

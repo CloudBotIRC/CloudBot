@@ -41,7 +41,7 @@ def weather(text, reply, db, nick, bot, notice):
         else:
             loc = text
 
-    location = http.quote_plus(loc)
+    location = requests.utils.quote(loc)
 
     request_url = base_url.format(api_key, "geolookup/forecast/conditions", location)
 

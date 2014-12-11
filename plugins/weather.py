@@ -1,7 +1,7 @@
 import requests
 
 from cloudbot import hook
-from cloudbot.util import http, web
+from cloudbot.util import web
 
 base_url = "http://api.wunderground.com/api/{}/{}/q/{}.json"
 

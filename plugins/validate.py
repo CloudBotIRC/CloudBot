@@ -1,26 +1,31 @@
-"""
-Runs a given url through the w3c validator
+import urllib.parse
 
-by Vladi
-"""
+import requests
 
 from cloudbot import hook
-from cloudbot.util import http
+from cloudbot.util import web
 
 
 @hook.command("validate", "w3c")
 def validate(text):
     """validate <url> -- Runs url through the w3c markup validator."""
+    text = text.strip()
 
-    if not text.startswith('http://'):
-        text = 'http://' + text
+    if not urllib.parse.urlparse(text).scheme:
+        text = "http://" + text
 
-    url = 'http://validator.w3.org/check?uri=' + http.quote_plus(text)
-    info = dict(http.open(url).info())
+    params = {'uri': text}
+    request = requests.get('http://validator.w3.org/check', params=params)
+
+    info = request.headers
+    url = web.try_shorten(request.url)
 
     status = info['x-w3c-validator-status'].lower()
+    print(status)
     if status in ("valid", "invalid"):
         error_count = info['x-w3c-validator-errors']
         warning_count = info['x-w3c-validator-warnings']
-        return "{} was found to be {} with {} errors and {} warnings." \
-               " see: {}".format(text, status, error_count, warning_count, url)
+        return "{} was found to be {} with {} errors and {} warnings" \
+               " - {}".format(text, status, error_count, warning_count, url)
+    elif status == "abort":
+        return "Invalid input."

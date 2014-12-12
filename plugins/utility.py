@@ -1,12 +1,16 @@
 import base64
-import codecs
 import hashlib
 import collections
 import re
+import os
+import json
+import codecs
+import random
 import binascii
 
 from cloudbot import hook
 from cloudbot.util import formatting
+
 
 colors = collections.OrderedDict([
     ('red', '\x0304'),
@@ -31,8 +35,18 @@ def strip(string):
     return strip_re.sub('', string)
 
 
-# basic text tools
+# onload
+@hook.onload()
+def load_text(bot):
+    """
+    :type bot: cloudbot.bot.CloudBot
+    """
+    global leet
 
+    with codecs.open(os.path.join(bot.data_dir, "leet.json"), encoding="utf-8") as f:
+        leet = json.load(f)
+
+# basic text tools
 
 @hook.command("capitalise", "capitalize")
 def capitalize(text):
@@ -150,6 +164,12 @@ def hash_command(text):
 def munge(text):
     """munge <text> -- Munges up <text>."""
     return formatting.munge(text)
+
+
+@hook.command("leet")
+def leet(text):
+    output = ''.join(random.choice(leet[ch]) if ch.isalpha() else ch for ch in text.lower())
+    return output
 
 
 # colors - based on code by Reece Selwood - <https://github.com/hitzler/homero>

@@ -6,6 +6,8 @@ CloudBotRefresh is the newest generation of CloudBot, the fun, fast, extendable 
 
 ## Installing CloudBot
 
+Firstly, CloudBot will only run on Python 3.4 or higher. Because we use the asyncio module, you will not be able to use any other versions of Python. If you really want to run CloudBot on Python 2.x, you can find the old unsupported version of CloudBot at [this location](https://github.com/ClouDev/CloudBot).
+
 To install CloudBotRefresh on *nix (linux, etc), see [docs/installing-unix.md](https://github.com/CloudBotIRC/CloudBotRefresh/blob/python3.4/docs/installing-unix.md)
 
 To install CloudBotRefresh on Windows, see [docs/installing-windows.md](https://github.com/CloudBotIRC/CloudBotRefresh/blob/python3.4/docs/installing-windows.md)

@@ -13,6 +13,8 @@ python3.4 -m ensurepip
 
 If that doesn't work, follow [this guide](http://simpledeveloper.com/how-to-install-easy_install/) and then run `easy_install pip` in cmd.
 
+Because installing `lxml` can be quite difficult on Windows due to it requiring compilation, you can find a pre-built distribution at [http://www.lfd.uci.edu/~gohlke/pythonlibs/#lxml](http://www.lfd.uci.edu/~gohlke/pythonlibs/#lxml)
+
 ### Download
 
 Download CloudBotRefresh from [https://github.com/CloudBotIRC/CloudBot/zipball/python3.4.zip](https://github.com/CloudBotIRC/CloudBotRefresh/archive/python3.4.zip).

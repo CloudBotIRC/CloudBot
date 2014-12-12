@@ -1,100 +1,56 @@
-import re
+from datetime import datetime
+
+from sqlalchemy import Table, Column, String, Boolean, Integer, DateTime
+from sqlalchemy.sql import select
 
 from cloudbot import hook
+from cloudbot.util import botvars
 
-db_ready = False
+table = Table(
+    'notes',
+    botvars.metadata,
+    Column('note_id', Integer, primary_key=True, unique=True, autoincrement=True),
+    Column('connection', String),
+    Column('user', String),
+    Column('text', String),
+    Column('priority', Integer),
+    Column('deleted', Boolean),
+    Column('added', DateTime),
+)
 
 
-def clean_sql(sql):
-    return re.sub(r'\s+', " ", sql).strip()
+def read_all_notes(db, server, user, show_deleted=False):
+    query = select([table.c.note_id, table.c.text, table.c.added]) \
+        .where(table.c.connection == server) \
+        .where(table.c.user == user.lower()) \
+        .where(table.c.deleted == show_deleted) \
+        .order_by(table.c.added)
+    return db.execute(query).fetchall()
 
 
-def db_init(db):
-    global db_ready
-    if db_ready:
-        return
+def read_note(db, server, user, note_id):
+    query = table.select() \
+        .where(table.c.connection == server) \
+        .where(table.c.user == user.lower()) \
+        .where(table.c.note_id == note_id)
+    return db.execute(query).fetchall()
 
-    exists = db.execute("""
-      select exists (
-        select * from sqlite_master where type = "table" and name = "todos"
-      )
-    """).fetchone()[0] == 1
 
-    if not exists:
-        db.execute(clean_sql("""
-           create virtual table todos using fts4(
-                user,
-                text,
-                added,
-                tokenize=porter
-           )"""))
-
+def add_note(db, server, user, text):
+    query = table.insert().values(
+        connection=server,
+        user=user.lower(),
+        text=text,
+        deleted=False,
+        added=datetime.today()
+    )
+    db.execute(query)
     db.commit()
-
-    db_ready = True
-
-
-def db_getall(db, nick, limit=-1):
-    return db.execute("""
-        select added, text
-            from todos
-            where lower(user) = lower(?)
-            order by added desc
-            limit ?
-
-        """, (nick, limit))
-
-
-def db_get(db, nick, note_id):
-    return db.execute("""
-        select added, text from todos
-        where lower(user) = lower(?)
-        order by added desc
-        limit 1
-        offset ?
-    """, (nick, note_id)).fetchone()
-
-
-def db_del(db, nick, limit='all'):
-    row = db.execute("""
-        delete from todos
-        where rowid in (
-          select rowid from todos
-          where lower(user) = lower(?)
-          order by added desc
-          limit ?
-          offset ?)
-     """, (nick,
-           -1 if limit == 'all' else 1,
-           0 if limit == 'all' else limit))
-    db.commit()
-    return row
-
-
-def db_add(db, nick, text):
-    db.execute("""
-        insert into todos (user, text, added)
-        values (?, ?, CURRENT_TIMESTAMP)
-    """, (nick, text))
-    db.commit()
-
-
-def db_search(db, nick, query):
-    return db.execute("""
-        select added, text
-        from todos
-        where todos match ?
-        and lower(user) = lower(?)
-        order by added desc
-    """, (query, nick))
 
 
 @hook.command("note", "notes")
-def note(text, nick, db, notice):
-    """<add|del|list|search> args - manipulates your list of notes"""
-
-    db_init(db)
-
+def note(text, conn, nick, db, notice):
+    """<add|list|get> args - manipulates your list of notes"""
     parts = text.split()
     cmd = parts[0].lower()
 
@@ -103,7 +59,7 @@ def note(text, nick, db, notice):
     # code to allow users to access each others factoids and a copy of help
     # ".note (add|del|list|search) [@user] args -- Manipulates your list of todos."
     # if len(args) and args[0].startswith("@"):
-    #    nick = args[0][1:]
+    # nick = args[0][1:]
     #    args = args[1:]
 
     if cmd == 'add':
@@ -112,78 +68,28 @@ def note(text, nick, db, notice):
 
         text = " ".join(args)
 
-        db_add(db, nick, text)
+        add_note(db, conn.name, nick, text)
 
         notice("Note added!")
         return
     elif cmd == 'get':
-        if len(args):
-            try:
-                index = int(args[0])
-            except ValueError:
-                notice("Invalid number format.")
-                return
-        else:
-            index = 0
+        notes = read_note(db, conn.name, nick, text)
 
-        row = db_get(db, nick, index)
-
-        if not row:
-            notice("No such entry.")
-            return
-        notice("[{}]: {}: {}".format(index, row[0], row[1]))
-    elif cmd == 'del' or cmd == 'delete' or cmd == 'remove':
-        if not len(args):
-            return "error"
-
-        if args[0] == 'all':
-            index = 'all'
-        else:
-            try:
-                index = int(args[0])
-            except ValueError:
-                notice("Invalid number.")
-                return
-
-        rows = db_del(db, nick, index)
-
-        notice("Deleted {} entries".format(rows.rowcount))
-    elif cmd == 'list':
-        limit = -1
-
-        if len(args):
-            try:
-                limit = int(args[0])
-                limit = max(-1, limit)
-            except ValueError:
-                notice("Invalid number.")
-                return
-
-        rows = db_getall(db, nick, limit)
-
-        found = False
-
-        for (index, row) in enumerate(rows):
-            notice("[{}]: {}: {}".format(index, row[0], row[1]))
-            found = True
-
-        if not found:
+        if not notes:
             notice("{} has no entries.".format(nick))
-    elif cmd == 'search':
-        if not len(args):
-            notice("No search query given!")
-            return
-        query = " ".join(args)
-        rows = db_search(db, nick, query)
 
-        found = False
+        for n in notes:
+            note_id, note, added = n
+            notice("#{}: {} - {}".format(note_id, note, added))
+    elif cmd == 'list':
+        notes = read_all_notes(db, conn.name, nick)
 
-        for (index, row) in enumerate(rows):
-            notice("[{}]: {}: {}".format(index, row[0], row[1]))
-            found = True
+        if not notes:
+            notice("{} has no entries.".format(nick))
 
-        if not found:
-            notice("{} has no matching entries for: {}".format(nick, query))
+        for n in notes:
+            note_id, note, added = n
+            notice("#{}: {} - {}".format(note_id, note, added))
 
     else:
         notice("Unknown command: {}".format(cmd))

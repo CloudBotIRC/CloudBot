@@ -1,7 +1,9 @@
 import re
+import requests
+
+from bs4 import BeautifulSoup
 
 from cloudbot import hook
-from cloudbot.util import http
 
 xkcd_re = re.compile(r'(.*:)//(www.xkcd.com|xkcd.com)(.*)', re.I)
 months = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 7: 'July', 8: 'August',
@@ -10,7 +12,8 @@ months = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'Jun
 
 def xkcd_info(xkcd_id, url=False):
     """ takes an XKCD entry ID and returns a formatted string """
-    data = http.get_json("http://www.xkcd.com/" + xkcd_id + "/info.0.json")
+    request = requests.get("http://www.xkcd.com/" + xkcd_id + "/info.0.json")
+    data = request.json()
     date = "{} {} {}".format(data['day'], months[int(data['month'])], data['year'])
     if url:
         url = " | http://xkcd.com/" + xkcd_id.replace("/", "")
@@ -18,9 +21,10 @@ def xkcd_info(xkcd_id, url=False):
 
 
 def xkcd_search(term):
-    search_term = http.quote_plus(term)
-    soup = http.get_soup("http://www.ohnorobot.com/index.pl?s={}&Search=Search&"
+    search_term = requests.utils.quote(term)
+    request = requests.get("http://www.ohnorobot.com/index.pl?s={}&Search=Search&"
                          "comic=56&e=0&n=0&b=0&m=0&d=0&t=0".format(search_term))
+    soup = BeautifulSoup(request.text)
     result = soup.find('li')
     if result:
         url = result.find('div', {'class': 'tinylink'}).text

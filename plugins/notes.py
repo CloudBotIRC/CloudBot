@@ -9,9 +9,9 @@ from cloudbot.util import botvars
 table = Table(
     'notes',
     botvars.metadata,
-    Column('note_id', Integer, primary_key=True, unique=True, autoincrement=True),
-    Column('connection', String),
-    Column('user', String),
+    Column('note_id', Integer, primary_key=True, autoincrement=True),
+    Column('connection', String, primary_key=True),
+    Column('user', String, primary_key=True),
     Column('text', String),
     Column('priority', Integer),
     Column('deleted', Boolean),
@@ -86,6 +86,9 @@ def note(text, conn, nick, db, notice):
 
         if not notes:
             notice("{} has no entries.".format(nick))
+            return
+
+        notice("All notes for {}:".format(nick))
 
         for n in notes:
             note_id, note, added = n

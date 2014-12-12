@@ -158,6 +158,10 @@ def strip_colors(text):
     return irc_color_re.sub('', text)
 
 
+def pluralize(num=0, text=''):
+    return "{:,} {}{}".format(num, text, "s"[num == 1:])
+
+
 # from <http://stackoverflow.com/questions/250357/smart-truncate-in-python>
 def truncate_str(content, length=100, suffix='...'):
     """Truncates a string after a certain number of chars.

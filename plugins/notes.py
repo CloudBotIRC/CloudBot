@@ -21,11 +21,17 @@ table = Table(
 
 
 def read_all_notes(db, server, user, show_deleted=False):
-    query = select([table.c.note_id, table.c.text, table.c.added]) \
-        .where(table.c.connection == server) \
-        .where(table.c.user == user.lower()) \
-        .where(table.c.deleted == show_deleted) \
-        .order_by(table.c.added)
+    if show_deleted:
+        query = select([table.c.note_id, table.c.text, table.c.added]) \
+            .where(table.c.connection == server) \
+            .where(table.c.user == user.lower()) \
+            .order_by(table.c.added)
+    else:
+        query = select([table.c.note_id, table.c.text, table.c.added]) \
+            .where(table.c.connection == server) \
+            .where(table.c.user == user.lower()) \
+            .where(table.c.deleted == 0) \
+            .order_by(table.c.added)
     return db.execute(query).fetchall()
 
 

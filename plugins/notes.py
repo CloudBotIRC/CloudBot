@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import Table, Column, String, Boolean, Integer, DateTime
+import sqlalchemy
 from sqlalchemy.sql import select
 
 from cloudbot import hook
@@ -28,16 +29,45 @@ def read_all_notes(db, server, user, show_deleted=False):
     return db.execute(query).fetchall()
 
 
+def delete_all_notes(db, server, user):
+    query = table.update() \
+        .where(table.c.connection == server) \
+        .where(table.c.user == user.lower()) \
+        .values(deleted=1)
+    db.execute(query)
+    db.commit()
+
+
 def read_note(db, server, user, note_id):
-    query = table.select() \
+    query = select() \
         .where(table.c.connection == server) \
         .where(table.c.user == user.lower()) \
         .where(table.c.note_id == note_id)
-    return db.execute(query).fetchall()
+    return db.execute(query).fetchone()[0]
+
+
+def delete_note(db, server, user, note_id):
+    query = table.update() \
+        .where(table.c.connection == server) \
+        .where(table.c.user == user.lower()) \
+        .where(table.c.note_id == note_id) \
+        .values(deleted=1)
+    db.execute(query)
+    db.commit()
 
 
 def add_note(db, server, user, text):
+    id_query = select([sqlalchemy.sql.expression.func.max(table.c.note_id).label("maxid")]) \
+        .where(table.c.user == user.lower())
+    max_id = db.execute(id_query).scalar()
+
+    if max_id is None:
+        note_id = 1
+    else:
+        note_id = max_id + 1
+
     query = table.insert().values(
+        note_id = note_id,
         connection=server,
         user=user.lower(),
         text=text,

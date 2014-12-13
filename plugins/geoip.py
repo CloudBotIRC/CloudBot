@@ -7,7 +7,6 @@ from io import BytesIO
 import pygeoip
 
 from cloudbot import hook
-from cloudbot.util import http
 
 
 # TODO: This is VERY awful

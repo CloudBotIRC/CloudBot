@@ -10,7 +10,7 @@ from cloudbot.util import botvars
 table = Table(
     'notes',
     botvars.metadata,
-    Column('note_id', Integer, primary_key=True, autoincrement=True),
+    Column('note_id', Integer, primary_key=True),
     Column('connection', String, primary_key=True),
     Column('user', String, primary_key=True),
     Column('text', String),
@@ -166,6 +166,19 @@ def note(text, conn, nick, db, notice):
             # show the note
             text = format_note(n)
             notice(text)
+    elif cmd == 'listall':
+        # user is getting all notes including deleted ones
+        notes = read_all_notes(db, conn.name, nick, show_deleted=True)
 
+        if not notes:
+            notice("You have no notes.".format(nick))
+            return
+
+        notice("All notes for {}:".format(nick))
+
+        for n in notes:
+            # show the note
+            text = format_note(n)
+            notice(text)
     else:
         notice("Unknown command: {}".format(cmd))

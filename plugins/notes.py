@@ -90,7 +90,7 @@ def format_note(data):
     # format timestamp
     added_string = added.strftime('%d/%m/%Y')
 
-    return "#{}: {} - {}".format(note_id, note_text, added_string)
+    return "[{}] Note #{}: {}".format(added_string, note_id, note_text)
 
 
 @hook.command("note", "notes")
@@ -108,7 +108,7 @@ def note(text, conn, nick, db, notice):
     # nick = args[0][1:]
     #    args = args[1:]
 
-    if cmd == 'add':
+    if cmd in ['add', 'new']:
         # user is adding a note
         if not len(args):
             return "No text provided!"
@@ -120,15 +120,23 @@ def note(text, conn, nick, db, notice):
 
         notice("Note added!")
         return
-    elif cmd == 'del':
+    elif cmd in ['del', 'delete', 'remove']:
         # user is deleting a note
         if not len(args):
             return "No note ID provided!"
 
+        # but lets get the note first
         note_id = args[0]
+        n = read_note(db, conn.name, nick, note_id)
+
+        if not n:
+            notice("#{} is not a valid note ID.".format(note_id))
+            return
+
+        # now we delete it
         delete_note(db, conn.name, nick, note_id)
 
-        notice("Note deleted!")
+        notice("Note #{} deleted!".format(note_id))
         return
     elif cmd == 'clear':
         # user is deleting all notes

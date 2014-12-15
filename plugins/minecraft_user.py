@@ -7,7 +7,7 @@ from cloudbot import hook
 
 
 HIST_API = "http://api.fishbans.com/history/{}"
-UUID_API = "http://api.goender.net/api/uuids/profiles/page/1"
+UUID_API = "http://api.goender.net/api/uuids/{}/"
 
 
 class McuError(Exception):
@@ -15,13 +15,9 @@ class McuError(Exception):
 
 
 def get_name(uuid):
-    # form the UUID request
-    payload = [{"uuid": uuid}]
-
     # submit the profile request
     try:
-        headers = {"Content-Type": "application/json"}
-        request = requests.post(UUID_API, data=json.dumps(payload).encode('utf-8'), headers=headers)
+        request = requests.get(UUID_API.format(uuid))
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         raise McuError("Could not get profile status: {}".format(e))
 
@@ -45,12 +41,13 @@ def mcuser(text):
     else:
         name = user
 
+
     if not name:
         return "The account \x02{}\x02 does not exist.".format(user)
 
     # submit the profile request
     try:
-        request = requests.get(HIST_API.format(user))
+        request = requests.get(HIST_API.format(requests.utils.quote(name)))
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         return "Could not get profile status: {}".format(e)
 

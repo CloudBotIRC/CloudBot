@@ -6,19 +6,17 @@ import json
 from cloudbot import hook
 
 
-HIST_API = "http://api.goender.net/api/hist/page/1"
-UUID_API = "http://api.goender.net/api/profiles/page/1"
-
-PAID_URL = "http://www.minecraft.net/haspaid.jsp"
+HIST_API = "http://api.fishbans.com/history/{}"
+UUID_API = "http://api.goender.net/api/uuids/profiles/page/1"
 
 
 class McuError(Exception):
     pass
 
 
-def get_uuid(username):
+def get_name(uuid):
     # form the UUID request
-    payload = [{"user": username}]
+    payload = [{"uuid": uuid}]
 
     # submit the profile request
     try:
@@ -28,52 +26,9 @@ def get_uuid(username):
         raise McuError("Could not get profile status: {}".format(e))
 
     data = request.json()
+    print(data[uuid])
 
-    return data[username] or None
-
-
-def get_profile(uuid):
-    profile = {}
-
-    # form the UUID request
-    payload = [{"uuid": uuid}]
-
-    print(json.dumps(payload))
-
-    # submit the profile request
-    try:
-        headers = {"Content-Type": "application/json"}
-        request = requests.post(HIST_API, data=json.dumps(payload).encode('utf-8'), headers=headers)
-    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
-        raise McuError("Could not get profile status: {}".format(e))
-
-    print(request.text)
-    # get the JSON data
-    try:
-        results = request.json()
-    except ValueError:
-        raise McuError("Could not parse profile status")
-
-    print(results)
-    if not results:
-        return False
-
-    user = results[0]
-    profile["name"] = user["name"]
-    profile["id"] = user["id"][0]
-
-    try:
-        params = {'user': uuid}
-        response = requests.get(PAID_URL, params=params)
-    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
-        raise McuError("Could not get payment status: {}".format(e))
-
-    if "true" in response.text:
-        profile["paid"] = True
-    else:
-        profile["paid"] = False
-
-    return profile
+    return data[uuid] or None
 
 
 @hook.command("mcuser", "mcpaid", "haspaid")
@@ -83,28 +38,36 @@ def mcuser(text):
 
     cleaned = user.replace('-', '')
     if re.search(r'[0-9a-f]{32}\Z', cleaned, re.I):
-        uuid = cleaned
-    else:
         try:
-            uuid = get_uuid(user)
+            name = get_name(cleaned)
         except McuError as e:
             return "Error: {}".format(e)
-
-    if not uuid:
-        return "The account \x02{}\x02 does not exist.".format(user)
-
-    try:
-        # get information about user
-        profile = get_profile(uuid)
-    except McuError as e:
-        return "Error: {}".format(e)
-
-    if not profile:
-        return "The account \x02{}\x02 does not exist.".format(user)
-
-    if profile["paid"]:
-        return 'The account \x02{name}\x02 ({id}) exists. It is a \x02paid\x02' \
-               ' account.'.format(**profile)
     else:
-        return 'The account \x02{name}\x02 ({id}) exists. It \x034\x02is NOT\x02\x0f a paid' \
-               ' account.'.format(**profile)
+        name = user
+
+    if not name:
+        return "The account \x02{}\x02 does not exist.".format(user)
+
+    # submit the profile request
+    try:
+        request = requests.get(HIST_API.format(user))
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+        return "Could not get profile status: {}".format(e)
+
+    # get the fishbans data
+    try:
+        results = request.json()
+    except ValueError:
+        return "Could not parse profile status"
+
+    # handle errors
+    if not results['success']:
+        if results['error'] == "User is not premium.":
+            return "User is not premium or does not exist."
+        else:
+            return results['error']
+
+    user = results["data"]
+
+    return 'The account \x02{username}\x02 ({uuid}) exists. It is a \x02paid\x02' \
+           ' account.'.format(**user)

@@ -22,7 +22,7 @@ class PermissionManager(object):
         """
         :type conn: cloudbot.client.Client
         """
-        logger.info("[{}] Created permission manager for {}.".format(conn.readable_name, conn.name))
+        logger.info("[{}|permissions] Created permission manager for {}.".format(conn.readable_name, conn.name))
 
         # stuff
         self.name = conn.name
@@ -39,12 +39,12 @@ class PermissionManager(object):
         self.group_perms = {}
         self.group_users = {}
         self.perm_users = {}
-        logger.info("[{}] Reloading permissions for {}.".format(self.readable_name, self.name))
+        logger.info("[{}|permissions] Reloading permissions for {}.".format(self.readable_name, self.name))
         groups = self.config.get("permissions", {})
         # work out the permissions and users each group has
         for key, value in groups.items():
             if not key.islower():
-                logger.warning("[{}] Warning! Non-lower-case group '{}' in config. This will cause problems when"
+                logger.warning("[{}|permissions] Warning! Non-lower-case group '{}' in config. This will cause problems when"
                                "setting permissions using the bot's permissions commands"
                                .format(self.readable_name, key))
             key = key.lower()
@@ -62,9 +62,9 @@ class PermissionManager(object):
                     self.perm_users[perm] = []
                 self.perm_users[perm].extend(users)
 
-        logger.debug("[{}] Group permissions: {}".format(self.readable_name, self.group_perms))
-        logger.debug("[{}] Group users: {}".format(self.readable_name, self.group_users))
-        logger.debug("[{}] Permission users: {}".format(self.readable_name, self.perm_users))
+        logger.debug("[{}|permissions] Group permissions: {}".format(self.readable_name, self.group_perms))
+        logger.debug("[{}|permissions] Group users: {}".format(self.readable_name, self.group_users))
+        logger.debug("[{}|permissions] Permission users: {}".format(self.readable_name, self.perm_users))
 
     def has_perm_mask(self, user_mask, perm, notice=True):
         """
@@ -86,7 +86,7 @@ class PermissionManager(object):
         for allowed_mask in allowed_users:
             if fnmatch(user_mask.lower(), allowed_mask):
                 if notice:
-                    logger.info("[{}] Allowed user {} access to {}".format(self.readable_name, user_mask, perm))
+                    logger.info("[{}|permissions] Allowed user {} access to {}".format(self.readable_name, user_mask, perm))
                 return True
 
         return False
@@ -177,7 +177,7 @@ class PermissionManager(object):
                 # Okay, maybe a warning, but no support.
                 if group not in config_groups:
                     logger.warning(
-                        "[{}] Can't remove user from group due to upper-case group names!".format(self.readable_name))
+                        "[{}|permissions] Can't remove user from group due to upper-case group names!".format(self.readable_name))
                     continue
                 config_group = config_groups.get(group)
                 config_users = config_group.get("users")

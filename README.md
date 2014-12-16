@@ -76,3 +76,5 @@ CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
 
     You should have received a copy of the GNU General Public License
     along with CloudBot.  If not, see <http://www.gnu.org/licenses/>.
+    
+![GPL V3](https://www.gnu.org/graphics/gplv3-127x51.png)

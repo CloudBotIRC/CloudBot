@@ -107,17 +107,20 @@ def bingimage(text, bot):
     # grab a random result from the top 10
     result = random.choice(j["Image"][:10])
 
+    # output stuff
+    tags = []
+
+    # image size
+    tags.append("\x02{}\x02x\x02{}\x02".format(result["Width"], result["Height"]))
+    # file type
+    tags.append("{}/\x02{}\x02".format(*result["ContentType"].split("/")))
+    # file size
+    tags.append(filesize.size(int(result["FileSize"]), system=filesize.alternative))
     # NSFW warning
     if "explicit" in result["Thumbnail"]["MediaUrl"]:
-        warning = ", \x02NSFW\x02"
-    else:
-        warning = ""
+        tags.append("NSFW")
 
-    # get the output we need
-    width = result["Width"]
-    height = result["Height"]
-    file_type = "{}/\x02{}\x02".format(*result["ContentType"].split("/"))
-    file_size = filesize.size(int(result["FileSize"]), system=filesize.alternative)
-    url = unescape(result["MediaUrl"])
+    # join all the tags together in a comma separated string ("tag1, tag2, tag3")
+    tag_text = ", ".join(tags)
 
-    return '{} (\x02{}\x02x\x02{}\x02, {}, {}{})'.format(url, width, height, file_type, file_size, warning)
+    return '{} ({})'.format(unescape(result["MediaUrl"]), tag_text)

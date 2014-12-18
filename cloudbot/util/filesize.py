@@ -161,4 +161,3 @@ def size(bytes, system=traditional):
         else:
             suffix = multiple
     return str(amount) + suffix
-

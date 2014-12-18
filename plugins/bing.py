@@ -1,8 +1,7 @@
 import random
-import requests
 
+import requests
 from lxml import html
-from pprint import pprint
 
 from cloudbot import hook
 from cloudbot.util import formatting, filesize
@@ -118,7 +117,7 @@ def bingimage(text, bot):
     width = result["Width"]
     height = result["Height"]
     file_type = "{}/\x02{}\x02".format(*result["ContentType"].split("/"))
-    file_size = filesize.size(int(result["FileSize"]))
+    file_size = filesize.size(int(result["FileSize"]), system=filesize.alternative)
     url = unescape(result["MediaUrl"])
 
     return '{} (\x02{}\x02x\x02{}\x02, {}, {}{})'.format(url, width, height, file_type, file_size, warning)

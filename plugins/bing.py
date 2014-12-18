@@ -1,5 +1,6 @@
 import random
 import requests
+import urllib.parse
 
 from lxml import html
 
@@ -18,8 +19,7 @@ def unescape(s):
 
 def bingify(s):
     """ because bing has to be an asshole and require special params """
-    _s = requests.utils.quote(s)
-    return "'{}'".format(_s)
+    return "'{}'".format(s)
 
 
 @hook.command("bing", "google", "g", "search")

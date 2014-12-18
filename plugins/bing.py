@@ -113,7 +113,7 @@ def bingimage(text, bot):
     # image size
     tags.append("\x02{}\x02x\x02{}\x02".format(result["Width"], result["Height"]))
     # file type
-    tags.append("{}/\x02{}\x02".format(*result["ContentType"].split("/")))
+    tags.append(result["ContentType"])
     # file size
     tags.append(filesize.size(int(result["FileSize"]), system=filesize.alternative))
     # NSFW warning

@@ -27,7 +27,7 @@ def onjoin(conn, bot):
     :type conn: cloudbot.clients.irc.IrcClient
     :type bot: cloudbot.bot.CloudBot
     """
-    bot.logger.info("ONJOIN hook triggered.")
+    bot.logger.info("[{}|misc] onjoin hook triggered.".format(conn.readable_name))
     nickserv = conn.config.get('nickserv')
     if nickserv and nickserv.get("enabled", True):
         nickserv_password = nickserv.get('nickserv_password', '')
@@ -53,12 +53,12 @@ def onjoin(conn, bot):
         conn.cmd('MODE', conn.nick, mode)
 
     # Join config-defined channels
-    bot.logger.info('Joining channels.')
+    bot.logger.info("[{}|misc] joining channels.".format(conn.readable_name))
     for channel in conn.channels:
         conn.join(channel)
         yield from asyncio.sleep(1)
 
-    bot.logger.info("ONJOIN hook completed. Bot ready.")
+    bot.logger.info("[{}|misc] onjoin hook completed.".format(conn.readable_name))
 
 
 @asyncio.coroutine

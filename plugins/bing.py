@@ -111,7 +111,7 @@ def bingimage(text, bot):
     tags = []
 
     # image size
-    tags.append("\x02{}\x02x\x02{}\x02".format(result["Width"], result["Height"]))
+    tags.append("{}x{}px".format(result["Width"], result["Height"]))
     # file type
     tags.append(result["ContentType"])
     # file size

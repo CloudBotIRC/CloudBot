@@ -12,3 +12,4 @@ psutil
 requests-oauthlib
 tweepy
 pyenchant
+pythonwhois

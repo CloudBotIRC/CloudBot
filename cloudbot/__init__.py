@@ -44,11 +44,11 @@ def _setup():
         "version": 1,
         "formatters": {
             "brief": {
-                "format": "[%(asctime)s][%(levelname)s] %(message)s",
+                "format": "[%(asctime)s] [%(levelname)s] %(message)s",
                 "datefmt": "%H:%M:%S"
             },
             "full": {
-                "format": "[%(asctime)s][%(levelname)s] %(message)s",
+                "format": "[%(asctime)s] [%(levelname)s] %(message)s",
                 "datefmt": "%Y-%m-%d][%H:%M:%S"
             }
         },
@@ -63,6 +63,7 @@ def _setup():
                 "class": "logging.FileHandler",
                 "formatter": "full",
                 "level": "INFO",
+                "encoding": "utf-8",
                 "filename": os.path.join(log_dir, "bot.log")
             }
         },
@@ -81,6 +82,7 @@ def _setup():
         dict_config["handlers"]["debug_file"] = {
             "class": "logging.FileHandler",
             "formatter": "full",
+            "encoding": "utf-8",
             "level": "DEBUG",
             "filename": os.path.join(log_dir, "debug.log")
         }

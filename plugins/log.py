@@ -165,6 +165,9 @@ def get_log_stream(server, chan):
         log_dir = os.path.dirname(new_filename)
         os.makedirs(log_dir, exist_ok=True)
 
+        # a dumb hack to bypass the fact windows does not allow * in file names
+        new_filename = new_filename.replace("*", "server")
+
         log_stream = codecs.open(new_filename, "a", "utf-8")
         stream_cache[cache_key] = (new_filename, log_stream)
 

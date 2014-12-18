@@ -57,10 +57,10 @@ def twitch_url(match):
  
 @hook.command('twitchviewers')
 @hook.command()
-def twviewers(inp):
-    inp = inp.split("/")[-1]
-    if test(inp):
-        location = inp
+def twviewers(text):
+    text = text.split("/")[-1]
+    if test(text):
+        location = text
     else:
         return "Not a valid channel name."
     return twitch_lookup(location).split("(")[-1].split(")")[0].replace("Online now! ", "")

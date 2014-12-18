@@ -168,7 +168,7 @@ def get_log_stream(server, chan):
         # a dumb hack to bypass the fact windows does not allow * in file names
         new_filename = new_filename.replace("*", "server")
 
-        log_stream = codecs.open(new_filename, "a", "utf-8")
+        log_stream = codecs.open(new_filename, mode="a", encoding="utf-8", buffering=1)
         stream_cache[cache_key] = (new_filename, log_stream)
 
     return log_stream
@@ -195,7 +195,7 @@ def get_raw_log_stream(server):
         log_dir = os.path.dirname(new_filename)
         os.makedirs(log_dir, exist_ok=True)
 
-        log_stream = codecs.open(new_filename, "a", "utf-8")
+        log_stream = codecs.open(new_filename, mode="a", encoding="utf-8", buffering=1)
         stream_cache[server] = (new_filename, log_stream)
 
     return log_stream
@@ -210,7 +210,9 @@ def log_raw(event):
     if not logging_config.get("raw_file_log", False):
         return
 
-    get_raw_log_stream(event.conn.name).write(event.irc_raw + "\n")
+    stream = get_raw_log_stream(event.conn.name)
+    stream.write(event.irc_raw + os.linesep)
+    stream.flush()
 
 
 @hook.irc_raw("*", singlethread=True)
@@ -222,7 +224,9 @@ def log(event):
 
     if text is not None:
         if event.irc_command in ["PRIVMSG", "PART", "JOIN", "MODE", "TOPIC", "QUIT", "NOTICE"] and event.chan:
-            get_log_stream(event.conn.name, event.chan).write(text + '\n')
+            stream = get_log_stream(event.conn.name, event.chan)
+            stream.write(text + os.linesep)
+            stream.flush()
 
 
 # Log console separately to prevent lag

@@ -1,6 +1,5 @@
 import random
 import requests
-import urllib.parse
 
 from lxml import html
 

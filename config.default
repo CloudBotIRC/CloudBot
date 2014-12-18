@@ -44,6 +44,7 @@
     ],
     "api_keys": {
         "tvdb": "",
+        "bing_azure": "",
         "wolframalpha": "",
         "lastfm": "",
         "rottentomatoes": "",

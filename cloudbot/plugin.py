@@ -137,7 +137,7 @@ class PluginManager:
 
         # make sure to unload the previously loaded plugin from this path, if it was loaded.
         if file_name in self.plugins:
-            yield from self._unload(file_path)
+            yield from self.unload_plugin(file_path)
 
         module_name = "plugins.{}".format(title)
         try:
@@ -216,7 +216,7 @@ class PluginManager:
         del plugin.run_on_load
 
     @asyncio.coroutine
-    def _unload(self, path):
+    def unload_plugin(self, path):
         """
         Unloads the plugin from the given path, unregistering all hooks from the plugin.
 

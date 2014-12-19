@@ -35,6 +35,17 @@ class PluginReloader(object):
             path = path.decode()
         self.bot.loop.call_soon_threadsafe(lambda: asyncio.async(self._reload(path), loop=self.bot.loop))
 
+    def unload(self, path):
+        """
+        Loads or reloads a module, given its file path. Thread safe.
+
+        :type path: str
+        """
+        if isinstance(path, bytes):
+            path = path.decode()
+        self.bot.loop.call_soon_threadsafe(lambda: asyncio.async(self._unload(path), loop=self.bot.loop))
+
+
     @asyncio.coroutine
     def _reload(self, path):
         if path in self.reloading:
@@ -48,6 +59,11 @@ class PluginReloader(object):
         yield from self.bot.plugin_manager.load_plugin(path)
 
 
+    @asyncio.coroutine
+    def _unload(self, path):
+        yield from self.bot.plugin_manager.unload_plugin(path)
+
+
 class PluginEventHandler(Trick):
     def __init__(self, loader, *args, **kwargs):
         """
@@ -58,6 +74,9 @@ class PluginEventHandler(Trick):
 
     def on_created(self, event):
         self.loader.reload(event.src_path)
+
+    def on_deleted(self, event):
+        self.loader.unload(event.src_path)
 
     def on_modified(self, event):
         self.loader.reload(event.src_path)

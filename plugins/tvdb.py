@@ -64,13 +64,13 @@ def get_episode_info(episode, api_key):
 
 @hook.command()
 @hook.command('tv')
-def tv_next(inp, bot=None):
+def tv_next(text, bot=None):
     """tv <series> -- Get the next episode of <series>."""
 
     api_key = bot.config.get("api_keys", {}).get("tvdb", None)
     if api_key is None:
         return "error: no api key set"
-    episodes = get_episodes_for_series(inp, api_key)
+    episodes = get_episodes_for_series(text, api_key)
 
     if episodes["error"]:
         return episodes["error"]
@@ -114,13 +114,13 @@ def tv_next(inp, bot=None):
 
 @hook.command()
 @hook.command('tv_prev')
-def tv_last(inp, bot=None):
+def tv_last(text, bot=None):
     """tv_last <series> -- Gets the most recently aired episode of <series>."""
 
     api_key = bot.config.get("api_keys", {}).get("tvdb", None)
     if api_key is None:
         return "error: no api key set"
-    episodes = get_episodes_for_series(inp, api_key)
+    episodes = get_episodes_for_series(text, api_key)
 
     if episodes["error"]:
         return episodes["error"]

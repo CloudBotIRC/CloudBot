@@ -280,7 +280,7 @@ class PluginManager:
         del self.plugins[plugin.file_name]
 
         if self.bot.config.get("logging", {}).get("show_plugin_loading", True):
-            logger.info("Unloaded all plugins from {}".format(plugin.title))
+            logger.info("Unloaded all plugins from {}.py".format(plugin.title))
 
         return True
 

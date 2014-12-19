@@ -19,14 +19,14 @@ def whois(text):
         pass
 
     try:
-        i = "\x02Registered\x02: {}".format(whois["creation_date"][0].strftime("%Y-%m-%d"))
+        i = "\x02Registered\x02: {}".format(whois["creation_date"][0].strftime("%d-%m-%Y"))
         info.append(i)
     except:
         pass
 
 
     try:
-        i = "\x02Expires\x02: {}".format(whois["expiration_date"][0].strftime("%Y-%m-%d"))
+        i = "\x02Expires\x02: {}".format(whois["expiration_date"][0].strftime("%d-%m-%Y"))
         info.append(i)
     except:
         pass

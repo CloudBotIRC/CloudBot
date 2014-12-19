@@ -37,7 +37,7 @@ class PluginReloader(object):
 
     def unload(self, path):
         """
-        Loads or reloads a module, given its file path. Thread safe.
+        Unloads a module, given its file path. Thread safe.
 
         :type path: str
         """

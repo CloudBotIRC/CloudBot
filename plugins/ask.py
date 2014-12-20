@@ -8,22 +8,24 @@ More info:
  * Phenny: http://inamidst.com/phenny/
 """
 from cloudbot import hook
-import random, time
+import random
+import time
+
 
 @hook.command("ask", autohelp=False)
 def ask(text):
-    """.ask <item1> or <item2> or <item3> - Randomly picks from a set of items seperated by ' or '."""
+    """.ask <item1> or <item2> or <item3> - Randomly picks from a set
+    of items seperated by ' or '."""
 
     choices = text
     random.seed()
 
-    if choices == None:
+    if choices is None:
         return("There is no spoon! Please try a valid question.")
-    elif choices.lower() == "what is the answer to life, the universe, and everything?":
-        return ("42")
     else:
         list_choices = choices.split(" or ")
         if len(list_choices) == 1:
-            return (random.choice(['yes', 'no', 'What are you a fucking toddler? Ask your mother!']))
+            return (random.choice(['yes', 'no', 'What are you a fucking '
+                                   'toddler? Ask your mother!']))
         else:
             return str((random.choice(list_choices)))

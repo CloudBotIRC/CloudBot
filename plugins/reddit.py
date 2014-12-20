@@ -30,19 +30,19 @@ def reddit_url(match):
     item = data
 
     title = formatting.truncate_str(item["title"], 50)
-    author = item["author"]    
+    author = item["author"]
     commentsnum = item["num_comments"]
     if commentsnum == 1:
-     	commentsword = "comment"
+        commentsword = "comment"
     else:
-    	commentsword = "comments"
+        commentsword = "comments"
     pointsnum = item["score"]
     raw_time = datetime.fromtimestamp(int(item["created_utc"]))
     timeago = timeformat.timesince(raw_time)
     if pointsnum == 1:
-     	pointsword = "point"
+        pointsword = "point"
     else:
-    	pointsword = "points"
+        pointsword = "points"
 
     return '\x02{}\x02 - posted by \x02{}\x02 {} - {} {} - {} {}'.format(
         title, author, timeago, commentsnum, commentsword, pointsnum, pointsword)
@@ -71,7 +71,7 @@ def reddit(text, loop):
         url = "http://reddit.com/.json"
 
     try:
-        # Again, identify with Reddit using an User Agent, otherwise get a 429...
+        # Again, identify with Reddit using an User Agent, otherwise get a 429
         inquiry = requests.get(url, headers=headers)
         data = inquiry.json()
     except Exception as e:
@@ -93,11 +93,11 @@ def reddit(text, loop):
 
     raw_time = datetime.fromtimestamp(int(item["created_utc"]))
     item["timesince"] = timeformat.timesince(raw_time)
-    
+
     if item["score"] == 1:
-    	item["score"] = "1 point"
+        item["score"] = "1 point"
     else:
-    	item["score"] = str(item["score"]) + " points"
+        item["score"] = str(item["score"]) + " points"
 
     if item["over_18"]:
         item["warning"] = " \x02NSFW\x02"

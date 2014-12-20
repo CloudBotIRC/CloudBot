@@ -26,14 +26,14 @@ def reddit_url(match):
     thread = html.fromstring(r.text)
 
     title = thread.xpath('//title/text()')[0]
-    upvotes = thread.xpath("//span[@class='upvotes']/span[@class='number']/text()")[0]
-    downvotes = thread.xpath("//span[@class='downvotes']/span[@class='number']/text()")[0]
     author = thread.xpath("//div[@id='siteTable']//a[contains(@class,'author')]/text()")[0]
     timeago = thread.xpath("//div[@id='siteTable']//p[@class='tagline']/time/text()")[0]
-    comments = thread.xpath("//div[@id='siteTable']//a[@class='comments']/text()")[0]
+    comments = thread.xpath("//div[@id='siteTable']//a[@class='comments may-blank']/text()")[0]
+    pointsnum = thread.xpath("//div[@class='score']//span[@class='number']/text()")[0]
+    pointsword = thread.xpath("//div[@class='score']//span[@class='word']/text()")[0]
 
-    return '\x02{}\x02 - posted by \x02{}\x02 {} ago - {} upvotes, {} downvotes - {}'.format(
-        title, author, timeago, upvotes, downvotes, comments)
+    return u'\x02{}\x02 - posted by \x02{}\x02 {} ago - {} - {} {}'.format(
+        title, author, timeago, comments, pointsnum, pointsword)
 
 
 @asyncio.coroutine

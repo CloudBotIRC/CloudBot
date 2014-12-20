@@ -3,7 +3,7 @@ import re
 
 from cloudbot import hook
 
-correction_re = re.compile(r"^[sS]/(.*/.*/[igx]{,4})\S*$")
+correction_re = re.compile(r"^[sS]/(.*/.*(?:/[igx]{,4})?)\S*$")
 
 
 @asyncio.coroutine
@@ -14,8 +14,10 @@ def correction(match, conn, chan, message):
     :type conn: cloudbot.client.Client
     :type chan: str
     """
-    find, replacement, flags = tuple([b.replace("\/", "/") for b in re.split(r"(?<!\\)/", match.groups()[0])])
-
+    groups = [b.replace("\/", "/") for b in re.split(r"(?<!\\)/", match.groups()[0])]
+    find = groups[0]
+    replacement = groups[1]
+    flags = groups[2] if len(groups) == 3 else ""
     find_re = re.compile("{}{}".format("(?{})".format(flags.replace("g", ""))
                                        if flags.replace("g", "") != "" else "", find))
 

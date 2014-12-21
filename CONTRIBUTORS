@@ -25,12 +25,14 @@ frdmn
 andyeff
 frozenMC
 nathanblaney
+rod156
 Spudstabber
 
 
 We are using code (*borrowed*) from the following projects:
 ./plugins/mlia.py - https://github.com/infinitylabs/UguuBot
 ./plugins/horoscope.py - https://github.com/infinitylabs/UguuBot
+./plugins/octopart.py - https://github.com/FurCode/RoboCop2
 color section in ./plugins/utility.py - https://github.com/hitzler/homero
 
 Special Thanks:

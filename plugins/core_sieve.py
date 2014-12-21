@@ -37,6 +37,7 @@ def init_tasks(loop, conn):
 @hook.sieve
 def sieve_suite(bot, event, _hook):
     """
+    this function stands between your users and the commands they want to use. it decides if they can or not
     :type bot: cloudbot.bot.CloudBot
     :type event: cloudbot.event.Event
     :type _hook: cloudbot.plugin.Hook
@@ -80,7 +81,7 @@ def sieve_suite(bot, event, _hook):
     # check command spam tokens
     if _hook.type == "command":
         # right now ratelimiting is per-channel, but this can be changed
-        uid = event.chan
+        uid = (event.chan, event.nick.lower())
 
         if uid not in buckets:
             bucket = TokenBucket(TOKENS, RESTORE_RATE)

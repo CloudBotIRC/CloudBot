@@ -104,10 +104,3 @@ def sieve_suite(bot, event, _hook):
     return event
 
 
-@hook.onload()
-def clearbuckets():
-    """temporary!"""
-
-    # clear ratelimiting tokens that have not been accessed in
-    # the last 10 minutes
-

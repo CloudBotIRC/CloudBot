@@ -5,7 +5,7 @@ import requests
 from cloudbot import hook
 
 
-@hook.command("octopart", "octosearch", "part")
+@hook.command("octopart", "octosearch")
 def octopart(text):
     """octopart <keyword> -- Search for any part on the Octopart database."""
     url = "http://octopart.com/api/v3/parts/search"

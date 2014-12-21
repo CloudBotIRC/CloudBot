@@ -4,6 +4,7 @@ import re
 import random
 import requests
 import asyncio
+import functools
 import urllib.parse
 
 from cloudbot import hook
@@ -20,6 +21,10 @@ headers = {'User-Agent': 'CloudBot/dev 1.0 - CloudBot Refresh by lukeroge'}
 @hook.regex(reddit_re)
 def reddit_url(match):
     url = match.group(1)
+    if "redd.it" in url:
+        url = "http://" + url
+        response = requests.get(url)
+        url = response.url + "/.json"
     if not urllib.parse.urlparse(url).scheme:
         url = "http://" + url + "/.json"
 
@@ -72,7 +77,7 @@ def reddit(text, loop):
 
     try:
         # Again, identify with Reddit using an User Agent, otherwise get a 429
-        inquiry = requests.get(url, headers=headers)
+        inquiry = yield from loop.run_in_executor(None, functools.partial(requests.get, url, headers=headers))
         data = inquiry.json()
     except Exception as e:
         return "Error: " + str(e)

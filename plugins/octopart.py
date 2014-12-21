@@ -13,7 +13,7 @@ def octopart(text):
         'apikey': 'aefcd00e',
         'q': text,
         'start': 0,
-        'limit': 2
+        'limit': 1
     }
 
     try:

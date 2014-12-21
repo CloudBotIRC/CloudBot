@@ -1,4 +1,5 @@
 import asyncio
+import os.path
 
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
@@ -31,6 +32,10 @@ class PluginReloader(object):
 
         :type path: str
         """
+        if not os.path.isfile(path):
+            # we check if the file still exists here because some programs modify a file before deleting
+            return
+
         if isinstance(path, bytes):
             path = path.decode()
         self.bot.loop.call_soon_threadsafe(lambda: asyncio.async(self._reload(path), loop=self.bot.loop))

@@ -108,10 +108,10 @@ class PluginManager:
         """
         path_list = glob.iglob(os.path.join(plugin_dir, '*.py'))
         # Load plugins asynchronously :O
-        yield from asyncio.gather(*[self.load_plugin(path) for path in path_list], loop=self.bot.loop)
+        yield from asyncio.gather(*[self.load_plugin(path, initial=True) for path in path_list], loop=self.bot.loop)
 
     @asyncio.coroutine
-    def load_plugin(self, path):
+    def load_plugin(self, path, initial=False):
         """
         Loads a plugin from the given path and plugin object, then registers all hooks from that plugin.
 
@@ -119,9 +119,13 @@ class PluginManager:
 
         :type path: str
         """
+
         file_path = os.path.abspath(path)
         file_name = os.path.basename(path)
         title = os.path.splitext(file_name)[0]
+
+        if self.bot.config.get("logging", {}).get("show_plugin_loading", True) and not initial:
+            logger.info("Attempting to load plugins from {}.py".format(title))
 
         if "plugin_loading" in self.bot.config:
             pl = self.bot.config.get("plugin_loading")

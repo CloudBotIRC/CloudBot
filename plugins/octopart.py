@@ -1,4 +1,4 @@
-# Based on plugin by foxcode - <https://github.com/FurCode/RoboCop2>
+# Based on plugin by FurCode - <https://github.com/FurCode/RoboCop2>
 
 import requests
 

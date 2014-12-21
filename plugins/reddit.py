@@ -1,14 +1,15 @@
 from datetime import datetime
-from lxml import html
 import re
 import random
-import requests
 import asyncio
 import functools
 import urllib.parse
 
+import requests
+
 from cloudbot import hook
 from cloudbot.util import timeformat, formatting
+
 
 reddit_re = re.compile(r'.*(((www\.)?reddit\.com/r|redd\.it)[^ ]+)', re.I)
 
@@ -17,6 +18,7 @@ short_url = "http://redd.it/{}"
 
 # A nice user agent for use with Reddit
 headers = {'User-Agent': 'CloudBot/dev 1.0 - CloudBot Refresh by lukeroge'}
+
 
 @hook.regex(reddit_re)
 def reddit_url(match):

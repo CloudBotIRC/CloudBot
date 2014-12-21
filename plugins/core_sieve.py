@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 from time import time
 
@@ -14,6 +15,22 @@ MESSAGE_COST = 5
 STRICT = True
 
 buckets = {}
+
+logger = logging.getLogger("cloudbot")
+
+
+def task_clear(loop):
+    for uid, _bucket in buckets:
+        if (time() - _bucket.timestamp) > 600:
+            del buckets[uid]
+    loop.call_later(600, task_clear, loop)
+
+
+@asyncio.coroutine
+@hook.irc_raw('004')
+def init_tasks(loop, conn):
+    logger.info("[{}|sieve] Bot is starting ratelimiter cleanup task.".format(conn.readable_name))
+    loop.call_later(600, task_clear, loop)
 
 
 @asyncio.coroutine
@@ -75,7 +92,7 @@ def sieve_suite(bot, event, _hook):
         if bucket.consume(MESSAGE_COST):
             pass
         else:
-            bot.logger.info("[{}] Refused command from {}. Entity had {} tokens, needed {}.".format(conn.readable_name,
+            bot.logger.info("[{}|sieve] Refused command from {}. Entity had {} tokens, needed {}.".format(conn.readable_name,
                                                                                                    uid,
                                                                                                    bucket.tokens,
                                                                                                    MESSAGE_COST))
@@ -87,12 +104,10 @@ def sieve_suite(bot, event, _hook):
     return event
 
 
-@hook.command
+@hook.onload()
 def clearbuckets():
     """temporary!"""
 
     # clear ratelimiting tokens that have not been accessed in
     # the last 10 minutes
-    for uid, _bucket in buckets:
-        if (time() - _bucket.timestamp) > 600:
-            del buckets[uid]
+

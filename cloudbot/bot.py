@@ -16,7 +16,7 @@ from cloudbot.reloader import PluginReloader
 from cloudbot.plugin import PluginManager
 from cloudbot.event import Event, CommandEvent, RegexEvent, EventType
 from cloudbot.util import botvars, formatting
-from cloudbot.clients.irc import IrcClient
+from cloudbot.irc.client import IrcClient
 
 logger = logging.getLogger("cloudbot")
 

@@ -5,7 +5,7 @@ import sys
 import logging
 
 from watchdog.observers import Observer
-from watchdog.tricks import Trick
+from watchdog.events import PatternMatchingEventHandler
 
 import cloudbot
 
@@ -77,7 +77,7 @@ class Config(dict):
         logger.info("Config saved to file.")
 
 
-class ConfigEventHandler(Trick):
+class ConfigEventHandler(PatternMatchingEventHandler):
     """
     :type bot: cloudbot.bot.CloudBot
     :type config: core.config.Config
@@ -91,7 +91,7 @@ class ConfigEventHandler(Trick):
         """
         self.bot = bot
         self.config = config
-        Trick.__init__(self, *args, **kwargs)
+        PatternMatchingEventHandler.__init__(self, *args, **kwargs)
 
     def on_any_event(self, event):
         if self.bot.running:

@@ -1,7 +1,7 @@
 import asyncio
 
 from watchdog.observers import Observer
-from watchdog.tricks import Trick
+from watchdog.events import PatternMatchingEventHandler
 
 
 class PluginReloader(object):
@@ -64,7 +64,7 @@ class PluginReloader(object):
         yield from self.bot.plugin_manager.unload_plugin(path)
 
 
-class PluginEventHandler(Trick):
+class PluginEventHandler(PatternMatchingEventHandler):
     def __init__(self, loader, *args, **kwargs):
         """
         :type loader: PluginReloader

@@ -4,11 +4,12 @@ import requests
 
 from cloudbot import hook
 
+API_URL = "http://octopart.com/api/v3/parts/search"
+
 
 @hook.command("octopart", "octosearch")
 def octopart(text, reply):
     """octopart <keyword> -- Search for any part on the Octopart database."""
-    url = "http://octopart.com/api/v3/parts/search"
     params = {
         'apikey': 'aefcd00e',
         'q': text,
@@ -17,7 +18,7 @@ def octopart(text, reply):
     }
 
     try:
-        request = requests.get(url, params=params)
+        request = requests.get(API_URL, params=params)
         request.raise_for_status()
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         return "Could not fetch part data: {}".format(e)

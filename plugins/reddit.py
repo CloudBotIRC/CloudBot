@@ -21,7 +21,32 @@ headers = {'User-Agent': 'CloudBot/dev 1.0 - CloudBot Refresh'}
 
 
 def plural(num=0, text=''):
-    return "\x02{}\x02 {}{}".format(num, text, "s"[num == 1:])
+    return "{} {}{}".format(num, text, "s"[num == 1:])
+
+
+def format_output(item, show_url=False):
+    """ takes a reddit post and returns a formatted sting """
+    item["title"] = formatting.truncate_str(item["title"], 50)
+    item["link"] = short_url.format(item["id"])
+
+    raw_time = datetime.fromtimestamp(int(item["created_utc"]))
+    item["timesince"] = timeformat.timesince(raw_time, count=1)
+
+    item["comments"] = plural(item["num_comments"], 'comment')
+    item["points"] = plural(item["score"], 'point')
+
+    if item["over_18"]:
+        item["warning"] = " \x02NSFW\x02"
+    else:
+        item["warning"] = ""
+
+    if show_url:
+        return "\x02{title} : {subreddit}\x02 - posted by \x02{author}\x02" \
+               " {timesince} ago - {comments}, {points} -" \
+               " {link}{warning}".format(**item)
+    else:
+        return "\x02{title} : {subreddit}\x02 - posted by \x02{author}\x02" \
+               " {timesince} ago - {comments}, {points}{warning}".format(**item)
 
 
 @hook.regex(reddit_re)
@@ -34,27 +59,12 @@ def reddit_url(match):
     if not urllib.parse.urlparse(url).scheme:
         url = "http://" + url + "/.json"
 
-    # The Reddit API will not play nice if it doesn't identify with headers...
+    # the reddit API gets grumpy if we don't include headers
     r = requests.get(url, headers=headers)
     data = r.json()
-    data = data[0]["data"]["children"][0]["data"]
-    item = data
+    item = data[0]["data"]["children"][0]["data"]
 
-    item["title"] = formatting.truncate_str(item["title"], 50)
-
-    raw_time = datetime.fromtimestamp(int(item["created_utc"]))
-    item["timesince"] = timeformat.timesince(raw_time)
-
-    item["comments"] = plural(item["num_comments"], 'comment')
-    item["points"] = plural(item["score"], 'point')
-
-    if item["over_18"]:
-        item["warning"] = " \x02NSFW\x02"
-    else:
-        item["warning"] = ""
-
-    return "\x02{title}\x02 : \x02{subreddit}\x02 - posted by \x02{author}\x02" \
-           " {timesince} ago - {comments}, {points}{warning}".format(**item)
+    return format_output(item)
 
 
 @asyncio.coroutine
@@ -97,20 +107,4 @@ def reddit(text, loop):
     else:
         item = random.choice(data)["data"]
 
-    item["title"] = formatting.truncate_str(item["title"], 50)
-    item["link"] = short_url.format(item["id"])
-
-    raw_time = datetime.fromtimestamp(int(item["created_utc"]))
-    item["timesince"] = timeformat.timesince(raw_time)
-
-    item["comments"] = plural(item["num_comments"], 'comment')
-    item["points"] = plural(item["score"], 'point')
-
-    if item["over_18"]:
-        item["warning"] = " \x02NSFW\x02"
-    else:
-        item["warning"] = ""
-
-    return "\x02{title}\x02 : \x02{subreddit}\x02 - posted by \x02{author}\x02" \
-           " {timesince} ago - {comments}, {points} -" \
-           " {link}{warning}".format(**item)
+    return format_output(item, show_url=True)

@@ -15,8 +15,9 @@ def about(event):
     """Gives information about cloudbot
     :type event: cloudbot.event.Event
     """
-    event.message("Hi, I'm CloudBot version {} - Created by Dabo - Powered by Redis!".format(cloudbot.__version__),
-                  "Source code is located at https://github.com/cloudbot/bot-clean")
+    event.message("Powered by CloudBot Refresh ({}) - "
+                  "https://github.com/CloudBotIRC/Refresh/".format(cloudbot.__version__))
+
 
 
 @hook.command(autohelp=False)
@@ -37,16 +38,16 @@ def system():
     sys_cpu_count = platform.machine()
 
     # Get uptime
-    uptime = timedelta(seconds=round(time.time() - process.create_time))
+    uptime = timedelta(seconds=round(time.time() - process.create_time()))
 
     return (
         "OS: \x02{}\x02, "
         "Python: \x02{} {}\x02, "
-        "Architecture: \x02{}\x02 - \x02{}\x02\n"
-        "Uptime: \x02{}\x02 "
+        "Architecture: \x02{}\x02 (\x02{}\x02)\n"
+        "Uptime: \x02{}\x02, "
         "Threads: \x02{}\x02, "
         "CPU Usage: \x02{}\x02, "
-        "Memory Usage: \x02{}\x02, "
+        "Memory Usage: \x02{}\x02"
     ).format(
         sys_os,
         python_implementation,

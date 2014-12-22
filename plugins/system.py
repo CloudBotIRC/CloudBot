@@ -17,10 +17,10 @@ def about(text, conn):
     """
     if text.lower() in ("license", "gpl", "source"):
         return "CloudBot Refresh is released under the GPL v3 license, get the source code " \
-               "at https://github.com/CloudBotIRC/Refresh/"
+               "at https://github.com/CloudBotIRC/CloudBot/"
 
     return "{} is powered by CloudBot Refresh! ({}) - " \
-           "https://github.com/CloudBotIRC/Refresh/".format(conn.nick, cloudbot.__version__)
+           "https://github.com/CloudBotIRC/CloudBot/".format(conn.nick, cloudbot.__version__)
 
 
 

@@ -1,0 +1,55 @@
+{
+    "connections": [
+        {
+            "name": "esper",
+            "connection": {
+                "server": "irc.esper.net",
+                "port": 6667,
+                "ssl": false,
+                "ignore_cert": true,
+                "password": ""
+            },
+            "nick": "CloudBot",
+            "user": "cloudbot",
+            "real_name": "CloudBot",
+            "channels": ["#cloudbot"],
+            "nickserv": {
+                "enabled": false,
+                "nickserv_password": "",
+                "nickserv_user": "",
+                "nickserv_name": "nickserv",
+                "nickserv_command": "IDENTIFY"
+            },
+            "permissions": {
+                "admins": {
+                    "perms": ["bot.manage", "bot.control", "permissions.view", "permissions.manage", "ignored.view", "ignored.manage"],
+                    "users": ["examplea!user@example.com"]
+                },
+                "moderators": {
+                    "perms": ["bot.control", "permissions.view", "ignored.view", "ignored.manage"],
+                    "users": ["examplec!user@example.com"]
+                },
+                "trusted": {
+                    "perms": ["ignored.view"],
+                    "users": ["exampled!user@example.com"]
+                }
+            },
+            "command_prefix": "."
+        }
+    ],
+    "database": {
+        "host": "localhost",
+        "port": 6379,
+        "database": 0
+    },
+    "developer_mode": {
+        "console_debug": false,
+        "file_debug": true
+    },
+    "logging": {
+        "show_plugin_loading": true,
+        "show_motd": true,
+        "show_server_info": true,
+        "raw_file_log": false
+    }
+}

@@ -11,10 +11,8 @@ __pycache__
 .geany
 *.sublime-project
 *.sublime-workspace
-.idea/
-data/GeoLiteCity.dat
-plugins/New Text Document.txt
-plugins/srvv.py
-run.cmd
-config
+.idea
+/start.cmd
+/start.sh
+/start
 .vagrant

@@ -1,13 +1,6 @@
-microdata
-sqlalchemy
-watchdog
-lxml
-beautifulsoup4
-pygeoip
-py3dns
-pycrypto
-pbkdf2
+# Redis - for storing data
+redis
+# Requests - used whenever accessing web
 requests
+# psutils - for process information
 psutil
-twitter
-pyenchant

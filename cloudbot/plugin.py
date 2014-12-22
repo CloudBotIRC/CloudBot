@@ -1,4 +1,5 @@
 import asyncio
+import enum
 import glob
 import importlib
 import inspect
@@ -6,55 +7,76 @@ import logging
 import os
 import re
 
-import sqlalchemy
-
 from cloudbot.event import Event
-from cloudbot.util import botvars
 
 logger = logging.getLogger("cloudbot")
+
+
+class HookType(enum.Enum):
+    command = 1,
+    regex = 2,
+    event = 3,
+    irc_raw = 4,
+    sieve = 5,
+    on_start = 6,
+    on_stop = 7
+
+# cloudbot.hook imports plugin.HookType, so to not cause a circular import error, we import cloudbot.hook after defining
+# the HookType enum. TODO: is there *any* better way to do this?
+import cloudbot.hook
 
 
 def find_hooks(parent, module):
     """
     :type parent: Plugin
     :type module: object
-    :rtype: (list[CommandHook], list[RegexHook], list[RawHook], list[SieveHook], List[EventHook], list[OnloadHook])
+    :rtype: (list[CommandHook], list[RegexHook], list[RawHook], list[SieveHook], List[EventHook], list[OnStartHook],
+        list[OnStopHook])
     """
     # set the loaded flag
-    module._cloudbot_loaded = True
+    module._plugins_loaded = True
     command = []
     regex = []
     raw = []
     sieve = []
     event = []
-    onload = []
-    type_lists = {"command": command, "regex": regex, "irc_raw": raw, "sieve": sieve, "event": event, "onload": onload}
+    on_start = []
+    on_stop = []
+    type_lists = {HookType.command: command, HookType.regex: regex, HookType.irc_raw: raw, HookType.sieve: sieve,
+                  HookType.event: event, HookType.on_start: on_start, HookType.on_stop: on_stop}
     for name, func in module.__dict__.items():
-        if hasattr(func, "_cloudbot_hook"):
+        if hasattr(func, "plugin_hook"):
             # if it has cloudbot hook
-            func_hooks = func._cloudbot_hook
+            func_hooks = func.plugin_hook
 
             for hook_type, func_hook in func_hooks.items():
-                type_lists[hook_type].append(_hook_name_to_plugin[hook_type](parent, func_hook))
+                type_lists[hook_type].append(_hook_type_to_plugin[hook_type](parent, func_hook))
 
             # delete the hook to free memory
-            del func._cloudbot_hook
+            del func.plugin_hook
 
-    return command, regex, raw, sieve, event, onload
+    return command, regex, raw, sieve, event, on_start, on_stop
 
 
-def find_tables(code):
+def _prepare_parameters(hook, event):
     """
-    :type code: object
-    :rtype: list[sqlalchemy.Table]
-    """
-    tables = []
-    for name, obj in code.__dict__.items():
-        if isinstance(obj, sqlalchemy.Table) and obj.metadata == botvars.metadata:
-            # if it's a Table, and it's using our metadata, append it to the list
-            tables.append(obj)
+    Prepares arguments for the given hook
 
-    return tables
+    :type hook: cloudbot.plugin.Hook
+    :type event: cloudbot.event.Event
+    :rtype: list
+    """
+    parameters = []
+    for required_arg in hook.required_args:
+        if hasattr(event, required_arg):
+            value = getattr(event, required_arg)
+            parameters.append(value)
+        else:
+            logger.error("Plugin {} asked for invalid argument '{}', cancelling execution!"
+                         .format(hook.description, required_arg))
+            logger.debug("Valid arguments are: {} ({})".format(dir(event), event))
+            return None
+    return parameters
 
 
 class PluginManager:
@@ -123,18 +145,6 @@ class PluginManager:
         file_name = os.path.basename(path)
         title = os.path.splitext(file_name)[0]
 
-        if "plugin_loading" in self.bot.config:
-            pl = self.bot.config.get("plugin_loading")
-
-            if pl.get("use_whitelist", False):
-                if title not in pl.get("whitelist", []):
-                    logger.info('Not loading plugin module "{}": plugin not whitelisted'.format(file_name))
-                    return
-            else:
-                if title in pl.get("blacklist", []):
-                    logger.info('Not loading plugin module "{}": plugin blacklisted'.format(file_name))
-                    return
-
         # make sure to unload the previously loaded plugin from this path, if it was loaded.
         if file_name in self.plugins:
             yield from self._unload(file_path)
@@ -143,7 +153,7 @@ class PluginManager:
         try:
             plugin_module = importlib.import_module(module_name)
             # if this plugin was loaded before, reload it
-            if hasattr(plugin_module, "_cloudbot_loaded"):
+            if hasattr(plugin_module, "_plugins_loaded"):
                 importlib.reload(plugin_module)
         except Exception:
             logger.exception("Error loading {}:".format(file_name))
@@ -154,17 +164,11 @@ class PluginManager:
 
         # proceed to register hooks
 
-        # create database tables
-        yield from plugin.create_tables(self.bot)
-
-        # run onload hooks
-        for onload_hook in plugin.run_on_load:
-            success = yield from self.launch(onload_hook, Event(bot=self.bot, hook=onload_hook))
+        # run on_start hooks
+        for on_start_hook in plugin.on_start:
+            success = yield from self.launch(on_start_hook, Event(bot=self.bot, hook=on_start_hook))
             if not success:
-                logger.warning("Not registering hooks from plugin {}: onload hook errored".format(plugin.title))
-
-                # unregister databases
-                plugin.unregister_tables(self.bot)
+                logger.warning("Not registering hooks from plugin {}: on_start hook errored".format(plugin.title))
                 return
 
         self.plugins[plugin.file_name] = plugin
@@ -213,7 +217,7 @@ class PluginManager:
             self._log_hook(sieve_hook)
 
         # we don't need this anymore
-        del plugin.run_on_load
+        del plugin.on_start
 
     @asyncio.coroutine
     def _unload(self, path):
@@ -273,9 +277,6 @@ class PluginManager:
         for sieve_hook in plugin.sieves:
             self.sieves.remove(sieve_hook)
 
-        # unregister databases
-        plugin.unregister_tables(self.bot)
-
         # remove last reference to plugin
         del self.plugins[plugin.file_name]
 
@@ -294,58 +295,71 @@ class PluginManager:
             logger.info("Loaded {}".format(hook))
             logger.debug("Loaded {}".format(repr(hook)))
 
-    def _prepare_parameters(self, hook, event):
+    # TODO: create remove_hook() method
+    def add_hook(self, hook_type, function, *args, **kwargs):
         """
-        Prepares arguments for the given hook
+        Add an internal hook, like a plugin @hook.X, but for methods in the core. Kind of like an internal event system.
+        :param hook_type: The type of the hook (command, regex, event, sieve, or irc_raw)
+        :param function: The function to call
+        :param args: Arguments to pass to the hook, dependent on the hook type
+        :param kwargs: Keyword arguments to pass to the hook, dependent on the hook type
+        :type hook_type: HookType
+        """
+        # Get the plugin, or create it - we want one unique plugin for each core file.
+        file = inspect.getmodule(function).__file__
+        # filename is used as the unique key for the plugin.
+        # we prepend internal/ so that this isn't confused with internal plugins.
+        # We *do* assume here that no core files will have the same basename, even if they are in different directories.
+        # I think that is a sane assumption.
+        filename = "internal/" + os.path.basename(file)
+        if filename in self.plugins:
+            plugin = self.plugins[filename]
+        else:
+            filepath = os.path.abspath(file)
+            title = os.path.splitext(filename)[0]
+            plugin = Plugin(filepath, filename, title)
+            self.plugins[filename] = plugin
 
-        :type hook: cloudbot.plugin.Hook
-        :type event: cloudbot.event.Event
-        :rtype: list
-        """
-        parameters = []
-        for required_arg in hook.required_args:
-            if hasattr(event, required_arg):
-                value = getattr(event, required_arg)
-                parameters.append(value)
+        # we don't allow on_start or command hooks for internal. We don't have to check a valid type otherwise, because
+        # the _hook_name_to_hook[hook_type] call will raise a KeyError already.
+        if hook_type is HookType.on_start:
+            raise ValueError("on_start hooks not allowed")
+        #
+        if hook_type is HookType.command:
+            raise ValueError("command hooks not allowed")
+
+        # this might seem a little hacky, but I think it's a good design choice.
+        # hook.py is in charge of argument processing, so it should process them here to
+        _processing_hook = cloudbot.hook._hook_name_to_hook[hook_type](function)
+        _processing_hook.add_hook(*args, **kwargs)
+        # create the *Hook object
+        hook = _hook_type_to_plugin[hook_type](plugin, _processing_hook)
+
+        # Register the hook.
+        # I *think* this is the best way to do this, there might be a more pythonic way though, not sure.
+        if hook_type is HookType.irc_raw:
+            if hook.is_catch_all():
+                self.catch_all_triggers.append(hook)
             else:
-                logger.error("Plugin {} asked for invalid argument '{}', cancelling execution!"
-                             .format(hook.description, required_arg))
-                logger.debug("Valid arguments are: {} ({})".format(dir(event), event))
-                return None
-        return parameters
+                for trigger in hook.triggers:
+                    if trigger in self.raw_triggers:
+                        self.raw_triggers[trigger].append(hook)
+                    else:
+                        self.raw_triggers[trigger] = [hook]
+        elif hook_type is HookType.event:
+            for event_type in hook.types:
+                if event_type in self.event_type_hooks:
+                    self.event_type_hooks[event_type].append(hook)
+                else:
+                    self.event_type_hooks[event_type] = [hook]
+        elif hook_type is HookType.regex:
+            for regex_match in hook.regexes:
+                self.regex_hooks.append((regex_match, hook))
+        elif hook_type is HookType.sieve:
+            self.sieves.append(hook)
 
-    def _execute_hook_threaded(self, hook, event):
-        """
-        :type hook: Hook
-        :type event: cloudbot.event.Event
-        """
-        event.prepare_threaded()
-
-        parameters = self._prepare_parameters(hook, event)
-        if parameters is None:
-            return None
-
-        try:
-            return hook.function(*parameters)
-        finally:
-            event.close_threaded()
-
-    @asyncio.coroutine
-    def _execute_hook_sync(self, hook, event):
-        """
-        :type hook: Hook
-        :type event: cloudbot.event.Event
-        """
-        yield from event.prepare()
-
-        parameters = self._prepare_parameters(hook, event)
-        if parameters is None:
-            return None
-
-        try:
-            return (yield from hook.function(*parameters))
-        finally:
-            yield from event.close()
+        # Log the hook. TODO: Do we want to do this for internal hooks?
+        self._log_hook(hook)
 
     @asyncio.coroutine
     def _execute_hook(self, hook, event):
@@ -358,25 +372,28 @@ class PluginManager:
         :type event: cloudbot.event.Event
         :rtype: bool
         """
+        parameters = _prepare_parameters(hook, event)
+        if parameters is None:
+            return False
+
         try:
             # _internal_run_threaded and _internal_run_coroutine prepare the database, and run the hook.
             # _internal_run_* will prepare parameters and the database session, but won't do any error catching.
             if hook.threaded:
-                out = yield from self.bot.loop.run_in_executor(None, self._execute_hook_threaded, hook, event)
+                out = yield from self.bot.loop.run_in_executor(None, hook.function, *parameters)
             else:
-                out = yield from self._execute_hook_sync(hook, event)
+                out = yield from hook.function(*parameters)
         except Exception:
             logger.exception("Error in hook {}".format(hook.description))
             return False
 
         if out is not None:
-            # if there are multiple items in the response, return them on multiple lines
             if isinstance(out, (list, tuple)):
-                event.reply(out[0])
-                for line in out[1:]:
-                    event.message(line)
+                # if there are multiple items in the response, return them on multiple lines
+                event.reply(*out)
             else:
-                event.reply(str(out))
+                event.reply(*str(out).split('\n'))
+
         return True
 
     @asyncio.coroutine
@@ -389,9 +406,9 @@ class PluginManager:
         """
         try:
             if sieve.threaded:
-                result = yield from self.bot.loop.run_in_executor(None, sieve.function, self.bot, event, hook)
+                result = yield from self.bot.loop.run_in_executor(None, sieve.function, event)
             else:
-                result = yield from sieve.function(self.bot, event, hook)
+                result = yield from sieve.function(event)
         except Exception:
             logger.exception("Error running sieve {} on {}:".format(sieve.description, hook.description))
             return None
@@ -409,13 +426,13 @@ class PluginManager:
         :type hook: cloudbot.plugin.Hook | cloudbot.plugin.CommandHook
         :rtype: bool
         """
-        if hook.type != "onload":  # we don't need sieves on onload hooks.
+        if hook.type not in (HookType.on_start, HookType.on_stop):  # we don't need sieves on on_start or on_stop hooks.
             for sieve in self.bot.plugin_manager.sieves:
                 event = yield from self._sieve(sieve, event, hook)
                 if event is None:
                     return False
 
-        if hook.type == "command" and hook.auto_help and not event.text and hook.doc is not None:
+        if hook.type is HookType.command and hook.auto_help and not event.text and hook.doc is not None:
             event.notice_doc()
             return False
 
@@ -459,6 +476,15 @@ class PluginManager:
         # Return the result
         return result
 
+    @asyncio.coroutine
+    def run_shutdown_hooks(self):
+        tasks = []
+        for plugin in self.plugins.values():
+            for hook in plugin.on_stop:
+                tasks.append(self.launch(hook, Event(bot=self.bot, hook=hook)))
+
+        yield from asyncio.gather(*tasks, loop=self.bot.loop)
+
 
 class Plugin:
     """
@@ -472,11 +498,12 @@ class Plugin:
     :type raw_hooks: list[RawHook]
     :type sieves: list[SieveHook]
     :type events: list[EventHook]
-    :type tables: list[sqlalchemy.Table]
     """
 
-    def __init__(self, filepath, filename, title, code):
+    def __init__(self, filepath, filename, title, code=None):
         """
+        :param code: Optional code argument, should be specified for all *actual* plugins.
+                        If provided, all hooks will be retrieved and attached to this plugin from the code.
         :type filepath: str
         :type filename: str
         :type code: object
@@ -484,62 +511,33 @@ class Plugin:
         self.file_path = filepath
         self.file_name = filename
         self.title = title
-        self.commands, self.regexes, self.raw_hooks, self.sieves, self.events, self.run_on_load = find_hooks(self, code)
-        # we need to find tables for each plugin so that they can be unloaded from the global metadata when the
-        # plugin is reloaded
-        self.tables = find_tables(code)
-
-    @asyncio.coroutine
-    def create_tables(self, bot):
-        """
-        Creates all sqlalchemy Tables that are registered in this plugin
-
-        :type bot: cloudbot.bot.CloudBot
-        """
-        if self.tables:
-            # if there are any tables
-
-            logger.info("Registering tables for {}".format(self.title))
-
-            for table in self.tables:
-                if not (yield from bot.loop.run_in_executor(None, table.exists, bot.db_engine)):
-                    yield from bot.loop.run_in_executor(None, table.create, bot.db_engine)
-
-    def unregister_tables(self, bot):
-        """
-        Unregisters all sqlalchemy Tables registered to the global metadata by this plugin
-        :type bot: cloudbot.bot.CloudBot
-        """
-        if self.tables:
-            # if there are any tables
-            logger.info("Unregistering tables for {}".format(self.title))
-
-            for table in self.tables:
-                bot.db_metadata.remove(table)
+        if code is not None:
+            self.commands, self.regexes, self.raw_hooks, self.sieves, self.events, self.on_start, self.on_stop = (
+                find_hooks(self, code)
+            )
 
 
 class Hook:
     """
     Each hook is specific to one function. This class is never used by itself, rather extended.
 
-    :type type; str
+    :type type: HookType
     :type plugin: Plugin
     :type function: callable
     :type function_name: str
     :type required_args: list[str]
     :type threaded: bool
-    :type ignore_bots: bool
+    :type run_first: bool
     :type permissions: list[str]
     :type single_thread: bool
     """
+    type = None  # to be assigned in subclasses
 
-    def __init__(self, _type, plugin, func_hook):
+    def __init__(self, plugin, func_hook):
         """
-        :type _type: str
         :type plugin: Plugin
         :type func_hook: hook._Hook
         """
-        self.type = _type
         self.plugin = plugin
         self.function = func_hook.function
         self.function_name = self.function.__name__
@@ -553,9 +551,9 @@ class Hook:
         else:
             self.threaded = True
 
-        self.ignore_bots = func_hook.kwargs.pop("ignorebots", False)
         self.permissions = func_hook.kwargs.pop("permissions", [])
         self.single_thread = func_hook.kwargs.pop("singlethread", False)
+        self.run_first = func_hook.kwargs.pop("run_first", False)
 
         if func_hook.kwargs:
             # we should have popped all the args, so warn if there are any left
@@ -566,9 +564,8 @@ class Hook:
         return "{}:{}".format(self.plugin.title, self.function_name)
 
     def __repr__(self):
-        return "type: {}, plugin: {}, ignore_bots: {}, permissions: {}, single_thread: {}, threaded: {}".format(
-            self.type, self.plugin.title, self.ignore_bots, self.permissions, self.single_thread, self.threaded
-        )
+        return "type: {}, plugin: {}, permissions: {}, ensure_first: {}, single_thread: {}, threaded: {}".format(
+            self.type.name, self.plugin.title, self.permissions, self.run_first, self.single_thread, self.threaded)
 
 
 class CommandHook(Hook):
@@ -578,6 +575,7 @@ class CommandHook(Hook):
     :type doc: str
     :type auto_help: bool
     """
+    type = HookType.command
 
     def __init__(self, plugin, cmd_hook):
         """
@@ -592,7 +590,7 @@ class CommandHook(Hook):
         self.aliases.insert(0, self.name)  # make sure the name, or 'main alias' is in position 0
         self.doc = cmd_hook.doc
 
-        super().__init__("command", plugin, cmd_hook)
+        super().__init__(plugin, cmd_hook)
 
     def __repr__(self):
         return "Command[name: {}, aliases: {}, {}]".format(self.name, self.aliases[1:], Hook.__repr__(self))
@@ -605,6 +603,7 @@ class RegexHook(Hook):
     """
     :type regexes: set[re.__Regex]
     """
+    type = HookType.regex
 
     def __init__(self, plugin, regex_hook):
         """
@@ -613,7 +612,7 @@ class RegexHook(Hook):
         """
         self.regexes = regex_hook.regexes
 
-        super().__init__("regex", plugin, regex_hook)
+        super().__init__(plugin, regex_hook)
 
     def __repr__(self):
         return "Regex[regexes: [{}], {}]".format(", ".join(regex.pattern for regex in self.regexes),
@@ -627,13 +626,14 @@ class RawHook(Hook):
     """
     :type triggers: set[str]
     """
+    type = HookType.irc_raw
 
     def __init__(self, plugin, irc_raw_hook):
         """
         :type plugin: Plugin
         :type irc_raw_hook: cloudbot.util.hook._RawHook
         """
-        super().__init__("irc_raw", plugin, irc_raw_hook)
+        super().__init__(plugin, irc_raw_hook)
 
         self.triggers = irc_raw_hook.triggers
 
@@ -648,13 +648,14 @@ class RawHook(Hook):
 
 
 class SieveHook(Hook):
+    type = HookType.sieve
+
     def __init__(self, plugin, sieve_hook):
         """
         :type plugin: Plugin
         :type sieve_hook: cloudbot.util.hook._SieveHook
         """
-        # We don't want to thread sieves by default - this is retaining old behavior for compatibility
-        super().__init__("sieve", plugin, sieve_hook)
+        super().__init__(plugin, sieve_hook)
 
     def __repr__(self):
         return "Sieve[{}]".format(Hook.__repr__(self))
@@ -667,13 +668,14 @@ class EventHook(Hook):
     """
     :type types: set[cloudbot.event.EventType]
     """
+    type = HookType.event
 
     def __init__(self, plugin, event_hook):
         """
         :type plugin: Plugin
         :type event_hook: cloudbot.util.hook._EventHook
         """
-        super().__init__("event", plugin, event_hook)
+        super().__init__(plugin, event_hook)
 
         self.types = event_hook.types
 
@@ -685,26 +687,46 @@ class EventHook(Hook):
                                               self.plugin.file_name)
 
 
-class OnloadHook(Hook):
+class OnStartHook(Hook):
+    type = HookType.on_start
+
     def __init__(self, plugin, on_load_hook):
         """
         :type plugin: Plugin
-        :type on_load_hook: cloudbot.util.hook._OnLoadHook
+        :type on_load_hook: cloudbot.util.hook._OnStartHook
         """
-        super().__init__("onload", plugin, on_load_hook)
+        super().__init__(plugin, on_load_hook)
 
     def __repr__(self):
-        return "Onload[{}]".format(Hook.__repr__(self))
+        return "OnStart[{}]".format(Hook.__repr__(self))
 
     def __str__(self):
-        return "onload {} from {}".format(self.function_name, self.plugin.file_name)
+        return "on_start {} from {}".format(self.function_name, self.plugin.file_name)
 
 
-_hook_name_to_plugin = {
-    "command": CommandHook,
-    "regex": RegexHook,
-    "irc_raw": RawHook,
-    "sieve": SieveHook,
-    "event": EventHook,
-    "onload": OnloadHook
+class OnStopHook(Hook):
+    type = HookType.on_stop
+
+    def __init__(self, plugin, on_load_hook):
+        """
+        :type plugin: Plugin
+        :type on_load_hook: cloudbot.util.hook._OnStartHook
+        """
+        super().__init__(plugin, on_load_hook)
+
+    def __repr__(self):
+        return "OnStop[{}]".format(Hook.__repr__(self))
+
+    def __str__(self):
+        return "on_stop {} from {}".format(self.function_name, self.plugin.file_name)
+
+
+_hook_type_to_plugin = {
+    HookType.command: CommandHook,
+    HookType.regex: RegexHook,
+    HookType.irc_raw: RawHook,
+    HookType.sieve: SieveHook,
+    HookType.event: EventHook,
+    HookType.on_start: OnStartHook,
+    HookType.on_stop: OnStopHook,
 }

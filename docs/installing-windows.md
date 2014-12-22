@@ -15,16 +15,14 @@ If that doesn't work, follow [this guide](http://simpledeveloper.com/how-to-inst
 
 ### Download
 
-Download CloudBotRefresh from [https://github.com/CloudBotIRC/CloudBot/zipball/python3.4.zip](https://github.com/CloudBotIRC/CloudBotRefresh/archive/python3.4.zip).
+Download CloudBot from [https://github.com/daboross/cloudbot/archive/master.zip](https://github.com/daboross/cloudbot/archive/master.zip).
 
 Unzip the resulting file, and continue to read this document.
 
 ### Install
 
-Before you can run the bot, you need to install a few Python dependencies. All of CloudBotRefresh's dependencies are stored in the `requirements.txt` file.`
+Before you can run the bot, you need to install a few Python dependencies. All of CloudBot's dependencies are stored in the `requirements.txt` file.`
 
 These can be installed with `pip` (The Python package manager) by running the following command in the bot directory:
 
     pip install -r requirements.txt
-
-Note for **Windows** users: Windows compatibility some modules is **broken** (such as ping), but we do intend to add it, eventually.

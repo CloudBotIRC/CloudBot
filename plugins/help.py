@@ -77,7 +77,7 @@ def help_command(text, conn, bot, notice, has_permission):
             # make sure to include the last line
             lines.append(", ".join(current_line))
 
-        notice("Here's a list of commands you can use:")
+        notice("Available commands:")
         for line in lines:
             notice(line)
-        notice("For detailed help, use {}help <command>, without the brackets.".format(conn.config["command_prefix"]))
+        notice("For detailed help, use {}help <command>".format(conn.config["command_prefix"]))

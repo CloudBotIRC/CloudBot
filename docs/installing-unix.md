@@ -3,30 +3,30 @@
 ### Downloading
 
 #### Manual Download
-Download CloudBotRefresh from [https://github.com/CloudBotIRC/CloudBot/zipball/python3.4.zip](https://github.com/CloudBotIRC/CloudBotRefresh/archive/python3.4.zip) and unzip, or execute the following commands:
+Download CloudBot from [https://github.com/daboross/cloudbot/archive/master.zip](https://github.com/daboross/cloudbot/archive/master.zip) and unzip, or execute the following commands:
 ```
-curl -Ls https://github.com/CloudBotIRC/CloudBotRefresh/archive/python3.4.zip > CloudBot.zip
+curl -Ls https://github.com/daboross/cloudbot/archive/master.zip > CloudBot.zip
 unzip CloudBot.zip
-cd CloudBotRefresh-python3.4
+cd cloudbot-master
 ```
 
 #### Git
 
-Alternately, you can also clone CloudBotRefresh by using:
+Alternately, you can also clone CloudBot by using:
 ```
-git clone https://github.com/CloudBotIRC/CloudBotRefresh.git
-cd CloudBotRefresh
+git clone https://github.com/daboross/cloudbot.git
+cd cloudbot
 ```
 
 ### Installing Dependencies
 
 All of CloudBot's python dependencies are stored in the `requirements.txt` file, and can be installed with pip.
 
-But first, you will need `git`, `python3.4-dev` and `libenchant1c2a`, `libxml2-dev`, `libxslt-dev` and `zlib1g-dev`. Install these with your system's package manager.
+But first, you will need `python3.4` installed on your system. Install this with your system's package manager.
 
 For example, on a Debian-based system, you could use:
 ```
-[sudo] apt-get install -y python3.4-dev git libenchant-dev libxml2-dev libxslt-dev zlib1g-dev
+[sudo] apt-get install -y python3.4
 ```
 
 Now we can install a python3.4 version of pip using the following command:

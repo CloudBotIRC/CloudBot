@@ -14,8 +14,7 @@ The following guidelines for contribution should be followed if you want to subm
 * Create a new branch with a descriptive name for your feature (optional)
 * Commit changes, push to your fork on GitHub
 * Create a new pull request, provide a short summary of changes in the title line, with more information in the description field.
-* After submitting the pull request, join the IRC channel (irc.esper.net #cloudbot) and paste a link to the pull request so people are aware of it
-* After discussion, your pull request will be accepted or rejected.
+* The pull request will be reviewed!
 
 ## How to prepare
 

@@ -19,8 +19,7 @@ irc_command_to_event_type = {
     "PRIVMSG": EventType.message,
     "JOIN": EventType.join,
     "PART": EventType.part,
-    "KICK": EventType.kick,
-    "NOTICE": EventType.notice
+    "KICK": EventType.kick
 }
 
 
@@ -107,7 +106,7 @@ class IrcClient(Client):
         self.set_pass(self.config["connection"].get("password"))
         self.set_nick(self.nick)
         self.cmd("USER", self.config.get('user', 'cloudbot'), "3", "*",
-                 self.config.get('realname', 'CloudBotRefresh - http://cloudbot.pw'))
+                 self.config.get('real_name', 'CloudBot'))
 
     def quit(self, reason=None):
         if self._quit:
@@ -127,24 +126,27 @@ class IrcClient(Client):
         self._transport.close()
         self._connected = False
 
-    def message(self, target, text):
-        self.cmd("PRIVMSG", target, text)
+    def message(self, target, *messages, log_hide=None):
+        for text in messages:
+            self.cmd("PRIVMSG", target, text, log_hide=log_hide)
 
-    def action(self, target, text):
-        self.ctcp(target, "ACTION", text)
+    def action(self, target, text, log_hide=None):
+        self.ctcp(target, "ACTION", text, log_hide=log_hide)
 
-    def notice(self, target, text):
-        self.cmd("NOTICE", target, text)
+    def notice(self, target, text, log_hide=None):
+        self.cmd("NOTICE", target, text, log_hide=log_hide)
 
     def set_nick(self, nick):
         self.cmd("NICK", nick)
 
     def join(self, channel):
-        self.send("JOIN {}".format(channel))
+        channel = channel.lower()
+        self.cmd("JOIN", channel)
         if channel not in self.channels:
             self.channels.append(channel)
 
     def part(self, channel):
+        channel = channel.lower()
         self.cmd("PART", channel)
         if channel in self.channels:
             self.channels.remove(channel)
@@ -154,7 +156,7 @@ class IrcClient(Client):
             return
         self.cmd("PASS", password)
 
-    def ctcp(self, target, ctcp_type, text):
+    def ctcp(self, target, ctcp_type, text, log_hide=None):
         """
         Makes the bot send a PRIVMSG CTCP of type <ctcp_type> to the target
         :type ctcp_type: str
@@ -162,9 +164,9 @@ class IrcClient(Client):
         :type target: str
         """
         out = "\x01{} {}\x01".format(ctcp_type, text)
-        self.cmd("PRIVMSG", target, out)
+        self.cmd("PRIVMSG", target, out, log_hide=log_hide)
 
-    def cmd(self, command, *params):
+    def cmd(self, command, *params, log_hide=None):
         """
         Sends a raw IRC command of type <command> with params <params>
         :param command: The IRC command to send
@@ -175,25 +177,28 @@ class IrcClient(Client):
         params = list(params)  # turn the tuple of parameters into a list
         if params:
             params[-1] = ':' + params[-1]
-            self.send("{} {}".format(command, ' '.join(params)))
+            self.send("{} {}".format(command, ' '.join(params)), log_hide=log_hide)
         else:
-            self.send(command)
+            self.send(command, log_hide=log_hide)
 
-    def send(self, line):
+    def send(self, line, log_hide=None):
         """
         Sends a raw IRC line
         :type line: str
         """
         if not self._connected:
             raise ValueError("Client must be connected to irc server to use send")
-        self.loop.call_soon_threadsafe(self._send, line)
+        self.loop.call_soon_threadsafe(self._send, line, log_hide)
 
-    def _send(self, line):
+    def _send(self, line, log_hide):
         """
         Sends a raw IRC line unchecked. Doesn't do connected check, and is *not* threadsafe
         :type line: str
         """
-        logger.info("[{}] >> {}".format(self.readable_name, line))
+        if log_hide is not None:
+            logger.info("[{}] >> {}".format(self.readable_name, line.replace(log_hide, "<hidden>")))
+        else:
+            logger.info("[{}] >> {}".format(self.readable_name, line))
         asyncio.async(self._protocol.send(line), loop=self.loop)
 
     @property
@@ -246,7 +251,10 @@ class _IrcProtocol(asyncio.Protocol):
         if exc is None:
             # we've been closed intentionally, so don't reconnect
             return
-        logger.exception("[{}] Connection lost.".format(self.conn.readable_name))
+        if exc is None:
+            logger.info("[{}] Connection lost.".format(self.conn.readable_name))
+        else:
+            logger.exception("[{}] Connection lost.".format(self.conn.readable_name))
         asyncio.async(self.conn.connect(), loop=self.loop)
 
     def eof_received(self):
@@ -255,7 +263,7 @@ class _IrcProtocol(asyncio.Protocol):
         self._connected_future = asyncio.Future(loop=self.loop)
         logger.info("[{}] EOF received.".format(self.conn.readable_name))
         asyncio.async(self.conn.connect(), loop=self.loop)
-        return True
+        return False
 
     @asyncio.coroutine
     def send(self, line):
@@ -337,13 +345,12 @@ class _IrcProtocol(asyncio.Protocol):
             elif command == "INVITE":
                 target = command_params[0]
             else:
-                # TODO: Find more commands which give a target
                 target = None
 
             # Parse for CTCP
             if event_type is EventType.message and content.count("\x01") >= 2 and content.startswith("\x01"):
                 # Remove the first \x01, then rsplit to remove the last one, and ignore text after the last \x01
-                ctcp_text = content[1:].rsplit("\x01", 1)[0]
+                ctcp_text = str(content[1:].rsplit("\x01", 1)[0])  # str() to make python happy - not strictly needed
                 ctcp_text_split = ctcp_text.split(None, 1)
                 if ctcp_text_split[0] == "ACTION":
                     # this is a CTCP ACTION, set event_type and content accordingly
@@ -356,7 +363,6 @@ class _IrcProtocol(asyncio.Protocol):
                 ctcp_text = None
 
             # Channel
-            # TODO: Migrate plugins using chan for storage to use chan.lower() instead so we can pass the original case
             if command_params and (len(command_params) > 2 or not command_params[0].startswith(":")):
 
                 if command_params[0].lower() == self.conn.nick.lower():
@@ -368,9 +374,8 @@ class _IrcProtocol(asyncio.Protocol):
                 channel = None
 
             # Set up parsed message
-            # TODO: Do we really want to send the raw `prefix` and `command_params` here?
             event = Event(bot=self.bot, conn=self.conn, event_type=event_type, content=content, target=target,
-                          channel=channel, nick=nick, user=user, host=host, mask=mask, irc_raw=line, irc_prefix=prefix,
+                          channel=channel, nick=nick, user=user, host=host, mask=mask, irc_raw=line,
                           irc_command=command, irc_paramlist=command_params, irc_ctcp_text=ctcp_text)
 
             # handle the message, async

@@ -5,6 +5,7 @@ import logging
 import re
 
 from cloudbot import hook
+from cloudbot.event import EventType
 
 logger = logging.getLogger("cloudbot")
 
@@ -12,7 +13,7 @@ nick_re = re.compile(":(.+?)!")
 
 
 @asyncio.coroutine
-@hook.irc_raw("KICK")
+@hook.event(EventType.kick)
 def on_kick(conn, chan, nick):
     """
     :type conn: cloudbot.client.Client
@@ -23,29 +24,12 @@ def on_kick(conn, chan, nick):
     if nick == conn.nick:
         if chan in conn.channels:
             conn.channels.remove(chan)
-        if conn.config.get('auto_rejoin', False):
-            conn.join(chan)
-
-
-@asyncio.coroutine
-@hook.irc_raw("NICK")
-def on_nick(irc_paramlist, conn, irc_raw):
-    """
-    :type irc_paramlist: list[str]
-    :type conn: cloudbot.client.Client
-    :type irc_raw: str
-    """
-    old_nick = nick_re.search(irc_raw).group(1)
-    new_nick = str(irc_paramlist[0])
-    if old_nick == conn.nick:
-        conn.nick = new_nick
-        logger.info("Bot nick changed from '{}' to '{}'.".format(old_nick, new_nick))
 
 
 # for channels the host tells us we're joining without us joining it ourselves
 # mostly when using a BNC which saves channels
 @asyncio.coroutine
-@hook.irc_raw("JOIN")
+@hook.event(EventType.join)
 def on_join(conn, chan, nick):
     """
     :type conn: cloudbot.client.Client
@@ -55,3 +39,18 @@ def on_join(conn, chan, nick):
     if nick == conn.nick:
         if chan not in conn.channels:
             conn.channels.append(chan)
+
+
+@asyncio.coroutine
+@hook.irc_raw("NICK")
+def on_nick(conn, irc_raw, content):
+    """
+    :type irc_paramlist: list[str]
+    :type conn: cloudbot.client.Client
+    :type irc_raw: str
+    """
+    old_nick = nick_re.search(irc_raw).group(1)
+    if old_nick == conn.nick:
+        conn.nick = new_nick = content
+        logger.info("Bot nick changed from '{}' to '{}'.".format(old_nick, new_nick))
+

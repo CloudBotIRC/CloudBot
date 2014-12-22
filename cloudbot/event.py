@@ -1,7 +1,6 @@
 import asyncio
 import enum
 import logging
-import concurrent.futures
 
 logger = logging.getLogger("cloudbot")
 
@@ -10,12 +9,10 @@ logger = logging.getLogger("cloudbot")
 class EventType(enum.Enum):
     message = 0
     action = 1
-    # TODO: Do we actually want to have a 'notice' event type? Should the NOTICE command be a 'message' type?
-    notice = 2
-    join = 3
-    part = 4
-    kick = 5
-    other = 6
+    join = 2
+    part = 3
+    kick = 4
+    other = 5
 
 
 class Event:
@@ -31,18 +28,15 @@ class Event:
     :type user: str
     :type host: str
     :type mask: str
-    :type db: sqlalchemy.orm.Session
-    :type db_executor: concurrent.futures.ThreadPoolExecutor
     :type irc_raw: str
-    :type irc_prefix: str
     :type irc_command: str
     :type irc_paramlist: str
     :type irc_ctcp_text: str
     """
 
     def __init__(self, *, bot=None, hook=None, conn=None, base_event=None, event_type=EventType.other, content=None,
-                 target=None, channel=None, nick=None, user=None, host=None, mask=None, irc_raw=None, irc_prefix=None,
-                 irc_command=None, irc_paramlist=None, irc_ctcp_text=None):
+                 target=None, channel=None, nick=None, user=None, host=None, mask=None, irc_raw=None, irc_command=None,
+                 irc_paramlist=None, irc_ctcp_text=None):
         """
         All of these parameters except for `bot` and `hook` are optional.
         The irc_* parameters should only be specified for IRC events.
@@ -63,7 +57,6 @@ class Event:
         :param host: The host of the sender that triggered this event
         :param mask: The mask of the sender that triggered this event (nick!user@host)
         :param irc_raw: The raw IRC line
-        :param irc_prefix: The raw IRC prefix
         :param irc_command: The IRC command
         :param irc_paramlist: The list of params for the IRC command. If the last param is a content param, the ':'
                                 should be removed from the front.
@@ -80,13 +73,10 @@ class Event:
         :type host: str
         :type mask: str
         :type irc_raw: str
-        :type irc_prefix: str
         :type irc_command: str
         :type irc_paramlist: list[str]
         :type irc_ctcp_text: str
         """
-        self.db = None
-        self.db_executor = None
         self.bot = bot
         self.conn = conn
         self.hook = hook
@@ -110,7 +100,6 @@ class Event:
             self.mask = base_event.mask
             # irc-specific parameters
             self.irc_raw = base_event.irc_raw
-            self.irc_prefix = base_event.irc_prefix
             self.irc_command = base_event.irc_command
             self.irc_paramlist = base_event.irc_paramlist
             self.irc_ctcp_text = base_event.irc_ctcp_text
@@ -126,85 +115,9 @@ class Event:
             self.mask = mask
             # irc-specific parameters
             self.irc_raw = irc_raw
-            self.irc_prefix = irc_prefix
             self.irc_command = irc_command
             self.irc_paramlist = irc_paramlist
             self.irc_ctcp_text = irc_ctcp_text
-
-    @asyncio.coroutine
-    def prepare(self):
-        """
-        Initializes this event to be run through it's hook
-
-        Mainly, initializes a database object on this event, if the hook requires it.
-
-        This method is for when the hook is *not* threaded (event.hook.threaded is False).
-        If you need to add a db to a threaded hook, use prepare_threaded.
-        """
-
-        if self.hook is None:
-            raise ValueError("event.hook is required to prepare an event")
-
-        if "db" in self.hook.required_args:
-            logger.debug("Opening database session for {}:threaded=False".format(self.hook.description))
-
-            # we're running a coroutine hook with a db, so initialise an executor pool
-            self.db_executor = concurrent.futures.ThreadPoolExecutor(1)
-            # be sure to initialize the db in the database executor, so it will be accessible in that thread.
-            self.db = yield from self.async(self.bot.db_session)
-
-    def prepare_threaded(self):
-        """
-        Initializes this event to be run through it's hook
-
-        Mainly, initializes the database object on this event, if the hook requires it.
-
-        This method is for when the hook is threaded (event.hook.threaded is True).
-        If you need to add a db to a coroutine hook, use prepare.
-        """
-
-        if self.hook is None:
-            raise ValueError("event.hook is required to prepare an event")
-
-        if "db" in self.hook.required_args:
-            logger.debug("Opening database session for {}:threaded=True".format(self.hook.description))
-
-            self.db = self.bot.db_session()
-
-    @asyncio.coroutine
-    def close(self):
-        """
-        Closes this event after running it through it's hook.
-
-        Mainly, closes the database connection attached to this event (if any).
-
-        This method is for when the hook is *not* threaded (event.hook.threaded is False).
-        If you need to add a db to a threaded hook, use close_threaded.
-        """
-        if self.hook is None:
-            raise ValueError("event.hook is required to close an event")
-
-        if self.db is not None:
-            logger.debug("Closing database session for {}:threaded=False".format(self.hook.description))
-            # be sure the close the database in the database executor, as it is only accessable in that one thread
-            yield from self.async(self.db.close)
-            self.db = None
-
-    def close_threaded(self):
-        """
-        Closes this event after running it through it's hook.
-
-        Mainly, closes the database connection attached to this event (if any).
-
-        This method is for when the hook is threaded (event.hook.threaded is True).
-        If you need to add a db to a coroutine hook, use close.
-        """
-        if self.hook is None:
-            raise ValueError("event.hook is required to close an event")
-        if self.db is not None:
-            logger.debug("Closing database session for {}:threaded=True".format(self.hook.description))
-            self.db.close()
-            self.db = None
 
     @property
     def event(self):
@@ -221,6 +134,10 @@ class Event:
         return self.bot.loop
 
     @property
+    def db(self):
+        return self.bot.db
+
+    @property
     def logger(self):
         return logger
 
@@ -235,9 +152,9 @@ class Event:
             target = self.chan
         self.conn.message(target, message)
 
-    def reply(self, message, target=None):
+    def reply(self, *messages, target=None):
         """sends a message to the current channel/user with a prefix
-        :type message: str
+        :type messages: str
         :type target: str
         """
         if target is None:
@@ -245,10 +162,13 @@ class Event:
                 raise ValueError("Target must be specified when chan is not assigned")
             target = self.chan
 
+        if not messages:  # if there are no messages specified, don't do anything
+            return
+
         if target == self.nick:
-            self.conn.message(target, message)
+            self.conn.message(target, messages)
         else:
-            self.conn.message(target, "({}) {}".format(self.nick, message))
+            self.conn.message(target, "({}) {}".format(self.nick, messages[0]), *messages[1:])
 
     def action(self, message, target=None):
         """sends an action to the current channel/user or a specific channel/user
@@ -295,20 +215,12 @@ class Event:
         :rtype: bool
         """
         if not self.mask:
-            raise ValueError("has_permission requires mask is not assigned")
+            raise ValueError("has_permission requires mask to be assigned")
         return self.conn.permissions.has_perm_mask(self.mask, permission, notice=notice)
 
     @asyncio.coroutine
     def async(self, function, *args, **kwargs):
-        if self.db_executor is not None:
-            executor = self.db_executor
-        else:
-            executor = None
-        if kwargs:
-            result = yield from self.loop.run_in_executor(executor, function, *args)
-        else:
-            result = yield from self.loop.run_in_executor(executor, lambda: function(*args, **kwargs))
-        return result
+        return (yield from self.loop.run_in_executor(None, lambda: function(*args, **kwargs)))
 
 
 class CommandEvent(Event):
@@ -320,7 +232,7 @@ class CommandEvent(Event):
 
     def __init__(self, *, bot=None, hook, text, triggered_command, conn=None, base_event=None, event_type=None,
                  content=None, target=None, channel=None, nick=None, user=None, host=None, mask=None, irc_raw=None,
-                 irc_prefix=None, irc_command=None, irc_paramlist=None):
+                 irc_command=None, irc_paramlist=None):
         """
         :param text: The arguments for the command
         :param triggered_command: The command that was triggered
@@ -329,7 +241,7 @@ class CommandEvent(Event):
         """
         super().__init__(bot=bot, hook=hook, conn=conn, base_event=base_event, event_type=event_type, content=content,
                          target=target, channel=channel, nick=nick, user=user, host=host, mask=mask, irc_raw=irc_raw,
-                         irc_prefix=irc_prefix, irc_command=irc_command, irc_paramlist=irc_paramlist)
+                         irc_command=irc_command, irc_paramlist=irc_paramlist)
         self.hook = hook
         self.text = text
         self.triggered_command = triggered_command
@@ -344,12 +256,8 @@ class CommandEvent(Event):
             message = "{}{} requires additional arguments.".format(self.conn.config["command_prefix"],
                                                                    self.triggered_command)
         else:
-            if self.hook.doc.split()[0].isalpha():
-                # this is using the old format of `name <args> - doc`
-                message = "{}{}".format(self.conn.config["command_prefix"], self.hook.doc)
-            else:
-                # this is using the new format of `<args> - doc`
-                message = "{}{} {}".format(self.conn.config["command_prefix"], self.triggered_command, self.hook.doc)
+            # this is using the new format of `<args> - doc`
+            message = "{}{} {}".format(self.conn.config["command_prefix"], self.triggered_command, self.hook.doc)
 
         self.notice(message, target=target)
 
@@ -361,13 +269,13 @@ class RegexEvent(Event):
     """
 
     def __init__(self, *, bot=None, hook, match, conn=None, base_event=None, event_type=None, content=None, target=None,
-                 channel=None, nick=None, user=None, host=None, mask=None, irc_raw=None, irc_prefix=None,
-                 irc_command=None, irc_paramlist=None):
+                 channel=None, nick=None, user=None, host=None, mask=None, irc_raw=None, irc_command=None,
+                 irc_paramlist=None):
         """
         :param: match: The match objected returned by the regex search method
         :type match: re.__Match
         """
         super().__init__(bot=bot, conn=conn, hook=hook, base_event=base_event, event_type=event_type, content=content,
                          target=target, channel=channel, nick=nick, user=user, host=host, mask=mask, irc_raw=irc_raw,
-                         irc_prefix=irc_prefix, irc_command=irc_command, irc_paramlist=irc_paramlist)
+                         irc_command=irc_command, irc_paramlist=irc_paramlist)
         self.match = match

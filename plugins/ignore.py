@@ -2,98 +2,83 @@ import asyncio
 from fnmatch import fnmatch
 
 from cloudbot import hook
-from cloudbot.event import EventType
-
-
-@hook.onload
-def ensure_ignored(bot):
-    changed = False
-    for conn_config in bot.config["connections"]:
-        if not "plugins" in conn_config:
-            conn_config["plugins"] = {"ignore": {"ignored": []}}
-            changed = True
-        elif not "ignore" in conn_config["plugins"]:
-            conn_config["plugins"]["ignore"] = {"ignored": []}
-            changed = True
-        elif not "ignored" in conn_config["plugins"]["ignore"]:
-            conn_config["plugins"]["ignore"]["ignored"] = []
-            changed = True
-
-    if changed:
-        bot.config.save_config()
+from cloudbot.plugin import HookType
 
 
 @asyncio.coroutine
 @hook.sieve()
-def ignore_sieve(bot, event, _hook):
+def ignore_sieve(event):
     """ blocks events from ignored channels/hosts
-    :type bot: cloudbot.bot.CloudBot
     :type event: cloudbot.event.Event
-    :type _hook: cloudbot.plugin.Hook
     """
+    bot = event.bot
     # don't block event hooks
-    if _hook.type == "event":
+    if event.hook.type is HookType.event or event.hook.type is HookType.irc_raw:
+        return event
+
+    # don't block server messages
+    if event.mask is None:
         return event
 
     # don't block an event that could be unignoring
-    if event.type is EventType.message and event.content[1:] == "unignore":
+    if event.hook.type is HookType.command and event.hook.function_name == 'unignore':
         return event
 
-    if event.mask is None:
-        # this is a server message, we don't need to check it
-        return event
+    ignore_list = yield from event.async(bot.db.smembers, "plugins:ignore:ignored")
 
-    ignorelist = event.conn.config["plugins"]["ignore"]["ignored"]
     mask = event.mask.lower()
-
-    for pattern in ignorelist:
-        if (pattern.startswith("#") and fnmatch(pattern, event.chan)) or fnmatch(mask, pattern):
+    for pattern in ignore_list:
+        pattern = pattern.decode()
+        if (pattern.startswith('#') and fnmatch(pattern, event.chan)) or fnmatch(mask, pattern):
             return None
 
     return event
 
 
 @asyncio.coroutine
-@hook.command(autohelp=False)
-def ignored(notice, conn):
+@hook.command(autohelp=False, permissions=["ignored.view"])
+def ignored(notice, async, db):
     """- lists all channels and users I'm ignoring"""
-    ignorelist = conn.config["plugins"]["ignore"]["ignored"]
-    if ignorelist:
-        notice("Ignored channels/users are: {}".format(", ".join(ignorelist)))
+
+    ignore_list = yield from async(db.smembers, 'plugins:ignore:ignored')
+    if ignore_list:
+        notice("Ignored users: {}".format(", ".join(b.decode() for b in ignore_list)))
     else:
-        notice("No masks are currently ignored.")
+        notice("No users are currently ignored.")
     return
 
 
-@hook.command(permissions=["ignore"])
-def ignore(text, bot, conn, notice):
-    """<channel|nick|usermask> - adds <channel|nick> to my ignore list"""
+@asyncio.coroutine
+@hook.command(permissions=['ignored.manage'])
+def ignore(text, async, db):
+    """<nick|usermask> - adds <channel|nick> to my ignore list
+    :type db: redis.StrictRedis
+    """
     target = text.lower()
-    if "!" not in target or "@" not in target:
-        target = "{}!*@*".format(target)
-    ignorelist = conn.config["plugins"]["ignore"]["ignored"]
-    if target in ignorelist:
-        notice("{} is already ignored.".format(target))
+    if ('!' not in target or '@' not in target) and not target.startswith('#'):
+        target = '{}!*@*'.format(target)
+
+    added = yield from async(db.sadd, 'plugins:ignore:ignored', target)
+
+    if added > 0:
+        return "{} has been ignored.".format(target)
     else:
-        notice("{} has been ignored.".format(target))
-        ignorelist.append(target)
-        ignorelist.sort()
-        bot.config.save_config()
-    return
+        return "{} is already ignored.".format(target)
 
 
-@hook.command(permissions=["ignore"])
-def unignore(text, bot, conn, notice):
-    """<channel|nick|usermask> - removes <channel|nick|usermask> from my ignore list"""
+@asyncio.coroutine
+@hook.command(permissions=['ignored.manage'])
+def unignore(text, async, db):
+    """<nick|usermask> - removes <nick|usermask> from my ignore list
+    :type db: redis.StrictRedis
+    """
     target = text.lower()
-    if "!" not in target or "@" not in target:
-        target = "{}!*@*".format(target)
-    ignorelist = conn.config["plugins"]["ignore"]["ignored"]
-    if target in ignorelist:
-        notice("{} has been unignored.".format(target))
-        ignorelist.remove(target)
-        ignorelist.sort()
-        bot.config.save_config()
+    if ('!' not in target or '@' not in target) and not target.startswith('#'):
+        target = '{}!*@*'.format(target)
+
+    removed = yield from async(db.srem, 'plugins:ignore:ignored', target)
+
+    if removed > 0:
+        return "{} has been unignored.".format(target)
     else:
-        notice("{} is not ignored.".format(target))
-    return
+        return "{} was not ignored.".format(target)

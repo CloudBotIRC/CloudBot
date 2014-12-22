@@ -1,4 +1,4 @@
-Thanks to everyone who has contributed to CloudBot! Come in IRC and ping me if I forgot anyone.
+This file contains the original CloudBot contributors, which cloudbot is forked from.
 
 Luke Rogers (lukeroge)
 neersighted
@@ -18,11 +18,6 @@ Spudstabber
 frozenMC
 frdmn
 Zarthus
-
-We are using code (*borrowed*) from the following projects:
-./plugins/mlia.py - https://github.com/infinitylabs/UguuBot
-./plugins/horoscope.py - https://github.com/infinitylabs/UguuBot
-color section in ./plugins/utility.py - https://github.com/hitzler/homero
 
 Special Thanks:
 Rmmh (created skybot!)

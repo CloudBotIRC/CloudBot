@@ -5,11 +5,10 @@ from cloudbot import hook
 import cloudbot
 
 
-# CTCP responses
 @asyncio.coroutine
 @hook.regex(r'^\x01VERSION\x01$')
 def ctcp_version(notice):
-    notice("\x01VERSION: CloudBotRefresh v{} - http://cloudbot.pw/".format(cloudbot.__version__))
+    notice("\x01VERSION: Obr v{}".format(cloudbot.__version__))
 
 
 @asyncio.coroutine

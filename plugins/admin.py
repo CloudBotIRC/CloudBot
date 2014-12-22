@@ -5,7 +5,7 @@ from cloudbot import hook
 
 
 @asyncio.coroutine
-@hook.command("groups", "listgroups", "permgroups", permissions=["permissions_users"], autohelp=False)
+@hook.command("groups", permissions=["permissions.view"], autohelp=False)
 def get_permission_groups(conn):
     """- lists all valid groups
     :type conn: cloudbot.client.Client
@@ -14,7 +14,7 @@ def get_permission_groups(conn):
 
 
 @asyncio.coroutine
-@hook.command("gperms", permissions=["permissions_users"])
+@hook.command("gperms", permissions=["permissions.view"])
 def get_group_permissions(text, conn, notice):
     """<group> - lists permissions given to <group>
     :type text: str
@@ -33,7 +33,7 @@ def get_group_permissions(text, conn, notice):
 
 
 @asyncio.coroutine
-@hook.command("gusers", permissions=["permissions_users"])
+@hook.command("gusers", permissions=["permissions.view"])
 def get_group_users(text, conn, notice):
     """<group> - lists users in <group>
     :type text: str
@@ -60,8 +60,8 @@ def get_user_permissions(text, conn, mask, has_permission, notice):
     :type mask: str
     """
     if text:
-        if not has_permission("permissions_users"):
-            notice("Sorry, you are not allowed to use this command on another user")
+        if not has_permission("permissions.view"):
+            notice("Sorry, you are not allowed to use this command on another user.")
             return
         user = text.strip().lower()
     else:
@@ -85,7 +85,7 @@ def get_user_groups(text, conn, mask, has_permission, notice):
     :type mask: str
     """
     if text:
-        if not has_permission("permissions_users"):
+        if not has_permission("permissions.view"):
             notice("Sorry, you are not allowed to use this command on another user")
             return
         user = text.strip().lower()
@@ -102,7 +102,7 @@ def get_user_groups(text, conn, mask, has_permission, notice):
 
 
 @asyncio.coroutine
-@hook.command("deluser", permissions=["permissions_users"])
+@hook.command("deluser", permissions=["permissions.manage"])
 def remove_permission_user(text, bot, conn, notice, reply):
     """<user> [group] - removes <user> from [group], or from all groups if no group is specified
     :type text: str
@@ -158,7 +158,7 @@ def remove_permission_user(text, bot, conn, notice, reply):
 
 
 @asyncio.coroutine
-@hook.command("adduser", permissions=["permissions_users"])
+@hook.command("adduser", permissions=["permissions.manage"])
 def add_permissions_user(text, conn, bot, notice, reply):
     """<user> <group> - adds <user> to <group>
     :type text: str
@@ -200,7 +200,7 @@ def add_permissions_user(text, conn, bot, notice, reply):
 
 
 @asyncio.coroutine
-@hook.command("stop", "quit", permissions=["botcontrol"], autohelp=False)
+@hook.command("stop", permissions=["bot.manage"], autohelp=False)
 def stop(text, bot):
     """[reason] - stops me with [reason] as its quit message.
     :type text: str
@@ -213,7 +213,7 @@ def stop(text, bot):
 
 
 @asyncio.coroutine
-@hook.command(permissions=["botcontrol"], autohelp=False)
+@hook.command(permissions=["bot.manage"], autohelp=False)
 def restart(text, bot):
     """[reason] - restarts me with [reason] as its quit message.
     :type text: str
@@ -226,7 +226,7 @@ def restart(text, bot):
 
 
 @asyncio.coroutine
-@hook.command(permissions=["botcontrol"])
+@hook.command(permissions=["bot.manage"])
 def join(text, conn, notice):
     """<channel> - joins <channel>
     :type text: str
@@ -240,7 +240,7 @@ def join(text, conn, notice):
 
 
 @asyncio.coroutine
-@hook.command(permissions=["botcontrol"], autohelp=False)
+@hook.command(permissions=["bot.manage"], autohelp=False)
 def part(text, conn, chan, notice):
     """[#channel] - parts [#channel], or the caller's channel if no channel is specified
     :type text: str
@@ -254,12 +254,12 @@ def part(text, conn, chan, notice):
     for target in targets.split():
         if not target.startswith("#"):
             target = "#{}".format(target)
-        notice("Attempting to leave {}...".format(target))
+        notice("Leaving {}.".format(target))
         conn.part(target)
 
 
 @asyncio.coroutine
-@hook.command(autohelp=False, permissions=["botcontrol"])
+@hook.command(autohelp=False, permissions=["bot.manage"])
 def cycle(text, conn, chan, notice):
     """[#channel] - cycles [#channel], or the caller's channel if no channel is specified
     :type text: str
@@ -273,13 +273,13 @@ def cycle(text, conn, chan, notice):
     for target in targets.split():
         if not target.startswith("#"):
             target = "#{}".format(target)
-        notice("Attempting to cycle {}...".format(target))
+        notice("Cycling {}.".format(target))
         conn.part(target)
         conn.join(target)
 
 
 @asyncio.coroutine
-@hook.command(permissions=["botcontrol"])
+@hook.command(permissions=["bot.manage"])
 def nick(text, conn, notice):
     """<nick> - changes my nickname to <nick>
     :type text: str
@@ -288,23 +288,23 @@ def nick(text, conn, notice):
     if not re.match("^[a-z0-9_|.-\]\[]*$", text.lower()):
         notice("Invalid username '{}'".format(text))
         return
-    notice("Attempting to change nick to '{}'...".format(text))
+    notice("Changing nick to '{}'.".format(text))
     conn.set_nick(text)
 
 
 @asyncio.coroutine
-@hook.command(permissions=["botcontrol"])
+@hook.command(permissions=["bot.manage"])
 def raw(text, conn, notice):
     """<command> - sends <command> as a raw IRC command
     :type text: str
-    :type conn: cloudbot.client.Client
+    :type conn: cloudbot.clients.irc.IrcClient
     """
-    notice("Raw command sent.")
+    notice("Sending raw command.")
     conn.send(text)
 
 
 @asyncio.coroutine
-@hook.command(permissions=["botcontrol"])
+@hook.command(permissions=["bot.control"])
 def say(text, conn, chan):
     """[#channel] <message> - says <message> to [#channel], or to the caller's channel if no channel is specified
     :type text: str
@@ -323,7 +323,7 @@ def say(text, conn, chan):
 
 
 @asyncio.coroutine
-@hook.command("message", "sayto", permissions=["botcontrol"])
+@hook.command("message", permissions=["bot.control"])
 def message(text, conn):
     """<name> <message> - says <message> to <name>
     :type text: str
@@ -336,7 +336,7 @@ def message(text, conn):
 
 
 @asyncio.coroutine
-@hook.command("me", "act", permissions=["botcontrol"])
+@hook.command("act", permissions=["bot.control"])
 def me(text, conn, chan):
     """[#channel] <action> - acts out <action> in a [#channel], or in the current channel of none is specified
     :type text: str
@@ -351,4 +351,4 @@ def me(text, conn, chan):
     else:
         channel = chan
         text = text
-    conn.ctcp(channel, "ACTION", text)
+    conn.action(channel, text)

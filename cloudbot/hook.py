@@ -3,6 +3,7 @@ import re
 import collections
 
 from cloudbot.event import EventType
+from cloudbot.plugin import HookType
 
 valid_command_re = re.compile(r"^\w+$")
 
@@ -10,20 +11,19 @@ valid_command_re = re.compile(r"^\w+$")
 class _Hook():
     """
     :type function: function
-    :type type: str
+    :type type: HookType
     :type kwargs: dict[str, unknown]
     """
+    type = None  # subclasses should define this
 
-    def __init__(self, function, _type):
+    def __init__(self, function):
         """
         :type function: function
-        :type _type: str
         """
         self.function = function
-        self.type = _type
         self.kwargs = {}
 
-    def _add_hook(self, kwargs):
+    def _add_hook(self, **kwargs):
         """
         :type kwargs: dict[str, unknown]
         """
@@ -36,12 +36,13 @@ class _CommandHook(_Hook):
     :type main_alias: str
     :type aliases: set[str]
     """
+    type = HookType.command
 
     def __init__(self, function):
         """
         :type function: function
         """
-        _Hook.__init__(self, function, "command")
+        _Hook.__init__(self, function)
         self.aliases = set()
         self.main_alias = None
 
@@ -50,208 +51,228 @@ class _CommandHook(_Hook):
         else:
             self.doc = None
 
-    def add_hook(self, alias_param, kwargs):
+    def add_hook(self, *aliases, **kwargs):
         """
-        :type alias_param: list[str] | str
+        :type aliases: list[str] | str
         """
-        self._add_hook(kwargs)
+        self._add_hook(**kwargs)
 
-        if not alias_param:
-            alias_param = self.function.__name__
-        if isinstance(alias_param, str):
-            alias_param = [alias_param]
+        if not aliases:
+            aliases = [self.function.__name__]
+        elif len(aliases) == 1 and not isinstance(aliases[0], str):
+            # we are being passed a list as the first argument, so aliases is in the form of ([item1, item2])
+            aliases = aliases[0]
+
         if not self.main_alias:
-            self.main_alias = alias_param[0]
-        for alias in alias_param:
+            self.main_alias = aliases[0]
+
+        for alias in aliases:
             if not valid_command_re.match(alias):
                 raise ValueError("Invalid command name {}".format(alias))
-        self.aliases.update(alias_param)
+        self.aliases.update(aliases)
 
 
 class _RegexHook(_Hook):
     """
     :type regexes: list[re.__Regex]
     """
+    type = HookType.regex
 
     def __init__(self, function):
         """
         :type function: function
         """
-        _Hook.__init__(self, function, "regex")
+        _Hook.__init__(self, function)
         self.regexes = []
 
-    def add_hook(self, regex_param, kwargs):
+    def add_hook(self, *regexes, **kwargs):
         """
-        :type regex_param: Iterable[str | re.__Regex] | str | re.__Regex
+        :type regexes: Iterable[str | re.__Regex] | str | re.__Regex
         :type kwargs: dict[str, unknown]
         """
-        self._add_hook(kwargs)
-        # add all regex_parameters to valid regexes
-        if isinstance(regex_param, str):
-            # if the parameter is a string, compile and add
-            self.regexes.append(re.compile(regex_param))
-        elif hasattr(regex_param, "search"):
-            # if the parameter is an re.__Regex, just add it
-            # we only use regex.search anyways, so this is a good determiner
-            self.regexes.append(regex_param)
-        else:
-            assert isinstance(regex_param, collections.Iterable)
-            # if the parameter is a list, add each one
-            for re_to_match in regex_param:
-                if isinstance(re_to_match, str):
-                    re_to_match = re.compile(re_to_match)
-                else:
-                    # make sure that the param is either a compiled regex, or has a search attribute.
-                    assert hasattr(regex_param, "search")
-                self.regexes.append(re_to_match)
+        self._add_hook(**kwargs)
+
+        # If we have one argument, and that argument is neither a string or a compiled regex, we're being passed a list
+        if len(regexes) == 1 and not (isinstance(regexes[0], str) or hasattr(regexes[0], "search")):
+            regexes = regexes[0]  # it's a list we're being passed as the first argument, so take it as a list
+
+        assert isinstance(regexes, collections.Iterable)
+        # if the parameter is a list, add each one
+        for re_to_match in regexes:
+            if isinstance(re_to_match, str):
+                re_to_match = re.compile(re_to_match)
+            # make sure that the param is either a compiled regex, or has a search attribute.
+            assert hasattr(re_to_match, "search")
+            self.regexes.append(re_to_match)
 
 
 class _RawHook(_Hook):
     """
     :type triggers: set[str]
     """
+    type = HookType.irc_raw
 
     def __init__(self, function):
         """
         :type function: function
         """
-        _Hook.__init__(self, function, "irc_raw")
+        _Hook.__init__(self, function)
         self.triggers = set()
 
-    def add_hook(self, trigger_param, kwargs):
+    def add_hook(self, *triggers, **kwargs):
         """
-        :type trigger_param: list[str] | str
+        :type triggers: list[str] | str
         :type kwargs: dict[str, unknown]
         """
-        self._add_hook(kwargs)
+        self._add_hook(**kwargs)
+        if len(triggers) == 1 and not isinstance(triggers[0], str):
+            # we are being passed a list as the first argument, so triggers is in the form of ([item1, item2])
+            triggers = triggers[0]
 
-        if isinstance(trigger_param, str):
-            self.triggers.add(trigger_param)
-        else:
-            # it's a list
-            self.triggers.update(trigger_param)
+        self.triggers.update(triggers)
 
 
 class _EventHook(_Hook):
     """
     :type types: set[cloudbot.event.EventType]
     """
+    type = HookType.event
 
     def __init__(self, function):
         """
         :type function: function
         """
-        _Hook.__init__(self, function, "event")
+        _Hook.__init__(self, function)
         self.types = set()
 
-    def add_hook(self, trigger_param, kwargs):
+    def add_hook(self, *events, **kwargs):
         """
-        :type trigger_param: cloudbot.event.EventType | list[cloudbot.event.EventType]
+        :type events: tuple[cloudbot.event.EventType] | (list[cloudbot.event.EventType])
         :type kwargs: dict[str, unknown]
         """
-        self._add_hook(kwargs)
+        self._add_hook(**kwargs)
 
-        if isinstance(trigger_param, EventType):
-            self.types.add(trigger_param)
+        if len(events) == 1 and not isinstance(events[0], EventType):
+            # we are being passed a list as the first argument, so events is in the form of ([item1, item2])
+            events = events[0]
+
+        self.types.update(events)
+
+
+class _SieveHook(_Hook):
+    type = HookType.sieve
+
+    def add_hook(self, **kwargs):
+        self._add_hook(**kwargs)
+
+
+class _OnStartHook(_Hook):
+    type = HookType.on_start
+
+    def add_hook(self, **kwargs):
+        self._add_hook(**kwargs)
+
+
+class _OnStopHook(_Hook):
+    type = HookType.on_stop
+
+    def add_hook(self, **kwargs):
+        self._add_hook(**kwargs)
+
+
+_hook_name_to_hook = {
+    HookType.command: _CommandHook,
+    HookType.regex: _RegexHook,
+    HookType.irc_raw: _RawHook,
+    HookType.event: _EventHook,
+    HookType.sieve: _SieveHook,
+    HookType.on_start: _OnStartHook,
+    HookType.on_stop: _OnStopHook,
+}
+
+
+def _get_or_add_hook(func, hook_type):
+    if hasattr(func, "plugin_hook"):
+        if hook_type in func.plugin_hook:
+            hook = func.plugin_hook[hook_type]
         else:
-            # it's a list
-            self.types.update(trigger_param)
-
-
-def _add_hook(func, hook):
-    if not hasattr(func, "_cloudbot_hook"):
-        func._cloudbot_hook = {}
+            hook = _hook_name_to_hook[hook_type](func)  # Make a new hook
+            func.plugin_hook[hook_type] = hook
     else:
-        assert hook.type not in func._cloudbot_hook  # in this case the hook should be using the add_hook method
-    func._cloudbot_hook[hook.type] = hook
+        hook = _hook_name_to_hook[hook_type](func)  # Make a new hook
+        func.plugin_hook = {hook_type: hook}
+
+    return hook
 
 
-def _get_hook(func, hook_type):
-    if hasattr(func, "_cloudbot_hook") and hook_type in func._cloudbot_hook:
-        return func._cloudbot_hook[hook_type]
-
-    return None
-
-
-def command(*args, **kwargs):
+def command(*aliases, **kwargs):
     """External command decorator. Can be used directly as a decorator, or with args to return a decorator.
-    :type param: str | list[str] | function
+    :type param: tuple[str] | (list[str]) | (function)
     """
 
-    def _command_hook(func, alias_param=None):
-        hook = _get_hook(func, "command")
-        if hook is None:
-            hook = _CommandHook(func)
-            _add_hook(func, hook)
+    def decorator(func):
+        hook = _get_or_add_hook(func, HookType.command)
 
-        hook.add_hook(alias_param, kwargs)
+        if len(aliases) == 1 and callable(aliases[0]):
+            hook.add_hook(**kwargs)  # we don't want to pass the function as an argument
+        else:
+            hook.add_hook(*aliases, **kwargs)
+
         return func
 
-    if len(args) == 1 and callable(args[0]):  # this decorator is being used directly
-        return _command_hook(args[0])
+    if len(aliases) == 1 and callable(aliases[0]):  # this decorator is being used directly
+        return decorator(aliases[0])
     else:  # this decorator is being used indirectly, so return a decorator function
-        return lambda func: _command_hook(func, alias_param=args)
+        return decorator
 
 
-def irc_raw(triggers_param, **kwargs):
+def irc_raw(*triggers, **kwargs):
     """External raw decorator. Must be used as a function to return a decorator
-    :type triggers_param: str | list[str]
+    :type triggers: tuple[str] | (list[str])
     """
 
-    def _raw_hook(func):
-        hook = _get_hook(func, "irc_raw")
-        if hook is None:
-            hook = _RawHook(func)
-            _add_hook(func, hook)
-
-        hook.add_hook(triggers_param, kwargs)
+    def decorator(func):
+        hook = _get_or_add_hook(func, HookType.irc_raw)
+        hook.add_hook(*triggers, **kwargs)
         return func
 
-    if callable(triggers_param):  # this decorator is being used directly, which isn't good
-        raise TypeError("@irc_raw() must be used as a function that returns a decorator")
+    if len(triggers) == 1 and callable(triggers[0]):  # this decorator is being used directly, which isn't good
+        raise TypeError("irc_raw() must be used as a function that returns a decorator")
     else:  # this decorator is being used as a function, so return a decorator
-        return lambda func: _raw_hook(func)
+        return decorator
 
 
-def event(types_param, **kwargs):
+def event(*triggers, **kwargs):
     """External event decorator. Must be used as a function to return a decorator
-    :type types_param: cloudbot.event.EventType | list[cloudbot.event.EventType]
+    :type triggers: tuple[cloudbot.event.EventType] | (list[cloudbot.event.EventType])
     """
 
-    def _event_hook(func):
-        hook = _get_hook(func, "event")
-        if hook is None:
-            hook = _EventHook(func)
-            _add_hook(func, hook)
-
-        hook.add_hook(types_param, kwargs)
+    def decorator(func):
+        hook = _get_or_add_hook(func, HookType.event)
+        hook.add_hook(*triggers, **kwargs)
         return func
 
-    if callable(types_param):  # this decorator is being used directly, which isn't good
-        raise TypeError("@irc_raw() must be used as a function that returns a decorator")
+    if len(triggers) == 1 and callable(triggers[0]):  # this decorator is being used directly, which isn't good
+        raise TypeError("event() must be used as a function that returns a decorator")
     else:  # this decorator is being used as a function, so return a decorator
-        return lambda func: _event_hook(func)
+        return decorator
 
 
-def regex(regex_param, **kwargs):
+def regex(*regexes, **kwargs):
     """External regex decorator. Must be used as a function to return a decorator.
-    :type regex_param: str | re.__Regex | list[str | re.__Regex]
+    :type regexes: tuple[str | re.__Regex] | (list[str | re.__Regex])
     :type flags: int
     """
 
-    def _regex_hook(func):
-        hook = _get_hook(func, "regex")
-        if hook is None:
-            hook = _RegexHook(func)
-            _add_hook(func, hook)
-
-        hook.add_hook(regex_param, kwargs)
+    def decorator(func):
+        hook = _get_or_add_hook(func, HookType.regex)
+        hook.add_hook(*regexes, **kwargs)
         return func
 
-    if callable(regex_param):  # this decorator is being used directly, which isn't good
-        raise TypeError("@regex() hook must be used as a function that returns a decorator")
+    if len(regexes) == 1 and callable(regexes[0]):  # this decorator is being used directly, which isn't good
+        raise TypeError("regex() hook must be used as a function that returns a decorator")
     else:  # this decorator is being used as a function, so return a decorator
-        return lambda func: _regex_hook(func)
+        return decorator
 
 
 def sieve(param=None, **kwargs):
@@ -259,39 +280,48 @@ def sieve(param=None, **kwargs):
     :type param: function | None
     """
 
-    def _sieve_hook(func):
-        assert len(inspect.getargspec(func).args) == 3, \
-            "Sieve plugin has incorrect argument count. Needs params: bot, input, plugin"
+    def decorator(func):
+        if len(inspect.getargspec(func).args) != 1:
+            raise ValueError(
+                "Sieve plugin has too many or too few arguments. Sieves should only accept one argument: 'event'")
 
-        hook = _get_hook(func, "sieve")
-        if hook is None:
-            hook = _Hook(func, "sieve")  # there's no need to have a specific SieveHook object
-            _add_hook(func, hook)
+        hook = _get_or_add_hook(func, HookType.sieve)
+        hook.add_hook(**kwargs)
 
-        hook._add_hook(kwargs)
         return func
 
     if callable(param):
-        return _sieve_hook(param)
+        return decorator(param)
     else:
-        return lambda func: _sieve_hook(func)
+        return decorator
 
 
-def onload(param=None, **kwargs):
-    """External onload decorator. Can be used directly as a decorator, or with args to return a decorator
+def on_start(param=None, **kwargs):
+    """External on start decorator. Can be used directly as a decorator, or with args to return a decorator
     :type param: function | None
     """
 
-    def _onload_hook(func):
-        hook = _get_hook(func, "onload")
-        if hook is None:
-            hook = _Hook(func, "onload")
-            _add_hook(func, hook)
-
-        hook._add_hook(kwargs)
+    def decorator(func):
+        hook = _get_or_add_hook(func, HookType.on_start)
+        hook.add_hook(**kwargs)
         return func
 
     if callable(param):
-        return _onload_hook(param)
+        return decorator(param)
     else:
-        return lambda func: _onload_hook(func)
+        return decorator
+
+def on_stop(param=None, **kwargs):
+    """External on stop decorator. Can be used directly as a decorator, or with args to return a decorator
+    :type param: function | None
+    """
+
+    def decorator(func):
+        hook = _get_or_add_hook(func, HookType.on_stop)
+        hook.add_hook(**kwargs)
+        return func
+
+    if callable(param):
+        return decorator(param)
+    else:
+        return decorator

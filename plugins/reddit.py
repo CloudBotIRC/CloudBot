@@ -17,7 +17,7 @@ base_url = "http://reddit.com/r/{}/.json"
 short_url = "http://redd.it/{}"
 
 # A nice user agent for use with Reddit
-headers = {'User-Agent': 'CloudBot/dev 1.0 - CloudBot Refresh'}
+headers = {'User-Agent': 'CloudBot/3.0 - CloudBot Refresh <https://github.com/CloudBotIRC/Refresh/>'}
 
 
 def format_output(item, show_url=False):

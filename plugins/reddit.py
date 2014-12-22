@@ -17,7 +17,11 @@ base_url = "http://reddit.com/r/{}/.json"
 short_url = "http://redd.it/{}"
 
 # A nice user agent for use with Reddit
-headers = {'User-Agent': 'CloudBot/dev 1.0 - CloudBot Refresh by lukeroge'}
+headers = {'User-Agent': 'CloudBot/dev 1.0 - CloudBot Refresh'}
+
+
+def plural(num=0, text=''):
+    return "\x02{}\x02 {}{}".format(num, text, "s"[num == 1:])
 
 
 @hook.regex(reddit_re)
@@ -36,23 +40,21 @@ def reddit_url(match):
     data = data[0]["data"]["children"][0]["data"]
     item = data
 
-    title = formatting.truncate_str(item["title"], 50)
-    author = item["author"]
-    commentsnum = item["num_comments"]
-    if commentsnum == 1:
-        commentsword = "comment"
-    else:
-        commentsword = "comments"
-    pointsnum = item["score"]
-    raw_time = datetime.fromtimestamp(int(item["created_utc"]))
-    timeago = timeformat.timesince(raw_time)
-    if pointsnum == 1:
-        pointsword = "point"
-    else:
-        pointsword = "points"
+    item["title"] = formatting.truncate_str(item["title"], 50)
 
-    return '\x02{}\x02 - posted by \x02{}\x02 {} - {} {} - {} {}'.format(
-        title, author, timeago, commentsnum, commentsword, pointsnum, pointsword)
+    raw_time = datetime.fromtimestamp(int(item["created_utc"]))
+    item["timesince"] = timeformat.timesince(raw_time)
+
+    item["comments"] = plural(item["num_comments"], 'comment')
+    item["points"] = plural(item["score"], 'point')
+
+    if item["over_18"]:
+        item["warning"] = " \x02NSFW\x02"
+    else:
+        item["warning"] = ""
+
+    return "\x02{title}\x02 : \x02{subreddit}\x02 - posted by \x02{author}\x02" \
+           " {timesince} ago - {comments}, {points}{warning}".format(**item)
 
 
 @asyncio.coroutine
@@ -101,16 +103,14 @@ def reddit(text, loop):
     raw_time = datetime.fromtimestamp(int(item["created_utc"]))
     item["timesince"] = timeformat.timesince(raw_time)
 
-    if item["score"] == 1:
-        item["score"] = "1 point"
-    else:
-        item["score"] = str(item["score"]) + " points"
+    item["comments"] = plural(item["num_comments"], 'comment')
+    item["points"] = plural(item["score"], 'point')
 
     if item["over_18"]:
         item["warning"] = " \x02NSFW\x02"
     else:
         item["warning"] = ""
 
-    return "\x02{title} : {subreddit}\x02 - posted by \x02{author}\x02" \
-           " {timesince} ago - {score} -" \
+    return "\x02{title}\x02 : \x02{subreddit}\x02 - posted by \x02{author}\x02" \
+           " {timesince} ago - {comments}, {points} -" \
            " {link}{warning}".format(**item)

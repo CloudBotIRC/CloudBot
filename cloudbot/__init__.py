@@ -55,6 +55,7 @@ def _setup():
                 "class": "logging.FileHandler",
                 "formatter": "full",
                 "level": "INFO",
+                "encoding": "utf-8",
                 "filename": os.path.join(logging_dir, "bot.log")
             }
         },

@@ -13,7 +13,7 @@ plugin_info = {
 @hook.command("groups", permissions=["permissions.view"], autohelp=False)
 def get_permission_groups(conn):
     """- lists all valid groups
-    :type conn: cloudbot.connection.Connection
+    :type conn: cloudbot.client.Client
     """
     return "Valid groups: {}".format(conn.permissions.get_groups())
 
@@ -23,7 +23,7 @@ def get_permission_groups(conn):
 def get_group_permissions(text, conn, notice):
     """<group> - lists permissions given to <group>
     :type text: str
-    :type conn: cloudbot.connection.Connection
+    :type conn: cloudbot.client.Client
     """
     group = text.strip().lower()
     permission_manager = conn.permissions
@@ -42,7 +42,7 @@ def get_group_permissions(text, conn, notice):
 def get_group_users(text, conn, notice):
     """<group> - lists users in <group>
     :type text: str
-    :type conn: cloudbot.connection.Connection
+    :type conn: cloudbot.client.Client
     """
     group = text.strip().lower()
     permission_manager = conn.permissions
@@ -61,7 +61,7 @@ def get_group_users(text, conn, notice):
 def get_user_permissions(text, conn, mask, has_permission, notice):
     """[user] - lists all permissions given to [user], or the caller if no user is specified
     :type text: str
-    :type conn: cloudbot.connection.Connection
+    :type conn: cloudbot.client.Client
     :type mask: str
     """
     if text:
@@ -86,7 +86,7 @@ def get_user_permissions(text, conn, mask, has_permission, notice):
 def get_user_groups(text, conn, mask, has_permission, notice):
     """[user] - lists all permissions given to [user], or the caller if no user is specified
     :type text: str
-    :type conn: cloudbot.connection.Connection
+    :type conn: cloudbot.client.Client
     :type mask: str
     """
     if text:
@@ -112,7 +112,7 @@ def remove_permission_user(text, bot, conn, notice, reply):
     """<user> [group] - removes <user> from [group], or from all groups if no group is specified
     :type text: str
     :type bot: cloudbot.bot.CloudBot
-    :type conn: cloudbot.connection.Connection
+    :type conn: cloudbot.client.Client
     """
     split = text.split()
     if len(split) > 2:
@@ -167,7 +167,7 @@ def remove_permission_user(text, bot, conn, notice, reply):
 def add_permissions_user(text, conn, bot, notice, reply):
     """<user> <group> - adds <user> to <group>
     :type text: str
-    :type conn: cloudbot.connection.Connection
+    :type conn: cloudbot.client.Client
     :type bot: cloudbot.bot.CloudBot
     """
     split = text.split()
@@ -235,7 +235,7 @@ def restart(text, bot):
 def join(text, conn, notice):
     """<channel> - joins <channel>
     :type text: str
-    :type conn: cloudbot.connection.Connection
+    :type conn: cloudbot.client.Client
     """
     for target in text.split():
         if not target.startswith("#"):
@@ -249,7 +249,7 @@ def join(text, conn, notice):
 def part(text, conn, chan_name, notice):
     """[#channel] - parts [#channel], or the caller's channel if no channel is specified
     :type text: str
-    :type conn: cloudbot.connection.Connection
+    :type conn: cloudbot.client.Client
     :type chan_name: str
     """
     if text:
@@ -268,7 +268,7 @@ def part(text, conn, chan_name, notice):
 def cycle(text, conn, chan_name, notice):
     """[#channel] - cycles [#channel], or the caller's channel if no channel is specified
     :type text: str
-    :type conn: cloudbot.connection.Connection
+    :type conn: cloudbot.client.Client
     :type chan_name: str
     """
     if text:
@@ -288,7 +288,7 @@ def cycle(text, conn, chan_name, notice):
 def nick(text, conn, notice):
     """<nick> - changes my nickname to <nick>
     :type text: str
-    :type conn: cloudbot.connection.Connection
+    :type conn: cloudbot.client.Client
     """
     if not re.match("^[a-z0-9_|.-\]\[]*$", text.lower()):
         notice("Invalid username '{}'".format(text))
@@ -302,7 +302,7 @@ def nick(text, conn, notice):
 def raw(text, conn, notice):
     """<command> - sends <command> as a raw IRC command
     :type text: str
-    :type conn: cloudbot.clients.irc.IrcConnection
+    :type conn: cloudbot.clients.irc.IrcClient
     """
     notice("Sending raw command.")
     conn.send(text)
@@ -313,7 +313,7 @@ def raw(text, conn, notice):
 def say(text, conn, chan_name):
     """[#channel] <message> - says <message> to [#channel], or to the caller's channel if no channel is specified
     :type text: str
-    :type conn: cloudbot.connection.Connection
+    :type conn: cloudbot.client.Client
     :type chan_name: str
     """
     text = text.strip()
@@ -332,7 +332,7 @@ def say(text, conn, chan_name):
 def message(text, conn):
     """<name> <message> - says <message> to <name>
     :type text: str
-    :type conn: cloudbot.connection.Connection
+    :type conn: cloudbot.client.Client
     """
     split = text.split(None, 1)
     channel = split[0]
@@ -345,7 +345,7 @@ def message(text, conn):
 def me(text, conn, chan_name):
     """[#channel] <action> - acts out <action> in a [#channel], or in the current channel of none is specified
     :type text: str
-    :type conn: cloudbot.connection.Connection
+    :type conn: cloudbot.client.Client
     :type chan_name: str
     """
     text = text.strip()

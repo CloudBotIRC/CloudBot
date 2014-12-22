@@ -28,9 +28,9 @@ def grouper(iterable, n, fillvalue=None):
     return itertools.zip_longest(*args, fillvalue=fillvalue)
 
 
-class Connection:
+class Client:
     """
-    A Connection representing each connection the bot makes to a single server
+    A Client representing each connection the bot makes to a single server
     :type bot: cloudbot.bot.CloudBot
     :type loop: asyncio.events.AbstractEventLoop
     :type name: str
@@ -80,7 +80,7 @@ class Connection:
 
     def close(self):
         """
-        Disconnects from the server, only for use when this Connection object will *not* ever be connected again
+        Disconnects from the server, only for use when this Client object will *not* ever be connected again
         """
         raise NotImplementedError
 

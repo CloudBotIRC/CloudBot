@@ -6,11 +6,11 @@ import gc
 
 import redis
 
-from cloudbot.connection import Connection
+from cloudbot.client import Client
 from cloudbot.config import Config
 from cloudbot.plugin import PluginManager
 from cloudbot.event import Event, CommandHookEvent, RegexHookEvent, EventType
-from cloudbot.clients.irc import IrcConnection
+from cloudbot.clients.irc import IrcClient
 
 logger = logging.getLogger("bot")
 
@@ -27,7 +27,7 @@ class CloudBot:
     """
     :type start_time: float
     :type running: bool
-    :type connections: list[Connection | IrcConnection]
+    :type connections: list[Client | IrcClient]
     :type config: core.config.Config
     :type plugin_manager: PluginManager
     :type db: redis.StrictRedis
@@ -91,7 +91,7 @@ class CloudBot:
             server = config['connection']['server']
             port = config['connection'].get('port', 6667)
 
-            self.connections.append(IrcConnection(self, name, nick, config=config,
+            self.connections.append(IrcClient(self, name, nick, config=config,
                                                   server=server, port=port,
                                                   use_ssl=config['connection'].get('ssl', False)))
             logger.debug("[{}] Created connection.".format(name))

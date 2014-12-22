@@ -21,12 +21,12 @@ class EventType(enum.Enum):
 class Event:
     """
     :type bot: cloudbot.bot.CloudBot
-    :type conn: cloudbot.connection.Connection
+    :type conn: cloudbot.client.Client
     :type type: EventType
     :type content: str
     :type target: str
     :type chan_name: str
-    :type channel: cloudbot.connection.Channel
+    :type channel: cloudbot.client.Channel
     :type channels: list(cloudbot.connection.Channel)
     :type nick: str
     :type user: str
@@ -43,7 +43,7 @@ class Event:
         The irc_* parameters should only be specified for IRC events.
 
         :param bot: The CloudBot instance this event was triggered from
-        :param conn: The Connection instance this event was triggered from
+        :param conn: The Client instance this event was triggered from
         :param event_type: The type of the event
         :param content: The content of the message, or the reason for an join or part
         :param target: The target of the action, for example the user being kicked, or invited
@@ -53,7 +53,7 @@ class Event:
         :param host: The host of the sender that triggered this event
         :param mask: The mask of the sender that triggered this event (nick!user@host)
         :type bot: cloudbot.bot.CloudBot
-        :type conn: cloudbot.connection.Connection
+        :type conn: cloudbot.client.Client
         :type content: str
         :type target: str
         :type event_type: EventType
@@ -72,7 +72,7 @@ class Event:
         self.user = user
         self.host = host
         self.mask = mask
-        # channel and channels are assigned in Connection.pre_process_event
+        # channel and channels are assigned in Client.pre_process_event
         self.channel = None
         self.channels = []
 

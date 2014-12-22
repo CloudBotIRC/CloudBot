@@ -6,7 +6,7 @@ from cloudbot import hook
 
 
 @hook.command("octopart", "octosearch")
-def octopart(text):
+def octopart(text, reply):
     """octopart <keyword> -- Search for any part on the Octopart database."""
     url = "http://octopart.com/api/v3/parts/search"
     params = {
@@ -28,8 +28,10 @@ def octopart(text):
         return "No results."
 
     # get part
-    result = response['results'][0]
-    part = result['item']
+    results = response['results']
 
-    # print matched part
-    return "{} - {} - {}".format(part['brand']['name'], part['mpn'], part['octopart_url'])
+    for result in results:
+        part = result['item']
+
+        # print matched part
+        reply("{} - {} - {}".format(part['brand']['name'], part['mpn'], part['octopart_url']))

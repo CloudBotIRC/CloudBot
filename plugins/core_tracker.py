@@ -26,7 +26,8 @@ def on_kick(conn, chan, target, loop):
             conn.channels.remove(chan)
         if conn.config.get('auto_rejoin', False):
             loop.call_later(5, conn.join, chan)
-            loop.call_later(5, logger.info, "Bot was kicked from {}, rejoining channel.".format(chan))
+            loop.call_later(5, logger.info, "[{}|tracker] Bot was kicked from {}, "
+                                            "rejoining channel.".format(conn.readable_name, chan))
 
 
 @asyncio.coroutine
@@ -39,9 +40,14 @@ def on_nick(irc_paramlist, conn, irc_raw):
     """
     old_nick = nick_re.search(irc_raw).group(1)
     new_nick = str(irc_paramlist[0])
+
+    # get rid of :
+    if new_nick.startswith(":"):
+        new_nick = new_nick[1:]
+
     if old_nick == conn.nick:
         conn.nick = new_nick
-        logger.info("Bot nick changed from '{}' to '{}'.".format(old_nick, new_nick))
+        logger.info("[{}|tracker] Bot nick changed from '{}' to '{}'.".format(conn.readable_name, old_nick, new_nick))
 
 
 # for channels the host tells us we're joining without us joining it ourselves

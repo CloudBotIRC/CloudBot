@@ -11,12 +11,12 @@ import cloudbot
 
 
 @hook.command(autohelp=False)
-def about(event):
+def about(event, conn):
     """Gives information about cloudbot
     :type event: cloudbot.event.Event
     """
-    event.message("Powered by CloudBot Refresh ({}) - "
-                  "https://github.com/CloudBotIRC/Refresh/".format(cloudbot.__version__))
+    return "{} is powered by CloudBot Refresh! ({}) - " \
+           "https://github.com/CloudBotIRC/Refresh/".format(conn.nick, cloudbot.__version__)
 
 
 

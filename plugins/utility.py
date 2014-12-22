@@ -178,6 +178,7 @@ def leet(text):
     return output
 
 
+# Based on plugin by FurCode - <https://github.com/FurCode/RoboCop2>
 @hook.command
 def derpify(text):
     """derpify <text> - returns some amusing responses from your input."""

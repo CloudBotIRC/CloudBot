@@ -20,10 +20,6 @@ short_url = "http://redd.it/{}"
 headers = {'User-Agent': 'CloudBot/dev 1.0 - CloudBot Refresh'}
 
 
-def plural(num=0, text=''):
-    return "{} {}{}".format(num, text, "s"[num == 1:])
-
-
 def format_output(item, show_url=False):
     """ takes a reddit post and returns a formatted sting """
     item["title"] = formatting.truncate_str(item["title"], 50)
@@ -32,8 +28,8 @@ def format_output(item, show_url=False):
     raw_time = datetime.fromtimestamp(int(item["created_utc"]))
     item["timesince"] = timeformat.timesince(raw_time, count=1)
 
-    item["comments"] = plural(item["num_comments"], 'comment')
-    item["points"] = plural(item["score"], 'point')
+    item["comments"] = formatting.pluralize(item["num_comments"], 'comment')
+    item["points"] = formatting.pluralize(item["score"], 'point')
 
     if item["over_18"]:
         item["warning"] = " \x02NSFW\x02"

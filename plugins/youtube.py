@@ -6,6 +6,7 @@ import requests
 
 from cloudbot import hook
 from cloudbot.util import timeformat
+from cloudbot.util.formatting import pluralize
 
 
 youtube_re = re.compile(r'(?:youtube.*?(?:v=|/v/)|youtu\.be/|yooouuutuuube.*?id=)([-_a-zA-Z0-9]+)', re.I)
@@ -14,10 +15,6 @@ base_url = 'http://gdata.youtube.com/feeds/api/'
 api_url = base_url + 'videos/{}?v=2&alt=jsonc'
 search_api_url = base_url + 'videos?v=2&alt=jsonc&max-results=1'
 video_url = "http://youtu.be/%s"
-
-
-def plural(num=0, text=''):
-    return "{:,} {}{}".format(num, text, "s"[num == 1:])
 
 
 def get_video_description(video_id):
@@ -38,8 +35,8 @@ def get_video_description(video_id):
 
     if 'ratingCount' in data:
         # format
-        likes = plural(int(data['likeCount']), "like")
-        dislikes = plural(data['ratingCount'] - int(data['likeCount']), "dislike")
+        likes = pluralize(int(data['likeCount']), "like")
+        dislikes = pluralize(data['ratingCount'] - int(data['likeCount']), "dislike")
 
         percent = 100 * float(data['likeCount']) / float(data['ratingCount'])
         out += ' - {}, {} (\x02{:.1f}\x02%)'.format(likes,

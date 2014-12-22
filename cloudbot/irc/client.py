@@ -129,8 +129,9 @@ class IrcClient(Client):
         self._transport.close()
         self._connected = False
 
-    def message(self, target, text):
-        self.cmd("PRIVMSG", target, text)
+    def message(self, target, *messages):
+        for text in messages:
+            self.cmd("PRIVMSG", target, text)
 
     def action(self, target, text):
         self.ctcp(target, "ACTION", text)

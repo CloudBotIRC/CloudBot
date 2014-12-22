@@ -235,7 +235,7 @@ class Event:
             target = self.chan
         self.conn.message(target, message)
 
-    def reply(self, message, target=None):
+    def reply(self, *messages, target=None):
         """sends a message to the current channel/user with a prefix
         :type message: str
         :type target: str
@@ -245,10 +245,13 @@ class Event:
                 raise ValueError("Target must be specified when chan is not assigned")
             target = self.chan
 
+        if not messages:  # if there are no messages specified, don't do anything
+            return
+
         if target == self.nick:
-            self.conn.message(target, message)
+            self.conn.message(target, *messages)
         else:
-            self.conn.message(target, "({}) {}".format(self.nick, message))
+            self.conn.message(target, "({}) {}".format(self.nick, messages[0]), *messages[1:])
 
     def action(self, message, target=None):
         """sends an action to the current channel/user or a specific channel/user

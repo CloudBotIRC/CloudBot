@@ -73,7 +73,7 @@ class Client:
         """
         raise NotImplementedError
 
-    def message(self, target, text):
+    def message(self, target, *text):
         """
         Sends a message to the given target
         :type target: str

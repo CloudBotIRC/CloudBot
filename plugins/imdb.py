@@ -60,5 +60,4 @@ def imdb_url(match):
         if content['imdbRating'] != 'N/A' and content['imdbVotes'] != 'N/A':
             out += ' \x02%(imdbRating)s/10\x02 with \x02%(imdbVotes)s\x02' \
                    ' votes.'
-        out += ' %(URL)s'
         return out % content

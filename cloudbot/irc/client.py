@@ -199,6 +199,13 @@ class IrcClient(Client):
         logger.info("[{}] >> {}".format(self.readable_name, line))
         asyncio.async(self._protocol.send(line), loop=self.loop)
 
+
+    @asyncio.coroutine
+    def process(self, event):
+        # handle the message, async
+        yield from self.conn.pre_process_event(event)
+        asyncio.async(self.bot.process(event), loop=self.loop)
+
     @property
     def connected(self):
         return self._connected

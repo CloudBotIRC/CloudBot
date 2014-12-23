@@ -6,7 +6,7 @@ from cloudbot.util import web
 base_url = "http://api.wunderground.com/api/{}/{}/q/{}.json"
 
 
-@hook.command(autohelp=False)
+@hook.command("weather", "we", autohelp=False)
 def weather(text, reply, db, nick, bot, notice):
     """weather <location> [dontsave] -- Gets weather data
     for <location> from Wunderground."""

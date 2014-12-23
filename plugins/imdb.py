@@ -52,8 +52,6 @@ def imdb_url(match):
     content = request.json()
 
     if content['Response'] == 'True':
-        content['URL'] = 'http://www.imdb.com/title/{}'.format(content['imdbID'])
-
         out = '\x02%(Title)s\x02 (%(Year)s) (%(Genre)s): %(Plot)s'
         if content['Runtime'] != 'N/A':
             out += ' \x02%(Runtime)s\x02.'

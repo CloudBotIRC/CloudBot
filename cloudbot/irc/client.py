@@ -249,7 +249,7 @@ class _IrcProtocol(asyncio.Protocol):
         if exc is None:
             # we've been closed intentionally, so don't reconnect
             return
-        logger.exception("[{}] Connection lost.".format(self.conn.readable_name))
+        logger.error("[{}] Connection lost: {}".format(self.conn.readable_name, exc))
         asyncio.async(self.conn.connect(), loop=self.loop)
 
     def eof_received(self):

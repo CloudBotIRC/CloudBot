@@ -4,12 +4,30 @@ import asyncio
 import logging
 import re
 import functools
+from collections import deque
 
 from cloudbot import hook
 
 logger = logging.getLogger("cloudbot")
 
 nick_re = re.compile(":(.+?)!")
+
+
+# functions called for bot state tracking
+
+def bot_left_channel(conn, chan):
+    logger.info("[{}|tracker] Bot left channel '{}'".format(conn.readable_name, chan))
+    if chan in conn.channels:
+        conn.channels.remove(chan)
+    if chan in conn.history:
+        del conn.history[chan]
+
+
+def bot_joined_channel(conn, chan):
+    logger.info("[{}|tracker] Bot joined channel '{}'".format(conn.readable_name, chan))
+    conn.channels.append(chan)
+    conn.history[chan] = deque(maxlen=100)
+
 
 
 @asyncio.coroutine
@@ -22,8 +40,7 @@ def on_kick(conn, chan, target, loop):
     """
     # if the bot has been kicked, remove from the channel list
     if target == conn.nick:
-        if chan in conn.channels:
-            conn.channels.remove(chan)
+        bot_left_channel(conn, chan)
         if conn.config.get('auto_rejoin', False):
             loop.call_later(5, conn.join, chan)
             loop.call_later(5, logger.info, "[{}|tracker] Bot was kicked from {}, "
@@ -61,5 +78,16 @@ def on_join(conn, chan, target):
     :type nick: str
     """
     if target == conn.nick:
-        if chan not in conn.channels:
-            conn.channels.append(chan)
+        bot_joined_channel(conn, chan)
+
+
+@asyncio.coroutine
+@hook.irc_raw("PART")
+def on_join(conn, chan, target):
+    """
+    :type conn: cloudbot.client.Client
+    :type chan: str
+    :type nick: str
+    """
+    if target == conn.nick:
+        bot_joined_channel(conn, chan)

@@ -27,10 +27,12 @@ def correction(match, conn, chan, message):
             # don't correct corrections, it gets really confusing
             continue
         if find_re.search(msg):
+            is_action = False
             if "\x01ACTION" in msg:
-                mod_msg = msg.replace("\x01ACTION ", "/me ").replace("\x01", "")
-            mod_msg = find_re.sub("\x02" + replacement + "\x02", msg, count=int("g" not in flags))
-            message("Correction, <{}> {}".format(nick, mod_msg))
+                is_action = True
+                mod_msg = msg.replace("\x01ACTION ", "* {} ".format(nick)).replace("\x01", "")
+            mod_msg = "<{}> ".format(nick) + find_re.sub("\x02" + replacement + "\x02", msg, count=int("g" not in flags))
+            message("Correction, {}".format(mod_msg))
             # append to end of history file
             msg = find_re.sub(replacement, msg, count=int("g not" in flags))
             conn.history[chan].append((nick, timestamp, msg))

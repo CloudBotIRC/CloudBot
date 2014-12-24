@@ -3,6 +3,22 @@ import re
 import time
 
 from cloudbot import hook
+from cloudbot.util import botvars
+from sqlalchemy import Table, Column, String, PrimaryKeyConstraint
+from sqlalchemy.types import REAL
+from sqlalchemy import select
+
+qtable = Table(
+    'quote',
+    botvars.metadata,
+    Column('chan', String),
+    Column('nick', String),
+    Column('add_nick', String),
+    Column('msg', String),
+    Column('time', REAL),
+    Column('deleted', String, default=0),
+    PrimaryKeyConstraint('chan', 'nick', 'msg')
+)
 
 
 def format_quote(q, num, n_quotes):
@@ -12,31 +28,31 @@ def format_quote(q, num, n_quotes):
                                     nick, msg)
 
 
-def create_table_if_not_exists(db):
-    """Creates an empty quote table if one does not already exist"""
-    db.execute("create table if not exists quote"
-               "(chan, nick, add_nick, msg, time real, deleted default 0, "
-               "primary key (chan, nick, msg))")
-    db.commit()
-
-
-def add_quote(db, chan, nick, add_nick, msg):
+def add_quote(db, chan, target, sender, message):
     """Adds a quote to a nick, returns message string"""
     try:
-        db.execute('''INSERT OR FAIL INTO quote
-                      (chan, nick, add_nick, msg, time)
-                      VALUES(?,?,?,?,?)''',
-                   (chan, nick, add_nick, msg, time.time()))
+        query = qtable.insert().values(
+            chan=chan,
+            nick=target.lower(),
+            add_nick=sender.lower(),
+            msg=message,
+            time=time.time()
+        )
+        db.execute(query)
         db.commit()
-    except db.IntegrityError:
+    except:
         return "Message already stored, doing nothing."
     return "Quote added."
 
 
 def del_quote(db, chan, nick, add_nick, msg):
     """Deletes a quote from a nick"""
-    db.execute('''UPDATE quote SET deleted = 1 WHERE
-                  chan=? AND lower(nick)=lower(?) AND msg=msg''')
+    query = qtable.update() \
+        .where(qtable.c.chan == 1) \
+        .where(qtable.c.nick == nick.lower()) \
+        .where(qtable.c.msg == msg) \
+        .values(deleted=1)
+    db.execute(query)
     db.commit()
 
 
@@ -59,73 +75,81 @@ def get_quote_num(num, count, name):
 
 def get_quote_by_nick(db, nick, num=False):
     """Returns a formatted quote from a nick, random or selected by number"""
-    count = db.execute('''SELECT COUNT(*) FROM quote WHERE deleted != 1
-                          AND lower(nick) = lower(?)''', [nick]).fetchall()[0][0]
+
+    count_query = select([qtable]) \
+        .where(qtable.c.deleted != 1) \
+        .where(qtable.c.nick == nick.lower()) \
+        .count()
+    count = db.execute(count_query).fetchall()[0][0]
 
     try:
         num = get_quote_num(num, count, nick)
     except Exception as error_message:
         return error_message
 
-    quote = db.execute('''SELECT time, nick, msg
-                          FROM quote
-                          WHERE deleted != 1
-                          AND lower(nick) = lower(?)
-                          ORDER BY time
-                          LIMIT ?, 1''', (nick, (num - 1))).fetchall()[0]
+    query = select([qtable.c.time, qtable.c.nick, qtable.c.msg]) \
+        .where(qtable.c.deleted != 1) \
+        .where(qtable.c.nick == nick.lower()) \
+        .order_by(qtable.c.time)\
+        .limit(1) \
+        .offset((num - 1))
+    quote = db.execute(query).fetchall()[0]
     return format_quote(quote, num, count)
 
 
 def get_quote_by_nick_chan(db, chan, nick, num=False):
     """Returns a formatted quote from a nick in a channel, random or selected by number"""
-    count = db.execute('''SELECT COUNT(*)
-                          FROM quote
-                          WHERE deleted != 1
-                          AND chan = ?
-                          AND lower(nick) = lower(?)''', (chan, nick)).fetchall()[0][0]
+    count_query = select([qtable]) \
+        .where(qtable.c.deleted != 1) \
+        .where(qtable.c.chan == chan) \
+        .where(qtable.c.nick == nick.lower()) \
+        .count()
+    count = db.execute(count_query).fetchall()[0][0]
 
     try:
         num = get_quote_num(num, count, nick)
     except Exception as error_message:
         return error_message
 
-    quote = db.execute('''SELECT time, nick, msg
-                          FROM quote
-                          WHERE deleted != 1
-                          AND chan = ?
-                          AND lower(nick) = lower(?)
-                          ORDER BY time
-                          LIMIT ?, 1''', (chan, nick, (num - 1))).fetchall()[0]
+    query = select([qtable.c.time, qtable.c.nick, qtable.c.msg]) \
+        .where(qtable.c.deleted != 1) \
+        .where(qtable.c.chan == chan) \
+        .where(qtable.c.nick == nick.lower()) \
+        .order_by(qtable.c.time) \
+        .limit(1) \
+        .offset((num - 1))
+    quote = db.execute(query).fetchall()[0]
     return format_quote(quote, num, count)
 
 
 def get_quote_by_chan(db, chan, num=False):
     """Returns a formatted quote from a channel, random or selected by number"""
-    count = db.execute('''SELECT COUNT(*)
-                          FROM quote
-                          WHERE deleted != 1
-                          AND chan = ?''', (chan,)).fetchall()[0][0]
+    count_query = select([qtable]) \
+        .where(qtable.c.deleted != 1) \
+        .where(qtable.c.chan == chan) \
+        .count()
+    count = db.execute(count_query).fetchall()[0][0]
 
     try:
         num = get_quote_num(num, count, chan)
     except Exception as error_message:
         return error_message
 
-    quote = db.execute('''SELECT time, nick, msg
-                          FROM quote
-                          WHERE deleted != 1
-                          AND chan = ?
-                          ORDER BY time
-                          LIMIT ?, 1''', (chan, (num - 1))).fetchall()[0]
+    query = select([qtable.c.time, qtable.c.nick, qtable.c.msg]) \
+        .where(qtable.c.deleted != 1) \
+        .where(qtable.c.chan == chan) \
+        .order_by(qtable.c.time)\
+        .limit(1) \
+        .offset((num - 1))
+    quote = db.execute(query).fetchall()[0]
     return format_quote(quote, num, count)
 
 
 @hook.command('q')
 @hook.command()
-def quote(text, nick='', chan='', db=None, notice=None):
+def quote(text, nick='', chan='', db=None, notice=None, conn=None):
     """[#chan] [nick] [#n] OR add <nick> <message> - gets the [#n]th quote by <nick> (defaulting to random)
     OR adds <message> as a quote for <nick> in the caller's channel"""
-    create_table_if_not_exists(db)
 
     add = re.match(r"add[^\w@]+(\S+?)>?\s+(.*)", text, re.I)
     retrieve = re.match(r"(\S+)(?:\s+#?(-?\d+))?$", text)

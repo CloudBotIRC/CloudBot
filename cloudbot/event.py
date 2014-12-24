@@ -285,12 +285,17 @@ class Event:
         :type message: str
         :type target: str
         """
+        avoid_notices = self.conn.config.get("avoid_notices", False)
         if target is None:
             if self.nick is None:
                 raise ValueError("Target must be specified when nick is not assigned")
             target = self.nick
 
-        self.conn.notice(target, message)
+        # we have a config option to avoid noticing user and PM them instead, so we use it here
+        if avoid_notices:
+            self.conn.message(target, message)
+        else:
+            self.conn.notice(target, message)
 
     def has_permission(self, permission, notice=True):
         """ returns whether or not the current user has a given permission

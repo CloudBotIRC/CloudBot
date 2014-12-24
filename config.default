@@ -12,6 +12,7 @@
             "nick": "MyCloudBot",
             "user": "cloudbot",
             "real_name": "CloudBotRefresh - http://cloudbot.pw",
+            "avoid_notices": False,
             "channels": ["#cloudbot", "#cloudbot2"],
             "disabled_commands": [],
             "acls": {},

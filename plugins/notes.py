@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Table, Column, String, Boolean, Integer, DateTime
+from sqlalchemy import Table, Column, String, Boolean, Integer, DateTime, PrimaryKeyConstraint
 import sqlalchemy
 from sqlalchemy.sql import select
 
@@ -10,13 +10,14 @@ from cloudbot.util import botvars
 table = Table(
     'notes',
     botvars.metadata,
-    Column('note_id', Integer, primary_key=True),
-    Column('connection', String, primary_key=True),
-    Column('user', String, primary_key=True),
+    Column('note_id', Integer),
+    Column('connection', String),
+    Column('user', String),
     Column('text', String),
     Column('priority', Integer),
     Column('deleted', Boolean),
     Column('added', DateTime),
+    PrimaryKeyConstraint('note_id', 'connection', 'user')
 )
 
 

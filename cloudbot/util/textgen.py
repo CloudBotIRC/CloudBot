@@ -40,7 +40,7 @@ class TextGenerator(object):
 
                 # this uses way too much code, but I wrote it at like 6am
                 for _part in _parts:
-                    if isinstance(_part, list):
+                    if isinstance(_part, (list, tuple)):
                         __part, __weight = _part
                         _weighted_parts.append((__part, __weight))
                     else:

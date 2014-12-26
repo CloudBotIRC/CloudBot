@@ -16,9 +16,6 @@ reddit_re = re.compile(r'.*(((www\.)?reddit\.com/r|redd\.it)[^ ]+)', re.I)
 base_url = "http://reddit.com/r/{}/.json"
 short_url = "http://redd.it/{}"
 
-# A nice user agent for use with Reddit
-headers = {'User-Agent': 'CloudBot/3.0 - CloudBot Refresh <https://github.com/CloudBotIRC/Refresh/>'}
-
 
 def format_output(item, show_url=False):
     """ takes a reddit post and returns a formatted sting """
@@ -46,7 +43,7 @@ def format_output(item, show_url=False):
 
 
 @hook.regex(reddit_re)
-def reddit_url(match):
+def reddit_url(match, bot):
     url = match.group(1)
     if "redd.it" in url:
         url = "http://" + url
@@ -56,6 +53,7 @@ def reddit_url(match):
         url = "http://" + url + "/.json"
 
     # the reddit API gets grumpy if we don't include headers
+    headers = {'User-Agent': bot.user_agent}
     r = requests.get(url, headers=headers)
     data = r.json()
     item = data[0]["data"]["children"][0]["data"]
@@ -65,9 +63,10 @@ def reddit_url(match):
 
 @asyncio.coroutine
 @hook.command(autohelp=False)
-def reddit(text, loop):
+def reddit(text, bot, loop):
     """<subreddit> [n] - gets a random post from <subreddit>, or gets the [n]th post in the subreddit"""
     id_num = None
+    headers = {'User-Agent': bot.user_agent}
 
     if text:
         # clean and split the input

@@ -60,6 +60,7 @@
         "rdio_secret": ""
     },
     "database": "sqlite:///cloudbot.db",
+    "user_agent": "CloudBot/3.0 - CloudBot Refresh <https://github.com/CloudBotIRC/CloudBot/>",
     "plugin_loading": {
         "use_whitelist": false,
         "blacklist": ["update"],

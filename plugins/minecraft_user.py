@@ -28,8 +28,9 @@ def get_name(uuid):
 
 
 @hook.command("mcuser", "mcpaid", "haspaid")
-def mcuser(text):
+def mcuser(text, bot):
     """<username> - gets information about the Minecraft user <account>"""
+    headers = {'User-Agent': bot.user_agent}
     user = text.strip()
 
     cleaned = user.replace('-', '')
@@ -47,7 +48,7 @@ def mcuser(text):
 
     # submit the profile request
     try:
-        request = requests.get(HIST_API.format(requests.utils.quote(name)))
+        request = requests.get(HIST_API.format(requests.utils.quote(name)), headers=headers)
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         return "Could not get profile status: {}".format(e)
 

@@ -9,19 +9,20 @@ id_re = re.compile("tt\d+")
 imdb_re = re.compile(r'(.*:)//(imdb.com|www.imdb.com)(:[0-9]+)?(.*)', re.I)
 
 
-@hook.command()
-def imdb(text):
+@hook.command
+def imdb(text, bot):
     """imdb <movie> - gets information about <movie> from IMDb"""
 
+    headers = {'User-Agent': bot.user_agent}
     strip = text.strip()
 
     if id_re.match(strip):
         params = {'i': strip}
-        request = requests.get("http://www.omdbapi.com/", params=params)
+        request = requests.get("http://www.omdbapi.com/", params=params, headers=headers)
         content = request.json()
     else:
         params = {'t': strip}
-        request = requests.get("http://www.omdbapi.com/", params=params)
+        request = requests.get("http://www.omdbapi.com/", params=params, headers=headers)
         content = request.json()
 
     if content.get('Error', None) == 'Movie not found!':
@@ -42,13 +43,15 @@ def imdb(text):
 
 
 @hook.regex(imdb_re)
-def imdb_url(match):
+def imdb_url(match, bot):
+    headers = {'User-Agent': bot.user_agent}
+
     imdb_id = match.group(4).split('/')[-1]
     if imdb_id == "":
         imdb_id = match.group(4).split('/')[-2]
 
     params = {'i': imdb_id}
-    request = requests.get("http://www.omdbapi.com/", params=params)
+    request = requests.get("http://www.omdbapi.com/", params=params, headers=headers)
     content = request.json()
 
     if content['Response'] == 'True':

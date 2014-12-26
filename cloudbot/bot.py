@@ -81,6 +81,10 @@ class CloudBot:
         if cloudbot.dev_mode.get("file_debug"):
             logger.info("Enabling developer option: file debug")
 
+        # this doesn't REALLY need to be here but it's nice
+        self.user_agent = self.config.get('user_agent', 'CloudBot/3.0 - CloudBot Refresh '
+                                                        '<https://github.com/CloudBotIRC/CloudBot/>')
+
         # setup db
         db_path = self.config.get('database', 'sqlite:///cloudbot.db')
         self.db_engine = create_engine(db_path)

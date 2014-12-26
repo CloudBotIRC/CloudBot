@@ -14,8 +14,10 @@ def init(db):
 
 
 @hook.command(autohelp=False)
-def horoscope(text, db, notice, nick):
+def horoscope(text, db, bot, notice, nick):
     """<sign> - get your horoscope"""
+
+    headers = {'User-Agent': bot.user_agent}
 
     # check if the user asked us not to save his details
     dontsave = text.endswith(" dontsave")
@@ -37,7 +39,7 @@ def horoscope(text, db, notice, nick):
     url = "http://my.horoscope.com/astrology/free-daily-horoscope-{}.html".format(sign)
 
     try:
-        request = requests.get(url)
+        request = requests.get(url, headers=headers)
         request.raise_for_status()
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         return "Could not get horoscope: {}.".format(e)

@@ -13,3 +13,4 @@ requests-oauthlib
 tweepy
 pyenchant
 pythonwhois
+imgurpython

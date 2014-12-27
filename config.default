@@ -54,6 +54,8 @@
         "twitter_consumer_secret": "",
         "twitter_access_token": "",
         "twitter_access_secret": "",
+        "imgur_client_id": "",
+        "imgur_client_secret": "",
         "wunderground": "",
         "googletranslate": "",
         "rdio_key": "",

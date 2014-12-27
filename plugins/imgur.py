@@ -2,81 +2,88 @@ import re
 import random
 
 from cloudbot import hook
-from cloudbot.util import http, web
+from cloudbot.util import web
 
-base_url = "http://reddit.com/r/{}/.json"
-imgur_re = re.compile(r'http://(?:i\.)?imgur\.com/(a/)?(\w+\b(?!/))\.?\w?')
-
-album_api = "https://api.imgur.com/3/album/{}/images.json"
+from imgurpython import ImgurClient
 
 
-def is_valid(data):
-    if data["domain"] in ["i.imgur.com", "imgur.com"]:
-        return True
+@hook.onload()
+def load_api(bot):
+    global imgur_api
+
+    client_id = bot.config.get("api_keys", {}).get("imgur_client_id")
+    client_secret = bot.config.get("api_keys", {}).get("imgur_client_secret")
+
+    if None in (client_id, client_secret):
+        imgur_api = None
+        return
     else:
-        return False
+        imgur_api = ImgurClient(client_id, client_secret)
+
 
 
 @hook.command(autohelp=False)
 def imgur(text):
-    """[subreddit] - returns a link to the first page of imgur images from [subreddit],
-     or the first page of all imgur images if no subreddit is provided"""
+    """[search term] / [/r/subreddit] / memes / random - returns a link to a random imgur image based on your input. if
+    no input is given the bot will get an image from the imgur frontpage """
+    text = text.strip().lower()
+
+    if not imgur_api:
+        return "No imgur API details"
+
     if text:
-        # see if the input ends with "nsfw"
-        show_nsfw = text.endswith(" nsfw")
+        reddit_search = re.search(r"/r/([^\s/]+)", text)
 
-        # remove "nsfw" from the input string after checking for it
-        if show_nsfw:
-            text = text[:-5].strip().lower()
-
-        url = base_url.format(text.strip())
+        if reddit_search:
+            subreddit = reddit_search.groups()[0]
+            items = imgur_api.subreddit_gallery(subreddit)
+        elif text in ("meme", "memes"):
+            items = imgur_api.memes_subgallery()
+        elif text == "random":
+            page = random.randint(1,50)
+            items = imgur_api.gallery_random(page=page)
+        else:
+            items = imgur_api.gallery_search(text)
     else:
-        url = "http://www.reddit.com/domain/imgur.com/.json"
-        show_nsfw = False
+        items = imgur_api.gallery()
 
+    # if the item has no title, we don't want it. ugh >_>
+    items = [item for item in items if item.title]
+
+    random.shuffle(items)
+    item = random.choice(items)
+
+    tags = []
+    print(item.title)
+
+    # remove unslightly full stops
+    if item.title.endswith("."):
+        title = item.title[:-1]
+    else:
+        title = item.title
+
+    # if it's an imgur meme, add the meme name
     try:
-        data = http.get_json(url, user_agent=http.ua_chrome)
-    except Exception as e:
-        return "Error: " + str(e)
+        title = "\x02{}\x02 - {}".format(item.meme_metadata["meme_name"].lower(), title)
+    except:
+        # this is a super un-important thing, so if it fails we don't care, carry on
+        pass
 
-    data = data["data"]["children"]
-    random.shuffle(data)
+    # if the item has a tag, show that
+    if item.section:
+        tags.append(item.section)
 
-    # filter list to only have imgur links
-    filtered_posts = [i["data"] for i in data if is_valid(i["data"])]
+    # if the item is nsfw, show that
+    if item.nsfw:
+        tags.append("nsfw")
 
-    if not filtered_posts:
-        return "No images found."
-
-    items = []
-
-    headers = {
-        "Authorization": "Client-ID b5d127e6941b07a"
-    }
-
-    # loop over the list of posts
-    for post in filtered_posts:
-        if post["over_18"] and not show_nsfw:
-            continue
-
-        match = imgur_re.search(post["url"])
-        if match.group(1) == 'a/':
-            # post is an album
-            url = album_api.format(match.group(2))
-            images = http.get_json(url, headers=headers)["data"]
-
-            # loop over the images in the album and add to the list
-            for image in images:
-                items.append(image["id"])
-
-        elif match.group(2) is not None:
-            # post is an image
-            items.append(match.group(2))
-
-    if not items:
-        return "No images found (use .imgur <subreddit> nsfw to show explicit content)"
-
-    if show_nsfw:
-        return "{} \x02NSFW\x02".format(web.try_shorten("http://imgur.com/" + ','.join(items)))
+    # if the search was a subreddit search, add the reddit comment link
+    if reddit_search:
+        reddit_url = web.try_shorten("http://reddit.com" + item.reddit_comments)
+        url = "{} ({})".format(item.link, reddit_url)
     else:
-        return web.try_shorten("http://imgur.com/" + ','.join(items))
+        url = "{}".format(item.link)
+
+    tag_str = "[\x02" + ("\x02, \x02".join(tags)) + "\x02] " if tags else ""
+
+    return '{}"{}" - {}'.format(tag_str, title, url)

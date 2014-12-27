@@ -1,24 +1,33 @@
 import re
-import requests
 
+import requests
 from bs4 import BeautifulSoup, NavigableString, Tag
 
 from cloudbot import hook
 from cloudbot.util import web
 from cloudbot.util.formatting import truncate_str
 
+
+class SteamError(Exception):
+    pass
+
+
 steam_re = re.compile(r'(.*:)//(store.steampowered.com)(:[0-9]+)?(.*)', re.I)
 
 
-# TODO: this should really just return a info dict and have the formatting in another function
-def get_steam_info(url):
+def get_data(url):
     """
-    takes a URL to a steam store page and returns a formatted info string
+    takes a URL to a steam store page and returns a dict of info
     :param url: string
-    :return: string
+    :return: dict
     """
-    page = requests.get(url).text
-    soup = BeautifulSoup(page, 'lxml', from_encoding="utf-8")
+    try:
+        request = requests.get(url)
+        request.raise_for_status()
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+        raise SteamError("Could not get game info: {}".format(e))
+
+    soup = BeautifulSoup(request.text, 'lxml', from_encoding="utf-8")
 
     data = {"name": soup.find('div', {'class': 'apphub_AppName'}).text,
             "desc": truncate_str(soup.find('meta', {'name': 'description'})['content'].strip(), 80)}
@@ -61,24 +70,57 @@ def get_steam_info(url):
                     data[title] = text
                     continue
 
-    print(data)
+    price_div = soup.find('div', {'class': 'game_purchase_action_bg'})
 
-    data["price"] = soup.find('div', {'class': 'game_purchase_price price'}).text.strip()
+    if price_div.find('div', {'class': 'discount_block game_purchase_discount'}):
+        data["discounted"] = True
+        data["price"] = price_div.find('div', {'class': 'discount_final_price'}).text.strip()
+        data["price_original"] = price_div.find('div', {'class': 'discount_original_price'}).text.strip()
+    else:
+        data["discounted"] = False
+        data["price"] = price_div.find('div', {'class': 'game_purchase_price price'}).text.strip()
+        data["price_original"] = data["price"]
+
     data["genre"] = data["genre"].lower()
 
-    return "\x02{name}\x02 - {desc} - \x02{genre}\x02 - released \x02{release date}\x02" \
-           " - \x02{price}\x02".format(**data)
+    return data
 
 
 @hook.regex(steam_re)
 def steam_url(match):
-    return get_steam_info("http://store.steampowered.com" + match.group(4))
+    data = get_data("http://store.steampowered.com" + match.group(4))
+
+    if data["discounted"]:
+        return "\x02{name}\x02 - {desc} - \x02{genre}\x02 - released \x02{release date}\x02" \
+               " - \x02{price}\x02 (was \x02{price_original}\x02)".format(**data)
+    else:
+        return "\x02{name}\x02 - {desc} - \x02{genre}\x02 - released \x02{release date}\x02" \
+               " - \x02{price}\x02".format(**data)
 
 
 @hook.command()
 def steam(text):
     """steam [search] - Search for specified game/trailer/DLC"""
-    page = requests.get("http://store.steampowered.com/search/?term=" + text).text
-    soup = BeautifulSoup(page, 'lxml', from_encoding="utf-8")
+    params = {'term': text.strip().lower()}
+
+    try:
+        request = requests.get("http://store.steampowered.com/search/", params=params)
+        request.raise_for_status()
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+        return "Could not get game info: {}".format(e)
+
+    soup = BeautifulSoup(request.text, 'lxml', from_encoding="utf-8")
     result = soup.find('a', {'class': 'search_result_row'})
-    return get_steam_info(result['href']) + " - " + web.try_shorten(result['href'])
+
+    if not result:
+        return "No game found."
+
+    data = get_data(result['href'])
+    data["short_url"] = web.try_shorten(result['href'])
+
+    if data["discounted"]:
+        return "\x02{name}\x02 - {desc} - \x02{genre}\x02 - released \x02{release date}\x02" \
+               " - \x02{price}\x02 (was \x02{price_original}\x02) - {short_url}".format(**data)
+    else:
+        return "\x02{name}\x02 - {desc} - \x02{genre}\x02 - released \x02{release date}\x02" \
+               " - \x02{price}\x02 - {short_url}".format(**data)

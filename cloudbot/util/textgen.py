@@ -29,6 +29,7 @@ class TextGenerator(object):
         # get a list of all text parts we need
         required_parts = TEMPLATE_RE.findall(text)
 
+        # do magic
         for required_part in required_parts:
             _parts = self.parts[required_part]
 
@@ -50,7 +51,7 @@ class TextGenerator(object):
                 population = [val for val, cnt in _weighted_parts for i in range(cnt)]
                 part = random.choice(population)
 
-            text = text.replace("{%s}" % required_part, part)
+            text = text.replace("{%s}" % required_part, part, 1)
 
         return text
 

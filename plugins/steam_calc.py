@@ -43,10 +43,10 @@ def get_data(user, currency="us"):
 
     # get all the data we need
     try:
-        data["status"] = soup.find('td', text='Status').find_next('td').text
-
         data["name"] = soup.find("h1", {"class": "header-title"}).find("a").text
         data["url"] = request.url
+
+        data["status"] = soup.find('td', text='Status').find_next('td').text
 
         data["value"] = soup.find("h1", {"class": "calculator-price"}).text
         data["value_sales"] = soup.find("h1", {"class": "calculator-price-lowest"}).text
@@ -81,6 +81,6 @@ def steamcalc(text):
 
     data["short_url"] = web.try_shorten(data["url"])
 
-    return "\x02{name}\x02 ({status}) has \x02{count}\x02 games with a total value of \x02{value}\x02" \
+    return "\x02{name}\x02 has \x02{count}\x02 games with a total value of \x02{value}\x02" \
            " (\x02{value_sales}\x02 during sales). \x02{count_unplayed}\x02" \
            " (\x02{percent_unplayed}%\x02) have never been played - {short_url}".format(**data)

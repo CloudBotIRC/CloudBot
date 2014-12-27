@@ -1,3 +1,5 @@
+import re
+
 import requests
 import bs4
 
@@ -9,7 +11,12 @@ class SteamError(Exception):
     pass
 
 
+def percentage(part, whole):
+    return 100 * float(part) / float(whole)
+
+
 CALC_URL = "https://steamdb.info/calculator/"
+PLAYED_RE = re.compile(r"(.*)\((.*)%\)")
 
 
 def get_data(user, currency="us"):
@@ -36,15 +43,26 @@ def get_data(user, currency="us"):
 
     # get all the data we need
     try:
+        data["status"] = soup.find('td', text='Status').find_next('td').text
+
         data["name"] = soup.find("h1", {"class": "header-title"}).find("a").text
         data["url"] = request.url
 
         data["value"] = soup.find("h1", {"class": "calculator-price"}).text
         data["value_sales"] = soup.find("h1", {"class": "calculator-price-lowest"}).text
 
-        data["count"] = soup.find("div",
-                                  {"class": "pull-right price-container"}).find("p").find("span", {"class":
-                                                                                          "number"}).text
+        data["count"] = int(soup.find("div",
+                                      {"class": "pull-right price-container"}).find("p").find("span", {"class":
+                                                                                                       "number"}).text)
+        played = soup.find('td', text='Games not played').find_next('td').text
+        played = PLAYED_RE.search(played).groups()
+
+        data["count_unplayed"] = int(played[0])
+        data["count_played"] = data["count"] - data["count_unplayed"]
+
+        data["percent_unplayed"] = round(percentage(data["count_unplayed"], data["count"]), 1)
+        data["percent_played"] = round(percentage(data["count_played"], data["count"]), 1)
+
     except AttributeError:
         raise SteamError("Could not read info, does this user exist?")
 
@@ -63,5 +81,6 @@ def steamcalc(text):
 
     data["short_url"] = web.try_shorten(data["url"])
 
-    return "\x02{name}\x02 has \x02{count}\x02 games with a total value of \x02{value}\x02!" \
-           " (\x02{value_sales}\x02 during sales) - {short_url}".format(**data)
+    return "\x02{name}\x02 ({status}) has \x02{count}\x02 games with a total value of \x02{value}\x02" \
+           " (\x02{value_sales}\x02 during sales). \x02{count_unplayed}\x02" \
+           " (\x02{percent_unplayed}%\x02) have never been played - {short_url}".format(**data)

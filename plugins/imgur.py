@@ -1,10 +1,10 @@
 import re
 import random
 
+from imgurpython import ImgurClient
+
 from cloudbot import hook
 from cloudbot.util import web
-
-from imgurpython import ImgurClient
 
 
 @hook.onload()
@@ -19,7 +19,6 @@ def load_api(bot):
         return
     else:
         imgur_api = ImgurClient(client_id, client_secret)
-
 
 
 @hook.command(autohelp=False)
@@ -55,7 +54,6 @@ def imgur(text):
     item = random.choice(items)
 
     tags = []
-    print(item.title)
 
     # remove unslightly full stops
     if item.title.endswith("."):

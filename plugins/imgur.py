@@ -40,11 +40,12 @@ def imgur(text):
         elif text in ("meme", "memes"):
             items = imgur_api.memes_subgallery()
         elif text == "random":
-            page = random.randint(1,50)
+            page = random.randint(1, 50)
             items = imgur_api.gallery_random(page=page)
         else:
             items = imgur_api.gallery_search(text)
     else:
+        reddit_search = False
         items = imgur_api.gallery()
 
     # if the item has no title, we don't want it. ugh >_>

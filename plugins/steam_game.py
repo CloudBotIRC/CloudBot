@@ -26,7 +26,8 @@ def get_steam_info(url):
     # get the element details_block
     details = soup.find('div', {'class': 'details_block'})
 
-    # loop over every <b></b> tag in details_block
+    # the following code parses over each bit of data in details_block
+    # and appends it to the data dict
     for b in details.findAll('b'):
         # get the contents of the <b></b> tag, which is our title
         title = b.text.lower().replace(":", "")
@@ -59,6 +60,8 @@ def get_steam_info(url):
                     # save it and continue the loop
                     data[title] = text
                     continue
+
+    print(data)
 
     data["price"] = soup.find('div', {'class': 'game_purchase_price price'}).text.strip()
     data["genre"] = data["genre"].lower()

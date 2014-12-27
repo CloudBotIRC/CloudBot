@@ -4,6 +4,7 @@ from pprint import pprint
 
 from cloudbot import hook
 
+
 @hook.command
 def whois(text):
     domain = text.strip().lower()
@@ -24,17 +25,13 @@ def whois(text):
     except:
         pass
 
-
     try:
         i = "\x02Expires\x02: {}".format(whois["expiration_date"][0].strftime("%d-%m-%Y"))
         info.append(i)
     except:
         pass
 
-
-
     pprint(whois)
-
 
     info_text = ", ".join(info)
     return "{} - {}".format(domain, info_text)

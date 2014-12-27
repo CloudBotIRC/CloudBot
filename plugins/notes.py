@@ -74,7 +74,7 @@ def add_note(db, server, user, text):
         note_id = max_id + 1
 
     query = table.insert().values(
-        note_id = note_id,
+        note_id=note_id,
         connection=server,
         user=user.lower(),
         text=text,

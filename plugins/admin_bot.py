@@ -75,7 +75,7 @@ def get_user_permissions(text, conn, mask, has_permission, notice):
     else:
         return "User {} has no elevated permissions".format(user)
 
-1
+
 @asyncio.coroutine
 @hook.command("ugroups", autohelp=False)
 def get_user_groups(text, conn, mask, has_permission, notice):

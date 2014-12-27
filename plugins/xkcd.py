@@ -23,7 +23,7 @@ def xkcd_info(xkcd_id, url=False):
 def xkcd_search(term):
     search_term = requests.utils.quote(term)
     request = requests.get("http://www.ohnorobot.com/index.pl?s={}&Search=Search&"
-                         "comic=56&e=0&n=0&b=0&m=0&d=0&t=0".format(search_term))
+                           "comic=56&e=0&n=0&b=0&m=0&d=0&t=0".format(search_term))
     soup = BeautifulSoup(request.text)
     result = soup.find('li')
     if result:

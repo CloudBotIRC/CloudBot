@@ -7,7 +7,7 @@ from cloudbot import hook
 from cloudbot.util import web, formatting
 
 
-steam_re = re.compile(r'.*://store.steampowered.com/app/([0-9]+)?.*', re.I)
+steam_re = re.compile(r'store.steampowered.com/app/([0-9]+)?.*', re.I)
 
 API_URL = "http://store.steampowered.com/api/appdetails/"
 STORE_URL = "http://store.steampowered.com/app/{}/"
@@ -19,11 +19,7 @@ def format_data(app_id, show_url=True):
     :param appid: string
     :return: string
     """
-
-    if isinstance(app_id, (tuple, list)):
-        params = {'appids': ", ".join(app_id)}
-    else:
-        params = {'appids': app_id}
+    params = {'appids': app_id}
 
     try:
         request = requests.get(API_URL, params=params)

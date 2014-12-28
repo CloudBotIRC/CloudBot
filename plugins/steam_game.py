@@ -85,7 +85,6 @@ def steam(text):
         request.raise_for_status()
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         return "Could not get game info: {}".format(e)
-
     soup = BeautifulSoup(request.text, 'lxml', from_encoding="utf-8")
     result = soup.find('a', {'class': 'search_result_row'})
 
@@ -93,5 +92,4 @@ def steam(text):
         return "No game found."
 
     app_id = result['data-ds-appid']
-
     return format_data(app_id)

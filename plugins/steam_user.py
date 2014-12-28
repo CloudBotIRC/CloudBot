@@ -15,15 +15,15 @@ class SteamError(Exception):
 
 
 def convert_id32(id_64):
-    steamID = []
-    steamID.append("STEAM_0:")
-    steamIDLastPart = id_64 - ID_BASE
-    if steamIDLastPart % 2 == 0:
-        steamID.append("0:")
+    out = []
+    out.append("STEAM_0:")
+    final = id_64 - ID_BASE
+    if final % 2 == 0:
+        out.append("0:")
     else:
-        steamID.append("1:")
-    steamID.append(str(steamIDLastPart // 2))
-    return "".join(steamID)
+        out.append("1:")
+    out.append(str(final // 2))
+    return "".join(out)
 
 
 def convert_id3(id_64):

@@ -1,101 +1,82 @@
 import re
 
 import requests
-from bs4 import BeautifulSoup, NavigableString, Tag
+from bs4 import BeautifulSoup
 
 from cloudbot import hook
-from cloudbot.util import web
-from cloudbot.util.formatting import truncate_str
+from cloudbot.util import web, formatting
 
 
-class SteamError(Exception):
-    pass
+steam_re = re.compile(r'.*://store.steampowered.com/app/([0-9]+)?.*', re.I)
+
+API_URL = "http://store.steampowered.com/api/appdetails/"
+STORE_URL = "http://store.steampowered.com/app/{}/"
 
 
-steam_re = re.compile(r'(.*:)//(store.steampowered.com)(:[0-9]+)?(.*)', re.I)
-
-
-def get_data(url):
+def format_data(app_id, show_url=True):
     """
-    takes a URL to a steam store page and returns a dict of info
-    :param url: string
-    :return: dict
+    takes a steam appid and returns a formatted string with info
+    :param appid: string
+    :return: string
     """
+
+    if isinstance(app_id, (tuple, list)):
+        params = {'appids': ", ".join(app_id)}
+    else:
+        params = {'appids': app_id}
+
     try:
-        request = requests.get(url)
+        request = requests.get(API_URL, params=params)
         request.raise_for_status()
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
-        raise SteamError("Could not get game info: {}".format(e))
+        return "Could not get game info: {}".format(e)
 
-    soup = BeautifulSoup(request.text, 'lxml', from_encoding="utf-8")
+    data = request.json()
+    game = data[app_id]["data"]
 
-    data = {"name": soup.find('div', {'class': 'apphub_AppName'}).text,
-            "desc": truncate_str(soup.find('meta', {'name': 'description'})['content'].strip(), 80)}
+    out = []
 
-    # get the element details_block
-    details = soup.find('div', {'class': 'details_block'})
+    # basic info
+    out.append("\x02{}\x02".format(game["name"]))
 
-    # the following code parses over each bit of data in details_block
-    # and appends it to the data dict
-    for b in details.findAll('b'):
-        # get the contents of the <b></b> tag, which is our title
-        title = b.text.lower().replace(":", "")
-        if title == "languages":
-            # we have all we need!
-            break
+    desc = formatting.strip_html(game["about_the_game"])
+    out.append(formatting.truncate_str(desc, 70))
 
-        # find the next element directly after the <b></b> tag
-        next_element = b.nextSibling
-        if next_element:
-            # if the element is some text
-            if isinstance(next_element, NavigableString):
-                text = next_element.string.strip()
-                if text:
-                    # we found valid text, save it and continue the loop
-                    data[title] = text
-                    continue
-                else:
-                    # the text is blank - sometimes this means there are
-                    # useless spaces or tabs between the <b> and <a> tags.
-                    # so we find the next <a> tag and carry on to the next
-                    # bit of code below
-                    next_element = next_element.find_next('a', href=True)
+    # genres
+    genres = ", ".join([g['description'] for g in game["genres"]])
+    out.append("\x02{}\x02".format(genres))
 
-            # if the element is an <a></a> tag
-            if isinstance(next_element, Tag) and next_element.name == 'a':
-                text = next_element.string.strip()
-                if text:
-                    # we found valid text (in the <a></a> tag),
-                    # save it and continue the loop
-                    data[title] = text
-                    continue
-
-    price_div = soup.find('div', {'class': 'game_purchase_action_bg'})
-
-    if price_div.find('div', {'class': 'discount_block game_purchase_discount'}):
-        data["discounted"] = True
-        data["price"] = price_div.find('div', {'class': 'discount_final_price'}).text.strip()
-        data["price_original"] = price_div.find('div', {'class': 'discount_original_price'}).text.strip()
+    # release date
+    if game['release_date']['coming_soon']:
+        out.append("coming \x02{}\x02".format(game['release_date']['date']))
     else:
-        data["discounted"] = False
-        data["price"] = price_div.find('div', {'class': 'game_purchase_price price'}).text.strip()
-        data["price_original"] = data["price"]
+        out.append("released \x02{}\x02".format(game['release_date']['date']))
 
-    data["genre"] = data["genre"].lower()
+    # pricing
+    if game['is_free']:
+        out.append("\x02free\x02")
+    else:
+        price = game['price_overview']
 
-    return data
+        if price['final'] == price['initial']:
+            out.append("\x02$%d.%02d\x02" % divmod(price['final'], 100))
+        else:
+            price_now = "$%d.%02d" % divmod(price['final'], 100)
+            price_original = "$%d.%02d" % divmod(price['initial'], 100)
+
+            out.append("\x02{}\x02 (was \x02{}\x02)".format(price_now, price_original))
+
+    if show_url:
+        url = web.try_shorten(STORE_URL.format(game['steam_appid']))
+        out.append(url)
+
+    return " - ".join(out)
 
 
 @hook.regex(steam_re)
 def steam_url(match):
-    data = get_data("http://store.steampowered.com" + match.group(4))
-
-    if data["discounted"]:
-        return "\x02{name}\x02 - {desc} - \x02{genre}\x02 - released \x02{release date}\x02" \
-               " - \x02{price}\x02 (was \x02{price_original}\x02)".format(**data)
-    else:
-        return "\x02{name}\x02 - {desc} - \x02{genre}\x02 - released \x02{release date}\x02" \
-               " - \x02{price}\x02".format(**data)
+    app_id = match.group(1)
+    return format_data(app_id, show_url=False)
 
 
 @hook.command()
@@ -115,12 +96,6 @@ def steam(text):
     if not result:
         return "No game found."
 
-    data = get_data(result['href'])
-    data["short_url"] = web.try_shorten(result['href'])
+    app_id = result['data-ds-appid']
 
-    if data["discounted"]:
-        return "\x02{name}\x02 - {desc} - \x02{genre}\x02 - released \x02{release date}\x02" \
-               " - \x02{price}\x02 (was \x02{price_original}\x02) - {short_url}".format(**data)
-    else:
-        return "\x02{name}\x02 - {desc} - \x02{genre}\x02 - released \x02{release date}\x02" \
-               " - \x02{price}\x02 - {short_url}".format(**data)
+    return format_data(app_id)

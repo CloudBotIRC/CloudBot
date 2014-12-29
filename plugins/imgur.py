@@ -47,6 +47,9 @@ def imgur(text):
         reddit_search = False
         items = imgur_api.gallery()
 
+    if not items:
+        return "No results found."
+
     # if the item has no title, we don't want it. ugh >_>
     items = [item for item in items if item.title]
 
@@ -86,3 +89,42 @@ def imgur(text):
     tag_str = "[\x02" + ("\x02, \x02".join(tags)) + "\x02] " if tags else ""
 
     return '{}"{}" - {}'.format(tag_str, title, url)
+
+
+@hook.command(autohelp=False)
+def multiimgur(text):
+    """[search term] / [/r/subreddit] / memes / random - returns a link to lots of random images based on your input. if
+    no input is given the bot will get images from the imgur frontpage """
+    text = text.strip().lower()
+
+    if not imgur_api:
+        return "No imgur API details"
+
+    if text:
+        reddit_search = re.search(r"/r/([^\s/]+)", text)
+
+        if reddit_search:
+            subreddit = reddit_search.groups()[0]
+            items = imgur_api.subreddit_gallery(subreddit)
+        elif text in ("meme", "memes"):
+            items = imgur_api.memes_subgallery()
+        elif text == "random":
+            page = random.randint(1, 50)
+            items = imgur_api.gallery_random(page=page)
+        else:
+            items = imgur_api.gallery_search(text)
+    else:
+        items = imgur_api.gallery()
+
+    if not items:
+        return "No results found."
+
+    random.shuffle(items)
+    items = items[:10]
+
+    nsfw = any([item.nsfw for item in items])
+
+    if nsfw:
+        return "[\x02some nsfw\x02] " + ", ".join([item.link for item in items])
+    else:
+        return ", ".join([item.link for item in items])

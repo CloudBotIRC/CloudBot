@@ -44,7 +44,8 @@ def imgur(text):
             page = random.randint(1, 50)
             items = imgur_api.gallery_random(page=page)
         else:
-            items = imgur_api.gallery_search(text)
+            page = random.randint(1, 5)
+            items = imgur_api.gallery_search(text, page=page)
     else:
         reddit_search = False
         items = imgur_api.gallery()
@@ -116,16 +117,19 @@ def multiimgur(text, conn):
         else:
             items = imgur_api.gallery_search(text)
     else:
-        items = imgur_api.gallery()
+        page = random.randint(1, 5)
+        items = imgur_api.gallery(page=page)
 
     if not items:
         return "No results found."
 
     random.shuffle(items)
+    items = items[:50]
+
     nsfw = any([item.nsfw for item in items])
 
     params = {
-        'title': '{} presents: "{}"'.format(conn.nick, text),
+        'title': '{} presents: "{}"'.format(conn.nick, text or "random images"),
         'ids': ",".join([item.id for item in items]),
         'layout': 'blog',
         'account_url': None

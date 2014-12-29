@@ -6,6 +6,8 @@ from imgurpython import ImgurClient
 from cloudbot import hook
 from cloudbot.util import web
 
+ImgurClient.logged_in = lambda x: None
+
 
 @hook.onload()
 def load_api(bot):
@@ -92,7 +94,7 @@ def imgur(text):
 
 
 @hook.command(autohelp=False)
-def multiimgur(text):
+def multiimgur(text, conn):
     """[search term] / [/r/subreddit] / memes / random - returns a link to lots of random images based on your input. if
     no input is given the bot will get images from the imgur frontpage """
     text = text.strip().lower()
@@ -120,11 +122,17 @@ def multiimgur(text):
         return "No results found."
 
     random.shuffle(items)
-    items = items[:10]
-
     nsfw = any([item.nsfw for item in items])
 
+    params = {
+        'title': '{} presents: "{}"'.format(conn.nick, text),
+        'ids': ",".join([item.id for item in items]),
+        'layout': 'blog',
+        'account_url': None
+    }
+    album = imgur_api.create_album(params)
+
     if nsfw:
-        return "[\x02some nsfw\x02] " + ", ".join([item.link for item in items])
+        return "[\x02nsfw\x02] https://imgur.com/a/" + album["id"]
     else:
-        return ", ".join([item.link for item in items])
+        return "https://imgur.com/a/" + album["id"]

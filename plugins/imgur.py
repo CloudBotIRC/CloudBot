@@ -98,8 +98,8 @@ def imgur(text):
     return '{}"{}" - {}'.format(tag_str, title, url)
 
 
-@hook.command(autohelp=False)
-def multiimgur(text, conn):
+@hook.command("imguralbum", "multiimgur", "imgalbum", autohelp=False)
+def imguralbum(text, conn):
     """[search term] / [/r/subreddit] / memes / random - returns a link to lots of random images based on your input. if
     no input is given the bot will get images from the imgur frontpage """
     text = text.strip().lower()

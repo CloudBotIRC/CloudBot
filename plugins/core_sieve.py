@@ -6,6 +6,8 @@ from time import time
 from cloudbot import hook
 from cloudbot.util.tokenbucket import TokenBucket
 
+init = []
+
 TOKENS = 17.5
 RESTORE_RATE = 2.5
 MESSAGE_COST = 5
@@ -29,8 +31,13 @@ def task_clear(loop):
 @asyncio.coroutine
 @hook.irc_raw('004')
 def init_tasks(loop, conn):
+    if conn.name in init:
+        # tasks already started
+        return
+
     logger.info("[{}|sieve] Bot is starting ratelimiter cleanup task.".format(conn.readable_name))
     loop.call_later(600, task_clear, loop)
+    init.append[conn.name]
 
 
 @asyncio.coroutine

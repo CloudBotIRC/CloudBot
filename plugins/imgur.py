@@ -29,7 +29,7 @@ def load_api(bot):
 
 @hook.command(autohelp=False)
 def imgur(text):
-    """[search term] / [/r/subreddit] / memes / random - returns a link to a random imgur image based on your input. if
+    """[search term] / [/r/subreddit] / [/user/username] / memes / random - returns a link to a random imgur image based on your input. if
     no input is given the bot will get an image from the imgur frontpage """
     text = text.strip().lower()
 
@@ -104,7 +104,7 @@ def imgur(text):
 
 @hook.command("imguralbum", "multiimgur", "imgalbum", autohelp=False)
 def imguralbum(text, conn):
-    """[search term] / [/r/subreddit] / memes / random - returns a link to lots of random images based on your input. if
+    """[search term] / [/r/subreddit] / [/user/username] / memes / random - returns a link to lots of random images based on your input. if
     no input is given the bot will get images from the imgur frontpage """
     text = text.strip().lower()
 

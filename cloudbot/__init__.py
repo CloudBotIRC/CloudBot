@@ -60,7 +60,9 @@ def _setup():
                 "stream": "ext://sys.stdout"
             },
             "file": {
-                "class": "logging.FileHandler",
+                "class": "logging.handlers.RotatingFileHandler",
+                "maxBytes": 1000000,
+                "backupCount": 10,
                 "formatter": "full",
                 "level": "INFO",
                 "encoding": "utf-8",
@@ -80,7 +82,9 @@ def _setup():
 
     if developer_mode["file_debug"]:
         dict_config["handlers"]["debug_file"] = {
-            "class": "logging.FileHandler",
+            "class": "logging.handlers.RotatingFileHandler",
+            "maxBytes": 1000000,
+            "backupCount": 10,
             "formatter": "full",
             "encoding": "utf-8",
             "level": "DEBUG",

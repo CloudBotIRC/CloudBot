@@ -13,6 +13,32 @@ from cloudbot.util import web
 ImgurClient.logged_in = lambda x: None
 
 
+def get_items(text):
+    if text:
+        reddit_search = re.search(r"/r/([^\s/]+)", text)
+        user_search = re.search(r"/user/([^\s/]+)", text)
+
+        if reddit_search:
+            subreddit = reddit_search.groups()[0]
+            items = imgur_api.subreddit_gallery(subreddit)
+        elif user_search:
+            user = user_search.groups()[0]
+            items = imgur_api.get_account_submissions(user)
+        elif text in ("meme", "memes"):
+            items = imgur_api.memes_subgallery()
+        elif text == "random":
+            page = random.randint(1, 50)
+            items = imgur_api.gallery_random(page=page)
+        else:
+            page = random.randint(1, 5)
+            items = imgur_api.gallery_search(text, page=page)
+    else:
+        reddit_search = False
+        items = imgur_api.gallery()
+
+    return items, reddit_search
+
+
 @hook.onload()
 def load_api(bot):
     global imgur_api
@@ -36,27 +62,7 @@ def imgur(text):
     if not imgur_api:
         return "No imgur API details"
 
-    if text:
-        reddit_search = re.search(r"/r/([^\s/]+)", text)
-        user_search = re.search(r"/user/([^\s/]+)", text)
-
-        if reddit_search:
-            subreddit = reddit_search.groups()[0]
-            items = imgur_api.subreddit_gallery(subreddit)
-        elif user_search:
-            user = user_search.groups()[0]
-            items = imgur_api.get_account_submissions(user)
-        elif text in ("meme", "memes"):
-            items = imgur_api.memes_subgallery()
-        elif text == "random":
-            page = random.randint(1, 50)
-            items = imgur_api.gallery_random(page=page)
-        else:
-            page = random.randint(1, 5)
-            items = imgur_api.gallery_search(text, page=page)
-    else:
-        reddit_search = False
-        items = imgur_api.gallery()
+    items, is_reddit = get_items(text)
 
     if not items:
         return "No results found."
@@ -91,7 +97,7 @@ def imgur(text):
         tags.append("nsfw")
 
     # if the search was a subreddit search, add the reddit comment link
-    if reddit_search:
+    if is_reddit:
         reddit_url = web.try_shorten("http://reddit.com" + item.reddit_comments)
         url = "{} ({})".format(item.link, reddit_url)
     else:
@@ -111,26 +117,7 @@ def imguralbum(text, conn):
     if not imgur_api:
         return "No imgur API details"
 
-    if text:
-        reddit_search = re.search(r"/r/([^\s/]+)", text)
-        user_search = re.search(r"/user/([^\s/]+)", text)
-
-        if reddit_search:
-            subreddit = reddit_search.groups()[0]
-            items = imgur_api.subreddit_gallery(subreddit)
-        elif user_search:
-            user = user_search.groups()[0]
-            items = imgur_api.get_account_submissions(user)
-        elif text in ("meme", "memes"):
-            items = imgur_api.memes_subgallery()
-        elif text == "random":
-            page = random.randint(1, 50)
-            items = imgur_api.gallery_random(page=page)
-        else:
-            items = imgur_api.gallery_search(text)
-    else:
-        page = random.randint(1, 5)
-        items = imgur_api.gallery(page=page)
+    items, is_reddit = get_items(text)
 
     if not items:
         return "No results found."

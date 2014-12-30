@@ -38,10 +38,14 @@ def imgur(text):
 
     if text:
         reddit_search = re.search(r"/r/([^\s/]+)", text)
+        user_search = re.search(r"/user/([^\s/]+)", text)
 
         if reddit_search:
             subreddit = reddit_search.groups()[0]
             items = imgur_api.subreddit_gallery(subreddit)
+        elif user_search:
+            user = user_search.groups()[0]
+            items = imgur_api.get_account_submissions(user)
         elif text in ("meme", "memes"):
             items = imgur_api.memes_subgallery()
         elif text == "random":
@@ -109,10 +113,14 @@ def imguralbum(text, conn):
 
     if text:
         reddit_search = re.search(r"/r/([^\s/]+)", text)
+        user_search = re.search(r"/user/([^\s/]+)", text)
 
         if reddit_search:
             subreddit = reddit_search.groups()[0]
             items = imgur_api.subreddit_gallery(subreddit)
+        elif user_search:
+            user = user_search.groups()[0]
+            items = imgur_api.get_account_submissions(user)
         elif text in ("meme", "memes"):
             items = imgur_api.memes_subgallery()
         elif text == "random":

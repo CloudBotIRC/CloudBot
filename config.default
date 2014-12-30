@@ -12,8 +12,11 @@
             "nick": "MyCloudBot",
             "user": "cloudbot",
             "real_name": "CloudBotRefresh - http://cloudbot.pw",
-            "avoid_notices": False,
-            "channels": ["#cloudbot", "#cloudbot2"],
+            "avoid_notices": false,
+            "channels": [
+                "#cloudbot",
+                "#cloudbot2"
+            ],
             "disabled_commands": [],
             "acls": {},
             "nickserv": {
@@ -25,21 +28,41 @@
             },
             "permissions": {
                 "admins": {
-                    "perms": ["addfactoid", "delfactoid", "ignore", "botcontrol", "plpaste", "permissions_users", "op"],
-                    "users": ["examplea!user@example.com", "exampleb!user@example.com"]
+                    "perms": [
+                        "addfactoid",
+                        "delfactoid",
+                        "ignore",
+                        "botcontrol",
+                        "plpaste",
+                        "permissions_users",
+                        "op"
+                    ],
+                    "users": [
+                        "examplea!user@example.com",
+                        "exampleb!user@example.com"
+                    ]
                 },
                 "moderators": {
-                    "perms": ["addfactoid", "delfactoid", "ignore"],
-                    "users": ["examplec!user@example.com"]
+                    "perms": [
+                        "addfactoid",
+                        "delfactoid",
+                        "ignore"
+                    ],
+                    "users": [
+                        "examplec!user@example.com"
+                    ]
                 },
                 "trusted": {
-                    "perms": ["addfactoid", "delfactoid"],
-                    "users": ["exampled!user@example.com"]
+                    "perms": [
+                        "addfactoid",
+                        "delfactoid"
+                    ],
+                    "users": [
+                        "exampled!user@example.com"
+                    ]
                 }
             },
-            "plugins": {
-
-            },
+            "plugins": {},
             "command_prefix": "."
         }
     ],
@@ -65,7 +88,9 @@
     "user_agent": "CloudBot/3.0 - CloudBot Refresh <https://github.com/CloudBotIRC/CloudBot/>",
     "plugin_loading": {
         "use_whitelist": false,
-        "blacklist": ["update"],
+        "blacklist": [
+            "update"
+        ],
         "whitelist": []
     },
     "developer_mode": {

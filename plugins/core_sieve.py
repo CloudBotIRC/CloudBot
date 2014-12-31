@@ -31,6 +31,7 @@ def task_clear(loop):
 @asyncio.coroutine
 @hook.irc_raw('004')
 def init_tasks(loop, conn):
+    global inited
     if conn.name in inited:
         # tasks already started
         return

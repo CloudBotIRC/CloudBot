@@ -62,7 +62,7 @@ def _setup():
             "file": {
                 "class": "logging.handlers.RotatingFileHandler",
                 "maxBytes": 1000000,
-                "backupCount": 10,
+                "backupCount": 5,
                 "formatter": "full",
                 "level": "INFO",
                 "encoding": "utf-8",
@@ -84,7 +84,7 @@ def _setup():
         dict_config["handlers"]["debug_file"] = {
             "class": "logging.handlers.RotatingFileHandler",
             "maxBytes": 1000000,
-            "backupCount": 10,
+            "backupCount": 5,
             "formatter": "full",
             "encoding": "utf-8",
             "level": "DEBUG",

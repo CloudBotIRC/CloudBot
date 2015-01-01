@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 from cloudbot import hook
 from cloudbot.util import web, formatting
 
+# CONSTANTS
 
 steam_re = re.compile(r'store.steampowered.com/app/([0-9]+)?.*', re.I)
 
@@ -13,10 +14,12 @@ API_URL = "http://store.steampowered.com/api/appdetails/"
 STORE_URL = "http://store.steampowered.com/app/{}/"
 
 
-def format_data(app_id, show_url=True):
+# OTHER FUNCTIONS
+
+def format_game(app_id, show_url=True):
     """
-    takes a steam appid and returns a formatted string with info
-    :param appid: string
+    takes a steam app id and returns a formatted string with info
+    :param app_id: string
     :return: string
     """
     params = {'appids': app_id}
@@ -69,13 +72,9 @@ def format_data(app_id, show_url=True):
     return " - ".join(out)
 
 
-@hook.regex(steam_re)
-def steam_url(match):
-    app_id = match.group(1)
-    return format_data(app_id, show_url=False)
+# HOOK FUNCTIONS
 
-
-@hook.command()
+@hook.command
 def steam(text):
     """steam [search] - Search for specified game/trailer/DLC"""
     params = {'term': text.strip().lower()}
@@ -85,11 +84,17 @@ def steam(text):
         request.raise_for_status()
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         return "Could not get game info: {}".format(e)
-    soup = BeautifulSoup(request.text, 'lxml', from_encoding="utf-8")
+    soup = BeautifulSoup(request.text, from_encoding="utf-8")
     result = soup.find('a', {'class': 'search_result_row'})
 
     if not result:
         return "No game found."
 
     app_id = result['data-ds-appid']
-    return format_data(app_id)
+    return format_game(app_id)
+
+
+@hook.regex(steam_re)
+def steam_url(match):
+    app_id = match.group(1)
+    return format_game(app_id, show_url=False)

@@ -44,7 +44,7 @@ def format_item(item, show_url=True):
     if item["FreeShippingFlag"]:
         tags.append("\x02Free Shipping\x02")
 
-    if item["IsPremierItem"]:
+    if item.get("IsPremierItem"):
         tags.append("\x02Premier\x02")
 
     if item["IsFeaturedItem"]:

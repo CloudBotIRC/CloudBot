@@ -201,65 +201,72 @@ class CloudBot:
         """
         :type event: Event
         """
-        run_before_tasks = []
-        tasks = []
-        command_prefix = event.conn.config.get('command_prefix', '.')
+        try:
+            run_before_tasks = []
+            tasks = []
+            command_prefix = event.conn.config.get('command_prefix', '.')
 
-        # Raw IRC hook
-        for raw_hook in self.plugin_manager.catch_all_triggers:
-            # run catch-all coroutine hooks before all others - TODO: Make this a plugin argument
-            if not raw_hook.threaded:
-                run_before_tasks.append(
-                    self.plugin_manager.launch(raw_hook, Event(hook=raw_hook, base_event=event)))
-            else:
-                tasks.append(self.plugin_manager.launch(raw_hook, Event(hook=raw_hook, base_event=event)))
-        if event.irc_command in self.plugin_manager.raw_triggers:
-            for raw_hook in self.plugin_manager.raw_triggers[event.irc_command]:
-                tasks.append(self.plugin_manager.launch(raw_hook, Event(hook=raw_hook, base_event=event)))
-
-        # Event hooks
-        if event.type in self.plugin_manager.event_type_hooks:
-            for event_hook in self.plugin_manager.event_type_hooks[event.type]:
-                tasks.append(self.plugin_manager.launch(event_hook, Event(hook=event_hook, base_event=event)))
-
-        if event.type is EventType.message:
-            # Commands
-            if event.chan.lower() == event.nick.lower():  # private message, no command prefix
-                command_re = r'(?i)^(?:[{}]?|{}[,;:]+\s+)(\w+)(?:$|\s+)(.*)'.format(command_prefix, event.conn.nick)
-            else:
-                command_re = r'(?i)^(?:[{}]|{}[,;:]+\s+)(\w+)(?:$|\s+)(.*)'.format(command_prefix, event.conn.nick)
-
-            match = re.match(command_re, event.content)
-
-            if match:
-                command = match.group(1).lower()
-                if command in self.plugin_manager.commands:
-                    command_hook = self.plugin_manager.commands[command]
-                    command_event = CommandEvent(hook=command_hook, text=match.group(2).strip(),
-                                                 triggered_command=command, base_event=event)
-                    tasks.append(self.plugin_manager.launch(command_hook, command_event))
+            # Raw IRC hook
+            for raw_hook in self.plugin_manager.catch_all_triggers:
+                # run catch-all coroutine hooks before all others - TODO: Make this a plugin argument
+                if not raw_hook.threaded:
+                    run_before_tasks.append(
+                        self.plugin_manager.launch(raw_hook, Event(hook=raw_hook, base_event=event)))
                 else:
-                    potential_matches = []
-                    for potential_match, plugin in self.plugin_manager.commands.items():
-                        if potential_match.startswith(command):
-                            potential_matches.append((potential_match, plugin))
-                    if potential_matches:
-                        if len(potential_matches) == 1:
-                            command_hook = potential_matches[0][1]
-                            command_event = CommandEvent(hook=command_hook, text=match.group(2).strip(),
+                    tasks.append(self.plugin_manager.launch(raw_hook, Event(hook=raw_hook, base_event=event)))
+            if event.irc_command in self.plugin_manager.raw_triggers:
+                for raw_hook in self.plugin_manager.raw_triggers[event.irc_command]:
+                    tasks.append(self.plugin_manager.launch(raw_hook, Event(hook=raw_hook, base_event=event)))
+
+            # Event hooks
+            if event.type in self.plugin_manager.event_type_hooks:
+                for event_hook in self.plugin_manager.event_type_hooks[event.type]:
+                    tasks.append(self.plugin_manager.launch(event_hook, Event(hook=event_hook, base_event=event)))
+
+            if event.type is EventType.message:
+                # Commands
+                if event.chan.lower() == event.nick.lower():  # private message, no command prefix
+                    command_re = r'(?i)^(?:[{}]?|{}[,;:]+\s+)(\w+)(?:$|\s+)(.*)'.format(command_prefix, event.conn.nick)
+                else:
+                    command_re = r'(?i)^(?:[{}]|{}[,;:]+\s+)(\w+)(?:$|\s+)(.*)'.format(command_prefix, event.conn.nick)
+
+                cmd_match = re.match(command_re, event.content)
+
+                if cmd_match:
+                    command = cmd_match.group(1).lower()
+                    if command in self.plugin_manager.commands:
+                        command_hook = self.plugin_manager.commands[command]
+                        command_event = CommandEvent(hook=command_hook, text=cmd_match.group(2).strip(),
+                                                 triggered_command=command, base_event=event)
+                        tasks.append(self.plugin_manager.launch(command_hook, command_event))
+                    else:
+                        potential_matches = []
+                        for potential_match, plugin in self.plugin_manager.commands.items():
+                            if potential_match.startswith(command):
+                                potential_matches.append((potential_match, plugin))
+                        if potential_matches:
+                            if len(potential_matches) == 1:
+                                command_hook = potential_matches[0][1]
+                                command_event = CommandEvent(hook=command_hook, text=cmd_match.group(2).strip(),
                                                          triggered_command=command, base_event=event)
-                            tasks.append(self.plugin_manager.launch(command_hook, command_event))
-                        else:
-                            event.notice("Possible matches: {}".format(
-                                formatting.get_text_list([command for command, plugin in potential_matches])))
+                                tasks.append(self.plugin_manager.launch(command_hook, command_event))
+                            else:
+                                event.notice("Possible matches: {}".format(
+                                    formatting.get_text_list([command for command, plugin in potential_matches])))
 
-            # Regex hooks
-            for regex, regex_hook in self.plugin_manager.regex_hooks:
-                match = regex.search(event.content)
-                if match:
-                    regex_event = RegexEvent(hook=regex_hook, match=match, base_event=event)
-                    tasks.append(self.plugin_manager.launch(regex_hook, regex_event))
+                # Regex hooks
+                for regex, regex_hook in self.plugin_manager.regex_hooks:
+                    if not regex_hook.run_on_cmd and cmd_match:
+                        pass
+                    else:
+                        regex_match = regex.search(event.content)
+                        if regex_match:
+                            regex_event = RegexEvent(hook=regex_hook, match=regex_match, base_event=event)
+                            tasks.append(self.plugin_manager.launch(regex_hook, regex_event))
 
-        # Run the tasks
-        yield from asyncio.gather(*run_before_tasks, loop=self.loop)
-        yield from asyncio.gather(*tasks, loop=self.loop)
+            # Run the tasks
+            yield from asyncio.gather(*run_before_tasks, loop=self.loop)
+            yield from asyncio.gather(*tasks, loop=self.loop)
+
+        except:
+            logger.exception("Error while processing event")

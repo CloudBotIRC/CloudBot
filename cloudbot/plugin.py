@@ -610,6 +610,8 @@ class RegexHook(Hook):
         :type plugin: Plugin
         :type regex_hook: cloudbot.util.hook._RegexHook
         """
+        self.run_on_cmd = regex_hook.kwargs.pop("run_on_cmd", False)
+
         self.regexes = regex_hook.regexes
 
         super().__init__("regex", plugin, regex_hook)

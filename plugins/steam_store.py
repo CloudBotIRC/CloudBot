@@ -42,8 +42,12 @@ def format_game(app_id, show_url=True):
     out.append(formatting.truncate_str(desc, 70))
 
     # genres
-    genres = ", ".join([g['description'] for g in game["genres"]])
-    out.append("\x02{}\x02".format(genres))
+    try:
+        genres = ", ".join([g['description'] for g in game["genres"]])
+        out.append("\x02{}\x02".format(genres))
+    except KeyError:
+        # some things have no genre
+        pass
 
     # release date
     if game['release_date']['coming_soon']:

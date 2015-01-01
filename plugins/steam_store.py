@@ -38,8 +38,8 @@ def format_game(app_id, show_url=True):
     # basic info
     out.append("\x02{}\x02".format(game["name"]))
 
-    desc = formatting.strip_html(game["about_the_game"])
-    out.append(formatting.truncate_str(desc, 70))
+    desc = " ".join(formatting.strip_html(game["about_the_game"]).split())
+    out.append(formatting.truncate_str(desc, 75))
 
     # genres
     try:
@@ -58,6 +58,8 @@ def format_game(app_id, show_url=True):
     # pricing
     if game['is_free']:
         out.append("\x02free\x02")
+    elif not game.get("price_overview"):
+        pass
     else:
         price = game['price_overview']
 

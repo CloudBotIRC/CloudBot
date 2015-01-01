@@ -109,6 +109,9 @@ def newegg(text):
 
     r = request.json()
 
+    if r.get("Description", False):
+        return "Newegg Error: {Description} (\x02{Code}\x02)". format(**r)
+
     # get the first result
     if r["ProductListItems"]:
         return format_item(r["ProductListItems"][0])

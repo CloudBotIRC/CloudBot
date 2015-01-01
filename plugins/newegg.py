@@ -2,6 +2,8 @@ import json
 import requests
 import re
 
+from pprint import pprint
+
 from cloudbot import hook
 from cloudbot.util import formatting, web
 
@@ -21,6 +23,8 @@ NEWEGG_RE = re.compile(r"(?:(?:www.newegg.com|newegg.com)/Product/Product\.aspx\
 def format_item(item, show_url=True):
     """ takes a newegg API item object and returns a description """
     title = formatting.truncate_str(item["Title"], 50)
+
+    pprint(item)
 
     # format the rating nicely if it exists
     if not item["ReviewSummary"]["TotalReviews"] == "[]":
@@ -43,6 +47,9 @@ def format_item(item, show_url=True):
 
     if item["FreeShippingFlag"]:
         tags.append("\x02Free Shipping\x02")
+
+    if item["IsPremierItem"]:
+        tags.append("\x02Premier\x02")
 
     if item["IsFeaturedItem"]:
         tags.append("\x02Featured\x02")

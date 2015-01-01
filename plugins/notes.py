@@ -94,7 +94,7 @@ def format_note(data):
     return "[{}] Note #{}: {}".format(added_string, note_id, note_text)
 
 
-@hook.command("note", "notes")
+@hook.command("note", "notes", "todo")
 def note(text, conn, nick, db, notice):
     """<add|list|get|del|clear> args - manipulates your list of notes"""
     parts = text.split()

@@ -68,7 +68,15 @@ def format_item(item, show_url=True):
 @hook.regex(NEWEGG_RE)
 def newegg_url(match):
     item_id = match.group(1)
-    item = requests.get(API_PRODUCT.format(item_id)).json()
+
+    # newegg thinks it's so damn smart blocking my scraper
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) '
+                      'Version/5.1 Mobile/9A334 Safari/7534.48.3',
+        'Referer': 'http://www.newegg.com/'
+    }
+
+    item = requests.get(API_PRODUCT.format(item_id), headers=headers).json()
     return format_item(item, show_url=False)
 
 
@@ -86,7 +94,7 @@ def newegg(text):
     headers = {
         'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) '
                       'Version/5.1 Mobile/9A334 Safari/7534.48.3',
-        'Referer':  'http://www.newegg.com/'
+        'Referer': 'http://www.newegg.com/'
     }
 
     # submit the search request

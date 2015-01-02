@@ -99,15 +99,12 @@ def note(text, conn, nick, db, notice):
     """<add|list|get|del|clear> args - manipulates your list of notes"""
     parts = text.split()
 
-    # split up the input
-    cmd = parts[0].lower()
-    args = parts[1:]
-
-    # code to allow users to access each others factoids and a copy of help
-    # ".note (add|del|list|search) [@user] args -- Manipulates your list of todos."
-    # if len(args) and args[0].startswith("@"):
-    # nick = args[0][1:]
-    #    args = args[1:]
+    if len(parts) == 1 and text.isdigit():
+        cmd = "get"
+        args = parts
+    else:
+        cmd = parts[0].lower()
+        args = parts[1:]
 
     if cmd in ['add', 'new']:
         # user is adding a note
@@ -161,7 +158,7 @@ def note(text, conn, nick, db, notice):
         text = format_note(n)
         notice(text)
         return
-    elif cmd in ('share', 'show'):
+    elif cmd in ['share', 'show']:
         # user is sharing a single note
         if not len(args):
             return "No note ID provided!"

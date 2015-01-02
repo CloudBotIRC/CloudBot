@@ -89,9 +89,9 @@ def format_note(data):
     note_id, note_text, added = data
 
     # format timestamp
-    added_string = added.strftime('%d/%m/%Y')
+    added_string = added.strftime('%d %b, %Y')
 
-    return "[{}] Note #{}: {}".format(added_string, note_id, note_text)
+    return "\x02Note #{}:\x02 {} - \x02{}\x02".format(note_id, note_text, added_string)
 
 
 @hook.command("note", "notes", "todo")
@@ -161,6 +161,21 @@ def note(text, conn, nick, db, notice):
         text = format_note(n)
         notice(text)
         return
+    elif cmd in ('share', 'show'):
+        # user is sharing a single note
+        if not len(args):
+            return "No note ID provided!"
+
+        note_id = args[0]
+        n = read_note(db, conn.name, nick, note_id)
+
+        if not n:
+            notice("{} is not a valid note ID.".format(nick))
+            return
+
+        # show the note
+        text = format_note(n)
+        return text
     elif cmd == 'list':
         # user is getting all notes
         notes = read_all_notes(db, conn.name, nick)

@@ -5,12 +5,14 @@ from lxml import html
 
 from cloudbot import hook
 
-SPEEDTEST_RE = re.compile(r'(.*://www.speedtest.net/my-result/([0-9]+)?.*)', re.I)
+speedtest_re = re.compile(r'.*://www.speedtest.net/my-result/([0-9]+)?.*', re.I)
+base_url = "http://www.speedtest.net/my-result/{}"
 
 
-@hook.regex(SPEEDTEST_RE)
+@hook.regex(speedtest_re)
 def speedtest_url(match):
-    url = match.group(1)
+    test_id = match.group(1)
+    url = base_url.format(test_id)
 
     request = requests.get(url)
     request.raise_for_status()

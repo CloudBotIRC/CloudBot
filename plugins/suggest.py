@@ -25,7 +25,7 @@ def suggest(text):
     suggestions = [suggestion[0] for suggestion in suggestions]
 
     if not suggestions:
-        return 'no suggestions found'
+        return 'No suggestions found.'
 
     out = formatting.strip_html(", ".join(suggestions))
 

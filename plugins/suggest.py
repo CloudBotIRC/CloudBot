@@ -22,11 +22,11 @@ def suggest(text):
     page_json = page.split('(', 1)[1][:-1]
 
     suggestions = json.loads(page_json)[1]
-    suggestions = [formatting.strip_html(suggestion[0]) for suggestion in suggestions]
+    suggestions = [suggestion[0] for suggestion in suggestions]
 
     if not suggestions:
         return 'no suggestions found'
 
-    out = ", ".join(suggestions)
+    out = formatting.strip_html(", ".join(suggestions))
 
     return formatting.truncate_str(out, 200)

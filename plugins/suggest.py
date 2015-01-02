@@ -1,8 +1,6 @@
 import json
 import requests
 
-from bs4 import BeautifulSoup
-
 from cloudbot import hook
 from cloudbot.util import formatting
 
@@ -24,15 +22,11 @@ def suggest(text):
     page_json = page.split('(', 1)[1][:-1]
 
     suggestions = json.loads(page_json)[1]
-    suggestions = [suggestion[0] for suggestion in suggestions]
+    suggestions = [formatting.strip_html(suggestion[0]) for suggestion in suggestions]
 
     if not suggestions:
         return 'no suggestions found'
 
     out = ", ".join(suggestions)
-
-    # defuckify text (might not be needed now, but I'll keep it)
-    soup = BeautifulSoup(out)
-    out = soup.get_text()
 
     return formatting.truncate_str(out, 200)

@@ -59,10 +59,12 @@ def format_game(app_id, show_url=True):
     if game['is_free']:
         out.append("\x02free\x02")
     elif not game.get("price_overview"):
+        # game has no pricing, it's probably not released yet
         pass
     else:
         price = game['price_overview']
 
+        # the steam API sends prices as an int like "9999" for $19.99, we divmod to get the actual price
         if price['final'] == price['initial']:
             out.append("\x02$%d.%02d\x02" % divmod(price['final'], 100))
         else:

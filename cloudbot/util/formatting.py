@@ -9,6 +9,7 @@ import re
 from html.parser import HTMLParser
 import html.entities
 
+# <https://stackoverflow.com/questions/753052/strip-html-from-strings-in-python>
 
 class HTMLTextExtractor(HTMLParser):
     def __init__(self):

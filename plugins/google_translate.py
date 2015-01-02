@@ -1,44 +1,9 @@
-"""
-A Google API key is required and retrieved from the bot config file.
-Since December 1, 2011, the Google Translate API is a paid service only.
-"""
-
-import re
-import html.entities
-
 import requests
 
 from cloudbot import hook
 
 
 max_length = 100
-
-
-########### from http://effbot.org/zone/re-sub.htm#unescape-html #############
-def unescape(text):
-    def fixup(m):
-        _text = m.group(0)
-        if _text[:2] == "&#":
-            # character reference
-            try:
-                if _text[:3] == "&#x":
-                    return chr(int(_text[3:-1], 16))
-                else:
-                    return chr(int(_text[2:-1]))
-            except ValueError:
-                pass
-        else:
-            # named entity
-            try:
-                _text = chr(html.entities.name2codepoint[_text[1:-1]])
-            except KeyError:
-                pass
-        return _text  # leave as is
-
-    return re.sub("&#?\w+;", fixup, text)
-
-
-##############################################################################
 
 
 def goog_trans(api_key, text, source, target):
@@ -61,9 +26,8 @@ def goog_trans(api_key, text, source, target):
     parsed = request.json()
 
     if not source:
-        return unescape('(%(detectedSourceLanguage)s) %(translatedText)s' %
-                        (parsed['data']['translations'][0]))
-    return unescape('%(translatedText)s' % parsed['data']['translations'][0])
+        return '(%(detectedSourceLanguage)s) %(translatedText)s' % (parsed['data']['translations'][0])
+    return '%(translatedText)s' % parsed['data']['translations'][0]
 
 
 def match_language(fragment):

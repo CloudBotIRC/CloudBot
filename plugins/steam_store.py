@@ -18,8 +18,8 @@ STORE_URL = "http://store.steampowered.com/app/{}/"
 
 def format_game(app_id, show_url=True):
     """
-    takes a steam app id and returns a formatted string with info
-    :param app_id: string
+    Takes a Steam Store app ID and returns a formatted string with data about that app ID
+    :type app_id: string
     :return: string
     """
     params = {'appids': app_id}
@@ -84,7 +84,7 @@ def format_game(app_id, show_url=True):
 
 @hook.command
 def steam(text):
-    """steam [search] - Search for specified game/trailer/DLC"""
+    """steam [Takes a Steam ID_64 formatted ID and returns a ID_32 formatted IDsearch] - Search for specified game/trailer/DLC"""
     params = {'term': text.strip().lower()}
 
     try:

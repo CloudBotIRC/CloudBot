@@ -18,7 +18,7 @@ class SteamError(Exception):
 def convert_id32(id_64):
     """
     Takes a Steam ID_64 formatted ID and returns a ID_32 formatted ID
-    :param id_64: int
+    :type id_64: int
     :return: str
     """
     out = []
@@ -35,7 +35,7 @@ def convert_id32(id_64):
 def convert_id3(id_64):
     """
     Takes a Steam ID_64 formatted ID and returns a ID_3 formatted ID
-    :param id_64: int
+    :typetype id_64: int
     :return: str
     """
     _id = (id_64 - ID_BASE) * 2
@@ -85,6 +85,7 @@ def get_data(user):
 
 @hook.onload
 def set_headers(bot):
+    """ Runs on initial plugin load and sets the HTTP headers for this plugin. """
     global headers
 
     headers = {

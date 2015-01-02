@@ -8,7 +8,7 @@ from cloudbot.util import web, formatting
 
 # CONSTANTS
 
-steam_re = re.compile(r'store.steampowered.com/app/([0-9]+)?.*', re.I)
+steam_re = re.compile(r'.*://store.steampowered.com/app/([0-9]+)?.*', re.I)
 
 API_URL = "http://store.steampowered.com/api/appdetails/"
 STORE_URL = "http://store.steampowered.com/app/{}/"

@@ -6,15 +6,15 @@ Since December 1, 2011, the Google Translate API is a paid service only.
 import re
 import html.entities
 
+import requests
+
 from cloudbot import hook
-from cloudbot.util import http
+
 
 max_length = 100
 
 
 ########### from http://effbot.org/zone/re-sub.htm#unescape-html #############
-
-
 def unescape(text):
     def fixup(m):
         _text = m.group(0)
@@ -41,21 +41,26 @@ def unescape(text):
 ##############################################################################
 
 
-def goog_trans(api_key, text, slang, tlang):
+def goog_trans(api_key, text, source, target):
     url = 'https://www.googleapis.com/language/translate/v2'
 
     if len(text) > max_length:
         return "This command only supports input of less then 100 characters."
 
-    if slang:
-        parsed = http.get_json(url, key=api_key, q=text, source=slang, target=tlang, format="text")
-    else:
-        parsed = http.get_json(url, key=api_key, q=text, target=tlang, format="text")
+    params = {
+        'q': text,
+        'key': api_key,
+        'target': target,
+        'format': 'text'
+    }
 
-        # if not 200 <= parsed['responseStatus'] < 300:
-        #    raise IOError('error with the translation server: %d: %s' % (
-        #            parsed['responseStatus'], parsed['responseDetails']))
-    if not slang:
+    if source:
+        params['source'] = source
+
+    request = requests.get(url, params=params)
+    parsed = request.json()
+
+    if not source:
         return unescape('(%(detectedSourceLanguage)s) %(translatedText)s' %
                         (parsed['data']['translations'][0]))
     return unescape('%(translatedText)s' % parsed['data']['translations'][0])

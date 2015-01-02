@@ -31,7 +31,7 @@ def drama(text):
     page_response = requests.get(url)
 
     if page_response.status_code != requests.codes.ok:
-        return "Error getting page: {}".format(search_response.status_code)
+        return "Error getting page: {}".format(page_response.status_code)
 
     page = html.fromstring(page_response.text)
 

@@ -585,8 +585,8 @@ class CommandHook(Hook):
         """
         self.auto_help = cmd_hook.kwargs.pop("autohelp", True)
 
-        self.name = cmd_hook.main_alias
-        self.aliases = list(cmd_hook.aliases)  # turn the set into a list
+        self.name = cmd_hook.main_alias.lower()
+        self.aliases = [alias.lower() for alias in cmd_hook.aliases]  # turn the set into a list
         self.aliases.remove(self.name)
         self.aliases.insert(0, self.name)  # make sure the name, or 'main alias' is in position 0
         self.doc = cmd_hook.doc

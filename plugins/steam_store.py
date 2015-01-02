@@ -25,7 +25,7 @@ def format_game(app_id, show_url=True):
     params = {'appids': app_id}
 
     try:
-        request = requests.get(API_URL, params=params)
+        request = requests.get(API_URL, params=params, timeout=15)
         request.raise_for_status()
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         return "Could not get game info: {}".format(e)

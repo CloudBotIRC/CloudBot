@@ -54,15 +54,14 @@ class TextGenerator(object):
         for required_part in required_parts:
             # get the part
             replacement = self.get_part(required_part, _parts)
+
             # remove the used part
-            print(_parts[required_part])
             for _part in _parts[required_part]:
                 if isinstance(_part, (list, tuple)) and _part[0] == replacement:
                     _parts[required_part].remove(_part)
                 elif _part == replacement:
                     _parts[required_part].remove(_part)
 
-            print(_parts[required_part])
             text = text.replace("{%s}" % required_part, replacement, 1)
 
         return text

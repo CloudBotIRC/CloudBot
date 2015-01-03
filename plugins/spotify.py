@@ -1,8 +1,9 @@
 import re
-from urllib.parse import urlencode
+
+import requests
 
 from cloudbot import hook
-from cloudbot.util import http, web
+from cloudbot.util import web
 
 
 gateway = 'http://open.spotify.com/{}/{}'  # http spotify gw address
@@ -13,76 +14,64 @@ http_re = re.compile(r'(open\.spotify\.com/(track|album|artist|user)/'
                      '([a-zA-Z0-9]+))', re.I)
 
 
-def sptfy(inp, sptfy=False):
-    if sptfy:
-        shortenurl = "http://sptfy.com/index.php"
-        data = urlencode({'longUrl': inp, 'shortUrlDomain': 1, 'submitted': 1, "shortUrlFolder": 6, "customUrl": "",
-                          "shortUrlPassword": "", "shortUrlExpiryDate": "", "shortUrlUses": 0, "shortUrlType": 0})
-        try:
-            soup = http.get_soup(shortenurl, post_data=data, cookies=True)
-        except:
-            return inp
-        try:
-            link = soup.find('div', {'class': 'resultLink'}).text.strip()
-            return link
-        except:
-            message = "Unable to shorten URL: {}".format(soup.find('div', {
-                'class': 'messagebox_text'}).find('p').text.split("<br/>")[0])
-            return message
-    else:
-        return web.try_shorten(inp)
-
-
-@hook.command('sptrack')
-@hook.command()
-def spotify(inp):
+@hook.command('spotify', 'sptrack')
+def spotify(text):
     """spotify <song> -- Search Spotify for <song>"""
-    try:
-        data = http.get_json("http://ws.spotify.com/search/1/track.json", q=inp.strip())
-    except Exception as e:
-        return "Could not get track information: {}".format(e)
+    params = {'q': text.strip()}
+
+    request = requests.get('http://ws.spotify.com/search/1/track.json', params=params)
+    if request.status_code != requests.codes.ok:
+        return "Could not get track information: {}".format(request.status_code)
+
+    data = request.json()
 
     try:
         type, id = data["tracks"][0]["href"].split(":")[1:]
     except IndexError:
         return "Could not find track."
-    url = sptfy(gateway.format(type, id))
+    url = web.try_shorten(gateway.format(type, id))
 
     return "\x02{}\x02 by \x02{}\x02 - {}".format(data["tracks"][0]["name"],
                                                   data["tracks"][0]["artists"][0]["name"], url)
 
 
-@hook.command()
-def spalbum(inp):
+@hook.command
+def spalbum(text):
     """spalbum <album> -- Search Spotify for <album>"""
-    try:
-        data = http.get_json("http://ws.spotify.com/search/1/album.json", q=inp.strip())
-    except Exception as e:
-        return "Could not get album information: {}".format(e)
+    params = {'q': text.strip()}
+
+    request = requests.get('http://ws.spotify.com/search/1/album.json', params=params)
+    if request.status_code != requests.codes.ok:
+        return "Could not get album information: {}".format(request.status_code)
+
+    data = request.json()
 
     try:
         type, id = data["albums"][0]["href"].split(":")[1:]
     except IndexError:
         return "Could not find album."
-    url = sptfy(gateway.format(type, id))
+    url = web.try_shorten(gateway.format(type, id))
 
     return "\x02{}\x02 by \x02{}\x02 - {}".format(data["albums"][0]["name"],
                                                   data["albums"][0]["artists"][0]["name"], url)
 
 
-@hook.command()
-def spartist(inp):
+@hook.command
+def spartist(text):
     """spartist <artist> -- Search Spotify for <artist>"""
-    try:
-        data = http.get_json("http://ws.spotify.com/search/1/artist.json", q=inp.strip())
-    except Exception as e:
-        return "Could not get artist information: {}".format(e)
+    params = {'q': text.strip()}
+
+    request = requests.get('http://ws.spotify.com/search/1/artist.json', params=params)
+    if request.status_code != requests.codes.ok:
+        return "Could not get artist information: {}".format(request.status_code)
+
+    data = request.json()
 
     try:
         type, id = data["artists"][0]["href"].split(":")[1:]
     except IndexError:
         return "Could not find artist."
-    url = sptfy(gateway.format(type, id))
+    url = web.try_shorten(gateway.format(type, id))
 
     return "\x02{}\x02 - {}".format(data["artists"][0]["name"], url)
 
@@ -94,19 +83,18 @@ def spotify_url(match):
     spotify_id = match.group(3)
     url = spuri.format(type, spotify_id)
     # no error catching here, if the API is down fail silently
-    data = http.get_json("http://ws.spotify.com/lookup/1/.json", uri=url)
+    params = {'uri': url}
+    request = requests.get('http://ws.spotify.com/search/1/artist.json', params=params)
+    if request.status_code != requests.codes.ok:
+        return
+    data = request.json()
     if type == "track":
         name = data["track"]["name"]
         artist = data["track"]["artists"][0]["name"]
         album = data["track"]["album"]["name"]
 
-        return "Spotify Track: \x02{}\x02 by \x02{}\x02 from the album \x02{}\x02 - {}".format(name, artist,
-                                                                                               album, sptfy(
-                gateway.format(type, spotify_id)))
+        return "Spotify Track: \x02{}\x02 by \x02{}\x02 from the album \x02{}\x02".format(name, artist, album)
     elif type == "artist":
-        return "Spotify Artist: \x02{}\x02 - {}".format(data["artist"]["name"],
-                                                        sptfy(gateway.format(type, spotify_id)))
+        return "Spotify Artist: \x02{}\x02".format(data["artist"]["name"])
     elif type == "album":
-        return "Spotify Album: \x02{}\x02 - \x02{}\x02 - {}".format(data["album"]["artist"],
-                                                                    data["album"]["name"],
-                                                                    sptfy(gateway.format(type, spotify_id)))
+        return "Spotify Album: \x02{}\x02 - \x02{}\x02".format(data["album"]["artist"], data["album"]["name"])

@@ -1,7 +1,9 @@
 import datetime
+import requests
+
+from lxml import etree
 
 from cloudbot import hook
-from cloudbot.util import http
 
 base_url = "http://thetvdb.com/api/"
 
@@ -9,12 +11,16 @@ base_url = "http://thetvdb.com/api/"
 def get_episodes_for_series(series_name, api_key):
     res = {"error": None, "ended": False, "episodes": None, "name": None}
     # http://thetvdb.com/wiki/index.php/API:GetSeries
+
     try:
-        query = http.get_xml(base_url + 'GetSeries.php', seriesname=series_name)
-    except http.URLError:
+        params = {'seriesname': series_name}
+        request = requests.get(base_url + 'GetSeries.php', params=params)
+        request.raise_for_status()
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         res["error"] = "error contacting thetvdb.com"
         return res
 
+    query = etree.fromstring(request.content)
     series_id = query.xpath('//seriesid/text()')
 
     if not series_id:
@@ -24,11 +30,13 @@ def get_episodes_for_series(series_name, api_key):
     series_id = series_id[0]
 
     try:
-        series = http.get_xml(base_url + '%s/series/%s/all/en.xml' % (api_key, series_id))
-    except http.URLError:
-        res["error"] = "Error contacting thetvdb.com."
+        _request = requests.get(base_url + '%s/series/%s/all/en.xml' % (api_key, series_id))
+        _request.raise_for_status()
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+        res["error"] = "error contacting thetvdb.com"
         return res
 
+    series = etree.fromstring(_request.content)
     series_name = series.xpath('//SeriesName/text()')[0]
 
     if series.xpath('//Status/text()')[0] == 'Ended':

@@ -55,8 +55,8 @@ def load_api(bot):
 
 @hook.command(autohelp=False)
 def imgur(text):
-    """[search term] / [/r/subreddit] / [/user/username] / memes / random - returns a link to a random imgur image based on your input. if
-    no input is given the bot will get an image from the imgur frontpage """
+    """[search term] / [/r/subreddit] / [/user/username] / memes / random - returns a link to a random imgur image based
+     on your input. if no input is given the bot will get an image from the imgur frontpage """
     text = text.strip().lower()
 
     if not imgur_api:

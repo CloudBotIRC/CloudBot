@@ -13,7 +13,7 @@ def lastfm(text, nick, db, bot, notice):
     """[user] [dontsave] - displays the now playing (or last played) track of LastFM user [user]"""
     api_key = bot.config.get("api_keys", {}).get("lastfm")
     if not api_key:
-        return "error: no api key set"
+        return "No last.fm API key set."
 
     # check if the user asked us not to save his details
     dontsave = text.endswith(" dontsave")
@@ -35,10 +35,13 @@ def lastfm(text, nick, db, bot, notice):
     params = {'method': 'user.getrecenttracks', 'api_key': api_key, 'user': user, 'limit': 1}
     request = requests.get(api_url, params=params)
 
+    if request.status_code != requests.codes.ok:
+        return "Failed to fetch info ({})".format(request.status_code)
+
     response = request.json()
 
     if 'error' in response:
-        return "Error: {}.".format(response["message"])
+        return "Last.FM Error: {}.".format(response["message"])
 
     if "track" not in response["recenttracks"] or len(response["recenttracks"]["track"]) == 0:
         return 'No recent tracks for user "{}" found.'.format(user)
@@ -83,4 +86,3 @@ def lastfm(text, nick, db, bot, notice):
         db.commit()
 
     return out
-

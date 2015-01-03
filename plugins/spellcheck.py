@@ -1,21 +1,19 @@
 from enchant.checker import SpellChecker
-import enchant
+from enchant.tokenize import EmailFilter, URLFilter
+from enchant import Dict
 
 from cloudbot import hook
 
 locale = "en_US"
+en_dict = Dict(locale)
 
 
 @hook.command()
 def spell(text):
     """spell <word/sentence> -- Check spelling of a word or sentence."""
-
-    if not enchant.dict_exists(locale):
-        return "Could not find dictionary: {}".format(locale)
-
     if len(text.split(" ")) > 1:
         # input is a sentence
-        checker = SpellChecker(locale)
+        checker = SpellChecker(en_dict, filters=[EmailFilter, URLFilter])
         checker.set_text(text)
 
         offset = 0
@@ -34,9 +32,8 @@ def spell(text):
         return text
     else:
         # input is a word
-        dictionary = enchant.Dict(locale)
-        is_correct = dictionary.check(text)
-        suggestions = dictionary.suggest(text)
+        is_correct = en_dict.check(text)
+        suggestions = en_dict.suggest(text)
         s_string = ', '.join(suggestions[:10])
         if is_correct:
             return '"{}" appears to be \x02valid\x02! ' \

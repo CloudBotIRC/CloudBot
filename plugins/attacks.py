@@ -19,9 +19,6 @@ def load_attacks(bot):
     with codecs.open(os.path.join(bot.data_dir, "larts.txt"), encoding="utf-8") as f:
         larts = [line.strip() for line in f.readlines() if not line.startswith("//")]
 
-    with codecs.open(os.path.join(bot.data_dir, "insults.txt"), encoding="utf-8") as f:
-        insults = [line.strip() for line in f.readlines() if not line.startswith("//")]
-
     with codecs.open(os.path.join(bot.data_dir, "flirts.txt"), encoding="utf-8") as f:
         flirts = [line.strip() for line in f.readlines() if not line.startswith("//")]
 
@@ -62,27 +59,6 @@ def lart(text, conn, nick, notice, action):
 
     # act out the message
     action(phrase.format(user=target))
-
-
-@asyncio.coroutine
-@hook.command()
-def insult(text, conn, nick, notice, message):
-    """<user> - insults <user>
-    :type text: str
-    :type conn: cloudbot.client.Client
-    :type nick: str
-    """
-    target = text.strip()
-
-    if " " in target:
-        notice("Invalid username!")
-        return
-
-    # if the user is trying to make the bot target itself, target them
-    if is_self(conn, target):
-        target = nick
-
-    message("{}, {}".format(target, random.choice(insults)))
 
 
 @asyncio.coroutine

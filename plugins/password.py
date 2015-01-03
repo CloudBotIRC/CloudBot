@@ -14,8 +14,11 @@ except ImportError:
 with open("data/password_words.txt") as f:
     common_words = [line.strip() for line in f.readlines()]
 
-# pygw - Generate pronounceable passwords, by Wayne Werner, Converted from http://www.multicians.org/thvv/gpw.js written by Tom Van Vleck.
+# beginning of: pygw - Generate pronounceable passwords, by Wayne Werner
+# Converted from http://www.multicians.org/thvv/gpw.js written by Tom Van Vleck.
 # See www.multicians.org/thvv/gpw.html for more info
+
+
 trigram = [[
                [2, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 3, 2, 0, 0, 0, 0, 0, 0, 0],  # A A
                [37, 25, 2, 5, 38, 0, 0, 2, 46, 1, 0, 304, 0, 2, 49, 0, 0, 24, 24, 0, 19, 0, 0, 0, 14, 0],  # A B
@@ -704,44 +707,46 @@ trigram = [[
             [7, 0, 0, 0, 1, 0, 0, 0, 7, 0, 0, 17, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 5, 0]]];  # Z Z
 
 
-def getstart():
+def get_start():
     start = ''
     total = 0
     # Hooray magic numbers!
-    # ... in reality it's probably the total of all trigram combinations
-    # ... Sweet! I was right (see the last few lines)
-    randnum = random.random() * 125729.0
+    # ... in reality it's the total of all trigram combinations
+    rand_num = gen.random() * 125729.0
     for x in range(26):
         for y in range(26):
             for z in range(26):
                 total += trigram[x][y][z]
-                if total > randnum:
+                if total > rand_num:
                     start += string.ascii_lowercase[x]
                     start += string.ascii_lowercase[y]
                     start += string.ascii_lowercase[z]
                     return start
 
 
-def genpass(pwlen):
-    ''' Generates a password. '''
-    password = getstart()
+def gen_pass(length):
+    """ Generates a random password of :length
+    :type length: int
+    :rtype str
+    """
+    pw = get_start()
     total = 0
-    while len(password) < pwlen:
-        x = string.ascii_lowercase.find(password[-2])
-        y = string.ascii_lowercase.find(password[-1])
+    while len(pw) < length:
+        x = string.ascii_lowercase.find(pw[-2])
+        y = string.ascii_lowercase.find(pw[-1])
         total = 0
         for z in range(26):
             total += trigram[x][y][z]
         if not total:
             break  # total was zero??
-        randnum = gen.random() * total
+        rand_num = gen.random() * total
         total = 0
         for z in range(26):
             total += trigram[x][y][z]
-            if total > randnum:
-                password += string.ascii_lowercase[z]
+            if total > rand_num:
+                pw += string.ascii_lowercase[z]
                 break
-    return password
+    return pw
 
 
 # end of pygw
@@ -810,7 +815,7 @@ def word_password(text, notice):
 
 
 @hook.command("rpass", "readablepass", "readablepassword", autohelp=False)
-def readable_password(text, notice, reply):
+def readable_password(text, notice):
     """[length] - generates an easy to remember password with [length] (default 10) characters"""
     if text:
         try:
@@ -822,7 +827,6 @@ def readable_password(text, notice, reply):
         length = 10
 
     # generate password
-    password = genpass(length)
-
+    password = gen_pass(length)
     notice(password)
 

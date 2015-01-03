@@ -26,10 +26,10 @@ def spotify(text):
     data = request.json()
 
     try:
-        type, id = data["tracks"][0]["href"].split(":")[1:]
+        _type, _id = data["tracks"][0]["href"].split(":")[1:]
     except IndexError:
         return "Could not find track."
-    url = web.try_shorten(gateway.format(type, id))
+    url = web.try_shorten(gateway.format(_type, _id))
 
     return "\x02{}\x02 by \x02{}\x02 - {}".format(data["tracks"][0]["name"],
                                                   data["tracks"][0]["artists"][0]["name"], url)
@@ -47,10 +47,10 @@ def spalbum(text):
     data = request.json()
 
     try:
-        type, id = data["albums"][0]["href"].split(":")[1:]
+        _type, _id = data["albums"][0]["href"].split(":")[1:]
     except IndexError:
         return "Could not find album."
-    url = web.try_shorten(gateway.format(type, id))
+    url = web.try_shorten(gateway.format(_type, _id))
 
     return "\x02{}\x02 by \x02{}\x02 - {}".format(data["albums"][0]["name"],
                                                   data["albums"][0]["artists"][0]["name"], url)
@@ -68,10 +68,10 @@ def spartist(text):
     data = request.json()
 
     try:
-        type, id = data["artists"][0]["href"].split(":")[1:]
+        _type, _id = data["artists"][0]["href"].split(":")[1:]
     except IndexError:
         return "Could not find artist."
-    url = web.try_shorten(gateway.format(type, id))
+    url = web.try_shorten(gateway.format(_type, _id))
 
     return "\x02{}\x02 - {}".format(data["artists"][0]["name"], url)
 
@@ -79,7 +79,7 @@ def spartist(text):
 @hook.regex(http_re)
 @hook.regex(spotify_re)
 def spotify_url(match):
-    type = match.group(2)
+    _type = match.group(2)
     spotify_id = match.group(3)
     url = spuri.format(type, spotify_id)
     # no error catching here, if the API is down fail silently
@@ -88,13 +88,13 @@ def spotify_url(match):
     if request.status_code != requests.codes.ok:
         return
     data = request.json()
-    if type == "track":
+    if _type == "track":
         name = data["track"]["name"]
         artist = data["track"]["artists"][0]["name"]
         album = data["track"]["album"]["name"]
 
         return "Spotify Track: \x02{}\x02 by \x02{}\x02 from the album \x02{}\x02".format(name, artist, album)
-    elif type == "artist":
+    elif _type == "artist":
         return "Spotify Artist: \x02{}\x02".format(data["artist"]["name"])
-    elif type == "album":
+    elif _type == "album":
         return "Spotify Album: \x02{}\x02 - \x02{}\x02".format(data["album"]["artist"], data["album"]["name"])

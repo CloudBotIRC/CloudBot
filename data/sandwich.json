@@ -1,0 +1,63 @@
+{
+  "templates": [
+    "{gives} {user} {flavor} {meat} {type} filled with {salad} and {salad}, and topped with {sauce}!",
+    "{gives} {user} {flavor} {meat} and {meat} {type} filled with {salad} and {salad}, and topped with {sauce}!"
+  ],
+  "parts": {
+    "gives": [
+      "hands",
+      "gives",
+      "makes",
+      "passes"
+    ],
+    "flavor": [
+      "a tasty",
+      "a delicious",
+      "an awesome",
+      "a mediocre",
+      [
+        "an awful",
+        1
+      ],
+      "an excellent",
+      "a beautifully-made"
+    ],
+    "meat": [
+      "ham",
+      "salami",
+      "steak",
+      "meatball",
+      "tuna",
+      "pork",
+      "chicken",
+      "roast beef",
+      "corned beef",
+      "pastrami",
+      "turkey"
+    ],
+    "type": [
+      "roll",
+      "wrap",
+      "pita",
+      "sandwich",
+      "bun"
+    ],
+    "salad": [
+      "tomatoes",
+      "lettuce",
+      "pickles",
+      "cucumbers",
+      "red onions",
+      "jalapenos"
+    ],
+    "sauce":[
+      "sweet onion sauce",
+      "honey mustard sauce",
+      "mayo",
+      "sweet chili sauce",
+      "italian sauce",
+      "ranch dressing",
+      "barbecue sauce"
+    ]
+  }
+}

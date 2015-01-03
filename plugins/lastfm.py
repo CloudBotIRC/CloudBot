@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import requests
+import random
 
 from cloudbot import hook
 from cloudbot.util import timeformat
@@ -8,7 +9,7 @@ from cloudbot.util import timeformat
 api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
 
 
-@hook.command("lastfm", "l", autohelp=False)
+@hook.command("lastfm", "lfm", "l", autohelp=False)
 def lastfm(text, nick, db, bot, notice):
     """[user] [dontsave] - displays the now playing (or last played) track of LastFM user [user]"""
     api_key = bot.config.get("api_keys", {}).get("lastfm")
@@ -86,3 +87,42 @@ def lastfm(text, nick, db, bot, notice):
         db.commit()
 
     return out
+
+
+@hook.command("lastfmcompare", "compare")
+def lastfmcompare(text, bot):
+    """[user] [dontsave] - displays the now playing (or last played) track of LastFM user [user]"""
+    api_key = bot.config.get("api_keys", {}).get("lastfm")
+    if not api_key:
+        return "No last.fm API key set."
+
+    user1, user2 = text.split()
+
+    params = {
+        'method': 'tasteometer.compare',
+        'api_key': api_key,
+        'type1': 'user',
+        'value1': user1,
+        'type2': 'user',
+        'value2': user2
+    }
+    request = requests.get(api_url, params=params)
+
+    if request.status_code != requests.codes.ok:
+        return "Failed to fetch info ({})".format(request.status_code)
+
+    data = request.json()
+
+    score = int(float(data["comparison"]["result"]["score"]) * 100)
+    level = "Super" if score > 95 else "Very High" if score > 80 else "High" if score > 60 else \
+            "Medium" if score > 40 else "Low" if score > 10 else "Very Low"
+
+    # I'm not even going to try to rewrite this line
+    artists = [f["name"] for f in data["comparison"]["result"]["artists"]["artist"]] if \
+        type(data["comparison"]["result"]["artists"]["artist"]) == list else \
+        [data["comparison"]["result"]["artists"]["artist"]["name"]] if "artist" \
+        in data["comparison"]["result"]["artists"] else ""
+    artist_string = "\x02In Common:\x02 " + ", ".join(artists) if artists else ""
+
+    return "Musical compatibility between \x02{}\x02 and \x02{}\x02: {} (\x02{}%\x02)".format(user1, user2, level,
+                                                                                        score), artist_string

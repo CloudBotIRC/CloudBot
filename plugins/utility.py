@@ -5,11 +5,12 @@ import re
 import os
 import json
 import codecs
+import urllib.parse
 import random
 import binascii
 
 from cloudbot import hook
-from cloudbot.util import formatting
+from cloudbot.util import formatting, web
 
 
 colors = collections.OrderedDict([
@@ -51,6 +52,24 @@ def load_text(bot):
 
     with codecs.open(os.path.join(bot.data_dir, "leet.json"), encoding="utf-8") as f:
         leet = json.load(f)
+
+
+# misc
+
+@hook.command("qrcode", "qr")
+def qrcode(text):
+    """[link] - returns a link to a QR code image for [link]"""
+
+    args = {
+        "cht": "qr",  # chart type (QR)
+        "chs": "200x200",  # dimensions
+        "chl": text  # data
+    }
+
+    argstring = urllib.parse.urlencode(args)
+
+    link = "http://chart.googleapis.com/chart?{}".format(argstring)
+    return web.try_shorten(link)
 
 
 # basic text tools

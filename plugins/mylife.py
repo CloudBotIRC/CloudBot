@@ -6,11 +6,25 @@ import requests
 
 from cloudbot import hook
 
+fml_cache = []
 mlia_cache = []
 
 
 @asyncio.coroutine
-def refresh_cache(loop):
+def refresh_fml_cache(loop):
+    """ gets a page of random FMLs and puts them into a dictionary """
+    url = 'http://www.fmylife.com/random/'
+    response = yield from loop.run_in_executor(None, requests.get, url)
+    soup = BeautifulSoup(response.text)
+
+    for e in soup.find_all('div', {'class': 'post article'}):
+        fml_id = int(e['id'])
+        text = ''.join(e.find('p').find_all(text=True))
+        fml_cache.append((fml_id, text))
+
+
+@asyncio.coroutine
+def refresh_mlia_cache(loop):
     """ gets a page of random MLIAs and puts them into a dictionary """
     url = 'http://mylifeisaverage.com/{}'.format(random.randint(1, 11000))
     request = yield from loop.run_in_executor(None, requests.get, url)
@@ -23,11 +37,27 @@ def refresh_cache(loop):
         mlia_cache.append((mlia_id, mlia_text))
 
 
+
 @asyncio.coroutine
 @hook.onload()
 def initial_refresh(loop):
-    # do an initial refresh of the cache
-    yield from refresh_cache(loop)
+    # do an initial refresh of the caches
+    yield from refresh_fml_cache(loop)
+    yield from refresh_mlia_cache(loop)
+
+
+@asyncio.coroutine
+@hook.command(autohelp=False)
+def fml(reply, loop):
+    """- gets a random quote from fmyfife.com"""
+
+    # grab the last item in the fml cache and remove it
+    fml_id, text = fml_cache.pop()
+    # reply with the fml we grabbed
+    reply('(#{}) {}'.format(fml_id, text))
+    # refresh fml cache if its getting empty
+    if len(fml_cache) < 3:
+        yield from refresh_fml_cache(loop)
 
 
 @asyncio.coroutine
@@ -41,4 +71,4 @@ def mlia(reply, loop):
     reply('({}) {}'.format(mlia_id, text))
     # refresh mlia cache if its getting empty
     if len(mlia_cache) < 3:
-        yield from refresh_cache(loop)
+        yield from refresh_mlia_cache(loop)

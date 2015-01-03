@@ -1,25 +1,37 @@
 import re
+import urllib.parse
+
+import requests
+from lxml import etree
 
 from cloudbot import hook
-from cloudbot.util import http, web, formatting
+from cloudbot.util import web, formatting
 
 
-@hook.command("wa", "calc", "math", "wolframalpha")
+api_url = 'http://api.wolframalpha.com/v2/query'
+query_url = 'http://www.wolframalpha.com/input/?i={}'
+
+
+@hook.command("wolframalpha", "wa", "calc", "math")
 def wolframalpha(text, bot):
-    """wa <query> -- Computes <query> using Wolfram Alpha."""
+    """w<query> -- Computes <query> using Wolfram Alpha."""
     api_key = bot.config.get("api_keys", {}).get("wolframalpha", None)
-
     if not api_key:
         return "error: missing api key"
 
-    url = 'http://api.wolframalpha.com/v2/query?format=plaintext'
+    params = {
+        'input': text,
+        'appid': api_key
+    }
+    request = requests.get(api_url, params=params)
 
-    result = http.get_xml(url, input=text, appid=api_key)
+    if request.status_code != requests.codes.ok:
+        return "Error getting query: {}".format(request.status_code)
+
+    result = etree.fromstring(request.content)
 
     # get the URL for a user to view this query in a browser
-    query_url = "http://www.wolframalpha.com/input/?i=" + \
-                http.quote_plus(text)
-    short_url = web.try_shorten(query_url)
+    short_url = web.try_shorten(query_url.format(urllib.parse.quote_plus(text)))
 
     pod_texts = []
     for pod in result.xpath("//pod[@primary='true']"):
@@ -41,13 +53,8 @@ def wolframalpha(text, bot):
     if not pod_texts:
         return 'No results.'
 
+    # I have no idea what this regex does.
     ret = re.sub(r'\\(.)', r'\1', ret)
-
-    def unicode_sub(match):
-        return chr(int(match.group(1), 16))
-
-    ret = re.sub(r'\\:([0-9a-z]{4})', unicode_sub, ret)
-
     ret = formatting.truncate_str(ret, 250)
 
     if not ret:

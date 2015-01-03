@@ -1,7 +1,7 @@
 {
   "templates": [
     "{gives} {user} {flavor} {meat} {type} filled with {salad} and {salad}, and topped with {sauce}!",
-    "{gives} {user} {flavor} {meat} and {meat} {type} filled with {salad} and {salad}, and topped with {sauce}!"
+    "{gives} {user} {flavor} {meat} and {meat} {type} filled with {salad} and topped with {sauce}!"
   ],
   "parts": {
     "gives": [

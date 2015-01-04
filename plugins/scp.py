@@ -28,6 +28,12 @@ def get_title(scp_id):
     # get the page
     if "J" in scp_id:
         page = "http://www.scp-wiki.net/joke-scps"
+    elif "ARC" in scp_id:
+        page = "http://www.scp-wiki.net/archived-scps"
+    elif "D" in scp_id:
+        page = "http://www.scp-wiki.net/decommissioned-scps"
+    elif "EX" in scp_id:
+        page = "http://www.scp-wiki.net/scp-ex"
     else:
         try:
             stripped_id = scp_id[4:]
@@ -82,7 +88,6 @@ def get_info(url):
         return "Could not get SCP information: Page was not a valid SCP page."
 
     description = formatting.truncate_str(description, 150)
-
     short_url = web.try_shorten(url)
 
     title = get_title(item_id)

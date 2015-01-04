@@ -1,9 +1,11 @@
+import re
+
+import requests
+from bs4 import BeautifulSoup
+
 from cloudbot import hook
 from cloudbot.util import web, formatting
-import re
-import requests
 
-from bs4 import BeautifulSoup
 
 SCP_SEARCH = "http://www.scp-wiki.net/search:site/q/{}"
 
@@ -43,20 +45,18 @@ def get_title(scp_id):
 
         if int_id < 1000:
             page = "http://www.scp-wiki.net/scp-series"
-        elif int_id >= 100 < 2000:
+        elif int_id < 2000:
             page = "http://www.scp-wiki.net/scp-series-2"
-        elif int_id >= 2000 < 3000:
+        elif int_id < 3000:
             page = "http://www.scp-wiki.net/scp-series-3"
         else:
             return None
-
     # get the name
     try:
         request = requests.get(page)
         request.raise_for_status()
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError):
         return None
-
     soup = BeautifulSoup(request.content)
     item = soup.find(text=scp_id)
 
@@ -99,8 +99,6 @@ def get_info(url):
            " \x02Description:\x02 {} - {}".format(title, item_id, object_class, description, short_url)
 
 
-
-
 @hook.command
 def scp(text):
     """scp <query>/<item id> -- Returns SCP Foundation wiki search result for <query>/<item id>."""
@@ -110,10 +108,12 @@ def scp(text):
     else:
         if len(text) == 3:
             term = text
-        if len(text) == 2:
+        elif len(text) == 2:
             term = "0" + text
-        if len(text) == 1:
+        elif len(text) == 1:
             term = "00" + text
+        else:
+            term = text
 
     # search for the SCP
     url = search(term)

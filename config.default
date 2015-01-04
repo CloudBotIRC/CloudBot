@@ -26,6 +26,12 @@
                 "nickserv_name": "nickserv",
                 "nickserv_command": "IDENTIFY"
             },
+            "ratelimit": {
+                "max_tokens": 17.5,
+                "restore_rate": 2.5,
+                "message_cost": 5,
+                "strict": true
+            }
             "permissions": {
                 "admins": {
                     "perms": [

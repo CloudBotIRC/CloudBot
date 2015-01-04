@@ -8,13 +8,8 @@ from cloudbot.util.tokenbucket import TokenBucket
 
 inited = []
 
-TOKENS = 17.5
-RESTORE_RATE = 2.5
-MESSAGE_COST = 5
-
 # when STRICT is enabled, every time a user gets ratelimted it wipes
 # their tokens so they have to wait at least X seconds to regen
-STRICT = True
 
 buckets = {}
 
@@ -91,20 +86,25 @@ def sieve_suite(bot, event, _hook):
         # right now ratelimiting is per-channel, but this can be changed
         uid = (event.chan, event.nick.lower())
 
+        tokens = conn.config.get('ratelimit', {}).get('tokens', 17.5)
+        restore_rate = conn.config.get('ratelimit', {}).get('restore_rate', 2.5)
+        message_cost = conn.config.get('ratelimit', {}).get('message_cost', 5)
+        strict = conn.config.get('ratelimit', {}).get('strict', True)
+
         if uid not in buckets:
-            bucket = TokenBucket(TOKENS, RESTORE_RATE)
-            bucket.consume(MESSAGE_COST)
+            bucket = TokenBucket(tokens, restore_rate)
+            bucket.consume(message_cost)
             buckets[uid] = bucket
             return event
 
         bucket = buckets[uid]
-        if bucket.consume(MESSAGE_COST):
+        if bucket.consume(message_cost):
             pass
         else:
             bot.logger.info("[{}|sieve] Refused command from {}. "
                             "Entity had {} tokens, needed {}.".format(conn.readable_name, uid, bucket.tokens,
-                                                                      MESSAGE_COST))
-            if STRICT:
+                                                                      message_cost))
+            if strict:
                 # bad person loses all tokens
                 bucket.empty()
             return None

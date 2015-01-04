@@ -12,7 +12,7 @@ api_url = 'http://api.wolframalpha.com/v2/query'
 query_url = 'http://www.wolframalpha.com/input/?i={}'
 
 
-@hook.command("wolframalpha", "wa", "calc", "math")
+@hook.command("wolframalpha", "wa", "calc", "ca", "math")
 def wolframalpha(text, bot):
     """w<query> -- Computes <query> using Wolfram Alpha."""
     api_key = bot.config.get("api_keys", {}).get("wolframalpha", None)

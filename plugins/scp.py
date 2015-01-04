@@ -72,13 +72,13 @@ def get_info(url):
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         return "Could not get SCP information: Unable to fetch URL. ({})".format(e)
     html = request.text
-    contents = re.sub('<[^<]+?>', '', html)
+    contents = formatting.strip_html(html)
 
     try:
         item_id = re.findall("Item #: (.+?)\n", contents, re.S)[0]
         object_class = re.findall("Object Class: (.+?)\n", contents, re.S)[0]
         description = re.findall("Description: (.+?)\n", contents, re.S)[0]
-    except IndexError as e:
+    except IndexError:
         return "Could not get SCP information: Page was not a valid SCP page."
 
     description = formatting.truncate_str(description, 150)

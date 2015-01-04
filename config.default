@@ -31,7 +31,7 @@
                 "restore_rate": 2.5,
                 "message_cost": 5,
                 "strict": true
-            }
+            },
             "permissions": {
                 "admins": {
                     "perms": [

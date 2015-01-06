@@ -3,7 +3,7 @@ Scaevolus 2009"""
 
 import re
 import requests
-from lxml import html
+from lxml import etree
 
 from cloudbot import hook
 from cloudbot.util import formatting
@@ -24,8 +24,7 @@ def wiki(text):
         request.raise_for_status()
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         return "Could not get Wikipedia page: {}".format(e)
-
-    x = html.fromstring(request.text)
+    x = etree.fromstring(request.text)
 
     ns = '{http://opensearch.org/searchsuggest2}'
     items = x.findall(ns + 'Section/' + ns + 'Item')
@@ -51,7 +50,6 @@ def wiki(text):
         desc = title + desc
 
     desc = ' '.join(desc.split())  # remove excess spaces
-
     desc = formatting.truncate_str(desc, 200)
 
     return '{} :: {}'.format(desc, requests.utils.quote(url, ':/'))

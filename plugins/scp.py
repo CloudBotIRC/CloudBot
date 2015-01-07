@@ -8,6 +8,9 @@ from cloudbot import hook
 from cloudbot.util import web, formatting
 
 
+class SCPError(Exception):
+    pass
+
 SCP_SEARCH = "http://www.scp-wiki.net/search:site/q/{}"
 NAME_LISTS = ["http://www.scp-wiki.net/joke-scps", "http://www.scp-wiki.net/archived-scps",
               "http://www.scp-wiki.net/decommissioned-scps", "http://www.scp-wiki.net/scp-ex",
@@ -15,6 +18,7 @@ NAME_LISTS = ["http://www.scp-wiki.net/joke-scps", "http://www.scp-wiki.net/arch
               "http://www.scp-wiki.net/scp-series-3"]
 
 scp_cache = {}
+scp_re = re.compile(r"(www.scp-wiki.net/scp-([a-zA-Z0-9]+))")
 
 
 @asyncio.coroutine
@@ -61,13 +65,13 @@ def search(query):
     return item.find('div', {'class': 'url'}).get_text().strip()
 
 
-def get_info(url):
+def get_info(url, show_url=True):
     """ Takes a SCPWiki URL and returns a formatted string """
     try:
         request = requests.get(url)
         request.raise_for_status()
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
-        return "Could not get SCP information: Unable to fetch URL. ({})".format(e)
+        raise SCPError("Could not get SCP information: Unable to fetch URL. ({})".format(e))
     html = request.text
     contents = formatting.strip_html(html)
 
@@ -76,9 +80,9 @@ def get_info(url):
         object_class = re.findall("Object Class: (.+?)\n", contents, re.S)[0]
         description = re.findall("Description: (.+?)\n", contents, re.S)[0]
     except IndexError:
-        return "Could not get SCP information: Page was not a valid SCP page."
+        raise SCPError("Could not get SCP information: Page was not a valid SCP page.")
 
-    description = formatting.truncate_str(description, 150)
+    description = formatting.truncate_str(description, 130)
     short_url = web.try_shorten(url)
 
     # get the title from our pre-generated cache
@@ -87,9 +91,21 @@ def get_info(url):
     else:
         title = "Unknown"
 
-    return "\x02Item Name:\x02 {}, \x02Item #:\x02 {}, \x02Class\x02: {}," \
-           " \x02Description:\x02 {} - {}".format(title, item_id, object_class, description, short_url)
+    if show_url:
+        return "\x02Item Name:\x02 {}, \x02Item #:\x02 {}, \x02Class\x02: {}," \
+               " \x02Description:\x02 {} - {}".format(title, item_id, object_class, description, short_url)
+    else:
+        return "\x02Item Name:\x02 {}, \x02Item #:\x02 {}, \x02Class\x02: {}," \
+               " \x02Description:\x02 {}".format(title, item_id, object_class, description)
 
+
+@hook.regex(scp_re)
+def scp_url(match):
+    url = "http://" + match.group(1)
+    try:
+        return get_info(url, show_url=False)
+    except SCPError:
+        return
 
 @hook.command
 def scp(text):
@@ -114,4 +130,7 @@ def scp(text):
     if not url:
         return "Could not get SCP information: No results found."
 
-    return get_info(url)
+    try:
+        return get_info(url)
+    except SCPError as e:
+        return e

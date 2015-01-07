@@ -1,4 +1,5 @@
 import re
+import asyncio
 
 import requests
 from bs4 import BeautifulSoup
@@ -8,10 +9,47 @@ from cloudbot.util import web, formatting
 
 
 SCP_SEARCH = "http://www.scp-wiki.net/search:site/q/{}"
+NAME_LISTS = ["http://www.scp-wiki.net/joke-scps", "http://www.scp-wiki.net/archived-scps",
+              "http://www.scp-wiki.net/decommissioned-scps", "http://www.scp-wiki.net/scp-ex",
+              "http://www.scp-wiki.net/scp-series", "http://www.scp-wiki.net/scp-series-2",
+              "http://www.scp-wiki.net/scp-series-3"]
+
+scp_cache = {}
+
+
+@asyncio.coroutine
+@hook.command
+def load_names(loop):
+    """ creates a SCP-ID > NAME/URL mapping """
+    for url in NAME_LISTS:
+        request = yield from loop.run_in_executor(None, requests.get, url)
+        soup = BeautifulSoup(request.text)
+
+        page = soup.find('div', {'id': 'page-content'}).find('div', {'class': 'content-panel standalone series'})
+        names = page.find_all("a", text=re.compile(r"SCP-"))
+
+        for item in names:
+            scp_id = item.text
+            name = item.parent.contents[1][3:].strip()
+            url = item['href']
+            data = (name, url)
+
+            scp_cache[scp_id] = data
+
+
+@asyncio.coroutine
+@hook.onload()
+def initial_refresh(loop):
+    # do an initial refresh of the caches
+    yield from load_names(loop)
 
 
 def search(query):
     """Takes an SCP name and returns a link"""
+    # we see if the query is an SCPID in our pre-generated cache
+    if query.upper() in scp_cache:
+        return "http://www.scp-wiki.net" + scp_cache[query.upper()][1]
+
     request = requests.get(SCP_SEARCH.format(query))
     soup = BeautifulSoup(request.content)
 
@@ -21,53 +59,6 @@ def search(query):
 
     item = results.find('div', {'class': 'item'})
     return item.find('div', {'class': 'url'}).get_text().strip()
-
-
-def get_title(scp_id):
-    """ An insanely over-complicated function that gets the name of a SCP, because the SCP page does not
-    include the name (?!?!?! WHY)
-    """
-    # get the page
-    if "J" in scp_id:
-        page = "http://www.scp-wiki.net/joke-scps"
-    elif "ARC" in scp_id:
-        page = "http://www.scp-wiki.net/archived-scps"
-    elif "D" in scp_id:
-        page = "http://www.scp-wiki.net/decommissioned-scps"
-    elif "EX" in scp_id:
-        page = "http://www.scp-wiki.net/scp-ex"
-    else:
-        try:
-            stripped_id = scp_id[4:]
-            int_id = int(stripped_id)
-        except ValueError:
-            return None
-
-        if int_id < 1000:
-            page = "http://www.scp-wiki.net/scp-series"
-        elif int_id < 2000:
-            page = "http://www.scp-wiki.net/scp-series-2"
-        elif int_id < 3000:
-            page = "http://www.scp-wiki.net/scp-series-3"
-        else:
-            return None
-    # get the name
-    try:
-        request = requests.get(page)
-        request.raise_for_status()
-    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError):
-        return None
-    soup = BeautifulSoup(request.content)
-    item = soup.find(text=scp_id)
-
-    if not item:
-        return None
-
-    try:
-        name = item.parent.parent.contents[1][3:].strip()
-    except:
-        return None
-    return name
 
 
 def get_info(url):
@@ -90,9 +81,10 @@ def get_info(url):
     description = formatting.truncate_str(description, 150)
     short_url = web.try_shorten(url)
 
-    title = get_title(item_id)
-
-    if not title:
+    # get the title from our pre-generated cache
+    if item_id in scp_cache:
+        title = scp_cache[item_id][0]
+    else:
         title = "Unknown"
 
     return "\x02Item Name:\x02 {}, \x02Item #:\x02 {}, \x02Class\x02: {}," \
@@ -102,16 +94,17 @@ def get_info(url):
 @hook.command
 def scp(text):
     """scp <query>/<item id> -- Returns SCP Foundation wiki search result for <query>/<item id>."""
-
     if not text.isdigit():
         term = text
     else:
-        if len(text) == 3:
-            term = text
+        if len(text) == 4:
+            term = "SCP-" + text
+        elif len(text) == 3:
+            term = "SCP-" + text
         elif len(text) == 2:
-            term = "0" + text
+            term = "SCP-0" + text
         elif len(text) == 1:
-            term = "00" + text
+            term = "SCP-00" + text
         else:
             term = text
 

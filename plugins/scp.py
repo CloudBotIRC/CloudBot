@@ -18,7 +18,7 @@ NAME_LISTS = ["http://www.scp-wiki.net/joke-scps", "http://www.scp-wiki.net/arch
               "http://www.scp-wiki.net/scp-series-3"]
 
 scp_cache = {}
-scp_re = re.compile(r"(www.scp-wiki.net/scp-([a-zA-Z0-9]+))")
+scp_re = re.compile(r"(www.scp-wiki.net/scp-([a-zA-Z0-9-]+))")
 
 
 @asyncio.coroutine
@@ -37,7 +37,6 @@ def load_names(loop):
             name = item.parent.contents[1][3:].strip()
             url = item['href']
             data = (name, url)
-
             scp_cache[scp_id] = data
 
 

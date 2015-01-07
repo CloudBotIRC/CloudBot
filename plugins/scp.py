@@ -70,7 +70,7 @@ def get_info(url, show_url=True):
         request = requests.get(url)
         request.raise_for_status()
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
-        raise SCPError("Could not get SCP information: Unable to fetch URL. ({})".format(e))
+        raise SCPError("Error: Unable to fetch URL. ({})".format(e))
     html = request.text
     contents = formatting.strip_html(html)
 
@@ -79,7 +79,7 @@ def get_info(url, show_url=True):
         object_class = re.findall("Object Class: (.+?)\n", contents, re.S)[0]
         description = re.findall("Description: (.+?)\n", contents, re.S)[0]
     except IndexError:
-        raise SCPError("Could not get SCP information: Page was not a valid SCP page.")
+        raise SCPError("Error: Invalid or unreadable SCP. Does this SCP exist?")
 
     description = formatting.truncate_str(description, 130)
     short_url = web.try_shorten(url)
@@ -127,7 +127,7 @@ def scp(text):
     url = search(term)
 
     if not url:
-        return "Could not get SCP information: No results found."
+        return "No results found."
 
     try:
         return get_info(url)

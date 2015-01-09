@@ -14,13 +14,16 @@ More info:
 This library lets you open chat session with cleverbot (www.cleverbot.com)
 """
 
-import urllib.request, urllib.error, urllib.parse
+import urllib.request
+import urllib.error
+import urllib.parse
 import hashlib
 import re
 
 
 class ServerFullError(Exception):
     pass
+
 
 ReplyFlagsRE = re.compile('<INPUT NAME=(.+?) TYPE=(.+?) VALUE="(.*?)">',
                           re.IGNORECASE | re.MULTILINE)
@@ -49,26 +52,26 @@ class Session(object):
                         '', '', '', '', '', '', '', '0', 'Say', '1', 'false']
         self.MsgList = list()
 
-    def Send(self):
+    def send(self):
         data = encode(self.keylist, self.arglist)
         digest_txt = data[9:35]
         new_hash = hashlib.md5(digest_txt).hexdigest()
         self.arglist[self.keylist.index('icognocheck')] = new_hash
         data = encode(self.keylist, self.arglist)
         req = urllib.request.Request('http://www.cleverbot.com/webservicemin',
-                              data, self.headers)
+                                     data, self.headers)
         f = urllib.request.urlopen(req)
         reply = f.read()
         return reply
 
-    def Ask(self, q):
+    def ask(self, q):
         self.arglist[self.keylist.index('stimulus')] = q
         if self.MsgList:
             self.arglist[self.keylist.index('lineref')] = '!0' + str(len(
                 self.MsgList) / 2)
         asw = self.Send()
         self.MsgList.append(q)
-        answer = parseAnswers(asw.decode('UTF-8'))
+        answer = parse_answers(asw.decode('UTF-8'))
         for k, v in answer.items():
             try:
                 self.arglist[self.keylist.index(k)] = v
@@ -80,7 +83,7 @@ class Session(object):
         return text
 
 
-def parseAnswers(text):
+def parse_answers(text):
     d = dict()
     keys = ['text', 'sessionid', 'logurl', 'vText8', 'vText7', 'vText6',
             'vText5', 'vText4', 'vText3', 'vText2', 'prevref', 'foo',
@@ -103,6 +106,7 @@ def encode(keylist, arglist):
         text += '&' + k + '=' + v
     text = text[1:]
     return text.encode('UTF-8')
+
 
 always_safe = ('ABCDEFGHIJKLMNOPQRSTUVWXYZ'
                'abcdefghijklmnopqrstuvwxyz'

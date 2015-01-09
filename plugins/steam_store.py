@@ -33,10 +33,8 @@ def format_game(app_id, show_url=True):
     data = request.json()
     game = data[app_id]["data"]
 
-    out = []
-
     # basic info
-    out.append("\x02{}\x02".format(game["name"]))
+    out = "\x02{}\x02".format(game["name"])
 
     desc = " ".join(formatting.strip_html(game["about_the_game"]).split())
     out.append(formatting.truncate_str(desc, 75))
@@ -84,7 +82,8 @@ def format_game(app_id, show_url=True):
 
 @hook.command
 def steam(text):
-    """steam [Takes a Steam ID_64 formatted ID and returns a ID_32 formatted IDsearch] - Search for specified game/trailer/DLC"""
+    """steam [Takes a Steam ID_64 formatted ID and returns a ID_32 formatted IDsearch] - Search for specified
+    game/trailer/DLC"""
     params = {'term': text.strip().lower()}
 
     try:

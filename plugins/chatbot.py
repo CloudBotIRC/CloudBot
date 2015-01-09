@@ -6,5 +6,10 @@ from cloudbot import hook
 def ask(text):
     """ <question> -- Asks Cleverbot <question> """
     session = cleverbot.Session()
-    data = session.ask(text)
-    return data
+    answer = session.ask(text)
+
+    if answer.startswith("\n"):
+        # cleverbot tried to advert us
+        answer = session.ask(text)
+
+    return answer

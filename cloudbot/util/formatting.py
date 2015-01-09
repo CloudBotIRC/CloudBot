@@ -182,7 +182,7 @@ def fformat(args, formats):
     >>> formats = ["{a} {b} {c}", "{a} {b}", "{a}"]
     >>> data = {"a": "First Thing", "b": "Second Thing"}
     >>> fformat(data, formats)
-    "First Thing Second Thing"
+    'First Thing Second Thing'
     """
     matches = {}
     for f in formats:
@@ -190,14 +190,16 @@ def fformat(args, formats):
             # Check if values can be mapped
             m = f.format(**args)
             # Insert match and number of matched values (max matched values if already in dict)
-            matches[m] = max([matches.get(m, None), len(re.findall(r'(\{.*?\})', f))])
+            matches[m] = max([matches.get(m, 0), len(re.findall(r'(\{.*?\})', f))])
         except Exception as e:
             print(e)
 
     # Return most complete match, ranked by values matched and then my match length or None
     return max(matches.items(), key=lambda x: (x[1], len(x[0])))[0]
 
-
+formats = ["{a} {b} {c}", "{a} {b}", "{a}"]
+data = {"a": "First Thing", "b": "Second Thing"}
+fformat(data, formats)
 
 # ALL CODE BELOW THIS LINE IS COVERED BY THE FOLLOWING AGREEMENT:
 

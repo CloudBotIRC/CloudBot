@@ -1,21 +1,21 @@
-## Installing on *Unix systems
+## Installing on Unix Systems
 
 ### Downloading
 
-#### Manual Download
-Download CloudBotRefresh from [https://github.com/CloudBotIRC/CloudBot/zipball/python3.4.zip](https://github.com/CloudBotIRC/CloudBotRefresh/archive/python3.4.zip) and unzip, or execute the following commands:
+#### Archive
+Download CloudBot from [https://github.com/CloudBotIRC/CloudBot/zipball/python3.4.zip](https://github.com/CloudBotIRC/CloudBot/archive/python3.4.zip) and unzip, or execute the following commands:
 ```
-curl -Ls https://github.com/CloudBotIRC/CloudBotRefresh/archive/python3.4.zip > CloudBot.zip
+curl -Ls https://github.com/CloudBotIRC/CloudBot/archive/python3.4.zip > CloudBot.zip
 unzip CloudBot.zip
-cd CloudBotRefresh-python3.4
+cd CloudBot-python3.4
 ```
 
 #### Git
 
-Alternately, you can also clone CloudBotRefresh by using:
+Alternately, you can also clone CloudBot by using:
 ```
-git clone https://github.com/CloudBotIRC/CloudBotRefresh.git
-cd CloudBotRefresh
+git clone https://github.com/CloudBotIRC/CloudBot.git
+cd CloudBot
 ```
 
 ### Installing Dependencies

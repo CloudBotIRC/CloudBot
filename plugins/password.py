@@ -1,16 +1,17 @@
 import string
 
+import random as std_random
+
 from cloudbot import hook
 
 try:
     from Crypto.Random import random
-    gen = random
+    gen = random.StrongRandom()
 except ImportError:
     # Just use the regular random module, not the strong one
-    import random
-    gen = random.SystemRandom()
+    gen = std_random.SystemRandom()
 
-
+print(gen)
 with open("data/password_words.txt") as f:
     common_words = [line.strip() for line in f.readlines()]
 
@@ -712,7 +713,7 @@ def get_start():
     total = 0
     # Hooray magic numbers!
     # ... in reality it's the total of all trigram combinations
-    rand_num = gen.random() * 125729.0
+    rand_num = std_random.SystemRandom().random() * 125729.0
     for x in range(26):
         for y in range(26):
             for z in range(26):
@@ -739,7 +740,7 @@ def gen_pass(length):
             total += trigram[x][y][z]
         if not total:
             break  # total was zero??
-        rand_num = gen.random() * total
+        rand_num = std_random.SystemRandom().random() * total
         total = 0
         for z in range(26):
             total += trigram[x][y][z]

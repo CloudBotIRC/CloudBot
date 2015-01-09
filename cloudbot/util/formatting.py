@@ -114,7 +114,6 @@ def capitalize_first(line):
     return ' '.join([s[0].upper() + s[1:] for s in line.split(' ')])
 
 
-# TODO: rewrite to use a list of tuples
 def multiword_replace(text, word_dic):
     """
     take a text and replace words that match a key in a dictionary with
@@ -173,6 +172,33 @@ def truncate_str(content, length=100, suffix='...'):
     else:
         return content[:length].rsplit(' ', 1)[0] + suffix
 
+
+# TODO: DOES NOT WORK
+def fformat(args, formats):
+    """
+    :type args: dict[unknown, unknown]
+    :type formats: list[str]
+    :rtype: str
+    >>> formats = ["{a} {b} {c}", "{a} {b}", "{a}"]
+    >>> data = {"a": "First Thing", "b": "Second Thing"}
+    >>> fformat(data, formats)
+    "First Thing Second Thing"
+    """
+    matches = {}
+    for f in formats:
+        try:
+            # Check if values can be mapped
+            m = f.format(**args)
+            # Insert match and number of matched values (max matched values if already in dict)
+            matches[m] = max([matches.get(m, None), len(re.findall(r'(\{.*?\})', f))])
+        except Exception as e:
+            print(e)
+
+    # Return most complete match, ranked by values matched and then my match length or None
+    return max(matches.items(), key=lambda x: (x[1], len(x[0])))[0]
+
+
+
 # ALL CODE BELOW THIS LINE IS COVERED BY THE FOLLOWING AGREEMENT:
 
 # Copyright (c) Django Software Foundation and individual contributors.
@@ -181,7 +207,7 @@ def truncate_str(content, length=100, suffix='...'):
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #
-#  1. Redistributions of source code must retain the above copyright notice,
+# 1. Redistributions of source code must retain the above copyright notice,
 #     this list of conditions and the following disclaimer.
 #
 #  2. Redistributions in binary form must reproduce the above copyright
@@ -219,11 +245,11 @@ def smart_split(text):
     be further processed with unescape_string_literal()).
 
     >>> list(smart_split(r'This is "a person\'s" test.'))
-    [u'This', u'is', u'"a person\\\'s"', u'test.']
+    ['This', 'is', '"a person\\\'s"', 'test.']
     >>> list(smart_split(r"Another 'person\'s' test."))
-    [u'Another', u"'person\\'s'", u'test.']
+    ['Another', "'person\\'s'", 'test.']
     >>> list(smart_split(r'A "\"funky\" style" test.'))
-    [u'A', u'"\\"funky\\" style"', u'test.']
+    ['A', '"\\"funky\\" style"', 'test.']
     """
     for bit in split_re.finditer(text):
         yield bit.group(0)
@@ -232,15 +258,15 @@ def smart_split(text):
 def get_text_list(list_, last_word='or'):
     """
     >>> get_text_list(['a', 'b', 'c', 'd'])
-    u'a, b, c or d'
+    'a, b, c or d'
     >>> get_text_list(['a', 'b', 'c'], 'and')
-    u'a, b and c'
+    'a, b and c'
     >>> get_text_list(['a', 'b'], 'and')
-    u'a and b'
+    'a and b'
     >>> get_text_list(['a'])
-    u'a'
+    'a'
     >>> get_text_list([])
-    u''
+    ''
     """
     if len(list_) == 0:
         return ''

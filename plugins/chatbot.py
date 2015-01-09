@@ -2,7 +2,7 @@ from cloudbot.util import cleverbot
 from cloudbot import hook
 
 
-@hook.command
+@hook.command("ask", "cleverbot", "cb")
 def ask(text):
     """ <question> -- Asks Cleverbot <question> """
     session = cleverbot.Session()

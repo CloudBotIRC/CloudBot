@@ -17,13 +17,13 @@ If that doesn't work, follow [this guide](http://simpledeveloper.com/how-to-inst
 
 ### Downloading
 
-Download CloudBotRefresh from [https://github.com/CloudBotIRC/CloudBot/zipball/python3.4.zip](https://github.com/CloudBotIRC/CloudBotRefresh/archive/python3.4.zip).
+Download CloudBot from [https://github.com/CloudBotIRC/CloudBot/zipball/python3.4.zip](https://github.com/CloudBotIRC/CloudBot/archive/python3.4.zip).
 
 Unzip the resulting file, and continue to read this document.
 
-### Installing
+### Installing Dependencies
 
-Before you can run the bot, you need to install a few Python dependencies. All of CloudBotRefresh's dependencies are stored in the `requirements.txt` file.`
+Before you can run the bot, you need to install a few Python dependencies. All of CloudBot's dependencies are stored in the `requirements.txt` file.`
 
 These can be installed with `pip` (The Python package manager) by running the following command in the bot directory:
 

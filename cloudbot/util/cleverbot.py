@@ -29,12 +29,13 @@ ReplyFlagsRE = re.compile('<INPUT NAME=(.+?) TYPE=(.+?) VALUE="(.*?)">',
                           re.IGNORECASE | re.MULTILINE)
 
 
-class Session(object):
-    keylist = ['stimulus', 'start', 'sessionid', 'vText8', 'vText7', 'vText6',
-               'vText5', 'vText4', 'vText3', 'vText2', 'icognoid',
-               'icognocheck', 'prevref', 'emotionaloutput', 'emotionalhistory',
-               'asbotname', 'ttsvoice', 'typing', 'lineref', 'fno', 'sub',
-               'islearning', 'cleanslate']
+class Session():
+    key_list = ['stimulus', 'start', 'sessionid', 'vText8', 'vText7', 'vText6',
+                'vText5', 'vText4', 'vText3', 'vText2', 'icognoid',
+                'icognocheck', 'prevref', 'emotionaloutput', 'emotionalhistory',
+                'asbotname', 'ttsvoice', 'typing', 'lineref', 'fno', 'sub',
+                'islearning', 'cleanslate']
+
     headers = dict()
     headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:26.0)'
     headers['User-Agent'] += ' Gecko/20130101 Firefox/26.0'
@@ -48,16 +49,16 @@ class Session(object):
     headers['Pragma'] = 'no-cache'
 
     def __init__(self):
-        self.arglist = ['', 'y', '', '', '', '', '', '', '', '', 'wsf', '',
-                        '', '', '', '', '', '', '', '0', 'Say', '1', 'false']
-        self.MsgList = list()
+        self.arg_list = ['', 'y', '', '', '', '', '', '', '', '', 'wsf', '',
+                         '', '', '', '', '', '', '', '0', 'Say', '1', 'false']
+        self.message_list = list()
 
     def send(self):
-        data = encode(self.keylist, self.arglist)
+        data = encode(self.key_list, self.arg_list)
         digest_txt = data[9:35]
         new_hash = hashlib.md5(digest_txt).hexdigest()
-        self.arglist[self.keylist.index('icognocheck')] = new_hash
-        data = encode(self.keylist, self.arglist)
+        self.arg_list[self.key_list.index('icognocheck')] = new_hash
+        data = encode(self.key_list, self.arg_list)
         req = urllib.request.Request('http://www.cleverbot.com/webservicemin',
                                      data, self.headers)
         f = urllib.request.urlopen(req)
@@ -65,21 +66,21 @@ class Session(object):
         return reply
 
     def ask(self, q):
-        self.arglist[self.keylist.index('stimulus')] = q
-        if self.MsgList:
-            self.arglist[self.keylist.index('lineref')] = '!0' + str(len(
-                self.MsgList) / 2)
-        asw = self.Send()
-        self.MsgList.append(q)
+        self.arg_list[self.key_list.index('stimulus')] = q
+        if self.message_list:
+            self.arg_list[self.key_list.index('lineref')] = '!0' + str(len(
+                self.message_list) / 2)
+        asw = self.send()
+        self.message_list.append(q)
         answer = parse_answers(asw.decode('UTF-8'))
         for k, v in answer.items():
             try:
-                self.arglist[self.keylist.index(k)] = v
+                self.arg_list[self.key_list.index(k)] = v
             except ValueError:
                 pass
-        self.arglist[self.keylist.index('emotionaloutput')] = str()
+        self.arg_list[self.key_list.index('emotionaloutput')] = str()
         text = answer['ttsText']
-        self.MsgList.append(text)
+        self.message_list.append(text)
         return text
 
 
@@ -98,11 +99,11 @@ def parse_answers(text):
     return d
 
 
-def encode(keylist, arglist):
+def encode(key_list, arg_list):
     text = str()
-    for i in range(len(keylist)):
-        k = keylist[i]
-        v = quote(arglist[i])
+    for i in range(len(key_list)):
+        k = key_list[i]
+        v = quote(arg_list[i])
         text += '&' + k + '=' + v
     text = text[1:]
     return text.encode('UTF-8')

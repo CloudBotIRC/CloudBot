@@ -1,5 +1,6 @@
 import asyncio
 import random
+import functools
 
 from bs4 import BeautifulSoup
 import requests
@@ -14,8 +15,9 @@ mlia_cache = []
 def refresh_fml_cache(loop):
     """ gets a page of random FMLs and puts them into a dictionary """
     url = 'http://www.fmylife.com/random/'
-    response = yield from loop.run_in_executor(None, requests.get, url)
-    soup = BeautifulSoup(response.text)
+    _func = functools.partial(requests.get, url, timeout=6)
+    request = yield from loop.run_in_executor(None, _func)
+    soup = BeautifulSoup(request.text)
 
     for e in soup.find_all('div', {'class': 'post article'}):
         fml_id = int(e['id'])
@@ -27,7 +29,8 @@ def refresh_fml_cache(loop):
 def refresh_mlia_cache(loop):
     """ gets a page of random MLIAs and puts them into a dictionary """
     url = 'http://mylifeisaverage.com/{}'.format(random.randint(1, 11000))
-    request = yield from loop.run_in_executor(None, requests.get, url)
+    _func = functools.partial(requests.get, url, timeout=6)
+    request = yield from loop.run_in_executor(None, _func)
     soup = BeautifulSoup(request.text)
 
     for story in soup.find_all('div', {'class': 'story '}):

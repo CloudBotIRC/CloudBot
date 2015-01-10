@@ -5,7 +5,7 @@ import geoip2.database
 from cloudbot import hook
 
 
-reader = geoip2.database.Reader('./data/GeoLite2-City.mmdb')
+geoip_reader = geoip2.database.Reader('./data/GeoLite2-City.mmdb')
 
 
 @hook.command
@@ -16,7 +16,7 @@ def geoip(text):
         return "Invalid input."
 
     try:
-        location_data = reader.city(ip)
+        location_data = geoip_reader.city(ip)
     except geoip2.AddressNotFoundError:
         return "Sorry, I can't locate that in my database."
 

@@ -1,7 +1,5 @@
 # CloudBot Refresh
 
-## About
-
 CloudBotRefresh is the newest generation of CloudBot, the fun, fast, extendable Python IRC bot!
 
 ## Installing CloudBot

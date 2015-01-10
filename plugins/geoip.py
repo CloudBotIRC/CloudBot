@@ -4,6 +4,7 @@ import geoip2
 
 from cloudbot import hook
 
+
 @hook.onload()
 def load_geoip():
     global geoip_reader

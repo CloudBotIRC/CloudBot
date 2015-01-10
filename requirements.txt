@@ -5,7 +5,6 @@ watchdog
 lxml
 beautifulsoup4
 pygeoip
-py3dns
 pycrypto
 pbkdf2
 requests

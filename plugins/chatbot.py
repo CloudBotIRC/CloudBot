@@ -11,10 +11,8 @@ def ask(text):
 
     try:
         answer = session.ask(text)
-        if answer.startswith("\n"):
+        while answer.startswith("\n"):
             # cleverbot tried to advert us
-            answer = session.ask(text)
-        if answer.startswith("\n"):
             answer = session.ask(text)
     except urllib.error.HTTPError:
         return "Could not get response. Cleverbot is angry :("

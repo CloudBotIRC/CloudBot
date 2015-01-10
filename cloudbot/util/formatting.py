@@ -173,8 +173,7 @@ def truncate_str(content, length=100, suffix='...'):
         return content[:length].rsplit(' ', 1)[0] + suffix
 
 
-# TODO: DOES NOT WORK
-def fformat(args, formats):
+def dict_format(args, formats):
     """
     :type args: dict[unknown, unknown]
     :type formats: list[str]
@@ -191,15 +190,15 @@ def fformat(args, formats):
             m = f.format(**args)
             # Insert match and number of matched values (max matched values if already in dict)
             matches[m] = max([matches.get(m, 0), len(re.findall(r'(\{.*?\})', f))])
-        except Exception as e:
-            print(e)
+        except:
+            continue
 
     # Return most complete match, ranked by values matched and then my match length or None
-    return max(matches.items(), key=lambda x: (x[1], len(x[0])))[0]
+    try:
+        return max(matches.items(), key=lambda x: (x[1], len(x[0])))[0]
+    except:
+        return None
 
-formats = ["{a} {b} {c}", "{a} {b}", "{a}"]
-data = {"a": "First Thing", "b": "Second Thing"}
-fformat(data, formats)
 
 # ALL CODE BELOW THIS LINE IS COVERED BY THE FOLLOWING AGREEMENT:
 

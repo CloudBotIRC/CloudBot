@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from urllib.parse import urlparse
 
 from cloudbot import hook
 from cloudbot.util import web, formatting
@@ -43,6 +44,9 @@ def amazon(text):
     except AttributeError:
         rating = "No Ratings"
 
-    url = web.try_shorten(item.find('a', {'class': 's-access-detail-page'})['href'])
+    # clean up garbage url
+    o = urlparse(item.find('a', {'class': 's-access-detail-page'})['href'])
+    url = o.scheme + "://" + o.netloc + o.path + "?linkCode=as2&tag=cloudbot-20"
+    url = web.try_shorten(url)
 
     return "\x02{}\x02 ({}) - {} - {}".format(title, price, rating, url)

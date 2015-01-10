@@ -9,7 +9,7 @@ import pygeoip
 from cloudbot import hook
 
 
-# TODO: This is VERY awful
+# TODO: This is SUPER EXTRA MEGA awful
 @hook.onload()
 def load_regions(bot):
     global regions, geo

@@ -5,7 +5,7 @@ This should be as easy as possible for you but there are a few things to conside
 
 The following guidelines will help you to help us! If you have any troubles submitting a pull request, just come and ask us for help on our IRC channel.
 
-## TL;DR
+## Basic Overview
 
 * Read [Github documentation](http://help.github.com/) and [Pull Request documentation](http://help.github.com/send-pull-requests/)
 * Fork the repository

@@ -60,6 +60,8 @@ You can find a number of example bots in [#CloudBot](irc://irc.esper.net/cloudbo
 
 CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
 
+![GPL V3](https://www.gnu.org/graphics/gplv3-127x51.png)
+    
     CloudBot
 
     Copyright © 2011-2015 Luke Rogers and CloudBot Contributors
@@ -77,7 +79,5 @@ CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
     You should have received a copy of the GNU General Public License
     along with CloudBot.  If not, see <http://www.gnu.org/licenses/>.
     
-![GPL V3](https://www.gnu.org/graphics/gplv3-127x51.png)
-
 This product includes GeoLite2 data created by MaxMind, available from
-<a href="http://www.maxmind.com">http://www.maxmind.com</a>. GeoLite2 databases are distributed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
+<a href="http://www.maxmind.com">http://www.maxmind.com</a>. GeoLite2 databases are distributed under the [Creative Commons Attribution-ShareAlike 3.0 Unported License](https://creativecommons.org/licenses/by-sa/3.0/).

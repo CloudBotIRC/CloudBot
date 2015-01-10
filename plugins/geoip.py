@@ -1,9 +1,12 @@
-import geoip2.database
 import socket
+
+import geoip2.database
+
 from cloudbot import hook
 
 
 reader = geoip2.database.Reader('./data/GeoLite2-City.mmdb')
+
 
 @hook.command
 def geoip(text):

@@ -1,10 +1,10 @@
+geoip2
 mcstatus
 microdata
 sqlalchemy
 watchdog
 lxml
 beautifulsoup4
-pygeoip
 pycrypto
 pbkdf2
 requests

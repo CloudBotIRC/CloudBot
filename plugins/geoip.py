@@ -1,63 +1,27 @@
-import os.path
-import json
-import gzip
-import requests
-from io import BytesIO
-
-import pygeoip
-
+import geoip2.database
+import socket
 from cloudbot import hook
 
 
-# TODO: This is SUPER EXTRA MEGA awful
-@hook.onload()
-def load_regions(bot):
-    global regions, geo
-    # load region database
-    with open(os.path.join(bot.data_dir, "geoip_regions.json"), "rb") as f:
-        regions = json.loads(f.read().decode())
+reader = geoip2.database.Reader('./data/GeoLite2-City.mmdb')
 
-    if os.path.isfile(os.path.join(bot.data_dir, "GeoLiteCity.dat")):
-        # initialise geolocation database
-        geo = pygeoip.GeoIP(os.path.join(bot.data_dir, "GeoLiteCity.dat"))
-    else:
-        print("Downloading GeoIP database")
-        request = requests.get("http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz")
-        download = request.raw
-        print("Download complete")
-        bytes_io = BytesIO(download)
-        geoip_file = gzip.GzipFile(fileobj=bytes_io, mode='rb')
-
-        output = open(os.path.join(bot.data_dir, "GeoLiteCity.dat"), 'wb')
-        output.write(geoip_file.read())
-        output.close()
-
-        geo = pygeoip.GeoIP(os.path.join(bot.data_dir, "GeoLiteCity.dat"))
-
-
-@hook.command()
+@hook.command
 def geoip(text):
-    """<host/ip> - gets the location of <host/ip>"""
+    try:
+        ip = socket.gethostbyname(text)
+    except socket.gaierror:
+        return "Invalid input."
 
     try:
-        record = geo.record_by_name(text)
-    except Exception:
+        location_data = reader.city(ip)
+    except geoip2.AddressNotFoundError:
         return "Sorry, I can't locate that in my database."
 
-    data = {}
-
-    if "region_name" in record:
-        # we try catching an exception here because the region DB is missing a few areas
-        # it's a lazy patch, but it should do the job
-        try:
-            data["region"] = ", " + regions[record["country_code"]][record["region_name"]]
-        except Exception:
-            data["region"] = ""
-    else:
-        data["region"] = ""
-
-    data["cc"] = record["country_code"] or "N/A"
-    data["country"] = record["country_name"] or "Unknown"
-    data["city"] = record["city"] or "Unknown"
+    data = {
+        "cc": location_data.country.iso_code or "N/A",
+        "country": location_data.country.name or "Unknown",
+        "city": location_data.city.name or "Unknown",
+        "region": ", " + location_data.subdivisions.most_specific.name or ""
+    }
 
     return "\x02Country:\x02 {country} ({cc}), \x02City:\x02 {city}{region}".format(**data)

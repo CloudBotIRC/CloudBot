@@ -21,7 +21,7 @@ The following guidelines will help you to help us! If you have any troubles subm
 ## How to prepare
 
 * You need a [GitHub account](https://github.com/signup/free)
-* Submit an [issue ticket](https://github.com/ClouDev/CloudBot/issues) for your issue if the is no one yet.
+* Submit an [issue ticket](https://github.com/ClouDev/CloudBot/issues) for your issue if there is no one yet.
   * Try to describe the issue and include steps to reproduce if it's a bug.
 * If you are able and want to fix this, fork the repository on GitHub
 

@@ -1,9 +1,9 @@
 # How to contribute
 
-Hey, Luke here. It's awesome that you want to help contribute to CloudBot!
+Heya, Luke here. It's awesome that you want to help contribute to CloudBot!
 This should be as easy as possible for you but there are a few things to consider when contributing.
 
-The following guidelines will help you to help us! If you have any troubles submitting a pull request, just come and ask us for help on our IRC channel.
+The following guidelines for contribution should be followed if you want to submit a pull request. If you have any troubles, just come and ask us for help on our IRC channel.
 
 ## Basic Overview
 

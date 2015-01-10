@@ -20,7 +20,10 @@ def format_colors(description):
 @hook.command("mcping", "mcp")
 def mcping(text):
     """<server[:port]> - gets info about the Minecraft server at <server[:port]>"""
-    server = MinecraftServer.lookup(text)
+    try:
+        server = MinecraftServer.lookup(text)
+    except (IOError, ValueError) as e:
+        return e
 
     try:
         s = server.status()

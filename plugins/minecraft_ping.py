@@ -32,6 +32,8 @@ def mcping(text):
         return "Connection refused"
     except ConnectionError:
         return "Connection error"
+    except (IOError, ValueError) as e:
+        return "Error pinging server: {}".format(e)
 
     latency = round(s.latency)
     if isinstance(s.description, dict):

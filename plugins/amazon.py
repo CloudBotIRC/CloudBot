@@ -31,6 +31,7 @@ def amazon(text):
 
     results = results.find('ul', {'id': 's-results-list-atf'}).find_all('li', {'class': 's-result-item'})
     item = results[0]
+    asin = item['data-asin']
 
     # here we use dirty html scraping to get everything we need
     title = formatting.truncate_str(item.find('h2', {'class': 's-access-title'}).text, 50)
@@ -49,8 +50,7 @@ def amazon(text):
         rating_str = "No Ratings"
 
     # clean up garbage url
-    o = urlparse(item.find('a', {'class': 's-access-detail-page'})['href'])
-    url = o.scheme + "://" + "smile.amazon.com" + o.path + "?linkCode=as2&tag=cloudbot-20"
+    url = "http://www.amazon.com/dp/" + asin + "/?tag=cloudbot-20"
     url = web.try_shorten(url)
 
     return "\x02{}\x02 ({}) - {} - {}".format(title, price, rating_str, url)

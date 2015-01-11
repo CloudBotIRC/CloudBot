@@ -63,7 +63,7 @@ def imgur(text):
         return "No imgur API details"
 
     if text == "apicredits":
-        return "{ClientRemaining}/{ClientLimit} credits remaining.".format(**imgur_api.credits)
+        return imgur_api.credits
 
     items, is_reddit = get_items(text)
 
@@ -121,7 +121,7 @@ def imguralbum(text, conn):
         return "No imgur API details"
 
     if text == "apicredits":
-        return "{ClientRemaining}/{ClientLimit} credits remaining.".format(**imgur_api.credits)
+        return imgur_api.credits
 
     items, is_reddit = get_items(text)
 

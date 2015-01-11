@@ -5,6 +5,7 @@ sqlalchemy
 watchdog
 lxml
 beautifulsoup4
+feedparser
 pycrypto
 pbkdf2
 requests

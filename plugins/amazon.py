@@ -50,7 +50,7 @@ def amazon(text):
 
     # clean up garbage url
     o = urlparse(item.find('a', {'class': 's-access-detail-page'})['href'])
-    url = o.scheme + "://" + o.netloc + o.path + "?linkCode=as2&tag=cloudbot-20"
+    url = o.scheme + "://" + "smile.amazon.com" + o.path + "?linkCode=as2&tag=cloudbot-20"
     url = web.try_shorten(url)
 
     return "\x02{}\x02 ({}) - {} - {}".format(title, price, rating_str, url)

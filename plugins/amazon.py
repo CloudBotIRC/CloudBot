@@ -1,7 +1,6 @@
 import requests
 import re
 from bs4 import BeautifulSoup
-from urllib.parse import urlparse
 
 from cloudbot import hook
 from cloudbot.util import web, formatting
@@ -60,7 +59,7 @@ def amazon(text):
     except AttributeError:
         rating_str = "No Ratings"
 
-    # clean up garbage url
+    # generate a short url
     url = "http://www.amazon.com/dp/" + asin + "/?tag=cloudbot-20"
     url = web.try_shorten(url)
 

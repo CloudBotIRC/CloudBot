@@ -13,6 +13,7 @@ def format_item(item):
 
 @hook.command("feed", "rss", "news")
 def rss(text):
+    """<feed> -- Gets the first three items from the RSS/ATOM feed <feed>."""
     limit = 3
 
     text = text.lower().strip()
@@ -32,11 +33,12 @@ def rss(text):
         addr = text
 
     feed = feedparser.parse(addr)
-    out = []
+    if not feed.entries:
+        return "Feed not found."
 
+    out = []
     for item in feed.entries[:limit]:
         out.append(format_item(item))
 
     start = "\x02{}\x02: ".format(feed.feed.title) if 'title' in feed.feed else ""
-
     return start + ", ".join(out)

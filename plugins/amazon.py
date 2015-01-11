@@ -35,6 +35,17 @@ def amazon(text):
 
     # here we use dirty html scraping to get everything we need
     title = formatting.truncate_str(item.find('h2', {'class': 's-access-title'}).text, 50)
+    tags = []
+
+    # tags!
+    if item.find('i', {'class': 'a-icon-prime'}):
+        tags.append("\x02Prime\x02")
+
+    if item.find('i', {'class': 'sx-bestseller-badge-primary'}):
+        tags.append("\x02Bestseller\x02")
+
+    if "FREE Shipping" in item.text:
+        tags.append("\x02Free Shipping\x02")
 
     try:
         price = item.find('span', {'class': 's-price'}).text
@@ -53,4 +64,6 @@ def amazon(text):
     url = "http://www.amazon.com/dp/" + asin + "/?tag=cloudbot-20"
     url = web.try_shorten(url)
 
-    return "\x02{}\x02 ({}) - {} - {}".format(title, price, rating_str, url)
+    tag_str = " - " + ", ".join(tags) if tags else ""
+
+    return "\x02{}\x02 ({}) - {}{} - {}".format(title, price, rating_str, tag_str, url)

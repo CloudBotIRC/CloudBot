@@ -1,5 +1,5 @@
 from cloudbot.util.formatting import munge, dict_format, pluralize, strip_colors, truncate_str, \
-    capitalize_first, strip_html, multiword_replace, truncate_words, smart_split, get_text_list
+    strip_html, multiword_replace, truncate_words, smart_split, get_text_list
 
 test_munge_input = "The quick brown fox jumps over the lazy dog"
 test_munge_count = 3
@@ -30,9 +30,6 @@ test_truncate_words_length_a = 5
 test_truncate_words_length_b = 100
 test_truncate_words_result_a = "I am the example string for..."
 test_truncate_words_result_b = "I am the example string for a unit test"
-
-test_capitalize_first_input = "I really like the iPhone 3"
-test_capitalize_first_result = "I Really Like The IPhone 3"
 
 test_strip_html_input = "<strong>Cats &amp; Dogs: &#181;</strong>"
 test_strip_html_result = "Cats & Dogs: µ"
@@ -72,10 +69,6 @@ def test_truncate_words():
            test_truncate_words_result_a
     assert truncate_words(test_truncate_words_input, length=test_truncate_words_length_b) == \
            test_truncate_words_result_b
-
-
-def test_capitalize_first():
-    assert capitalize_first(test_capitalize_first_input) == test_capitalize_first_result
 
 
 def test_strip_html():

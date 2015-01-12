@@ -1,5 +1,3 @@
-import pytest
-
 from cloudbot.util.formatting import munge, dict_format, pluralize, strip_colors, truncate_str, \
     capitalize_first, strip_html, multiword_replace, truncate_words, smart_split, get_text_list
 
@@ -51,7 +49,7 @@ def test_munge():
 
 def test_dict_format():
     assert dict_format(test_format_data, test_format_formats) == test_format_result
-    assert dict_format({}, test_format_formats) == None
+    assert dict_format({}, test_format_formats) is None
 
 
 def test_pluralize():
@@ -68,9 +66,12 @@ def test_truncate_str():
     assert truncate_str(test_truncate_str_input, length=test_truncate_str_length_b) == test_truncate_str_result_b
 
 
+# noinspection PyPep8
 def test_truncate_words():
-    assert truncate_words(test_truncate_words_input, length=test_truncate_words_length_a) == test_truncate_words_result_a
-    assert truncate_words(test_truncate_words_input, length=test_truncate_words_length_b) == test_truncate_words_result_b
+    assert truncate_words(test_truncate_words_input, length=test_truncate_words_length_a) == \
+           test_truncate_words_result_a
+    assert truncate_words(test_truncate_words_input, length=test_truncate_words_length_b) == \
+           test_truncate_words_result_b
 
 
 def test_capitalize_first():

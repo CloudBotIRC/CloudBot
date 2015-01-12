@@ -10,10 +10,10 @@ import random
 import binascii
 
 from cloudbot import hook
-from cloudbot.util import formatting, web
+from cloudbot.util import formatting, web, colors
 
 
-colors = collections.OrderedDict([
+COLORS = collections.OrderedDict([
     ('red', '\x0304'),
     ('orange', '\x0307'),
     ('yellow', '\x0308'),
@@ -43,6 +43,7 @@ def translate(text, dic):
 
 
 # onload
+
 @hook.onload()
 def load_text(bot):
     """
@@ -221,15 +222,21 @@ def derpify(text):
     return output
 
 
+# colors
+@hook.command
+def color_parse(text):
+    return colors.parse(text)
+
+
 # colors - based on code by Reece Selwood - <https://github.com/hitzler/homero>
 @hook.command
 def rainbow(text):
     """<text> -- Gives <text> rainbow colors."""
     text = str(text)
     text = strip(text)
-    col = list(colors.items())
+    col = list(COLORS.items())
     out = ""
-    l = len(colors)
+    l = len(COLORS)
     for i, t in enumerate(text):
         if t == " ":
             out += t
@@ -242,10 +249,10 @@ def rainbow(text):
 def wrainbow(text):
     """<text> -- Gives each word in <text> rainbow colors."""
     text = str(text)
-    col = list(colors.items())
+    col = list(COLORS.items())
     text = strip(text).split(' ')
     out = []
-    l = len(colors)
+    l = len(COLORS)
     for i, t in enumerate(text):
         out.append(col[i % l][1] + t)
     return ' '.join(out)
@@ -255,7 +262,7 @@ def wrainbow(text):
 def usa(text):
     """<text> -- Makes <text> more patriotic."""
     text = strip(text)
-    c = [colors['red'], '\x0300', colors['blue']]
+    c = [COLORS['red'], '\x0300', COLORS['blue']]
     l = len(c)
     out = ''
     for i, t in enumerate(text):

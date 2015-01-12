@@ -142,7 +142,7 @@ def parse(string):
     """
     parse: Formats a string, replacing words wrapped in $( ) with actual colours or formatting.
     example:
-    IrcFormatter.parse("The quick $(brown)brown$(clear) fox jumps over the$(bold) lazy dog$(clear).")
+    parse("The quick $(brown)brown$(clear) fox jumps over the$(bold) lazy dog$(clear).")
     This method will not throw any KeyErrors, but will instead ignore input between $() if it doesn't know what to
     replace it with.
     """
@@ -151,7 +151,6 @@ def parse(string):
     regex = COLOR_RE.findall(string)
     for match in regex:
         formatted = formatted.replace(match, _convert(match), 1)
-
     return formatted
 
 

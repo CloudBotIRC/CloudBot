@@ -1,6 +1,5 @@
 geoip2
-six
-mcstatus
+git+https://github.com/Dinnerbone/mcstatus.git@master
 microdata
 sqlalchemy
 watchdog

@@ -11,7 +11,7 @@ $(dark_green, bold)Yes
 $(dark_green, bold)Yes, definitely
 $(dark_green, bold)You may rely on it
 $(bold)Reply hazy, try again
-$(bold)Ask again later:P
+$(bold)Ask again later
 $(bold)Better not tell you now
 $(bold)Cannot predict now
 $(bold)Concentrate and ask again

@@ -50,10 +50,16 @@ def remove_ignore(db, conn, chan, mask):
 
 def is_ignored(conn, chan, mask):
     for _conn, _chan, _mask in ignore_cache:
-        if not (conn, chan) == (_conn, _chan):
-            continue
-        if fnmatch(mask, _mask):
-            return True
+        if _chan == "*":
+            # this is a global ignore
+            if fnmatch(mask, _mask):
+                return True
+        else:
+            # this is a channel-specific ignore
+            if not (conn, chan) == (_conn, _chan):
+                continue
+            if fnmatch(mask, _mask):
+                return True
 
 
 @asyncio.coroutine
@@ -91,9 +97,9 @@ def ignore(text, db, chan, conn, notice):
         target = "{}!*@*".format(target)
 
     if is_ignored(conn.name, chan, target):
-        notice("{} is already ignored in this channel.".format(target))
+        notice("{} is already ignored in {}.".format(target, chan))
     else:
-        notice("{} has been ignored in this channel.".format(target))
+        notice("{} has been ignored in {}.".format(target, chan))
         add_ignore(db, conn.name, chan, target)
 
 
@@ -105,7 +111,35 @@ def unignore(text, db, chan, conn, notice):
         target = "{}!*@*".format(target)
 
     if not is_ignored(conn.name, chan, target):
-        notice("{} is not ignored in this channel.".format(target))
+        notice("{} is not ignored in {}.".format(target, chan))
     else:
-        notice("{} has been un-ignored in this channel.".format(target))
+        notice("{} has been un-ignored in {}.".format(target, chan))
         remove_ignore(db, conn.name, chan, target)
+
+
+@hook.command(permissions=["ignore"])
+def global_ignore(text, db, conn, notice):
+    """<nick|mask> -- ignores all input from <nick|mask> in ALL channels."""
+    target = text.lower()
+    if "!" not in target or "@" not in target:
+        target = "{}!*@*".format(target)
+
+    if is_ignored(conn.name, "*", target):
+        notice("{} is already globally ignored.".format(target))
+    else:
+        notice("{} has been globally ignored.".format(target))
+        add_ignore(db, conn.name, "*", target)
+
+
+@hook.command(permissions=["ignore"])
+def global_unignore(text, db, conn, notice):
+    """<nick|mask> -- un-ignores all input from <nick|mask> in ALL channels."""
+    target = text.lower()
+    if "!" not in target or "@" not in target:
+        target = "{}!*@*".format(target)
+
+    if not is_ignored(conn.name, "*", target):
+        notice("{} is not globally ignored.".format(target))
+    else:
+        notice("{} has been globally un-ignored.".format(target))
+        remove_ignore(db, conn.name, "*", target)

@@ -175,6 +175,7 @@ truncate_str = truncate
 
 def strip_colors(text):
     """
+    Takes a string and removes all IRC color codes.
     :param text: Text to strip
     :type text: str
     :return Text stripped of IRC colors

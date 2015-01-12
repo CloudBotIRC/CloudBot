@@ -1,8 +1,12 @@
 import pytest
-from cloudbot.util.formatting import munge, dict_format, pluralize, strip_colors, truncate_str, capitalize_first
+
+from cloudbot.util.formatting import munge, dict_format, pluralize, strip_colors, truncate_str, \
+    capitalize_first, strip_html, multiword_replace
 
 test_munge_input = "The quick brown fox jumps over the lazy dog"
-test_munge_result = "Ţħë ʠüíċķ Бŗöωñ ƒöχ ĵüṁρš övëŗ ţħë ĺäźÿ đöġ"
+test_munge_count = 3
+test_munge_result_a = "Ţħë ʠüíċķ Бŗöωñ ƒöχ ĵüṁρš övëŗ ţħë ĺäźÿ đöġ"
+test_munge_result_b = "Ţħë quick brown fox jumps over the lazy dog"
 
 test_format_formats = ["{a} {b} {c}", "{a} {b}", "{a}"]
 test_format_data = {"a": "First Thing", "b": "Second Thing"}
@@ -26,9 +30,17 @@ test_truncate_str_result_b = "I am the example string for a unit test"
 test_capitalize_first_input = "I really like the iPhone 3"
 test_capitalize_first_result = "I Really Like The IPhone 3"
 
+test_strip_html_input = "<strong>Cats &amp; Dogs: &#181;</strong>"
+test_strip_html_result = "Cats & Dogs: µ"
+
+test_multiword_replace_dict = {"<bit1>": "<replace1>", "[bit2]": "[replace2]"}
+test_multiword_replace_text = "<bit1> likes [bit2]"
+test_multiword_replace_result = "<replace1> likes [replace2]"
+
 
 def test_munge():
-    assert munge(test_munge_input) == test_munge_result
+    assert munge(test_munge_input) == test_munge_result_a
+    assert munge(test_munge_input, test_munge_count) == test_munge_result_b
 
 
 def test_dict_format():
@@ -51,3 +63,11 @@ def test_truncate_str():
 
 def test_capitalize_first():
     assert capitalize_first(test_capitalize_first_input) == test_capitalize_first_result
+
+
+def test_strip_html():
+    assert strip_html(test_strip_html_input) == test_strip_html_result
+
+
+def test_multiword_replace():
+    assert multiword_replace(test_multiword_replace_text, test_multiword_replace_dict) == test_multiword_replace_result

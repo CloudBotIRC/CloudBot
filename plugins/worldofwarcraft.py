@@ -45,15 +45,15 @@ def wow_armoury_format(data, link):
         return data['reason']
 
     if 'name' in data:
-        niceurl = link.replace('/api/wow/', '/wow/en/') + '/simple'
+        nice_url = link.replace('/api/wow/', '/wow/en/') + '/simple'
 
         try:
-            return '{0} is a level \x0307{1}\x0F {2} {3} on {4} with \x0307{5}\x0F achievement points and \x0307{6}' \
-                   '\x0F honourable kills. Armoury Profile: {7}' \
+            return '{} is a level \x0307{}\x0F {} {} on {} with \x0307{}\x0F achievement points and \x0307{}' \
+                   '\x0F honourable kills. Armoury Profile: {}' \
                 .format(data['name'], data['level'], wow_get_gender(data['gender']), wow_get_class(data['class'], True),
-                        data['realm'], data['achievementPoints'], data['totalHonorableKills'], web.shorten(niceurl))
+                        data['realm'], data['achievementPoints'], data['totalHonorableKills'], web.shorten(nice_url))
         except Exception as e:
-            return 'Unable to fetch information for {}. Does the realm or character exist? ({})'.format(niceurl, str(e))
+            return 'Unable to fetch information for {}. Does the realm or character exist? ({})'.format(nice_url, str(e))
 
     return 'An unexpected error occurred.'
 
@@ -127,19 +127,19 @@ def armoury(text):
     """armoury [realm] [character name] [region = EU] - Look up character and returns API data."""
 
     # Splits the input, builds the API url, and returns the formatted data to user.
-    splitinput = text.lower().split()
+    split_input = text.lower().split()
 
-    if len(splitinput) < 2:
+    if len(split_input) < 2:
         return 'armoury [realm] [character name] [region = EU] - Look up character and returns API data.'
 
-    realm = splitinput[0].replace('_', '-')
-    char_name = splitinput[1]
+    realm = split_input[0].replace('_', '-')
+    char_name = split_input[1]
 
     # Sets the default region to EU if none specified.
-    if len(splitinput) < 3:
+    if len(split_input) < 3:
         region = 'eu'
     else:
-        region = splitinput[2]
+        region = split_input[2]
 
     if not re.match(r"^[a-z]{1,3}$", region):
         return 'The region specified is not a valid region. Valid regions: eu, us, sea, kr, tw.'

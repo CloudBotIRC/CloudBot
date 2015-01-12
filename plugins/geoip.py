@@ -5,7 +5,7 @@ import geoip2.errors
 from cloudbot import hook
 
 
-@hook.onload()
+@hook.onload
 def load_geoip():
     global geoip_reader
     geoip_reader = geoip2.database.Reader('./data/GeoLite2-City.mmdb')

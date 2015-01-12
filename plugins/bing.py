@@ -4,7 +4,7 @@ import requests
 from lxml import html
 
 from cloudbot import hook
-from cloudbot.util import formatting, filesize
+from cloudbot.util import formatting, filesize, colors
 
 
 API_URL = "https://api.datamarket.azure.com/Bing/Search/v1/Composite"
@@ -68,7 +68,7 @@ def bing(text, bot):
     desc = formatting.truncate(unescape(result["Description"]), 150)
     url = unescape(result["Url"])
 
-    return '{} -- \x02{}\x02: "{}"'.format(url, title, desc)
+    return colors.parse('{} -- $(b){}$(b): "{}"'.format(url, title, desc))
 
 
 @hook.command("bingimage", "googleimage", "gis", "image")

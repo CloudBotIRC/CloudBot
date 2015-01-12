@@ -1,26 +1,26 @@
-<g>As I see it, yes
-<g>It is certain
-<g>It is decidedly so
-<g>Most likely
-<g>Outlook good
-<g>Signs point to yes
-<g>One would be wise to think so
-<g>Naturally
-<g>Without a doubt
-<g>Yes
-<g>Yes, definitely
-<g>You may rely on it
-<y>Reply hazy, try again
-<y>Ask again later
-<y>Better not tell you now
-<y>Cannot predict now
-<y>Concentrate and ask again
-<y>You know the answer better than I
-<y>Maybe...
-<r>You're kidding, right?
-<r>Don't count on it
-<r>In your dreams
-<r>My reply is no
-<r>My sources say no
-<r>Outlook not so good
-<r>Very doubtful
+$(dark_green, bold)As I see it, yes
+$(dark_green, bold)It is certain
+$(dark_green, bold)It is decidedly so
+$(dark_green, bold)Most likely
+$(dark_green, bold)Outlook good
+$(dark_green, bold)Signs point to yes
+$(dark_green, bold)One would be wise to think so
+$(dark_green, bold)Naturally
+$(dark_green, bold)Without a doubt
+$(dark_green, bold)Yes
+$(dark_green, bold)Yes, definitely
+$(dark_green, bold)You may rely on it
+$(bold)Reply hazy, try again
+$(bold)Ask again later
+$(bold)Better not tell you now
+$(bold)Cannot predict now
+$(bold)Concentrate and ask again
+$(bold)You know the answer better than I
+$(bold)Maybe...
+$(dark_red, bold)You're kidding, right?
+$(dark_red, bold)Don't count on it
+$(dark_red, bold)In your dreams
+$(dark_red, bold)My reply is no
+$(dark_red, bold)My sources say no
+$(dark_red, bold)Outlook not so good
+$(dark_red, bold)Very doubtful

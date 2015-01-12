@@ -3,7 +3,6 @@ git+https://github.com/Dinnerbone/mcstatus.git@master
 microdata
 sqlalchemy
 watchdog
-lxml
 beautifulsoup4
 feedparser
 pycrypto
@@ -12,6 +11,8 @@ requests
 psutil
 requests-oauthlib
 tweepy
+pytest
+flake8
 pyenchant
 pythonwhois
 imgurpython

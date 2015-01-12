@@ -1,99 +1,111 @@
 import asyncio
 from fnmatch import fnmatch
 
+from sqlalchemy import Table, Column, UniqueConstraint, String, Boolean
+
 from cloudbot import hook
-from cloudbot.event import EventType
+from cloudbot.util import botvars
+
+
+table = Table(
+    "ignored",
+    botvars.metadata,
+    Column("connection", String),
+    Column("channel", String),
+    Column("mask", String),
+    Column("status", Boolean, default=True),
+    UniqueConstraint("connection", "channel", "mask")
+)
 
 
 @hook.onload
-def ensure_ignored(bot):
-    changed = False
-    for conn_config in bot.config["connections"]:
-        if "plugins" not in conn_config:
-            conn_config["plugins"] = {"ignore": {"ignored": []}}
-            changed = True
-        elif "ignore" not in conn_config["plugins"]:
-            conn_config["plugins"]["ignore"] = {"ignored": []}
-            changed = True
-        elif "ignored" not in conn_config["plugins"]["ignore"]:
-            conn_config["plugins"]["ignore"]["ignored"] = []
-            changed = True
+def load_cache(db):
+    """
+    :type db: sqlalchemy.orm.Session
+    """
+    global ignore_cache
+    ignore_cache = []
+    for row in db.execute(table.select()):
+        conn = row["connection"]
+        chan = row["channel"]
+        mask = row["mask"]
+        ignore_cache.append((conn, chan, mask))
 
-    if changed:
-        bot.config.save_config()
+
+def add_ignore(db, conn, chan, mask):
+    if (conn, chan) in ignore_cache:
+        pass
+    else:
+        db.execute(table.insert().values(connection=conn, channel=chan, mask=mask))
+
+    db.commit()
+    load_cache(db)
+
+
+def remove_ignore(db, conn, chan, mask):
+    db.execute(table.delete().where(table.c.connection == conn).where(table.c.channel == chan)
+               .where(table.c.mask == mask))
+    db.commit()
+
+
+def is_ignored(conn, chan, mask):
+    for _conn, _chan, _mask in ignore_cache:
+        if not (conn, chan) == (_conn, _chan):
+            continue
+        if fnmatch(mask, _mask):
+            return True
 
 
 @asyncio.coroutine
-@hook.sieve()
-def ignore_sieve(bot, event, _hook):
-    """ blocks events from ignored channels/hosts
+@hook.sieve
+def ignore_sieve(bot, event, hook):
+    """
     :type bot: cloudbot.bot.CloudBot
     :type event: cloudbot.event.Event
     :type _hook: cloudbot.plugin.Hook
     """
     # don't block event hooks
-    if _hook.type in ("irc_raw", "event"):
+    if hook.type in ("irc_raw", "event"):
         return event
 
     # don't block an event that could be unignoring
-    if event.type is EventType.message and event.content[1:] == "unignore":
+    if hook.type == "command" and event.triggered_command == "unignore":
         return event
 
     if event.mask is None:
         # this is a server message, we don't need to check it
         return event
-
-    ignorelist = event.conn.config["plugins"]["ignore"]["ignored"]
     mask = event.mask.lower()
 
-    for pattern in ignorelist:
-        if (pattern.startswith("#") and fnmatch(pattern, event.chan)) or fnmatch(mask, pattern):
-            return None
+    if is_ignored(event.conn.name, event.chan, mask):
+        return None
 
     return event
 
 
-@asyncio.coroutine
-@hook.command(autohelp=False)
-def ignored(notice, conn):
-    """- lists all channels and users I'm ignoring"""
-    ignorelist = conn.config["plugins"]["ignore"]["ignored"]
-    if ignorelist:
-        notice("Ignored channels/users are: {}".format(", ".join(ignorelist)))
-    else:
-        notice("No masks are currently ignored.")
-    return
-
-
 @hook.command(permissions=["ignore"])
-def ignore(text, bot, conn, notice):
-    """<channel|nick|usermask> - adds <channel|nick> to my ignore list"""
+def ignore(text, db, chan, conn, notice):
+    """<nick|mask> -- ignores all input from <nick|mask> in this channel."""
     target = text.lower()
     if "!" not in target or "@" not in target:
         target = "{}!*@*".format(target)
-    ignorelist = conn.config["plugins"]["ignore"]["ignored"]
-    if target in ignorelist:
-        notice("{} is already ignored.".format(target))
+
+    if is_ignored(conn.name, chan, target):
+        notice("{} is already ignored in this channel.".format(target))
     else:
-        notice("{} has been ignored.".format(target))
-        ignorelist.append(target)
-        ignorelist.sort()
-        bot.config.save_config()
-    return
+        notice("{} has been ignored in this channel.".format(target))
+        add_ignore(db, conn.name, chan, target)
 
 
 @hook.command(permissions=["ignore"])
-def unignore(text, bot, conn, notice):
-    """<channel|nick|usermask> - removes <channel|nick|usermask> from my ignore list"""
+def unignore(text, db, chan, conn, notice):
+    """<nick|mask> -- un-ignores all input from <nick|mask> in this channel."""
     target = text.lower()
     if "!" not in target or "@" not in target:
         target = "{}!*@*".format(target)
-    ignorelist = conn.config["plugins"]["ignore"]["ignored"]
-    if target in ignorelist:
-        notice("{} has been unignored.".format(target))
-        ignorelist.remove(target)
-        ignorelist.sort()
-        bot.config.save_config()
+
+    if not is_ignored(conn.name, chan, target):
+        notice("{} is not ignored in this channel.".format(target))
     else:
-        notice("{} is not ignored.".format(target))
-    return
+        notice("{} has been un-ignored in this channel.".format(target))
+        remove_ignore(db, conn.name, chan, target)

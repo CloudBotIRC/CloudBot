@@ -1,7 +1,7 @@
 import asyncio
 from fnmatch import fnmatch
 
-from sqlalchemy import Table, Column, UniqueConstraint, String, Boolean
+from sqlalchemy import Table, Column, UniqueConstraint, PrimaryKeyConstraint, String, Boolean
 
 from cloudbot import hook
 from cloudbot.util import botvars
@@ -14,7 +14,8 @@ table = Table(
     Column("channel", String),
     Column("mask", String),
     Column("status", Boolean, default=True),
-    UniqueConstraint("connection", "channel", "mask")
+    UniqueConstraint("connection", "channel", "mask", "status"),
+    PrimaryKeyConstraint("connection", "channel", "mask")
 )
 
 

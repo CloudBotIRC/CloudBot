@@ -23,7 +23,7 @@ table = Table(
 
 def get_unread(db, server, target):
     query = select([table.c.sender, table.c.message, table.c.time_sent]) \
-        .where(table.c.connection == server) \
+        .where(table.c.connection == server.lower()) \
         .where(table.c.target == target.lower()) \
         .where(table.c.is_read == 0) \
         .order_by(table.c.time_sent)
@@ -32,7 +32,7 @@ def get_unread(db, server, target):
 
 def count_unread(db, server, target):
     query = select([table]) \
-        .where(table.c.connection == server) \
+        .where(table.c.connection == server.lower()) \
         .where(table.c.target == target.lower()) \
         .where(table.c.is_read == 0) \
         .count()
@@ -41,7 +41,7 @@ def count_unread(db, server, target):
 
 def read_all_tells(db, server, target):
     query = table.update() \
-        .where(table.c.connection == server) \
+        .where(table.c.connection == server.lower()) \
         .where(table.c.target == target.lower()) \
         .where(table.c.is_read == 0) \
         .values(is_read=1)
@@ -51,7 +51,7 @@ def read_all_tells(db, server, target):
 
 def read_tell(db, server, target, message):
     query = table.update() \
-        .where(table.c.connection == server) \
+        .where(table.c.connection == server.lower()) \
         .where(table.c.target == target.lower()) \
         .where(table.c.message == message) \
         .values(is_read=1)
@@ -61,9 +61,9 @@ def read_tell(db, server, target, message):
 
 def add_tell(db, server, sender, target, message):
     query = table.insert().values(
-        connection=server,
-        sender=sender,
-        target=target,
+        connection=server.lower(),
+        sender=sender.lower(),
+        target=target.lower(),
         message=message,
         is_read=False,
         time_sent=datetime.today()
@@ -150,5 +150,4 @@ def tell_cmd(text, nick, db, notice, conn):
         return
 
     add_tell(db, conn.name, sender, target, message)
-
     notice("Your message has been saved, and {} will be notified once they are active.".format(target))

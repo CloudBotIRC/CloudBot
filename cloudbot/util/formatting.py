@@ -178,10 +178,6 @@ def dict_format(args, formats):
     :type args: dict[unknown, unknown]
     :type formats: list[str]
     :rtype: str
-    >>> formats = ["{a} {b} {c}", "{a} {b}", "{a}"]
-    >>> data = {"a": "First Thing", "b": "Second Thing"}
-    >>> fformat(data, formats)
-    'First Thing Second Thing'
     """
     matches = {}
     for f in formats:

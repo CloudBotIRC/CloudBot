@@ -12,7 +12,7 @@ requests
 psutil
 requests-oauthlib
 tweepy
-pytest`
+pytest
 pyenchant
 pythonwhois
 imgurpython

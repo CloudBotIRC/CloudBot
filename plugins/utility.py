@@ -58,7 +58,7 @@ def load_text(bot):
 
 @hook.command("qrcode", "qr")
 def qrcode(text):
-    """[link] - returns a link to a QR code image for [link]"""
+    """<link> - returns a link to a QR code image for <link>"""
 
     args = {
         "cht": "qr",  # chart type (QR)
@@ -188,12 +188,13 @@ def hash_command(text):
 
 @hook.command
 def munge(text):
-    """munge <text> -- Munges up <text>."""
+    """<text> -- Munges up <text>."""
     return formatting.munge(text)
 
 
-@hook.command("leet")
+@hook.command
 def leet(text):
+    """<text> -- Makes <text> more 1337h4x0rz."""
     output = ''.join(random.choice(leet[ch]) if ch.isalpha() else ch for ch in text.lower())
     return output
 
@@ -223,6 +224,7 @@ def derpify(text):
 # colors - based on code by Reece Selwood - <https://github.com/hitzler/homero>
 @hook.command
 def rainbow(text):
+    """<text> -- Gives <text> rainbow colors."""
     text = str(text)
     text = strip(text)
     col = list(colors.items())
@@ -238,6 +240,7 @@ def rainbow(text):
 
 @hook.command
 def wrainbow(text):
+    """<text> -- Gives each word in <text> rainbow colors."""
     text = str(text)
     col = list(colors.items())
     text = strip(text).split(' ')
@@ -250,6 +253,7 @@ def wrainbow(text):
 
 @hook.command
 def usa(text):
+    """<text> -- Makes <text> more patriotic."""
     text = strip(text)
     c = [colors['red'], '\x0300', colors['blue']]
     l = len(c)
@@ -261,6 +265,7 @@ def usa(text):
 
 @hook.command
 def superscript(text):
+    """<text> -- Makes <text> superscript."""
     regular = "abcdefghijklmnoprstuvwxyzABDEGHIJKLMNOPRTUVW0123456789+-=()"
     super_script = "ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖʳˢᵗᵘᵛʷˣʸᶻᴬᴮᴰᴱᴳᴴᴵᴶᴷᴸᴹᴺᴼᴾᴿᵀᵁⱽᵂ⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾"
     result = []

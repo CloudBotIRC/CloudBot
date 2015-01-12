@@ -62,27 +62,28 @@ def is_ignored(conn, chan, mask):
                 return True
 
 
+# noinspection PyUnusedLocal
 @asyncio.coroutine
 @hook.sieve
-def ignore_sieve(bot, event, hook):
+def ignore_sieve(bot, event, _hook):
     """
     :type bot: cloudbot.bot.CloudBot
     :type event: cloudbot.event.Event
     :type _hook: cloudbot.plugin.Hook
     """
     # don't block event hooks
-    if hook.type in ("irc_raw", "event"):
+    if _hook.type in ("irc_raw", "event"):
         return event
 
     # don't block an event that could be unignoring
-    if hook.type == "command" and event.triggered_command == "unignore":
+    if _hook.type == "command" and event.triggered_command == "unignore":
         return event
 
     if event.mask is None:
         # this is a server message, we don't need to check it
         return event
-    mask = event.mask.lower()
 
+    mask = event.mask.lower()
     if is_ignored(event.conn.name, event.chan, mask):
         return None
 

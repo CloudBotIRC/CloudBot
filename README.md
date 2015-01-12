@@ -6,13 +6,13 @@ CloudBotRefresh is the newest generation of CloudBot, the fun, fast, extendable 
 
 Firstly, CloudBot will only run on **Python 3.4 or higher**. Because we use the asyncio module, you will not be able to use any other versions of Python. If you **really** want to run CloudBot on Python 2.x, you can find the old **unsupported** version of CloudBot at [this location](https://github.com/ClouDev/CloudBot).
 
-To install CloudBotRefresh on *nix (linux, etc), see [docs/installing-unix.md](https://github.com/CloudBotIRC/CloudBotRefresh/blob/python3.4/docs/installing-unix.md)
+To install CloudBot on *nix (linux, etc), see [here](https://github.com/CloudBotIRC/CloudBot/wiki/Installing-on-*nix)
 
-To install CloudBotRefresh on Windows, see [docs/installing-windows.md](https://github.com/CloudBotIRC/CloudBotRefresh/blob/python3.4/docs/installing-windows.md)
+To install CloudBot on Windows, see [here](https://github.com/CloudBotIRC/CloudBot/wiki/Installing-on-Windows)
 
-If you're going to be actively developing on CloudBotRefresh, and submitting PRs back, we recommend running CloudBotRefresh inside Vagrant. This allows everyone to have an identical development environment.
+If you're going to be actively developing on CloudBot, and submitting PRs back, we recommend running CloudBot inside Vagrant. This allows everyone to have an identical development environment.
 
-To install CloudBotRefresh in Vagrant (both *Unix and Windows), see [docs/installing-vagrant.md](https://github.com/CloudBotIRC/CloudBotRefresh/blob/python3.4/docs/installing-vagrant.md)
+To install CloudBot in Vagrant (both *Unix and Windows), see [here](https://github.com/CloudBotIRC/CloudBot/wiki/Installing-with-Vagrant)
 
 
 ### Running CloudBot

@@ -3,7 +3,7 @@ import re
 from bs4 import BeautifulSoup
 
 from cloudbot import hook
-from cloudbot.util import web, formatting
+from cloudbot.util import web, formatting, colors
 
 
 SEARCH_URL = "http://www.amazon.com/s/"
@@ -38,13 +38,13 @@ def amazon(text):
 
     # tags!
     if item.find('i', {'class': 'a-icon-prime'}):
-        tags.append("\x02Prime\x02")
+        tags.append("$(b)Prime$(b)")
 
     if item.find('i', {'class': 'sx-bestseller-badge-primary'}):
-        tags.append("\x02Bestseller\x02")
+        tags.append("$(b)Bestseller$(b)")
 
     if "FREE Shipping" in item.text:
-        tags.append("\x02Free Shipping\x02")
+        tags.append("$(b)Free Shipping$(b)")
 
     try:
         price = item.find('span', {'class': 's-price'}).text
@@ -65,4 +65,4 @@ def amazon(text):
 
     tag_str = " - " + ", ".join(tags) if tags else ""
 
-    return "\x02{}\x02 ({}) - {}{} - {}".format(title, price, rating_str, tag_str, url)
+    return colors.parse("$(b){}$(b) ({}) - {}{} - {}".format(title, price, rating_str, tag_str, url))

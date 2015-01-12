@@ -182,6 +182,6 @@ def _convert(string):
                 ret += get_color(formatting)
             count += 1
         elif formatting in IRC_FORMATTING_DICT:
-            ret += get_color(formatting)
+            ret += get_format(formatting)
 
     return ret.strip()

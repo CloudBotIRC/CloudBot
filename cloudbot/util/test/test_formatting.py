@@ -1,5 +1,5 @@
-from cloudbot.util.formatting import munge, dict_format, pluralize, strip_colors, truncate, \
-    strip_html, multiword_replace, truncate_words, smart_split, get_text_list
+from cloudbot.util.formatting import munge, dict_format, pluralize, strip_colors, truncate, truncate_str, \
+    strip_html, multi_replace, multiword_replace, truncate_words, smart_split, get_text_list
 
 test_munge_input = "The quick brown fox jumps over the lazy dog"
 test_munge_count = 3
@@ -62,6 +62,10 @@ def test_truncate_str():
     assert truncate(test_truncate_str_input, length=test_truncate_str_length_a) == test_truncate_str_result_a
     assert truncate(test_truncate_str_input, length=test_truncate_str_length_b) == test_truncate_str_result_b
 
+    # compatibility
+    assert truncate_str(test_truncate_str_input, length=test_truncate_str_length_a) == test_truncate_str_result_a
+    assert truncate_str(test_truncate_str_input, length=test_truncate_str_length_b) == test_truncate_str_result_b
+
 
 # noinspection PyPep8
 def test_truncate_words():
@@ -76,6 +80,9 @@ def test_strip_html():
 
 
 def test_multiword_replace():
+    assert multi_replace(test_multiword_replace_text, test_multiword_replace_dict) == test_multiword_replace_result
+
+    # compatibility
     assert multiword_replace(test_multiword_replace_text, test_multiword_replace_dict) == test_multiword_replace_result
 
 

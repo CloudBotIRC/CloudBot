@@ -1,7 +1,7 @@
 import pytest
 
 from cloudbot.util.formatting import munge, dict_format, pluralize, strip_colors, truncate_str, \
-    capitalize_first, strip_html, multiword_replace
+    capitalize_first, strip_html, multiword_replace, truncate_words, smart_split, get_text_list
 
 test_munge_input = "The quick brown fox jumps over the lazy dog"
 test_munge_count = 3
@@ -27,6 +27,12 @@ test_truncate_str_length_b = 100
 test_truncate_str_result_a = "I am the..."
 test_truncate_str_result_b = "I am the example string for a unit test"
 
+test_truncate_words_input = "I am the example string for a unit test"
+test_truncate_words_length_a = 5
+test_truncate_words_length_b = 100
+test_truncate_words_result_a = "I am the example string for..."
+test_truncate_words_result_b = "I am the example string for a unit test"
+
 test_capitalize_first_input = "I really like the iPhone 3"
 test_capitalize_first_result = "I Really Like The IPhone 3"
 
@@ -45,6 +51,7 @@ def test_munge():
 
 def test_dict_format():
     assert dict_format(test_format_data, test_format_formats) == test_format_result
+    assert dict_format({}, test_format_formats) == None
 
 
 def test_pluralize():
@@ -61,6 +68,11 @@ def test_truncate_str():
     assert truncate_str(test_truncate_str_input, length=test_truncate_str_length_b) == test_truncate_str_result_b
 
 
+def test_truncate_words():
+    assert truncate_words(test_truncate_words_input, length=test_truncate_words_length_a) == test_truncate_words_result_a
+    assert truncate_words(test_truncate_words_input, length=test_truncate_words_length_b) == test_truncate_words_result_b
+
+
 def test_capitalize_first():
     assert capitalize_first(test_capitalize_first_input) == test_capitalize_first_result
 
@@ -71,3 +83,17 @@ def test_strip_html():
 
 def test_multiword_replace():
     assert multiword_replace(test_multiword_replace_text, test_multiword_replace_dict) == test_multiword_replace_result
+
+
+def test_get_text_list():
+    assert get_text_list(['a', 'b', 'c', 'd']) == 'a, b, c or d'
+    assert get_text_list(['a', 'b', 'c'], 'and') == 'a, b and c'
+    assert get_text_list(['a', 'b'], 'and') == 'a and b'
+    assert get_text_list(['a']) == 'a'
+    assert get_text_list([]) == ''
+
+
+def test_smart_split():
+    assert list(smart_split(r'This is "a person\'s" test.')) == ['This', 'is', '"a person\\\'s"', 'test.']
+    assert list(smart_split(r"Another 'person\'s' test.")) == ['Another', "'person\\'s'", 'test.']
+    assert list(smart_split(r'A "\"funky\" style" test.')) == ['A', '"\\"funky\\" style"', 'test.']

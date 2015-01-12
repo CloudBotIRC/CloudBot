@@ -55,7 +55,7 @@ def wolframalpha(text, bot):
 
     # I have no idea what this regex does.
     ret = re.sub(r'\\(.)', r'\1', ret)
-    ret = formatting.truncate_str(ret, 250)
+    ret = formatting.truncate(ret, 250)
 
     if not ret:
         return 'No results.'

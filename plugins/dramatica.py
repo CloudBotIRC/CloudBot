@@ -39,7 +39,7 @@ def drama(text):
         if p.text_content():
             summary = " ".join(p.text_content().splitlines())
             summary = re.sub("\[\d+\]", "", summary)
-            summary = formatting.truncate_str(summary, 220)
+            summary = formatting.truncate(summary, 220)
             return "{} - {}".format(summary, url)
 
     return "Unknown Error."

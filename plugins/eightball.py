@@ -26,5 +26,5 @@ def load_responses(bot):
 def eightball(action):
     """<question> - asks the all knowing magic electronic eight ball <question>"""
 
-    magic = formatting.multiword_replace(random.choice(responses), color_codes)
+    magic = formatting.multi_replace(random.choice(responses), color_codes)
     action("shakes the magic 8 ball... {}".format(magic))

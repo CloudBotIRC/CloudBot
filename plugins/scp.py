@@ -81,7 +81,7 @@ def get_info(url, show_url=True):
     except IndexError:
         raise SCPError("Error: Invalid or unreadable SCP. Does this SCP exist?")
 
-    description = formatting.truncate_str(description, 130)
+    description = formatting.truncate(description, 130)
     short_url = web.try_shorten(url)
 
     # get the title from our pre-generated cache

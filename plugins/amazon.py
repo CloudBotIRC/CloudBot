@@ -33,7 +33,7 @@ def amazon(text):
     asin = item['data-asin']
 
     # here we use dirty html scraping to get everything we need
-    title = formatting.truncate_str(item.find('h2', {'class': 's-access-title'}).text, 50)
+    title = formatting.truncate(item.find('h2', {'class': 's-access-title'}).text, 50)
     tags = []
 
     # tags!

@@ -64,7 +64,7 @@ def urban(text):
             definition = definitions[id_num - 1]
 
             def_text = " ".join(definition['definition'].split())  # remove excess spaces
-            def_text = formatting.truncate_str(def_text, 200)
+            def_text = formatting.truncate(def_text, 200)
         except IndexError:
             return 'Not found.'
 
@@ -76,7 +76,7 @@ def urban(text):
         definition = random.choice(definitions)
 
         def_text = " ".join(definition['definition'].split())  # remove excess spaces
-        def_text = formatting.truncate_str(def_text, 200)
+        def_text = formatting.truncate(def_text, 200)
 
         name = definition['word']
         url = definition['permalink']

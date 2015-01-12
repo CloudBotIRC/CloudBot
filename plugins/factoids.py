@@ -164,7 +164,7 @@ def factoid(match, async, event, message, action):
             result = data
 
         # factoid postprocessors
-        result = formatting.multiword_replace(result, shortcodes)
+        result = formatting.multi_replace(result, shortcodes)
 
         if result.startswith("<act>"):
             result = result[5:].strip()

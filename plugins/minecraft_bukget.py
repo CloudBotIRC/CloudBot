@@ -102,7 +102,7 @@ def plugin_details(slug):
 def format_output(data):
     """ takes plugin data and returns two strings representing information about that plugin """
     name = data["plugin_name"]
-    description = formatting.truncate_str(data['description'], 30)
+    description = formatting.truncate(data['description'], 30)
     url = data['website']
     if data['authors']:
         authors = data['authors'][0]

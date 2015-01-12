@@ -1,6 +1,6 @@
 import socket
-
-import geoip2
+import geoip2.database
+import geoip2.errors
 
 from cloudbot import hook
 
@@ -20,7 +20,7 @@ def geoip(text):
 
     try:
         location_data = geoip_reader.city(ip)
-    except geoip2.AddressNotFoundError:
+    except geoip2.errors.AddressNotFoundError:
         return "Sorry, I can't locate that in my database."
 
     data = {

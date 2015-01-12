@@ -9,3 +9,10 @@ install:
 
 script:
   - "py.test ."
+
+notifications:
+  irc:
+    channels:
+      - "irc.esper.net#cloudbot"
+    template:
+      - "%{repository}#%{build_number} (%{branch} - %{commit}) %{author}: %{message} - %{build_url}"

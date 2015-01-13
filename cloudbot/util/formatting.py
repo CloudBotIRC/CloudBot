@@ -153,7 +153,7 @@ def truncate_words(content, length=10, suffix='...'):
 def truncate(content, length=100, suffix='...'):
     """
     Truncates a string after a certain number of characters.
-    Function always truncates on a word boundary.
+    Function always tries to truncate on a word boundary.
     :rtype str
     """
     if len(content) <= length:

@@ -9,7 +9,7 @@ install:
 
 script:
   - "python ./travis/travis_config.py"
-  - "py.test py.test --cov ."
+  - "py.test --cov ."
 
 notifications:
   irc:

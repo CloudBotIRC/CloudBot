@@ -9,7 +9,10 @@ install:
 
 script:
   - "python ./travis/travis_config.py"
-  - "py.test --cov ."
+  - "py.test -v --cov coveralls --cov-report term-missing . "
+
+after_success:
+  - "coveralls"
 
 notifications:
   irc:

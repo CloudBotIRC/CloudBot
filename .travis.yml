@@ -9,7 +9,7 @@ install:
 
 script:
   - "python ./travis/travis_config.py"
-  - "py.test . --doctest-modules --pep8 coveralls -v --cov coveralls --cov-report term-missing"
+  - "py.test . --doctest-modules --pep8 coveralls -v --cov . --cov-report term-missing"
 
 after_success:
   - "coveralls"

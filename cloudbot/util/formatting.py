@@ -147,7 +147,7 @@ def truncate_words(content, length=10, suffix='...'):
     out = None
     x = 0
     for i in msg:
-        if x <= length:
+        if x < length:
             if out:
                 out = out + " " + msg[x]
             else:

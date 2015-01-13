@@ -28,7 +28,7 @@ test_truncate_str_result_b = "I am the example string for a unit test"
 test_truncate_words_input = "I am the example string for a unit test"
 test_truncate_words_length_a = 5
 test_truncate_words_length_b = 100
-test_truncate_words_result_a = "I am the example string for..."
+test_truncate_words_result_a = "I am the example string..."
 test_truncate_words_result_b = "I am the example string for a unit test"
 
 test_strip_html_input = "<strong>Cats &amp; Dogs: &#181;</strong>"

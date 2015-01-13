@@ -1,4 +1,6 @@
-from cloudbot.util.colors import parse, strip, get_available_colours, get_available_formats
+import pytest
+
+from cloudbot.util.colors import parse, strip, get_available_colours, get_available_formats, get_color, get_format
 
 test_input = "The quick $(brown)brown$(clear) fox jumps over the$(bold) lazy dog$(clear)."
 
@@ -20,3 +22,15 @@ def test_available_colors():
 
 def test_available_formats():
     assert "bold" in get_available_formats()
+
+
+def test_invalid_color():
+    with pytest.raises(KeyError) as excinfo:
+        get_color("cake")
+    assert 'not in the list of available colours' in str(excinfo.value)
+
+
+def test_invalid_format():
+    with pytest.raises(KeyError) as excinfo:
+        get_format("cake")
+    assert 'not found in the list of available formats' in str(excinfo.value)

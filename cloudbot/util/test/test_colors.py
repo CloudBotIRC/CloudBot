@@ -54,5 +54,6 @@ def test_get_format():
 def test_convert():
     assert _convert("$(red, green)") == "\x0304,09"
     assert _convert("$(red, bold)") == "\x0304\x02"
+    assert _convert("$(red)") == "\x0304"
     assert _convert("$(bold)") == "\x02"
     assert _convert("cats") == "cats"

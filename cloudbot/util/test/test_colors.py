@@ -3,9 +3,9 @@ import pytest
 from cloudbot.util.colors import parse, strip, get_available_colours, get_available_formats, get_color, get_format, \
     _convert, IRC_COLOUR_DICT
 
-test_input = "The quick $(brown, bold)brown$(clear) fox$(fake) jumps over the$(bold) lazy dog$(clear)."
+test_input = "The quick $(brown, red)brown$(clear) fox$(fake) jumps over the $(bold)lazy dog$(clear)."
 
-test_parse_output = "The quick \x0305\x02brown\x0f fox jumps over the\x02 lazy dog\x0f."
+test_parse_output = "The quick \x0305,04brown\x0f fox jumps over the \x02lazy dog\x0f."
 test_strip_output = "The quick brown fox jumps over the lazy dog."
 
 
@@ -53,5 +53,6 @@ def test_get_format():
 
 def test_convert():
     assert _convert("$(red, green)") == "\x0304,09"
+    assert _convert("$(red, bold)") == "\x0304\x02"
     assert _convert("$(bold)") == "\x02"
     assert _convert("cats") == "cats"

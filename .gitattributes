@@ -1,2 +1,7 @@
-# Force LF on all files
+# default all files as text with lf
 * text eol=lf
+
+# mmdb files are binary
+*.mmdb binary
+
+

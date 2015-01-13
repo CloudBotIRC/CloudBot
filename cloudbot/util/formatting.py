@@ -143,25 +143,17 @@ def truncate_words(content, length=10, suffix='...'):
     Truncates a string after a certain number of words.
     :rtype str
     """
-    msg = content.split(" ")
-    out = None
-    x = 0
-    for i in msg:
-        if x < length:
-            if out:
-                out = out + " " + msg[x]
-            else:
-                out = msg[x]
-        x += 1
-    if x <= length:
-        return out
+    split = content.split()
+    if len(split) <= length:
+        return " ".join(split[:length])
     else:
-        return out + suffix
+        return " ".join(split[:length]) + suffix
 
 
 def truncate(content, length=100, suffix='...'):
     """
     Truncates a string after a certain number of characters.
+    Function always truncates on a word boundary.
     :rtype str
     """
     if len(content) <= length:

@@ -127,14 +127,17 @@ def info(text, notice):
         notice("Unknown Factoid.")
 
 
+factoid_re = re.compile(r'^{} ?(.+)'.format(re.escape(FACTOID_CHAR)), re.I)
+
+
 @asyncio.coroutine
-@hook.regex(r'^{} ?(.+)'.format(re.escape(FACTOID_CHAR)))
+@hook.regex(factoid_re)
 def factoid(match, async, event, message, action):
     """<word> - shows what data is associated with <word>"""
 
     # split up the input
     split = match.group(1).strip().split(" ")
-    factoid_id = split[0]
+    factoid_id = split[0].lower()
 
     if len(split) >= 1:
         arguments = " ".join(split[1:])

@@ -9,7 +9,7 @@ install:
 
 script:
   - "python ./travis/travis_config.py"
-  - "py.test -v --cov coveralls --cov-report term-missing . "
+  - "py.test . -v --cov coveralls --cov-report term-missing"
 
 after_success:
   - "coveralls"
@@ -20,7 +20,5 @@ notifications:
       - "irc.esper.net#cloudbot"
     template:
       - "%{repository}#%{build_number} (%{branch} - %{commit}) %{author}: %{message}"
-      - "Change view : %{compare_url}"
-      - "Build details : %{build_url}"
   on_failure: always
   on_success: change

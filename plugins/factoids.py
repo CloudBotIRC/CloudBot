@@ -1,27 +1,17 @@
-# Written by Scaevolus 2010
 import string
 import asyncio
 import re
-from sqlalchemy import Table, Column, String
 
+from sqlalchemy import Table, Column, String
 import requests
 
 from cloudbot import hook
-from cloudbot.util import botvars, formatting, web
+from cloudbot.util import botvars, colors, web
+
 
 re_lineends = re.compile(r'[\r\n]*')
 
 FACTOID_CHAR = "?"  # TODO: config
-
-# some simple "shortcodes" for formatting purposes
-shortcodes = {
-    '[b]': '\x02',
-    '[/b]': '\x02',
-    '[u]': '\x1F',
-    '[/u]': '\x1F',
-    '[i]': '\x16',
-    '[/i]': '\x16'
-}
 
 table = Table(
     "mem",
@@ -153,7 +143,7 @@ def factoid(match, async, event, message, action):
 
     if factoid_id in factoid_cache:
         data = factoid_cache[factoid_id]
-        # factoid preprocessors
+        # factoid pre-processors
         if data.startswith("<py>"):
             code = data[4:].strip()
             variables = 'input="""{}"""; nick="{}"; chan="{}"; bot_nick="{}";'.format(arguments.replace('"', '\\"'),
@@ -163,8 +153,8 @@ def factoid(match, async, event, message, action):
         else:
             result = data
 
-        # factoid postprocessors
-        result = formatting.multi_replace(result, shortcodes)
+        # factoid post-processors
+        result = colors.parse(result)
 
         if result.startswith("<act>"):
             result = result[5:].strip()

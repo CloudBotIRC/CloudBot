@@ -71,15 +71,9 @@ class CloudBot:
         self.config = Config(self)
         logger.debug("Config system initialised.")
 
-        # log developer mode
-        if cloudbot.dev_mode.get("plugin_reloading"):
-            logger.info("Enabling developer option: plugin reloading.")
-        if cloudbot.dev_mode.get("config_reloading"):
-            logger.info("Enabling developer option: config reloading.")
-        if cloudbot.dev_mode.get("console_debug"):
-            logger.info("Enabling developer option: console debug.")
-        if cloudbot.dev_mode.get("file_debug"):
-            logger.info("Enabling developer option: file debug")
+        # set values for reloading
+        self.plugin_reloading_enabled = self.config.get("reloading", {}).get("plugin_reloading", False)
+        self.config_reloading_enabled = self.config.get("reloading", {}).get("config_reloading", True)
 
         # this doesn't REALLY need to be here but it's nice
         self.user_agent = self.config.get('user_agent', 'CloudBot/3.0 - CloudBot Refresh '
@@ -91,6 +85,7 @@ class CloudBot:
         self.db_factory = sessionmaker(bind=self.db_engine)
         self.db_session = scoped_session(self.db_factory)
         self.db_metadata = MetaData()
+
         # set botvars.metadata so plugins can access when loading
         botvars.metadata = self.db_metadata
         logger.debug("Database system initialised.")
@@ -101,7 +96,7 @@ class CloudBot:
         # create bot connections
         self.create_connections()
 
-        if cloudbot.dev_mode.get("plugin_reloading"):
+        if self.plugin_reloading_enabled:
             self.reloader = PluginReloader(self)
 
         self.plugin_manager = PluginManager(self)
@@ -143,11 +138,11 @@ class CloudBot:
         """quits all networks and shuts the bot down"""
         logger.info("Stopping bot.")
 
-        if cloudbot.dev_mode.get("config_reloading"):
+        if self.config_reloading_enabled:
             logger.debug("Stopping config reloader.")
             self.config.stop()
 
-        if cloudbot.dev_mode.get("plugin_reloading"):
+        if self.plugin_reloading_enabled:
             logger.debug("Stopping plugin reloader.")
             self.reloader.stop()
 
@@ -186,7 +181,7 @@ class CloudBot:
             logger.info("Killed while loading, exiting")
             return
 
-        if cloudbot.dev_mode.get("plugin_reloading"):
+        if self.plugin_reloading_enabled:
             # start plugin reloader
             self.reloader.start(os.path.abspath("plugins"))
 

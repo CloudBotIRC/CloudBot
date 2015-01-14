@@ -5,20 +5,15 @@ import sys
 import time
 import signal
 
-print('CloudBot3 <http://git.io/refresh>')
+# store the original working directory, for use when restarting
+original_wd = os.path.realpath(".")
 
-# set up environment
-
-# we need to make sure we are in the install directory
+# set up environment - we need to make sure we are in the install directory
 path0 = os.path.realpath(sys.path[0] or '.')
-cloudbot_dir = os.path.realpath(os.path.dirname(__file__))
-if path0 == cloudbot_dir:
-    sys.path[0] = path0 = os.path.dirname(cloudbot_dir)
+install_dir = os.path.realpath(os.path.dirname(__file__))
+if path0 == install_dir:
+    sys.path[0] = path0 = os.path.dirname(install_dir)
 os.chdir(path0)
-
-# add 'lib' to path for libraries (currently unused)
-if os.path.exists(os.path.abspath('lib')):
-    sys.path += ['lib']
 
 # import bot
 from cloudbot.bot import CloudBot
@@ -31,12 +26,10 @@ def main():
     logging.logProcesses = 0
 
     logger = logging.getLogger("cloudbot")
-
-    # store the original working directory, for use when restarting
-    original_wd = os.path.realpath(".")
+    logger.info("Starting CloudBot.")
 
     # create the bot
-    cloudbot = CloudBot()
+    bot = CloudBot()
 
     # whether we are killed while restarting
     stopped_while_restarting = False
@@ -47,11 +40,11 @@ def main():
     # define closure for signal handling
     def exit_gracefully(signum, frame):
         nonlocal stopped_while_restarting
-        if not cloudbot:
+        if not bot:
             # we are currently in the process of restarting
             stopped_while_restarting = True
         else:
-            cloudbot.loop.call_soon_threadsafe(lambda: asyncio.async(cloudbot.stop("Killed"), loop=cloudbot.loop))
+            bot.loop.call_soon_threadsafe(lambda: asyncio.async(bot.stop("Killed"), loop=bot.loop))
 
         # restore the original handler so if they do it again it triggers
         signal.signal(signal.SIGINT, original_sigint)
@@ -61,12 +54,12 @@ def main():
     # start the bot master
 
     # CloudBot.run() will return True if it should restart, False otherwise
-    restart = cloudbot.run()
+    restart = bot.run()
 
     # the bot has stopped, do we want to restart?
     if restart:
         # remove reference to cloudbot, so exit_gracefully won't try to stop it
-        cloudbot = None
+        bot = None
         # sleep one second for timeouts
         time.sleep(1)
         if stopped_while_restarting:
@@ -75,8 +68,8 @@ def main():
             # actually restart
             os.chdir(original_wd)
             args = sys.argv
-            logger.info("Restarting CloudBot")
-            logger.debug("Restarting - arguments {}".format(args))
+            logger.info("Restarting Bot")
+            logger.debug("Restart arguments: {}".format(args))
             for f in [sys.stdout, sys.stderr]:
                 f.flush()
             # close logging, and exit the program.

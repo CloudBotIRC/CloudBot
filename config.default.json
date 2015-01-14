@@ -89,13 +89,13 @@
         ],
         "whitelist": []
     },
-    "developer_mode": {
+    "reloading": {
         "config_reloading": true,
-        "plugin_reloading": false,
-        "console_debug": false,
-        "file_debug": true
+        "plugin_reloading": false
     },
     "logging": {
+        "console_debug": false,
+        "file_debug": true,
         "show_plugin_loading": true,
         "show_motd": true,
         "show_server_info": true,

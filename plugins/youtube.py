@@ -80,10 +80,10 @@ def youtube(text):
     json = requests.get(search_api_url, params={"q": text, "key": dev_key}).json()
 
     if 'error' in json:
-        return 'error performing search'
+        return 'Error performing search.'
 
     if json['pageInfo']['totalResults'] == 0:
-        return 'no results found'
+        return 'No results found.'
 
     video_id = json['items'][0]['id']['videoId']
 
@@ -93,16 +93,16 @@ def youtube(text):
 @hook.command("youtime", "ytime")
 def youtime(text):
     """youtime <query> -- Gets the total run time of the first YouTube search result for <query>."""
-    json = requests.get(search_api_url, params={"q": text}).json()
+    json = requests.get(search_api_url, params={"q": text, "key": dev_key}).json()
 
     if 'error' in json:
-        return 'error performing search'
+        return 'Error performing search.'
 
-    if json['data']['totalItems'] == 0:
-        return 'no results found'
+    if json['pageInfo']['totalResults'] == 0:
+        return 'No results found.'
 
-    video_id = json['data']['items'][0]['id']
-    json = requests.get(api_url.format(video_id)).json()
+    video_id = json['items'][0]['id']['videoId']
+    json = requests.get(api_url.format(video_id, dev_key)).json()
 
     if json.get('error'):
         return

@@ -134,7 +134,7 @@ ytpl_re = re.compile(r'(.*:)//(www.youtube.com/playlist|youtube.com/playlist)(:[
 @hook.regex(ytpl_re)
 def ytplaylist_url(match):
     location = match.group(4).split("=")[-1]
-    json = requests.get(search_api_url, params={"id": location, "key": dev_key}).json()
+    json = requests.get(playlist_api_url, params={"id": location, "key": dev_key}).json()
 
     if 'error' in json:
         return 'Error looking up playlist.'

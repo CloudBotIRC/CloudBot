@@ -53,6 +53,7 @@ def update_db():
 def check_db(loop):
     """
     runs update_db in an executor thread and sets geoip_reader to the result
+    if this is run while update_db is already executing bad things will happen
     """
     global geoip_reader
     if not geoip_reader:

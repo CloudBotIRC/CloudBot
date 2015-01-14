@@ -1,4 +1,5 @@
 import os
+import codecs
 import random
 import asyncio
 
@@ -9,7 +10,7 @@ from cloudbot import hook
 def load_fortunes(bot):
     path = os.path.join(bot.data_dir, "fortunes.txt")
     global fortunes
-    with open(path) as f:
+    with codecs.open(path, encoding="utf-8") as f:
         fortunes = [line.strip() for line in f.readlines() if not line.startswith("//")]
 
 

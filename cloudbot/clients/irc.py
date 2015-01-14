@@ -99,7 +99,7 @@ class IrcClient(Client):
         """
         Connects to the IRC server, or reconnects if already connected.
         """
-        # connect to the irc server
+        # connect to the clients server
         if self._quit:
             # we've quit, so close instead (because this has probably been called because of EOF received)
             self.close()

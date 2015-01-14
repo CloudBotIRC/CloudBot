@@ -108,7 +108,7 @@ class Event:
             self.user = base_event.user
             self.host = base_event.host
             self.mask = base_event.mask
-            # irc-specific parameters
+            # clients-specific parameters
             self.irc_raw = base_event.irc_raw
             self.irc_prefix = base_event.irc_prefix
             self.irc_command = base_event.irc_command
@@ -124,7 +124,7 @@ class Event:
             self.user = user
             self.host = host
             self.mask = mask
-            # irc-specific parameters
+            # clients-specific parameters
             self.irc_raw = irc_raw
             self.irc_prefix = irc_prefix
             self.irc_command = irc_command

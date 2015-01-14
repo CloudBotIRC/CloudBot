@@ -1,13 +1,17 @@
 import socket
 import time
 import requests
+import gzip
 import asyncio
 import shutil
+import logging
 import os.path
 import geoip2.database
 import geoip2.errors
 
 from cloudbot import hook
+
+logger = logging.getLogger("cloudbot")
 
 DB_URL = "http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz"
 PATH = "./data/GeoLite2-City.mmdb"
@@ -18,46 +22,68 @@ geoip_reader = None
 def fetch_db():
     r = requests.get(DB_URL, stream=True)
     if r.status_code == 200:
-        with open(PATH, 'wb') as f:
-            r.raw.decode_content = True
-            shutil.copyfileobj(r.raw, f)
+        with gzip.open(r.raw, 'rb') as infile:
+            with open(PATH, 'wb') as outfile:
+                shutil.copyfileobj(infile, outfile)
 
 
-def update_db():
-    global geoip_reader
+def update_db(existing_reader):
+    """
+    Updates the DB.
+    """
     if os.path.isfile(PATH):
         # check if file is over 2 weeks old
         if time.time() - os.path.getmtime(PATH) > (14 * 24 * 60 * 60):
-            geoip_reader = None
+            # geoip is outdated, re-download
             fetch_db()
-            geoip_reader = geoip2.database.Reader(PATH)
+            return geoip2.database.Reader(PATH)
         else:
-            if not geoip_reader:
-                geoip_reader = geoip2.database.Reader(PATH)
+            # geoip is good, create a reader or return existing reader
+            if not existing_reader:
+                try:
+                    return geoip2.database.Reader(PATH)
+                except:
+                    fetch_db()
+                    return geoip2.database.Reader(PATH)
+            else:
+                return existing_reader
     else:
-        geoip_reader = None
+        # no geoip file
         fetch_db()
-        geoip_reader = geoip2.database.Reader(PATH)
+        return geoip2.database.Reader(PATH)
+
+
+def check_db(loop):
+    """
+    runs update_db in an executor thread and sets geoip_reader to the result
+    """
+    global geoip_reader
+    db = yield from loop.run_in_executor(None, update_db, geoip_reader)
+    if db:
+        geoip_reader = db
 
 
 @asyncio.coroutine
 @hook.onload
 def load_geoip(loop):
-    loop.run_in_executor(None, update_db)
+    asyncio.async(check_db(loop), loop=loop)
 
 
+@asyncio.coroutine
 @hook.command
-def geoip(text, reply):
+def geoip(text, reply, loop):
+    global geoip_reader
+
     if not geoip_reader:
         return "GeoIP database is updating, please wait a minute"
 
     try:
-        ip = socket.gethostbyname(text)
+        ip = yield from loop.run_in_executor(None, socket.gethostbyname, text)
     except socket.gaierror:
         return "Invalid input."
 
     try:
-        location_data = geoip_reader.city(ip)
+        location_data = yield from loop.run_in_executor(None, geoip_reader.city, ip)
     except geoip2.errors.AddressNotFoundError:
         return "Sorry, I can't locate that in my database."
 
@@ -71,4 +97,4 @@ def geoip(text, reply):
     reply("\x02Country:\x02 {country} ({cc}), \x02City:\x02 {city}{region}".format(**data))
 
     # check the DB
-    update_db()
+    asyncio.async(check_db(loop), loop=loop)

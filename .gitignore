@@ -52,6 +52,7 @@ target/
 
 # Cloudbot
 persist/
+log/
 config.json
 *.db
 *.log

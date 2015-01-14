@@ -34,7 +34,7 @@ def correction(match, conn, chan, message):
             mod_msg = find_re.sub("\x02" + replacement + "\x02", msg, count=int("g" not in flags))
             message("Correction, {}".format(("<{}> " if not is_action else "* {}").format(nick) + mod_msg))
             # append to end of history file
-            msg = find_re.sub(replacement, msg, count=int("g not" in flags))
+            msg = find_re.sub(replacement, msg, count=int("g" not in flags))
             conn.history[chan].append((nick, timestamp, msg))
             return
         else:

@@ -11,7 +11,6 @@ except ImportError:
     # Just use the regular random module, not the strong one
     gen = std_random.SystemRandom()
 
-print(gen)
 with open("data/password_words.txt") as f:
     common_words = [line.strip() for line in f.readlines()]
 

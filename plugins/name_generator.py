@@ -1,4 +1,5 @@
 import json
+import codecs
 import os
 
 from cloudbot import hook
@@ -43,7 +44,9 @@ def namegen(text, bot, notice):
         return "{} is not a valid name generator.".format(inp)
 
     # load the name generator
-    with open(os.path.join(bot.data_dir, "name_files", "{}.json".format(selected_module))) as f:
+    path = os.path.join(bot.data_dir, "name_files", "{}.json".format(selected_module))
+
+    with codecs.open(path, encoding="utf-8") as f:
         try:
             generator = get_generator(f.read())
         except ValueError as error:

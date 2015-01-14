@@ -1,16 +1,19 @@
 import json
+import codecs
+import os
 
 from cloudbot import hook
 from cloudbot.util import textgen
 
 
-def get_generator(_json, variables):
-    data = json.loads(_json)
-    return textgen.TextGenerator(data["templates"],
-                                 data["parts"], variables=variables)
+@hook.onload
+def load_slaps(bot):
+    global slaps
+    with codecs.open(os.path.join(bot.data_dir, "kills.json"), encoding="utf-8") as f:
+        slaps = json.load(f)
 
 
-@hook.command()
+@hook.command
 def slap(text, action, nick, conn, notice):
     """slap <user> -- Makes the bot slap <user>."""
     target = text.strip()
@@ -26,9 +29,7 @@ def slap(text, action, nick, conn, notice):
     variables = {
         "user": target
     }
-
-    with open("./data/slaps.json") as f:
-        generator = get_generator(f.read(), variables)
+    generator = textgen.TextGenerator(slaps["templates"], slaps["parts"], variables=variables)
 
     # act out the message
     action(generator.generate_string())

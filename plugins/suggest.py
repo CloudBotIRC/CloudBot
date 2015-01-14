@@ -29,4 +29,4 @@ def suggest(text):
 
     out = formatting.strip_html(", ".join(suggestions))
 
-    return formatting.truncate_str(out, 200)
+    return formatting.truncate(out, 200)

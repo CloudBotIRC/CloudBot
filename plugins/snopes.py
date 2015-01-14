@@ -46,7 +46,7 @@ def snopes(text):
                                                snopes_text).group(0).title())
 
     status = " ".join(status.split())  # compress whitespace
-    claim = formatting.truncate_str(" ".join(claim.split()), 150)
+    claim = formatting.truncate(" ".join(claim.split()), 150)
 
     url = web.try_shorten(result_urls[0])
 

@@ -1,10 +1,11 @@
 geoip2
-mcstatus
+git+https://github.com/Dinnerbone/mcstatus.git@master
 microdata
 sqlalchemy
 watchdog
 lxml
 beautifulsoup4
+feedparser
 pycrypto
 pbkdf2
 requests

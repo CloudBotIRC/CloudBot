@@ -34,7 +34,7 @@ exchanges = {
 
 @hook.command("btc", "bitcoin", autohelp=False)
 def bitcoin(text, notice):
-    """[mtgox|bitpay|coinbase|bitstamp] - gets bitcoin exchange rate using <exchange>, defaulting to blockchain
+    """[bitpay|coinbase|bitstamp] - gets bitcoin exchange rate using <exchange>, defaulting to blockchain
     :type text: str
     """
     text = text.lower()
@@ -48,7 +48,7 @@ def bitcoin(text, notice):
                                                                                  valid_exchanges[-1]))
             return
     else:
-        exchange = exchanges["blockchain"]
+        exchange = exchanges["bitstamp"]
 
     response = requests.get(exchange["api_url"])
     if response.status_code != requests.codes.ok:

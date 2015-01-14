@@ -1,56 +1,17 @@
-# -*- coding: utf-8 -*-
 """ formatting.py - handy functions for formatting text
-    this file contains code from the following URL:
-    <http://code.djangoproject.com/svn/django/trunk/django/utils/text.py>
 """
 
 import re
-
-from html.parser import HTMLParser
 import html.entities
 
-# <https://stackoverflow.com/questions/753052/strip-html-from-strings-in-python>
-
-class HTMLTextExtractor(HTMLParser):
-    def __init__(self):
-        HTMLParser.__init__(self)
-        self.result = []
-
-    def handle_data(self, d):
-        self.result.append(d)
-
-    def handle_charref(self, number):
-        codepoint = int(number[1:], 16) if number[0] in ('x', 'X') else int(number)
-        self.result.append(chr(codepoint))
-
-    def handle_entityref(self, name):
-        codepoint = html.entities.name2codepoint[name]
-        self.result.append(chr(codepoint))
-
-    def get_text(self):
-        return ''.join(self.result)
+from html.parser import HTMLParser
 
 
-def strip_html(html):
-    s = HTMLTextExtractor()
-    s.feed(html)
-    return s.get_text()
+# Constants
 
+IRC_COLOR_RE = re.compile(r"(\x03(\d+,\d+|\d)|[\x0f\x02\x16\x1f])")
 
-def munge(text, munge_count=0):
-    """munges up text."""
-    reps = 0
-    for n in range(len(text)):
-        rep = character_replacements.get(text[n])
-        if rep:
-            text = text[:n] + rep + text[n + 1:]
-            reps += 1
-            if reps == munge_count:
-                break
-    return text
-
-
-character_replacements = {
+REPLACEMENTS = {
     'a': 'ä',
     'b': 'Б',
     'c': 'ċ',
@@ -106,18 +67,65 @@ character_replacements = {
 }
 
 
-def capitalize_first(line):
+# Classes
+
+class HTMLTextExtractor(HTMLParser):
     """
-    capitalises the first letter of words
-    (keeps other letters intact)
+    Takes HTML and provides cleaned and stripped text.
     """
-    return ' '.join([s[0].upper() + s[1:] for s in line.split(' ')])
+    def __init__(self):
+        HTMLParser.__init__(self)
+        self.result = []
+
+    def handle_data(self, d):
+        self.result.append(d)
+
+    def handle_charref(self, number):
+        codepoint = int(number[1:], 16) if number[0] in ('x', 'X') else int(number)
+        self.result.append(chr(codepoint))
+
+    def handle_entityref(self, name):
+        codepoint = html.entities.name2codepoint[name]
+        self.result.append(chr(codepoint))
+
+    def get_text(self):
+        return ''.join(self.result)
 
 
-def multiword_replace(text, word_dic):
+# Functions
+
+def strip_html(to_strip):
     """
-    take a text and replace words that match a key in a dictionary with
-    the associated value, return the changed text
+    Takes HTML and returns cleaned and stripped text.
+    :rtype str
+    """
+    s = HTMLTextExtractor()
+    s.feed(to_strip)
+    return s.get_text()
+
+
+def munge(text, count=0):
+    """
+    Replaces characters in a string with visually similar characters to avoid pinging users in IRC.
+    Count sets how many characters are replaced, defaulting to all characters.
+    :rtype str
+    """
+    reps = 0
+    for n in range(len(text)):
+        rep = REPLACEMENTS.get(text[n])
+        if rep:
+            text = text[:n] + rep + text[n + 1:]
+            reps += 1
+            if reps == count:
+                break
+    return text
+
+
+def multi_replace(text, word_dic):
+    """
+    Takes a string and replace words that match a key in a dictionary with the associated value,
+    then returns the changed text
+    :rtype str
     """
     rc = re.compile('|'.join(map(re.escape, word_dic)))
 
@@ -126,51 +134,54 @@ def multiword_replace(text, word_dic):
 
     return rc.sub(translate, text)
 
+# compatibility
+multiword_replace = multi_replace
+
 
 def truncate_words(content, length=10, suffix='...'):
-    """Truncates a string after a certain number of words."""
-    nmsg = content.split(" ")
-    out = None
-    x = 0
-    for i in nmsg:
-        if x <= length:
-            if out:
-                out = out + " " + nmsg[x]
-            else:
-                out = nmsg[x]
-        x += 1
-    if x <= length:
-        return out
+    """
+    Truncates a string after a certain number of words.
+    :rtype str
+    """
+    split = content.split()
+    if len(split) <= length:
+        return " ".join(split[:length])
     else:
-        return out + suffix
+        return " ".join(split[:length]) + suffix
 
 
-irc_color_re = re.compile(r"(\x03(\d+,\d+|\d)|[\x0f\x02\x16\x1f])")
-
-
-def strip_colors(text):
+def truncate(content, length=100, suffix='...'):
     """
-    :param text: Text to strip
-    :return: Text stripped of IRC colors
-    :type text: str
-    :rtype: str
-    """
-    return irc_color_re.sub('', text)
-
-
-def pluralize(num=0, text=''):
-    return "{:,} {}{}".format(num, text, "s"[num == 1:])
-
-
-# from <http://stackoverflow.com/questions/250357/smart-truncate-in-python>
-def truncate_str(content, length=100, suffix='...'):
-    """Truncates a string after a certain number of chars.
-    @rtype : str
+    Truncates a string after a certain number of characters.
+    Function always tries to truncate on a word boundary.
+    :rtype str
     """
     if len(content) <= length:
         return content
     else:
         return content[:length].rsplit(' ', 1)[0] + suffix
+
+# compatibility
+truncate_str = truncate
+
+
+def strip_colors(text):
+    """
+    Takes a string and removes all IRC color codes.
+    :param text: Text to strip
+    :type text: str
+    :return Text stripped of IRC colors
+    :rtype str
+    """
+    return IRC_COLOR_RE.sub('', text)
+
+
+def pluralize(num=0, text=''):
+    """
+    Takes a number and a string, and pluralizes that string using the number and combines the results.
+    :rtype: str
+    """
+    return "{:,} {}{}".format(num, text, "s"[num == 1:])
 
 
 def dict_format(args, formats):
@@ -178,10 +189,6 @@ def dict_format(args, formats):
     :type args: dict[unknown, unknown]
     :type formats: list[str]
     :rtype: str
-    >>> formats = ["{a} {b} {c}", "{a} {b}", "{a}"]
-    >>> data = {"a": "First Thing", "b": "Second Thing"}
-    >>> fformat(data, formats)
-    'First Thing Second Thing'
     """
     matches = {}
     for f in formats:
@@ -209,7 +216,7 @@ def dict_format(args, formats):
 # modification, are permitted provided that the following conditions are met:
 #
 # 1. Redistributions of source code must retain the above copyright notice,
-#     this list of conditions and the following disclaimer.
+# this list of conditions and the following disclaimer.
 #
 #  2. Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in the
@@ -219,37 +226,35 @@ def dict_format(args, formats):
 #     to endorse or promote products derived from this software without
 #     specific prior written permission.
 #
-#THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"AND
-#ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-#WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-#DISCLAIMED.IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-#ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-#(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-#LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-#ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-#(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-#SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED.IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Expression to match some_token and some_token="with spaces" (and similarly
-# for single-quoted strings).
 
 split_re = re.compile(r"""((?:[^\s'"]*(?:(?:"(?:[^"\\]|\\.)*" | '(?:["""
                       r"""^'\\]|\\.)*')[^\s'"]*)+) | \S+)""", re.VERBOSE)
 
 
 def smart_split(text):
-    r"""
+    """
     Generator that splits a string by spaces, leaving quoted phrases together.
     Supports both single and double quotes, and supports escaping quotes with
     backslashes. In the output, strings will keep their initial and trailing
     quote marks and escaped quotes will remain escaped (the results can then
     be further processed with unescape_string_literal()).
 
-    >>> list(smart_split(r'This is "a person\'s" test.'))
+    >> list(smart_split(r'This is "a person\'s" test.'))
     ['This', 'is', '"a person\\\'s"', 'test.']
-    >>> list(smart_split(r"Another 'person\'s' test."))
+    >> list(smart_split(r"Another 'person\'s' test."))
     ['Another', "'person\\'s'", 'test.']
-    >>> list(smart_split(r'A "\"funky\" style" test.'))
+    >> list(smart_split(r'A "\"funky\" style" test.'))
     ['A', '"\\"funky\\" style"', 'test.']
     """
     for bit in split_re.finditer(text):
@@ -258,15 +263,15 @@ def smart_split(text):
 
 def get_text_list(list_, last_word='or'):
     """
-    >>> get_text_list(['a', 'b', 'c', 'd'])
+    >> get_text_list(['a', 'b', 'c', 'd'])
     'a, b, c or d'
-    >>> get_text_list(['a', 'b', 'c'], 'and')
+    >> get_text_list(['a', 'b', 'c'], 'and')
     'a, b and c'
-    >>> get_text_list(['a', 'b'], 'and')
+    >> get_text_list(['a', 'b'], 'and')
     'a and b'
-    >>> get_text_list(['a'])
+    >> get_text_list(['a'])
     'a'
-    >>> get_text_list([])
+    >> get_text_list([])
     ''
     """
     if len(list_) == 0:

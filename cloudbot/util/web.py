@@ -14,6 +14,7 @@ HASTEBIN_SERVER = 'http://hastebin.com'
 
 # Python eval
 
+
 def pyeval(code, pastebin=True):
     p = {'input': code}
     r = requests.post('http://pyeval.appspot.com/exec', data=p)
@@ -178,7 +179,7 @@ class Gitio(Shortener):
 
         if r.status_code == requests.codes.created:
             s = r.headers['location']
-            if custom and not custom in s:
+            if custom and custom not in s:
                 raise ServiceError('That URL is already in use', r)
             else:
                 return s

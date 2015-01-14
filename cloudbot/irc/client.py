@@ -24,6 +24,18 @@ irc_command_to_event_type = {
 }
 
 
+def decode(bytestring):
+    """
+    Tries to decode a bytestring using multiple encoding formats
+    """
+    for codec in ('utf-8', 'iso-8859-1', 'shift_jis', 'cp1252'):
+        try:
+            return bytestring.decode(codec)
+        except UnicodeDecodeError:
+            continue
+    return bytestring.decode('utf-8', errors='ignore')
+
+
 class IrcClient(Client):
     """
     An implementation of Client for IRC.
@@ -275,7 +287,7 @@ class _IrcProtocol(asyncio.Protocol):
 
         while b"\r\n" in self._input_buffer:
             line_data, self._input_buffer = self._input_buffer.split(b"\r\n", 1)
-            line = line_data.decode()
+            line = decode(line_data)
 
             # parse the line into a message
             if line.startswith(":"):

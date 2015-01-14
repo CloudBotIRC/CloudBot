@@ -58,7 +58,7 @@ def timeuntil(d, now=None, count=2, accuracy=6, simple=False):
     """
     if not now:
         now = datetime.datetime.now()
-    return timesince(now, d, count=3, accuracy=6, simple=False)
+    return timesince(now, d, count, accuracy, simple)
 
 
 def format_time(seconds, count=3, accuracy=6, simple=False):
@@ -107,6 +107,7 @@ def format_time(seconds, count=3, accuracy=6, simple=False):
     strings = []
     i = 0
     for period_name, period_seconds in periods:
+        print(i, period_name)
         if i < count:
             if seconds > period_seconds:
                 period_value, seconds = divmod(seconds, period_seconds)

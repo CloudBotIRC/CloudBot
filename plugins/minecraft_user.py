@@ -1,7 +1,5 @@
 import re
-
 import requests
-import json
 
 from cloudbot import hook
 
@@ -10,20 +8,10 @@ HIST_API = "http://api.fishbans.com/history/{}"
 UUID_API = "http://api.goender.net/api/uuids/{}/"
 
 
-class McuError(Exception):
-    pass
-
-
 def get_name(uuid):
     # submit the profile request
-    try:
-        request = requests.get(UUID_API.format(uuid))
-    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
-        raise McuError("Could not get profile status: {}".format(e))
-
+    request = requests.get(UUID_API.format(uuid))
     data = request.json()
-    print(data[uuid])
-
     return data[uuid] or None
 
 
@@ -37,11 +25,10 @@ def mcuser(text, bot):
     if re.search(r'[0-9a-f]{32}\Z', cleaned, re.I):
         try:
             name = get_name(cleaned)
-        except McuError as e:
-            return "Error: {}".format(e)
+        except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+            return "Could not get username from UUID: {}".format(e)
     else:
         name = user
-
 
     if not name:
         return "The account \x02{}\x02 does not exist.".format(user)
@@ -61,10 +48,9 @@ def mcuser(text, bot):
     # handle errors
     if not results['success']:
         if results['error'] == "User is not premium.":
-            return "User is not premium or does not exist."
+            return "The account \x02{}\x02 is not premium or does not exist.".format(user)
         else:
             return results['error']
-
     user = results["data"]
 
     return 'The account \x02{username}\x02 ({uuid}) exists. It is a \x02paid\x02' \

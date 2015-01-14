@@ -50,6 +50,6 @@ def wiki(text):
         desc = title + desc
 
     desc = ' '.join(desc.split())  # remove excess spaces
-    desc = formatting.truncate_str(desc, 200)
+    desc = formatting.truncate(desc, 200)
 
     return '{} :: {}'.format(desc, requests.utils.quote(url, ':/'))

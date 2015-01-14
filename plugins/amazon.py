@@ -1,10 +1,9 @@
 import requests
 import re
 from bs4 import BeautifulSoup
-from urllib.parse import urlparse
 
 from cloudbot import hook
-from cloudbot.util import web, formatting
+from cloudbot.util import web, formatting, colors
 
 
 SEARCH_URL = "http://www.amazon.com/s/"
@@ -31,9 +30,21 @@ def amazon(text):
 
     results = results.find('ul', {'id': 's-results-list-atf'}).find_all('li', {'class': 's-result-item'})
     item = results[0]
+    asin = item['data-asin']
 
     # here we use dirty html scraping to get everything we need
-    title = formatting.truncate_str(item.find('h2', {'class': 's-access-title'}).text, 50)
+    title = formatting.truncate(item.find('h2', {'class': 's-access-title'}).text, 50)
+    tags = []
+
+    # tags!
+    if item.find('i', {'class': 'a-icon-prime'}):
+        tags.append("$(b)Prime$(b)")
+
+    if item.find('i', {'class': 'sx-bestseller-badge-primary'}):
+        tags.append("$(b)Bestseller$(b)")
+
+    if "FREE Shipping" in item.text:
+        tags.append("$(b)Free Shipping$(b)")
 
     try:
         price = item.find('span', {'class': 's-price'}).text
@@ -48,9 +59,10 @@ def amazon(text):
     except AttributeError:
         rating_str = "No Ratings"
 
-    # clean up garbage url
-    o = urlparse(item.find('a', {'class': 's-access-detail-page'})['href'])
-    url = o.scheme + "://" + o.netloc + o.path + "?linkCode=as2&tag=cloudbot-20"
+    # generate a short url
+    url = "http://www.amazon.com/dp/" + asin + "/?tag=cloudbot-20"
     url = web.try_shorten(url)
 
-    return "\x02{}\x02 ({}) - {} - {}".format(title, price, rating_str, url)
+    tag_str = " - " + ", ".join(tags) if tags else ""
+
+    return colors.parse("$(b){}$(b) ({}) - {}{} - {}".format(title, price, rating_str, tag_str, url))

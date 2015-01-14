@@ -22,7 +22,7 @@ def issues(text):
         url = web.try_shorten(j['html_url'], service='git.io')
         number = j['number']
         title = j['title']
-        summary = formatting.truncate_str(j['body'].split('\n')[0], 25)
+        summary = formatting.truncate(j['body'].split('\n')[0], 25)
         if j['state'] == 'open':
             state = '\x033\x02Opened\x02\x0f by {}'.format(j['user']['login'])
         else:

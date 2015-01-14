@@ -277,21 +277,24 @@ def sieve(param=None, **kwargs):
         return lambda func: _sieve_hook(func)
 
 
-def onload(param=None, **kwargs):
-    """External onload decorator. Can be used directly as a decorator, or with args to return a decorator
+def on_start(param=None, **kwargs):
+    """External on_start decorator. Can be used directly as a decorator, or with args to return a decorator
     :type param: function | None
     """
 
-    def _onload_hook(func):
-        hook = _get_hook(func, "onload")
+    def _on_start_hook(func):
+        hook = _get_hook(func, "on_start")
         if hook is None:
-            hook = _Hook(func, "onload")
+            hook = _Hook(func, "on_start")
             _add_hook(func, hook)
 
         hook._add_hook(kwargs)
         return func
 
     if callable(param):
-        return _onload_hook(param)
+        return _on_start_hook(param)
     else:
-        return lambda func: _onload_hook(func)
+        return lambda func: _on_start_hook(func)
+
+
+onload = on_start

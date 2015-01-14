@@ -18,7 +18,7 @@ table = Table(
 default_enabled = True
 
 
-@hook.onload()
+@hook.on_start()
 def load_cache(db):
     """
     :type db: sqlalchemy.orm.Session

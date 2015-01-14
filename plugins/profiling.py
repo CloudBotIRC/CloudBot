@@ -96,7 +96,7 @@ def pympler_summary():
     return "Printed to console"
 
 
-@hook.onload()
+@hook.on_start()
 def create_tracker():
     if pympler is None:
         return

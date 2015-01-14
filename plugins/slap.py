@@ -6,7 +6,7 @@ from cloudbot import hook
 from cloudbot.util import textgen
 
 
-@hook.onload
+@hook.on_start
 def load_slaps(bot):
     global slaps
     with codecs.open(os.path.join(bot.data_dir, "kills.json"), encoding="utf-8") as f:

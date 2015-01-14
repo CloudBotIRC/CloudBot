@@ -28,7 +28,7 @@ def _load_cache_db(db):
 
 
 @asyncio.coroutine
-@hook.onload()
+@hook.on_start()
 def load_cache(async, db):
     """
     :type db: sqlalchemy.orm.Session

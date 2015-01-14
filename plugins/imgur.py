@@ -39,7 +39,7 @@ def get_items(text):
     return items, reddit_search
 
 
-@hook.onload()
+@hook.on_start()
 def load_api(bot):
     global imgur_api
 

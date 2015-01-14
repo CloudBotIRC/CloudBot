@@ -44,7 +44,7 @@ def decode_aes(c, s):
         return "Invalid password for the given message (couldn't encode result as utf-8)"
 
 
-@hook.onload
+@hook.on_start
 def create_db(db):
     """check to see that our db has the the encryption table.
     :type db: sqlalchemy.orm.session.Session

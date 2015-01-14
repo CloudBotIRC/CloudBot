@@ -42,7 +42,7 @@ def refresh_mlia_cache(loop):
 
 
 @asyncio.coroutine
-@hook.onload()
+@hook.on_start()
 def initial_refresh(loop):
     # do an initial refresh of the caches
     yield from refresh_fml_cache(loop)

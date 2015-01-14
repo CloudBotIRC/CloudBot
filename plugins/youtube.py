@@ -107,15 +107,18 @@ def youtime(text):
     if json.get('error'):
         return
     data = json['data']
+    content_details = data[0]['contentDetails']
+    statistics = data[0]['statistics']
 
-    if not data.get('duration'):
+    if not content_details.get('duration'):
         return
 
-    length = data['duration']
-    views = data['viewCount']
-    total = int(length * views)
+    length = isodate.parse_duration(content_details['duration'])
+    l_sec = int(length.total_seconds())
+    views = statistics['viewCount']
+    total = int(l_sec * views)
 
-    length_text = timeformat.format_time(length, simple=True)
+    length_text = timeformat.format_time(l_sec, simple=True)
     total_text = timeformat.format_time(total, accuracy=8)
 
     return 'The video \x02{}\x02 has a length of {} and has been viewed {:,} times for ' \

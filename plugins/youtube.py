@@ -1,5 +1,6 @@
 import re
 import time
+import isodate
 
 import bs4
 import requests
@@ -11,61 +12,61 @@ from cloudbot.util.formatting import pluralize
 
 youtube_re = re.compile(r'(?:youtube.*?(?:v=|/v/)|youtu\.be/|yooouuutuuube.*?id=)([-_a-zA-Z0-9]+)', re.I)
 
-base_url = 'http://gdata.youtube.com/feeds/api/'
-api_url = base_url + 'videos/{}?v=2&alt=jsonc'
+base_url = 'https://www.googleapis.com/youtube/v3/'
+api_url = base_url + 'videos?part=contentDetails%2C+snippet%2C+statistics&id={}&key={}'
 search_api_url = base_url + 'videos?v=2&alt=jsonc&max-results=1'
 video_url = "http://youtu.be/%s"
 
 
-def get_video_description(video_id):
-    json = requests.get(api_url.format(video_id)).json()
+def get_video_description(video_id, key):
+    json = requests.get(api_url.format(video_id, key)).json()
 
     if json.get('error'):
         return
 
-    data = json['data']
+    data = json['items']
+    snippet = data[0]['snippet']
+    statistics = data[0]['statistics']
+    content_details = data[0]['contentDetails']
 
-    out = '\x02{}\x02'.format(data['title'])
+    out = '\x02{}\x02'.format(snippet['title'])
 
-    if not data.get('duration'):
+    if not content_details.get('duration'):
         return out
 
-    length = data['duration']
-    out += ' - length \x02{}\x02'.format(timeformat.format_time(length, simple=True))
+    length = isodate.parse_duration(content_details['duration'])
+    out += ' - length \x02{}\x02'.format(timeformat.format_time(int(length.total_seconds()), simple=True))
 
-    if 'ratingCount' in data:
+    if 'likeCount' in statistics:
         # format
-        likes = pluralize(int(data['likeCount']), "like")
-        dislikes = pluralize(data['ratingCount'] - int(data['likeCount']), "dislike")
+        likes = pluralize(int(statistics['likeCount']), "like")
+        dislikes = pluralize(int(statistics['dislikeCount']), "dislike")
+        totalvotes = float(statistics['likeCount']) + float(statistics['dislikeCount'])
 
-        percent = 100 * float(data['likeCount']) / float(data['ratingCount'])
+        percent = 100 * float(statistics['likeCount']) / totalvotes
         out += ' - {}, {} (\x02{:.1f}\x02%)'.format(likes,
                                                     dislikes, percent)
 
-    if 'viewCount' in data:
-        views = data['viewCount']
+    if 'viewCount' in statistics:
+        views = int(statistics['viewCount'])
         out += ' - \x02{:,}\x02 view{}'.format(views, "s"[views == 1:])
 
-    try:
-        json = requests.get(base_url + "users/{}?alt=json".format(data["uploader"])).json()
-        uploader = json["entry"]["author"][0]["name"][
-            "$t"]
-    except:
-        uploader = data["uploader"]
+    uploader = snippet['channelTitle']
 
-    upload_time = time.strptime(data['uploaded'], "%Y-%m-%dT%H:%M:%S.000Z")
+    upload_time = time.strptime(snippet['publishedAt'], "%Y-%m-%dT%H:%M:%S.000Z")
     out += ' - \x02{}\x02 on \x02{}\x02'.format(uploader,
                                                 time.strftime("%Y.%m.%d", upload_time))
 
-    if 'contentRating' in data:
+    if 'contentRating' in content_details:
         out += ' - \x034NSFW\x02'
 
     return out
 
 
 @hook.regex(youtube_re)
-def youtube_url(match):
-    return get_video_description(match.group(1))
+def youtube_url(match, bot):
+    dev_key = bot.config.get("api_keys", {}).get("google_dev_key")
+    return get_video_description(match.group(1), dev_key)
 
 
 @hook.command("youtube", "you", "yt", "y")

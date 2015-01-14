@@ -14,7 +14,7 @@ youtube_re = re.compile(r'(?:youtube.*?(?:v=|/v/)|youtu\.be/|yooouuutuuube.*?id=
 
 base_url = 'https://www.googleapis.com/youtube/v3/'
 api_url = base_url + 'videos?part=contentDetails%2C+snippet%2C+statistics&id={}&key={}'
-search_api_url = base_url + 'search?part=id&q={}&maxResults=1&key={}'
+search_api_url = base_url + 'search?part=id&maxResults=1'
 video_url = "http://youtu.be/%s"
 
 
@@ -85,9 +85,9 @@ def youtube(text):
     if json['pageInfo']['totalResults'] == 0:
         return 'no results found'
 
-    video_id = json['items'][0]['id']
+    video_id = json['items'][0]['id']['videoId']
 
-    return get_video_description(video_id) + " - " + video_url % video_id
+    return get_video_description(video_id, dev_key) + " - " + video_url % video_id
 
 
 @hook.command("youtime", "ytime")

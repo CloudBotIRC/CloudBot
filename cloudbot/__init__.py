@@ -23,9 +23,6 @@ def _setup():
     else:
         logging_config = {}
 
-    console_debug = logging_config.get("console_debug", False)
-    file_debug = logging_config.get("file_debug", True)
-
     global logging_dir
     logging_dir = os.path.join(os.path.abspath(os.path.curdir), "logs")
 
@@ -69,10 +66,10 @@ def _setup():
         }
     }
 
-    if console_debug:
+    if logging_config.get("console_debug", False):
         dict_config["handlers"]["console"]["level"] = "DEBUG"
 
-    if file_debug:
+    if logging_config.get("file_debug", True):
         dict_config["handlers"]["debug_file"] = {
             "class": "logging.handlers.RotatingFileHandler",
             "maxBytes": 1000000,

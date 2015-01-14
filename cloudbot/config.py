@@ -57,7 +57,7 @@ class Config(dict):
             # if there is no config, show an error and die
             logger.critical("No config file found, bot shutting down!")
             print("No config file found! Bot shutting down in five seconds.")
-            print("Copy 'config.default' to 'config.json' for defaults.")
+            print("Copy 'config.default.json' to 'config.json' for defaults.")
             print("For help, see http://git.io/cloudbotirc. Thank you for using CloudBot!")
             time.sleep(5)
             sys.exit()

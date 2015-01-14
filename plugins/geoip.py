@@ -20,7 +20,7 @@ geoip_reader = None
 
 
 def fetch_db():
-    r = requests.get(DB_URL, stream=True)
+    r = requests.get(DB_URL)
     if r.status_code == 200:
         with gzip.open(r.raw, 'rb') as infile:
             with open(PATH, 'wb') as outfile:
@@ -31,23 +31,28 @@ def update_db():
     """
     Updates the DB.
     """
-    if os.path.isfile(PATH):
-        # check if file is over 2 weeks old
-        if time.time() - os.path.getmtime(PATH) > (14 * 24 * 60 * 60):
-            # geoip is outdated, re-download
-            fetch_db()
-            return geoip2.database.Reader(PATH)
-        else:
-            try:
-                return geoip2.database.Reader(PATH)
-            except:
-                # issue loading, geo
+    try:
+        if os.path.isfile(PATH):
+            # check if file is over 2 weeks old
+            if time.time() - os.path.getmtime(PATH) > (14 * 24 * 60 * 60):
+                # geoip is outdated, re-download
                 fetch_db()
                 return geoip2.database.Reader(PATH)
-    else:
-        # no geoip file
-        fetch_db()
-        return geoip2.database.Reader(PATH)
+            else:
+                try:
+                    return geoip2.database.Reader(PATH)
+                except:
+                    # issue loading, geo
+                    fetch_db()
+                    return geoip2.database.Reader(PATH)
+        else:
+            # no geoip file
+            print("calling fetch_db")
+            fetch_db()
+            print("fetch_db finished")
+            return geoip2.database.Reader(PATH)
+    except Exception as e:
+        print(e)
 
 
 def check_db(loop):
@@ -60,8 +65,7 @@ def check_db(loop):
         logger.info("Loading GeoIP database")
         db = yield from loop.run_in_executor(None, update_db, geoip_reader)
         logger.info("Loaded GeoIP database")
-        if db:
-            geoip_reader = db
+        geoip_reader = db
 
 
 @asyncio.coroutine

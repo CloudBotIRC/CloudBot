@@ -14,7 +14,7 @@ youtube_re = re.compile(r'(?:youtube.*?(?:v=|/v/)|youtu\.be/|yooouuutuuube.*?id=
 
 base_url = 'https://www.googleapis.com/youtube/v3/'
 api_url = base_url + 'videos?part=contentDetails%2C+snippet%2C+statistics&id={}&key={}'
-search_api_url = base_url + 'videos?v=2&alt=jsonc&max-results=1'
+search_api_url = base_url + 'search?part=id&q={}&maxResults=1&key={}'
 video_url = "http://youtu.be/%s"
 
 
@@ -63,24 +63,29 @@ def get_video_description(video_id, key):
     return out
 
 
+@hook.onload()
+def load_key(bot):
+    global dev_key
+    dev_key = bot.config.get("api_keys", {}).get("google_dev_key")
+
+
 @hook.regex(youtube_re)
 def youtube_url(match, bot):
-    dev_key = bot.config.get("api_keys", {}).get("google_dev_key")
     return get_video_description(match.group(1), dev_key)
 
 
 @hook.command("youtube", "you", "yt", "y")
 def youtube(text):
     """youtube <query> -- Returns the first YouTube search result for <query>."""
-    json = requests.get(search_api_url, params={"q": text}).json()
+    json = requests.get(search_api_url, params={"q": text, "key": dev_key}).json()
 
     if 'error' in json:
         return 'error performing search'
 
-    if json['data']['totalItems'] == 0:
+    if json['pageInfo']['totalResults'] == 0:
         return 'no results found'
 
-    video_id = json['data']['items'][0]['id']
+    video_id = json['items'][0]['id']
 
     return get_video_description(video_id) + " - " + video_url % video_id
 

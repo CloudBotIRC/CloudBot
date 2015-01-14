@@ -20,7 +20,10 @@ geoip_reader = None
 
 
 def fetch_db():
-    r = requests.get(DB_URL)
+    logger.info("fetch called")
+    if os.path.exists(PATH):
+        os.remove(PATH)
+    r = requests.get(DB_URL, stream=True)
     if r.status_code == 200:
         with gzip.open(r.raw, 'rb') as infile:
             with open(PATH, 'wb') as outfile:
@@ -52,7 +55,7 @@ def update_db():
             print("fetch_db finished")
             return geoip2.database.Reader(PATH)
     except Exception as e:
-        print(e)
+        print("GEOERROR" + e)
 
 
 def check_db(loop):
@@ -63,7 +66,7 @@ def check_db(loop):
     global geoip_reader
     if not geoip_reader:
         logger.info("Loading GeoIP database")
-        db = yield from loop.run_in_executor(None, update_db, geoip_reader)
+        db = yield from loop.run_in_executor(None, update_db)
         logger.info("Loaded GeoIP database")
         geoip_reader = db
 

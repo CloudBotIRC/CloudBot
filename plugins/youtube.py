@@ -15,6 +15,7 @@ youtube_re = re.compile(r'(?:youtube.*?(?:v=|/v/)|youtu\.be/|yooouuutuuube.*?id=
 base_url = 'https://www.googleapis.com/youtube/v3/'
 api_url = base_url + 'videos?part=contentDetails%2C+snippet%2C+statistics&id={}&key={}'
 search_api_url = base_url + 'search?part=id&maxResults=1'
+playlist_api_url = base_url + 'playlists?part=snippet%2CcontentDetails%2Cstatus'
 video_url = "http://youtu.be/%s"
 
 
@@ -133,13 +134,16 @@ ytpl_re = re.compile(r'(.*:)//(www.youtube.com/playlist|youtube.com/playlist)(:[
 @hook.regex(ytpl_re)
 def ytplaylist_url(match):
     location = match.group(4).split("=")[-1]
-    try:
-        request = requests.get("https://www.youtube.com/playlist?list=" + location)
-        soup = bs4.BeautifulSoup(request.text, 'lxml')
-    except Exception:
-        return "\x034\x02Invalid response."
-    title = soup.find('title').text.split('-')[0].strip()
-    author = soup.find('img', {'class': 'channel-header-profile-image'})['title']
-    num_videos = soup.find('ul', {'class': 'header-stats'}).findAll('li')[0].text.split(' ')[0]
-    views = soup.find('ul', {'class': 'header-stats'}).findAll('li')[1].text.split(' ')[0]
-    return "\x02{}\x02 - \x02{}\x02 views - \x02{}\x02 videos - \x02{}\x02".format(title, views, num_videos, author)
+    json = requests.get(search_api_url, params={"id": location, "key": dev_key}).json()
+
+    if 'error' in json:
+        return 'Error looking up playlist.'
+
+    data = json['items']
+    snippet = data[0]['snippet']
+    content_details = data[0]['contentDetails']
+
+    title = snippet['title']
+    author = snippet['channelTitle']
+    num_videos = str(content_details['itemCount'])
+    return "\x02{}\x02 - \x02{}\x02 videos - \x02{}\x02".format(title, num_videos, author)

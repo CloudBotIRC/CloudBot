@@ -31,7 +31,7 @@ def init_tasks(loop, conn):
         # tasks already started
         return
 
-    logger.info("[{}|sieve] Bot is starting ratelimiter cleanup task.".format(conn.readable_name))
+    logger.info("[{}|sieve] Bot is starting ratelimiter cleanup task.".format(conn.name))
     loop.call_later(600, task_clear, loop)
     inited.append(conn.name)
 
@@ -102,7 +102,7 @@ def sieve_suite(bot, event, _hook):
             pass
         else:
             bot.logger.info("[{}|sieve] Refused command from {}. "
-                            "Entity had {} tokens, needed {}.".format(conn.readable_name, uid, bucket.tokens,
+                            "Entity had {} tokens, needed {}.".format(conn.name, uid, bucket.tokens,
                                                                       message_cost))
             if strict:
                 # bad person loses all tokens

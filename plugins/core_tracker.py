@@ -16,7 +16,7 @@ nick_re = re.compile(":(.+?)!")
 # functions called for bot state tracking
 
 def bot_left_channel(conn, chan):
-    logger.info("[{}|tracker] Bot left channel '{}'".format(conn.readable_name, chan))
+    logger.info("[{}|tracker] Bot left channel '{}'".format(conn.name, chan))
     if chan in conn.channels:
         conn.channels.remove(chan)
     if chan in conn.history:
@@ -24,7 +24,7 @@ def bot_left_channel(conn, chan):
 
 
 def bot_joined_channel(conn, chan):
-    logger.info("[{}|tracker] Bot joined channel '{}'".format(conn.readable_name, chan))
+    logger.info("[{}|tracker] Bot joined channel '{}'".format(conn.name, chan))
     conn.channels.append(chan)
     conn.history[chan] = deque(maxlen=100)
 
@@ -44,7 +44,7 @@ def on_kick(conn, chan, target, loop):
         if conn.config.get('auto_rejoin', False):
             loop.call_later(5, conn.join, chan)
             loop.call_later(5, logger.info, "[{}|tracker] Bot was kicked from {}, "
-                                            "rejoining channel.".format(conn.readable_name, chan))
+                                            "rejoining channel.".format(conn.name, chan))
 
 
 @asyncio.coroutine
@@ -64,7 +64,7 @@ def on_nick(irc_paramlist, conn, irc_raw):
 
     if old_nick == conn.nick:
         conn.nick = new_nick
-        logger.info("[{}|tracker] Bot nick changed from '{}' to '{}'.".format(conn.readable_name, old_nick, new_nick))
+        logger.info("[{}|tracker] Bot nick changed from '{}' to '{}'.".format(conn.name, old_nick, new_nick))
 
 
 # for channels the host tells us we're joining without us joining it ourselves

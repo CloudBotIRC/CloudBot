@@ -12,7 +12,6 @@ class Client:
     :type bot: cloudbot.bot.CloudBot
     :type loop: asyncio.events.AbstractEventLoop
     :type name: str
-    :type readable_name: str
     :type channels: list[str]
     :type config: dict[str, unknown]
     :type nick: str
@@ -21,11 +20,10 @@ class Client:
     :type permissions: PermissionManager
     """
 
-    def __init__(self, bot, name, nick, *, readable_name, channels=None, config=None):
+    def __init__(self, bot, name, nick, *, channels=None, config=None):
         """
         :type bot: cloudbot.bot.CloudBot
         :type name: str
-        :type readable_name: str
         :type nick: str
         :type channels: list[str]
         :type config: dict[str, unknown]
@@ -34,7 +32,6 @@ class Client:
         self.loop = bot.loop
         self.name = name
         self.nick = nick
-        self.readable_name = readable_name
 
         if channels is None:
             self.channels = []

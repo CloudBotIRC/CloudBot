@@ -59,9 +59,9 @@ def sieve_regex(bot, event, _hook):
     if _hook.type == "regex" and event.chan.startswith("#") and _hook.plugin.title != "factoids":
         status = status_cache.get((event.conn.name, event.chan))
         if status != "ENABLED" and (status == "DISABLED" or not default_enabled):
-            bot.logger.info("[{}] Denying {} from {}".format(event.conn.readable_name, _hook.function_name, event.chan))
+            bot.logger.info("[{}] Denying {} from {}".format(event.conn.name, _hook.function_name, event.chan))
             return None
-        bot.logger.info("[{}] Allowing {} to {}".format(event.conn.readable_name, _hook.function_name, event.chan))
+        bot.logger.info("[{}] Allowing {} to {}".format(event.conn.name, _hook.function_name, event.chan))
 
     return event
 

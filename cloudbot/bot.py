@@ -117,21 +117,20 @@ class CloudBot:
 
     def create_connections(self):
         """ Create a BotConnection for all the networks defined in the config """
-        for conf in self.config['connections']:
+        for config in self.config['connections']:
             # strip all spaces and capitalization from the connection name
-            readable_name = conf['name']
-            name = clean_name(readable_name)
-            nick = conf['nick']
-            server = conf['connection']['server']
-            port = conf['connection'].get('port', 6667)
-            local_bind = (conf['connection'].get('bind_addr', False), conf['connection'].get('bind_port', 0))
+            name = clean_name(config['name'])
+            nick = config['nick']
+            server = config['connection']['server']
+            port = config['connection'].get('port', 6667)
+            local_bind = (config['connection'].get('bind_addr', False), config['connection'].get('bind_port', 0))
             if local_bind[0] is False:
                 local_bind = False
 
-            self.connections.append(IrcClient(self, name, nick, config=conf, channels=conf['channels'],
-                                              readable_name=readable_name, server=server, port=port,
-                                              use_ssl=conf['connection'].get('ssl', False), local_bind=local_bind))
-            logger.debug("[{}] Created connection.".format(readable_name))
+            self.connections.append(IrcClient(self, name, nick, config=config, channels=config['channels'],
+                                              server=server, port=port, use_ssl=config['connection'].get('ssl', False),
+                                              local_bind=local_bind))
+            logger.debug("[{}] Created connection.".format(name))
 
     @asyncio.coroutine
     def stop(self, reason=None, *, restart=False):
@@ -150,7 +149,7 @@ class CloudBot:
             if not connection.connected:
                 # Don't quit a connection that hasn't connected
                 continue
-            logger.debug("[{}] Closing connection.".format(connection.readable_name))
+            logger.debug("[{}] Closing connection.".format(connection.name))
 
             connection.quit(reason)
 

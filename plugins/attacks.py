@@ -9,7 +9,7 @@ from cloudbot import hook
 from cloudbot.util import textgen
 
 
-@hook.onload()
+@hook.on_start()
 def load_attacks(bot):
     """
     :type bot: cloudbot.bot.CloudBot

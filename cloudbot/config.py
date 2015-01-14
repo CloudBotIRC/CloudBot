@@ -35,8 +35,9 @@ class Config(dict):
 
         # populate self with config data
         self.load_config()
+        self.reloading_enabled = self.get("reloading", {}).get("config_reloading", True)
 
-        if cloudbot.dev_mode["config_reloading"]:
+        if self.reloading_enabled:
             # start watcher
             self.observer = Observer()
 
@@ -48,7 +49,7 @@ class Config(dict):
 
     def stop(self):
         """shuts down the config reloader"""
-        if cloudbot.dev_mode["config_reloading"]:
+        if self.reloading_enabled:
             self.observer.stop()
 
     def load_config(self):

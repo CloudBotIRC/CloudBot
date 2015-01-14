@@ -6,7 +6,7 @@ import asyncio
 from cloudbot import hook
 
 
-@hook.onload()
+@hook.on_start()
 def load_fortunes(bot):
     path = os.path.join(bot.data_dir, "fortunes.txt")
     global fortunes

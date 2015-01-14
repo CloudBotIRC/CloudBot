@@ -54,7 +54,7 @@ def format_event(event):
     # Setup arguments
 
     args = {
-        "server": event.conn.readable_name, "target": event.target, "channel": event.chan, "nick": event.nick,
+        "server": event.conn.name, "target": event.target, "channel": event.chan, "nick": event.nick,
         "user": event.user, "host": event.host
     }
 
@@ -126,7 +126,7 @@ def format_irc_event(event, args):
 
     # Format using the default raw format
 
-    return irc_default.format(server=event.conn.readable_name, irc_raw=event.irc_raw)
+    return irc_default.format(server=event.conn.name, irc_raw=event.irc_raw)
 
 # +--------------+
 # | File logging |
@@ -147,7 +147,7 @@ def get_log_filename(server, chan):
     current_time = time.gmtime()
     folder_name = time.strftime(folder_format, current_time)
     file_name = time.strftime(file_format.format(chan=chan, server=server), current_time).lower()
-    return os.path.join(cloudbot.log_dir, folder_name, file_name)
+    return os.path.join(cloudbot.logging_dir, folder_name, file_name)
 
 
 def get_log_stream(server, chan):
@@ -162,8 +162,8 @@ def get_log_stream(server, chan):
             log_stream.flush()
             log_stream.close()
 
-        log_dir = os.path.dirname(new_filename)
-        os.makedirs(log_dir, exist_ok=True)
+        logging_dir = os.path.dirname(new_filename)
+        os.makedirs(logging_dir, exist_ok=True)
 
         # a dumb hack to bypass the fact windows does not allow * in file names
         new_filename = new_filename.replace("*", "server")
@@ -178,7 +178,7 @@ def get_raw_log_filename(server):
     current_time = time.gmtime()
     folder_name = time.strftime(folder_format, current_time)
     file_name = time.strftime(raw_file_format.format(server=server), current_time).lower()
-    return os.path.join(cloudbot.log_dir, "raw", folder_name, file_name)
+    return os.path.join(cloudbot.logging_dir, "raw", folder_name, file_name)
 
 
 def get_raw_log_stream(server):
@@ -192,8 +192,8 @@ def get_raw_log_stream(server):
             log_stream.flush()
             log_stream.close()
 
-        log_dir = os.path.dirname(new_filename)
-        os.makedirs(log_dir, exist_ok=True)
+        logging_dir = os.path.dirname(new_filename)
+        os.makedirs(logging_dir, exist_ok=True)
 
         log_stream = codecs.open(new_filename, mode="a", encoding="utf-8", buffering=1)
         stream_cache[server] = (new_filename, log_stream)

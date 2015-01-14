@@ -19,7 +19,7 @@ table = Table(
 )
 
 
-@hook.onload
+@hook.on_start
 def load_cache(db):
     """
     :type db: sqlalchemy.orm.Session

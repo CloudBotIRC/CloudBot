@@ -18,7 +18,7 @@ def find_hooks(parent, module):
     """
     :type parent: Plugin
     :type module: object
-    :rtype: (list[CommandHook], list[RegexHook], list[RawHook], list[SieveHook], List[EventHook], list[OnloadHook])
+    :rtype: (list[CommandHook], list[RegexHook], list[RawHook], list[SieveHook], List[EventHook], list[OnStartHook])
     """
     # set the loaded flag
     module._cloudbot_loaded = True
@@ -27,8 +27,8 @@ def find_hooks(parent, module):
     raw = []
     sieve = []
     event = []
-    onload = []
-    type_lists = {"command": command, "regex": regex, "irc_raw": raw, "sieve": sieve, "event": event, "onload": onload}
+    on_start = []
+    type_lists = {"command": command, "regex": regex, "irc_raw": raw, "sieve": sieve, "event": event, "on_start": on_start}
     for name, func in module.__dict__.items():
         if hasattr(func, "_cloudbot_hook"):
             # if it has cloudbot hook
@@ -40,7 +40,7 @@ def find_hooks(parent, module):
             # delete the hook to free memory
             del func._cloudbot_hook
 
-    return command, regex, raw, sieve, event, onload
+    return command, regex, raw, sieve, event, on_start
 
 
 def find_tables(code):
@@ -158,11 +158,11 @@ class PluginManager:
         # create database tables
         yield from plugin.create_tables(self.bot)
 
-        # run onload hooks
-        for onload_hook in plugin.run_on_load:
-            success = yield from self.launch(onload_hook, Event(bot=self.bot, hook=onload_hook))
+        # run on_start hooks
+        for on_start_hook in plugin.run_on_start:
+            success = yield from self.launch(on_start_hook, Event(bot=self.bot, hook=on_start_hook))
             if not success:
-                logger.warning("Not registering hooks from plugin {}: onload hook errored".format(plugin.title))
+                logger.warning("Not registering hooks from plugin {}: on_start hook errored".format(plugin.title))
 
                 # unregister databases
                 plugin.unregister_tables(self.bot)
@@ -214,7 +214,7 @@ class PluginManager:
             self._log_hook(sieve_hook)
 
         # we don't need this anymore
-        del plugin.run_on_load
+        del plugin.run_on_start
 
     @asyncio.coroutine
     def unload_plugin(self, path):
@@ -408,7 +408,7 @@ class PluginManager:
         :type hook: cloudbot.plugin.Hook | cloudbot.plugin.CommandHook
         :rtype: bool
         """
-        if hook.type != "onload":  # we don't need sieves on onload hooks.
+        if hook.type != "on_start":  # we don't need sieves on on_start hooks.
             for sieve in self.bot.plugin_manager.sieves:
                 event = yield from self._sieve(sieve, event, hook)
                 if event is None:
@@ -483,7 +483,7 @@ class Plugin:
         self.file_path = filepath
         self.file_name = filename
         self.title = title
-        self.commands, self.regexes, self.raw_hooks, self.sieves, self.events, self.run_on_load = find_hooks(self, code)
+        self.commands, self.regexes, self.raw_hooks, self.sieves, self.events, self.run_on_start = find_hooks(self, code)
         # we need to find tables for each plugin so that they can be unloaded from the global metadata when the
         # plugin is reloaded
         self.tables = find_tables(code)
@@ -686,19 +686,19 @@ class EventHook(Hook):
                                               self.plugin.file_name)
 
 
-class OnloadHook(Hook):
-    def __init__(self, plugin, on_load_hook):
+class OnStartHook(Hook):
+    def __init__(self, plugin, on_start_hook):
         """
         :type plugin: Plugin
-        :type on_load_hook: cloudbot.util.hook._OnLoadHook
+        :type on_start_hook: cloudbot.util.hook._On_startHook
         """
-        super().__init__("onload", plugin, on_load_hook)
+        super().__init__("on_start", plugin, on_start_hook)
 
     def __repr__(self):
-        return "Onload[{}]".format(Hook.__repr__(self))
+        return "On_start[{}]".format(Hook.__repr__(self))
 
     def __str__(self):
-        return "onload {} from {}".format(self.function_name, self.plugin.file_name)
+        return "on_start {} from {}".format(self.function_name, self.plugin.file_name)
 
 
 _hook_name_to_plugin = {
@@ -707,5 +707,5 @@ _hook_name_to_plugin = {
     "irc_raw": RawHook,
     "sieve": SieveHook,
     "event": EventHook,
-    "onload": OnloadHook
+    "on_start": OnStartHook
 }

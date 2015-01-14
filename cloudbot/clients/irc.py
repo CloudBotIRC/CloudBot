@@ -46,12 +46,11 @@ class IrcClient(Client):
     :type _ignore_cert_errors: bool
     """
 
-    def __init__(self, bot, name, nick, *, readable_name, channels=None, config=None,
+    def __init__(self, bot, name, nick, *, channels=None, config=None,
                  server, port=6667, use_ssl=False, ignore_cert_errors=True, timeout=300, local_bind=False):
         """
         :type bot: cloudbot.bot.CloudBot
         :type name: str
-        :type readable_name: str
         :type nick: str
         :type channels: list[str]
         :type config: dict[str, unknown]
@@ -61,7 +60,7 @@ class IrcClient(Client):
         :type ignore_cert_errors: bool
         :type timeout: int
         """
-        super().__init__(bot, name, nick, readable_name=readable_name, channels=channels, config=config)
+        super().__init__(bot, name, nick, channels=channels, config=config)
 
         self.use_ssl = use_ssl
         self._ignore_cert_errors = ignore_cert_errors
@@ -99,18 +98,18 @@ class IrcClient(Client):
         """
         Connects to the IRC server, or reconnects if already connected.
         """
-        # connect to the irc server
+        # connect to the clients server
         if self._quit:
             # we've quit, so close instead (because this has probably been called because of EOF received)
             self.close()
             return
 
         if self._connected:
-            logger.info("[{}] Reconnecting".format(self.readable_name))
+            logger.info("[{}] Reconnecting".format(self.name))
             self._transport.close()
         else:
             self._connected = True
-            logger.info("[{}] Connecting".format(self.readable_name))
+            logger.info("[{}] Connecting".format(self.name))
         optional_params = {}
         if self.local_bind:
             optional_params["local_addr"] = self.local_bind
@@ -208,7 +207,7 @@ class IrcClient(Client):
         Sends a raw IRC line unchecked. Doesn't do connected check, and is *not* threadsafe
         :type line: str
         """
-        logger.info("[{}] >> {}".format(self.readable_name, line))
+        logger.info("[{}] >> {}".format(self.name, line))
         asyncio.async(self._protocol.send(line), loop=self.loop)
 
 
@@ -262,14 +261,14 @@ class _IrcProtocol(asyncio.Protocol):
         if exc is None:
             # we've been closed intentionally, so don't reconnect
             return
-        logger.error("[{}] Connection lost: {}".format(self.conn.readable_name, exc))
+        logger.error("[{}] Connection lost: {}".format(self.conn.name, exc))
         asyncio.async(self.conn.connect(), loop=self.loop)
 
     def eof_received(self):
         self._connected = False
         # create a new connected_future for when we are connected.
         self._connected_future = asyncio.Future(loop=self.loop)
-        logger.info("[{}] EOF received.".format(self.conn.readable_name))
+        logger.info("[{}] EOF received.".format(self.conn.name))
         asyncio.async(self.conn.connect(), loop=self.loop)
         return True
 
@@ -294,7 +293,7 @@ class _IrcProtocol(asyncio.Protocol):
                 prefix_line_match = irc_prefix_re.match(line)
                 if prefix_line_match is None:
                     logger.critical("[{}] Received invalid IRC line '{}' from {}".format(
-                        self.conn.readable_name, line, self.conn.describe_server()))
+                        self.conn.name, line, self.conn.describe_server()))
                     continue
 
                 netmask_prefix, command, params = prefix_line_match.groups()
@@ -316,7 +315,7 @@ class _IrcProtocol(asyncio.Protocol):
                 noprefix_line_match = irc_noprefix_re.match(line)
                 if noprefix_line_match is None:
                     logger.critical("[{}] Received invalid IRC line '{}' from {}".format(
-                        self.conn.readable_name, line, self.conn.describe_server()))
+                        self.conn.name, line, self.conn.describe_server()))
                     continue
                 command = noprefix_line_match.group(1)
                 params = noprefix_line_match.group(2)

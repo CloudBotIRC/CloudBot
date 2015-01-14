@@ -72,7 +72,7 @@ def check_db(loop):
 
 
 @asyncio.coroutine
-@hook.onload
+@hook.on_start
 def load_geoip(loop):
     asyncio.async(check_db(loop), loop=loop)
 

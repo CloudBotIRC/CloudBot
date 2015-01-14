@@ -7,7 +7,7 @@ from cloudbot import hook
 from cloudbot.util import colors
 
 
-@hook.onload()
+@hook.on_start()
 def load_responses(bot):
     path = os.path.join(bot.data_dir, "8ball_responses.txt")
     global responses

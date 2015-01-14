@@ -42,9 +42,9 @@ def translate(text, dic):
     return text
 
 
-# onload
+# on_start
 
-@hook.onload()
+@hook.on_start()
 def load_text(bot):
     """
     :type bot: cloudbot.bot.CloudBot

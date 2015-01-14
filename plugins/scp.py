@@ -41,7 +41,7 @@ def load_names(loop):
 
 
 @asyncio.coroutine
-@hook.onload()
+@hook.on_start()
 def initial_refresh(loop):
     # do an initial refresh of the caches
     yield from load_names(loop)

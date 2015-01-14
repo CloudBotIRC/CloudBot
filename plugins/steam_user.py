@@ -83,7 +83,7 @@ def get_data(user):
     return data
 
 
-@hook.onload
+@hook.on_start
 def set_headers(bot):
     """ Runs on initial plugin load and sets the HTTP headers for this plugin. """
     global headers

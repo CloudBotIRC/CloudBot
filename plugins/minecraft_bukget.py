@@ -16,7 +16,7 @@ random_url = base_url + "plugins/bukkit/?start={}&size=1"
 details_url = base_url + "plugins/bukkit/{}"
 
 
-@hook.onload()
+@hook.on_start()
 def load_categories():
     global categories, count_total, count_categories
     categories = requests.get("http://api.bukget.org/3/categories").json()

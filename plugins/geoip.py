@@ -27,7 +27,7 @@ def fetch_db():
                 shutil.copyfileobj(infile, outfile)
 
 
-def update_db(existing_reader):
+def update_db():
     """
     Updates the DB.
     """
@@ -38,15 +38,12 @@ def update_db(existing_reader):
             fetch_db()
             return geoip2.database.Reader(PATH)
         else:
-            # geoip is good, create a reader or return existing reader
-            if not existing_reader:
-                try:
-                    return geoip2.database.Reader(PATH)
-                except:
-                    fetch_db()
-                    return geoip2.database.Reader(PATH)
-            else:
-                return existing_reader
+            try:
+                return geoip2.database.Reader(PATH)
+            except:
+                # issue loading, geo
+                fetch_db()
+                return geoip2.database.Reader(PATH)
     else:
         # no geoip file
         fetch_db()
@@ -58,9 +55,12 @@ def check_db(loop):
     runs update_db in an executor thread and sets geoip_reader to the result
     """
     global geoip_reader
-    db = yield from loop.run_in_executor(None, update_db, geoip_reader)
-    if db:
-        geoip_reader = db
+    if not geoip_reader:
+        logger.info("Loading GeoIP database")
+        db = yield from loop.run_in_executor(None, update_db, geoip_reader)
+        logger.info("Loaded GeoIP database")
+        if db:
+            geoip_reader = db
 
 
 @asyncio.coroutine
@@ -75,7 +75,7 @@ def geoip(text, reply, loop):
     global geoip_reader
 
     if not geoip_reader:
-        return "GeoIP database is updating, please wait a minute"
+        return "GeoIP database is still loading, please wait a minute"
 
     try:
         ip = yield from loop.run_in_executor(None, socket.gethostbyname, text)
@@ -95,6 +95,3 @@ def geoip(text, reply, loop):
     }
 
     reply("\x02Country:\x02 {country} ({cc}), \x02City:\x02 {city}{region}".format(**data))
-
-    # check the DB
-    asyncio.async(check_db(loop), loop=loop)

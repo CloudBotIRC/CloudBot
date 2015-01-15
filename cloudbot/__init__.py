@@ -62,6 +62,10 @@ def _setup():
             "cloudbot": {
                 "level": "DEBUG",
                 "handlers": ["console", "file"]
+            },
+            "asyncio": {
+                "level": "DEBUG",
+                "handlers": ["console", "file"]
             }
         }
     }

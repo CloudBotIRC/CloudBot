@@ -17,13 +17,17 @@ api_url = base_url + 'videos?part=contentDetails%2C+snippet%2C+statistics&id={}&
 search_api_url = base_url + 'search?part=id&maxResults=1'
 playlist_api_url = base_url + 'playlists?part=snippet%2CcontentDetails%2Cstatus'
 video_url = "http://youtu.be/%s"
+err_noapi = "You did not turn on the Youtube API in the Google Developers Console."
 
 
 def get_video_description(video_id, key):
     json = requests.get(api_url.format(video_id, key)).json()
 
     if json.get('error'):
-        return
+        if json['error']['code'] == 403:
+            return err_noapi
+        else:
+            return
 
     data = json['items']
     snippet = data[0]['snippet']
@@ -83,8 +87,11 @@ def youtube(text):
 
     json = requests.get(search_api_url, params={"q": text, "key": dev_key}).json()
 
-    if 'error' in json:
-        return 'Error performing search.'
+    if json.get('error'):
+        if json['error']['code'] == 403:
+            return err_noapi
+        else:
+            return 'Error performing search.'
 
     if json['pageInfo']['totalResults'] == 0:
         return 'No results found.'
@@ -102,8 +109,11 @@ def youtime(text):
 
     json = requests.get(search_api_url, params={"q": text, "key": dev_key}).json()
 
-    if 'error' in json:
-        return 'Error performing search.'
+    if json.get('error'):
+        if json['error']['code'] == 403:
+            return err_noapi
+        else:
+            return 'Error performing search.'
 
     if json['pageInfo']['totalResults'] == 0:
         return 'No results found.'
@@ -142,8 +152,11 @@ def ytplaylist_url(match):
     location = match.group(4).split("=")[-1]
     json = requests.get(playlist_api_url, params={"id": location, "key": dev_key}).json()
 
-    if 'error' in json:
-        return 'Error looking up playlist.'
+    if json.get('error'):
+        if json['error']['code'] == 403:
+            return err_noapi
+        else:
+            return 'Error looking up playlist.'
 
     data = json['items']
     snippet = data[0]['snippet']

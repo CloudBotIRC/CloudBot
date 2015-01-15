@@ -17,7 +17,7 @@ def load_key(bot):
 def books(text):
     """books <query> -- Searches Google Books for <query>."""
     if not dev_key:
-        return "This command requires a Google API key."
+        return "This command requires a Google Developers Console API key."
 
     json = requests.get(book_search_api, params={"q": text, "key": dev_key}).json()
 

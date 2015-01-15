@@ -21,7 +21,7 @@ def shrt(url):
         return "%s: %s" % (content['code'], content['message'])
 
 
-@hook.onload()
+@hook.on_start()
 def load_key(bot):
     global dev_key
     dev_key = bot.config.get("api_keys", {}).get("google_dev_key")

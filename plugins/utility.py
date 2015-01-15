@@ -215,7 +215,7 @@ def derpify(text):
              "WHAT THE": "WT", "WHAT": "WUT", "ARE": "R", "WHY": "Y", "BE RIGHT BACK": "BRB", "BECAUSE": "B/C",
              "OH MY GOD": "OMG", "O": "OH", "THE": pick_the, "TOO": "2", "TO": "2", "BE": "B", "CK": "K", "ING": "NG",
              "PLEASE": "PLS", "SEE YOU": "CYA", "SEE YA": "CYA", "SCHOOL": "SKOOL", "AM": "M",
-             "AM GOING TO": "IAM GOING TO",
+             "AM GOING TO": "IAM GOING TO", "THAT": "DAT", "ICK": "IK",
              "LIKE": "LIEK", "HELP": "HALP", "KE": "EK", "E": pick_e, "!": pick_ex, "?": pick_qt}
     output = translate(string, rules) + " " + pick_end
 

@@ -39,7 +39,6 @@ License:
 import re
 from random import randint
 
-
 IRC_COLOUR_DICT = {
     "white": "00",
     "black": "01",
@@ -89,7 +88,6 @@ IRC_FORMATTING_DICT = {
     "reset": "\x0F",
     "clear": "\x0F"
 }
-
 
 COLOR_RE = re.compile(r"\$\(.*?\)", re.I)
 IRC_COLOR_RE = re.compile(r"(\x03(\d+,\d+|\d)|[\x0f\x02\x16\x1f])", re.I)

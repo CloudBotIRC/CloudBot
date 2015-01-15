@@ -119,6 +119,7 @@ class HTMLTextExtractor(HTMLParser):
     """
     Takes HTML and provides cleaned and stripped text.
     """
+
     def __init__(self):
         HTMLParser.__init__(self)
         self.result = []

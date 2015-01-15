@@ -52,7 +52,6 @@ many individuals on behalf of Zope Corporation. Specific attributions
 are listed in the accompanying credits file.
 """
 
-
 traditional = [
     (1024 ** 5, 'P'),
     (1024 ** 4, 'T'),

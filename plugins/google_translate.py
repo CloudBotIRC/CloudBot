@@ -25,8 +25,11 @@ def goog_trans(api_key, text, source, target):
     request = requests.get(url, params=params)
     parsed = request.json()
 
-    if 'error' in parsed:
-        return "Google API error."
+    if parsed.get('error'):
+        if parsed['error']['code'] == 403:
+            return "The Translate API is off in the Google Developers Console."
+        else:
+            return "Google API error."
 
     if not source:
         return '(%(detectedSourceLanguage)s) %(translatedText)s' % (parsed['data']['translations'][0])

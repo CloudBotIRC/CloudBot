@@ -155,11 +155,11 @@ def parse(string):
     return formatted
 
 
-# Color stripping.
+# Formatting stripping.
 
 def strip(string):
     """
-    Removes all $() syntax color codes from the input string and returns it.
+    Removes all $() syntax formatting codes from the input string and returns it.
     :rtype str
     """
 
@@ -174,7 +174,7 @@ def strip(string):
 
 def strip_irc(string):
     """
-    Removes all raw MIRC color codes from the input string and returns it.
+    Removes all raw MIRC formatting codes from the input string and returns it.
     :rtype str
     """
 
@@ -183,11 +183,11 @@ def strip_irc(string):
 
 def strip_all(string):
     """
-    Removes all $() syntax and MIRC color codes from the input string and returns it.
+    Removes all $() syntax and MIRC formatting codes from the input string and returns it.
     :rtype str
     """
 
-    # we run strip_irc twice to avoid people putting a $() color code inside a MIRC one
+    # we run strip_irc twice to avoid people putting a $() formatting code inside a MIRC one
     return strip_irc(strip(strip_irc(string)))
 
 

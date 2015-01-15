@@ -7,8 +7,6 @@ import logging
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
 
-import cloudbot
-
 logger = logging.getLogger("cloudbot")
 
 

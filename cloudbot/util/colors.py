@@ -25,7 +25,6 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 import re
 from random import randint
 
-
 IRC_COLOUR_DICT = {
     "white": "00",
     "black": "01",
@@ -75,7 +74,6 @@ IRC_FORMATTING_DICT = {
     "reset": "\x0F",
     "clear": "\x0F"
 }
-
 
 COLOR_RE = re.compile(r"\$\(.*?\)", re.I)
 

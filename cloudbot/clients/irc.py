@@ -210,7 +210,6 @@ class IrcClient(Client):
         logger.info("[{}] >> {}".format(self.name, line))
         asyncio.async(self._protocol.send(line), loop=self.loop)
 
-
     @property
     def connected(self):
         return self._connected

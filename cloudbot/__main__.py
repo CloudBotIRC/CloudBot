@@ -24,8 +24,9 @@ def main():
     logging._srcfile = None
     logging.logThreads = 0
     logging.logProcesses = 0
-
+    logging.logMultiprocessing = 0
     logger = logging.getLogger("cloudbot")
+
     logger.info("Starting CloudBot.")
 
     # create the bot
@@ -68,7 +69,7 @@ def main():
             # actually restart
             os.chdir(original_wd)
             args = sys.argv
-            logger.info("Restarting Bot")
+            logger.info("Restarting Bot.")
             logger.debug("Restart arguments: {}".format(args))
             for f in [sys.stdout, sys.stderr]:
                 f.flush()

@@ -12,8 +12,6 @@ import os
 
 __version__ = "0.1.1.dev0"
 
-__all__ = ["util", "bot", "connection", "config", "permissions", "plugin", "event", "hook", "log_dir"]
-
 
 def _setup():
     if os.path.exists(os.path.abspath("config.json")):
@@ -82,5 +80,6 @@ def _setup():
         dict_config["loggers"]["cloudbot"]["handlers"].append("debug_file")
 
     logging.config.dictConfig(dict_config)
+
 
 _setup()

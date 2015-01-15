@@ -4,15 +4,13 @@ import logging
 import re
 import os
 import gc
-from sqlalchemy import create_engine
 
+from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.schema import MetaData
 
-import cloudbot
 from cloudbot.client import Client
 from cloudbot.config import Config
-from cloudbot.reloader import PluginReloader
 from cloudbot.plugin import PluginManager
 from cloudbot.event import Event, CommandEvent, RegexEvent, EventType
 from cloudbot.util import botvars, formatting
@@ -37,7 +35,6 @@ class CloudBot:
     :type data_dir: bytes
     :type config: core.config.Config
     :type plugin_manager: PluginManager
-    :type reloader: PluginReloader
     :type db_engine: sqlalchemy.engine.Engine
     :type db_factory: sqlalchemy.orm.session.sessionmaker
     :type db_session: sqlalchemy.orm.scoping.scoped_session
@@ -96,9 +93,6 @@ class CloudBot:
         # create bot connections
         self.create_connections()
 
-        if self.plugin_reloading_enabled:
-            self.reloader = PluginReloader(self)
-
         self.plugin_manager = PluginManager(self)
 
     def run(self):
@@ -141,10 +135,6 @@ class CloudBot:
             logger.debug("Stopping config reloader.")
             self.config.stop()
 
-        if self.plugin_reloading_enabled:
-            logger.debug("Stopping plugin reloader.")
-            self.reloader.stop()
-
         for connection in self.connections:
             if not connection.connected:
                 # Don't quit a connection that hasn't connected
@@ -153,7 +143,7 @@ class CloudBot:
 
             connection.quit(reason)
 
-        yield from asyncio.sleep(1.0)  # wait for 'QUIT' calls to take affect
+        yield from asyncio.sleep(0.5)  # wait for 'QUIT' calls to take affect
 
         for connection in self.connections:
             if not connection.connected:
@@ -180,10 +170,6 @@ class CloudBot:
             logger.info("Killed while loading, exiting")
             return
 
-        if self.plugin_reloading_enabled:
-            # start plugin reloader
-            self.reloader.start(os.path.abspath("plugins"))
-
         # Connect to servers
         yield from asyncio.gather(*[conn.connect() for conn in self.connections], loop=self.loop)
 
@@ -196,7 +182,7 @@ class CloudBot:
         :type event: Event
         """
         try:
-            run_before_tasks = []
+            first = []
             tasks = []
             command_prefix = event.conn.config.get('command_prefix', '.')
 
@@ -204,7 +190,7 @@ class CloudBot:
             for raw_hook in self.plugin_manager.catch_all_triggers:
                 # run catch-all coroutine hooks before all others - TODO: Make this a plugin argument
                 if not raw_hook.threaded:
-                    run_before_tasks.append(
+                    first.append(
                         self.plugin_manager.launch(raw_hook, Event(hook=raw_hook, base_event=event)))
                 else:
                     tasks.append(self.plugin_manager.launch(raw_hook, Event(hook=raw_hook, base_event=event)))
@@ -231,7 +217,7 @@ class CloudBot:
                     if command in self.plugin_manager.commands:
                         command_hook = self.plugin_manager.commands[command]
                         command_event = CommandEvent(hook=command_hook, text=cmd_match.group(2).strip(),
-                                                 triggered_command=command, base_event=event)
+                                                     triggered_command=command, base_event=event)
                         tasks.append(self.plugin_manager.launch(command_hook, command_event))
                     else:
                         potential_matches = []
@@ -242,7 +228,7 @@ class CloudBot:
                             if len(potential_matches) == 1:
                                 command_hook = potential_matches[0][1]
                                 command_event = CommandEvent(hook=command_hook, text=cmd_match.group(2).strip(),
-                                                         triggered_command=command, base_event=event)
+                                                             triggered_command=command, base_event=event)
                                 tasks.append(self.plugin_manager.launch(command_hook, command_event))
                             else:
                                 event.notice("Possible matches: {}".format(
@@ -250,17 +236,14 @@ class CloudBot:
 
                 # Regex hooks
                 for regex, regex_hook in self.plugin_manager.regex_hooks:
-                    if not regex_hook.run_on_cmd and cmd_match:
-                        pass
-                    else:
-                        regex_match = regex.search(event.content)
-                        if regex_match:
-                            regex_event = RegexEvent(hook=regex_hook, match=regex_match, base_event=event)
+                    if not cmd_match or regex_hook.run_on_cmd:
+                        match = regex.search(event.content)
+                        if match:
+                            regex_event = RegexEvent(hook=regex_hook, match=match, base_event=event)
                             tasks.append(self.plugin_manager.launch(regex_hook, regex_event))
 
             # Run the tasks
-            yield from asyncio.gather(*run_before_tasks, loop=self.loop)
+            yield from asyncio.gather(*first, loop=self.loop)
             yield from asyncio.gather(*tasks, loop=self.loop)
-
-        except:
+        except Exception:
             logger.exception("Error while processing event")

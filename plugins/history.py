@@ -54,7 +54,7 @@ def track_history(event, message_time, conn):
     history.append(data)
 
 
-@hook.event([EventType.message, EventType.action], ignorebots=False, singlethread=True)
+@hook.event([EventType.message, EventType.action], singlethread=True)
 def chat_tracker(event, db, conn):
     """
     :type db: sqlalchemy.orm.Session

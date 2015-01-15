@@ -3,6 +3,7 @@ import re
 import collections
 
 from cloudbot.event import EventType
+from cloudbot.plugin import HookType
 
 valid_command_re = re.compile(r"^\w+$")
 
@@ -10,17 +11,17 @@ valid_command_re = re.compile(r"^\w+$")
 class _Hook():
     """
     :type function: function
-    :type type: str
+    :type type: HookType
     :type kwargs: dict[str, unknown]
     """
+    # to be assigned in sub-classes
+    type = None
 
-    def __init__(self, function, _type):
+    def __init__(self, function):
         """
         :type function: function
-        :type _type: str
         """
         self.function = function
-        self.type = _type
         self.kwargs = {}
 
     def _add_hook(self, kwargs):
@@ -34,15 +35,16 @@ class _Hook():
 class _CommandHook(_Hook):
     """
     :type main_alias: str
-    :type aliases: set[str]
+    :type triggers: set[str]
     """
+    type = HookType.command
 
     def __init__(self, function):
         """
         :type function: function
         """
-        _Hook.__init__(self, function, "command")
-        self.aliases = set()
+        _Hook.__init__(self, function)
+        self.triggers = set()
         self.main_alias = None
 
         if function.__doc__:
@@ -59,26 +61,29 @@ class _CommandHook(_Hook):
         if not alias_param:
             alias_param = self.function.__name__
         if isinstance(alias_param, str):
-            alias_param = [alias_param]
+            alias_param = [alias_param.lower()]
+        else:
+            alias_param = [alias.lower() for alias in alias_param]
         if not self.main_alias:
             self.main_alias = alias_param[0]
         for alias in alias_param:
             if not valid_command_re.match(alias):
                 raise ValueError("Invalid command name {}".format(alias))
-        self.aliases.update(alias_param)
+        self.triggers.update(alias_param)
 
 
 class _RegexHook(_Hook):
     """
-    :type regexes: list[re.__Regex]
+    :type triggers: list[re.__Regex]
     """
+    type = HookType.regex
 
     def __init__(self, function):
         """
         :type function: function
         """
-        _Hook.__init__(self, function, "regex")
-        self.regexes = []
+        _Hook.__init__(self, function)
+        self.triggers = []
 
     def add_hook(self, regex_param, kwargs):
         """
@@ -89,11 +94,11 @@ class _RegexHook(_Hook):
         # add all regex_parameters to valid regexes
         if isinstance(regex_param, str):
             # if the parameter is a string, compile and add
-            self.regexes.append(re.compile(regex_param))
+            self.triggers.append(re.compile(regex_param))
         elif hasattr(regex_param, "search"):
             # if the parameter is an re.__Regex, just add it
             # we only use regex.search anyways, so this is a good determiner
-            self.regexes.append(regex_param)
+            self.triggers.append(regex_param)
         else:
             assert isinstance(regex_param, collections.Iterable)
             # if the parameter is a list, add each one
@@ -103,7 +108,7 @@ class _RegexHook(_Hook):
                 else:
                     # make sure that the param is either a compiled regex, or has a search attribute.
                     assert hasattr(regex_param, "search")
-                self.regexes.append(re_to_match)
+                self.triggers.append(re_to_match)
 
 
 class _RawHook(_Hook):
@@ -111,11 +116,13 @@ class _RawHook(_Hook):
     :type triggers: set[str]
     """
 
+    type = HookType.irc_raw
+
     def __init__(self, function):
         """
         :type function: function
         """
-        _Hook.__init__(self, function, "irc_raw")
+        _Hook.__init__(self, function)
         self.triggers = set()
 
     def add_hook(self, trigger_param, kwargs):
@@ -134,15 +141,17 @@ class _RawHook(_Hook):
 
 class _EventHook(_Hook):
     """
-    :type types: set[cloudbot.event.EventType]
+    :type triggers: set[cloudbot.event.EventType]
     """
+
+    type = HookType.event
 
     def __init__(self, function):
         """
         :type function: function
         """
-        _Hook.__init__(self, function, "event")
-        self.types = set()
+        _Hook.__init__(self, function)
+        self.triggers = set()
 
     def add_hook(self, trigger_param, kwargs):
         """
@@ -152,23 +161,23 @@ class _EventHook(_Hook):
         self._add_hook(kwargs)
 
         if isinstance(trigger_param, EventType):
-            self.types.add(trigger_param)
+            self.triggers.add(trigger_param)
         else:
             # it's a list
-            self.types.update(trigger_param)
+            self.triggers.update(trigger_param)
 
 
 def _add_hook(func, hook):
-    if not hasattr(func, "_cloudbot_hook"):
-        func._cloudbot_hook = {}
+    if not hasattr(func, "cloudbot_hooks"):
+        func.cloudbot_hooks = {}
     else:
-        assert hook.type not in func._cloudbot_hook  # in this case the hook should be using the add_hook method
-    func._cloudbot_hook[hook.type] = hook
+        assert hook.type not in func.cloudbot_hooks  # in this case the hook should be using the add_hook method
+    func.cloudbot_hooks[hook.type] = hook
 
 
 def _get_hook(func, hook_type):
-    if hasattr(func, "_cloudbot_hook") and hook_type in func._cloudbot_hook:
-        return func._cloudbot_hook[hook_type]
+    if hasattr(func, "cloudbot_hooks") and hook_type in func.cloudbot_hooks:
+        return func.cloudbot_hooks[hook_type]
 
     return None
 
@@ -179,7 +188,7 @@ def command(*args, **kwargs):
     """
 
     def _command_hook(func, alias_param=None):
-        hook = _get_hook(func, "command")
+        hook = _get_hook(func, HookType.command)
         if hook is None:
             hook = _CommandHook(func)
             _add_hook(func, hook)
@@ -199,7 +208,7 @@ def irc_raw(triggers_param, **kwargs):
     """
 
     def _raw_hook(func):
-        hook = _get_hook(func, "irc_raw")
+        hook = _get_hook(func, HookType.irc_raw)
         if hook is None:
             hook = _RawHook(func)
             _add_hook(func, hook)
@@ -219,7 +228,7 @@ def event(types_param, **kwargs):
     """
 
     def _event_hook(func):
-        hook = _get_hook(func, "event")
+        hook = _get_hook(func, HookType.event)
         if hook is None:
             hook = _EventHook(func)
             _add_hook(func, hook)
@@ -240,7 +249,7 @@ def regex(regex_param, **kwargs):
     """
 
     def _regex_hook(func):
-        hook = _get_hook(func, "regex")
+        hook = _get_hook(func, HookType.regex)
         if hook is None:
             hook = _RegexHook(func)
             _add_hook(func, hook)
@@ -263,9 +272,10 @@ def sieve(param=None, **kwargs):
         assert len(inspect.getargspec(func).args) == 3, \
             "Sieve plugin has incorrect argument count. Needs params: bot, input, plugin"
 
-        hook = _get_hook(func, "sieve")
+        hook = _get_hook(func, HookType.sieve)
         if hook is None:
-            hook = _Hook(func, "sieve")  # there's no need to have a specific SieveHook object
+            hook = _Hook(func)  # there's no need to have a specific SieveHook object
+            hook.type = HookType.sieve
             _add_hook(func, hook)
 
         hook._add_hook(kwargs)
@@ -283,9 +293,10 @@ def on_start(param=None, **kwargs):
     """
 
     def _on_start_hook(func):
-        hook = _get_hook(func, "on_start")
+        hook = _get_hook(func, HookType.on_start)
         if hook is None:
-            hook = _Hook(func, "on_start")
+            hook = _Hook(func)
+            hook.type = HookType.on_start
             _add_hook(func, hook)
 
         hook._add_hook(kwargs)

@@ -297,4 +297,5 @@ def on_start(param=None, **kwargs):
         return lambda func: _on_start_hook(func)
 
 
+# this is temporary, to ease transition
 onload = on_start

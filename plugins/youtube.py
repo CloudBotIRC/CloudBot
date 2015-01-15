@@ -17,7 +17,7 @@ api_url = base_url + 'videos?part=contentDetails%2C+snippet%2C+statistics&id={}&
 search_api_url = base_url + 'search?part=id&maxResults=1'
 playlist_api_url = base_url + 'playlists?part=snippet%2CcontentDetails%2Cstatus'
 video_url = "http://youtu.be/%s"
-err_noapi = "You did not turn on the Youtube API in the Google Developers Console."
+err_noapi = "The YouTube API is off in the Google Developers Console."
 
 
 def get_video_description(video_id, key):

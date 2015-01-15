@@ -46,7 +46,7 @@ def find_hooks(title, module):
     """
     :type title: str
     :type module: object
-    :rtype: dict[HookType, list[Hook | CommandHook | RegexHook | EventHook | IrcRawHook]]
+    :rtype: dict[HookType, list[Hook | CommandHook | RegexHook | EventHook | IrcRawHook | PeriodicHook]]
     """
     # set the loaded flag
     module._plugins_loaded = True
@@ -57,7 +57,8 @@ def find_hooks(title, module):
     for name, func in module.__dict__.items():
         if hasattr(func, "cloudbot_hooks"):
             # if it has cloudbot hook
-            for hook_type, hook in func.cloudbot_hooks.items():
+            for hook in func.cloudbot_hooks:
+                hook_type = hook.type
                 hook_class = _hook_classes[hook_type]
                 hooks_dict[hook_type].append(hook_class(title, hook))
 
@@ -535,11 +536,11 @@ class PeriodicHook(Hook):
     def __init__(self, plugin, decorator):
         """
         :type plugin: Plugin
-        :type periodic_hook: cloudbot.util.hook.PeriodicDecorator
+        :type decorator: cloudbot.util.hook.PeriodicDecorator
         """
 
         self.interval = decorator.interval
-        self.initial_interval = decorator.initial_interval
+        self.initial_interval = decorator.kwargs.pop("initial_interval", decorator.interval)
 
         super().__init__(plugin, decorator)
 

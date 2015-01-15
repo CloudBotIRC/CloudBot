@@ -15,3 +15,4 @@ tweepy
 pyenchant
 pythonwhois
 imgurpython
+isodate

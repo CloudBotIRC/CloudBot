@@ -79,7 +79,8 @@
         "wunderground": "",
         "googletranslate": "",
         "rdio_key": "",
-        "rdio_secret": ""
+        "rdio_secret": "",
+        "google_dev_key": ""
     },
     "database": "sqlite:///cloudbot.db",
     "plugin_loading": {

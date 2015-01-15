@@ -37,12 +37,12 @@ def get_video_description(video_id, key):
 
     length = isodate.parse_duration(content_details['duration'])
     out += ' - length \x02{}\x02'.format(timeformat.format_time(int(length.total_seconds()), simple=True))
+    totalvotes = float(statistics['likeCount']) + float(statistics['dislikeCount'])
 
-    if 'likeCount' in statistics:
+    if totalvotes != 0:
         # format
         likes = pluralize(int(statistics['likeCount']), "like")
         dislikes = pluralize(int(statistics['dislikeCount']), "dislike")
-        totalvotes = float(statistics['likeCount']) + float(statistics['dislikeCount'])
 
         percent = 100 * float(statistics['likeCount']) / totalvotes
         out += ' - {}, {} (\x02{:.1f}\x02%)'.format(likes,
@@ -145,5 +145,6 @@ def ytplaylist_url(match):
 
     title = snippet['title']
     author = snippet['channelTitle']
-    num_videos = str(content_details['itemCount'])
-    return "\x02{}\x02 - \x02{}\x02 videos - \x02{}\x02".format(title, num_videos, author)
+    num_videos = int(content_details['itemCount'])
+    count_videos = ' - \x02{:,}\x02 video{}'.format(num_videos, "s"[num_videos == 1:])
+    return "\x02{}\x02 {} - \x02{}\x02".format(title, count_videos, author)

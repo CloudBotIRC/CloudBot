@@ -169,7 +169,7 @@ class CloudBot:
     @asyncio.coroutine
     def _init_routine(self):
         # Load plugins
-        yield from self.plugin_manager.load_all(os.path.abspath("plugins"))
+        yield from self.plugin_manager.load_all([os.path.abspath("plugins")])
 
         # If we we're stopped while loading plugins, cancel that and just stop
         if not self.running:
@@ -211,9 +211,11 @@ class CloudBot:
         if event.type is EventType.message:
             # Commands
             if event.chan.lower() == event.nick.lower():  # private message, no command prefix
-                command_re = r'(?i)^(?:[{}]?|{}[,;:]+\s+)(\w+)(?:$|\s+)(.*)'.format(command_prefix, event.conn.nick)
+                command_re = r'(?i)^(?:[{}]?|{}[,;:]+\s+)(\w+)(?:$|\s+)(.*)'.format(command_prefix,
+                                                                                    event.conn.bot_nick)
             else:
-                command_re = r'(?i)^(?:[{}]|{}[,;:]+\s+)(\w+)(?:$|\s+)(.*)'.format(command_prefix, event.conn.nick)
+                command_re = r'(?i)^(?:[{}]|{}[,;:]+\s+)(\w+)(?:$|\s+)(.*)'.format(command_prefix,
+                                                                                   event.conn.bot_nick)
 
             cmd_match = re.match(command_re, event.content)
 

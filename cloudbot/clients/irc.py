@@ -16,11 +16,13 @@ irc_netmask_re = re.compile(r"([^!@]*)!([^@]*)@(.*)")
 irc_param_re = re.compile(r"(?:^|(?<= ))(:.*|[^ ]+)")
 
 irc_command_to_event_type = {
-    "PRIVMSG": EventType.message,
-    "JOIN": EventType.join,
-    "PART": EventType.part,
-    "KICK": EventType.kick,
-    "NOTICE": EventType.notice
+    'PRIVMSG': EventType.message,
+    'JOIN': EventType.join,
+    'PART': EventType.part,
+    'KICK': EventType.kick,
+    'NICK': EventType.nick,
+    'QUIT': EventType.quit,
+    '332': EventType.topic
 }
 
 
@@ -46,12 +48,12 @@ class IrcClient(Client):
     :type _ignore_cert_errors: bool
     """
 
-    def __init__(self, bot, name, nick, *, channels=None, config=None,
+    def __init__(self, bot, name, bot_nick, *, channels=None, config,
                  server, port=6667, use_ssl=False, ignore_cert_errors=True, timeout=300, local_bind=False):
         """
         :type bot: cloudbot.bot.CloudBot
         :type name: str
-        :type nick: str
+        :type bot_nick: str
         :type channels: list[str]
         :type config: dict[str, unknown]
         :type server: str
@@ -60,7 +62,7 @@ class IrcClient(Client):
         :type ignore_cert_errors: bool
         :type timeout: int
         """
-        super().__init__(bot, name, nick, channels=channels, config=config)
+        super().__init__(bot, name, bot_nick, channels=channels, config=config)
 
         self.use_ssl = use_ssl
         self._ignore_cert_errors = ignore_cert_errors
@@ -93,12 +95,20 @@ class IrcClient(Client):
         else:
             return "{}:{}".format(self.server, self.port)
 
+    # legacy
+    @property
+    def nick(self):
+        """
+        :rtype: str
+        """
+        return self.bot_nick
+
     @asyncio.coroutine
     def connect(self):
         """
         Connects to the IRC server, or reconnects if already connected.
         """
-        # connect to the clients server
+        # connect to the irc server
         if self._quit:
             # we've quit, so close instead (because this has probably been called because of EOF received)
             self.close()
@@ -131,6 +141,10 @@ class IrcClient(Client):
         else:
             self.cmd("QUIT")
 
+        # Log ourselves quitting
+        quit_event = Event(bot=self.bot, conn=self, event_type=EventType.quit, nick=self.bot_nick)
+        yield from self._process_quit(quit_event)
+
     def close(self):
         if not self._quit:
             self.quit()
@@ -140,15 +154,15 @@ class IrcClient(Client):
         self._transport.close()
         self._connected = False
 
-    def message(self, target, *messages):
+    def message(self, target, *messages, log_hide=None):
         for text in messages:
-            self.cmd("PRIVMSG", target, text)
+            self.cmd("PRIVMSG", target, text, log_hide=log_hide)
 
-    def action(self, target, text):
-        self.ctcp(target, "ACTION", text)
+    def action(self, target, text, log_hide=None):
+        self.ctcp(target, "ACTION", text, log_hide=log_hide)
 
-    def notice(self, target, text):
-        self.cmd("NOTICE", target, text)
+    def notice(self, target, text, log_hide=None):
+        self.cmd("NOTICE", target, text, log_hide=log_hide)
 
     def set_nick(self, nick):
         self.cmd("NICK", nick)
@@ -168,7 +182,7 @@ class IrcClient(Client):
             return
         self.cmd("PASS", password)
 
-    def ctcp(self, target, ctcp_type, text):
+    def ctcp(self, target, ctcp_type, text, log_hide=None):
         """
         Makes the bot send a PRIVMSG CTCP of type <ctcp_type> to the target
         :type ctcp_type: str
@@ -176,9 +190,9 @@ class IrcClient(Client):
         :type target: str
         """
         out = "\x01{} {}\x01".format(ctcp_type, text)
-        self.cmd("PRIVMSG", target, out)
+        self.cmd("PRIVMSG", target, out, log_hide=log_hide)
 
-    def cmd(self, command, *params):
+    def cmd(self, command, *params, log_hide=None):
         """
         Sends a raw IRC command of type <command> with params <params>
         :param command: The IRC command to send
@@ -189,25 +203,28 @@ class IrcClient(Client):
         params = list(params)  # turn the tuple of parameters into a list
         if params:
             params[-1] = ':' + params[-1]
-            self.send("{} {}".format(command, ' '.join(params)))
+            self.send("{} {}".format(command, ' '.join(params)), log_hide=log_hide)
         else:
-            self.send(command)
+            self.send(command, log_hide=log_hide)
 
-    def send(self, line):
+    def send(self, line, log_hide=None):
         """
         Sends a raw IRC line
         :type line: str
         """
         if not self._connected:
             raise ValueError("Client must be connected to irc server to use send")
-        self.loop.call_soon_threadsafe(self._send, line)
+        self.loop.call_soon_threadsafe(self._send, line, log_hide)
 
-    def _send(self, line):
+    def _send(self, line, log_hide):
         """
         Sends a raw IRC line unchecked. Doesn't do connected check, and is *not* threadsafe
         :type line: str
         """
-        logger.info("[{}] >> {}".format(self.name, line))
+        if log_hide is not None:
+            logger.info("[{}] >> {}".format(self.name, line.replace(log_hide, "<hidden>")))
+        else:
+            logger.info("[{}] >> {}".format(self.name, line))
         asyncio.async(self._protocol.send(line), loop=self.loop)
 
     @property
@@ -332,27 +349,21 @@ class _IrcProtocol(asyncio.Protocol):
 
             # Parse the command and params
 
-            # Content
-            if command_params and command_params[-1].startswith(":"):
-                # If the last param is in the format of `:content` remove the `:` from it, and set content from it
-                content = command_params[-1][1:]
-            else:
-                content = None
-
             # Event type
             if command in irc_command_to_event_type:
                 event_type = irc_command_to_event_type[command]
             else:
                 event_type = EventType.other
 
-            # Target (for KICK, INVITE)
-            if event_type is EventType.kick:
-                target = command_params[1]
-            elif command == "INVITE":
-                target = command_params[0]
+            # Content
+            if command_params and command_params[-1].startswith(":"):
+                # If the last param is in the format of `:content` remove the `:` from it, and set content from it
+                content = command_params[-1][1:]
+            elif event_type is EventType.nick:
+                content = command_params[0]
             else:
-                # TODO: Find more commands which give a target
-                target = None
+                content = None
+
 
             # Parse for CTCP
             if event_type is EventType.message and content.count("\x01") >= 2 and content.startswith("\x01"):
@@ -371,15 +382,36 @@ class _IrcProtocol(asyncio.Protocol):
 
             # Channel
             # TODO: Migrate plugins using chan for storage to use chan.lower() instead so we can pass the original case
-            if command_params and (len(command_params) > 2 or not command_params[0].startswith(":")):
+            if command == "353":
+                # 353 format is `:network.name 353 bot_nick = #channel :user1 user2`, if we just used the below,
+                # we would think the channel was the bot_nick
+                channel = command_params[2].lower()
+            elif (command_params and (len(command_params) > 2 or not command_params[0].startswith(":"))
+                  and event_type is not EventType.nick):
 
-                if command_params[0].lower() == self.conn.nick.lower():
+                if command_params[0].lower() == self.conn.bot_nick.lower():
                     # this is a private message - set the channel to the sender's nick
                     channel = nick.lower()
                 else:
                     channel = command_params[0].lower()
+            elif command == "JOIN":
+                channel = content
             else:
                 channel = None
+
+            # Target (for KICK, INVITE)
+            if event_type is EventType.kick:
+                target = command_params[1]
+            elif command == "INVITE":
+                target = command_params[0]
+            elif command == "MODE":
+                if len(command_params) > 2:
+                    target = command_params[2]
+                else:
+                    target = command_params[0]
+                    channel = None
+            else:
+                target = None
 
             # Set up parsed message
             # TODO: Do we really want to send the raw `prefix` and `command_params` here?

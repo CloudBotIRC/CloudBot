@@ -55,9 +55,9 @@ class Config(dict):
         if not os.path.exists(self.path):
             # if there is no config, show an error and die
             logger.critical("No config file found, bot shutting down!")
-            print("No config file found! Bot shutting down in five seconds.")
-            print("Copy 'config.default.json' to 'config.json' for defaults.")
-            print("For help, see http://git.io/cloudbotirc. Thank you for using CloudBot!")
+            print("No config file found, please copy 'config.default.json' to 'config.json' and customize!")
+            print("For help configuring, see http://git.io/cloudbotirc. Thank you for using CloudBot!")
+            print("Stopping in 5 seconds.")
             time.sleep(5)
             sys.exit()
 

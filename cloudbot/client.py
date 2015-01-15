@@ -15,24 +15,24 @@ class Client:
     :type name: str
     :type channels: list[str]
     :type config: dict[str, unknown]
-    :type nick: str
+    :type bot_nick: str
     :type vars: dict
     :type history: dict[str, list[tuple]]
     :type permissions: PermissionManager
     """
 
-    def __init__(self, bot, name, nick, *, channels=None, config=None):
+    def __init__(self, bot, name, bot_nick, *, channels=None, config):
         """
         :type bot: cloudbot.bot.CloudBot
         :type name: str
-        :type nick: str
+        :type bot_nick: str
         :type channels: list[str]
         :type config: dict[str, unknown]
         """
         self.bot = bot
         self.loop = bot.loop
         self.name = name
-        self.nick = nick
+        self.bot_nick = bot_nick
 
         if channels is None:
             self.channels = []
@@ -81,7 +81,7 @@ class Client:
         """
         Sends a message to the given target
         :type target: str
-        :type text: str
+        :type text: tuple[str]
         """
         raise NotImplementedError
 

@@ -10,12 +10,14 @@ logger = logging.getLogger("cloudbot")
 class EventType(enum.Enum):
     message = 0
     action = 1
-    # TODO: Do we actually want to have a 'notice' event type? Should the NOTICE command be a 'message' type?
-    notice = 2
-    join = 3
-    part = 4
-    kick = 5
-    other = 6
+    notice = 9
+    join = 2
+    part = 3
+    kick = 4
+    topic = 5
+    nick = 6
+    quit = 7
+    other = 8
 
 
 class Event:

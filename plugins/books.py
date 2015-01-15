@@ -21,8 +21,11 @@ def books(text):
 
     json = requests.get(book_search_api, params={"q": text, "key": dev_key}).json()
 
-    if 'error' in json:
-        return 'Error performing search.'
+    if json.get('error'):
+        if json['error']['code'] == 403:
+            return "The Books API is off in the Google Developers Console."
+        else:
+            return 'Error performing search.'
 
     if json['totalItems'] == 0:
         return 'No results found.'

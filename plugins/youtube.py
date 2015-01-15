@@ -78,6 +78,9 @@ def youtube_url(match, bot):
 @hook.command("youtube", "you", "yt", "y")
 def youtube(text):
     """youtube <query> -- Returns the first YouTube search result for <query>."""
+    if not dev_key:
+        return "This command requires a Google API key."
+
     json = requests.get(search_api_url, params={"q": text, "key": dev_key}).json()
 
     if 'error' in json:
@@ -94,6 +97,9 @@ def youtube(text):
 @hook.command("youtime", "ytime")
 def youtime(text):
     """youtime <query> -- Gets the total run time of the first YouTube search result for <query>."""
+    if not dev_key:
+        return "This command requires a Google API key."
+
     json = requests.get(search_api_url, params={"q": text, "key": dev_key}).json()
 
     if 'error' in json:

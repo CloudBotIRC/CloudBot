@@ -14,7 +14,7 @@ def load_attacks(bot):
     """
     :type bot: cloudbot.bot.CloudBot
     """
-    global larts, insults, flirts, kills
+    global larts, insults, flirts, kills, slaps
 
     with codecs.open(os.path.join(bot.data_dir, "larts.txt"), encoding="utf-8") as f:
         larts = [line.strip() for line in f.readlines() if not line.startswith("//")]
@@ -24,6 +24,9 @@ def load_attacks(bot):
 
     with codecs.open(os.path.join(bot.data_dir, "kills.json"), encoding="utf-8") as f:
         kills = json.load(f)
+
+    with codecs.open(os.path.join(bot.data_dir, "slaps.json"), encoding="utf-8") as f:
+        slaps = json.load(f)
 
 
 def is_self(conn, target):
@@ -101,6 +104,28 @@ def kill(text, conn, nick, notice, action):
         target = nick
 
     generator = textgen.TextGenerator(kills["templates"], kills["parts"], variables={"user": target})
+
+    # act out the message
+    action(generator.generate_string())
+
+
+@hook.command
+def slap(text, action, nick, conn, notice):
+    """slap <user> -- Makes the bot slap <user>."""
+    target = text.strip()
+
+    if " " in target:
+        notice("Invalid username!")
+        return
+
+    # if the user is trying to make the bot slap itself, slap them
+    if target.lower() == conn.nick.lower() or target.lower() == "itself":
+        target = nick
+
+    variables = {
+        "user": target
+    }
+    generator = textgen.TextGenerator(slaps["templates"], slaps["parts"], variables=variables)
 
     # act out the message
     action(generator.generate_string())

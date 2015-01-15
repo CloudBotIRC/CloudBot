@@ -90,8 +90,7 @@
         "whitelist": []
     },
     "reloading": {
-        "config_reloading": true,
-        "plugin_reloading": false
+        "config_reloading": true
     },
     "logging": {
         "console_debug": false,

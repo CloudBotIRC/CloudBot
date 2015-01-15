@@ -53,7 +53,7 @@ def translate(text, bot):
 
     api_key = bot.config.get("api_keys", {}).get("google_dev_key", None)
     if not api_key:
-        return "No Google API key."
+        return "This command requires a Google Developers Console API key."
 
     args = text.split(' ', 2)
 

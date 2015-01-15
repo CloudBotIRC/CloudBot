@@ -1,4 +1,5 @@
 import sys
+import warnings
 
 # check python version
 if sys.version_info < (3, 4, 0):
@@ -28,6 +29,8 @@ def _setup():
 
     if not os.path.exists(logging_dir):
         os.makedirs(logging_dir)
+
+    logging.captureWarnings(True)
 
     dict_config = {
         "version": 1,
@@ -64,6 +67,10 @@ def _setup():
                 "handlers": ["console", "file"]
             },
             "asyncio": {
+                "level": "DEBUG",
+                "handlers": ["console", "file"]
+            },
+            "py.warnings": {
                 "level": "DEBUG",
                 "handlers": ["console", "file"]
             }

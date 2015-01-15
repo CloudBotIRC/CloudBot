@@ -78,6 +78,7 @@ IRC_FORMATTING_DICT = {
 
 
 COLOR_RE = re.compile(r"\$\(.*?\)", re.I)
+IRC_COLOR_RE = re.compile(r"(\x03(\d+,\d+|\d)|[\x0f\x02\x16\x1f])", re.I)
 
 
 def get_color(colour, return_formatted=True):
@@ -154,8 +155,13 @@ def parse(string):
     return formatted
 
 
+# Color stripping.
+
 def strip(string):
-    """strip: Similiar to parse, only this removes colour codes"""
+    """
+    Removes all $() syntax color codes from the input string and returns it.
+    :rtype str
+    """
 
     stripped = ""
 
@@ -165,6 +171,27 @@ def strip(string):
 
     return stripped.strip()
 
+
+def strip_irc(string):
+    """
+    Removes all raw MIRC color codes from the input string and returns it.
+    :rtype str
+    """
+
+    return IRC_COLOR_RE.sub('', string)
+
+
+def strip_all(string):
+    """
+    Removes all $() syntax and MIRC color codes from the input string and returns it.
+    :rtype str
+    """
+
+    # we run strip_irc twice to avoid people putting a $() color code inside a MIRC one
+    return strip_irc(strip(strip_irc(string)))
+
+
+# Internal use
 
 def _convert(string):
     if not string.startswith("$(") and not string.endswith(")"):

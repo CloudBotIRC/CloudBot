@@ -55,6 +55,7 @@ def test_pluralize():
 
 
 def test_strip_colors():
+    # compatibility
     assert strip_colors(test_strip_colors_input) == test_strip_colors_result
 
 

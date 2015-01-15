@@ -1,12 +1,16 @@
 import pytest
 
 from cloudbot.util.colors import parse, strip, get_available_colours, get_available_formats, get_color, get_format, \
-    _convert, IRC_COLOUR_DICT
+    _convert, strip_irc, strip_all, IRC_COLOUR_DICT
 
 test_input = "The quick $(brown, red)brown$(clear) fox$(fake) jumps over the $(bold)lazy dog$(clear)."
 
 test_parse_output = "The quick \x0305,04brown\x0f fox jumps over the \x02lazy dog\x0f."
 test_strip_output = "The quick brown fox jumps over the lazy dog."
+
+test_strip_irc_input = "\x02I am $(bold)bold\x02"
+test_strip_irc_result = "I am $(bold)bold"
+test_strip_all_result = "I am bold"
 
 
 def test_parse():
@@ -15,6 +19,8 @@ def test_parse():
 
 def test_strip():
     assert strip(test_input) == test_strip_output
+    assert strip_irc(test_strip_irc_input) == test_strip_irc_result
+    assert strip_all(test_strip_irc_input) == test_strip_all_result
 
 
 def test_available_colors():

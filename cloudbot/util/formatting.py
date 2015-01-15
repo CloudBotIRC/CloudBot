@@ -6,6 +6,8 @@ import html.entities
 
 from html.parser import HTMLParser
 
+from cloudbot.util.colors import strip_irc
+
 
 # Constants
 
@@ -163,17 +165,7 @@ def truncate(content, length=100, suffix='...'):
 
 # compatibility
 truncate_str = truncate
-
-
-def strip_colors(text):
-    """
-    Takes a string and removes all IRC color codes.
-    :param text: Text to strip
-    :type text: str
-    :return Text stripped of IRC colors
-    :rtype str
-    """
-    return IRC_COLOR_RE.sub('', text)
+strip_colors = strip_irc
 
 
 def pluralize(num=0, text=''):

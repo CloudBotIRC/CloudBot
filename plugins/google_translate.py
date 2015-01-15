@@ -25,6 +25,9 @@ def goog_trans(api_key, text, source, target):
     request = requests.get(url, params=params)
     parsed = request.json()
 
+    if 'error' in parsed:
+        return "Google API error."
+
     if not source:
         return '(%(detectedSourceLanguage)s) %(translatedText)s' % (parsed['data']['translations'][0])
     return '%(translatedText)s' % parsed['data']['translations'][0]
@@ -48,9 +51,9 @@ def translate(text, bot):
     """[source language [target language]] <sentence> - translates <sentence> from source language (default autodetect)
      to target language (default English) using Google Translate"""
 
-    api_key = bot.config.get("api_keys", {}).get("googletranslate", None)
+    api_key = bot.config.get("api_keys", {}).get("google_dev_key", None)
     if not api_key:
-        return "This command requires a paid API key."
+        return "No Google API key."
 
     args = text.split(' ', 2)
 

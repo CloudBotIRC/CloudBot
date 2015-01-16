@@ -9,29 +9,27 @@ from cloudbot import hook
 def whois(text):
     domain = text.strip().lower()
 
-    whois = pythonwhois.get_whois(domain, normalized=True)
+    data = pythonwhois.get_whois(domain, normalized=True)
 
     info = []
 
     try:
-        i = "\x02Registrar\x02: {}".format(whois["registrar"][0])
+        i = "\x02Registrar\x02: {}".format(data["registrar"][0])
         info.append(i)
     except:
         pass
 
     try:
-        i = "\x02Registered\x02: {}".format(whois["creation_date"][0].strftime("%d-%m-%Y"))
+        i = "\x02Registered\x02: {}".format(data["creation_date"][0].strftime("%d-%m-%Y"))
         info.append(i)
     except:
         pass
 
     try:
-        i = "\x02Expires\x02: {}".format(whois["expiration_date"][0].strftime("%d-%m-%Y"))
+        i = "\x02Expires\x02: {}".format(data["expiration_date"][0].strftime("%d-%m-%Y"))
         info.append(i)
     except:
         pass
-
-    pprint(whois)
 
     info_text = ", ".join(info)
     return "{} - {}".format(domain, info_text)

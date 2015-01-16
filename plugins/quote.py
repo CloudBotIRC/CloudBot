@@ -93,8 +93,8 @@ def get_quote_by_nick(db, nick, num=False):
         .order_by(qtable.c.time)\
         .limit(1) \
         .offset((num - 1))
-    quote = db.execute(query).fetchall()[0]
-    return format_quote(quote, num, count)
+    data = db.execute(query).fetchall()[0]
+    return format_quote(data, num, count)
 
 
 def get_quote_by_nick_chan(db, chan, nick, num=False):
@@ -118,8 +118,8 @@ def get_quote_by_nick_chan(db, chan, nick, num=False):
         .order_by(qtable.c.time) \
         .limit(1) \
         .offset((num - 1))
-    quote = db.execute(query).fetchall()[0]
-    return format_quote(quote, num, count)
+    data = db.execute(query).fetchall()[0]
+    return format_quote(data, num, count)
 
 
 def get_quote_by_chan(db, chan, num=False):
@@ -141,13 +141,12 @@ def get_quote_by_chan(db, chan, num=False):
         .order_by(qtable.c.time)\
         .limit(1) \
         .offset((num - 1))
-    quote = db.execute(query).fetchall()[0]
-    return format_quote(quote, num, count)
+    data = db.execute(query).fetchall()[0]
+    return format_quote(data, num, count)
 
 
-@hook.command('q')
-@hook.command()
-def quote(text, nick='', chan='', db=None, notice=None, conn=None):
+@hook.command('q', 'quote')
+def quote(text, nick, chan, db, notice):
     """[#chan] [nick] [#n] OR add <nick> <message> - gets the [#n]th quote by <nick> (defaulting to random)
     OR adds <message> as a quote for <nick> in the caller's channel"""
 

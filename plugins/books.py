@@ -32,7 +32,13 @@ def books(text):
 
     book = json['items'][0]['volumeInfo']
     title = book['title']
-    author = book['authors'][0]
+    try:
+        author = book['authors'][0]
+    except KeyError:
+        try:
+            author = book['publisher']
+        except KeyError:
+            author = "Unknown Author"
 
     try:
         description = formatting.truncate_str(book['description'], 130)

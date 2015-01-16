@@ -106,6 +106,7 @@ def scp_url(match):
     except SCPError:
         return
 
+
 @hook.command
 def scp(text):
     """scp <query>/<item id> -- Returns SCP Foundation wiki search result for <query>/<item id>."""

@@ -29,7 +29,6 @@ def bot_joined_channel(conn, chan):
     conn.history[chan] = deque(maxlen=100)
 
 
-
 @asyncio.coroutine
 @hook.irc_raw("KICK")
 def on_kick(conn, chan, target, loop):

@@ -4,10 +4,10 @@ from time import time
 
 class TokenBucket(object):
     """An implementation of the token bucket algorithm.
-    >>> bucket = TokenBucket(80, 0.5)
-    >>> bucket.consume(10)
+    >> bucket = TokenBucket(80, 0.5)
+    >> bucket.consume(10)
     True
-    >>> bucket.consume(90)
+    >> bucket.consume(90)
     False
     """
 

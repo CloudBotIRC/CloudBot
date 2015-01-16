@@ -11,15 +11,15 @@ def timesince(d, now=None, count=2, accuracy=6, simple=False):
     This function has a number of optional arguments that can be combined:
 
     SIMPLE: displays the time in a simple format
-    >>> timesince(SECONDS)
+    >> timesince(SECONDS)
     1 hour, 2 minutes and 34 seconds
-    >>> timesince(SECONDS, simple=True)
+    >> timesince(SECONDS, simple=True)
     1h 2m 34s
 
     COUNT: how many periods should be shown (default 3)
-    >>> timesince(SECONDS)
+    >> timesince(SECONDS)
     147 years, 9 months and 8 weeks
-    >>> timesince(SECONDS, count=6)
+    >> timesince(SECONDS, count=6)
     147 years, 9 months, 7 weeks, 18 hours, 12 minutes and 34 seconds
     """
 
@@ -67,15 +67,15 @@ def format_time(seconds, count=3, accuracy=6, simple=False):
     This function has a number of optional arguments that can be combined:
 
     SIMPLE: displays the time in a simple format
-    >>> format_time(SECONDS)
+    >> format_time(SECONDS)
     1 hour, 2 minutes and 34 seconds
-    >>> format_time(SECONDS, simple=True)
+    >> format_time(SECONDS, simple=True)
     1h 2m 34s
 
     COUNT: how many periods should be shown (default 3)
-    >>> format_time(SECONDS)
+    >> format_time(SECONDS)
     147 years, 9 months and 8 weeks
-    >>> format_time(SECONDS, count=6)
+    >> format_time(SECONDS, count=6)
     147 years, 9 months, 7 weeks, 18 hours, 12 minutes and 34 seconds
     """
 

@@ -23,7 +23,6 @@ def about(text, conn):
            "https://github.com/CloudBotIRC/CloudBot/".format(conn.nick, cloudbot.__version__)
 
 
-
 @hook.command(autohelp=False)
 def system():
     """-- Retrieves information about the host system."""

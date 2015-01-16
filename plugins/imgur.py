@@ -113,8 +113,8 @@ def imgur(text):
 
 @hook.command("imguralbum", "multiimgur", "imgalbum", "album", autohelp=False)
 def imguralbum(text, conn):
-    """[search term] / [/r/subreddit] / [/user/username] / memes / random - returns a link to lots of random images based on your input. if
-    no input is given the bot will get images from the imgur frontpage """
+    """[search term] / [/r/subreddit] / [/user/username] / memes / random - returns a link to lots of random images
+    based on your input. if no input is given the bot will get images from the imgur frontpage """
     text = text.strip().lower()
 
     if not imgur_api:

@@ -13,7 +13,7 @@ def down(text):
     :type text: str
     """
 
-    if not "://" in text:
+    if "://" not in text:
         text = 'http://' + text
 
     text = 'http://' + urllib.parse.urlparse(text).netloc

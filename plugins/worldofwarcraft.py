@@ -53,7 +53,8 @@ def wow_armoury_format(data, link):
                 .format(data['name'], data['level'], wow_get_gender(data['gender']), wow_get_class(data['class'], True),
                         data['realm'], data['achievementPoints'], data['totalHonorableKills'], web.shorten(nice_url))
         except Exception as e:
-            return 'Unable to fetch information for {}. Does the realm or character exist? ({})'.format(nice_url, str(e))
+            return 'Unable to fetch information for {}. Does the realm or ' \
+                   'character exist? ({})'.format(nice_url, str(e))
 
     return 'An unexpected error occurred.'
 

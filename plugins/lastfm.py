@@ -125,4 +125,4 @@ def lastfmcompare(text, bot):
     artist_string = "\x02In Common:\x02 " + ", ".join(artists) if artists else ""
 
     return "Musical compatibility between \x02{}\x02 and \x02{}\x02: {} (\x02{}%\x02)".format(user1, user2, level,
-                                                                                        score), artist_string
+                                                                                              score), artist_string

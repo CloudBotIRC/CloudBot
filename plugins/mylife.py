@@ -40,7 +40,6 @@ def refresh_mlia_cache(loop):
         mlia_cache.append((mlia_id, mlia_text))
 
 
-
 @asyncio.coroutine
 @hook.on_start()
 def initial_refresh(loop):

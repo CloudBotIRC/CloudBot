@@ -1,39 +1,31 @@
 import asyncio
 import logging
+import functools
 
 from time import time
 
 from cloudbot import hook
 from cloudbot.util.tokenbucket import TokenBucket
 
-inited = []
-
-# when STRICT is enabled, every time a user gets ratelimted it wipes
-# their tokens so they have to wait at least X seconds to regen
-
-buckets = {}
-
 logger = logging.getLogger("cloudbot")
 
 
-def task_clear(loop):
-    for uid, _bucket in buckets:
+def task_clear(loop, buckets):
+    for uid, _bucket in buckets.items():
         if (time() - _bucket.timestamp) > 600:
             del buckets[uid]
-    loop.call_later(600, task_clear, loop)
+    _func = functools.partial(task_clear, loop, buckets)
+    loop.call_later(600, _func)
 
 
 @asyncio.coroutine
-@hook.irc_raw('004')
-def init_tasks(loop, conn):
-    global inited
-    if conn.name in inited:
-        # tasks already started
-        return
+@hook.on_start
+def init_tasks(loop, bot):
+    bot.memory["buckets"] = {}
+    logger.info("[sieve] Bot is starting ratelimiter cleanup task.")
+    _func = functools.partial(task_clear, loop, bot.memory["buckets"])
+    loop.call_later(600, _func)
 
-    logger.info("[{}|sieve] Bot is starting ratelimiter cleanup task.".format(conn.name))
-    loop.call_later(600, task_clear, loop)
-    inited.append(conn.name)
 
 
 @asyncio.coroutine
@@ -84,7 +76,8 @@ def sieve_suite(bot, event, _hook):
     # check command spam tokens
     if _hook.type == "command":
         # right now ratelimiting is per-channel, but this can be changed
-        uid = (event.chan, event.nick.lower())
+        uid = "/".join(event.conn.name, event.chan, event.nick.lower())
+        buckets = bot.memory["buckets"]
 
         tokens = conn.config.get('ratelimit', {}).get('tokens', 17.5)
         restore_rate = conn.config.get('ratelimit', {}).get('restore_rate', 2.5)

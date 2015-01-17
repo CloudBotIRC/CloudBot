@@ -17,7 +17,7 @@ api_url = base_url + 'videos?part=contentDetails%2C+snippet%2C+statistics&id={}&
 search_api_url = base_url + 'search?part=id&maxResults=1'
 playlist_api_url = base_url + 'playlists?part=snippet%2CcontentDetails%2Cstatus'
 video_url = "http://youtu.be/%s"
-err_noapi = "The YouTube API is off in the Google Developers Console."
+err_no_api = "The YouTube API is off in the Google Developers Console."
 
 
 def get_video_description(video_id, key):
@@ -25,7 +25,7 @@ def get_video_description(video_id, key):
 
     if json.get('error'):
         if json['error']['code'] == 403:
-            return err_noapi
+            return err_no_api
         else:
             return
 
@@ -41,14 +41,14 @@ def get_video_description(video_id, key):
 
     length = isodate.parse_duration(content_details['duration'])
     out += ' - length \x02{}\x02'.format(timeformat.format_time(int(length.total_seconds()), simple=True))
-    totalvotes = float(statistics['likeCount']) + float(statistics['dislikeCount'])
+    total_votes = float(statistics['likeCount']) + float(statistics['dislikeCount'])
 
-    if totalvotes != 0:
+    if total_votes != 0:
         # format
         likes = pluralize(int(statistics['likeCount']), "like")
         dislikes = pluralize(int(statistics['dislikeCount']), "dislike")
 
-        percent = 100 * float(statistics['likeCount']) / totalvotes
+        percent = 100 * float(statistics['likeCount']) / total_votes
         out += ' - {}, {} (\x02{:.1f}\x02%)'.format(likes,
                                                     dislikes, percent)
 
@@ -75,7 +75,7 @@ def load_key(bot):
 
 
 @hook.regex(youtube_re)
-def youtube_url(match, bot):
+def youtube_url(match):
     return get_video_description(match.group(1), dev_key)
 
 
@@ -89,7 +89,7 @@ def youtube(text):
 
     if json.get('error'):
         if json['error']['code'] == 403:
-            return err_noapi
+            return err_no_api
         else:
             return 'Error performing search.'
 
@@ -111,7 +111,7 @@ def youtime(text):
 
     if json.get('error'):
         if json['error']['code'] == 403:
-            return err_noapi
+            return err_no_api
         else:
             return 'Error performing search.'
 
@@ -154,7 +154,7 @@ def ytplaylist_url(match):
 
     if json.get('error'):
         if json['error']['code'] == 403:
-            return err_noapi
+            return err_no_api
         else:
             return 'Error looking up playlist.'
 

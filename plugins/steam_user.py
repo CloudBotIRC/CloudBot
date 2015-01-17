@@ -21,8 +21,7 @@ def convert_id32(id_64):
     :type id_64: int
     :return: str
     """
-    out = []
-    out.append("STEAM_0:")
+    out = ["STEAM_0:"]
     final = id_64 - ID_BASE
     if final % 2 == 0:
         out.append("0:")

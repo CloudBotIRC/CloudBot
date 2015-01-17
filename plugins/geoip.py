@@ -20,7 +20,6 @@ geoip_reader = None
 
 
 def fetch_db():
-    logger.info("fetch called")
     if os.path.exists(PATH):
         os.remove(PATH)
     r = requests.get(DB_URL, stream=True)
@@ -34,28 +33,23 @@ def update_db():
     """
     Updates the DB.
     """
-    try:
-        if os.path.isfile(PATH):
-            # check if file is over 2 weeks old
-            if time.time() - os.path.getmtime(PATH) > (14 * 24 * 60 * 60):
-                # geoip is outdated, re-download
+    if os.path.isfile(PATH):
+        # check if file is over 2 weeks old
+        if time.time() - os.path.getmtime(PATH) > (14 * 24 * 60 * 60):
+            # geoip is outdated, re-download
+            fetch_db()
+            return geoip2.database.Reader(PATH)
+        else:
+            try:
+                return geoip2.database.Reader(PATH)
+            except:
+                # issue loading, geo
                 fetch_db()
                 return geoip2.database.Reader(PATH)
-            else:
-                try:
-                    return geoip2.database.Reader(PATH)
-                except:
-                    # issue loading, geo
-                    fetch_db()
-                    return geoip2.database.Reader(PATH)
-        else:
-            # no geoip file
-            print("calling fetch_db")
-            fetch_db()
-            print("fetch_db finished")
-            return geoip2.database.Reader(PATH)
-    except Exception as e:
-        print("GEOERROR" + e)
+    else:
+        # no geoip file
+        fetch_db()
+        return geoip2.database.Reader(PATH)
 
 
 def check_db(loop):

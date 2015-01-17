@@ -70,23 +70,23 @@ def twitch_lookup(location):
     locsplit = location.split("/")
     if len(locsplit) > 1 and len(locsplit) == 3:
         channel = locsplit[0]
-        type = locsplit[1]  # should be b or c
-        id = locsplit[2]
+        _type = locsplit[1]  # should be b or c
+        _id = locsplit[2]
     else:
         channel = locsplit[0]
-        type = None
-        id = None
+        _type = None
+        _id = None
     fmt = "{}: {} playing {} ({})"  # Title: nickname playing Game (x views)
-    if type and id:
-        if type == "b":  # I haven't found an API to retrieve broadcast info
+    if _type and _id:
+        if _type == "b":  # I haven't found an API to retrieve broadcast info
             soup = http.get_soup("http://twitch.tv/" + location)
             title = soup.find('span', {'class': 'real_title js-title'}).text
             playing = soup.find('a', {'class': 'game js-game'}).text
             views = soup.find('span', {'id': 'views-count'}).text + " view"
             views = views + "s" if not views[0:2] == "1 " else views
             return html.unescape(fmt.format(title, channel, playing, views))
-        elif type == "c":
-            data = http.get_json("https://api.twitch.tv/kraken/videos/" + type + id)
+        elif _type == "c":
+            data = http.get_json("https://api.twitch.tv/kraken/videos/" + _type + _id)
             title = data['title']
             playing = data['game']
             views = str(data['views']) + " view"

@@ -22,8 +22,6 @@ def speedtest_url(match):
     upload = data.xpath('//div[@class="share-speed share-upload"]/p')[0].text_content().strip()
 
     ping = data.xpath('//div[@class="share-data share-ping"]/p')[0].text_content().strip()
-    stars = data.xpath('//div[contains(@class, "share-stars")]')[0].text_content().strip()
-
     isp = data.xpath('//div[@class="share-data share-isp"]/p')[0].text_content().strip().title()
 
     return "\x02{}\x02 - Download: \x02{}\x02, Upload: \x02{}\x02, Ping: \x02{}\x02".format(isp, download, upload, ping)

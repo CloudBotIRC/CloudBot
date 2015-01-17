@@ -1,5 +1,4 @@
 import sys
-import warnings
 
 # check python version
 if sys.version_info < (3, 4, 0):

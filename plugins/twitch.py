@@ -1,55 +1,19 @@
 import re
 import html
- 
+
 from cloudbot import hook
 from cloudbot.util import http
- 
+
+
 twitch_re = re.compile(r'(.*:)//(twitch.tv|www.twitch.tv)(:[0-9]+)?(.*)', re.I)
 multitwitch_re = re.compile(r'(.*:)//(www.multitwitch.tv|multitwitch.tv)/(.*)', re.I)
- 
- 
-def test(s):
+
+
+def test_name(s):
     valid = set('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_/')
     return set(s) <= valid
- 
 
- 
-@hook.regex(multitwitch_re)
-def multitwitch_url(match):
-    usernames = match.group(3).split("/")
-    out = ""
-    for i in usernames:
-        if not test(i):
-            print("Not a valid username")
-            return None
-        if out == "":
-            out = twitch_lookup(i)
-        else:
-            out = out + " \x02|\x02 " + twitch_lookup(i)
-    return out
- 
- 
-@hook.regex(twitch_re)
-def twitch_url(match):
-    bit = match.group(4).split("#")[0]
-    location = "/".join(bit.split("/")[1:])
-    if not test(location):
-        print("Not a valid username")
-        return None
-    return twitch_lookup(location)
- 
- 
-@hook.command('twitchviewers')
-@hook.command()
-def twviewers(text):
-    text = text.split("/")[-1]
-    if test(text):
-        location = text
-    else:
-        return "Not a valid channel name."
-    return twitch_lookup(location).split("(")[-1].split(")")[0].replace("Online now! ", "")
- 
- 
+
 def twitch_lookup(location):
     locsplit = location.split("/")
     if len(locsplit) > 1 and len(locsplit) == 3:
@@ -93,3 +57,38 @@ def twitch_lookup(location):
             playing = data['game']
             viewers = "\x034\x02Offline\x02\x0f"
             return html.unescape(fmt.format(title, channel, playing, viewers))
+
+
+@hook.regex(multitwitch_re)
+def multitwitch_url(match):
+    usernames = match.group(3).split("/")
+    out = ""
+    for i in usernames:
+        if not test_name(i):
+            print("Not a valid username")
+            return None
+        if out == "":
+            out = twitch_lookup(i)
+        else:
+            out = out + " \x02|\x02 " + twitch_lookup(i)
+    return out
+
+
+@hook.regex(twitch_re)
+def twitch_url(match):
+    bit = match.group(4).split("#")[0]
+    location = "/".join(bit.split("/")[1:])
+    if not test_name(location):
+        print("Not a valid username")
+        return None
+    return twitch_lookup(location)
+
+
+@hook.command('twitch', 'twviewers')
+def twitch(text):
+    text = text.split("/")[-1]
+    if test_name(text):
+        location = text
+    else:
+        return "Not a valid channel name."
+    return twitch_lookup(location).split("(")[-1].split(")")[0].replace("Online now! ", "")

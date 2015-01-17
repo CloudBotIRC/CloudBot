@@ -1,5 +1,4 @@
 import sys
-import warnings
 
 # check python version
 if sys.version_info < (3, 4, 0):
@@ -11,7 +10,7 @@ import logging.config
 import logging
 import os
 
-__version__ = "1.0.0 Stable"
+__version__ = "1.0.2"
 
 __all__ = ["util", "bot", "connection", "config", "permissions", "plugin", "event", "hook", "log_dir"]
 

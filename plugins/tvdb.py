@@ -32,7 +32,7 @@ def get_episodes_for_series(series_name, api_key):
     try:
         _request = requests.get(base_url + '%s/series/%s/all/en.xml' % (api_key, series_id))
         _request.raise_for_status()
-    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError):
         res["error"] = "error contacting thetvdb.com"
         return res
 

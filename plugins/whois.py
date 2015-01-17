@@ -1,7 +1,5 @@
 import pythonwhois
 
-from pprint import pprint
-
 from cloudbot import hook
 
 

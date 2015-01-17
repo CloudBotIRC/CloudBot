@@ -99,7 +99,7 @@ si = [
 ]
 
 
-def size(bytes, system=traditional):
+def size(b, system=traditional):
     """Human-readable file size.
 
     Using the traditional system, where a factor of 1024 is used::
@@ -150,9 +150,9 @@ def size(bytes, system=traditional):
     
     """
     for factor, suffix in system:
-        if bytes >= factor:
+        if b >= factor:
             break
-    amount = int(bytes / factor)
+    amount = int(b / factor)
     if isinstance(suffix, tuple):
         singular, multiple = suffix
         if amount == 1:

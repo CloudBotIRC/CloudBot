@@ -12,9 +12,7 @@ import cloudbot
 
 @hook.command(autohelp=False)
 def about(text, conn):
-    """-- Gives information about CloudBot. Use .about license for licensing information
-    :type event: cloudbot.event.Event
-    """
+    """-- Gives information about CloudBot. Use .about license for licensing information"""
     if text.lower() in ("license", "gpl", "source"):
         return "CloudBot Refresh is released under the GPL v3 license, get the source code " \
                "at https://github.com/CloudBotIRC/CloudBot/"

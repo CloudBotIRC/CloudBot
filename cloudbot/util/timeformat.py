@@ -107,7 +107,6 @@ def format_time(seconds, count=3, accuracy=6, simple=False):
     strings = []
     i = 0
     for period_name, period_seconds in periods:
-        print(i, period_name)
         if i < count:
             if seconds > period_seconds:
                 period_value, seconds = divmod(seconds, period_seconds)

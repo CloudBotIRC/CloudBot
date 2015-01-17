@@ -159,12 +159,12 @@ def quote(text, nick, chan, db, notice):
         notice(add_quote(db, chan, quoted_nick, nick, msg))
         return
     elif retrieve:
-        select, num = retrieve.groups()
-        by_chan = True if select.startswith('#') else False
+        selected, num = retrieve.groups()
+        by_chan = True if selected.startswith('#') else False
         if by_chan:
-            return get_quote_by_chan(db, select, num)
+            return get_quote_by_chan(db, selected, num)
         else:
-            return get_quote_by_nick(db, select, num)
+            return get_quote_by_nick(db, selected, num)
     elif retrieve_chan:
         chan, nick, num = retrieve_chan.groups()
         return get_quote_by_nick_chan(db, chan, nick, num)

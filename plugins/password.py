@@ -30,6 +30,9 @@ def password(text, notice):
     except ValueError:
         length = 12
 
+    if length > 50:
+        notice("Maximum length is 50 characters.")
+
     # add alpha characters
     if "alpha" in text or "letter" in text:
         okay += list(string.ascii_lowercase)

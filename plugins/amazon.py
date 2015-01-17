@@ -11,7 +11,7 @@ SEARCH_URL = "http://www.amazon.com/s/"
 
 @hook.command("amazon", "az")
 def amazon(text):
-    """ <query> -- Searches Amazon for query"""
+    """<query> -- Searches Amazon for query"""
     headers = {
         'User-Agent': 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.4 (KHTML, '
                       'like Gecko) Chrome/22.0.1229.79 Safari/537.4',

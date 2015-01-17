@@ -55,5 +55,6 @@ persist/
 logs/
 config.json
 *.db
+*.mmdb
 *.log
 .idea/

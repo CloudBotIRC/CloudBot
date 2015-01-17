@@ -56,8 +56,8 @@ If you think you have found a bug/have a idea/suggestion, please **open a issue*
 You can find a number of example bots in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via IRC to #CloudBot on irc.esper.net").
 
 ## Changelog
- - **1.0.1** - Fix history.py tracking
- - **1.0.0** - Initial stable release
+
+See [CHANGELOG.md](https://github.com/CloudBotIRC/CloudBot/blob/master/CHANGELOG.md)
 
 ## License
 

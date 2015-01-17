@@ -12,23 +12,7 @@ def test(s):
     valid = set('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_/')
     return set(s) <= valid
  
- 
-def truncate(msg):
-    nmsg = msg.split(" ")
-    out = None
-    x = 0
-    for i in nmsg:
-        if x <= 7:
-            if out:
-                out = out + " " + nmsg[x]
-            else:
-                out = nmsg[x]
-        x += 1
-    if x <= 7:
-        return out
-    else:
-        return out + "..."
- 
+
  
 @hook.regex(multitwitch_re)
 def multitwitch_url(match):

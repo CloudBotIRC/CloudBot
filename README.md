@@ -1,4 +1,4 @@
-# CloudBot (1.0.0) [![Build Status](https://travis-ci.org/CloudBotIRC/CloudBot.svg?branch=master)](https://travis-ci.org/CloudBotIRC/CloudBot) [![Coverage Status](https://coveralls.io/repos/CloudBotIRC/CloudBot/badge.png?branch=master)](https://coveralls.io/r/CloudBotIRC/CloudBot?branch=master)
+# CloudBot [![Build Status](https://travis-ci.org/CloudBotIRC/CloudBot.svg?branch=master)](https://travis-ci.org/CloudBotIRC/CloudBot) [![Coverage Status](https://coveralls.io/repos/CloudBotIRC/CloudBot/badge.png?branch=master)](https://coveralls.io/r/CloudBotIRC/CloudBot?branch=master)
 
 CloudBot Refresh is the newest generation of CloudBot, the fun, fast, extendable Python IRC bot!
 

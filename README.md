@@ -1,6 +1,11 @@
-# CloudBot [![Build Status](https://travis-ci.org/CloudBotIRC/CloudBot.svg?branch=master)](https://travis-ci.org/CloudBotIRC/CloudBot) [![Coverage Status](https://coveralls.io/repos/CloudBotIRC/CloudBot/badge.png?branch=master)](https://coveralls.io/r/CloudBotIRC/CloudBot?branch=master)
+# CloudBot
 
-CloudBot Refresh is the newest generation of CloudBot, the fun, fast, extendable Python IRC bot!
+You are on the stable branch of CloudBot
+## Getting CloudBot
+
+There are currently two different branches of this repository, each with a different level of stability:
+ - **master (current branch)**: This branch contains stable, tested code. This is the branch you should be using if you just want to run your own CloudBot!
+ - **python3.4 ([click to switch](https://github.com/CloudBotIRC/CloudBot/tree/python3.4))**: This branch is where where test and develop new features. If you would like to help develop CloudBot, you can use this branch.
 
 ## Installing CloudBot
 
@@ -9,10 +14,6 @@ Firstly, CloudBot will only run on **Python 3.4 or higher**. Because we use the 
 To install CloudBot on *nix (linux, etc), see [here](https://github.com/CloudBotIRC/CloudBot/wiki/Installing-on-*nix)
 
 To install CloudBot on Windows, see [here](https://github.com/CloudBotIRC/CloudBot/wiki/Installing-on-Windows)
-
-If you're going to be actively developing on CloudBot, and submitting PRs back, you can run CloudBot inside Vagrant. This allows everyone to have an identical development environment.
-
-To install CloudBot in Vagrant (both *Unix and Windows), see [here](https://github.com/CloudBotIRC/CloudBot/wiki/Installing-with-Vagrant)
 
 
 ### Running CloudBot

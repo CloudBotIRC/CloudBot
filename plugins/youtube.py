@@ -1,8 +1,7 @@
 import re
 import time
-import isodate
 
-import bs4
+import isodate
 import requests
 
 from cloudbot import hook

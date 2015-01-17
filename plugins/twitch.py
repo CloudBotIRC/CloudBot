@@ -93,11 +93,19 @@ def twitch_lookup(location):
             views = views + "s" if not views[0:2] == "1 " else views
             return html.unescape(fmt.format(title, channel, playing, views))
     else:
-        data = http.get_json("https://api.twitch.tv/kraken/channels/" + channel)
-        if data and len(data) >= 1:
+        data = http.get_json("https://api.twitch.tv/kraken/streams?channel=" + channel)
+        if data["streams"]:
+            title = data["streams"][0]["channel"]["status"]
+            playing = data["streams"][0]["game"]
+            v = data["streams"][0]["viewers"]
+            viewers = "\x033\x02Online now!\x02\x0f " + str(v) + " viewer" + ("s" if v != 1 else "")
+            return html.unescape(fmt.format(title, channel, playing, viewers))
+        else:
+            try:
+                data = http.get_json("https://api.twitch.tv/kraken/channels/" + channel)
+            except:
+                return "Unable to get channel data. Maybe channel is on justin.tv instead of twitch.tv?"
             title = data['status']
             playing = data['game']
             viewers = "\x034\x02Offline\x02\x0f"
             return html.unescape(fmt.format(title, channel, playing, viewers))
-        else:
-            return

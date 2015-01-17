@@ -1,4 +1,4 @@
-# CloudBot [![Build Status](https://travis-ci.org/CloudBotIRC/CloudBot.svg?branch=python3.4)](https://travis-ci.org/CloudBotIRC/CloudBot) [![Coverage Status](https://coveralls.io/repos/CloudBotIRC/CloudBot/badge.png?branch=python3.4)](https://coveralls.io/r/CloudBotIRC/CloudBot?branch=python3.4)
+# CloudBot [![Build Status](https://travis-ci.org/CloudBotIRC/CloudBot.svg?branch=master)](https://travis-ci.org/CloudBotIRC/CloudBot) [![Coverage Status](https://coveralls.io/repos/CloudBotIRC/CloudBot/badge.png?branch=master)](https://coveralls.io/r/CloudBotIRC/CloudBot?branch=master)
 
 CloudBot Refresh is the newest generation of CloudBot, the fun, fast, extendable Python IRC bot!
 
@@ -50,6 +50,9 @@ If you think you have found a bug/have a idea/suggestion, please **open a issue*
 ## Example CloudBots
 
 You can find a number of example bots in [#CloudBot](irc://irc.esper.net/cloudbot "Connect via IRC to #CloudBot on irc.esper.net").
+
+## Changelog
+ - **1.0.0** - Initial stable release
 
 ## License
 

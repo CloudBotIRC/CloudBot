@@ -11,7 +11,7 @@ import logging.config
 import logging
 import os
 
-__version__ = "0.1.1.dev0"
+__version__ = "1.0.0 Stable"
 
 __all__ = ["util", "bot", "connection", "config", "permissions", "plugin", "event", "hook", "log_dir"]
 

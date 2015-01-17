@@ -1,6 +1,6 @@
 # CloudBot
 
-You are on the stable branch of CloudBot
+CloudBot is a simple, fast, extendable open-source Python IRC Bot!
 ## Getting CloudBot
 
 There are currently two different branches of this repository, each with a different level of stability:

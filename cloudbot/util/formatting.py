@@ -168,6 +168,19 @@ truncate_str = truncate
 strip_colors = strip_irc
 
 
+def chunk_str(content, length=420):
+    """
+    Chunks a string into smaller strings of given length. Returns chunks.
+    :rtype list
+    """
+    def chunk(c, l):
+        while c:
+            out = (c+' ')[:l].rsplit(' ', 1)[0]
+            c = c[len(out):].strip()
+            yield out
+    return list(chunk(content, length))
+
+
 def pluralize(num=0, text=''):
     """
     Takes a number and a string, and pluralizes that string using the number and combines the results.

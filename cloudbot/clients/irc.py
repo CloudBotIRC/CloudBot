@@ -278,7 +278,7 @@ class _IrcProtocol(asyncio.Protocol):
         if not self._connected:
             yield from self._connected_future
         line = line[:500] + "\r\n"
-        data = line.encode("utf-8")
+        data = line.encode("utf-8", "replace")
         self._transport.write(data)
 
     def data_received(self, data):

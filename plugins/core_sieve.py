@@ -75,7 +75,7 @@ def sieve_suite(bot, event, _hook):
     # check command spam tokens
     if _hook.type == "command":
         # right now ratelimiting is per-channel, but this can be changed
-        uid = "/".join(event.conn.name, event.chan, event.nick.lower())
+        uid = "/".join([event.conn.name, event.chan, event.nick.lower()])
         buckets = bot.memory["buckets"]
 
         tokens = conn.config.get('ratelimit', {}).get('tokens', 17.5)

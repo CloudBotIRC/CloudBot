@@ -14,7 +14,8 @@ def whois(text):
     try:
         i = "\x02Registrar\x02: {}".format(data["registrar"][0])
         info.append(i)
-    except Exception:
+    except Exception as e:
+        print(e)
         pass
 
     try:

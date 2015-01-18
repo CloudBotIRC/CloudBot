@@ -19,8 +19,8 @@ video_url = "http://youtu.be/%s"
 err_no_api = "The YouTube API is off in the Google Developers Console."
 
 
-def get_video_description(video_id, key):
-    json = requests.get(api_url.format(video_id, key)).json()
+def get_video_description(video_id):
+    json = requests.get(api_url.format(video_id, dev_key)).json()
 
     if json.get('error'):
         if json['error']['code'] == 403:
@@ -75,7 +75,7 @@ def load_key(bot):
 
 @hook.regex(youtube_re)
 def youtube_url(match):
-    return get_video_description(match.group(1), dev_key)
+    return get_video_description(match.group(1))
 
 
 @hook.command("youtube", "you", "yt", "y")
@@ -97,7 +97,7 @@ def youtube(text):
 
     video_id = json['items'][0]['id']['videoId']
 
-    return get_video_description(video_id, dev_key) + " - " + video_url % video_id
+    return get_video_description(video_id) + " - " + video_url % video_id
 
 
 @hook.command("youtime", "ytime")

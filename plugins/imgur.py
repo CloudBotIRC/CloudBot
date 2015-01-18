@@ -2,6 +2,7 @@ import re
 import random
 
 from imgurpython import ImgurClient
+from contextlib import suppress
 
 from cloudbot import hook
 from cloudbot.util import web
@@ -85,11 +86,9 @@ def imgur(text):
         title = item.title
 
     # if it's an imgur meme, add the meme name
-    try:
+    # if not, AttributeError will trigger and code will carry on
+    with suppress(AttributeError):
         title = "\x02{}\x02 - {}".format(item.meme_metadata["meme_name"].lower(), title)
-    except Exception:
-        # this is a super un-important thing, so if it fails we don't care, carry on
-        pass
 
     # if the item has a tag, show that
     if item.section:

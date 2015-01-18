@@ -40,7 +40,7 @@ def add_quote(db, chan, target, sender, message):
         )
         db.execute(query)
         db.commit()
-    except:
+    except Exception:
         return "Message already stored, doing nothing."
     return "Quote added."
 

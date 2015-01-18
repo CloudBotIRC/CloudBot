@@ -14,19 +14,19 @@ def whois(text):
     try:
         i = "\x02Registrar\x02: {}".format(data["registrar"][0])
         info.append(i)
-    except:
+    except Exception:
         pass
 
     try:
         i = "\x02Registered\x02: {}".format(data["creation_date"][0].strftime("%d-%m-%Y"))
         info.append(i)
-    except:
+    except Exception:
         pass
 
     try:
         i = "\x02Expires\x02: {}".format(data["expiration_date"][0].strftime("%d-%m-%Y"))
         info.append(i)
-    except:
+    except Exception:
         pass
 
     info_text = ", ".join(info)

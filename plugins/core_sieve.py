@@ -27,7 +27,6 @@ def init_tasks(loop, bot):
     loop.call_later(600, _func)
 
 
-
 @asyncio.coroutine
 @hook.sieve
 def sieve_suite(bot, event, _hook):

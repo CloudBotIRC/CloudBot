@@ -87,7 +87,7 @@ def imgur(text):
     # if it's an imgur meme, add the meme name
     try:
         title = "\x02{}\x02 - {}".format(item.meme_metadata["meme_name"].lower(), title)
-    except:
+    except Exception:
         # this is a super un-important thing, so if it fails we don't care, carry on
         pass
 

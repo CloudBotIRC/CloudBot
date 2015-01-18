@@ -51,7 +51,7 @@ def twitch_lookup(location):
         else:
             try:
                 data = http.get_json("https://api.twitch.tv/kraken/channels/" + channel)
-            except:
+            except Exception:
                 return "Unable to get channel data. Maybe channel is on justin.tv instead of twitch.tv?"
             title = data['status']
             playing = data['game']

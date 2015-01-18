@@ -122,6 +122,6 @@ def quote(s, safe='/'):
         safe_map[c] = (c in safe) and c or ('%%%02X' % i)
     try:
         res = list(map(safe_map.__getitem__, s))
-    except:
+    except Exception:
         return ''
     return ''.join(res)

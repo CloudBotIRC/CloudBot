@@ -42,7 +42,7 @@ def update_db():
         else:
             try:
                 return geoip2.database.Reader(PATH)
-            except:
+            except Exception:
                 # issue loading, geo
                 fetch_db()
                 return geoip2.database.Reader(PATH)

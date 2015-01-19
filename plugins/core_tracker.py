@@ -3,7 +3,6 @@
 import asyncio
 import logging
 import re
-import functools
 from collections import deque
 
 from cloudbot import hook

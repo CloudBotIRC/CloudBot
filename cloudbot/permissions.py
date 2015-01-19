@@ -80,7 +80,7 @@ class PermissionManager(object):
         for user_perm, allowed_users in self.perm_users.items():
             if fnmatch(perm, user_perm):
                 for allowed_mask in allowed_users:
-                    if fnmatch(user_mask.lower(), allowed_mask):
+                    if fnmatch(allowed_mask, user_mask.lower()):
                         if notice:
                             logger.info("[{}|permissions] Allowed user {} access to {}".format(self.name, user_mask, perm))
                         return True

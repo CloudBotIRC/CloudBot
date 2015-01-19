@@ -1,30 +1,34 @@
 import asyncio
 import logging
-import functools
 
 from time import time
 
 from cloudbot import hook
 from cloudbot.util.tokenbucket import TokenBucket
 
+ready = False
+buckets = {}
 logger = logging.getLogger("cloudbot")
 
 
-def task_clear(loop, buckets):
-    for uid, _bucket in buckets.items():
+def task_clear(loop):
+    for uid, _bucket in buckets.copy():
         if (time() - _bucket.timestamp) > 600:
             del buckets[uid]
-    _func = functools.partial(task_clear, loop, buckets)
-    loop.call_later(600, _func)
+    loop.call_later(600, task_clear, loop)
 
 
 @asyncio.coroutine
-@hook.on_start
-def init_tasks(loop, bot):
-    bot.memory["buckets"] = {}
-    logger.info("[sieve] Bot is starting ratelimiter cleanup task.")
-    _func = functools.partial(task_clear, loop, bot.memory["buckets"])
-    loop.call_later(600, _func)
+@hook.irc_raw('004')
+def init_tasks(loop, conn):
+    global ready
+    if ready:
+        # tasks already started
+        return
+
+    logger.info("[{}|sieve] Bot is starting ratelimiter cleanup task.".format(conn.name))
+    loop.call_later(600, task_clear, loop)
+    ready = True
 
 
 @asyncio.coroutine
@@ -75,8 +79,7 @@ def sieve_suite(bot, event, _hook):
     # check command spam tokens
     if _hook.type == "command":
         # right now ratelimiting is per-channel, but this can be changed
-        uid = "/".join([event.conn.name, event.chan, event.nick.lower()])
-        buckets = bot.memory["buckets"]
+        uid = (event.chan, event.nick.lower())
 
         tokens = conn.config.get('ratelimit', {}).get('tokens', 17.5)
         restore_rate = conn.config.get('ratelimit', {}).get('restore_rate', 2.5)
@@ -102,5 +105,3 @@ def sieve_suite(bot, event, _hook):
             return None
 
     return event
-
-

@@ -6,45 +6,37 @@ from time import time
 from cloudbot import hook
 from cloudbot.util.tokenbucket import TokenBucket
 
-inited = []
-
-# when STRICT is enabled, every time a user gets ratelimted it wipes
-# their tokens so they have to wait at least X seconds to regen
-
+ready = False
 buckets = {}
-
 logger = logging.getLogger("cloudbot")
 
 
 def task_clear(loop):
-    for uid, _bucket in buckets:
+    global buckets
+    for uid, _bucket in buckets.copy().items():
         if (time() - _bucket.timestamp) > 600:
             del buckets[uid]
-    loop.call_later(600, task_clear, loop)
+    loop.call_later(10, task_clear, loop)
 
 
 @asyncio.coroutine
 @hook.irc_raw('004')
 def init_tasks(loop, conn):
-    global inited
-    if conn.name in inited:
+    global ready
+    if ready:
         # tasks already started
         return
 
     logger.info("[{}|sieve] Bot is starting ratelimiter cleanup task.".format(conn.name))
-    loop.call_later(600, task_clear, loop)
-    inited.append(conn.name)
+    loop.call_later(10, task_clear, loop)
+    ready = True
 
 
 @asyncio.coroutine
 @hook.sieve
 def sieve_suite(bot, event, _hook):
-    """
-    this function stands between your users and the commands they want to use. it decides if they can or not
-    :type bot: cloudbot.bot.CloudBot
-    :type event: cloudbot.event.Event
-    :type _hook: cloudbot.plugin.Hook
-    """
+    global buckets
+
     conn = event.conn
     # check ignore bots
     if event.irc_command == 'PRIVMSG' and event.nick.endswith('bot') and _hook.ignore_bots:
@@ -83,8 +75,7 @@ def sieve_suite(bot, event, _hook):
 
     # check command spam tokens
     if _hook.type == "command":
-        # right now ratelimiting is per-channel, but this can be changed
-        uid = (event.chan, event.nick.lower())
+        uid = "!".join([conn.name, event.chan, event.nick]).lower()
 
         tokens = conn.config.get('ratelimit', {}).get('tokens', 17.5)
         restore_rate = conn.config.get('ratelimit', {}).get('restore_rate', 2.5)
@@ -110,5 +101,3 @@ def sieve_suite(bot, event, _hook):
             return None
 
     return event
-
-

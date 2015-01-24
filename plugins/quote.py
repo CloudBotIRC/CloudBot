@@ -4,9 +4,12 @@ import time
 
 from cloudbot import hook
 from cloudbot.util import botvars
+
+from sqlalchemy import select
 from sqlalchemy import Table, Column, String, PrimaryKeyConstraint
 from sqlalchemy.types import REAL
-from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
+
 
 qtable = Table(
     'quote',
@@ -40,7 +43,7 @@ def add_quote(db, chan, target, sender, message):
         )
         db.execute(query)
         db.commit()
-    except:
+    except IntegrityError:
         return "Message already stored, doing nothing."
     return "Quote added."
 

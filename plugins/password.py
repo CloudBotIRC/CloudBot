@@ -32,6 +32,7 @@ def password(text, notice):
 
     if length > 50:
         notice("Maximum length is 50 characters.")
+        return
 
     # add alpha characters
     if "alpha" in text or "letter" in text:
@@ -65,18 +66,18 @@ def password(text, notice):
 @hook.command("wpass", "wordpass", "wordpassword", autohelp=False)
 def word_password(text, notice):
     """[length] - generates an easy to remember password with [length] (default 4) commonly used words"""
-    if text:
-        try:
-            length = int(text)
-        except ValueError:
-            notice("Invalid input '{}'".format(text))
-            return
-    else:
-        length = 4
+    try:
+        length = int(text)
+    except ValueError:
+        length = 3
+
+    if length > 10:
+        notice("Maximum length is 50 characters.")
+        return
+
     words = []
     # generate password
     for x in range(length):
         words.append(gen.choice(common_words))
 
     notice("Your password is '{}'. Feel free to remove the spaces when using it.".format(" ".join(words)))
-

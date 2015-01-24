@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import collections
 
 from cloudbot.permissions import PermissionManager
 
@@ -47,6 +48,9 @@ class Client:
 
         # create permissions manager
         self.permissions = PermissionManager(self)
+
+        # for plugins to abuse
+        self.memory = collections.defaultdict()
 
     def describe_server(self):
         raise NotImplementedError

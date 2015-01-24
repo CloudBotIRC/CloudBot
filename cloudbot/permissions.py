@@ -75,17 +75,15 @@ class PermissionManager(object):
             if fnmatch(user_mask.lower(), backdoor.lower()):
                 return True
 
-        if not perm.lower() in self.perm_users:
-            # no one has access
-            return False
+        perm = perm.lower()
 
-        allowed_users = self.perm_users[perm.lower()]
-
-        for allowed_mask in allowed_users:
-            if fnmatch(user_mask.lower(), allowed_mask):
-                if notice:
-                    logger.info("[{}|permissions] Allowed user {} access to {}".format(self.name, user_mask, perm))
-                return True
+        for user_perm, allowed_users in self.perm_users.items():
+            if fnmatch(perm, user_perm):
+                for allowed_mask in allowed_users:
+                    if fnmatch(allowed_mask, user_mask.lower()):
+                        if notice:
+                            logger.info("[{}|permissions] Allowed user {} access to {}".format(self.name, user_mask, perm))
+                        return True
 
         return False
 

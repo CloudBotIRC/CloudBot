@@ -77,7 +77,7 @@ def ignore_sieve(bot, event, _hook):
         return event
 
     # don't block an event that could be unignoring
-    if _hook.type == "command" and event.triggered_command == "unignore":
+    if _hook.type == "command" and event.triggered_command in ("unignore", "global_unignore"):
         return event
 
     if event.mask is None:

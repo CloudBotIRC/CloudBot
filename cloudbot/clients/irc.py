@@ -277,7 +277,7 @@ class _IrcProtocol(asyncio.Protocol):
         # make sure we are connected before sending
         if not self._connected:
             yield from self._connected_future
-        line = line.splitlines()[0][:500] + "\r\n"
+        line = line[:510] + "\r\n"
         data = line.encode("utf-8", "replace")
         self._transport.write(data)
 

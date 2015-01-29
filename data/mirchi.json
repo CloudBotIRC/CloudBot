@@ -2,7 +2,7 @@
   "templates": [
     "{gives} {user} {flavor} {type} with {condiments} and {sauce}!",
     "{gives} {user} {flavor} {type} with {condiments}, {condiments}, and {sauce}!",
-    "{gives} {user} {flavor} {type} with {condiments}, {condiments}, {sauce}, and {sauce}!",
+    "{gives} {user} {flavor} {type} with {condiments}, {condiments}, {sauce}, and {sauce}!"
   ],
   "parts": {
     "gives": [
@@ -16,10 +16,7 @@
       "a delicious",
       "an awesome",
       "a mediocre",
-      [
-        "an awful",
-        1
-      ],
+      "an awful",
       "an excellent",
       "a mirchilicious"
     ],
@@ -30,12 +27,12 @@
       "peanut powder",
       "sriracha",
       "grilled onions",
-      "coconut powder",
+      "coconut powder"
     ],
     "type": [
       "mirchi bajji",
       "molaga bajji",
-      "deep fried mirchi bajji",
+      "deep fried mirchi bajji"
     ],
     "sauce":[
       "ginger chutney",

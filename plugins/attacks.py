@@ -14,13 +14,16 @@ def load_attacks(bot):
     """
     :type bot: cloudbot.bot.CloudBot
     """
-    global larts, insults, flirts, kills, slaps
+    global larts, insults, flirts, kills, slaps, moms
 
     with codecs.open(os.path.join(bot.data_dir, "larts.txt"), encoding="utf-8") as f:
         larts = [line.strip() for line in f.readlines() if not line.startswith("//")]
 
     with codecs.open(os.path.join(bot.data_dir, "flirts.txt"), encoding="utf-8") as f:
         flirts = [line.strip() for line in f.readlines() if not line.startswith("//")]
+
+    with codecs.open(os.path.join(bot.data_dir, "moms.txt"), encoding="utf-8") as f:
+        moms = [line.strip() for line in f.readlines() if not line.startswith("//")]
 
     with codecs.open(os.path.join(bot.data_dir, "kills.json"), encoding="utf-8") as f:
         kills = json.load(f)
@@ -129,3 +132,26 @@ def slap(text, action, nick, conn, notice):
 
     # act out the message
     action(generator.generate_string())
+
+
+@asyncio.coroutine
+@hook.command()
+def insult(text, conn, nick, notice, message):
+    """<user> - insults <user>
+    :type text: str
+    :type conn: cloudbot.client.Client
+    :type nick: str
+    """
+    target = text.strip()
+
+    # if the user is trying to make the bot target itself, target them
+    if " " in target:
+        notice("Invalid username!")
+        return
+
+    if is_self(conn, target):
+        target = nick
+    
+    phrase = random.choice(moms)
+
+    message(phrase.format(user=target))

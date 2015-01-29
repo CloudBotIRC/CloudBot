@@ -58,3 +58,6 @@ config*.json
 *.mmdb
 *.log
 .idea/
+
+# Vagrant
+.vagrant/

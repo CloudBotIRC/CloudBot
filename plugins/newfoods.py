@@ -48,10 +48,6 @@ def mirchi(text, conn, nick, notice, action):
         notice("Invalid username!")
         return
 
-    # if the user is trying to make the bot kill itself, kill them
-    if is_self(conn, target):
-        target = nick
-
     generator = textgen.TextGenerator(mirchi_data["templates"], mirchi_data["parts"],
                                       variables={"user": target})
 

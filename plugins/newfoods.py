@@ -15,9 +15,13 @@ def load_foods(bot):
     :type bot: cloudbot.bot.CloudBot
     """
     global sandwhich_data
+    global mirchi_data
 
     with codecs.open(os.path.join(bot.data_dir, "sandwich.json"), encoding="utf-8") as f:
         sandwhich_data = json.load(f)
+
+    with codecs.open(os.path.join(bot.data_dir, "mirchi.json"), encoding="utf-8") as mData:
+        mirchi_data = json.load(mData)
 
 
 def is_self(conn, target):
@@ -30,6 +34,29 @@ def is_self(conn, target):
     else:
         return False
 
+@asyncio.coroutine
+@hook.command()
+def mirchi(text, conn, nick, notice, action):
+    """<user> - give a tasty mirchi to <user>
+    :type text: str
+    :type conn: cloudbot.client.Client
+    :type nick: str
+    """
+    target = text.strip()
+
+    if " " in target:
+        notice("Invalid username!")
+        return
+
+    # if the user is trying to make the bot kill itself, kill them
+    if is_self(conn, target):
+        target = nick
+
+    generator = textgen.TextGenerator(mirchi_data["templates"], mirchi_data["parts"],
+                                      variables={"user": target})
+
+    # act out the message
+    action(generator.generate_string())
 
 @asyncio.coroutine
 @hook.command()

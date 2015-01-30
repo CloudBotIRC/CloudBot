@@ -42,6 +42,25 @@ def is_self(conn, target):
     else:
         return False
 
+def get_attack_string(text, conn, nick, notice, attack_json):
+    """
+    :type text: str
+    :type conn: cloudbot.client.Client
+    :type nick: str
+    """
+    
+    target = text.strip()
+    
+    if " " in target:
+        notice("Invalid username!")
+        return None
+
+    # if the user is trying to make the bot target itself, target them
+    if is_self(conn, target):
+        target = nick
+
+    generator = textgen.TextGenerator(attack_json["templates"], attack_json["parts"], variables={"user": target})
+    return generator.generate_string()
 
 @asyncio.coroutine
 @hook.command()
@@ -51,20 +70,10 @@ def lart(text, conn, nick, notice, action):
     :type conn: cloudbot.client.Client
     :type nick: str
     """
-    target = text.strip()
-
-    if " " in target:
-        notice("Invalid username!")
-        return
-
-    # if the user is trying to make the bot target itself, target them
-    if is_self(conn, target):
-        target = nick
-
-    generator = textgen.TextGenerator(larts["templates"], larts["parts"], variables={"user": target})
-
-    # act out the message
-    action(generator.generate_string())
+    
+    phrase = get_attack_string(text, conn, nick, notice, larts) 
+    if phrase is not None:
+        action(phrase)
 
 
 @asyncio.coroutine
@@ -75,22 +84,10 @@ def flirt(text, conn, nick, notice, message):
     :type conn: cloudbot.client.Client
     :type nick: str
     """
-    target = text.strip()
-
-    # if the user is trying to make the bot target itself, target them
-    if " " in target:
-        notice("Invalid username!")
-        return
-
-
-	# if the user is trying to make the bot target itself, target them
-    if is_self(conn, target):
-        target = nick
-	
-    generator = textgen.TextGenerator(flirts["templates"], flirts["parts"], variables={"user": target})
-
-    # act out the message
-    message(generator.generate_string())
+    
+    phrase = get_attack_string(text, conn, nick, notice, flirts) 
+    if phrase is not None:
+        message(phrase)
 
 
 @asyncio.coroutine
@@ -101,42 +98,19 @@ def kill(text, conn, nick, notice, action):
     :type conn: cloudbot.client.Client
     :type nick: str
     """
-    target = text.strip()
-
-    if " " in target:
-        notice("Invalid username!")
-        return
-
-    # if the user is trying to make the bot kill itself, kill them
-    if is_self(conn, target):
-        target = nick
-
-    generator = textgen.TextGenerator(kills["templates"], kills["parts"], variables={"user": target})
-
-    # act out the message
-    action(generator.generate_string())
+    
+    phrase = get_attack_string(text, conn, nick, notice, kills) 
+    if phrase is not None:
+        action(phrase)
 
 
 @hook.command
 def slap(text, action, nick, conn, notice):
     """slap <user> -- Makes the bot slap <user>."""
-    target = text.strip()
-
-    if " " in target:
-        notice("Invalid username!")
-        return
-
-    # if the user is trying to make the bot slap itself, slap them
-    if target.lower() == conn.nick.lower() or target.lower() == "itself":
-        target = nick
-
-    variables = {
-        "user": target
-    }
-    generator = textgen.TextGenerator(slaps["templates"], slaps["parts"], variables=variables)
-
-    # act out the message
-    action(generator.generate_string())
+    
+    phrase = get_attack_string(text, conn, nick, notice, slaps) 
+    if phrase is not None:
+        action(phrase)
 
 
 @asyncio.coroutine
@@ -147,17 +121,7 @@ def insult(text, conn, nick, notice, message):
     :type conn: cloudbot.client.Client
     :type nick: str
     """
-    target = text.strip()
-
-    # if the user is trying to make the bot target itself, target them
-    if " " in target:
-        notice("Invalid username!")
-        return
-
-    if is_self(conn, target):
-        target = nick
     
-    generator = textgen.TextGenerator(moms["templates"], moms["parts"], variables={"user": target})
-
-    # act out the message
-    message(generator.generate_string())
+    phrase = get_attack_string(text, conn, nick, notice, moms) 
+    if phrase is not None:
+        message(phrase)

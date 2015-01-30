@@ -64,6 +64,17 @@ class PermissionManager(object):
         logger.debug("[{}|permissions] Group users: {}".format(self.name, self.group_users))
         logger.debug("[{}|permissions] Permission users: {}".format(self.name, self.perm_users))
 
+    def get_nick_from_mask(self, user_mask):
+        """
+        :type user_mask: str
+        """
+
+        user_nick = user_mask
+        idx = user_mask.find('!')
+        if idx != -1:
+            user_nick = user_mask[:idx]
+        return user_nick
+
     def has_perm_mask(self, user_mask, perm, notice=True):
         """
         :type user_mask: str
@@ -83,6 +94,29 @@ class PermissionManager(object):
                     if fnmatch(allowed_mask, user_mask.lower()):
                         if notice:
                             logger.info("[{}|permissions] Allowed user {} access to {}".format(self.name, user_mask, perm))
+                        return True
+
+        return False
+
+    def has_perm_nick(self, user_nick, perm, notice=True):
+        """
+        :type user_nick: str
+        :type perm: str
+        :rtype: bool
+        """
+
+        if backdoor:
+            if fnmatch(user_nick.lower(), backdoor.lower()):
+                return True
+
+        perm = perm.lower()
+
+        for user_perm, allowed_users in self.perm_users.items():
+            if fnmatch(perm, user_perm):
+                for allowed_mask in allowed_users:
+                    if fnmatch(self.get_nick_from_mask(allowed_mask), user_nick.lower()):
+                        if notice:
+                            logger.info("[{}|permissions] Allowed nick {} access to {}".format(self.name, user_nick, perm))
                         return True
 
         return False

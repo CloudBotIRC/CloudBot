@@ -42,7 +42,7 @@ def is_self(conn, target):
     else:
         return False
 
-def get_attack_string(text, conn, nick, notice, attack_json):
+def get_attack_string(text, conn, nick, notice, attack_json, message):
     """
     :type text: str
     :type conn: cloudbot.client.Client
@@ -59,69 +59,75 @@ def get_attack_string(text, conn, nick, notice, attack_json):
     if is_self(conn, target):
         target = nick
 
-    generator = textgen.TextGenerator(attack_json["templates"], attack_json["parts"], variables={"user": target})
-    return generator.generate_string()
+    permission_manager = conn.permissions
+    if permission_manager.has_perm_nick(target, "unattackable"):
+        generator = textgen.TextGenerator(flirts["templates"], flirts["parts"], variables={"user": target})
+        message(generator.generate_string())
+        return None
+    else:
+        generator = textgen.TextGenerator(attack_json["templates"], attack_json["parts"], variables={"user": target})
+        return generator.generate_string()
 
 @asyncio.coroutine
 @hook.command()
-def lart(text, conn, nick, notice, action):
+def lart(text, conn, nick, notice, action, message):
     """<user> - LARTs <user>
     :type text: str
     :type conn: cloudbot.client.Client
     :type nick: str
     """
     
-    phrase = get_attack_string(text, conn, nick, notice, larts) 
+    phrase = get_attack_string(text, conn, nick, notice, larts, message) 
     if phrase is not None:
         action(phrase)
 
 
 @asyncio.coroutine
 @hook.command()
-def flirt(text, conn, nick, notice, message):
+def flirt(text, conn, nick, notice, action, message):
     """<user> - flirts with <user>
     :type text: str
     :type conn: cloudbot.client.Client
     :type nick: str
     """
     
-    phrase = get_attack_string(text, conn, nick, notice, flirts) 
+    phrase = get_attack_string(text, conn, nick, notice, flirts, message) 
     if phrase is not None:
         message(phrase)
 
 
 @asyncio.coroutine
 @hook.command()
-def kill(text, conn, nick, notice, action):
+def kill(text, conn, nick, notice, action, message):
     """<user> - kills <user>
     :type text: str
     :type conn: cloudbot.client.Client
     :type nick: str
     """
     
-    phrase = get_attack_string(text, conn, nick, notice, kills) 
+    phrase = get_attack_string(text, conn, nick, notice, kills, message) 
     if phrase is not None:
         action(phrase)
 
 
 @hook.command
-def slap(text, action, nick, conn, notice):
+def slap(text, nick, conn, notice, action, message):
     """slap <user> -- Makes the bot slap <user>."""
     
-    phrase = get_attack_string(text, conn, nick, notice, slaps) 
+    phrase = get_attack_string(text, conn, nick, notice, slaps, message) 
     if phrase is not None:
         action(phrase)
 
 
 @asyncio.coroutine
 @hook.command()
-def insult(text, conn, nick, notice, message):
+def insult(text, conn, nick, notice, action, message):
     """<user> - insults <user>
     :type text: str
     :type conn: cloudbot.client.Client
     :type nick: str
     """
     
-    phrase = get_attack_string(text, conn, nick, notice, moms) 
+    phrase = get_attack_string(text, conn, nick, notice, moms, message) 
     if phrase is not None:
         message(phrase)

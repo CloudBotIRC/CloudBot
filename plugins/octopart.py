@@ -7,11 +7,20 @@ from cloudbot import hook
 API_URL = "http://octopart.com/api/v3/parts/search"
 
 
-@hook.command("octopart", "octosearch")
+@hook.on_start()
+def load_key(bot):
+    global api_key
+    api_key = bot.config.get("api_keys", {}).get("octopart", None)
+
+
+@hook.command("octopart", "octo")
 def octopart(text, reply):
     """octopart <keyword> -- Search for any part on the Octopart database."""
+    if not api_key:
+        return "Octopart API key required."
+
     params = {
-        'apikey': 'aefcd00e',
+        'apikey': api_key,
         'q': text,
         'start': 0,
         'limit': 1

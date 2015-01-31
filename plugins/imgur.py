@@ -13,6 +13,8 @@ from cloudbot.util import web
 # yes, it's kinda dirty, but it works :)
 ImgurClient.logged_in = lambda x: None
 
+NO_NSFW = False
+
 
 def get_items(text):
     if text:
@@ -36,6 +38,9 @@ def get_items(text):
     else:
         reddit_search = False
         items = imgur_api.gallery()
+
+    if NO_NSFW:
+        items = [item for item in items if not item.nsfw]
 
     return items, reddit_search
 

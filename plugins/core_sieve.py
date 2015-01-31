@@ -16,7 +16,7 @@ def task_clear(loop):
     for uid, _bucket in buckets.copy().items():
         if (time() - _bucket.timestamp) > 600:
             del buckets[uid]
-    loop.call_later(10, task_clear, loop)
+    loop.call_later(600, task_clear, loop)
 
 
 @asyncio.coroutine
@@ -28,7 +28,7 @@ def init_tasks(loop, conn):
         return
 
     logger.info("[{}|sieve] Bot is starting ratelimiter cleanup task.".format(conn.name))
-    loop.call_later(10, task_clear, loop)
+    loop.call_later(600, task_clear, loop)
     ready = True
 
 

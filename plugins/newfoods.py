@@ -16,13 +16,16 @@ def load_foods(bot):
     """
     global sandwhich_data
     global mirchi_data
+    global dhokla_data
 
     with codecs.open(os.path.join(bot.data_dir, "sandwich.json"), encoding="utf-8") as f:
         sandwhich_data = json.load(f)
 
     with codecs.open(os.path.join(bot.data_dir, "mirchi.json"), encoding="utf-8") as mData:
         mirchi_data = json.load(mData)
-
+        
+    with codecs.open(os.path.join(bot.data_dir, "dhokla.json"), encoding="utf-8") as dData:
+        dhokla_data = json.load(dData)
 
 def is_self(conn, target):
     """
@@ -33,6 +36,25 @@ def is_self(conn, target):
         return True
     else:
         return False
+
+@asyncio.coroutine()
+@hook.command()
+def dhokla(text, conn, nick, notice, action):
+    """<user> - give a tasty dhokla to <user>                                                                                                                      
+    :type text: str                                                                                                                                                
+    :type conn: cloudbot.client.Client                                                                                                                             
+    :type nick: str                                                                                                                                                
+    """
+    target = text.strip()
+    if " " in target:
+        notice("Invalid username!")
+        return
+    generator = textgen.TextGenerator(dhokla_data["templates"], dhokla_data["parts"],
+                                      variables={"user": target})
+    # act out the message                                                                                                                                          
+    action(generator.generate_string())
+
+
 
 @asyncio.coroutine
 @hook.command()

@@ -1,21 +1,20 @@
 {
     "connections": [
         {
-            "name": "esper",
+            "name": "snoonet",
             "connection": {
-                "server": "irc.esper.net",
-                "port": 6667,
+                "server": "alt.irc.snoonet.org",
+                "port": 80,
                 "ssl": false,
                 "ignore_cert": true,
                 "password": ""
             },
-            "nick": "MyCloudBot",
-            "user": "cloudbot",
+            "nick": "testbottest",
+            "user": "testbottest",
             "real_name": "CloudBot Refresh <https://github.com/CloudBotIRC/CloudBot/>",
             "avoid_notices": false,
             "channels": [
-                "#cloudbot",
-                "#cloudbot2"
+                "#abcdesisbottest"
             ],
             "disabled_commands": [],
             "acls": {},
@@ -60,7 +59,7 @@
                 }
             },
             "plugins": {},
-            "command_prefix": "."
+            "command_prefix": "@"
         }
     ],
     "api_keys": {

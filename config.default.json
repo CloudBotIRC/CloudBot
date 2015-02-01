@@ -88,7 +88,10 @@
         "blacklist": [
             "update"
         ],
-        "whitelist": []
+        "whitelist": [
+		"admin_bot", "admin_channel", "ignore", "log",
+		"core_channel","core_ctcp", "core_misc", "core_sieve", "core_tracker"
+	]
     },
     "reloading": {
         "config_reloading": true,

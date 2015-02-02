@@ -37,7 +37,7 @@ def is_self(conn, target):
     else:
         return False
 
-@asyncio.coroutine()
+@asyncio.coroutine
 @hook.command()
 def dhokla(text, conn, nick, notice, action):
     """<user> - give a tasty dhokla to <user>                                                                                                                      

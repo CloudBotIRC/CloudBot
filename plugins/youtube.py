@@ -70,7 +70,7 @@ def get_video_description(video_id):
 @hook.on_start()
 def load_key(bot):
     global dev_key
-    dev_key = bot.config.get("api_keys", {}).get("google_dev_key")
+    dev_key = bot.config.get("api_keys", {}).get("google_dev_key", None)
 
 
 @hook.regex(youtube_re)

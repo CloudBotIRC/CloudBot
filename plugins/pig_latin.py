@@ -7,7 +7,7 @@ from cloudbot import hook
 def pig(text, bot)
 
 #checks if the word doesn't have any thing from the alphabet,
-    if len(text) > 0 and tpig.isalpha():
+    if len(text) > 0 and pig.isalpha():
         #makes it lower-case
         pig = pig.lower()
         #redefines original

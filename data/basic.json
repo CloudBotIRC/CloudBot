@@ -1,7 +1,7 @@
 {
 	"templates": [
 		"{gives} {user} {qualifier} {adjective} {item}!{hashtag}",
-		"{gives} {user} {qualifier} {adjective} {item}!",
+		"{gives} {user} {qualifier} {adjective} {item}!"
 	],
 
 	"parts": {

@@ -4,7 +4,7 @@ pyg = 'ay'
 #Orginal Hook for command
 from cloudbot import hook
 @hook_command("pig", "pigtran")
-def pig(text, bot)
+def pig(text, bot):
 
 #checks if the word doesn't have any thing from the alphabet,
     if len(text) > 0 and pig.isalpha():

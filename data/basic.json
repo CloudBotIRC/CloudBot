@@ -2,7 +2,6 @@
 	"templates": [
 		"{gives} {user} {qualifier} {adjective} {item}!{hashtag}",
 		"{gives} {user} {qualifier} {adjective} {item}!",
-		"{gives} {user} a {item}"
 	],
 
 	"parts": {
@@ -21,23 +20,19 @@
 			"a totes",
 			"an amazingly",
 			"a basically",
-			"an orgasmically",
-			"an awfully",
-			"an adventurously",
-			"a disappointingly",
+			"an orgasmic,",
 			"a super",
-			"a literally"
+			"a totally"
 		],
 
 		"adjective": [
 			"basic",
 			"amazing",
+			"cute",
 			"life-changing",
 			"sparkly",
 			"tacky",
 			"sinful",
-			"ombré",
-			"pumpkin-spiced",
 			"adorbs",
 			"hot pink",
 			"bedazzled",
@@ -45,7 +40,6 @@
 			"carbalicious",
 			"unsatisfying",
 			"gluten-free",
-			"—I can’t even—",
 			"Pinterest-worthy",
 			"Lauren Conrad-approved",
 			"FOMO-inducing"
@@ -60,14 +54,12 @@
 			"boozy brunch",
 			"infinity scarf",
 			"bowl of kale chips",
-			"Buzzfeed article",
 			"glass of cheap bubbly",
-			"bottle of 2 buck chuck",
+			"box of wine",
 			"North Face fleece",
-			"jeggings",
-			"new haircut",
+			"a pair of jeggings",
+			"ombré highlights",
 			"cupcake",
-			"Pinterest board",
 			"Cosmo in a Mason jar",
 			"Audrey Hepburn poster",
 			"shameless selfie",

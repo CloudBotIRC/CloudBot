@@ -92,8 +92,11 @@ def geoip(text, reply, loop):
     data = {
         "cc": location_data.country.iso_code or "N/A",
         "country": location_data.country.name or "Unknown",
-        "city": location_data.city.name or "Unknown",
-        "region": ", " + location_data.subdivisions.most_specific.name or ""
+        "city": location_data.city.name or "Unknown"
     }
 
-    reply("\x02Country:\x02 {country} ({cc}), \x02City:\x02 {city}{region}".format(**data))
+    # add a region to the city if one is listed
+    if location_data.subdivisions.most_specific.name:
+        data["city"] += ", " + location_data.subdivisions.most_specific.name
+
+    reply("\x02Country:\x02 {country} ({cc}), \x02City:\x02 {city}".format(**data))

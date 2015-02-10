@@ -16,6 +16,7 @@ We recommend using the stable releases of Cloudbot that can be found [on the rel
 
 IF you only have command-line access, you can use the following to get CloudBot onto your server.
   **On Linux**: `wget https://github.com/CloudBotIRC/CloudBot/archive/master.zip`
+  
   **On OS X**: `curl -O https://github.com/CloudBotIRC/CloudBot/archive/master.zip`
   
   Followed by `unzip master.zip` on both OSs.

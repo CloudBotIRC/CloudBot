@@ -16,7 +16,7 @@ We recommend using the stable releases of Cloudbot that can be found [on the rel
 
 #### Using HTTP
 
-IF you only have command-line access, you can use the following to get CloudBot onto your server.
+If you only have command-line access, you can use the following to get CloudBot onto your server.
 
   **On Linux**: `wget https://github.com/CloudBotIRC/CloudBot/archive/master.zip`
   
@@ -32,6 +32,8 @@ IF you only have command-line access, you can use the following to get CloudBot 
   git clone https://github.com/CloudBotIRC/CloudBot.git
   cd CloudBot
   ```
-  
+## CloudBot Depdendencies and APIs
+
+Before running CloudBot, you'll need to get some of the required dependencies and APIs configured/installed.
   
 

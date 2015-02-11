@@ -11,7 +11,7 @@
             },
             "nick": "MyCloudBot",
             "user": "cloudbot",
-            "real_name": "CloudBot Refresh <https://github.com/CloudBotIRC/CloudBot/>",
+            "realname": "CloudBot Refresh <https://github.com/CloudBotIRC/CloudBot/>",
             "avoid_notices": false,
             "channels": [
                 "#cloudbot",
@@ -88,7 +88,10 @@
         "blacklist": [
             "update"
         ],
-        "whitelist": []
+        "whitelist": [
+		"admin_bot", "admin_channel", "ignore", "log",
+		"core_channel","core_ctcp", "core_misc", "core_sieve", "core_tracker"
+	]
     },
     "reloading": {
         "config_reloading": true,

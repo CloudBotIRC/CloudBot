@@ -53,7 +53,7 @@ def potato(text, action):
     """<user> - makes <user> a tasty little potato"""
     text = text.strip()
 
-    if not re.match("^[A-Za-z0-9_|.-\]\[]*$", text.lower()):
+    if not re.match("^[A-Za-z0-9_|.\-\]\[]*$", text.lower()):
         return "I cant make a tasty potato for that user!"
 
     potato_type = random.choice(potatoes)
@@ -72,7 +72,7 @@ def cake(text, action):
     """<user> - gives <user> an awesome cake"""
     text = text.strip()
 
-    if not re.match("^[A-Za-z0-9_|.-\]\[]*$", text.lower()):
+    if not re.match("^[A-Za-z0-9_|.\-\]\[]*$", text.lower()):
         return "I can't give an awesome cake to that user!"
 
     cake_type = random.choice(cakes)
@@ -92,7 +92,7 @@ def cookie(text, action):
     """<user> - gives <user> a cookie"""
     text = text.strip()
 
-    if not re.match("^[A-Za-z0-9_|.-\]\[]*$", text.lower()):
+    if not re.match("^[A-Za-z0-9_|.\-\]\[]*$", text.lower()):
         return "I can't give a cookie to that user!"
 
     cookie_type = random.choice(cookies)

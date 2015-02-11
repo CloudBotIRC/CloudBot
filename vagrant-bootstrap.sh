@@ -23,6 +23,7 @@ ln -sf /vagrant /home/vagrant/bot
 cat > /usr/local/bin/start-bot <<- _EOF_
     #!/usr/bin/env bash
     cd /home/vagrant/bot
+    export BOTCONFIG=\`cat /home/vagrant/bot/config-local.json\`
     python3 -m cloudbot
 _EOF_
 chmod +x /usr/local/bin/start-bot

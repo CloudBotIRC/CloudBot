@@ -14,13 +14,16 @@ def load_attacks(bot):
     """
     :type bot: cloudbot.bot.CloudBot
     """
-    global larts, insults, flirts, kills, slaps
+    global larts, insults, flirts, kills, slaps, moms
 
-    with codecs.open(os.path.join(bot.data_dir, "larts.txt"), encoding="utf-8") as f:
-        larts = [line.strip() for line in f.readlines() if not line.startswith("//")]
+    with codecs.open(os.path.join(bot.data_dir, "larts.json"), encoding="utf-8") as f:
+        larts = json.load(f)
 
-    with codecs.open(os.path.join(bot.data_dir, "flirts.txt"), encoding="utf-8") as f:
-        flirts = [line.strip() for line in f.readlines() if not line.startswith("//")]
+    with codecs.open(os.path.join(bot.data_dir, "flirts.json"), encoding="utf-8") as f:
+        flirts = json.load(f)
+
+    with codecs.open(os.path.join(bot.data_dir, "moms.json"), encoding="utf-8") as f:
+        moms = json.load(f)
 
     with codecs.open(os.path.join(bot.data_dir, "kills.json"), encoding="utf-8") as f:
         kills = json.load(f)
@@ -39,93 +42,92 @@ def is_self(conn, target):
     else:
         return False
 
+def get_attack_string(text, conn, nick, notice, attack_json, message):
+    """
+    :type text: str
+    :type conn: cloudbot.client.Client
+    :type nick: str
+    """
+    
+    target = text.strip()
+    
+    if " " in target:
+        notice("Invalid username!")
+        return None
+
+    # if the user is trying to make the bot target itself, target them
+    if is_self(conn, target):
+        target = nick
+
+    permission_manager = conn.permissions
+    if permission_manager.has_perm_nick(target, "unattackable"):
+        generator = textgen.TextGenerator(flirts["templates"], flirts["parts"], variables={"user": target})
+        message(generator.generate_string())
+        return None
+    else:
+        generator = textgen.TextGenerator(attack_json["templates"], attack_json["parts"], variables={"user": target})
+        return generator.generate_string()
 
 @asyncio.coroutine
 @hook.command()
-def lart(text, conn, nick, notice, action):
+def lart(text, conn, nick, notice, action, message):
     """<user> - LARTs <user>
     :type text: str
     :type conn: cloudbot.client.Client
     :type nick: str
     """
-    target = text.strip()
-
-    if " " in target:
-        notice("Invalid username!")
-        return
-
-    # if the user is trying to make the bot target itself, target them
-    if is_self(conn, target):
-        target = nick
-
-    phrase = random.choice(larts)
-
-    # act out the message
-    action(phrase.format(user=target))
+    
+    phrase = get_attack_string(text, conn, nick, notice, larts, message) 
+    if phrase is not None:
+        action(phrase)
 
 
 @asyncio.coroutine
 @hook.command()
-def flirt(text, conn, nick, notice, message):
+def flirt(text, conn, nick, notice, action, message):
     """<user> - flirts with <user>
     :type text: str
     :type conn: cloudbot.client.Client
     :type nick: str
     """
-    target = text.strip()
-
-    # if the user is trying to make the bot target itself, target them
-    if " " in target:
-        notice("Invalid username!")
-        return
-
-    if is_self(conn, target):
-        target = nick
-
-    message('{}, {}'.format(target, random.choice(flirts)))
+    
+    phrase = get_attack_string(text, conn, nick, notice, flirts, message) 
+    if phrase is not None:
+        message(phrase)
 
 
 @asyncio.coroutine
 @hook.command()
-def kill(text, conn, nick, notice, action):
+def kill(text, conn, nick, notice, action, message):
     """<user> - kills <user>
     :type text: str
     :type conn: cloudbot.client.Client
     :type nick: str
     """
-    target = text.strip()
-
-    if " " in target:
-        notice("Invalid username!")
-        return
-
-    # if the user is trying to make the bot kill itself, kill them
-    if is_self(conn, target):
-        target = nick
-
-    generator = textgen.TextGenerator(kills["templates"], kills["parts"], variables={"user": target})
-
-    # act out the message
-    action(generator.generate_string())
+    
+    phrase = get_attack_string(text, conn, nick, notice, kills, message) 
+    if phrase is not None:
+        action(phrase)
 
 
 @hook.command
-def slap(text, action, nick, conn, notice):
+def slap(text, nick, conn, notice, action, message):
     """slap <user> -- Makes the bot slap <user>."""
-    target = text.strip()
+    
+    phrase = get_attack_string(text, conn, nick, notice, slaps, message) 
+    if phrase is not None:
+        action(phrase)
 
-    if " " in target:
-        notice("Invalid username!")
-        return
 
-    # if the user is trying to make the bot slap itself, slap them
-    if target.lower() == conn.nick.lower() or target.lower() == "itself":
-        target = nick
-
-    variables = {
-        "user": target
-    }
-    generator = textgen.TextGenerator(slaps["templates"], slaps["parts"], variables=variables)
-
-    # act out the message
-    action(generator.generate_string())
+@asyncio.coroutine
+@hook.command()
+def insult(text, conn, nick, notice, action, message):
+    """<user> - insults <user>
+    :type text: str
+    :type conn: cloudbot.client.Client
+    :type nick: str
+    """
+    
+    phrase = get_attack_string(text, conn, nick, notice, moms, message) 
+    if phrase is not None:
+        message(phrase)

@@ -1,0 +1,45 @@
+{
+  "templates": [
+    "{gives} {user} {flavor} {type} with {condiments} and {sauce}!",
+    "{gives} {user} {flavor} {type} with {condiments}, {condiments}, and {sauce}!",
+    "{gives} {user} {flavor} {type} with {condiments}, {condiments}, {sauce}, and {sauce}!"
+  ],
+  "parts": {
+    "gives": [
+      "hands",
+      "throws",
+      "makes",
+      "passes"
+    ],
+    "flavor": [
+      "a tasty",
+      "a delicious",
+      "an awesome",
+      "an excellent",
+      "a dhoklalicious"
+    ],
+    "condiments": [
+      "coriander",
+      "onions",
+      "lemon",
+      "peanut powder",
+      "orange zest",
+      "grilled onions",
+      "coconut powder"
+    ],
+    "type": [
+      "dhokla",
+      "sprouts dhokla",
+      "deep fried dhokla"
+    ],
+    "sauce":[
+      "imli chutney",
+      "peanut chutney",
+      "mint chutney",
+      "mango pickle",
+      "batata nu shaak",
+      "tomato chutney",
+      "thepla"
+    ]
+  }
+}

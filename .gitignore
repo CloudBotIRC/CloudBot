@@ -53,8 +53,11 @@ target/
 # Cloudbot
 persist/
 logs/
-config.json
+config*.json
 *.db
 *.mmdb
 *.log
 .idea/
+
+# Vagrant
+.vagrant/

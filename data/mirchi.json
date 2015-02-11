@@ -1,0 +1,45 @@
+{
+  "templates": [
+    "{gives} {user} {flavor} {type} with {condiments} and {sauce}!",
+    "{gives} {user} {flavor} {type} with {condiments}, {condiments}, and {sauce}!",
+    "{gives} {user} {flavor} {type} with {condiments}, {condiments}, {sauce}, and {sauce}!"
+  ],
+  "parts": {
+    "gives": [
+      "hands",
+      "throws",
+      "makes",
+      "passes"
+    ],
+    "flavor": [
+      "a tasty",
+      "a delicious",
+      "an awesome",
+      "an excellent",
+      "a mirchilicious"
+    ],
+    "condiments": [
+      "coriander",
+      "onions",
+      "lemon",
+      "peanut powder",
+      "sriracha",
+      "grilled onions",
+      "coconut powder"
+    ],
+    "type": [
+      "mirchi bajji",
+      "molaga bajji",
+      "deep fried mirchi bajji"
+    ],
+    "sauce":[
+      "ginger chutney",
+      "peanut chutney",
+      "lime pickle",
+      "mango pickle",
+      "italian sauce",
+      "tomato chutney",
+      "sambar"
+    ]
+  }
+}

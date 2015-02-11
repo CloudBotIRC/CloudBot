@@ -46,13 +46,14 @@ def horoscope(text, db, bot, notice, nick):
 
     soup = BeautifulSoup(request.text)
 
-    title = soup.find_all('h1', {'class': 'h1b'})[1]
+    title = soup.find_all('h1', {'class': 'h1b'})
+    if not title:
+        return "Could not get the horoscope for {}.".format(text)
+
+    title = title[1]
     horoscope_text = soup.find('div', {'class': 'fontdef1'})
     result = "\x02{}\x02 {}".format(title, horoscope_text)
     result = formatting.strip_html(result)
-
-    if not title:
-        return "Could not get the horoscope for {}.".format(text)
 
     if text and not dontsave:
         db.execute("insert or replace into horoscope(nick, sign) values (:nick, :sign)",

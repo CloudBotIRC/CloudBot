@@ -8,7 +8,7 @@ from sqlalchemy import Table, Column, String, DateTime, PrimaryKeyConstraint
 from cloudbot import hook
 from cloudbot.util import botvars
 from cloudbot.util.timeparse import time_parse
-from cloudbot.util.timeformat import format_time
+from cloudbot.util.timeformat import format_time, timesince
 from cloudbot.util import colors
 
 
@@ -55,13 +55,13 @@ def load_cache(async, db):
     global reminder_cache
     reminder_cache = []
 
-    for network, remind_time, user, message in (yield from async(_load_cache_db, db)):
-        reminder_cache.append((network, remind_time, user, message))
+    for network, remind_time, added_time, user, message in (yield from async(_load_cache_db, db)):
+        reminder_cache.append((network, remind_time, added_time, user, message))
 
 
 def _load_cache_db(db):
     query = db.execute(table.select())
-    return [(row["network"], row["remind_time"], row["added_user"], row["message"]) for row in query]
+    return [(row["network"], row["remind_time"], row["added_time"], row["added_user"], row["message"]) for row in query]
 
 
 @asyncio.coroutine
@@ -70,7 +70,7 @@ def check_reminders(bot, async, db):
     current_time = datetime.now()
 
     for reminder in reminder_cache:
-        network, remind_time, user, message = reminder
+        network, remind_time, added_time, user, message = reminder
         if remind_time <= current_time:
             if network not in bot.connections:
                 # connection is invalid
@@ -83,7 +83,9 @@ def check_reminders(bot, async, db):
             if not conn.ready:
                 return
 
-            conn.message(user, "You have a reminder!")
+            remind_text = colors.parse(timesince(added_time, count=2))
+            alert = colors.parse("{}, you have a reminder from $(b){}$(clear) ago!".format(user, remind_text))
+            conn.message(user, alert)
             conn.message(user, '"{}"'.format(message))
 
             yield from delete_reminder(async, db, network, remind_time, user)
@@ -101,6 +103,7 @@ def remind(text, nick, chan, db, conn, notice, async):
     if len(parts) == 1:
         # user didn't add a message, send them help
         notice(remind.__doc__)
+        return
 
     time_string = parts[0].strip()
     message = colors.strip_all(parts[1].strip())
@@ -124,6 +127,6 @@ def remind(text, nick, chan, db, conn, notice, async):
     yield from load_cache(async, db)
 
     remind_text = format_time(seconds, count=2)
-    output = "Alright, I'll remind you to '{}' in $(b){}$(clear)!".format(message, remind_text)
+    output = "Alright, I'll remind you \"{}\" in $(b){}$(clear)!".format(message, remind_text)
 
     return colors.parse(output)

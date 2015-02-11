@@ -27,8 +27,10 @@ def find_hooks(parent, module):
     raw = []
     sieve = []
     event = []
+    periodic = []
     on_start = []
-    type_lists = {"command": command, "regex": regex, "irc_raw": raw, "sieve": sieve, "event": event, "on_start": on_start}
+    type_lists = {"command": command, "regex": regex, "irc_raw": raw, "sieve": sieve, "event": event,
+                  "periodic": periodic, "on_start": on_start}
     for name, func in module.__dict__.items():
         if hasattr(func, "_cloudbot_hook"):
             # if it has cloudbot hook
@@ -40,7 +42,7 @@ def find_hooks(parent, module):
             # delete the hook to free memory
             del func._cloudbot_hook
 
-    return command, regex, raw, sieve, event, on_start
+    return command, regex, raw, sieve, event, periodic, on_start
 
 
 def find_tables(code):
@@ -158,6 +160,7 @@ class PluginManager:
         # create database tables
         yield from plugin.create_tables(self.bot)
 
+
         # run on_start hooks
         for on_start_hook in plugin.run_on_start:
             success = yield from self.launch(on_start_hook, Event(bot=self.bot, hook=on_start_hook))
@@ -169,6 +172,10 @@ class PluginManager:
                 return
 
         self.plugins[plugin.file_name] = plugin
+
+        for periodic_hook in plugin.periodic:
+            self._log_hook(periodic_hook)
+
 
         # register commands
         for command_hook in plugin.commands:
@@ -483,7 +490,7 @@ class Plugin:
         self.file_path = filepath
         self.file_name = filename
         self.title = title
-        self.commands, self.regexes, self.raw_hooks, self.sieves, self.events, self.run_on_start = find_hooks(self, code)
+        self.commands, self.regexes, self.raw_hooks, self.sieves, self.events, self.periodic, self.run_on_start = find_hooks(self, code)
         # we need to find tables for each plugin so that they can be unloaded from the global metadata when the
         # plugin is reloaded
         self.tables = find_tables(code)
@@ -624,6 +631,28 @@ class RegexHook(Hook):
         return "regex {} from {}".format(self.function_name, self.plugin.file_name)
 
 
+class PeriodicHook(Hook):
+    """
+    :type interval: int
+    """
+
+    def __init__(self, plugin, periodic_hook):
+        """
+        :type plugin: Plugin
+        :type periodic_hook: cloudbot.util.hook._PeriodicHook
+        """
+
+        self.interval = periodic_hook.interval
+
+        super().__init__("regex", plugin, periodic_hook)
+
+    def __repr__(self):
+        return "Periodic[interval: [{}], {}]".format(self.interval, Hook.__repr__(self))
+
+    def __str__(self):
+        return "periodic ({}) {} from {}".format(self.interval, self.function_name, self.plugin.file_name)
+
+
 class RawHook(Hook):
     """
     :type triggers: set[str]
@@ -707,5 +736,6 @@ _hook_name_to_plugin = {
     "irc_raw": RawHook,
     "sieve": SieveHook,
     "event": EventHook,
+    "periodic": PeriodicHook,
     "on_start": OnStartHook
 }

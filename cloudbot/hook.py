@@ -138,7 +138,7 @@ class _PeriodicHook(_Hook):
         :type function: function
         """
         _Hook.__init__(self, function, "periodic")
-        self.interval = 60
+        self.interval = 60.0
 
     def add_hook(self, interval, kwargs):
         """

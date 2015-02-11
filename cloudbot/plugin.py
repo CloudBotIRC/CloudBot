@@ -174,6 +174,7 @@ class PluginManager:
         self.plugins[plugin.file_name] = plugin
 
         for periodic_hook in plugin.periodic:
+            asyncio.async(self._start_periodic(periodic_hook, periodic_hook.interval))
             self._log_hook(periodic_hook)
 
 
@@ -405,6 +406,14 @@ class PluginManager:
             return result
 
     @asyncio.coroutine
+    def _start_periodic(self, hook, interval):
+        while True:
+            yield from asyncio.sleep(interval)
+            event = Event(bot=self.bot, hook=hook)
+            yield from self.launch(hook, event)
+
+
+    @asyncio.coroutine
     def launch(self, hook, event):
         """
         Dispatch a given event to a given hook using a given bot object.
@@ -415,7 +424,8 @@ class PluginManager:
         :type hook: cloudbot.plugin.Hook | cloudbot.plugin.CommandHook
         :rtype: bool
         """
-        if hook.type != "on_start":  # we don't need sieves on on_start hooks.
+
+        if hook.type not in ("on_start", "periodic"):  # we don't need sieves on on_start hooks.
             for sieve in self.bot.plugin_manager.sieves:
                 event = yield from self._sieve(sieve, event, hook)
                 if event is None:
@@ -644,7 +654,7 @@ class PeriodicHook(Hook):
 
         self.interval = periodic_hook.interval
 
-        super().__init__("regex", plugin, periodic_hook)
+        super().__init__("periodic", plugin, periodic_hook)
 
     def __repr__(self):
         return "Periodic[interval: [{}], {}]".format(self.interval, Hook.__repr__(self))

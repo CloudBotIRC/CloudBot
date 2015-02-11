@@ -6,10 +6,6 @@ import random
 from cloudbot import hook
 from cloudbot.util import colors
 
-@hook.periodic(20)
-def fake_hook(bot):
-    pass
-
 
 @hook.on_start()
 def load_responses(bot):

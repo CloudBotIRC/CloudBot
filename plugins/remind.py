@@ -1,0 +1,129 @@
+from datetime import datetime
+
+import time
+import asyncio
+
+from sqlalchemy import Table, Column, String, DateTime, PrimaryKeyConstraint
+
+from cloudbot import hook
+from cloudbot.util import botvars
+from cloudbot.util.timeparse import time_parse
+from cloudbot.util.timeformat import format_time
+from cloudbot.util import colors
+
+
+table = Table(
+    'reminders',
+    botvars.metadata,
+    Column('network', String(50)),
+    Column('added_user', String(30)),
+    Column('added_time', DateTime),
+    Column('added_chan', String(50)),
+    Column('message', String(512)),
+    Column('remind_time', DateTime),
+    PrimaryKeyConstraint('network', 'added_user', 'added_time')
+)
+
+
+@asyncio.coroutine
+def delete_reminder(async, db, network, remind_time, added_user):
+    query = table.delete() \
+        .where(table.c.network == network) \
+        .where(table.c.remind_time == remind_time) \
+        .where(table.c.added_user == added_user)
+    yield from async(db.execute, query)
+    yield from async(db.commit)
+
+
+@asyncio.coroutine
+def add_reminder(async, db, network, added_user, added_chan, message, remind_time, added_time):
+    query = table.insert().values(
+        network=network,
+        added_user=added_user,
+        added_time=added_time,
+        added_chan=added_chan,
+        message=message,
+        remind_time=remind_time
+    )
+    yield from async(db.execute, query)
+    yield from async(db.commit)
+
+
+@asyncio.coroutine
+@hook.on_start()
+def load_cache(async, db):
+    global reminder_cache
+    reminder_cache = []
+
+    for network, remind_time, user, message in (yield from async(_load_cache_db, db)):
+        reminder_cache.append((network, remind_time, user, message))
+
+
+def _load_cache_db(db):
+    query = db.execute(table.select())
+    return [(row["network"], row["remind_time"], row["added_user"], row["message"]) for row in query]
+
+
+@asyncio.coroutine
+@hook.periodic(2.5)
+def check_reminders(bot, async, db):
+    current_time = datetime.now()
+
+    for reminder in reminder_cache:
+        network, remind_time, user, message = reminder
+        if remind_time <= current_time:
+            if network not in bot.connections:
+                # connection is invalid
+                yield from add_reminder(async, db, network, remind_time, user)
+                yield from load_cache(async, db)
+                continue
+
+            conn = bot.connections[network]
+
+            if not conn.ready:
+                return
+
+            conn.message(user, "You have a reminder!")
+            conn.message(user, '"{}"'.format(message))
+
+            yield from delete_reminder(async, db, network, remind_time, user)
+            yield from load_cache(async, db)
+
+
+@asyncio.coroutine
+@hook.command('remind')
+def remind(text, nick, chan, db, conn, notice, async):
+    """remind <1 minute, 30 seconds>: <do task> -- reminds you to <do task> in <1 minute, 30 seconds>"""
+
+    # split the input on the first ":"
+    parts = text.split(":", 1)
+
+    if len(parts) == 1:
+        # user didn't add a message, send them help
+        notice(remind.__doc__)
+
+    time_string = parts[0].strip()
+    message = colors.strip_all(parts[1].strip())
+
+    # get the current time in both DateTime and Unix Epoch
+    current_epoch = time.time()
+    current_time = datetime.fromtimestamp(current_epoch)
+
+    # parse the time input, return error if invalid
+    seconds = time_parse(time_string)
+    if not seconds:
+        return "Invalid input"
+
+    # work out the time to remind the user, and check if that time is in the past
+    remind_time = datetime.fromtimestamp(current_epoch + seconds)
+    if remind_time < current_time:
+        return "I can't remind you in the past!"
+
+    # finally, add the reminder and send a confirmation message
+    yield from add_reminder(async, db, conn.name, nick, chan, message, remind_time, current_time)
+    yield from load_cache(async, db)
+
+    remind_text = format_time(seconds, count=2)
+    output = "Alright, I'll remind you to '{}' in $(b){}$(clear)!".format(message, remind_text)
+
+    return colors.parse(output)

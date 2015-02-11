@@ -160,7 +160,6 @@ class PluginManager:
         # create database tables
         yield from plugin.create_tables(self.bot)
 
-
         # run on_start hooks
         for on_start_hook in plugin.run_on_start:
             success = yield from self.launch(on_start_hook, Event(bot=self.bot, hook=on_start_hook))
@@ -174,7 +173,7 @@ class PluginManager:
         self.plugins[plugin.file_name] = plugin
 
         for periodic_hook in plugin.periodic:
-            asyncio.async(self._start_periodic(periodic_hook, periodic_hook.interval))
+            asyncio.async(self._start_periodic(periodic_hook))
             self._log_hook(periodic_hook)
 
 
@@ -406,12 +405,15 @@ class PluginManager:
             return result
 
     @asyncio.coroutine
-    def _start_periodic(self, hook, interval):
+    def _start_periodic(self, hook):
+        interval = hook.interval
+        initial_interval = hook.initial_interval
+        yield from asyncio.sleep(initial_interval)
+
         while True:
-            yield from asyncio.sleep(interval)
             event = Event(bot=self.bot, hook=hook)
             yield from self.launch(hook, event)
-
+            yield from asyncio.sleep(interval)
 
     @asyncio.coroutine
     def launch(self, hook, event):
@@ -653,6 +655,7 @@ class PeriodicHook(Hook):
         """
 
         self.interval = periodic_hook.interval
+        self.initial_interval = periodic_hook.kwargs.pop("initial_interval", self.interval)
 
         super().__init__("periodic", plugin, periodic_hook)
 
@@ -660,7 +663,7 @@ class PeriodicHook(Hook):
         return "Periodic[interval: [{}], {}]".format(self.interval, Hook.__repr__(self))
 
     def __str__(self):
-        return "periodic ({}) {} from {}".format(self.interval, self.function_name, self.plugin.file_name)
+        return "periodic hook ({} seconds) {} from {}".format(self.interval, self.function_name, self.plugin.file_name)
 
 
 class RawHook(Hook):

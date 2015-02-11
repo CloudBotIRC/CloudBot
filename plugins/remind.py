@@ -65,7 +65,7 @@ def _load_cache_db(db):
 
 
 @asyncio.coroutine
-@hook.periodic(2.5)
+@hook.periodic(2.5, initial_interval=30)
 def check_reminders(bot, async, db):
     current_time = datetime.now()
 

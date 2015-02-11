@@ -30,6 +30,9 @@ def load_foods(bot):
 
     with codecs.open(os.path.join(bot.data_dir, "basic.json"), encoding="utf-8") as bData:
         basic_data = json.load(bData)
+    
+	with codecs.open(os.path.join(bot.data_dir, "funday.json"), encoding="utf-8") as fData:
+		funday_data = json.load(fData)
 
 def is_self(conn, target):
     """
@@ -79,6 +82,27 @@ def mirchi(text, conn, nick, notice, action):
 
     # act out the message
     action(generator.generate_string())
+
+@asyncio.coroutine
+@hook.command()
+def funday(text, conn, nick, notice, action):
+    """<user> - give a bollywood funda to <user>
+    :type text: str
+    :type conn: cloudbot.client.Client
+    :type nick: str
+    """
+    target = text.strip()
+
+    if " " in target:
+        notice("Invalid username!")
+        return
+
+    generator = textgen.TextGenerator(funday_data["templates"],
+                                      variables={"user": target})
+
+    # act out the message
+    action(generator.generate_string())
+
 
 @asyncio.coroutine
 @hook.command()

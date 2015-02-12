@@ -1,5 +1,7 @@
 """
-remind.py - plugin to remind users of tasks!
+remind.py
+
+Allows users to add reminders for various tasks.
 
 Created By:
     - Pangea <https://github.com/PangeaCake>

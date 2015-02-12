@@ -1,5 +1,7 @@
 """
-utility.py - command for working with text
+utility.py
+
+Provides a number of simple commands for working with strings.
 
 Created By:
     - Luke Rogers <https://github.com/lukeroge>

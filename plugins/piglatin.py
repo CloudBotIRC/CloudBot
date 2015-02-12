@@ -1,5 +1,7 @@
 """
-piglatin.py - translates text into pig latin
+piglatin.py
+
+Translates text into pig latin. Use the NLTK module to provide correct translation.
 
 Created By:
     - Luke Rogers <https://github.com/lukeroge>

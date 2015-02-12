@@ -55,8 +55,6 @@ def password(text, notice):
     if not okay:
         okay = list(string.ascii_lowercase) + list(string.digits)
 
-    print(len(okay))
-
     # extra random lel
     random.shuffle(okay)
     chars = []

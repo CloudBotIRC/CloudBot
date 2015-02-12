@@ -55,12 +55,16 @@ def password(text, notice):
     if not okay:
         okay = list(string.ascii_lowercase) + list(string.digits)
 
+    print(len(okay))
+
     # extra random lel
     random.shuffle(okay)
-    chars = random.sample(okay, length)
+    chars = []
 
-    pw = "".join(chars)
-    notice(pw)
+    for i in range(length):
+        chars.append(random.choice(okay))
+
+    notice("".join(chars))
 
 
 @hook.command("wpass", "wordpass", "wordpassword", autohelp=False)

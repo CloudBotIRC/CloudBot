@@ -1,3 +1,4 @@
+nltk
 geoip2
 git+https://github.com/Dinnerbone/mcstatus.git@master
 microdata

@@ -1,9 +1,9 @@
 {
 	"templates": [
-		"{gives} {user} {qualifier} {adjective} {item}!{hashtag}",
+		"{gives} {user} {qualifier} {adjective} {item}! {hashtag} {hashtag}",
+		"{gives} {user} {qualifier} {adjective} {item}! {hashtag}",
 		"{gives} {user} {qualifier} {adjective} {item}!"
 	],
-
 	"parts": {
 		"gives": [
 			"snapchats",
@@ -13,9 +13,8 @@
 			"sends",
 			"pinky-promises",
 			"shows",
-			"hands"
+			"gifts"
 		],
-
 		"qualifier": [
 			"a totes",
 			"an amazingly",
@@ -24,7 +23,6 @@
 			"a super",
 			"a totally"
 		],
-
 		"adjective": [
 			"basic",
 			"amazing",
@@ -38,13 +36,11 @@
 			"bedazzled",
 			"delish",
 			"carbalicious",
-			"unsatisfying",
 			"gluten-free",
 			"Pinterest-worthy",
 			"Lauren Conrad-approved",
 			"FOMO-inducing"
 		],
-
 		"item": [
 			"pumpkin spice latte",
 			"pair of Uggs",
@@ -53,19 +49,21 @@
 			"framed Marilyn Monroe quote",
 			"boozy brunch",
 			"infinity scarf",
+			"chunky sweater",
+			"manicure with nail art",
 			"bowl of kale chips",
 			"glass of cheap bubbly",
+			"pair of oversized sunglasses",
 			"box of wine",
 			"North Face fleece",
-			"a pair of jeggings",
-			"ombré highlights",
+			"pair of jeggings",
+			"haircut and ombré highlights",
 			"cupcake",
 			"Cosmo in a Mason jar",
 			"Audrey Hepburn poster",
 			"shameless selfie",
 			"Ryan Gosling picture"
 		],
-
 		"hashtag": [
 			"#ilovemylife",
 			"#friendsforlife",
@@ -83,7 +81,17 @@
 			"#happy",
 			"#nofilter",
 			"#amazing",
-			"#grateful"
+			"#grateful",
+			"#humblebrag",
+			"#treatyoself",
+			"#YOLO",
+			"#youcantsitwithus",
+			"#humpday",
+			"#throwbackthursday",
+			"#girlsnightout",
+			"#besties",
+			"#BFFs",
+			"#goodtimes"
 		]
 	}
 }

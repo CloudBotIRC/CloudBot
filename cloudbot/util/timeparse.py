@@ -1,10 +1,10 @@
-'''
+"""
 timeparse.py
 (c) Will Roberts <wildwilhelm@gmail.com>  1 February, 2014
 
 Implements a single function, `timeparse`, which can parse various
 kinds of time expressions.
-'''
+"""
 
 # MIT LICENSE
 #

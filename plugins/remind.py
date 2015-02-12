@@ -1,3 +1,14 @@
+"""
+remind.py - plugin to remind users of tasks!
+
+Created By:
+    - Pangea <https://github.com/PangeaCake>
+    - Luke Rogers <https://github.com/lukeroge>
+
+License: GPL v3
+"""
+
+
 from datetime import datetime
 
 import time

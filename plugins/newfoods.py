@@ -18,6 +18,7 @@ def load_foods(bot):
     global mirchi_data
     global dhokla_data
     global basic_data
+    global funday_data
 
     with codecs.open(os.path.join(bot.data_dir, "sandwich.json"), encoding="utf-8") as f:
         sandwhich_data = json.load(f)
@@ -31,8 +32,8 @@ def load_foods(bot):
     with codecs.open(os.path.join(bot.data_dir, "basic.json"), encoding="utf-8") as bData:
         basic_data = json.load(bData)
     
-	with codecs.open(os.path.join(bot.data_dir, "funday.json"), encoding="utf-8") as fData:
-		funday_data = json.load(fData)
+    with codecs.open(os.path.join(bot.data_dir, "funday.json"), encoding="utf-8") as fData:
+        funday_data = json.load(fData)
 
 def is_self(conn, target):
     """
@@ -97,7 +98,7 @@ def funday(text, conn, nick, notice, action):
         notice("Invalid username!")
         return
 
-    generator = textgen.TextGenerator(funday_data["templates"],
+    generator = textgen.TextGenerator(funday_data["templates"], funday_data["parts"],
                                       variables={"user": target})
 
     # act out the message

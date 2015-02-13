@@ -21,7 +21,7 @@ from sqlalchemy import Table, Column, String, DateTime, PrimaryKeyConstraint
 from cloudbot import hook
 from cloudbot.util import botvars
 from cloudbot.util.timeparse import time_parse
-from cloudbot.util.timeformat import format_time, timesince
+from cloudbot.util.timeformat import format_time, time_since
 from cloudbot.util import colors
 
 
@@ -96,7 +96,7 @@ def check_reminders(bot, async, db):
             if not conn.ready:
                 return
 
-            remind_text = colors.parse(timesince(added_time, count=2))
+            remind_text = colors.parse(time_since(added_time, count=2))
             alert = colors.parse("{}, you have a reminder from $(b){}$(clear) ago!".format(user, remind_text))
             conn.message(user, alert)
             conn.message(user, '"{}"'.format(message))

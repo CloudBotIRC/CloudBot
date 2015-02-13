@@ -33,7 +33,7 @@ def pre(text):
     # parse date/time
     date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
     date_string = date.strftime("%d %b %Y")
-    since = timeformat.timesince(date)
+    since = timeformat.time_since(date)
 
     size = result.xpath("span[@class='inforight']//text()")
     if size:

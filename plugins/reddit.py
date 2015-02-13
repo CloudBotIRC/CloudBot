@@ -23,7 +23,7 @@ def format_output(item, show_url=False):
     item["link"] = short_url.format(item["id"])
 
     raw_time = datetime.fromtimestamp(int(item["created_utc"]))
-    item["timesince"] = timeformat.timesince(raw_time, count=1)
+    item["timesince"] = timeformat.time_since(raw_time, count=1)
 
     item["comments"] = formatting.pluralize(item["num_comments"], 'comment')
     item["points"] = formatting.pluralize(item["score"], 'point')

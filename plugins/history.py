@@ -107,7 +107,7 @@ def seen(text, nick, chan, db, event, conn):
                            {'name': text, 'chan': chan}).fetchone()
 
     if last_seen:
-        reltime = timeformat.timesince(last_seen[1])
+        reltime = timeformat.time_since(last_seen[1])
         if last_seen[0] != text.lower():  # for glob matching
             text = last_seen[0]
         if last_seen[2][0:1] == "\x01":

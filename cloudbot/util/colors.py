@@ -8,7 +8,7 @@ Supports both the American and British spellings of many colours and words.
 Created By:
     - Zarthus <zarthus@zarth.us>
 
-Modified for CloudBot:
+Maintainer:
     - Luke Rogers <https://github.com/lukeroge>
 
 License:

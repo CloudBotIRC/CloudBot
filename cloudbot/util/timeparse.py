@@ -7,7 +7,7 @@ kinds of time expressions.
 Created By:
     - Will Roberts <wildwilhelm@gmail.com>
 
-Modified for CloudBot:
+Maintainer:
     - Luke Rogers <https://github.com/lukeroge>
 
 License:

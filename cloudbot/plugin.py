@@ -220,6 +220,9 @@ class PluginManager:
             self.sieves.append(sieve_hook)
             self._log_hook(sieve_hook)
 
+        # sort sieve hooks by priority
+        self.sieves.sort(key=lambda x: x.priority)
+
         # we don't need this anymore
         del plugin.run_on_start
 
@@ -696,6 +699,8 @@ class SieveHook(Hook):
         :type plugin: Plugin
         :type sieve_hook: cloudbot.util.hook._SieveHook
         """
+
+        self.priority = sieve_hook.kwargs.pop("priority", 100)
         # We don't want to thread sieves by default - this is retaining old behavior for compatibility
         super().__init__("sieve", plugin, sieve_hook)
 

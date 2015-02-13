@@ -33,7 +33,7 @@ def init_tasks(loop, conn):
 
 
 @asyncio.coroutine
-@hook.sieve
+@hook.sieve(priority=100)
 def sieve_suite(bot, event, _hook):
     global buckets
 

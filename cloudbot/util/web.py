@@ -1,5 +1,17 @@
-""" web.py - web services and more
-    wot is this overbuilt thing even """
+"""
+web.py
+
+Contains functions for interacting with web services.
+
+Created by:
+    - Bjorn Neergaard <https://github.com/neersighted>
+
+Maintainer:
+    - Luke Rogers <https://github.com/lukeroge>
+
+License:
+    GPL v3
+"""
 
 import json
 

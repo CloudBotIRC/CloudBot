@@ -12,7 +12,7 @@ Maintainer:
 License:
     BSD license
 
-    Copyright (c) 2013-2015 Luke Rogers
+    Copyright (c) 2013-2015 Luke Rogers and CloudBot Contributors
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without modification,
@@ -25,7 +25,7 @@ License:
            notice, this list of conditions and the following disclaimer in the
            documentation and/or other materials provided with the distribution.
 
-        3. Neither the name of Django nor the names of its contributors may be used
+        3. Neither the name of CloudBot nor the names of its contributors may be used
            to endorse or promote products derived from this software without
            specific prior written permission.
 

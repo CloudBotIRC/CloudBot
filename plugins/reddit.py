@@ -19,7 +19,7 @@ short_url = "http://redd.it/{}"
 
 def format_output(item, show_url=False):
     """ takes a reddit post and returns a formatted sting """
-    item["title"] = formatting.truncate(item["title"], 50)
+    item["title"] = formatting.truncate(item["title"], 60)
     item["link"] = short_url.format(item["id"])
 
     raw_time = datetime.fromtimestamp(int(item["created_utc"]))
@@ -34,11 +34,11 @@ def format_output(item, show_url=False):
         item["warning"] = ""
 
     if show_url:
-        return "\x02{title} : {subreddit}\x02 - posted by \x02{author}\x02" \
+        return "\x02{title} : {subreddit}\x02 - by \x02{author}\x02" \
                " {timesince} ago - {comments}, {points} -" \
                " {link}{warning}".format(**item)
     else:
-        return "\x02{title} : {subreddit}\x02 - posted by \x02{author}\x02" \
+        return "\x02{title} : {subreddit}\x02 - by \x02{author}\x02" \
                " {timesince} ago - {comments}, {points}{warning}".format(**item)
 
 

@@ -98,8 +98,16 @@ def check_reminders(bot, async, db):
 
             remind_text = colors.parse(time_since(added_time, count=2))
             alert = colors.parse("{}, you have a reminder from $(b){}$(clear) ago!".format(user, remind_text))
+
             conn.message(user, alert)
             conn.message(user, '"{}"'.format(message))
+
+            delta = (remind_time-added_time).seconds
+            if delta > (30*60):
+                late_time = time_since(remind_time, count=2)
+                late = "(I'm sorry for delivering this message $(b){}$(clear) late," \
+                       " it seems I was unable to deliver it on time)".format(late_time)
+                conn.message(user, colors.parse(late))
 
             yield from delete_reminder(async, db, network, remind_time, user)
             yield from load_cache(async, db)

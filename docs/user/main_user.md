@@ -32,6 +32,19 @@ If you only have command-line access, you can use the following to get CloudBot 
   git clone https://github.com/CloudBotIRC/CloudBot.git
   cd CloudBot
   ```
+
+## Getting Python 3.4
+If you don't already have Python 3.4 installed on your server, the following explains how to do so for Linux and Mac OS X.
+
+#### On Linux (Debian-based)
+Using the terminal
+```
+[sudo] apt-get install python python3.4-dev git libenchant-dev libxml2-dev libxslt-dev zlib1g-dev
+```
+
+#### On OS X
+Mac OS X already comes with Python 2.7 pre-installed, this is not sufficient for CloudBot. The latest binaries can be found at https://www.python.org/downloads/
+
 ## CloudBot Depdendencies and APIs
 
 Before running CloudBot, you'll need to get some of the required dependencies and APIs configured/installed.

@@ -45,6 +45,9 @@ Using the terminal
 #### On OS X
 Mac OS X already comes with Python 2.7 pre-installed, this is not sufficient for CloudBot. The latest binaries can be found at https://www.python.org/downloads/
 
+#### On Windows
+You can download releases of Python 3.4 for Windows at https://www.python.org/downloads/
+
 ## CloudBot Depdendencies and APIs
 
 Before running CloudBot, you'll need to get some of the required dependencies and APIs configured/installed.

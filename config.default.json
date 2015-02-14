@@ -11,7 +11,6 @@
             },
             "nick": "MyCloudBot",
             "user": "cloudbot",
-            "real_name": "CloudBot Refresh <https://github.com/CloudBotIRC/CloudBot/>",
             "avoid_notices": false,
             "channels": [
                 "#cloudbot",

@@ -549,7 +549,6 @@ class Hook:
     :type function_name: str
     :type required_args: list[str]
     :type threaded: bool
-    :type ignore_bots: bool
     :type permissions: list[str]
     :type single_thread: bool
     """
@@ -574,7 +573,6 @@ class Hook:
         else:
             self.threaded = True
 
-        self.ignore_bots = func_hook.kwargs.pop("ignorebots", False)
         self.permissions = func_hook.kwargs.pop("permissions", [])
         self.single_thread = func_hook.kwargs.pop("singlethread", False)
 
@@ -587,8 +585,8 @@ class Hook:
         return "{}:{}".format(self.plugin.title, self.function_name)
 
     def __repr__(self):
-        return "type: {}, plugin: {}, ignore_bots: {}, permissions: {}, single_thread: {}, threaded: {}".format(
-            self.type, self.plugin.title, self.ignore_bots, self.permissions, self.single_thread, self.threaded
+        return "type: {}, plugin: {}, permissions: {}, single_thread: {}, threaded: {}".format(
+            self.type, self.plugin.title, self.permissions, self.single_thread, self.threaded
         )
 
 

@@ -1,4 +1,4 @@
-from cloudbot.util.timeformat import format_time, time_since, timeuntil
+from cloudbot.util.timeformat import format_time, time_since, time_until
 
 from datetime import datetime, timezone
 
@@ -33,6 +33,6 @@ def test_timeuntil():
     now = datetime(2010, 4, 12, 12, 30, 0)
     future = datetime(2010, 5, 15, 1, 50, 0)
     # basic
-    assert timeuntil(future, now) == "1 month and 2 days"
+    assert time_until(future, now) == "1 month and 2 days"
     # count
-    assert timeuntil(future, now, count=3) == "1 month, 2 days and 13 hours"
+    assert time_until(future, now, count=3) == "1 month, 2 days and 13 hours"

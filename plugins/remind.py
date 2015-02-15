@@ -52,7 +52,7 @@ def delete_reminder(async, db, network, remind_time, added_user):
 def add_reminder(async, db, network, added_user, added_chan, message, remind_time, added_time):
     query = table.insert().values(
         network=network,
-        added_user=added_user,
+        added_user=added_user.lower(),
         added_time=added_time,
         added_chan=added_chan,
         message=message,
@@ -126,6 +126,8 @@ def remind(text, nick, chan, db, conn, notice, async):
         notice(remind.__doc__)
         return
 
+    count = [x for x in reminder_cache if x[0] == conn.name and x[3] == nick.lower()].count()
+
     time_string = parts[0].strip()
     message = colors.strip_all(parts[1].strip())
 
@@ -136,7 +138,10 @@ def remind(text, nick, chan, db, conn, notice, async):
     # parse the time input, return error if invalid
     seconds = time_parse(time_string)
     if not seconds:
-        return "Invalid input"
+        return "Invalid input."
+
+    if seconds > 2764800:
+        return "I can't remind you of something more than (approximately) a month from now."
 
     # work out the time to remind the user, and check if that time is in the past
     remind_time = datetime.fromtimestamp(current_epoch + seconds)

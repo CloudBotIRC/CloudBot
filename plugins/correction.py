@@ -39,5 +39,3 @@ def correction(match, conn, chan, message):
             return
         else:
             continue
-    return "Did not find {} in any recent messages.".format(to_find)
-

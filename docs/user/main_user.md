@@ -73,6 +73,10 @@ PIP is suggested to make installation of CloudBot's dependencies easier.
   ```
   curl https://bootstrap.pypa.io/get-pip.py | sudo python3.4
   ```
+  **On Windows:**
+  ```
+  Luke, fill this bit.
+  ```
 
 ## CloudBot Depdendencies and APIs
 

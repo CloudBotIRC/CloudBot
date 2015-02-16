@@ -66,7 +66,7 @@ def amazon(text):
 
     # generate a short url
     if AFFILIATE_TAG:
-        url = "http://www.amazon.com/dp/" + asin + "/?tag=cloudbot-20"
+        url = "http://www.amazon.com/dp/" + asin + "/?tag=" + AFFILIATE_TAG
     else:
         url = "http://www.amazon.com/dp/" + asin + "/"
 

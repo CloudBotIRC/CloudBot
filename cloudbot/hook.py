@@ -40,6 +40,20 @@ class _DecoratorClass():
 
         return function
 
+    # legacy - this separate method is needed for calling directly with function
+    @classmethod
+    def decorator(cls, function=None):
+        instance = cls(function=function)
+
+        return instance.decorator_return()
+
+    # legacy - this separate method is needed for calling directly with function
+    def decorator_return(self):
+        if self.function is not None:
+            return self.function
+        else:
+            return self
+
 
 class OnStartDecorator(_DecoratorClass):
     """
@@ -51,6 +65,12 @@ class OnStartDecorator(_DecoratorClass):
         super().__init__(function=function)  # legacy - support calling directly with function
         self.kwargs = kwargs
 
+    @classmethod
+    def decorator(cls, function=None, **kwargs):
+        instance = cls(function=function, **kwargs)
+
+        return instance.decorator_return()
+
 
 class OnStopDecorator(_DecoratorClass):
     """
@@ -61,6 +81,12 @@ class OnStopDecorator(_DecoratorClass):
     def __init__(self, function=None, **kwargs):
         super().__init__(function=function)  # legacy - support calling directly with function
         self.kwargs = kwargs
+
+    @classmethod
+    def decorator(cls, function=None, **kwargs):
+        instance = cls(function=function, **kwargs)
+
+        return instance.decorator_return()
 
 
 class PeriodicDecorator(_DecoratorClass):
@@ -83,6 +109,12 @@ class PeriodicDecorator(_DecoratorClass):
         else:
             self.interval = interval
 
+    @classmethod
+    def decorator(cls, interval=None, **kwargs):
+        instance = cls(interval=interval, **kwargs)
+
+        return instance.decorator_return()
+
 
 class SieveDecorator(_DecoratorClass):
     """
@@ -93,6 +125,12 @@ class SieveDecorator(_DecoratorClass):
     def __init__(self, function=None, **kwargs):
         super().__init__(function=function)  # legacy - support calling directly with function
         self.kwargs = kwargs
+
+    @classmethod
+    def decorator(cls, function=None, **kwargs):
+        instance = cls(function=function, **kwargs)
+
+        return instance.decorator_return()
 
 
 class EventDecorator(_DecoratorClass):
@@ -117,6 +155,12 @@ class EventDecorator(_DecoratorClass):
 
         self.triggers = triggers
         self.kwargs = kwargs
+
+    @classmethod
+    def decorator(cls, *triggers, **kwargs):
+        instance = cls(*triggers, **kwargs)
+
+        return instance.decorator_return()
 
 
 class RegexDecorator(_DecoratorClass):
@@ -150,6 +194,12 @@ class RegexDecorator(_DecoratorClass):
         self.triggers = tuple(compiled_triggers)
         self.kwargs = kwargs
 
+    @classmethod
+    def decorator(cls, *triggers, **kwargs):
+        instance = cls(*triggers, **kwargs)
+
+        return instance.decorator_return()
+
 
 class CommandDecorator(_DecoratorClass):
     """
@@ -160,6 +210,8 @@ class CommandDecorator(_DecoratorClass):
 
     def __init__(self, *triggers, **kwargs):
         super().__init__()
+
+        self.kwargs = kwargs
 
         # legacy - support calling directly with function
         if len(triggers) == 1 and callable(triggers[0]):
@@ -176,7 +228,6 @@ class CommandDecorator(_DecoratorClass):
             if not valid_command_re.match(trigger):
                 raise ValueError("Invalid command trigger '{}'".format(trigger))
 
-        self.kwargs = kwargs
         if triggers:
             self.triggers = triggers
             self.main_alias = triggers[0]
@@ -199,6 +250,12 @@ class CommandDecorator(_DecoratorClass):
 
         return result  # Return the result of super().__call__(function)
 
+    @classmethod
+    def decorator(cls, *triggers, **kwargs):
+        instance = cls(*triggers, **kwargs)
+
+        return instance.decorator_return()
+
 
 class IrcRawDecorator(_DecoratorClass):
     """
@@ -219,13 +276,19 @@ class IrcRawDecorator(_DecoratorClass):
         self.triggers = triggers
         self.kwargs = kwargs
 
+    @classmethod
+    def decorator(cls, *triggers, **kwargs):
+        instance = cls(*triggers, **kwargs)
 
-on_start = OnStartDecorator
-on_stop = OnStopDecorator
-periodic = PeriodicDecorator
-sieve = SieveDecorator
-event = EventDecorator
-regex = RegexDecorator
-command = CommandDecorator
-irc_raw = IrcRawDecorator
+        return instance.decorator_return()
+
+
+on_start = OnStartDecorator.decorator
+on_stop = OnStopDecorator.decorator
+periodic = PeriodicDecorator.decorator
+sieve = SieveDecorator.decorator
+event = EventDecorator.decorator
+regex = RegexDecorator.decorator
+command = CommandDecorator.decorator
+irc_raw = IrcRawDecorator.decorator
 onload = on_start  # legacy - support @hook.onload()

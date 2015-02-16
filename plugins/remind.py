@@ -126,7 +126,7 @@ def remind(text, nick, chan, db, conn, notice, async):
         notice(remind.__doc__)
         return
 
-    count = [x for x in reminder_cache if x[0] == conn.name and x[3] == nick.lower()].count()
+    count = len([x for x in reminder_cache if x[0] == conn.name and x[3] == nick.lower()])
 
     time_string = parts[0].strip()
     message = colors.strip_all(parts[1].strip())

@@ -16,14 +16,14 @@ We recommend using the stable releases of CloudBot that can be found [on the rel
 
 #### Using HTTP
 
-If you only have command-line access, you can use the following to get CloudBot onto your server.
+If you only have command-line access, run the following in your terminal:
 
-  **On Linux**: 
+  **On Linux:**
   ```
   wget https://github.com/CloudBotIRC/CloudBot/archive/master.zip
   ```
   
-  **On OS X**: 
+  **On OS X:**
   ```
   curl -O https://github.com/CloudBotIRC/CloudBot/archive/master.zip
   ```
@@ -42,24 +42,37 @@ If you only have command-line access, you can use the following to get CloudBot 
 ## 2 - Getting Python 3.4
 If you don't already have Python 3.4 installed on your server, the following explains how to do so for Linux and Mac OS X.
 
-#### On Linux (Debian-based)
-Using the terminal
-```
-[sudo] apt-get install python python3.4-dev git libenchant-dev libxml2-dev libxslt-dev zlib1g-dev
-```
+  **On Linux (Debian Based):**
+  Run the following in your terminal:
+  ```
+  [sudo] apt-get install python python3.4-dev git libenchant-dev libxml2-dev libxslt-dev zlib1g-dev
+  ```
 
-#### On OS X
-Mac OS X already comes with Python 2.7 pre-installed, this is not sufficient for CloudBot. The latest binaries can be found at https://www.python.org/downloads/
+  **On OS X:**
+  Mac OS X already comes with Python 2.7 pre-installed, this is not sufficient for CloudBot. The latest binaries can be found at https://www.python.org/downloads/
 
-#### On Windows
-You can download releases of Python 3.4 for Windows at https://www.python.org/downloads/
+  **On Windows:**
+  You can download releases of Python 3.4 for Windows at https://www.python.org/downloads/
 
-#### On another OS (Solaris/BSD/ActivePython/etc)
-You can try compiling Python 3.4 from source, note however that you may run into issues with CloudBot or its dependencies (many of the Other OSs only support Python 2.x). You can find source at https://www.python.org/downloads/source/
+  **On another OS (Solaris/BSD/ActivePython/etc):**
+  You can try compiling Python 3.4 from source, note however that you may run into issues with CloudBot or its dependencies (many of the Other OSs only support Python 2.x).
+
+  You can find source at https://www.python.org/downloads/source/
 
 ## 3 - Get PIP
+PIP is suggested to make installation of CloudBot's dependencies easier.
 
-Blahblah.
+  **On Linux:**
+  Run the following in your terminal:
+  ```
+  wget https://bootstrap.pypa.io/get-pip.py
+  [sudo] python3.4 get-pip.py
+  ```
+  **On OS X:**
+  Run the following in your terminal:
+  ```
+  curl https://bootstrap.pypa.io/get-pip.py | sudo python3.4
+  ```
 
 ## CloudBot Depdendencies and APIs
 

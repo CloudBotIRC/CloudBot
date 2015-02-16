@@ -60,7 +60,7 @@ Setting up Python 3.4 on most OSs usually goes as follows.
   You can find source at https://www.python.org/downloads/source/
 
 ## 3 - Get PIP
-PIP is suggested to make installation of CloudBot's dependencies easier.
+PIP is suggested to make installation of CloudBot's dependencies easier, and is used extensively in this guide.
 
   **On Linux:**
   Run the following in your terminal:
@@ -81,5 +81,11 @@ PIP is suggested to make installation of CloudBot's dependencies easier.
 ## CloudBot Depdendencies and APIs
 
 Before running CloudBot, you'll need to get some of the required dependencies and APIs configured/installed.
+
+  **Using PIP:**
+  Assuming the current directory is that of your CloudBot installation (in the terminal):
+  ```
+  pip install -r requirements.txt
+  ```
   
 

@@ -69,7 +69,9 @@
 		"{user}: your mom's so dumb...  she got stabbed at a shoot-out.",
 		"{user}: your mom's like a Christmas tree, everybody hangs balls on her.",
 		"{user}: your mom's like a postage stamp, you lick her, stick her, then send her away.",
-		"{user}: your mom's so fat, everytime she wears high heels, she strikes oil."
+		"{user}: your mom's so fat, everytime she wears high heels, she strikes oil.",
+		"I don't like you, {user}",
+		"Who are you again, {user}?"
 	],
    "parts": {
     }

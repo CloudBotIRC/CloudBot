@@ -40,7 +40,7 @@ If you only have command-line access, run the following in your terminal:
   ```
 
 ## 2 - Getting Python 3.4
-If you don't already have Python 3.4 installed on your server, the following explains how to do so for Linux and Mac OS X.
+Setting up Python 3.4 on most OSs usually goes as follows.
 
   **On Linux (Debian Based):**
   Run the following in your terminal:

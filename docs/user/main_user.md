@@ -12,7 +12,7 @@ In this guide, we will cover the setup and configuration procedures in the follo
 
 Setting up CloudBot on a new server instance is simple. To begin, you need a compatible server that supports **Python 3.4**. Earlier versions of Python are not compatible due to the use of *asyncIO*.
 
-We recommend using the stable releases of Cloudbot that can be found [on the releases page](https://github.com/CloudBotIRC/CloudBot/releases), or from the `master` branch on GitHub.
+We recommend using the stable releases of CloudBot that can be found [on the releases page](https://github.com/CloudBotIRC/CloudBot/releases), or from the `master` branch on GitHub.
 
 #### Using HTTP
 
@@ -53,6 +53,9 @@ Mac OS X already comes with Python 2.7 pre-installed, this is not sufficient for
 
 #### On Windows
 You can download releases of Python 3.4 for Windows at https://www.python.org/downloads/
+
+#### On another OS (Solaris/BSD/ActivePython/etc)
+You can try compiling Python 3.4 from source, note however that you may run into issues with CloudBot or its dependencies (many of the Other OSs only support Python 2.x). You can find source at https://www.python.org/downloads/source/
 
 ## 3 - Get PIP
 

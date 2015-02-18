@@ -20,7 +20,7 @@ Give your bot a name (and optionally change the name of the project ID), agree t
 
 ## 3 - Enable APIs
 
-Once you have created the project, select it in the main panel (if it already hasn't been), then on the sidebar go to **APIs and Auth -> APIs**. Scroll through the list to slect ***ON*** for the following services:
+Once you have created the project, select it in the main panel (if it already hasn't been), then on the sidebar go to **APIs and Auth -> APIs**. Scroll through the list to select ***ON*** for the following services:
 
  - Books API
  - Youtube Data API v3

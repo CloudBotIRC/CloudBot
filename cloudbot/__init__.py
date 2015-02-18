@@ -64,20 +64,16 @@ def _setup():
             "cloudbot": {
                 "level": "DEBUG",
                 "handlers": ["console", "file"]
-            },
-            "asyncio": {
-                "level": "DEBUG",
-                "handlers": ["console", "file"]
-            },
-            "py.warnings": {
-                "level": "DEBUG",
-                "handlers": ["console", "file"]
             }
         }
     }
 
     if logging_config.get("console_debug", False):
         dict_config["handlers"]["console"]["level"] = "DEBUG"
+        dict_config["loggers"]["asyncio"] = {
+            "level": "DEBUG",
+            "handlers": ["console", "file"]
+        }
 
     if logging_config.get("file_debug", True):
         dict_config["handlers"]["debug_file"] = {

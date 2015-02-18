@@ -14,12 +14,6 @@ For each set of docs, a PDF and HTML version is also available.
 
 Refresh (this repo) is the newest CloudBot, which cleans up the internals of the bot and brings support for Python 3.4.
 
-## Guides
-
-Guide to writing plugins can be found at docs/dev/
-
-Guide on configuration is still TODO.
-
 ## Developers
 * [Luke Rogers](http://git.io/theluke)
 * [neersighted](http://git.io/neersighted)

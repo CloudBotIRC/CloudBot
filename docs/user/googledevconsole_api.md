@@ -12,3 +12,4 @@ You can create a GDC account at https://console.developers.google.com/. You need
 ## 2 - Create a new project
 Select "Create New Project" if you haven't already done so:
 
+![Google Developers Create a New Project](/img/gdev_1.png?raw=true "Create a New Project")

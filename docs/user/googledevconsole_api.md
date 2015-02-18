@@ -35,19 +35,19 @@ Optional APIs are only used if you got the right modules or a payment type to us
  
 ![GDC Agree to the ToS](img/gdev_4.png?raw=true "Agree to the ToS")
  
- ## 4 - Generate an API Key
- GDC API services only need one key for all Google Services used. You must generate a key for each bot instance you plan to use. Go to **APIs and Auth -> Credentials** then select ***Create a new Key***
+## 4 - Generate an API Key
+GDC API services only need one key for all Google Services used. You must generate a key for each bot instance you plan to use. Go to **APIs and Auth -> Credentials** then select ***Create a new Key***
  
 ![GDC Create a Key](img/gdev_5.png?raw=true "Create a Key")
  
- Select to create a ***Server Key***
+Select to create a ***Server Key***
  
 ![GDC Server Key](img/gdev_6.png?raw=true "Server Key")
  
- Enter the Public IPs of the Cloudbot instance you plan to assign to this key. If you don't know it, running `wget -qO- http://icanhazip.com/` within your terminal should return it. Click ***Create***.
+Enter the Public IPs of the Cloudbot instance you plan to assign to this key. If you don't know it, running `wget -qO- http://icanhazip.com/` within your terminal should return it. Click ***Create***.
  
 ![GDC Enter IPs](img/gdev_7.png?raw=true "Enter IPs")
  
- Your new key should now appear on the main panel, simply copy it to the *google_dev_key* object in your CloudBot's configuration.
+Your new key should now appear on the main panel, simply copy it to the *google_dev_key* object in your CloudBot's configuration.
 
 ![GDC Copy the key](img/gdev_8.png?raw=true "Copy the key")

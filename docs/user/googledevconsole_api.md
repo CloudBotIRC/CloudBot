@@ -27,6 +27,8 @@ Once you have created the project, select it in the main panel (if it already ha
  - Optional: Google Custom Search API, if using Google Search
  - Optional: Translate API, if using Google Translate
 
+Optional APIs are only used if you got the right modules or a payment type to use.
+
  ![GDC Select the APIs](img/gdev_3.png?raw=true "Select the APIs")
  
  For each API, you may have to first accept their individual Terms of Service, then select ***Accept***.

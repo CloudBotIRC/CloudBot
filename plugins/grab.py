@@ -39,18 +39,28 @@ def grab(text, chan, db, conn):
                        "where name = :name and chan = :chan ",
                        {'name': text.lower(), 'chan': chan}).fetchone()
     if lastq:
+        msg = ""
+        if lastq[2].startswith("\x01ACTION"):
+            msg = lastq[2].replace("\x01ACTION", "* ").replace("\x01", "")
+        else:
+            msg = lastq[2]
+
         check = db.execute("select * from grab where name = :name "
                            "and quote = :quote and chan = :chan ",
-                           {'name': lastq[0], 'quote': lastq[2],
+                           {'name': lastq[0], 'quote': msg,
                             'chan': lastq[3]}).fetchone()
         if check:
             return "the quote has already been added to the database."
         else:
-            grab_add(lastq[0], lastq[1], lastq[2], lastq[3], db, conn)
+            if lastq[2].startswith("\x01ACTION"):
+                msg = lastq[2].replace("\x01ACTION", "* ").replace("\x01", "")
+            else:
+                msg = lastq[2]    
+            grab_add(lastq[0], lastq[1], msg, lastq[3], db, conn)
             lastcheck = db.execute("select * from grab "
                                    "where name = :name and quote = :quote and "
                                    "chan = :chan ", {'name': lastq[0],
-                                                     'quote': lastq[2],
+                                                     'quote': msg,
                                                      'chan': lastq[3]}
                                    ).fetchone()
             if lastcheck:
@@ -85,14 +95,14 @@ def grabrandom(text, chan, message, db, conn):
     grablist = ""
     if not text:
         grablist = db.execute("select name, quote from grab "
-                          "where chan = :chan order by random()",
-                          {'chan': chan}).fetchone()
+                              "where chan = :chan order by random()",
+                              {'chan': chan}).fetchone()
     else:
         name = text.split(' ')[0]
         grablist = db.execute("select name, quote from grab "
-                          "where chan = :chan and name = :name "
-                          "order by random()",
-                          {'chan': chan, 'name': name.lower()}).fetchone()
+                              "where chan = :chan and name = :name "
+                              "order by random()",
+                              {'chan': chan, 'name': name.lower()}).fetchone()
     if grablist:
         name = grablist[0]
         quote = grablist[1]
@@ -101,11 +111,15 @@ def grabrandom(text, chan, message, db, conn):
         return ("somebody really fucked up, or no quotes have been "
                 "grabbed from that nick.")
 
+
 @hook.command(autohelp=False)
 def grabsearch(text, chan, db, conn):
     """.grabsearch <text> matches "text" against nicks or grab strings in the database"""
     out = ""
-    result = db.execute("select name, quote from grab where (chan = :chan) and (name like :name or quote like :quote)", {"chan":chan, "name":"%{}%".format(text.lower()), "quote":"%{}%".format(text)}).fetchall()
+    result = db.execute(
+        "select name, quote from grab where (chan = :chan) and (name like :name or quote like :quote)", {
+            "chan": chan, "name": "%{}%".format(
+                text.lower()), "quote": "%{}%".format(text)}).fetchall()
     if result:
         for grab in result:
             out += "<{}> {} {} ".format(grab[0], grab[1], u'\u2022')

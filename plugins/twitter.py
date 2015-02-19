@@ -53,7 +53,7 @@ def twitter_url(match):
     else:
         prefix = ""
 
-    time = timeformat.timesince(tweet.created_at, datetime.utcnow())
+    time = timeformat.time_since(tweet.created_at, datetime.utcnow())
 
     return "{}@\x02{}\x02 ({}): {} ({} ago)".format(prefix, user.screen_name, user.name, text, time)
 
@@ -136,7 +136,7 @@ def twitter(text):
     else:
         prefix = ""
 
-    time = timeformat.timesince(tweet.created_at, datetime.utcnow())
+    time = timeformat.time_since(tweet.created_at, datetime.utcnow())
 
     return "{}@\x02{}\x02 ({}): {} ({} ago)".format(prefix, user.screen_name, user.name, text, time)
 

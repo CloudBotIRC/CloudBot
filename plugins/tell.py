@@ -86,7 +86,7 @@ def tellinput(event, conn, db, nick, notice):
 
     if tells:
         user_from, message, time_sent = tells[0]
-        reltime = timeformat.timesince(time_sent)
+        reltime = timeformat.time_since(time_sent)
 
         if reltime == 0:
             reltime_formatted = "just a moment"
@@ -113,7 +113,7 @@ def showtells(nick, notice, db, conn):
 
     for tell in tells:
         sender, message, time_sent = tell
-        past = timeformat.timesince(time_sent)
+        past = timeformat.time_since(time_sent)
         notice("{} sent you a message {} ago: {}".format(sender, past, message))
 
     read_all_tells(db, conn.name, nick)

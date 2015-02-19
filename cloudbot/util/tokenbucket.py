@@ -1,4 +1,16 @@
-# modified from http://code.activestate.com/recipes/511490-implementation-of-the-token-bucket-algorithm/
+"""
+tokenbucket.py
+
+A python implementation of the token bucket algorithm.
+Adapted from <http://code.activestate.com/recipes/511490-implementation-of-the-token-bucket-algorithm/>
+
+Maintainer:
+    - Luke Rogers <https://github.com/lukeroge>
+
+License:
+    Python Software Foundation License (PSF)
+"""
+
 from time import time
 
 

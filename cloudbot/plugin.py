@@ -27,8 +27,10 @@ def find_hooks(parent, module):
     raw = []
     sieve = []
     event = []
+    periodic = []
     on_start = []
-    type_lists = {"command": command, "regex": regex, "irc_raw": raw, "sieve": sieve, "event": event, "on_start": on_start}
+    type_lists = {"command": command, "regex": regex, "irc_raw": raw, "sieve": sieve, "event": event,
+                  "periodic": periodic, "on_start": on_start}
     for name, func in module.__dict__.items():
         if hasattr(func, "_cloudbot_hook"):
             # if it has cloudbot hook
@@ -40,7 +42,7 @@ def find_hooks(parent, module):
             # delete the hook to free memory
             del func._cloudbot_hook
 
-    return command, regex, raw, sieve, event, on_start
+    return command, regex, raw, sieve, event, periodic, on_start
 
 
 def find_tables(code):
@@ -170,6 +172,11 @@ class PluginManager:
 
         self.plugins[plugin.file_name] = plugin
 
+        for periodic_hook in plugin.periodic:
+            asyncio.async(self._start_periodic(periodic_hook))
+            self._log_hook(periodic_hook)
+
+
         # register commands
         for command_hook in plugin.commands:
             for alias in command_hook.aliases:
@@ -212,6 +219,9 @@ class PluginManager:
         for sieve_hook in plugin.sieves:
             self.sieves.append(sieve_hook)
             self._log_hook(sieve_hook)
+
+        # sort sieve hooks by priority
+        self.sieves.sort(key=lambda x: x.priority)
 
         # we don't need this anymore
         del plugin.run_on_start
@@ -398,6 +408,17 @@ class PluginManager:
             return result
 
     @asyncio.coroutine
+    def _start_periodic(self, hook):
+        interval = hook.interval
+        initial_interval = hook.initial_interval
+        yield from asyncio.sleep(initial_interval)
+
+        while True:
+            event = Event(bot=self.bot, hook=hook)
+            yield from self.launch(hook, event)
+            yield from asyncio.sleep(interval)
+
+    @asyncio.coroutine
     def launch(self, hook, event):
         """
         Dispatch a given event to a given hook using a given bot object.
@@ -408,7 +429,8 @@ class PluginManager:
         :type hook: cloudbot.plugin.Hook | cloudbot.plugin.CommandHook
         :rtype: bool
         """
-        if hook.type != "on_start":  # we don't need sieves on on_start hooks.
+
+        if hook.type not in ("on_start", "periodic"):  # we don't need sieves on on_start hooks.
             for sieve in self.bot.plugin_manager.sieves:
                 event = yield from self._sieve(sieve, event, hook)
                 if event is None:
@@ -483,7 +505,7 @@ class Plugin:
         self.file_path = filepath
         self.file_name = filename
         self.title = title
-        self.commands, self.regexes, self.raw_hooks, self.sieves, self.events, self.run_on_start = find_hooks(self, code)
+        self.commands, self.regexes, self.raw_hooks, self.sieves, self.events, self.periodic, self.run_on_start = find_hooks(self, code)
         # we need to find tables for each plugin so that they can be unloaded from the global metadata when the
         # plugin is reloaded
         self.tables = find_tables(code)
@@ -527,7 +549,6 @@ class Hook:
     :type function_name: str
     :type required_args: list[str]
     :type threaded: bool
-    :type ignore_bots: bool
     :type permissions: list[str]
     :type single_thread: bool
     """
@@ -552,7 +573,6 @@ class Hook:
         else:
             self.threaded = True
 
-        self.ignore_bots = func_hook.kwargs.pop("ignorebots", False)
         self.permissions = func_hook.kwargs.pop("permissions", [])
         self.single_thread = func_hook.kwargs.pop("singlethread", False)
 
@@ -565,8 +585,8 @@ class Hook:
         return "{}:{}".format(self.plugin.title, self.function_name)
 
     def __repr__(self):
-        return "type: {}, plugin: {}, ignore_bots: {}, permissions: {}, single_thread: {}, threaded: {}".format(
-            self.type, self.plugin.title, self.ignore_bots, self.permissions, self.single_thread, self.threaded
+        return "type: {}, plugin: {}, permissions: {}, single_thread: {}, threaded: {}".format(
+            self.type, self.plugin.title, self.permissions, self.single_thread, self.threaded
         )
 
 
@@ -624,6 +644,29 @@ class RegexHook(Hook):
         return "regex {} from {}".format(self.function_name, self.plugin.file_name)
 
 
+class PeriodicHook(Hook):
+    """
+    :type interval: int
+    """
+
+    def __init__(self, plugin, periodic_hook):
+        """
+        :type plugin: Plugin
+        :type periodic_hook: cloudbot.util.hook._PeriodicHook
+        """
+
+        self.interval = periodic_hook.interval
+        self.initial_interval = periodic_hook.kwargs.pop("initial_interval", self.interval)
+
+        super().__init__("periodic", plugin, periodic_hook)
+
+    def __repr__(self):
+        return "Periodic[interval: [{}], {}]".format(self.interval, Hook.__repr__(self))
+
+    def __str__(self):
+        return "periodic hook ({} seconds) {} from {}".format(self.interval, self.function_name, self.plugin.file_name)
+
+
 class RawHook(Hook):
     """
     :type triggers: set[str]
@@ -654,6 +697,8 @@ class SieveHook(Hook):
         :type plugin: Plugin
         :type sieve_hook: cloudbot.util.hook._SieveHook
         """
+
+        self.priority = sieve_hook.kwargs.pop("priority", 100)
         # We don't want to thread sieves by default - this is retaining old behavior for compatibility
         super().__init__("sieve", plugin, sieve_hook)
 
@@ -707,5 +752,6 @@ _hook_name_to_plugin = {
     "irc_raw": RawHook,
     "sieve": SieveHook,
     "event": EventHook,
+    "periodic": PeriodicHook,
     "on_start": OnStartHook
 }

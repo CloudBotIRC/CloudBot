@@ -62,7 +62,7 @@ def lastfm(text, nick, db, bot, notice):
         status = 'last listened to'
         # lets see how long ago they listened to it
         time_listened = datetime.fromtimestamp(int(track["date"]["uts"]))
-        time_since = timeformat.timesince(time_listened)
+        time_since = timeformat.time_since(time_listened)
         ending = ' ({} ago)'.format(time_since)
 
     else:

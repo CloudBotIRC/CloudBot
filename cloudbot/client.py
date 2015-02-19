@@ -52,6 +52,9 @@ class Client:
         # for plugins to abuse
         self.memory = collections.defaultdict()
 
+        # set when on_load in core_misc is done
+        self.ready = False
+
     def describe_server(self):
         raise NotImplementedError
 

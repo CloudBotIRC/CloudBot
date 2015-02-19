@@ -10,7 +10,7 @@ import logging.config
 import logging
 import os
 
-__version__ = "1.0.5"
+__version__ = "1.0.6"
 
 __all__ = ["util", "bot", "connection", "config", "permissions", "plugin", "event", "hook", "log_dir"]
 
@@ -64,20 +64,16 @@ def _setup():
             "cloudbot": {
                 "level": "DEBUG",
                 "handlers": ["console", "file"]
-            },
-            "asyncio": {
-                "level": "DEBUG",
-                "handlers": ["console", "file"]
-            },
-            "py.warnings": {
-                "level": "DEBUG",
-                "handlers": ["console", "file"]
             }
         }
     }
 
     if logging_config.get("console_debug", False):
         dict_config["handlers"]["console"]["level"] = "DEBUG"
+        dict_config["loggers"]["asyncio"] = {
+            "level": "DEBUG",
+            "handlers": ["console", "file"]
+        }
 
     if logging_config.get("file_debug", True):
         dict_config["handlers"]["debug_file"] = {

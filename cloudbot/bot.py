@@ -57,7 +57,7 @@ class CloudBot:
         self.stopped_future = asyncio.Future(loop=self.loop)
 
         # stores each bot server connection
-        self.connections = []
+        self.connections = {}
 
         # for plugins
         self.logger = logger
@@ -131,9 +131,9 @@ class CloudBot:
             if local_bind[0] is False:
                 local_bind = False
 
-            self.connections.append(IrcClient(self, name, nick, config=config, channels=config['channels'],
+            self.connections[name] = IrcClient(self, name, nick, config=config, channels=config['channels'],
                                               server=server, port=port, use_ssl=config['connection'].get('ssl', False),
-                                              local_bind=local_bind))
+                                              local_bind=local_bind)
             logger.debug("[{}] Created connection.".format(name))
 
     @asyncio.coroutine
@@ -189,7 +189,7 @@ class CloudBot:
             self.reloader.start(os.path.abspath("plugins"))
 
         # Connect to servers
-        yield from asyncio.gather(*[conn.connect() for conn in self.connections], loop=self.loop)
+        yield from asyncio.gather(*[conn.connect() for conn in self.connections.values()], loop=self.loop)
 
         # Run a manual garbage collection cycle, to clean up any unused objects created during initialization
         gc.collect()

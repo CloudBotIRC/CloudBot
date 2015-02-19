@@ -1,4 +1,4 @@
-from cloudbot.util.timeformat import format_time, timesince, timeuntil
+from cloudbot.util.timeformat import format_time, time_since, time_until
 
 from datetime import datetime, timezone
 
@@ -20,19 +20,19 @@ def test_timesince():
     now = datetime(2010, 5, 15, 1, 50, 0)
     now_timestamp = 1273888200.0
     # timestamp
-    assert timesince(then_timestamp, now_timestamp) == "1 month and 2 days"
+    assert time_since(then_timestamp, now_timestamp) == "1 month and 2 days"
     # basic
-    assert timesince(then, now) == "1 month and 2 days"
+    assert time_since(then, now) == "1 month and 2 days"
     # count
-    assert timesince(then, now, count=3) == "1 month, 2 days and 13 hours"
+    assert time_since(then, now, count=3) == "1 month, 2 days and 13 hours"
     # future
-    assert timesince(then_future, now) == "0 minutes"
+    assert time_since(then_future, now) == "0 minutes"
 
 
 def test_timeuntil():
     now = datetime(2010, 4, 12, 12, 30, 0)
     future = datetime(2010, 5, 15, 1, 50, 0)
     # basic
-    assert timeuntil(future, now) == "1 month and 2 days"
+    assert time_until(future, now) == "1 month and 2 days"
     # count
-    assert timeuntil(future, now, count=3) == "1 month, 2 days and 13 hours"
+    assert time_until(future, now, count=3) == "1 month, 2 days and 13 hours"

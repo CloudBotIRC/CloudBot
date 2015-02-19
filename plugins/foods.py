@@ -1,8 +1,14 @@
-import re
-import asyncio
+import codecs
+import json
+import os
 import random
+import asyncio
+import re
 
 from cloudbot import hook
+from cloudbot.util import textgen
+
+nick_re = re.compile("^[A-Za-z0-9_|.\-\]\[]*$", re.I)
 
 cakes = ['Chocolate', 'Ice Cream', 'Angel', 'Boston Cream', 'Birthday', 'Bundt', 'Carrot', 'Coffee', 'Devils', 'Fruit',
          'Gingerbread', 'Pound', 'Red Velvet', 'Stack', 'Welsh', 'Yokan']
@@ -47,14 +53,32 @@ potatoes = ['AC Belmont', 'AC Blue Pride', 'AC Brador', 'AC Chaleur', 'AC Domino
             'Yukon Gold']
 
 
+def is_valid(target):
+    """ Checks if a string is a valid IRC nick. """
+    if nick_re.match(target):
+        return True
+    else:
+        return False
+
+@hook.on_start()
+def load_foods(bot):
+    """
+    :type bot: cloudbot.bot.CloudBot
+    """
+    global sandwich_data
+
+    with codecs.open(os.path.join(bot.data_dir, "sandwich.json"), encoding="utf-8") as f:
+        sandwich_data = json.load(f)
+
+
 @asyncio.coroutine
-@hook.command()
+@hook.command
 def potato(text, action):
     """<user> - makes <user> a tasty little potato"""
-    text = text.strip()
+    user = text.strip()
 
-    if not re.match("^[A-Za-z0-9_|.-\]\[]*$", text.lower()):
-        return "I cant make a tasty potato for that user!"
+    if not is_valid(user):
+        return "I can't give a potato to that user."
 
     potato_type = random.choice(potatoes)
     size = random.choice(['small', 'little', 'mid-sized', 'medium-sized', 'large', 'gigantic'])
@@ -62,18 +86,18 @@ def potato(text, action):
     method = random.choice(['bakes', 'fries', 'boils', 'roasts'])
     side_dish = random.choice(['side salad', 'dollop of sour cream', 'piece of chicken', 'bowl of shredded bacon'])
 
-    action("{} a {} {} {} potato for {} and serves it with a small {}!".format(method, flavor, size, potato_type, text,
+    action("{} a {} {} {} potato for {} and serves it with a small {}!".format(method, flavor, size, potato_type, user,
                                                                                side_dish))
 
 
 @asyncio.coroutine
-@hook.command()
+@hook.command
 def cake(text, action):
     """<user> - gives <user> an awesome cake"""
-    text = text.strip()
+    user = text.strip()
 
-    if not re.match("^[A-Za-z0-9_|.-\]\[]*$", text.lower()):
-        return "I can't give an awesome cake to that user!"
+    if not is_valid(user):
+        return "I can't give a cake to that user."
 
     cake_type = random.choice(cakes)
     size = random.choice(['small', 'little', 'mid-sized', 'medium-sized', 'large', 'gigantic'])
@@ -82,18 +106,18 @@ def cake(text, action):
     side_dish = random.choice(['glass of chocolate milk', 'bowl of ice cream', 'jar of cookies',
                                'some chocolate sauce'])
 
-    action("{} {} a {} {} {} cake and serves it with a small {}!".format(method, text, flavor, size, cake_type,
+    action("{} {} a {} {} {} cake and serves it with a small {}!".format(method, user, flavor, size, cake_type,
                                                                          side_dish))
 
 
 @asyncio.coroutine
-@hook.command()
+@hook.command
 def cookie(text, action):
     """<user> - gives <user> a cookie"""
-    text = text.strip()
+    user = text.strip()
 
-    if not re.match("^[A-Za-z0-9_|.-\]\[]*$", text.lower()):
-        return "I can't give a cookie to that user!"
+    if not is_valid(user):
+        return "I can't give a cookie to that user."
 
     cookie_type = random.choice(cookies)
     size = random.choice(['small', 'little', 'medium-sized', 'large', 'gigantic'])
@@ -101,5 +125,21 @@ def cookie(text, action):
     method = random.choice(['makes', 'gives', 'gets', 'buys'])
     side_dish = random.choice(['glass of milk', 'bowl of ice cream', 'bowl of chocolate sauce'])
 
-    action("{} {} a {} {} {} cookie and serves it with a {}!".format(method, text, flavor, size, cookie_type,
+    action("{} {} a {} {} {} cookie and serves it with a {}!".format(method, user, flavor, size, cookie_type,
                                                                      side_dish))
+
+
+@asyncio.coroutine
+@hook.command
+def sandwich(text, action):
+    """<user> - give a tasty sandwich to <user>"""
+    user = text.strip()
+
+    if not is_valid(user):
+        return "I can't give a cookie to that user."
+
+    generator = textgen.TextGenerator(sandwich_data["templates"], sandwich_data["parts"],
+                                      variables={"user": user})
+
+    # act out the message
+    action(generator.generate_string())

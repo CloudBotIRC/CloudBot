@@ -74,6 +74,7 @@ def load_geoip(loop):
 @asyncio.coroutine
 @hook.command
 def geoip(text, reply, loop):
+    """ geoip <host|ip> -- Looks up the physical location of <host|ip> using Maxmind GeoLite """
     global geoip_reader
 
     if not geoip_reader:

@@ -4,4 +4,5 @@
 # mmdb files are binary
 *.mmdb binary
 
-
+# PNGs are also binary (it broke the docs)
+*.png binary

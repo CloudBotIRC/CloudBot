@@ -132,6 +132,25 @@ class _RawHook(_Hook):
             self.triggers.update(trigger_param)
 
 
+class _PeriodicHook(_Hook):
+    def __init__(self, function):
+        """
+        :type function: function
+        """
+        _Hook.__init__(self, function, "periodic")
+        self.interval = 60.0
+
+    def add_hook(self, interval, kwargs):
+        """
+        :type interval: int
+        :type kwargs: dict[str, unknown]
+        """
+        self._add_hook(kwargs)
+
+        if interval:
+            self.interval = interval
+
+
 class _EventHook(_Hook):
     """
     :type types: set[cloudbot.event.EventType]
@@ -275,6 +294,27 @@ def sieve(param=None, **kwargs):
         return _sieve_hook(param)
     else:
         return lambda func: _sieve_hook(func)
+
+
+def periodic(interval, **kwargs):
+    """External on_start decorator. Can be used directly as a decorator, or with args to return a decorator
+    :type param: function | None
+    """
+
+    def _periodic_hook(func):
+        hook = _get_hook(func, "periodic")
+        if hook is None:
+            hook = _PeriodicHook(func)
+            _add_hook(func, hook)
+
+        hook.add_hook(interval, kwargs)
+        return func
+
+    if callable(interval):  # this decorator is being used directly, which isn't good
+        raise TypeError("@periodic() hook must be used as a function that returns a decorator")
+    else:  # this decorator is being used as a function, so return a decorator
+        return lambda func: _periodic_hook(func)
+
 
 
 def on_start(param=None, **kwargs):

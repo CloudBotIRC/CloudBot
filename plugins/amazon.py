@@ -8,6 +8,11 @@ from cloudbot.util import web, formatting, colors
 
 SEARCH_URL = "http://www.amazon.com/s/"
 
+# Feel free to set this to None or change it to your own ID.
+# Or leave it in to support CloudBot, it's up to you!
+AFFILIATE_TAG = "cloudbot-20"
+
+
 
 @hook.command("amazon", "az")
 def amazon(text):
@@ -60,7 +65,11 @@ def amazon(text):
         rating_str = "No Ratings"
 
     # generate a short url
-    url = "http://www.amazon.com/dp/" + asin + "/?tag=cloudbot-20"
+    if AFFILIATE_TAG:
+        url = "http://www.amazon.com/dp/" + asin + "/?tag=" + AFFILIATE_TAG
+    else:
+        url = "http://www.amazon.com/dp/" + asin + "/"
+
     url = web.try_shorten(url)
 
     tag_str = " - " + ", ".join(tags) if tags else ""

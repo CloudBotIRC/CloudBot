@@ -33,14 +33,11 @@ def init_tasks(loop, conn):
 
 
 @asyncio.coroutine
-@hook.sieve
+@hook.sieve(priority=100)
 def sieve_suite(bot, event, _hook):
     global buckets
 
     conn = event.conn
-    # check ignore bots
-    if event.irc_command == 'PRIVMSG' and event.nick.endswith('bot') and _hook.ignore_bots:
-        return None
 
     # check acls
     acl = conn.config.get('acls', {}).get(_hook.function_name)

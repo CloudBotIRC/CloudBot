@@ -1,3 +1,18 @@
+"""
+utility.py
+
+Provides a number of simple commands for working with strings.
+
+Created By:
+    - Luke Rogers <https://github.com/lukeroge>
+    - Dabo Ross <https://github.com/daboross>
+
+Special Thanks:
+    - Fletcher Boyd <https://github.com/thenoodle68>
+
+License: GPL v3
+"""
+
 import base64
 import hashlib
 import collections

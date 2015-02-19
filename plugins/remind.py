@@ -127,6 +127,8 @@ def remind(text, nick, chan, db, conn, notice, async):
         return
 
     count = len([x for x in reminder_cache if x[0] == conn.name and x[3] == nick.lower()])
+    if count > 10:
+        return "Sorry, you already have too many reminders queued, you will need to wait or clear your reminders to add any more."
 
     time_string = parts[0].strip()
     message = colors.strip_all(parts[1].strip())
@@ -140,8 +142,8 @@ def remind(text, nick, chan, db, conn, notice, async):
     if not seconds:
         return "Invalid input."
 
-    if seconds > 2764800:
-        return "I can't remind you of something more than (approximately) a month from now."
+    if seconds > 2764800 or seconds < 60:
+        return "Sorry, remind input must be more then a minute, and less then one month."
 
     # work out the time to remind the user, and check if that time is in the past
     remind_time = datetime.fromtimestamp(current_epoch + seconds)

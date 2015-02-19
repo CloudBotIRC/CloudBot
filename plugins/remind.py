@@ -39,11 +39,20 @@ table = Table(
 
 
 @asyncio.coroutine
-def delete_reminder(async, db, network, remind_time, added_user):
+def delete_reminder(async, db, network, remind_time, user):
     query = table.delete() \
-        .where(table.c.network == network) \
+        .where(table.c.network == network.lower()) \
         .where(table.c.remind_time == remind_time) \
-        .where(table.c.added_user == added_user)
+        .where(table.c.added_user == user.lower())
+    yield from async(db.execute, query)
+    yield from async(db.commit)
+
+
+@asyncio.coroutine
+def delete_all(async, db, network, user):
+    query = table.delete() \
+        .where(table.c.network == network.lower()) \
+        .where(table.c.added_user == user.lower())
     yield from async(db.execute, query)
     yield from async(db.commit)
 
@@ -51,10 +60,10 @@ def delete_reminder(async, db, network, remind_time, added_user):
 @asyncio.coroutine
 def add_reminder(async, db, network, added_user, added_chan, message, remind_time, added_time):
     query = table.insert().values(
-        network=network,
+        network=network.lower(),
         added_user=added_user.lower(),
         added_time=added_time,
-        added_chan=added_chan,
+        added_chan=added_chan.lower(),
         message=message,
         remind_time=remind_time
     )
@@ -78,7 +87,7 @@ def _load_cache_db(db):
 
 
 @asyncio.coroutine
-@hook.periodic(2.5, initial_interval=30)
+@hook.periodic(30, initial_interval=30)
 def check_reminders(bot, async, db):
     current_time = datetime.now()
 
@@ -114,9 +123,19 @@ def check_reminders(bot, async, db):
 
 
 @asyncio.coroutine
-@hook.command('remind')
+@hook.command('remind', 'reminder')
 def remind(text, nick, chan, db, conn, notice, async):
-    """remind <1 minute, 30 seconds>: <do task> -- reminds you to <do task> in <1 minute, 30 seconds>"""
+    """<1 minute, 30 seconds>: <do task> -- reminds you to <do task> in <1 minute, 30 seconds>"""
+
+    count = len([x for x in reminder_cache if x[0] == conn.name and x[3] == nick.lower()])
+
+    if text == "clear":
+        if count == 0:
+            return "You have no reminders to delete."
+
+        yield from delete_all(async, db, conn.name, nick)
+        yield from load_cache(async, db)
+        return "Deleted all ({}) reminders for {}!".format(count, nick)
 
     # split the input on the first ":"
     parts = text.split(":", 1)
@@ -126,9 +145,9 @@ def remind(text, nick, chan, db, conn, notice, async):
         notice(remind.__doc__)
         return
 
-    count = len([x for x in reminder_cache if x[0] == conn.name and x[3] == nick.lower()])
     if count > 10:
-        return "Sorry, you already have too many reminders queued, you will need to wait or clear your reminders to add any more."
+        return "Sorry, you already have too many reminders queued (10), you will need to wait or " \
+               "clear your reminders to add any more."
 
     time_string = parts[0].strip()
     message = colors.strip_all(parts[1].strip())

@@ -69,7 +69,7 @@ class Config(dict):
 
         # reload permissions
         if self.bot.connections:
-            for connection in self.bot.connections:
+            for connection in self.bot.connections.values():
                 connection.permissions.reload()
 
     def save_config(self):

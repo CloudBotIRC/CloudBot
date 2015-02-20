@@ -18,7 +18,7 @@ def wyr(bot):
     choice2 = data['choiceb'].strip().lower().rstrip('.?,!').lstrip('.')
     link = data['link']
 
-    # get a list all the words in the answers
+    # get a list of all the words in the answers
     text = choice1.split() + choice2.split()
     text = [word for word in text if word != "a"]
 

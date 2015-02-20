@@ -53,7 +53,7 @@ class CloudBot:
         self.loop = loop
         self.start_time = time.time()
         self.running = True
-        # future which will be called when the bot stops
+        # future which will be called when the bot stopsIf you
         self.stopped_future = asyncio.Future(loop=self.loop)
 
         # stores each bot server connection
@@ -90,8 +90,10 @@ class CloudBot:
         self.db_session = scoped_session(self.db_factory)
         self.db_metadata = MetaData()
 
-        # set botvars.metadata so plugins can access when loading
+        # set botvars so plugins can access when loading
         botvars.metadata = self.db_metadata
+        botvars.user_agent = self.user_agent
+
         logger.debug("Database system initialised.")
 
         # Bot initialisation complete

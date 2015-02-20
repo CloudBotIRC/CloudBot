@@ -12,13 +12,13 @@ def wyr(bot):
     r = requests.get(url=API_URL, headers=headers)
     data = r.json()
 
-    # decrapify text
+    # clean up text
     title = data['title'].strip().capitalize().rstrip('.?,')
     choice1 = data['choicea'].strip().lower().rstrip('.?,!').lstrip('.')
     choice2 = data['choiceb'].strip().lower().rstrip('.?,!').lstrip('.')
     link = data['link']
 
-    # get all the words in the answers
+    # get a list all the words in the answers
     text = choice1.split() + choice2.split()
     text = [word for word in text if word != "a"]
 

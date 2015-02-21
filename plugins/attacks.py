@@ -32,7 +32,7 @@ def load_attacks(bot):
     """
     :type bot: cloudbot.bot.CloudBot
     """
-    global larts, flirts, kills, slaps
+    global larts, flirts, kills, slaps, north_korea
 
     with codecs.open(os.path.join(bot.data_dir, "larts.txt"), encoding="utf-8") as f:
         larts = [line.strip() for line in f.readlines() if not line.startswith("//")]
@@ -45,6 +45,9 @@ def load_attacks(bot):
 
     with codecs.open(os.path.join(bot.data_dir, "slaps.json"), encoding="utf-8") as f:
         slaps = json.load(f)
+
+    with codecs.open(os.path.join(bot.data_dir, "north_korea.txt"), encoding="utf-8") as f:
+        north_korea = [line.strip() for line in f.readlines() if not line.startswith("//")]
 
 
 @asyncio.coroutine
@@ -121,3 +124,10 @@ def slap(text, action, nick, conn, notice):
 
     # act out the message
     action(generator.generate_string())
+
+@hook.command(autohelp=False)
+def nk(chan, message):
+    """outputs a random North Korea propoganda slogan"""
+    index = random.randint(0,len(north_korea)-1)
+    slogan = north_korea[index]
+    message(slogan, chan)

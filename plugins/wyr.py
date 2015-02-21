@@ -3,42 +3,54 @@ import requests
 from cloudbot import hook
 
 API_URL = "http://www.rrrather.com/botapi"
+FILTERED_TAGS = ('rape', 'gross', 'sex')
+
+
+def get_wyr(headers):
+    r = requests.get(url=API_URL, headers=headers)
+    data = r.json()
+
+    # clean up text
+    data['title'] = data['title'].strip().capitalize().rstrip('.?,')
+    data['choicea'] = data['choicea'].strip().lower().rstrip('.?,!').lstrip('.')
+    data['choiceb'] = data['choiceb'].strip().lower().rstrip('.?,!').lstrip('.')
+
+    if data['tags']:
+        data['tags'] = data['tags'].lower().split(',')
+    else:
+        data['tags'] = []
+
+    return data
 
 
 @hook.command("wyr", "wouldyourather")
 def wyr(bot):
     headers = {"User-Agent": bot.user_agent}
 
-    r = requests.get(url=API_URL, headers=headers)
-    data = r.json()
+    while True:
+        data = get_wyr(headers)
 
-    # clean up text
-    title = data['title'].strip().capitalize().rstrip('.?,')
-    choice1 = data['choicea'].strip().lower().rstrip('.?,!').lstrip('.')
-    choice2 = data['choiceb'].strip().lower().rstrip('.?,!').lstrip('.')
-    link = data['link']
+        if [i for i in FILTERED_TAGS if i in data['tags']]:
+            continue
+        else:
+            break
 
     # get a list of all the words in the answers
-    text = choice1.split() + choice2.split()
+    text = data['choicea'].split() + data['choiceb'].split()
     text = [word for word in text if word != "a"]
 
-    title_text = title.split()
-
-    print(str(title_text))
-    print(str(text))
+    title_text = data['title'].split()
 
     dupl_count = 0
 
     for word in title_text:
         dupl_count += text.count(word)
 
-    print(str(dupl_count / len(text)))
-
-    title = title.replace(" u ", " you ")
+    data['title'] = data['title'].replace(" u ", " you ")
 
     # detect if the answers are also in the question
     # if so, replace question with a generic one
     if dupl_count / len(text) >= 0.6:
-        title = "Would you rather"
+        data['title'] = "Would you rather"
 
-    return "{}... {} \x02OR\x02 {}? - {}".format(title, choice1, choice2, link)
+    return "{title}... {choicea} \x02OR\x02 {choiceb}? - {link}".format(**data)

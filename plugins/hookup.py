@@ -2,7 +2,6 @@ import random
 import time
 
 from cloudbot import hook
-from plugins import grab
 
 rooms = ["courtyard", "guest house", "observatory", "theatre", "drawing room", "garage", "spa", "master bedroom", "studio", "pool", "arcade", "beach house", "surf shop", "kitchen", "ballroom", "conservatory", "billiard room", "library", "study", "hallway", "lounge", "dining room", "cellar"]
 weapons = ["a candlestick","an axe", "a pistol", "rope", "gloves", "a horseshoe", "a knife", "a baseball bat", "a chalice", "a dumbbell", "a wrench", "a trophy", "a pipe", "garden shears"]
@@ -51,8 +50,3 @@ def glomp(text, chan, action):
     glomp = random.choice(glomps)
     out = "{} {}.".format(glomp, name)
     action(out, chan)
-
-@hook.command("testballs")
-def shitface(text, db, conn, chan):
-    out = grab.grabrandom(text, chan, db, conn)
-    return out

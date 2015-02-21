@@ -11,7 +11,7 @@ Special Thanks:
     - http://www.rrrather.com/ for adding extra features to their API to make this command possible
 
 License:
-    GPL v3
+    ???
 """
 
 import requests

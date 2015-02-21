@@ -89,14 +89,27 @@ def lastfm(text, nick, db, bot, notice):
     return out
 
 
-@hook.command("lastfmcompare", "compare")
-def lastfmcompare(text, bot):
-    """[user] [dontsave] - displays the now playing (or last played) track of LastFM user [user]"""
+@hook.command("lastfmcompare", "compare", "lc")
+def lastfmcompare(text, nick, bot, db):
+    """[user] ([user] optional) - displays the now playing (or last played) track of LastFM user [user]"""
     api_key = bot.config.get("api_keys", {}).get("lastfm")
     if not api_key:
         return "No last.fm API key set."
+    if not text:
+        return("please specify a lastfm username to compare")
+    try:
+        user1, user2 = text.split()
+    except:
+        user2 = text
+        user1 = nick
 
-    user1, user2 = text.split()
+    user2_check = db.execute("select acc from lastfm where nick=lower(:nick)",{'nick': user2}).fetchone()
+    if user2_check:
+        user2 = user2_check[0]
+
+    user1_check = db.execute("select acc from lastfm where nick=lower(:nick)",{'nick': user1}).fetchone()
+    if user1_check:
+        user1 = user1_check[0]
 
     params = {
         'method': 'tasteometer.compare',
@@ -112,8 +125,13 @@ def lastfmcompare(text, bot):
         return "Failed to fetch info ({})".format(request.status_code)
 
     data = request.json()
+    if 'error' in data:
+        return "Error: {}.".format(data["message"])
 
-    score = int(float(data["comparison"]["result"]["score"]) * 100)
+
+    score = float(format(float(data["comparison"]["result"]["score"]) * 100, '.3f'))
+    if score == "0":
+         return "{} and {} have no common listening history.".format(user2, user1)
     level = "Super" if score > 95 else "Very High" if score > 80 else "High" if score > 60 else \
             "Medium" if score > 40 else "Low" if score > 10 else "Very Low"
 
@@ -124,5 +142,5 @@ def lastfmcompare(text, bot):
         in data["comparison"]["result"]["artists"] else ""
     artist_string = "\x02In Common:\x02 " + ", ".join(artists) if artists else ""
 
-    return "Musical compatibility between \x02{}\x02 and \x02{}\x02: {} (\x02{}%\x02)".format(user1, user2, level,
-                                                                                              score), artist_string
+    return "Musical compatibility between \x02{}\x02 and \x02{}\x02: {} (\x02{}%\x02) {}".format(user1, user2, level,
+                                                                                              score, artist_string)

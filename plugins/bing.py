@@ -15,7 +15,7 @@ API_URL = "https://api.datamarket.azure.com/Bing/Search/v1/Composite"
 # use ("Strict", "Strict") to block all NSFW content
 # the default config just sets the filter to Moderate for all queries
 DEFAULT_FILTER = "Moderate"
-NSFW_FILTER = "Moderate"
+NSFW_FILTER = "Off"
 
 
 def unescape(s):
@@ -29,7 +29,7 @@ def bingify(s):
     return "'{}'".format(s)
 
 
-@hook.command("bing", "google", "g", "search")
+@hook.command("bing", "bsearch")
 def bing(text, bot):
     """<query> - returns the first bing search result for <query>"""
     api_key = bot.config.get("api_keys", {}).get("bing_azure")
@@ -71,7 +71,7 @@ def bing(text, bot):
     return colors.parse('{} -- $(b){}$(b): "{}"'.format(url, title, desc))
 
 
-@hook.command("bingimage", "googleimage", "gis", "image")
+@hook.command("bingimage")
 def bingimage(text, bot):
     """<query> - returns the first bing image search result for <query>"""
     api_key = bot.config.get("api_keys", {}).get("bing_azure")

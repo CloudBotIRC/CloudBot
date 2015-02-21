@@ -52,6 +52,7 @@ flippers = ["( ﾉ⊙︵⊙）ﾉ", "(╯°□°）╯", "( ﾉ♉︵♉ ）ﾉ"
 @hook.command
 def flip(text, message, reply):
     """<text> -- Flips <text> over."""
+    text = text.lower()
     if USE_FLIPPERS:
         message(random.choice(flippers) + " ︵ " + formatting.multi_replace(text[::-1], replacements))
     else:
@@ -61,6 +62,7 @@ def flip(text, message, reply):
 @hook.command
 def table(text, message):
     """<text> -- (╯°□°）╯︵ <ʇxǝʇ>"""
+    text = text.lower()
     message(random.choice(flippers) + " ︵ " + formatting.multi_replace(text[::-1], replacements))
 
 

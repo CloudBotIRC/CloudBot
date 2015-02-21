@@ -1,3 +1,19 @@
+"""
+wyr.py
+
+A plugin that uses the RRRather.com API to return random "Would you rather" questions.
+
+Created By:
+    - Foxlet <https://github.com/foxlet>
+    - Luke Rogers <https://github.com/lukeroge>
+
+Special Thanks:
+    - http://www.rrrather.com/ for adding extra features to their API to make this command possible
+
+License:
+    GPL v3
+"""
+
 import requests
 
 from cloudbot import hook
@@ -7,6 +23,7 @@ FILTERED_TAGS = ('rape', 'gross', 'sex')
 
 
 def get_wyr(headers):
+    """ Gets a entry from the RRRather API and cleans up the data """
     r = requests.get(url=API_URL, headers=headers)
     data = r.json()
 
@@ -23,10 +40,12 @@ def get_wyr(headers):
     return data
 
 
-@hook.command("wyr", "wouldyourather")
+@hook.command("wyr", "wouldyourather", autohelp=False)
 def wyr(bot):
+    """ -- What would you rather do? """
     headers = {"User-Agent": bot.user_agent}
 
+    # keep trying to get entries until we find one that is not filtered
     while True:
         data = get_wyr(headers)
 
@@ -42,7 +61,6 @@ def wyr(bot):
     title_text = data['title'].split()
 
     dupl_count = 0
-
     for word in title_text:
         dupl_count += text.count(word)
 

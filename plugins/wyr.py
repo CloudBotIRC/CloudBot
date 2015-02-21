@@ -11,7 +11,7 @@ Special Thanks:
     - http://www.rrrather.com/ for adding extra features to their API to make this command possible
 
 License:
-    FurCode License <http://furcode.tk/licensing/furcode_license.txt>
+    BSD 3-Clause License
 """
 
 import requests

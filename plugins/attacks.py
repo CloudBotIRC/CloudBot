@@ -8,6 +8,7 @@ import re
 from cloudbot import hook
 from cloudbot.util import textgen
 
+nick_re = re.compile("^[A-Za-z0-9_|.\-\]\[]*$", re.I)
 
 @hook.on_start()
 def load_attacks(bot):
@@ -32,12 +33,16 @@ def load_attacks(bot):
         slaps = json.load(f)
 
 
+def is_valid(target):
+    """ Checks if a string is a valid IRC nick. """
+    if nick_re.match(target):
+        return True
+    else:
+        return False
+
 def is_self(conn, target):
-    """
-    :type conn: cloudbot.client.Client
-    :type target: str
-    """
-    if re.search("(^..?.?.?self|{})".format(re.escape(conn.nick.lower())), target.lower()):
+    """ Checks if a string is "****self" or contains conn.name. """
+    if re.search("(^..?.?.?self|{})".format(re.escape(conn.nick)), target, re.I):
         return True
     else:
         return False
@@ -51,7 +56,7 @@ def get_attack_string(text, conn, nick, notice, attack_json, message):
     
     target = text.strip()
     
-    if " " in target:
+    if not is_valid(target):
         notice("Invalid username!")
         return None
 

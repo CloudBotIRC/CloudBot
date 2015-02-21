@@ -32,14 +32,17 @@ def mcstatus():
             red.append(server)
 
     if green:
+        green.sort()
         out = "\x033\x02Online\x02\x0f: " + ", ".join(green)
         if yellow:
             out += " "
     if yellow:
+        yellow.sort()
         out += "\x02Issues\x02: " + ", ".join(yellow)
         if red:
             out += " "
     if red:
+        red.sort()
         out += "\x034\x02Offline\x02\x0f: " + ", ".join(red)
 
     return "\x0f" + out.replace(".mojang.com", ".mj") \

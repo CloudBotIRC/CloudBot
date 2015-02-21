@@ -19,11 +19,11 @@ short_url = "http://redd.it/{}"
 
 def format_output(item, show_url=False):
     """ takes a reddit post and returns a formatted sting """
-    item["title"] = formatting.truncate(item["title"], 50)
+    item["title"] = formatting.truncate(item["title"], 70)
     item["link"] = short_url.format(item["id"])
 
     raw_time = datetime.fromtimestamp(int(item["created_utc"]))
-    item["timesince"] = timeformat.timesince(raw_time, count=1)
+    item["timesince"] = timeformat.time_since(raw_time, count=1, simple=True)
 
     item["comments"] = formatting.pluralize(item["num_comments"], 'comment')
     item["points"] = formatting.pluralize(item["score"], 'point')
@@ -34,12 +34,11 @@ def format_output(item, show_url=False):
         item["warning"] = ""
 
     if show_url:
-        return "\x02{title} : {subreddit}\x02 - posted by \x02{author}\x02" \
-               " {timesince} ago - {comments}, {points} -" \
-               " {link}{warning}".format(**item)
+        return "\x02{title} : {subreddit}\x02 - {comments}, {points}" \
+               " - \x02{author}\x02 {timesince} ago - {link}{warning}".format(**item)
     else:
-        return "\x02{title} : {subreddit}\x02 - posted by \x02{author}\x02" \
-               " {timesince} ago - {comments}, {points}{warning}".format(**item)
+        return "\x02{title} : {subreddit}\x02 - {comments}, {points}" \
+               " - \x02{author}\x02, {timesince} ago{warning}".format(**item)
 
 
 @hook.regex(reddit_re)

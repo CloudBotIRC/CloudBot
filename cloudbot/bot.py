@@ -53,11 +53,11 @@ class CloudBot:
         self.loop = loop
         self.start_time = time.time()
         self.running = True
-        # future which will be called when the bot stops
+        # future which will be called when the bot stopsIf you
         self.stopped_future = asyncio.Future(loop=self.loop)
 
         # stores each bot server connection
-        self.connections = []
+        self.connections = {}
 
         # for plugins
         self.logger = logger
@@ -90,8 +90,10 @@ class CloudBot:
         self.db_session = scoped_session(self.db_factory)
         self.db_metadata = MetaData()
 
-        # set botvars.metadata so plugins can access when loading
+        # set botvars so plugins can access when loading
         botvars.metadata = self.db_metadata
+        botvars.user_agent = self.user_agent
+
         logger.debug("Database system initialised.")
 
         # Bot initialisation complete
@@ -131,9 +133,9 @@ class CloudBot:
             if local_bind[0] is False:
                 local_bind = False
 
-            self.connections.append(IrcClient(self, name, nick, config=config, channels=config['channels'],
+            self.connections[name] = IrcClient(self, name, nick, config=config, channels=config['channels'],
                                               server=server, port=port, use_ssl=config['connection'].get('ssl', False),
-                                              local_bind=local_bind))
+                                              local_bind=local_bind)
             logger.debug("[{}] Created connection.".format(name))
 
     @asyncio.coroutine
@@ -189,7 +191,7 @@ class CloudBot:
             self.reloader.start(os.path.abspath("plugins"))
 
         # Connect to servers
-        yield from asyncio.gather(*[conn.connect() for conn in self.connections], loop=self.loop)
+        yield from asyncio.gather(*[conn.connect() for conn in self.connections.values()], loop=self.loop)
 
         # Run a manual garbage collection cycle, to clean up any unused objects created during initialization
         gc.collect()

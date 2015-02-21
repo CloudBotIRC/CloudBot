@@ -57,10 +57,12 @@ def password(text, notice):
 
     # extra random lel
     random.shuffle(okay)
-    chars = random.sample(okay, length)
+    chars = []
 
-    pw = "".join(chars)
-    notice(pw)
+    for i in range(length):
+        chars.append(random.choice(okay))
+
+    notice("".join(chars))
 
 
 @hook.command("wpass", "wordpass", "wordpassword", autohelp=False)

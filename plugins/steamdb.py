@@ -2,6 +2,7 @@ import re
 
 import requests
 import bs4
+from cfscrape import cfscrape
 
 from cloudbot import hook
 from cloudbot.util import web
@@ -33,13 +34,15 @@ def get_data(user, currency="us"):
 
     # get the page
     try:
-        request = requests.get(CALC_URL, params=params)
+        scraper = cfscrape.create_scraper()
+        request = scraper.get(CALC_URL, params=params)
+
         request.raise_for_status()
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         raise SteamError("Could not get user info: {}".format(e))
 
     # parse that page!
-    soup = bs4.BeautifulSoup(request.text)
+    soup = bs4.BeautifulSoup(request.content)
 
     # get all the data we need
     try:

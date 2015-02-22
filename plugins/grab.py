@@ -19,9 +19,6 @@ def db_init(db, conn_name):
 
 def grab_add(nick, time, msg, chan, db, conn):
     # Adds a quote to the grab table
-
-    # make sure the db is created and ready
-
     # add the nick, chan, timestamp, msg to the database
     db.execute(
         "insert or replace into grab(name, time, quote, chan)"
@@ -39,28 +36,28 @@ def grab(text, chan, db, conn):
                        "where name = :name and chan = :chan ",
                        {'name': text.lower(), 'chan': chan}).fetchone()
     if lastq:
-        msg = ""
-        if lastq[2].startswith("\x01ACTION"):
-            msg = lastq[2].replace("\x01ACTION", "* ").replace("\x01", "")
-        else:
-            msg = lastq[2]
+        #msg = ""
+        #if lastq[2].startswith("\x01ACTION"):
+        #    msg = lastq[2].replace("\x01ACTION", "* ").replace("\x01", "")
+        #else:
+        #    msg = lastq[2]
 
         check = db.execute("select * from grab where name = :name "
                            "and quote = :quote and chan = :chan ",
-                           {'name': lastq[0], 'quote': msg,
+                           {'name': lastq[0], 'quote': lastq[2],
                             'chan': lastq[3]}).fetchone()
         if check:
             return "the quote has already been added to the database."
         else:
-            if lastq[2].startswith("\x01ACTION"):
-                msg = lastq[2].replace("\x01ACTION", "* ").replace("\x01", "")
-            else:
-                msg = lastq[2]    
-            grab_add(lastq[0], lastq[1], msg, lastq[3], db, conn)
+            #if lastq[2].startswith("\x01ACTION"):
+            #    msg = lastq[2].replace("\x01ACTION", "* ").replace("\x01", "")
+            #else:
+            #    msg = lastq[2]    
+            grab_add(lastq[0], lastq[1], lastq[2], lastq[3], db, conn)
             lastcheck = db.execute("select * from grab "
                                    "where name = :name and quote = :quote and "
                                    "chan = :chan ", {'name': lastq[0],
-                                                     'quote': msg,
+                                                     'quote': lastq[2],
                                                      'chan': lastq[3]}
                                    ).fetchone()
             if lastcheck:
@@ -72,6 +69,14 @@ def grab(text, chan, db, conn):
         return ("I couldn't find anything from {}"
                 " in the recent messages.".format(text))
 
+def format_grab(name, quote):
+    if quote.startswith("\x01ACTION") or quote.startswith("*"):
+        quote = quote.replace("\x01ACTION", "").replace("\x01", "")
+        out = "* {}{}".format(name, quote)
+        return out
+    else:
+        out = "<{}> {}".format(name, quote)
+        return out
 
 @hook.command()
 def lastgrab(text, chan, db, message, conn):
@@ -81,9 +86,8 @@ def lastgrab(text, chan, db, message, conn):
                        "where name = :name and chan = :chan order by time "
                        "desc", {'name': text.lower(), 'chan': chan}).fetchone()
     if lgrab:
-        name = lgrab[0]
         quote = lgrab[1]
-        message("<{}> {}".format(text, quote), chan)
+        message(format_grab(text, quote),chan)
     else:
         return "<{}> has never been grabbed.".format(text)
 
@@ -93,10 +97,12 @@ def grabrandom(text, chan, message, db, conn):
     """grabs a random quote from the grab database"""
     db_init(db, conn.name)
     grablist = ""
+    name = ""
     if not text:
         grablist = db.execute("select name, quote from grab "
                               "where chan = :chan order by random()",
                               {'chan': chan}).fetchone()
+        name = grablist[0]
     else:
         name = text.split(' ')[0]
         grablist = db.execute("select name, quote from grab "
@@ -104,9 +110,8 @@ def grabrandom(text, chan, message, db, conn):
                               "order by random()",
                               {'chan': chan, 'name': name.lower()}).fetchone()
     if grablist:
-        name = grablist[0]
         quote = grablist[1]
-        message("<{}> {}".format(name, quote), chan)
+        message(format_grab(name, quote), chan)
     else:
         return ("somebody really fucked up, or no quotes have been "
                 "grabbed from that nick.")
@@ -122,7 +127,12 @@ def grabsearch(text, chan, db, conn):
                 text.lower()), "quote": "%{}%".format(text)}).fetchall()
     if result:
         for grab in result:
-            out += "<{}> {} {} ".format(grab[0], grab[1], u'\u2022')
+            name = grab[0]
+            if text.lower() == name:
+                name = text
+            quote = grab[1]
+            out += "{} {} ".format(format_grab(name, quote), u'\u2022')
+        out = out[:-2]
         return out
     else:
         return "I couldn't find any matches for {}.".format(text)

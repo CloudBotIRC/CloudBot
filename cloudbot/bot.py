@@ -151,7 +151,7 @@ class CloudBot:
             logger.debug("Stopping plugin reloader.")
             self.reloader.stop()
 
-        for connection in self.connections:
+        for connection in self.connections.values():
             if not connection.connected:
                 # Don't quit a connection that hasn't connected
                 continue
@@ -161,7 +161,7 @@ class CloudBot:
 
         yield from asyncio.sleep(1.0)  # wait for 'QUIT' calls to take affect
 
-        for connection in self.connections:
+        for connection in self.connections.values():
             if not connection.connected:
                 # Don't close a connection that hasn't connected
                 continue

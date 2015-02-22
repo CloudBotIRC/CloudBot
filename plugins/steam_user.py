@@ -4,6 +4,8 @@ from lxml import etree
 from cloudbot import hook
 from cloudbot.util import formatting
 
+# security
+parser = etree.XMLParser(resolve_entities=False, no_network=True)
 
 API_URL = "http://steamcommunity.com/id/{}/"
 ID_BASE = 76561197960265728
@@ -64,7 +66,7 @@ def get_data(user):
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         raise SteamError("Could not get user info: {}".format(e))
 
-    profile = etree.fromstring(request.content)
+    profile = etree.fromstring(request.content, parser=parser)
 
     try:
         data["name"] = profile.find('steamID').text

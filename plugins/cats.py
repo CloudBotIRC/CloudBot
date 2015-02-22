@@ -20,3 +20,20 @@ def cats():
         json = r.json()
         response = json['facts']
         return response
+
+@hook.command(autohelp=False)
+def catgifs():
+    """gets a fucking cat gif."""
+    attempts = 0
+    while True:
+        try:
+            r = requests.get("http://marume.herokuapp.com/random.gif")
+
+        except:
+            if attempts > 2:
+                return "there was an error finding a cat gif for you."
+            else:
+                attempts += 1
+                continue
+        response = r.url
+        return "OMG A CAT GIF: {}".format(response)

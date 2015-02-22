@@ -49,7 +49,7 @@ def welcome(nick, action, message, chan, event, db, conn):
     # For some reason chan isn't passed correctly. The below hack is sloppy and may need to be adjusted for different networks.
     # If someone knows how to get the channel a better way please fix this.
     # freenode uncomment then next line
-    # chan = event.irc_raw.split('JOIN ')[1]
+    # chan = event.irc_raw.split('JOIN ')[1].lower()
     # snoonet
     chan = event.irc_raw.split(':')[2].lower()
     welcome = db.execute("select quote from herald where name = :name and chan = :chan", {

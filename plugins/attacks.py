@@ -32,13 +32,16 @@ def load_attacks(bot):
     """
     :type bot: cloudbot.bot.CloudBot
     """
-    global larts, flirts, kills, slaps, north_korea
+    global larts, flirts, kills, slaps, north_korea, insults
 
     with codecs.open(os.path.join(bot.data_dir, "larts.txt"), encoding="utf-8") as f:
         larts = [line.strip() for line in f.readlines() if not line.startswith("//")]
 
     with codecs.open(os.path.join(bot.data_dir, "flirts.txt"), encoding="utf-8") as f:
         flirts = [line.strip() for line in f.readlines() if not line.startswith("//")]
+
+    with codecs.open(os.path.join(bot.data_dir, "insults.txt"), encoding="utf-8") as f:
+        insults = [line.strip() for line in f.readlines() if not line.startswith("//")]
 
     with codecs.open(os.path.join(bot.data_dir, "kills.json"), encoding="utf-8") as f:
         kills = json.load(f)
@@ -70,7 +73,7 @@ def lart(text, conn, nick, action):
 
 
 @asyncio.coroutine
-@hook.command
+@hook.command("flirt", "sexup", "jackmeoff")
 def flirt(text, conn, nick, message):
     """<user> - flirts with <user>"""
     target = text.strip()
@@ -131,3 +134,24 @@ def nk(chan, message):
     index = random.randint(0,len(north_korea)-1)
     slogan = north_korea[index]
     message(slogan, chan)
+
+@asyncio.coroutine
+@hook.command()
+def insult(text, conn, nick, notice, message):
+    """<user> - insults <user>
+    :type text: str
+    :type conn: cloudbot.client.Client
+    :type nick: str
+    """
+    target = text.strip()
+
+    if " " in target:
+        notice("Invalid username!")
+        return
+
+    # if the user is trying to make the bot target itself, target them
+    if is_self(conn, target):
+        target = nick
+
+    message("{}, {}".format(target, random.choice(insults)))
+

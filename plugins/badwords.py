@@ -131,30 +131,14 @@ def test_badwords(event, db, conn, message):
         else:
             pass
 
-
-ballface_re = re.compile('(\s|^)\:3($|\s)|(\s|^)3\:(\s|$)', re.IGNORECASE)
-
-
-@asyncio.coroutine
-@hook.regex(ballface_re)
-def ballface(match, conn, nick, chan, message):
-    """
-    :type match: re.__Match
-    :type conn: cloudbot.client.Client
-    :type chan: str
-    """
-    if chan not in [
-            "#banwomen",
-            "#foreveralonewomen",
-            "#yogscast",
-            "#casualconversation"]:
-        message("You teabagging son-of-a-bitch!", chan)
-
+@hook.onstart()
+def fuck_regex(conn)
+    global fuckyou_re
+    fuckyou_re = re.compile(
 
 cheer_re = re.compile('\\\\o\/', re.IGNORECASE)
 
 
-@asyncio.coroutine
 @hook.regex(cheer_re)
 def cheer(match, conn, nick, chan, message):
     """

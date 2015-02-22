@@ -4,7 +4,6 @@ import random
 from cloudbot.event import EventType
 from cloudbot import hook
 
-fuckyou_re = ""
 
 cheers = [
     "FUCK YEAH!",
@@ -134,15 +133,6 @@ def test_badwords(event, db, conn, message):
             pass
 
 
-@hook.regex(fuckyou_re)
-def fuckyou(match, conn, nick, chan, message):
-    """
-    :type match: re.__Match
-    :type conn: cloudbot.client.Client
-    :type chan: str
-    """
-    shit = "Fuck you too {}!".format(nick)
-    message(shit,chan)
 
 
 cheer_re = re.compile('\\\\o\/', re.IGNORECASE)

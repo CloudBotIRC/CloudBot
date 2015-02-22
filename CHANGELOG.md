@@ -1,4 +1,6 @@
 ## Changelog
+### 1.0.7
+ * Added new "Would you rather" plugin.
 ### 1.0.6
  * Added pig latin translator, requires new *nltk* module
  * Added reminder command

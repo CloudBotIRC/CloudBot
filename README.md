@@ -67,7 +67,7 @@ CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
     
     CloudBot
 
-    Copyright © 2011-2015 Luke Rogers and CloudBot Contributors
+    Copyright © 2011-2015 Luke Rogers / CloudBot Project
 
     CloudBot is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -84,5 +84,3 @@ CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
     
 This product includes GeoLite2 data created by MaxMind, available from
 <a href="http://www.maxmind.com">http://www.maxmind.com</a>. GeoLite2 databases are distributed under the [Creative Commons Attribution-ShareAlike 3.0 Unported License](https://creativecommons.org/licenses/by-sa/3.0/).
-
-This product uses the TheTVDB API. Find more info and contribute at http://thetvdb.com/

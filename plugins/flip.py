@@ -3,7 +3,7 @@ import random
 from cloudbot import hook
 from cloudbot.util import formatting
 
-USE_FLIPPERS = False
+USE_FLIPPERS = True
 
 replacements = {
     'a': 'ɐ',

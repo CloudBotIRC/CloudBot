@@ -133,11 +133,6 @@ def test_badwords(event, db, conn, message):
         else:
             pass
 
-@hook.onload()
-def fuck_regex(conn, bot):
-    global fuckyou_re
-    name = bot.config['connections'][0].get('nick')
-    fuckyou_re = re.compile('fuck you {}|{} fuck ..?.?.?self|fuck ..?.?.?self {}'.format(name, name, name))
 
 @hook.regex(fuckyou_re)
 def fuckyou(match, conn, nick, chan, message):

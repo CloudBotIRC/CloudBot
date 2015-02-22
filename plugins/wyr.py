@@ -19,7 +19,7 @@ import requests
 from cloudbot import hook
 
 API_URL = "http://www.rrrather.com/botapi"
-FILTERED_TAGS = ('rape', 'gross', 'sex')
+FILTERED_TAGS = ()
 
 
 def get_wyr(headers):

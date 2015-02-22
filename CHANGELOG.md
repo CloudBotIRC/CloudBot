@@ -1,4 +1,6 @@
 ## Changelog
+### 1.0.7.1
+ * Security fixes.
 ### 1.0.7
  * Added new "Would you rather" plugin.
 ### 1.0.6

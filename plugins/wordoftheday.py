@@ -6,7 +6,7 @@ from cloudbot import hook
 
 @hook.command("wordoftheday", "word", autohelp=False)
 def wordoftheday():
-    """- Gets the word of the day from http://www.merriam-webster.com/word-of-the-day"""
+    """-- Gets the word of the day from http://www.merriam-webster.com/word-of-the-day"""
     try:
         request = requests.get('http://merriam-webster.com/word-of-the-day')
         request.raise_for_status()
@@ -16,12 +16,12 @@ def wordoftheday():
     soup = BeautifulSoup(request.text)
 
     try:
-        word = soup.find('strong', {'class': 'main_entry_word'}).text
-        function = soup.find('p', {'class': 'word_function'}).text
+        word = soup.find('div', {'class': 'wod_headword'}).text
+        function = soup.find('div', {'class': 'wod_pos'}).text
     except AttributeError:
         return "Could not parse word of the day."
 
-    # here be demons
+    # sometimes this wont work, so we do it separately
     try:
         definition = soup.find('div', {'class': 'scnt'}).find('span', {'class': 'ssens'}).text
     except AttributeError:

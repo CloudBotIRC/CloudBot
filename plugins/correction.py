@@ -17,6 +17,8 @@ def correction(match, conn, chan, message):
     groups = [b.replace("\/", "/") for b in re.split(r"(?<!\\)/", match.groups()[0])]
     find = groups[0]
     replacement = groups[1]
+    if find == replacement:
+        return "really dude? you want me to replace {} with {}?".format(find, replacement)
     flags = groups[2] if len(groups) == 3 else ""
     find_re = find
     #find_re = re.compile("{}{}".format("(?{})".format(flags.replace("g", ""))

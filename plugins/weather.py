@@ -104,6 +104,7 @@ def weather(text, reply, db, nick, bot, notice):
           "Low: {tomorrow_low_f}F/{tomorrow_low_c}C - {url}".format(**weather_data))
 
     if location and not dontsave:
+        assert isinstance(db, object)
         db.execute("insert or replace into weather(nick, loc) values (:nick, :loc)",
                    {"nick": nick.lower(), "loc": loc})
         db.commit()

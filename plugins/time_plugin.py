@@ -8,6 +8,10 @@ base_url = 'https://maps.googleapis.com/maps/api/'
 geocode_api = base_url + 'geocode/json'
 timezone_api = base_url + 'timezone/json'
 
+# Change this to a ccTLD code (eg. uk, nz) to make results more targeted towards that specific country.
+# <https://developers.google.com/maps/documentation/geocoding/#RegionCodes>
+bias = None
+
 
 def check_status(status, api):
     """ A little helper function that checks an API error code and returns a nice message.
@@ -26,7 +30,7 @@ def check_status(status, api):
         return None
     else:
         # !!!
-        return 'Unknown Error.'
+        return 'Unknown Demons.'
 
 
 @hook.on_start
@@ -43,7 +47,11 @@ def time_command(text):
         return "This command requires a Google Developers Console API key."
 
     # Use the Geocoding API to get co-ordinates from the input
-    json = requests.get(geocode_api, params={"address": text, "key": dev_key}).json()
+    params = {"address": text, "key": dev_key}
+    if bias:
+        params['region'] = bias
+
+    json = requests.get(geocode_api, params=params).json()
 
     error = check_status(json['status'], "geocoding")
     if error:
@@ -58,8 +66,9 @@ def time_command(text):
     formatted_location = "{lat},{lng}".format(**location)
 
     epoch = time.time()
-    json = requests.get(timezone_api, params={"location": formatted_location,
-                                              "timestamp": epoch, "key": dev_key}).json()
+
+    params = {"location": formatted_location, "timestamp": epoch, "key": dev_key}
+    json = requests.get(timezone_api, params=params).json()
 
     error = check_status(json['status'], "timezone")
     if error:

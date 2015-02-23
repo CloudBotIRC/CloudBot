@@ -10,7 +10,8 @@ SEARCH_URL = "http://www.amazon.com/s/"
 
 # Feel free to set this to None or change it to your own ID.
 # Or leave it in to support CloudBot, it's up to you!
-AFFILIATE_TAG = "cloudbot-20"
+# requsted to remove it by network
+AFFILIATE_TAG = ""
 
 
 

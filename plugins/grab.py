@@ -28,9 +28,11 @@ def grab_add(nick, time, msg, chan, db, conn):
 
 
 @hook.command()
-def grab(text, chan, db, conn):
+def grab(text, nick, chan, db, conn):
     """grab <nick> grabs the last message from the
     specified nick and adds it to the quote database"""
+    if text.lower() == nick.lower():
+        return "Didn't your mother teach you not to grab yourself?"
     db_init(db, conn.name)
     lastq = db.execute("select name, time, quote, chan from seen_user "
                        "where name = :name and chan = :chan ",

@@ -8,6 +8,9 @@ from lxml import etree
 from cloudbot import hook
 from cloudbot.util import formatting
 
+# security
+parser = etree.XMLParser(resolve_entities=False, no_network=True)
+
 api_prefix = "http://en.wikipedia.org/w/api.php"
 search_url = api_prefix + "?action=opensearch&format=xml"
 random_url = api_prefix + "?action=query&format=xml&list=random&rnlimit=1&rnnamespace=0"
@@ -24,7 +27,7 @@ def wiki(text):
         request.raise_for_status()
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         return "Could not get Wikipedia page: {}".format(e)
-    x = etree.fromstring(request.text)
+    x = etree.fromstring(request.text, parser=parser)
 
     ns = '{http://opensearch.org/searchsuggest2}'
     items = x.findall(ns + 'Section/' + ns + 'Item')

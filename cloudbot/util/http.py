@@ -18,6 +18,9 @@ from lxml import etree, html
 # noinspection PyUnresolvedReferences
 from urllib.error import URLError, HTTPError
 
+# security
+parser = etree.XMLParser(resolve_entities=False, no_network=True)
+
 ua_cloudbot = 'Cloudbot/DEV http://github.com/CloudDev/CloudBot'
 
 ua_firefox = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:17.0) Gecko/17.0' \
@@ -52,7 +55,7 @@ def get_soup(*args, **kwargs):
 
 def get_xml(*args, **kwargs):
     kwargs["decode"] = False  # we don't want to decode, for etree
-    return etree.fromstring(get(*args, **kwargs))
+    return etree.fromstring(get(*args, **kwargs), parser=parser)
 
 
 def get_json(*args, **kwargs):

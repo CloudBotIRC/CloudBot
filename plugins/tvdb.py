@@ -5,6 +5,9 @@ from lxml import etree
 
 from cloudbot import hook
 
+# security
+parser = etree.XMLParser(resolve_entities=False, no_network=True)
+
 base_url = "http://thetvdb.com/api/"
 
 
@@ -20,7 +23,7 @@ def get_episodes_for_series(series_name, api_key):
         res["error"] = "error contacting thetvdb.com"
         return res
 
-    query = etree.fromstring(request.content)
+    query = etree.fromstring(request.content, parser=parser)
     series_id = query.xpath('//seriesid/text()')
 
     if not series_id:
@@ -36,7 +39,7 @@ def get_episodes_for_series(series_name, api_key):
         res["error"] = "error contacting thetvdb.com"
         return res
 
-    series = etree.fromstring(_request.content)
+    series = etree.fromstring(_request.content, parser=parser)
     series_name = series.xpath('//SeriesName/text()')[0]
 
     if series.xpath('//Status/text()')[0] == 'Ended':

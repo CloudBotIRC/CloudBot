@@ -10,9 +10,9 @@ replacements = {
     'd': 'p',
     'e': 'ǝ',
     'f': 'ɟ',
-    'g': 'b',
+    'g': 'ƃ',
     'h': 'ɥ',
-    'i': 'ı',
+    'i': 'ᴉ',
     'j': 'ɾ',
     'k': 'ʞ',
     'l': 'ן',
@@ -32,6 +32,7 @@ replacements = {
     'z': 'z',
     '?': '¿',
     '.': '˙',
+    ',': '\'',
     '/': '\\',
     '\\': '/',
     '(': ')',
@@ -45,17 +46,20 @@ replacements = {
     '\'': ',',
     '_': '‾'}
 
+# append an inverted form of replacements to itself, so flipping works both ways
+replacements.update(dict((v, k) for k, v in replacements.items()))
+
 flippers = ["( ﾉ⊙︵⊙）ﾉ", "(╯°□°）╯", "( ﾉ♉︵♉ ）ﾉ"]
 
 @hook.command
 def flip(text, reply):
     """<text> -- Flips <text> over."""
-    reply(formatting.multi_replace(text[::-1], replacements))
+    reply(formatting.multi_replace(text[::-1].lower(), replacements))
 
 
 @hook.command
 def table(text, message):
     """<text> -- (╯°□°）╯︵ <ʇxǝʇ>"""
-    message(random.choice(flippers) + " ︵ " + formatting.multi_replace(text[::-1], replacements))
+    message(random.choice(flippers) + " ︵ " + formatting.multi_replace(text[::-1].lower(), replacements))
 
 

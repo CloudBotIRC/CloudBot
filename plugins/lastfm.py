@@ -352,6 +352,6 @@ def lastfm_artist(text, nick, db, bot, notice):
         artist_name, playcount, listeners, url)
     if 'userplaycount' in response["artist"]["stats"]:
         userplaycount = response["artist"]["stats"]["userplaycount"]
-        out = "'{}' from the album {} by {} has been played {} times by {} listeners. {} has listened {} times. {}".format(
+        out = "'{}' has been played {} times by {} listeners. {} has listened {} times. {}".format(
             artist_name, playcount, listeners, username, userplaycount, url)
     return out

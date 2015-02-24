@@ -5,7 +5,7 @@ from cloudbot import hook
 
 
 @hook.command
-def dig(text):
+def dig(text, nick, notice):
     """.dig <domain> <recordtype> returns a list of records for the specified domain valid record types are A, NS, TXT, and MX. If a record type is not chosen A will be the default."""
     try:
         domain, rtype = text.split()
@@ -19,7 +19,7 @@ def dig(text):
     r = requests.get(url)
     results = r.json()
     out = "The following records were found for {}: ".format(domain)
-    if results['header']['rcode'] == "NXDOMAIN" or not results['header']['answer']:
+    if results['header']['rcode'] == "NXDOMAIN":
         return "no dns record for {} was found".format(domain)
     out = "The following records were found for {}: ".format(domain)
     for r in range(len(results['answer'])):
@@ -33,4 +33,4 @@ def dig(text):
         out += "name: \x02{}\x02 type: \x02{}\x02 ttl: \x02{}\x02 rdata: \x02{}\x02 | ".format(
             domain, rtype, ttl, rdata)
     out = out[:-2]
-    return out
+    notice(out, nick)

@@ -27,9 +27,7 @@ def check_status(status):
         return 'Invalid Request.'
     elif status == 'OK':
         return None
-    else:
-        # !!!
-        return 'Unknown Demons.'
+
 
 
 @hook.on_start

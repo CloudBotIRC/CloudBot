@@ -21,7 +21,7 @@ def dig(text, nick, notice):
     out = "The following records were found for {}: ".format(domain)
     if results['header']['rcode'] == "NXDOMAIN":
         return "no dns record for {} was found".format(domain)
-    out = "The following records were found for \x02{}\x02: ".format(domain)
+    notice( "The following records were found for \x02{}\x02: ".format(domain),nick)
     for r in range(len(results['answer'])):
         domain = results['answer'][r]['name']
         rtype = results['answer'][r]['type']

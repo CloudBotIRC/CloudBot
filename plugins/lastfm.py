@@ -136,7 +136,7 @@ def lastfmcompare(text, nick, bot, db):
 
     score = float(
         format(float(data["comparison"]["result"]["score"]) * 100, '.3f'))
-    if score == "0":
+    if score == 0:
         return "{} and {} have no common listening history.".format(user2, user1)
     level = "Super" if score > 95 else "Very High" if score > 80 else "High" if score > 60 else \
             "Medium" if score > 40 else "Low" if score > 10 else "Very Low"

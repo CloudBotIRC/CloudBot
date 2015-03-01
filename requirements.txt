@@ -1,6 +1,6 @@
 nltk
 geoip2
-mcstatus
+git+https://github.com/CloudBotIRC/mcstatus.git@master
 microdata
 sqlalchemy
 watchdog

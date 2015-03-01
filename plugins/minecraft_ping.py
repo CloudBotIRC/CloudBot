@@ -47,3 +47,4 @@ def mcping(text):
     return "{}\x0f - \x02{}\x0f (\x0f{}\x0f) - \x02{}ms\x02" \
            " - \x02{}/{}\x02 players".format(description, s.version.name, s.version.protocol, latency,
                                              s.players.online, s.players.max).replace("\n", "\x0f - ")
+''

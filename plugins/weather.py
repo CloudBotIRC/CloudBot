@@ -40,8 +40,8 @@ def check_status(status):
 def find_location(location):
     """
     Takes a location as a string, and returns a dict of data
-    :param location:
-    :return:
+    :param location: string
+    :return: dict
     """
     params = {"address": location, "key": dev_key}
     if bias:

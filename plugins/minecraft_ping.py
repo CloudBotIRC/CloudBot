@@ -7,7 +7,7 @@ mc_colors = [('\xa7f', '\x0300'), ('\xa70', '\x0301'), ('\xa71', '\x0302'), ('\x
              ('\xa7c', '\x0304'), ('\xa74', '\x0305'), ('\xa75', '\x0306'), ('\xa76', '\x0307'),
              ('\xa7e', '\x0308'), ('\xa7a', '\x0309'), ('\xa73', '\x0310'), ('\xa7b', '\x0311'),
              ('\xa71', '\x0312'), ('\xa7d', '\x0313'), ('\xa78', '\x0314'), ('\xa77', '\x0315'),
-             ('\xa7l', '\x02'), ('\xa79', '\x0310'), ('\xa7o', '\t'), ('\xa7m', '\x13'),
+             ('\xa7l', '\x02'), ('\xa79', '\x0310'), ('\xa7o', ''), ('\xa7m', '\x13'),
              ('\xa7r', '\x0f'), ('\xa7n', '\x15')]
 
 
@@ -44,6 +44,6 @@ def mcping(text):
     else:
         description = format_colors(" ".join(s.description.split()))
 
-    return "{}\x0f - \x02{}\x0f - \x02{}ms\x02" \
-           " - \x02{}/{}\x02 players".format(description, s.version.name, latency,
+    return "{}\x0f - \x02{}\x0f (\x0f{}\x0f) - \x02{}ms\x02" \
+           " - \x02{}/{}\x02 players".format(description, s.version.name, s.version.protocol, latency,
                                              s.players.online, s.players.max).replace("\n", "\x0f - ")

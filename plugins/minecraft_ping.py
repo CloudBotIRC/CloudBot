@@ -1,6 +1,7 @@
+import socket
+
 from mcstatus import MinecraftServer
 
-import socket
 from cloudbot import hook
 
 mc_colors = [('\xa7f', '\x0300'), ('\xa70', '\x0301'), ('\xa71', '\x0302'), ('\xa72', '\x0303'),
@@ -38,13 +39,11 @@ def mcping(text):
     except (IOError, ValueError) as e:
         return "Error pinging server: {}".format(e)
 
-    latency = round(s.latency)
     if isinstance(s.description, dict):
         description = format_colors(" ".join(s.description["text"].split()))
     else:
         description = format_colors(" ".join(s.description.split()))
 
-    return "{}\x0f - \x02{}\x0f (\x0f{}\x0f) - \x02{}ms\x02" \
-           " - \x02{}/{}\x02 players".format(description, s.version.name, s.version.protocol, latency,
+    return "{}\x0f - \x02{}\x0f - \x02{:.1f}ms\x02" \
+           " - \x02{}/{}\x02 players".format(description, s.version.name, s.latency,
                                              s.players.online, s.players.max).replace("\n", "\x0f - ")
-''

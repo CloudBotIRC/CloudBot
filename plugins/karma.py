@@ -1,6 +1,8 @@
 #import asyncio
 import re
+import operator
 
+from collections import defaultdict
 from cloudbot import hook
 #from cloudbot.util import timesince
 from cloudbot.event import EventType
@@ -108,3 +110,64 @@ def points(text, chan, db, conn):
         return "{} has a total score of {} in {}.".format(text, score, chan)
     else:
         return "I couldn't find {} in the database.".format(text)
+
+@hook.command("topten", "pointstop", "loved", autohelp=False)
+def pointstop(text, chan, db, message, conn, notice):
+    """.topten or .pointstop prints the top 10 things with the highest points in the channel. To see the top 10 items in all of the channels the bot sits in use .topten global."""
+    db_init(db, conn.name)
+    scores = []
+    points = defaultdict(int)
+    items = ""
+    out = ""
+    if text == "global":
+        items = db.execute("select thing, score from karma").fetchall()
+        out = "The top {} favorite things in all channels are: "
+    else:
+        items = db.execute("select thing, score from karma where chan = :chan", {'chan':chan}).fetchall()
+        out = "The top {} favorite things in {} are: "
+    if items:
+        for item in items:
+            thing = item[0]
+            score = int(item[1])
+            points[thing] += score
+        scores = points.items()
+        sorts = sorted(scores, key=operator.itemgetter(1), reverse = True)
+        ten = str(len(sorts))
+        if int(ten) > 10:
+            ten = "10"
+        out = out.format(ten, chan)
+        for i in range(0,int(ten)-1):
+            out += "{} with {} points \u2022 ".format(sorts[i][0], sorts[i][1])
+        out = out[:-2]
+        return out
+
+@hook.command("bottomten", "pointsbottom", "hated", autohelp=False)
+def pointsbottom(text, chan, db, message, conn, notice):
+    """.bottomten or .pointsbottom prints the top 10 things with the highest points in the channel. To see the top 10 items in all of the channels the bot sits in use .topten global."""
+    db_init(db, conn.name)
+    scores = []
+    points = defaultdict(int)
+    items = ""
+    out = ""
+    if text == "global":
+        items = db.execute("select thing, score from karma").fetchall()
+        out = "The {} most hated things in all channels are: "
+    else:
+        items = db.execute("select thing, score from karma where chan = :chan", {'chan':chan}).fetchall()
+        out = "The {} most hated things in {} are: "
+    if items:
+        for item in items:
+            thing = item[0]
+            score = int(item[1])
+            points[thing] += score
+        scores = points.items()
+        sorts = sorted(scores, key=operator.itemgetter(1))
+        ten = str(len(sorts))
+        if int(ten) > 10:
+            ten = "10"
+        out = out.format(ten, chan)
+        for i in range(0,int(ten)-1):
+            out += "{} with {} points \u2022 ".format(sorts[i][0], sorts[i][1])
+        out = out[:-2]
+        return out
+

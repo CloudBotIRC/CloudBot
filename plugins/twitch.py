@@ -86,6 +86,7 @@ def twitch_url(match):
 
 @hook.command('twitch', 'twviewers')
 def twitch(text):
+    """<channel name> -- Retreieves the channel and shows it's offline/offline status"""
     text = text.split("/")[-1]
     if test_name(text):
         location = text

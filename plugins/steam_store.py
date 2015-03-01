@@ -80,10 +80,9 @@ def format_game(app_id, show_url=True):
 
 # HOOK FUNCTIONS
 
-@hook.command
+@hook.command()
 def steam(text):
-    """steam [Takes a Steam ID_64 formatted ID and returns a ID_32 formatted IDsearch] - Search for specified
-    game/trailer/DLC"""
+    """<query> - Search for specified game/trailer/DLC"""
     params = {'term': text.strip().lower()}
 
     try:

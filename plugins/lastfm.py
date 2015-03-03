@@ -9,7 +9,7 @@ from cloudbot.util import timeformat
 api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
 
 
-@hook.command("lastfm", "lfm", "l", autohelp=False)
+@hook.command("lastfm", "last", "lfm", "l", autohelp=False)
 def lastfm(text, nick, db, bot, notice):
     """[user] [dontsave] - displays the now playing (or last played) track of LastFM user [user]"""
     api_key = bot.config.get("api_keys", {}).get("lastfm")

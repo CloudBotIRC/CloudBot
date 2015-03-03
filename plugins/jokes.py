@@ -9,7 +9,7 @@ def load_jokes(bot):
     """
     :type bot: cloudbot.bot.Cloudbot
     """
-    global yo_momma, do_it, pun, confucious, one_liner, wisdom
+    global yo_momma, do_it, pun, confucious, one_liner, wisdom, book_puns
 
     with codecs.open(os.path.join(bot.data_dir, "yo_momma.txt"), encoding="utf-8") as f:
         yo_momma = [line.strip() for line in f.readlines() if not line.startswith("//")]
@@ -28,6 +28,9 @@ def load_jokes(bot):
 
     with codecs.open(os.path.join(bot.data_dir, "wisdom.txt"), encoding="utf-8") as f:
         wisdom = [line.strip() for line in f.readlines() if not line.startswith("//")]
+    
+    with codecs.open(os.path.join(bot.data_dir, "book_puns.txt"), encoding="utf-8") as f:
+        book_puns = [line.strip() for line in f.readlines() if not line.startswith("//")]
 
 @hook.command()
 def yomomma(text, message, conn):
@@ -60,3 +63,13 @@ def dadjoke(message, conn):
 def wisdom(message, conn):
     """words of wisdom from various bathroom stalls."""
     message(random.choice(wisdom))
+
+@hook.command(autohelp=False)
+def bookpun(message, conn):
+    """Suggests a pun of a book title/author."""
+    #suggestions = ["Why not try", "You should read", "You gotta check out"]
+    book = random.choice(book_puns)
+    title = book.split(':')[0].strip()
+    author = book.split(':')[1].strip()
+    message("{} by {}".format(title, author))
+

@@ -91,7 +91,7 @@ def lastfm(text, nick, db, bot, notice):
 
 @hook.command("lastfmcompare", "compare")
 def lastfmcompare(text, bot):
-    """[user] [dontsave] - displays the now playing (or last played) track of LastFM user [user]"""
+    """<user1> <user2> - compare the music compatibility of two LastFM users"""
     api_key = bot.config.get("api_keys", {}).get("lastfm")
     if not api_key:
         return "No last.fm API key set."

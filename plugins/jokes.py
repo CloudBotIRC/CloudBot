@@ -1,6 +1,7 @@
 import codecs
 import os
 import random
+import re
 
 from cloudbot import hook
 
@@ -73,3 +74,12 @@ def bookpun(message, conn):
     author = book.split(':')[1].strip()
     message("{} by {}".format(title, author))
 
+@hook.command("boobs", "boobies")
+def boobies(text, conn):
+    """prints boobies!"""
+    boob = "\u2299"
+    out = text.strip()
+    out = out.replace('o', boob).replace('O', boob).replace('0', boob)
+    if out == text.strip():
+        return "Sorry I couldn't turn anything in '{}' into boobs for you.".format(out)
+    return out

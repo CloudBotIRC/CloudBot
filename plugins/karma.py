@@ -136,7 +136,7 @@ def pointstop(text, chan, db, message, conn, notice):
         if int(ten) > 10:
             ten = "10"
         out = out.format(ten, chan)
-        for i in range(0,int(ten)-1):
+        for i in range(0,int(ten)):
             out += "{} with {} points \u2022 ".format(sorts[i][0], sorts[i][1])
         out = out[:-2]
         return out
@@ -166,7 +166,7 @@ def pointsbottom(text, chan, db, message, conn, notice):
         if int(ten) > 10:
             ten = "10"
         out = out.format(ten, chan)
-        for i in range(0,int(ten)-1):
+        for i in range(0,int(ten)):
             out += "{} with {} points \u2022 ".format(sorts[i][0], sorts[i][1])
         out = out[:-2]
         return out

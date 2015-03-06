@@ -41,7 +41,7 @@ def rotten_tomatoes(text, bot):
                "Audience Rating: \x02{}%\x02 - {}".format(title, audience_score, url)
 
     review_params = {
-        'review_type': all,
+        'review_type': 'all',
         'apikey': api_key
     }
 

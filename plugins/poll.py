@@ -1,85 +1,129 @@
-from collections import defaultdict
-from json import dumps
 from re import findall
+
 from cloudbot import hook
-from cloudbot.util import web
+
+from cloudbot.util.formatting import pluralize, get_text_list
 
 
-def tree():  # autovivification
-    return defaultdict(tree)
+polls = {}
 
 
-active_polls = tree()
+class PollError(Exception):
+    pass
 
 
-@hook.command(autohelp=True)
+class PollOption:
+    def __init__(self, title):
+        self.title = title
+        self.votes = 0
+
+
+class Poll:
+    def __init__(self, question, creator, options=["Yes", "No"]):
+        self.question = question
+        self.creator = creator
+        self.options = {i.lower(): PollOption(i) for i in options}
+
+        self.voted = []
+
+    def vote(self, voted_option, voter):
+        """
+        Adds a vote to a specific poll option. Raises PollError if option is invalid or user has already voted.
+        Returns PollOption if sucessful.
+        :param voted_option: The poll option to vote on
+        :param voter: The user who is voting on the poll
+        """
+        voted_option = voted_option.lower()
+
+        # check if the option is valid
+        if voted_option not in self.options.keys():
+            raise PollError("Invalid option")
+
+        # make sure the user hasn't already voted
+        if voter.lower() in self.voted:
+            raise PollError("Sorry, you have already voted on this poll.")
+
+        option = self.options.get(voted_option)
+        option.votes += 1
+
+        self.voted.append(voter.lower())
+        return option
+
+
+@hook.command()
 def poll(text, conn, nick, chan, message):
-    """poll <description>: choice1, choice2, ... - Begins a poll (if it does not exist). Choice defaults are [yes|no]. end poll and get results with 'poll close'."""
-    global active_polls
-    active_polls[chan]  # init
+    global polls
 
-    global bot_prefix
-    bot_prefix = conn.config["command_prefix"]
+    # get poll ID
+    uid = ":".join([conn.name, chan, nick]).lower()
 
-    if text == "close":
-        if active_polls.get(chan).get(nick) is None:
-            return "You do not have an active poll."
-        else:
-            active_polls[chan][nick]['results']['total'] = len(active_polls[chan][nick]['votes'].keys())
-            for choice in active_polls[chan][nick]['choices']:
-                active_polls[chan][nick]['results']['choices'][choice] = len([x for x in active_polls[chan][nick]['votes'] if active_polls[chan][nick]['votes'][x] == choice])
-            results = web.paste(dumps(dict(active_polls.get(chan).get(nick)), sort_keys=True, indent=2))
-            del active_polls[chan][nick]
-            message("Results for {}'s poll: {}".format(nick, results))
-            return
-    if active_polls.get(chan).get(nick) is not None:
-        return "You already have an active poll: '{}'.".format(active_polls[chan][nick]['description'])
+    if text.lower() == "close":
+        if uid not in polls.keys():
+            return "You have no active poll to close."
+
+        poll = polls.get(uid)
+        message("Your poll has been closed. Final results for \x02{}\x02:".format(poll.question, poll.creator))
+        #message(", ".join(poll.options.values()))
+        del polls[uid]
+        return
+
+    if uid in polls.keys():
+        return "You already have an active poll in this channel, you must close it before you can create a new one."
 
     if ':' in text:
-        desc, choices = text.split(':')
-        c = findall(r'([^,]+)', choices)
+        question, options = text.strip().split(':')
+        c = findall(r'([^,]+)', options)
         if len(c) == 1:
-            c = findall(r'(\S+)', choices)
-        choices = list(set(x.strip() for x in c))
+            c = findall(r'(\S+)', options)
+        options = list(set(x.strip() for x in c))
+        _poll = Poll(question, nick, options)
     else:
-        desc = text
-        choices = ["yes", "no"]
+        question = text.strip()
+        _poll = Poll(question, nick)
 
-    active_polls[chan][nick]['description'] = desc
-    active_polls[chan][nick]['choices'] = choices
-    active_polls[chan][nick]['votes']
-    message("Poll '{1}' started by {0}; to vote use '{3}vote {0} <{2}>'.".format(nick, desc, "|".join(choices), bot_prefix))
+    # store poll in list
+    polls[uid] = _poll
 
-
-@hook.command(autohelp=False)
-def polls(text, chan, message):
-    """.polls [user] - Gets a list of active polls, or information on a specific poll."""
-    global active_polls
-    active_polls[chan]  # init
-
-    if text:
-        if active_polls.get(chan).get(text):
-            message("{}'s '{}' poll choices: {}".format(text, active_polls.get(chan).get(text).get('description'), ', '.join(active_polls.get(chan).get(text).get('choices'))))
-        else:
-            message("No active poll for {}.".format(text))
-    else:
-        message("Active polls: {}".format((", ".join(active_polls.get(chan).keys()) if active_polls.get(chan) else "None")))
+    option_str = get_text_list([option.title for option in _poll.options.values()], "and")
+    message('Created poll "{}" with the following options: {}'.format(_poll.question, option_str))
+    message("Use .vote {} <option> to vote on this poll!".format(nick.lower()))
 
 
 @hook.command(autohelp=True)
-def vote(text, nick, chan, notice):
+def vote(text, nick, conn, chan, notice):
     """.vote <poll> <choice> - Vote on a poll; responds on error and silently records on success."""
-    global active_polls
-    active_polls[chan]  # init
+    global polls
 
     if len(text.split(' ', 1)) == 2:
-        poll, vote = text.split(' ', 1)
-        if active_polls.get(chan).get(poll) is None:
-            return "The poll you are trying to vote for no longer exists."
-        if vote not in active_polls.get(chan).get(poll).get('choices'):
-            return "Invalid vote; valid choices are: {}".format(', '.join(active_polls.get(chan).get(poll).get('choices')))
+        _user, option = text.split(' ', 1)
+        uid = ":".join([conn.name, chan, _user]).lower()
     else:
-        return "Please use form '{0}vote <poll> <choice>'. Check active polls with '{0}polls'.".format(bot_prefix)
+        return "Invalid input!"
 
-    active_polls[chan][poll]['votes'][nick] = vote
-    notice("You have successfully voted for {}".format(vote))
+    if uid not in polls.keys():
+        return "There is no poll active from that user!"
+
+    poll = polls.get(uid)
+
+    try:
+        voted_option = poll.vote(option, nick)
+    except PollError as e:
+        return "{}".format(e)
+
+    return "Saved vote. {} now has {} votes.".format(voted_option.title, voted_option.votes)
+
+
+@hook.command(autohelp=True)
+def results(text, conn, chan, message):
+    """.vote <poll> <choice> - Vote on a poll; responds on error and silently records on success."""
+    global polls
+
+    # get poll ID and see if it exists
+    uid = ":".join([conn.name, chan, text]).lower()
+    if uid not in polls.keys():
+        return "There is no poll active from that user!"
+
+    poll = polls.get(uid)
+
+    message("Results for \x02{}\x02 by \x02{}\x02:".format(poll.question, poll.creator))
+    message(", ".join(poll.options.values()))

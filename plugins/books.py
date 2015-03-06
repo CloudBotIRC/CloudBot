@@ -23,7 +23,8 @@ def books(text):
 
     if json.get('error'):
         if json['error']['code'] == 403:
-            return "The Books API is off in the Google Developers Console."
+            print(json['error']['message'])
+            return "The Books API is off in the Google Developers Console (or check the console)."
         else:
             return 'Error performing search.'
 

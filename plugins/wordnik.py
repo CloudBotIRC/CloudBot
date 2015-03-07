@@ -67,7 +67,7 @@ def define(text, conn):
                                     dictionaries[json[0]['sourceDictionary']])
         return out
     else:
-        return "I could find a definition for {}.".format(word)
+        return "I could not find a definition for {}.".format(word)
 
 # word pronunciations
 

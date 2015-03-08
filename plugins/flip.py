@@ -53,7 +53,10 @@ flippers = ["( ﾉ⊙︵⊙）ﾉ", "(╯°□°）╯", "( ﾉ♉︵♉ ）ﾉ"
 def flip(text, message, reply):
     """<text> -- Flips <text> over."""
     if USE_FLIPPERS:
-        message(random.choice(flippers) + " ︵ " + formatting.multi_replace(text[::-1], replacements))
+        if text in ['table','tables']:
+             message(random.choice(flippers) + " ︵ " + "\u253B\u2501\u253B")
+        else:
+             message(random.choice(flippers) + " ︵ " + formatting.multi_replace(text[::-1], replacements))
     else:
         reply(formatting.multi_replace(text[::-1], replacements))
 

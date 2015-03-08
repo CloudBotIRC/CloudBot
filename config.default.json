@@ -80,7 +80,7 @@
         "rdio_secret": "",
         "google_dev_key": "",
         "octopart": "",
-        "wordnik": "",
+        "wordnik": ""
     },
     "database": "sqlite:///cloudbot.db",
     "plugin_loading": {

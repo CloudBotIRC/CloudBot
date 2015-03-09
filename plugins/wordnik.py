@@ -43,13 +43,12 @@ def define(text):
             dictionaries[json[0]['sourceDictionary']])
 
     else:
-        return "I could not find a definition for {}.".format(word)
+        return "I could not find a definition for \x02{}\x02.".format(word)
 
 
-# word usage
-@hook.command("wordexample", "wordusage", "usage")
-def word_example(text):
-    """Provides an example sentence of the usage of a specified word."""
+@hook.command("wordusage", "wordexample", "usage")
+def word_usage(text):
+    """<word> -- Returns an example sentence showing the usage of <word>."""
     if not api_key:
         return "This command requires an API key from wordnik.com."
     word = text.split(' ')[0]
@@ -66,12 +65,12 @@ def word_example(text):
         out += "{} ".format(json['examples'][i]['text'])
         return out
     else:
-        return "I could not find any usage examples for the word: {}".format(word)
+        return "I could not find any usage examples for \x02{}\x02.".format(word)
 
 
 @hook.command("pronounce", "sounditout")
-def pronounce(text, conn):
-    """Input a word and I will tell you how to pronounce it."""
+def pronounce(text):
+    """<word> -- Returns instructions on how to pronounce <word> with an audio example."""
     if not api_key:
         return "This command requires an API key from wordnik.com."
     word = text.split(' ')[0]
@@ -85,18 +84,29 @@ def pronounce(text, conn):
 
     if json:
         out = "\x02{}\x02: ".format(word)
-        for i in range(len(json)):
-            out += "{} {} ".format(json[i]['raw'], u'\u2022')
-        out = out[:-3] + ". "
-        out += word_audio(word, conn)
-        return out
+        out += " • ".join([i['raw'] for i in json])
     else:
-        return "Sorry I don't know how to pronounce {}.".format(word)
+        return "Sorry, I don't know how to pronounce \x02{}\x02.".format(word)
+
+    url = BASE_URL + "word.json/{}/audio".format(word)
+
+    params = {
+        'api_key': api_key,
+        'limit': 1,
+        'useCanonical': 'false'
+    }
+    json = requests.get(url, params=params).json()
+
+    if json:
+        url = web.try_shorten(json[0]['fileUrl'])
+        out += " - {}".format(url)
+
+    return out
 
 
 @hook.command()
 def synonym(text):
-    """provides a list of synonyms for a given word"""
+    """<word> -- Returns a list of synonyms for <word>."""
     if not api_key:
         return "This command requires an API key from wordnik.com."
     word = text.split(' ')[0]
@@ -111,17 +121,15 @@ def synonym(text):
 
     if json:
         out = "\x02{}\x02: ".format(word)
-        for i in range(len(json[0]['words'])):
-            out += "{} {} ".format(json[0]['words'][i], u'\u2022')
-        out = out[:-2]
+        out += " • ".join(json[0]['words'])
         return out
     else:
-        return "Sorry, I couldn't find any synonyms for {}.".format(word)
+        return "Sorry, I couldn't find any synonyms for \x02{}\x02.".format(word)
 
 
 @hook.command()
 def antonym(text):
-    """provides a list of antonyms for a given word"""
+    """<word> -- Returns a list of antonyms for <word>."""
     if not api_key:
         return "This command requires an API key from wordnik.com."
     word = text.split(' ')[0]
@@ -137,37 +145,11 @@ def antonym(text):
 
     if json:
         out = "\x02{}\x02: ".format(word)
-        for i in range(len(json[0]['words'])):
-            out += "{} {} ".format(json[0]['words'][i], u'\u2022')
+        out += " • ".join(json[0]['words'])
         out = out[:-2]
         return out
     else:
-        return "Sorry, I couldn't find any antonyms for {}.".format(word)
-
-
-# audio pronunciation
-@hook.command("wordaudio", "audioword")
-def word_audio(text, conn):
-    """provides a link to the audible pronunciation of a given word"""
-    if not api_key:
-        return "This command requires an API key from wordnik.com."
-    word = text.split(' ')[0]
-    url = BASE_URL + "word.json/{}/audio".format(word)
-
-    params = {
-        'api_key': api_key,
-        'limit': 1,
-        'useCanonical': 'false'
-    }
-    json = requests.get(url, params=params).json()
-
-    if json:
-        out = "This is how you say \x02{}\x02: ".format(word)
-        audio = web.try_shorten(json[0]['fileUrl'])
-        out += "{}".format(audio)
-        return out
-    else:
-        return "Sorry, I couldn't find an audio pronunciation for {}.".format(word)
+        return "Sorry, I couldn't find any antonyms for \x02{}\x02.".format(word)
 
 
 # word of the day

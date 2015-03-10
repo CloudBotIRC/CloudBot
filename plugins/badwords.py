@@ -30,9 +30,7 @@ def db_init(db, conn_name):
 @hook.command("loadbad", permissions=["badwords"], autohelp=False)
 def load_bad(db, conn):
     """Should run on start of bot to load the existing words into the regex"""
-    global badword_re
-    global blacklist
-    global black_re
+    global badword_re, blacklist, black_re
     db_init(db, conn)
     words = db.execute("select word from badwords").fetchall()
     out = ""
@@ -46,7 +44,7 @@ def load_bad(db, conn):
 @hook.command("addbad", permissions=["badwords"], autohelp=False)
 def add_bad(text, nick, db, conn):
     """adds a bad word to the auto kick list must specify a channel with each word"""
-    global blacklist
+    global blacklist, black_re, blacklist
     db_init(db, conn.name)
     word = text.split(' ')[0].lower()
     channel = text.split(' ')[1].lower()
@@ -78,6 +76,7 @@ def add_bad(text, nick, db, conn):
 @hook.command("rmbad", "delbad", permissions=["badwords"], autohelp=False)
 def del_bad(text, nick, db, conn):
     """removes the specified word from the specified channels bad word list"""
+    global blacklist, black_re, blacklist
     db_init(db, conn.name)
     word = text.split(' ')[0].lower()
     if not (text.split(' ')[1] or text.split(' ')[1]('#')):

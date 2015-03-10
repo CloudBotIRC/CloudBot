@@ -19,6 +19,8 @@ ATTRIB_NAMES = {
     'wordnet': 'Wordnet/WordNik'
 }
 
+def sanitize(text):
+    return urllib.parse.quote(text.translate({ord('\\'):None, ord('/'):None}))
 
 @hook.on_start()
 def load_key(bot):
@@ -31,7 +33,7 @@ def define(text):
     """<word> -- Returns a dictionary definition for <word>."""
     if not api_key:
         return "This command requires an API key from wordnik.com."
-    word = urllib.parse.quote(text)
+    word = sanitize(text)
     url = API_URL + "word.json/{}/definitions".format(word)
 
     params = {
@@ -55,7 +57,7 @@ def word_usage(text):
     """<word> -- Returns an example sentence showing the usage of <word>."""
     if not api_key:
         return "This command requires an API key from wordnik.com."
-    word = text.split(' ')[0]
+    word = sanitize(text)
     url = API_URL + "word.json/{}/examples".format(word)
     params = {
         'api_key': api_key,
@@ -77,7 +79,7 @@ def pronounce(text):
     """<word> -- Returns instructions on how to pronounce <word> with an audio example."""
     if not api_key:
         return "This command requires an API key from wordnik.com."
-    word = text.split(' ')[0]
+    word = sanitize(text)
     url = API_URL + "word.json/{}/pronunciations".format(word)
 
     params = {
@@ -113,7 +115,7 @@ def synonym(text):
     """<word> -- Returns a list of synonyms for <word>."""
     if not api_key:
         return "This command requires an API key from wordnik.com."
-    word = text.split(' ')[0]
+    word = sanitize(text)
     url = API_URL + "word.json/{}/relatedWords".format(word)
 
     params = {
@@ -136,7 +138,7 @@ def antonym(text):
     """<word> -- Returns a list of antonyms for <word>."""
     if not api_key:
         return "This command requires an API key from wordnik.com."
-    word = text.split(' ')[0]
+    word = sanitize(text)
     url = API_URL + "word.json/{}/relatedWords".format(word)
 
     params = {

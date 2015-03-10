@@ -1,11 +1,22 @@
-import requests
 import re
 import random
+
+import requests
 
 from cloudbot import hook
 from cloudbot.util import web
 
-base_url = 'http://api.wordnik.com/v4/'
+
+API_URL = 'http://api.wordnik.com/v4/'
+WEB_URL = 'https://www.wordnik.com/words/{}'
+
+ATTRIB_NAMES = {
+    'ahd-legacy': 'AHD/WordNik',
+    'century': 'Century/WordNik',
+    'wiktionary': 'Wiktionary/WordNik',
+    'gcide': 'GCIDE/WordNik',
+    'wordnet': 'Wordnet/WordNik'
+}
 
 
 @hook.on_start()
@@ -14,15 +25,37 @@ def load_key(bot):
     api_key = bot.config.get("api_keys", {}).get("wordnik", None)
 
 
-# word usage
-@hook.command("wordexample", "wordusage", "usage")
-def wordexample(text, conn):
-    """Provides an example sentance of the usage of a specified word."""
+@hook.command("define", "dictionary")
+def define(text):
+    """<word> -- Returns a dictionary definition for <word>."""
     if not api_key:
         return "This command requires an API key from wordnik.com."
     word = text.split(' ')[0]
-    url = base_url
-    url += "word.json/{}/examples".format(word)
+    url = API_URL + "word.json/{}/definitions".format(word)
+
+    params = {
+        'api_key': api_key,
+        'limit': 1
+    }
+    json = requests.get(url, params=params).json()
+
+    if json:
+        data = json[0]
+
+        data['url'] = web.try_shorten(WEB_URL.format(data['word']))
+        data['attrib'] = ATTRIB_NAMES[data['sourceDictionary']]
+        return "\x02{word}\x02: {text} - {url} ({attrib})".format(**data)
+    else:
+        return "I could not find a definition for \x02{}\x02.".format(word)
+
+
+@hook.command("wordusage", "wordexample", "usage")
+def word_usage(text):
+    """<word> -- Returns an example sentence showing the usage of <word>."""
+    if not api_key:
+        return "This command requires an API key from wordnik.com."
+    word = text.split(' ')[0]
+    url = API_URL + "word.json/{}/examples".format(word)
     params = {
         'api_key': api_key,
         'limit': 10
@@ -35,51 +68,16 @@ def wordexample(text, conn):
         out += "{} ".format(json['examples'][i]['text'])
         return out
     else:
-        return "I could not find any usage examples for the word: {}".format(word)
-
-# word definitions
-
-
-@hook.command("define", "dictionary")
-def define(text, conn):
-    """Returns a definition for the given word."""
-    if not api_key:
-        return "This command requires an API key from wordnik.com."
-    word = text.split(' ')[0]
-    url = base_url
-    url += "word.json/{}/definitions".format(word)
-    dictionaries = {
-        'ahd-legacy': 'The American Heritage Dictionary',
-        'century': 'The Century Dictionary',
-        'wiktionary': 'Wiktionary',
-        'gcide': 'Collaborative International Dictionary of English',                     'wordnet': 'Wordnet 3.0'
-    }
-
-    params = {
-        'api_key': api_key,
-        'limit': 1
-    }
-    json = requests.get(url, params=params).json()
-
-    if json:
-        out = "\x02{}\x02: ".format(word)
-        out += "{} From {}.".format(json[0]['text'],
-                                    dictionaries[json[0]['sourceDictionary']])
-        return out
-    else:
-        return "I could not find a definition for {}.".format(word)
-
-# word pronunciations
+        return "I could not find any usage examples for \x02{}\x02.".format(word)
 
 
 @hook.command("pronounce", "sounditout")
-def prounounce(text, conn):
-    """Input a word and I will tell you how to pronounce it."""
+def pronounce(text):
+    """<word> -- Returns instructions on how to pronounce <word> with an audio example."""
     if not api_key:
         return "This command requires an API key from wordnik.com."
     word = text.split(' ')[0]
-    url = base_url
-    url += "word.json/{}/pronunciations".format(word)
+    url = API_URL + "word.json/{}/pronunciations".format(word)
 
     params = {
         'api_key': api_key,
@@ -89,23 +87,33 @@ def prounounce(text, conn):
 
     if json:
         out = "\x02{}\x02: ".format(word)
-        for i in range(len(json)):
-            out += "{} {} ".format(json[i]['raw'], u'\u2022')
-        out = out[:-2]
-        return out
+        out += " • ".join([i['raw'] for i in json])
     else:
-        return "Sorry I don't know how to pronounce {} either.".format(word)
+        return "Sorry, I don't know how to pronounce \x02{}\x02.".format(word)
+
+    url = API_URL + "word.json/{}/audio".format(word)
+
+    params = {
+        'api_key': api_key,
+        'limit': 1,
+        'useCanonical': 'false'
+    }
+    json = requests.get(url, params=params).json()
+
+    if json:
+        url = web.try_shorten(json[0]['fileUrl'])
+        out += " - {}".format(url)
+
+    return out
 
 
-# synonym
 @hook.command()
-def synonym(text, conn):
-    """provides a list of synonyms for a given word"""
+def synonym(text):
+    """<word> -- Returns a list of synonyms for <word>."""
     if not api_key:
         return "This command requires an API key from wordnik.com."
     word = text.split(' ')[0]
-    url = base_url
-    url += "word.json/{}/relatedWords".format(word)
+    url = API_URL + "word.json/{}/relatedWords".format(word)
 
     params = {
         'api_key': api_key,
@@ -116,23 +124,19 @@ def synonym(text, conn):
 
     if json:
         out = "\x02{}\x02: ".format(word)
-        for i in range(len(json[0]['words'])):
-            out += "{} {} ".format(json[0]['words'][i], u'\u2022')
-        out = out[:-2]
+        out += " • ".join(json[0]['words'])
         return out
     else:
-        return "Sorry, I couldn't find any synonyms for {}.".format(word)
+        return "Sorry, I couldn't find any synonyms for \x02{}\x02.".format(word)
 
 
-# antonym
 @hook.command()
-def antonym(text, conn):
-    """provides a list of antonyms for a given word"""
+def antonym(text):
+    """<word> -- Returns a list of antonyms for <word>."""
     if not api_key:
         return "This command requires an API key from wordnik.com."
     word = text.split(' ')[0]
-    url = base_url
-    url += "word.json/{}/relatedWords".format(word)
+    url = API_URL + "word.json/{}/relatedWords".format(word)
 
     params = {
         'api_key': api_key,
@@ -144,38 +148,11 @@ def antonym(text, conn):
 
     if json:
         out = "\x02{}\x02: ".format(word)
-        for i in range(len(json[0]['words'])):
-            out += "{} {} ".format(json[0]['words'][i], u'\u2022')
+        out += " • ".join(json[0]['words'])
         out = out[:-2]
         return out
     else:
-        return "Sorry, I couldn't find any antonyms for {}.".format(word)
-
-
-# audio pronunciation
-@hook.command("wordaudio", "audioword")
-def word_audio(text, conn):
-    """provides a link to the audible pronunciation of a given word"""
-    if not api_key:
-        return "This command requires an API key from wordnik.com."
-    word = text.split(' ')[0]
-    url = base_url
-    url += "word.json/{}/audio".format(word)
-
-    params = {
-        'api_key': api_key,
-        'limit': 1,
-        'useCanonical': 'false'
-    }
-    json = requests.get(url, params=params).json()
-
-    if json:
-        out = "This is how you say \x02{}\x02: ".format(word)
-        audio = web.try_shorten(json[0]['fileUrl'])
-        out += "{}".format(audio)
-        return out
-    else:
-        return "Sorry, I couldn't find an audio pronunciation for {}.".format(word)
+        return "Sorry, I couldn't find any antonyms for \x02{}\x02.".format(word)
 
 
 # word of the day
@@ -188,8 +165,7 @@ def wordoftheday(text, conn):
     date = ""
     if match:
         date = match.group(1)
-    url = base_url
-    url += "words.json/wordOfTheDay"
+    url = API_URL + "words.json/wordOfTheDay"
     if date:
         params = {
             'api_key': api_key,
@@ -215,7 +191,8 @@ def wordoftheday(text, conn):
         out += "\x02Definition:\x02 \x0303{}\x0303".format(definition)
         return out
     else:
-        return "Sorry I couldn't find the word of the day, check out this awesome otter instead {}".format("http://i.imgur.com/pkuWlWx.gif")
+        return "Sorry I couldn't find the word of the day, check out this awesome otter instead {}".format(
+            "http://i.imgur.com/pkuWlWx.gif")
 
 
 # random word
@@ -224,8 +201,7 @@ def random_word(conn):
     """Grabs a random word from wordnik.com"""
     if not api_key:
         return "This command requires an API key from wordnik.com."
-    url = base_url
-    url += "words.json/randomWord"
+    url = API_URL + "words.json/randomWord"
     params = {
         'api_key': api_key,
         'hasDictionarydef': 'true',

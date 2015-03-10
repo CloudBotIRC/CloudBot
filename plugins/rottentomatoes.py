@@ -55,7 +55,7 @@ def rotten_tomatoes(text, bot):
 
     # review_count = 0
 
-    fresh = critics_score * review_count / 100
+    fresh = int(critics_score * review_count / 100)
     rotten = review_count - fresh
 
     return "\x02{}\x02 - Critics Rating: \x02{}%\x02 ({} liked, {} disliked), " \

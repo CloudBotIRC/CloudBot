@@ -28,10 +28,10 @@ def help_command(text, conn, bot, notice, has_permission):
             if doc:
                 if doc.split()[0].isalpha():
                     # this is using the old format of `name <args> - doc`
-                    message = "{}{}".format(conn.config["command_prefix"], doc)
+                    message = "{}{}".format(conn.config["command_prefix"][0], doc)
                 else:
                     # this is using the new format of `<args> - doc`
-                    message = "{}{} {}".format(conn.config["command_prefix"], searching_for, doc)
+                    message = "{}{} {}".format(conn.config["command_prefix"][0], searching_for, doc)
                 notice(message)
             else:
                 notice("Command {} has no additional documentation.".format(searching_for))
@@ -65,4 +65,4 @@ def help_command(text, conn, bot, notice, has_permission):
 
         for line in lines:
             notice(line)
-        notice("For detailed help, use {}help <command>, without the brackets.".format(conn.config["command_prefix"]))
+        notice("For detailed help, use {}help <command>, without the brackets.".format(conn.config["command_prefix"][0]))

@@ -95,7 +95,7 @@ def tellinput(event, conn, db, nick, notice):
 
         reply = "{} sent you a message {} ago: {}".format(user_from, reltime_formatted, message)
         if len(tells) > 1:
-            reply += " (+{} more, {}showtells to view)".format(len(tells) - 1, conn.config["command_prefix"])
+            reply += " (+{} more, {}showtells to view)".format(len(tells) - 1, conn.config["command_prefix"][0])
 
         read_tell(db, conn.name, nick, message)
         notice(reply)
@@ -125,7 +125,8 @@ def tell_cmd(text, nick, db, notice, conn):
     query = text.split(' ', 1)
 
     if len(query) != 2:
-        notice(conn.config("command_prefix") + tell_cmd.__doc__)
+        prefix = conn.config("command_prefix")
+        notice(prefix[0] + tell_cmd.__doc__)
         return
 
     target = query[0].lower()

@@ -2,6 +2,7 @@ import re
 import random
 
 import requests
+import urllib.parse
 
 from cloudbot import hook
 from cloudbot.util import web
@@ -30,7 +31,7 @@ def define(text):
     """<word> -- Returns a dictionary definition for <word>."""
     if not api_key:
         return "This command requires an API key from wordnik.com."
-    word = text.split(' ')[0]
+    word = urllib.parse.quote(text)
     url = API_URL + "word.json/{}/definitions".format(word)
 
     params = {

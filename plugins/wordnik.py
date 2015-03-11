@@ -67,8 +67,8 @@ def word_usage(text):
     json = requests.get(url, params=params).json()
     if json:
         out = "\x02{}\x02: ".format(word)
-        i = random.randint(0, len(json['examples']) - 1)
-        out += "{} ".format(json['examples'][i]['text'])
+        example = random.choice(json['examples'])
+        out += "{} ".format(example['text'])
         return out
     else:
         return "I could not find any usage examples for \x02{}\x02.".format(word)

@@ -1,7 +1,7 @@
 {
    "templates":[
 		"{user}, I bet your name's Mickey, 'cause you're so fine.",
-		"{user}, Hey, pretty mama. You smell kinda pretty, wanna smell me?",
+		"{user}, Hey, pretty man. You smell kinda pretty, wanna smell me?",
 		"{user}, I better get out my library card, 'cause I'm checkin' you out.",
 		"{user}, If you were a booger, I'd pick you.",
 		"{user}, If I could rearrange the alphabet, I would put U and I together.",
@@ -21,14 +21,14 @@
 		"{user}, Hey, baby cakes.",
 		"{user}, Nice butt.",
 		"{user}, Did you ever realize that screw rhymes with me and you?",
-		"{user}, I'm gay but you might just turn me straight.",
+		"{user}, I'm straight but you might just turn me gay.",
 		"{user}, I love you like a fat kid loves cake.",
 		"{user}, Do you believe in love at first sight? Or should I walk by again...?",
 		"{user}, Do you have a map? I think I just got lost in your eyes.",
 		"{user}, Want to see my good side? Hah, that was a trick question, all I have are good sides.",
 		"{user}, Do you work at subway? Cause you just gave me a footlong.",
-		"{user}, You look like a woman who appreciates the finer things in life. Come over here and feel my velour bedspread.",
-		"{user}, Now you're officially my woman. Kudos! I can't say I don't envy you.",
+		"{user}, You look like a man who appreciates the finer things in life. Come over here and feel my velour bedspread.",
+		"{user}, Now you're officially my man. Kudos! I can't say I don't envy you.",
 		"{user}, I find that the most erotic part of a woman is the boobies.",
 		"{user}, I wish I was one of your tears, so I could be born in your eye, run down your cheek, and die on your lips.",
 		"{user}, If you want to climb aboard the Love Train, you've got to stand on the Love Tracks. But you might just get smushed by a very sensual cow-catcher.",
@@ -39,7 +39,7 @@
 		"{user}, Are you a parking ticket? Cause you have FINE written all over you.",
 		"{user}, Do you have a mirror in your jeans? Cause I can see myself in your ass.",
 		"{user}, Apart from being sexy, what do you do for a living?",
-		"{user}, Hi, I'm Mr. Right. Someone said you were looking for me.",
+		"{user}, Hi, I'm Mrs. Right. Someone said you were looking for me.",
 		"{user}, Eyy bby wun sum fuk?",
 		"{user}, You got something on your chest: My eyes.",
 		"{user}, Are you from Tennessee? Cause you're the only TEN I see.",
@@ -69,7 +69,13 @@
 		"{user}, I wish I were adenine because then I'd be paired with U",
 		"{user}, Are you an alpha carbon, because you look like you could use a backside attack!",
 		"Do you want to extract some protein from my column, {user}?",
-		"Hey {user}, do you want to form a synapse with me and exchange neurotransmitters?"
+		"Hey {user}, do you want to form a synapse with me and exchange neurotransmitters?",
+		"Hey {user} are you an mp3 I downloaded 20 years ago because getting with you is taking like 30 minutes and my dad keeps picking up the phone in the middle",
+		"{user} are you uranium tetraiodide because all I see is U and I getting together with three of my friends and it being dangerous, but also powerful",
+		"{user} are you a cloud because your body is constantly changing and when I look at you I see a hot stud but my friend says she sees a car",
+		"{user} are you Magic: The Gathering because I could see myself wasting a lot of money and the better art of my 20s on you",
+		"Hey {user}. Anna Kaplan asks, \"Is the gaze male\" but all I know is I can't take my eyes off of you",
+		"Hey {user} can I borrow your phone, because I told my mom I'd call her when I met the man of my dreams"
    ],
    "parts": {
     }

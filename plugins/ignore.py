@@ -47,7 +47,7 @@ def remove_ignore(db, conn, chan, mask):
     db.execute(table.delete().where(table.c.connection == conn).where(table.c.channel == chan)
                .where(table.c.mask == mask))
     db.commit()
-
+    load_cache(db)
 
 def is_ignored(conn, chan, mask):
     for _conn, _chan, _mask in ignore_cache:

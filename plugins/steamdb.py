@@ -2,10 +2,14 @@ import re
 
 import requests
 import bs4
-from cfscrape import cfscrape
 
 from cloudbot import hook
 from cloudbot.util import web
+
+try:
+    from cfscrape import cfscrape
+except ImportError:
+    cfscrape = None
 
 
 class SteamError(Exception):
@@ -34,8 +38,16 @@ def get_data(user, currency="us"):
 
     # get the page
     try:
-        scraper = cfscrape.create_scraper()
-        request = scraper.get(CALC_URL, params=params)
+        if cfscrape:
+            scraper = cfscrape.create_scraper()
+            request = scraper.get(CALC_URL, params=params)
+        else:
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, '
+                              'like Gecko) Chrome/41.0.2228.0 Safari/537.36',
+                'Referer': 'https://steamdb.info/'
+            }
+            request = requests.get(CALC_URL, params=params, headers=headers)
 
         request.raise_for_status()
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:

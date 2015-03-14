@@ -18,8 +18,8 @@ AFFILIATE_TAG = "cloudbot-20"
 def amazon(text):
     """<query> -- Searches Amazon for query"""
     headers = {
-        'User-Agent': 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.4 (KHTML, '
-                      'like Gecko) Chrome/22.0.1229.79 Safari/537.4',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, '
+                      'like Gecko) Chrome/41.0.2228.0 Safari/537.36',
         'Referer': 'http://www.amazon.com/'
     }
     params = {

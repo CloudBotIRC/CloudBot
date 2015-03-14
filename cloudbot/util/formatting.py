@@ -253,6 +253,9 @@ def pluralize(num=0, text=''):
     """
     return "{:,} {}{}".format(num, text, "s"[num == 1:])
 
+# alternate form
+pluralise = pluralize
+
 
 def dict_format(args, formats):
     """

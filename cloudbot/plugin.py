@@ -548,7 +548,7 @@ class PeriodicHook(Hook):
         return super().__repr__(interval=self.interval)
 
     def __str__(self):
-        return "periodic hook ({} seconds) {} from {}".format(self.interval, self.function_name, self.plugin.file_name)
+        return "periodic hook ({} seconds) {} from {}".format(self.interval, self.function_name, self.plugin)
 
 
 class RegexHook(Hook):

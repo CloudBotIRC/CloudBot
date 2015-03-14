@@ -91,7 +91,10 @@ class TextGenerator(object):
         # do magic
         for required_part in required_parts:
             # get the part
-            replacement = self.get_part(required_part, _parts)
+            try:
+                replacement = self.get_part(required_part, _parts)
+            except KeyError:
+                continue
 
             # remove the used part
             for _part in _parts[required_part]:

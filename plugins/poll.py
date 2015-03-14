@@ -53,7 +53,7 @@ class Poll:
     def format_results(self):
         # store a list of options, and sort by votes
         options = list(self.options.values())
-        options.sort(key=lambda x: x.votes, reverse=True)
+        options.sort(key=lambda x: x.votes)
 
         output = []
         for o in self.options.values():
@@ -103,7 +103,7 @@ def poll(text, conn, nick, chan, message, reply):
 
 
 @hook.command(autohelp=True)
-def vote(text, nick, conn, chan):
+def vote(text, nick, conn, chan, notice):
     """.vote <poll> <choice> - Vote on a poll; responds on error and silently records on success."""
     global polls
 
@@ -123,7 +123,7 @@ def vote(text, nick, conn, chan):
     except PollError as e:
         return "{}".format(e)
 
-    return "Voted \x02\"{}\"\x02 on {}'s poll!".format(o.title, p.creator)
+    notice("Voted \x02\"{}\"\x02 on {}'s poll!".format(o.title, p.creator))
 
 
 @hook.command(autohelp=Poll)

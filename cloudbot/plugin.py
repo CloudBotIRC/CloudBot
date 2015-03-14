@@ -422,6 +422,15 @@ class PluginManager:
         yield from asyncio.gather(*tasks, loop=self.bot.loop)
 
 
+class Plugin:
+    """
+    Represents a single loaded plugin. Owns multiple hooks.
+    """
+
+    def __init__(self):
+        raise NotImplementedError
+
+
 class Hook:
     """
     Each hook is specific to one function. This class is never used by itself, rather extended.

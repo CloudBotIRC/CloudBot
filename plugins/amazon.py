@@ -7,15 +7,21 @@ from cloudbot.util import web, formatting, colors
 
 
 SEARCH_URL = "http://www.amazon.com/s/"
+AMAZON_RE = re.compile(""".*ama?zo?n\.(com|co\.uk|co\.jp|de|fr)/.*/(?:exec/obidos/ASIN/|o/|gp/product/|(?:(?:[^"\'/]*)/)?dp/|)(B[A-Z0-9]{9})""", re.I)
 
 # Feel free to set this to None or change it to your own ID.
 # Or leave it in to support CloudBot, it's up to you!
 AFFILIATE_TAG = "cloudbot-20"
 
 
+@hook.regex(AMAZON_RE)
+def amazon_url(match):
+    asin = match.group(2)
+    return amazon(asin, parsed=True)
+
 
 @hook.command("amazon", "az")
-def amazon(text):
+def amazon(text, parsed=False):
     """<query> -- Searches Amazon for query"""
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, '
@@ -31,7 +37,10 @@ def amazon(text):
 
     results = soup.find('div', {'id': 'atfResults'})
     if not results:
-        return "No results found."
+        if not parsed:
+            return "No results found."
+        else:
+            return
 
     results = results.find('ul', {'id': 's-results-list-atf'}).find_all('li', {'class': 's-result-item'})
     item = results[0]
@@ -57,7 +66,7 @@ def amazon(text):
         price = item.find('span', {'class': 'a-color-price'}).text
 
     try:
-        pattern = re.compile(r'product-reviews')
+        pattern = re.compile(r'(product-reviews|#customerReviews)')
         rating = item.find('i', {'class': 'a-icon-star'}).find('span', {'class': 'a-icon-alt'}).text
         num_ratings = item.find('a', {'href': pattern}).text
         rating_str = "{} ({} ratings)".format(rating, num_ratings)
@@ -74,4 +83,7 @@ def amazon(text):
 
     tag_str = " - " + ", ".join(tags) if tags else ""
 
-    return colors.parse("$(b){}$(b) ({}) - {}{} - {}".format(title, price, rating_str, tag_str, url))
+    if not parsed:
+        return colors.parse("$(b){}$(b) ({}) - {}{} - {}".format(title, price, rating_str, tag_str, url))
+    else:
+        return colors.parse("$(b){}$(b) ({}) - {}{}".format(title, price, rating_str, tag_str))

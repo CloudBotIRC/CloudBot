@@ -65,7 +65,7 @@ def amazon(text, parsed=None):
     if item.find('i', {'class': 'sx-bestseller-badge-primary'}):
         tags.append("$(b)Bestseller$(b)")
 
-    if "FREE Shipping" in item.text:
+    if re.search(r"(Kostenlose Lieferung|Livraison gratuite|FREE Shipping)", item.text, re.I):
         tags.append("$(b)Free Shipping$(b)")
 
     try:

@@ -6,7 +6,9 @@ from cloudbot import hook
 from cloudbot.util import web, formatting, colors
 
 
-SEARCH_URL = "http://www.amazon.com/s/"
+SEARCH_URL = "http://www.amazon.{}/s/"
+REGION = "com"
+
 AMAZON_RE = re.compile(""".*ama?zo?n\.(com|co\.uk|co\.jp|de|fr)/.*/(?:exec/obidos/ASIN/|o/|gp/product/|(?:(?:[^"\'/]*)/)?dp/|)(B[A-Z0-9]{9})""", re.I)
 
 # Feel free to set this to None or change it to your own ID.
@@ -16,12 +18,13 @@ AFFILIATE_TAG = "cloudbot-20"
 
 @hook.regex(AMAZON_RE)
 def amazon_url(match):
+    cc = match.group(1)
     asin = match.group(2)
-    return amazon(asin, parsed=True)
+    return amazon(asin, parsed=cc)
 
 
 @hook.command("amazon", "az")
-def amazon(text, parsed=False):
+def amazon(text, parsed=None):
     """<query> -- Searches Amazon for query"""
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, '
@@ -32,7 +35,12 @@ def amazon(text, parsed=False):
         'url': 'search-alias',
         'field-keywords': text.strip()
     }
-    request = requests.get(SEARCH_URL, params=params, headers=headers)
+    if parsed:
+        # input is from a link parser, we need a specific URL
+        request = requests.get(SEARCH_URL.format(parsed), params=params, headers=headers)
+    else:
+        request = requests.get(SEARCH_URL.format(REGION), params=params, headers=headers)
+
     soup = BeautifulSoup(request.text)
 
     results = soup.find('div', {'id': 'atfResults'})

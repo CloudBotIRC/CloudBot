@@ -9,7 +9,8 @@ from cloudbot.util import web, formatting, colors
 SEARCH_URL = "http://www.amazon.{}/s/"
 REGION = "com"
 
-AMAZON_RE = re.compile(""".*ama?zo?n\.(com|co\.uk|co\.jp|de|fr)/.*/(?:exec/obidos/ASIN/|o/|gp/product/|(?:(?:[^"\'/]*)/)?dp/|)(B[A-Z0-9]{9})""", re.I)
+AMAZON_RE = re.compile(""".*ama?zo?n\.(com|co\.uk|de|fr|ca|cn|es|it)/.*/(?:exec/obidos/ASIN/|o/|gp/product/|(?:(?:
+[^"\'/]*)/)?dp/|)(B[A-Z0-9]{9})""", re.I)
 
 # Feel free to set this to None or change it to your own ID.
 # Or leave it in to support CloudBot, it's up to you!
@@ -65,7 +66,8 @@ def amazon(text, _parsed=False):
     if item.find('i', {'class': 'sx-bestseller-badge-primary'}):
         tags.append("$(b)Bestseller$(b)")
 
-    if re.search(r"(Kostenlose Lieferung|Livraison gratuite|FREE Shipping)", item.text, re.I):
+    if re.search(r"(Kostenlose Lieferung|Livraison gratuite|FREE Shipping|Envío GRATIS"
+                 r"|Spedizione gratuita)", item.text, re.I):
         tags.append("$(b)Free Shipping$(b)")
 
     price = item.find('span', {'class': ['s-price', 'a-color-price']}).text

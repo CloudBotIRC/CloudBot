@@ -68,14 +68,11 @@ def amazon(text, parsed=None):
     if re.search(r"(Kostenlose Lieferung|Livraison gratuite|FREE Shipping)", item.text, re.I):
         tags.append("$(b)Free Shipping$(b)")
 
-    try:
-        price = item.find('span', {'class': 's-price'}).text
-    except AttributeError:
-        price = item.find('span', {'class': 'a-color-price'}).text
+    price = item.find('span', {'class': ['s-price', 'a-color-price']}).text
 
     try:
         pattern = re.compile(r'(product-reviews|#customerReviews)')
-        rating = item.find('i', {'class': 'a-icon-star'}).find('span', {'class': 'a-icon-alt'}).text
+        rating = item.find('i', _class='a-icon-star').find('span', _class='a-icon-alt').text
         num_ratings = item.find('a', {'href': pattern}).text
         rating_str = "{} ({} ratings)".format(rating, num_ratings)
     except AttributeError:

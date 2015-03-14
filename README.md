@@ -5,8 +5,8 @@ CloudBot is a simple, fast, expandable open-source Python IRC Bot!
 ## Getting CloudBot
 
 There are currently two different branches of this repository, each with a different level of stability:
- - **master** *(stable)*: This branch contains stable, tested code. This is the branch you should be using if you just want to run your own CloudBot!
- - **python3.4** *(unstable)*: This branch is where where test and develop new features. If you would like to help develop CloudBot, you can use this branch.
+ - **master** *(stable)*: This branch contains stable, tested code. This is the branch you should be using if you just want to run your own CloudBot! [![Build Status](https://travis-ci.org/CloudBotIRC/CloudBot.svg?branch=master)](https://travis-ci.org/CloudBotIRC/CloudBot)
+ - **python3.4** *(unstable)*: This branch is where where test and develop new features. If you would like to help develop CloudBot, you can use this branch. [![Build Status](https://travis-ci.org/CloudBotIRC/CloudBot.svg?branch=python3.4)](https://travis-ci.org/CloudBotIRC/CloudBot)
  
 New releases will be pushed from **python3.4** to **master** whenever we have a stable version to release. This should happen on a fairly regular basis, so you'll never be too far behind the latest improvements.
 

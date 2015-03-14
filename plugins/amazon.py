@@ -20,11 +20,11 @@ AFFILIATE_TAG = "cloudbot-20"
 def amazon_url(match):
     cc = match.group(1)
     asin = match.group(2)
-    return amazon(asin, parsed=cc)
+    return amazon(asin, _parsed=cc)
 
 
 @hook.command("amazon", "az")
-def amazon(text, parsed=None):
+def amazon(text, _parsed=False):
     """<query> -- Searches Amazon for query"""
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, '
@@ -35,9 +35,9 @@ def amazon(text, parsed=None):
         'url': 'search-alias',
         'field-keywords': text.strip()
     }
-    if parsed:
+    if _parsed:
         # input is from a link parser, we need a specific URL
-        request = requests.get(SEARCH_URL.format(parsed), params=params, headers=headers)
+        request = requests.get(SEARCH_URL.format(_parsed), params=params, headers=headers)
     else:
         request = requests.get(SEARCH_URL.format(REGION), params=params, headers=headers)
 
@@ -45,7 +45,7 @@ def amazon(text, parsed=None):
 
     results = soup.find('div', {'id': 'atfResults'})
     if not results:
-        if not parsed:
+        if not _parsed:
             return "No results found."
         else:
             return
@@ -72,7 +72,7 @@ def amazon(text, parsed=None):
 
     try:
         pattern = re.compile(r'(product-reviews|#customerReviews)')
-        rating = item.find('i', _class='a-icon-star').find('span', _class='a-icon-alt').text
+        rating = item.find('i', {'class': 'a-icon-star'}).find('span', {'class': 'a-icon-alt'}).text
         num_ratings = item.find('a', {'href': pattern}).text
         rating_str = "{} ({} ratings)".format(rating, num_ratings)
     except AttributeError:
@@ -88,7 +88,7 @@ def amazon(text, parsed=None):
 
     tag_str = " - " + ", ".join(tags) if tags else ""
 
-    if not parsed:
+    if not _parsed:
         return colors.parse("$(b){}$(b) ({}) - {}{} - {}".format(title, price, rating_str, tag_str, url))
     else:
         return colors.parse("$(b){}$(b) ({}) - {}{}".format(title, price, rating_str, tag_str))

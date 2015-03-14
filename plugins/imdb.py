@@ -18,12 +18,11 @@ def imdb(text, bot):
 
     if id_re.match(strip):
         params = {'i': strip}
-        request = requests.get("http://www.omdbapi.com/", params=params, headers=headers)
-        content = request.json()
     else:
         params = {'t': strip}
-        request = requests.get("http://www.omdbapi.com/", params=params, headers=headers)
-        content = request.json()
+
+    request = requests.get("http://www.omdbapi.com/", params=params, headers=headers)
+    content = request.json()
 
     if content.get('Error', None) == 'Movie not found!':
         return 'Movie not found!'

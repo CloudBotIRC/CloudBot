@@ -72,6 +72,7 @@ def amazon(text, _parsed=False):
 
     price = item.find('span', {'class': ['s-price', 'a-color-price']}).text
 
+    # use a whole lot of BS4 and regex to get the ratings
     try:
         pattern = re.compile(r'(product-reviews|#customerReviews)')
         rating = item.find('i', {'class': 'a-icon-star'}).find('span', {'class': 'a-icon-alt'}).text

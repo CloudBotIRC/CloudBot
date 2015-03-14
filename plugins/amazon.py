@@ -9,8 +9,8 @@ from cloudbot.util import web, formatting, colors
 SEARCH_URL = "http://www.amazon.{}/s/"
 REGION = "com"
 
-AMAZON_RE = re.compile(""".*ama?zo?n\.(com|co\.uk|com\.au|de|fr|ca|cn|es|it)/.*/(?:exec/obidos/ASIN/|o/|gp/product/|(?:(?:
-[^"\'/]*)/)?dp/|)(B[A-Z0-9]{9})""", re.I)
+AMAZON_RE = re.compile(""".*ama?zo?n\.(com|co\.uk|com\.au|de|fr|ca|cn|es|it)/.*/(?:exec/obidos/ASIN/|o/|gp/product/|
+(?:(?:[^"\'/]*)/)?dp/|)(B[A-Z0-9]{9})""", re.I)
 
 # Feel free to set this to None or change it to your own ID.
 # Or leave it in to support CloudBot, it's up to you!
@@ -75,8 +75,9 @@ def amazon(text, _parsed=False):
     try:
         pattern = re.compile(r'(product-reviews|#customerReviews)')
         rating = item.find('i', {'class': 'a-icon-star'}).find('span', {'class': 'a-icon-alt'}).text
-        num_ratings = item.find('a', {'href': pattern}).text
-        rating_str = "{} ({} ratings)".format(rating, num_ratings)
+        rating = re.search(r"([0-9]+(?:(?:\.|,)[0-9])?).*5", rating).group(1).replace(",", ".")
+        num_ratings = item.find('a', {'href': pattern}).text.replace(".", ",")
+        rating_str = "{}/5 stars ({} ratings)".format(rating, num_ratings)
     except AttributeError:
         rating_str = "No Ratings"
 

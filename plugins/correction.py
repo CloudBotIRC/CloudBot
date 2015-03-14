@@ -6,7 +6,14 @@ from cloudbot import hook
 correction_re = re.compile(r"^[sS]/(.*/.*(?:/[igx]{,4})?)\S*$")
 
 
-def i_replace(text, old, new, count=None):
+def ireplace(text, old, new, count=None):
+    """
+    A case-insensitive replace() clone. Return a copy of text with all occurrences of substring
+    old replaced by new. If the optional argument count is given, only the first count
+    occurrences are replaced.
+    This function also checks the casing of the words it is replacing, and attempts to maintain
+    the same casing the word had before.
+    """
     idx = 0
     num = 0
     while idx < len(text):
@@ -51,14 +58,14 @@ def correction(match, conn, chan, message):
         if find.lower() in msg.lower():
             if "\x01ACTION" in msg:
                 msg = msg.replace("\x01ACTION", "").replace("\x01", "")
-                mod_msg = i_replace(msg, find, replace)
+                mod_msg = ireplace(msg, find, replace)
                 message("Correction, * {} {}".format(nick, mod_msg))
             else:
-                mod_msg = i_replace(msg, find, replace)
+                mod_msg = ireplace(msg, find, replace)
                 message("Correction, <{}> {}".format(nick, mod_msg))
 
             # append to end of history
-            msg = i_replace(msg, find, replace)
+            msg = ireplace(msg, find, replace)
             conn.history[chan].append((nick, timestamp, msg))
             return
         else:

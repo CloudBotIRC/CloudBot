@@ -118,10 +118,14 @@ def format_playlist(playlist, show_url=True):
         out += " - \x02{}\x02".format(playlist['genre'])
 
     out += " - by \x02{}\x02".format(playlist['user']['username'])
-    out += " - \x02{}\x02 items,".format(len(playlist['tracks']))
 
-    seconds = round(int(playlist['duration'])/1000)
-    out += " {}".format(timeformat.format_time(seconds, simple=True))
+    if not playlist['tracks']:
+        out += " - No items"
+    else:
+        out += " - {} items,".format(len(playlist['tracks']))
+
+        seconds = round(int(playlist['duration'])/1000)
+        out += " {}".format(timeformat.format_time(seconds, simple=True))
 
     if show_url:
         out += " - {}".format(web.try_shorten(playlist['permalink_url']))

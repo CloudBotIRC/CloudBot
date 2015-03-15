@@ -51,7 +51,11 @@ def get_data(user, currency="us"):
 
         request.raise_for_status()
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
-        raise SteamError("Could not get user info: {}".format(e))
+        if cfscrape:
+            raise SteamError("Could not get user info: {}".format(e))
+        else:
+            raise SteamError("Could not get user info: {} (You may have been blocked by CloudFlare, try installing the "
+                             "cfscrape module)".format(e))
 
     # parse that page!
     soup = bs4.BeautifulSoup(request.content)
@@ -67,8 +71,10 @@ def get_data(user, currency="us"):
         data["value_sales"] = soup.find("h1", {"class": "calculator-price-lowest"}).text
 
         data["count"] = int(soup.find("div",
-                                      {"class": "pull-right price-container"}).find("p").find("span", {"class":
-                                                                                                       "number"}).text)
+                            {"class": "pull-right"
+                             " price-container"}).find("p").find("span", {"class":
+                                                                 "number"}).text.replace(',', ''))
+
         played = soup.find('td', text='Games not played').find_next('td').text
         played = PLAYED_RE.search(played).groups()
 
@@ -84,7 +90,7 @@ def get_data(user, currency="us"):
     return data
 
 
-@hook.command
+@hook.command("steamcalc", "steamdb")
 def steamcalc(text):
     """steamcalc <username> - Gets value of steam account. Uses steamcommunity.com/id/<nickname>."""
     user = text.strip().lower()
@@ -96,6 +102,6 @@ def steamcalc(text):
 
     data["short_url"] = web.try_shorten(data["url"])
 
-    return "\x02{name}\x02 has \x02{count}\x02 games with a total value of \x02{value}\x02" \
-           " (\x02{value_sales}\x02 during sales). \x02{count_unplayed}\x02" \
+    return "\x02{name}\x02 has \x02{count:,}\x02 games with a total value of \x02{value}\x02" \
+           " (\x02{value_sales}\x02 during sales). \x02{count_unplayed:,}\x02" \
            " (\x02{percent_unplayed}%\x02) have never been played - {short_url}".format(**data)

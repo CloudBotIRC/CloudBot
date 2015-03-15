@@ -2,7 +2,7 @@ import re
 import requests
 
 from cloudbot import hook
-from cloudbot.util import web
+from cloudbot.util import web, formatting, timeformat
 
 SC_RE = re.compile(r'(.*:)//(www.)?(soundcloud.com|snd.sc)(.*)', re.I)
 API_BASE = "http://api.soundcloud.com/{}/"
@@ -63,8 +63,7 @@ def format_track(track, show_url=True):
     :param track:
     :return:
     """
-    out = ""
-    out += track['title']
+    out = track['title']
 
     out += " by \x02{}\x02".format(track['user']['username'])
 
@@ -77,6 +76,55 @@ def format_track(track, show_url=True):
 
     if show_url:
         out += " - {}".format(web.try_shorten(track['permalink_url']))
+    return out
+
+
+def format_user(user, show_url=True):
+    """
+    Takes a SoundCloud user item and returns a formatted string.
+    :type show_url: object
+    :param user:
+    :return:
+    """
+    out = "\x02{}\x02".format(user['username'])
+
+    if user['description']:
+        out += ": {}".format(formatting.truncate(user['description']))
+
+    if user['country']:
+        out += " - {}".format(formatting.truncate(user['country']))
+
+    out += " - \x02{track_count:,}\x02 tracks, \x02{playlist_count:,}\x02 playlists, \x02{followers_count:,}\x02 " \
+           "followers, \x02{followings_count:,}\x02 followed".format(**user)
+
+    if show_url:
+        out += " - {}".format(web.try_shorten(user['permalink_url']))
+    return out
+
+
+def format_playlist(playlist, show_url=True):
+    """
+    Takes a SoundCloud playlist item and returns a formatted string.
+    :type show_url: object
+    :param playlist:
+    :return:
+    """
+    out = "\x02{}\x02".format(playlist['title'])
+
+    if playlist['description']:
+        out += ": {}".format(formatting.truncate(playlist['description']))
+
+    if playlist['genre']:
+        out += " - \x02{}\x02".format(playlist['genre'])
+
+    out += " - by \x02{}\x02".format(playlist['user']['username'])
+    out += " - \x02{}\x02 items,".format(len(playlist['tracks']))
+
+    seconds = round(int(playlist['duration'])/1000)
+    out += " {}".format(timeformat.format_time(seconds, simple=True))
+
+    if show_url:
+        out += " - {}".format(web.try_shorten(playlist['permalink_url']))
     return out
 
 
@@ -114,11 +162,12 @@ def soundcloud_url(match):
         match.group(4).split(' ')[0]
 
     item = get_with_url(url)
-
     if not item:
         return
 
-    if not item['type'] == 'track':
-        return
-
-    return format_track(item, show_url=False)
+    if item['kind'] == 'track':
+        return format_track(item, show_url=False)
+    elif item['kind'] == 'user':
+        return format_user(item, show_url=False)
+    elif item['kind'] == 'playlist':
+        return format_playlist(item, show_url=False)

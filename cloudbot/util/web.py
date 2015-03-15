@@ -22,7 +22,7 @@ import requests
 DEFAULT_SHORTENER = 'is.gd'
 DEFAULT_PASTEBIN = 'hastebin'
 
-HASTEBIN_SERVER = 'http://hastebin.com'
+HASTEBIN_SERVER = 'http://hasteb.in'
 
 # Python eval
 

@@ -21,6 +21,12 @@ def rss(text):
         addr = "http://xkcd.com/rss.xml"
     elif text == "ars":
         addr = "http://feeds.arstechnica.com/arstechnica/index"
+    elif text in ("pypi", "pip", "py"):
+        addr = "https://pypi.python.org/pypi?%3Aaction=rss"
+        limit = 6
+    elif text in ("pypinew", "pipnew", "pynew"):
+        addr = "https://pypi.python.org/pypi?%3Aaction=packages_rss"
+        limit = 5
     elif text == "world":
         addr = "https://news.google.com/news?cf=all&ned=us&hl=en&topic=w&output=rss"
     elif text in ("us", "usa"):

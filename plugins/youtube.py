@@ -48,7 +48,7 @@ def get_video_description(video_id):
         dislikes = pluralize(int(statistics['dislikeCount']), "dislike")
 
         percent = 100 * float(statistics['likeCount']) / total_votes
-        out += ' - {}, {} (\x02{:.1f}\x02%)'.format(likes,
+        out += ' - \x033\x02{}\x02\x0f, \x034\x02{}\x02\x0f ({:.1f}%)'.format(likes,
                                                     dislikes, percent)
 
     if 'viewCount' in statistics:

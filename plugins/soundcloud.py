@@ -15,8 +15,9 @@ class APIError(Exception):
 # DATA FETCHING
 def get_with_search(endpoint, term):
     """
-    Takes a search term and finds a track on SoundCloud. Will only return 'track' items.
-    :param term:
+    Searches :endpoint on SoundCloud for :term and returns an item.
+    :param endpoint: API endpoint to search
+    :param term: Term to search for.
     :return:
     """
     try:
@@ -36,8 +37,8 @@ def get_with_search(endpoint, term):
 
 def get_with_url(url):
     """
-    Takes a SoundCloud URL and returns an item. Can return any item type.
-    :param url:
+    Takes a SoundCloud URL and returns an item.
+    :param url: URL to fetch data on.
     :return:
     """
     try:
@@ -59,9 +60,6 @@ def get_with_url(url):
 def format_track(track, show_url=True):
     """
     Takes a SoundCloud track item and returns a formatted string.
-    :type show_url: object
-    :param track:
-    :return:
     """
     out = track['title']
 
@@ -82,9 +80,6 @@ def format_track(track, show_url=True):
 def format_user(user, show_url=True):
     """
     Takes a SoundCloud user item and returns a formatted string.
-    :type show_url: object
-    :param user:
-    :return:
     """
     out = "\x02{}\x02".format(user['username'])
 
@@ -105,9 +100,6 @@ def format_user(user, show_url=True):
 def format_playlist(playlist, show_url=True):
     """
     Takes a SoundCloud playlist item and returns a formatted string.
-    :type show_url: object
-    :param playlist:
-    :return:
     """
     out = "\x02{}\x02".format(playlist['title'])
 
@@ -141,6 +133,7 @@ def load_key(bot):
 
 @hook.command("soundcloud", "sc")
 def soundcloud(text):
+    """<query> -- Searches for tracks on SoundCloud."""
     if not api_key:
         return "This command requires a SoundCloud API key."
     try:
@@ -159,6 +152,7 @@ def soundcloud(text):
 
 @hook.command("scuser")
 def soundcloud_user(text):
+    """<query> -- Searches for users on SoundCloud."""
     if not api_key:
         return "This command requires a SoundCloud API key."
     try:

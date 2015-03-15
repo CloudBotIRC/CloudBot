@@ -68,8 +68,8 @@ def format_track(track, show_url=True):
     if track['genre']:
         out += " - \x02{}\x02".format(track['genre'])
 
-    out += " - \x02{:,}\x02 plays, \x02{:,}\x02 downloads, \x02{:,}\x02 comments".format(track['playback_count'],
-                                                                                         track['download_count'],
+    out += " - \x02{:,}\x02 plays, \x02{:,}\x02 favorites, \x02{:,}\x02 comments".format(track['playback_count'],
+                                                                                         track['favoritings_count'],
                                                                                          track['comment_count'])
 
     if show_url:

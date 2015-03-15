@@ -340,6 +340,7 @@ class CommandEvent(Event):
                          irc_prefix=irc_prefix, irc_command=irc_command, irc_paramlist=irc_paramlist)
         self.hook = hook
         self.text = text
+        self.doc = self.hook.doc
         self.triggered_command = triggered_command
 
     def notice_doc(self, target=None):

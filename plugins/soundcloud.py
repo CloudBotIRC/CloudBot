@@ -89,7 +89,7 @@ def format_user(user, show_url=True):
     out = "\x02{}\x02".format(user['username'])
 
     if user['description']:
-        out += ": {}".format(formatting.truncate(user['description']))
+        out += ': "{}"'.format(formatting.truncate(user['description']))
 
     if user['country']:
         out += " - {}".format(formatting.truncate(user['country']))
@@ -112,7 +112,7 @@ def format_playlist(playlist, show_url=True):
     out = "\x02{}\x02".format(playlist['title'])
 
     if playlist['description']:
-        out += ": {}".format(formatting.truncate(playlist['description']))
+        out += ': "{}"'.format(formatting.truncate(playlist['description']))
 
     if playlist['genre']:
         out += " - \x02{}\x02".format(playlist['genre'])

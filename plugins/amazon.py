@@ -44,6 +44,7 @@ def amazon(text, _parsed=False):
 
     soup = BeautifulSoup(request.text)
 
+    # check if there are any results on the amazon page
     results = soup.find('div', {'id': 'atfResults'})
     if not results:
         if not _parsed:
@@ -51,6 +52,7 @@ def amazon(text, _parsed=False):
         else:
             return
 
+    # get the first item from the results on the amazon page
     results = results.find('ul', {'id': 's-results-list-atf'}).find_all('li', {'class': 's-result-item'})
     item = results[0]
     asin = item['data-asin']
@@ -66,6 +68,8 @@ def amazon(text, _parsed=False):
     if item.find('i', {'class': 'sx-bestseller-badge-primary'}):
         tags.append("$(b)Bestseller$(b)")
 
+    # we use regex because we need to recognise text for this part
+    # the other parts detect based on html tags, not text
     if re.search(r"(Kostenlose Lieferung|Livraison gratuite|FREE Shipping|Envío GRATIS"
                  r"|Spedizione gratuita)", item.text, re.I):
         tags.append("$(b)Free Shipping$(b)")
@@ -74,10 +78,13 @@ def amazon(text, _parsed=False):
 
     # use a whole lot of BS4 and regex to get the ratings
     try:
-        pattern = re.compile(r'(product-reviews|#customerReviews)')
+        # get the rating
         rating = item.find('i', {'class': 'a-icon-star'}).find('span', {'class': 'a-icon-alt'}).text
         rating = re.search(r"([0-9]+(?:(?:\.|,)[0-9])?).*5", rating).group(1).replace(",", ".")
+        # get the rating count
+        pattern = re.compile(r'(product-reviews|#customerReviews)')
         num_ratings = item.find('a', {'href': pattern}).text.replace(".", ",")
+        # format the rating and count into a nice string
         rating_str = "{}/5 stars ({} ratings)".format(rating, num_ratings)
     except AttributeError:
         rating_str = "No Ratings"
@@ -90,6 +97,7 @@ def amazon(text, _parsed=False):
 
     url = web.try_shorten(url)
 
+    # join all the tags into a string
     tag_str = " - " + ", ".join(tags) if tags else ""
 
     if not _parsed:

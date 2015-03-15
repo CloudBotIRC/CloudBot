@@ -1,9 +1,10 @@
 from operator import attrgetter
 import asyncio
 import re
+import os
 
 from cloudbot import hook
-from cloudbot.util import formatting
+from cloudbot.util import formatting, web
 
 
 @asyncio.coroutine
@@ -66,3 +67,44 @@ def help_command(text, conn, bot, notice, has_permission):
         for line in lines:
             notice(line)
         notice("For detailed help, use {}help <command>, without the brackets.".format(conn.config["command_prefix"][0]))
+
+@hook.command(permissions=["botcontrol"], autohelp=False)
+def generatehelp(conn, bot, notice, has_permission):
+    """Dumps a list of commands with their help text to the docs directory formatted using markdown."""
+    message = "{} Command list\n".format(conn.nick)
+    message += "------\n"
+    for plugin in sorted(set(bot.plugin_manager.commands.values()), key=attrgetter("name")):
+    # use set to remove duplicate commands (from multiple aliases), and sorted to sort by name
+        command = plugin.name
+        aliases = ""
+        doc = bot.plugin_manager.commands[command].doc
+        permission = ""
+        for perm in plugin.permissions:
+            permission += perm + ", "
+        permission = permission[:-2]
+        for alias in plugin.aliases:
+            if alias == command:
+                pass
+            else:
+                aliases += alias + ", "
+        aliases = aliases[:-2]
+        if doc:
+            doc = doc.replace("<","&lt;").replace(">","&gt;")
+            if aliases:
+                message += "**{} ({}):** {}\n\n".format(command, aliases, doc)
+            else:
+                # No aliases so just print the commands
+                message += "**{}**: {}\n\n".format(command, doc)
+        else:
+            message += "**{}**: Command has no documentation.\n\n".format(command)
+        if permission:
+            message = message[:-2]
+            message += " ( *Permission required:* {})\n\n".format(permission)
+    # toss the markdown text into a paste
+    out = web.paste(message.encode('utf-8'), ext="md")
+    docs = os.path.join(os.path.abspath(os.path.curdir), "docs")
+    docs = os.path.join(docs, "user")
+    f = open(os.path.join(docs, "commands.md"), 'w')
+    f.write(message)
+    f.close()
+    return out

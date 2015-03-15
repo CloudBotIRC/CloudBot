@@ -89,8 +89,8 @@ def twitter(text):
             username, tweet_number = text.split()
             tweet_number = int(tweet_number) - 1
 
-        if tweet_number > 300:
-            return "This command can only find the last \x02300\x02 tweets."
+        if tweet_number > 200:
+            return "This command can only find the last \x02200\x02 tweets."
 
         try:
             # try to get user by username

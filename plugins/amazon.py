@@ -94,12 +94,12 @@ def amazon(text, _parsed=False):
         url = "http://www.amazon.com/dp/" + asin + "/?tag=" + AFFILIATE_TAG
     else:
         url = "http://www.amazon.com/dp/" + asin + "/"
-
     url = web.try_shorten(url)
 
     # join all the tags into a string
     tag_str = " - " + ", ".join(tags) if tags else ""
 
+    # finally, assemble everything into the final string, and return it!
     if not _parsed:
         return colors.parse("$(b){}$(b) ({}) - {}{} - {}".format(title, price, rating_str, tag_str, url))
     else:

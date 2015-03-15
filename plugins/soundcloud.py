@@ -1,50 +1,94 @@
 import re
-from urllib.parse import urlencode
+import requests
+from pprint import pprint
 
 from cloudbot import hook
 from cloudbot.util import http, web, formatting
 
-sc_re = re.compile(r'(.*:)//(www.)?(soundcloud.com)(.*)', re.I)
-api_url = "http://api.soundcloud.com"
-sndsc_re = re.compile(r'(.*:)//(www.)?(snd.sc)(.*)', re.I)
+SC_RE = re.compile(r'(.*:)//(www.)?(soundcloud.com|snd.sc)(.*)', re.I)
+API_BASE = "http://api.soundcloud.com/{}/"
 
 
-def soundcloud(url, api_key):
-    data = http.get_json(api_url + '/resolve.json?' + urlencode({'url': url, 'client_id': api_key}))
-
-    if data['description']:
-        desc = ": {} ".format(formatting.truncate(data['description'], 50))
-    else:
-        desc = ""
-    if data['genre']:
-        genre = "- Genre: \x02{}\x02 ".format(data['genre'])
-    else:
-        genre = ""
-
-    url = web.try_shorten(data['permalink_url'])
-
-    return "SoundCloud track: \x02{}\x02 by \x02{}\x02 {}{}- {} plays, {} downloads, {} comments - {}".format(
-        data['title'], data['user']['username'], desc, genre, data['playback_count'], data['download_count'],
-        data['comment_count'], url)
+class APIError(Exception):
+    pass
 
 
-@hook.regex(sc_re)
-def soundcloud_url(match, bot):
-    api_key = bot.config.get("api_keys", {}).get("soundcloud")
-    if not api_key:
-        print("Error: no api key set")
+# DATA FETCHING
+def get_with_search(term):
+    """
+    Takes a search term and finds a track on SoundCloud. Will only return 'track' items.
+    :param term:
+    :return:
+    """
+    try:
+        params = {'q': term, 'client_id': api_key}
+        request = requests.get(API_BASE.format('tracks'), params=params)
+        request.raise_for_status()
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+        raise APIError("Could not find track: {}".format(e))
+
+    json = request.json()
+
+    if not json:
         return None
-    url = match.group(1).split(' ')[-1] + "//" + (match.group(2) if match.group(2) else "") + match.group(3) + \
-        match.group(4).split(' ')[0]
-    return soundcloud(url, api_key)
+    else:
+        return json[0]
 
 
-@hook.regex(sndsc_re)
-def sndsc_url(match, bot):
-    api_key = bot.config.get("api_keys", {}).get("soundcloud")
+def get_with_url(url):
+    """
+    Takes a SoundCloud URL and returns an item. Can return any item type.
+    :param url:
+    :return:
+    """
+
+
+# DATA FORMATTING
+def format_track(track, show_url=True):
+    """
+    Takes a SoundCloud track item and returns a formatted string.
+    :type show_url: object
+    :param track:
+    :return:
+    """
+    out = ""
+    out += track['title']
+
+    out += " by \x02{}\x02".format(track['user']['username'])
+
+    if track['genre']:
+        out += " - \x02{}\x02".format(track['genre'])
+
+    out += " - \x02{:,}\x02 plays, \x02{:,}\x02 downloads, \x02{:,}\x02 comments".format(track['playback_count'],
+                                                                                         track['download_count'],
+                                                                                         track['comment_count'])
+
+    if show_url:
+        out += " - {}".format(web.try_shorten(track['permalink_url']))
+    return out
+
+
+# CLOUDBOT HOOKS
+@hook.on_start()
+def load_key(bot):
+    global api_key
+    api_key = bot.config.get("api_keys", {}).get("soundcloud", None)
+
+
+@hook.command("soundcloud")
+def soundcloud(text):
     if not api_key:
-        print("Error: no api key set")
-        return None
-    url = match.group(1).split(' ')[-1] + "//" + (match.group(2) if match.group(2) else "") + match.group(3) + \
-        match.group(4).split(' ')[0]
-    return soundcloud(http.open(url).url, api_key)
+        return "This command requires a SoundCloud API key."
+    try:
+        track = get_with_search(text)
+    except APIError as ae:
+        return ae
+
+    if not track:
+        return "No results found."
+
+    try:
+        return format_track(track)
+    except APIError as ae:
+        return ae
+

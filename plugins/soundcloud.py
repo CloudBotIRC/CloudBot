@@ -1,9 +1,8 @@
 import re
 import requests
-from pprint import pprint
 
 from cloudbot import hook
-from cloudbot.util import http, web, formatting
+from cloudbot.util import web
 
 SC_RE = re.compile(r'(.*:)//(www.)?(soundcloud.com|snd.sc)(.*)', re.I)
 API_BASE = "http://api.soundcloud.com/{}/"
@@ -41,6 +40,19 @@ def get_with_url(url):
     :param url:
     :return:
     """
+    try:
+        params = {'url': url, 'client_id': api_key}
+        request = requests.get(API_BASE.format('resolve'), params=params)
+        request.raise_for_status()
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+        raise APIError("Could not find track: {}".format(e))
+
+    json = request.json()
+
+    if not json:
+        return None
+    else:
+        return json
 
 
 # DATA FORMATTING
@@ -92,3 +104,21 @@ def soundcloud(text):
     except APIError as ae:
         return ae
 
+
+@hook.regex(SC_RE)
+def soundcloud_url(match):
+    if not api_key:
+        return
+
+    url = match.group(1).split(' ')[-1] + "//" + (match.group(2) if match.group(2) else "") + match.group(3) + \
+        match.group(4).split(' ')[0]
+
+    item = get_with_url(url)
+
+    if not item:
+        return
+
+    if not item['type'] == 'track':
+        return
+
+    return format_track(item, show_url=False)

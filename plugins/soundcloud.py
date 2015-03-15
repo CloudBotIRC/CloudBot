@@ -13,7 +13,7 @@ class APIError(Exception):
 
 
 # DATA FETCHING
-def get_with_search(term):
+def get_with_search(endpoint, term):
     """
     Takes a search term and finds a track on SoundCloud. Will only return 'track' items.
     :param term:
@@ -21,10 +21,10 @@ def get_with_search(term):
     """
     try:
         params = {'q': term, 'client_id': api_key}
-        request = requests.get(API_BASE.format('tracks'), params=params)
+        request = requests.get(API_BASE.format(endpoint), params=params)
         request.raise_for_status()
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
-        raise APIError("Could not find track: {}".format(e))
+        raise APIError("Could not find {}: {}".format(endpoint, e))
 
     json = request.json()
 
@@ -45,7 +45,7 @@ def get_with_url(url):
         request = requests.get(API_BASE.format('resolve'), params=params)
         request.raise_for_status()
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
-        raise APIError("Could not find track: {}".format(e))
+        raise APIError("{}".format(e))
 
     json = request.json()
 
@@ -139,12 +139,12 @@ def load_key(bot):
     api_key = bot.config.get("api_keys", {}).get("soundcloud", None)
 
 
-@hook.command("soundcloud")
+@hook.command("soundcloud", "sc")
 def soundcloud(text):
     if not api_key:
         return "This command requires a SoundCloud API key."
     try:
-        track = get_with_search(text)
+        track = get_with_search('tracks', text)
     except APIError as ae:
         return ae
 
@@ -153,6 +153,24 @@ def soundcloud(text):
 
     try:
         return format_track(track)
+    except APIError as ae:
+        return ae
+
+
+@hook.command("scuser")
+def soundcloud_user(text):
+    if not api_key:
+        return "This command requires a SoundCloud API key."
+    try:
+        user = get_with_search('users', text)
+    except APIError as ae:
+        return ae
+
+    if not user:
+        return "No results found."
+
+    try:
+        return format_user(user)
     except APIError as ae:
         return ae
 

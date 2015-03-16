@@ -4,7 +4,7 @@
 import requests
 
 from cloudbot import hook
-from cloudbot.util import http, formatting
+from cloudbot.util import formatting
 
 API_CS = 'https://www.googleapis.com/customsearch/v1'
 
@@ -16,7 +16,6 @@ def load_api(bot):
 
     dev_key = bot.config.get("api_keys", {}).get("google_dev_key", None)
     cx = bot.config.get("api_keys", {}).get("google_cse_id", None)
-
 
 @hook.command('g', 'google', 'gse')
 def gse(text):
@@ -33,8 +32,7 @@ def gse(text):
     except KeyError:
         return "No results found."
 
-    title = http.unescape(result['title'])
-    title = formatting.truncate_str(title, 60)
+    title = formatting.truncate_str(result['title'], 60)
     content = result['snippet']
 
     if not content:

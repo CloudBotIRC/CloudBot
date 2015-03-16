@@ -1,13 +1,12 @@
 # RoboCop 2's gsearch.py - A replacement for google.py after Google's deprecation of Google Web Search API
 # Module requires a Google Custom Search API key and a Custom Search Engine ID in order to function.
 
-import urllib.parse
 import requests
 
 from cloudbot import hook
 from cloudbot.util import http, formatting
 
-API_CS = 'https://www.googleapis.com/customsearch/v1?cx={}&q={}&key={}'
+API_CS = 'https://www.googleapis.com/customsearch/v1'
 
 
 @hook.on_start()
@@ -27,7 +26,7 @@ def gse(text, bot):
     if not cx:
         return "This command requires a custom Google Search Engine ID."
 
-    parsed = requests.get(API_CS.format(urllib.parse.quote(cx), urllib.parse.quote(text), urllib.parse.quote(dev_key)))
+    parsed = requests.get(API_CS, params={"cx": cx, "q": text, "key": dev_key}).json()
 
     try:
         result = parsed['items'][0]

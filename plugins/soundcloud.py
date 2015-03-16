@@ -5,7 +5,6 @@ from cloudbot import hook
 from cloudbot.util import web, formatting, timeformat
 
 SC_RE = re.compile(r'(.*:)//(www.)?(soundcloud.com|snd.sc)(.*)', re.I)
-SCGROUP_RE = re.compile(r'(.*:)//(www.)?(soundcloud.com/group)(.*)', re.I)
 API_BASE = 'http://api.soundcloud.com/{}/'
 
 

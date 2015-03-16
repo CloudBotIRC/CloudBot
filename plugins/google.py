@@ -20,7 +20,7 @@ def load_api(bot):
 
 @hook.command('g', 'google', 'gse')
 def gse(text):
-    """google <query> -- Returns first google search result for <query>."""
+    """<query> -- Returns first Google search result for <query>."""
     if not dev_key:
         return "This command requires a Google Developers Console API key."
     if not cx:
@@ -47,9 +47,10 @@ def gse(text):
 
 @hook.command('gis','image', 'googleimage')
 def gse_gis(text):
+    """<query> -- Returns first Google Images result for <query>."""
     if not dev_key:
         return "This command requires a Google Developers Console API key."
     if not cx:
         return "This command requires a custom Google Search Engine ID."
-    
+
     return "Stuff will eventually happen."

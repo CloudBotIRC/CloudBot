@@ -12,25 +12,25 @@ API_CS = 'https://www.googleapis.com/customsearch/v1?cx={}&q={}&key={}'
 
 @hook.on_start()
 def load_api(bot):
-    global key
+    global dev_key
     global cx
 
-    key = urllib.parse.quote(bot.config.get("api_keys", {}).get("google_dev_key"))
-    cx = urllib.parse.quote(bot.config.get("api_keys", {}).get("google_cse_id"))
+    dev_key = bot.config.get("api_keys", {}).get("google_dev_key", None)
+    cx = bot.config.get("api_keys", {}).get("google_cse_id", None)
 
 def api_get(query, bot):
     """Use the RESTful Google Search API"""
     # YOU NEED A KEY TO USE THIS MODULE!!!
     # [key] is your Google Developers Project API Key, and [cx] is the custom search engine ID to use for requests.
 
-    url = 'https://www.googleapis.com/customsearch/v1?cx=' + cx + '&q='+ query + '&key=' + key
+    url = API_CS.format(urllib.parse.quote(cx), query, urllib.parse.quote(dev_key))
     return http.get_json(url)
 
-@hook.command('g')
-@hook.command('gse')
-@hook.command
+@hook.command('g','gse')
 def gse(text, bot):
-    """gsearch <query> -- Returns first google search result for <query>."""
+    """google <query> -- Returns first google search result for <query>."""
+    if not dev_key:
+        return "This command requires a Google Developers Console API key."
 
     eval = urllib.parse.quote(text)
     parsed = api_get(eval, bot)

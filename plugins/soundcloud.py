@@ -84,7 +84,7 @@ def format_user(user, show_url=True):
     out = "\x02{}\x02".format(user['username'])
 
     if user['description']:
-        out += ': "{}"'.format(user['description'])
+        out += ': "{}"'.format(formatting.truncate(user['description']))
 
     if user['city']:
         out += ': {}'.format(user['city'])

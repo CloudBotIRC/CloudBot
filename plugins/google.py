@@ -4,7 +4,7 @@
 import requests
 
 from cloudbot import hook
-from cloudbot.util import formatting
+from cloudbot.util import formatting, filesize
 
 API_CS = 'https://www.googleapis.com/customsearch/v1'
 
@@ -52,4 +52,13 @@ def gse_gis(text):
 
     parsed = requests.get(API_CS, params={"cx": cx, "q": text, "searchType": "image", "key": dev_key}).json()
 
-    return "Stuff will eventually happen."
+    try:
+        result = parsed['items'][0]
+        metadata = parsed['items'][0]['image']
+    except KeyError:
+        return "No results found."
+
+    dimens = '{}x{}px'.format(metadata['width'], metadata['height'])
+    size = filesize.size(int(metadata['byteSize']))
+
+    return u'{} [{}, {}, {}]'.format(result['link'], dimens, result['mime'], size)

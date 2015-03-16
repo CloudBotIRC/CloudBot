@@ -1,8 +1,6 @@
 # RoboCop 2's gsearch.py - A replacement for google.py after Google's deprecation of Google Web Search API
 # Module requires a Google Custom Search API key and a Custom Search Engine ID in order to function.
 
-import random
-
 import urllib.request, urllib.parse
 
 from cloudbot import hook

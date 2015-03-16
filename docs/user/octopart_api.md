@@ -18,3 +18,6 @@ Once you got an account, you can proceed to make a new API application project [
 Next, enter a new application name for your CloudBot instance, as well as a webpage for your bot (or your organization), agree to the Terms of Use, then select "Register application".
 
 ![Fill the Form](img/oc_3.png?raw=true "Fill the Form")
+
+## 3 - Get your API key
+Once in the dashboard, you can get the API key from the table shown.

@@ -36,17 +36,15 @@ class Session():
                 'asbotname', 'ttsvoice', 'typing', 'lineref', 'fno', 'sub',
                 'islearning', 'cleanslate']
 
-    headers = dict()
-    headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:26.0)'
-    headers['User-Agent'] += ' Gecko/20130101 Firefox/26.0'
-    headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;'
-    headers['Accept'] += 'q=0.9,*/*;q=0.8'
-    headers['Accept-Language'] = 'en-us;q=0.8,en;q=0.5'
-    headers['X-Moz'] = 'prefetch'
-    headers['Accept-Charset'] = 'ISO-8859-1,utf-8;q=0.7,*;q=0.7'
-    headers['Referer'] = 'http://www.cleverbot.com'
-    headers['Cache-Control'] = 'no-cache, no-cache'
-    headers['Pragma'] = 'no-cache'
+    headers = {
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
+        'Accept-Language': 'en-us;q=0.8,en;q=0.5',
+        'Pragma': 'no-cache',
+        'Referer': 'http://www.cleverbot.com',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:26.0) Gecko/20130101 Firefox/26.0',
+        'X-Moz': 'prefetch'
+    }
 
     def __init__(self):
         self.arg_list = ['', 'y', '', '', '', '', '', '', '', '', 'wsf', '',

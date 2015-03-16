@@ -19,7 +19,7 @@ def load_api(bot):
 
 
 @hook.command('g','gse')
-def gse(text, bot):
+def gse(text):
     """google <query> -- Returns first google search result for <query>."""
     if not dev_key:
         return "This command requires a Google Developers Console API key."
@@ -44,3 +44,7 @@ def gse(text, bot):
         content = formatting.truncate_str(content, 150)
 
     return u'{} -- \x02{}\x02: "{}"'.format(result['link'], title, content)
+
+@hook.command('gis','image', 'googleimage')
+def gse_gis(text):
+    return "Stuff will eventually happen."

@@ -47,4 +47,9 @@ def gse(text):
 
 @hook.command('gis','image', 'googleimage')
 def gse_gis(text):
+    if not dev_key:
+        return "This command requires a Google Developers Console API key."
+    if not cx:
+        return "This command requires a custom Google Search Engine ID."
+    
     return "Stuff will eventually happen."

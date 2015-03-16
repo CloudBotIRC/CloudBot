@@ -8,13 +8,20 @@ import urllib.request, urllib.parse
 from cloudbot import hook
 from cloudbot.util import http, formatting
 
+API_CS = 'https://www.googleapis.com/customsearch/v1?cx={}&q={}&key={}'
+
+@hook.on_start()
+def load_api(bot):
+    global key
+    global cx
+
+    key = urllib.parse.quote(bot.config.get("api_keys", {}).get("google_dev_key"))
+    cx = urllib.parse.quote(bot.config.get("api_keys", {}).get("google_cse_id"))
 
 def api_get(query, bot):
     """Use the RESTful Google Search API"""
     # YOU NEED A KEY TO USE THIS MODULE!!!
     # [key] is your Google Developers Project API Key, and [cx] is the custom search engine ID to use for requests.
-    key = urllib.parse.quote(bot.config.get("api_keys", {}).get("google_dev_key"))
-    cx = urllib.parse.quote(bot.config.get("api_keys", {}).get("google_cse_id"))
 
     url = 'https://www.googleapis.com/customsearch/v1?cx=' + cx + '&q='+ query + '&key=' + key
     return http.get_json(url)

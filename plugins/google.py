@@ -18,7 +18,7 @@ def load_api(bot):
     cx = bot.config.get("api_keys", {}).get("google_cse_id", None)
 
 
-@hook.command('g','gse')
+@hook.command('g', 'google', 'gse')
 def gse(text):
     """google <query> -- Returns first google search result for <query>."""
     if not dev_key:

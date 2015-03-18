@@ -3,11 +3,42 @@ from datetime import datetime
 import requests
 import random
 
+from sqlalchemy import Table, Column, PrimaryKeyConstraint, String
+
 from cloudbot import hook
-from cloudbot.util import timeformat, web
+from cloudbot.util import timeformat, web, botvars
 
 api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
 
+table = Table(
+    "lastfm",
+    botvars.metadata,
+    Column('nick', String),
+    Column('acc', String),
+    PrimaryKeyConstraint('nick')
+)
+
+
+@hook.on_start()
+def load_cache(db):
+    """
+    :type db: sqlalchemy.orm.Session
+    """
+    global last_cache
+    last_cache = []
+    for row in db.execute(table.select()):
+        nick = row["nick"]
+        account = row["acc"]
+        last_cache.append((nick, account))
+
+def get_account(nick):
+    """looks in last_cache for the lastfm account name"""
+    last_account = [row[1] for row in last_cache if nick == row[0]]
+    if not last_account:
+        return
+    else:
+        last_account = last_account[0]
+    return last_account
 
 @hook.command("lastfm", "np", "l", autohelp=False)
 def lastfm(text, nick, db, bot, notice):
@@ -23,15 +54,11 @@ def lastfm(text, nick, db, bot, notice):
     else:
         user = text
 
-    db.execute("create table if not exists lastfm(nick primary key, acc)")
-
     if not user:
-        user = db.execute("select acc from lastfm where nick=lower(:nick)",
-                          {'nick': nick}).fetchone()
+        user = get_account(nick)
         if not user:
             notice(lastfm.__doc__)
             return
-        user = user[0]
 
     params = {'method': 'user.getrecenttracks',
               'api_key': api_key, 'user': user, 'limit': 1}
@@ -89,7 +116,7 @@ def lastfm(text, nick, db, bot, notice):
         db.execute("insert or replace into lastfm(nick, acc) values (:nick, :account)",
                    {'nick': nick.lower(), 'account': user})
         db.commit()
-
+        load_cache(db)
     return out
 
 
@@ -107,15 +134,13 @@ def lastfmcompare(text, nick, bot, db):
         user2 = text
         user1 = nick
 
-    user2_check = db.execute(
-        "select acc from lastfm where nick=lower(:nick)", {'nick': user2}).fetchone()
+    user2_check = get_account(user2)
     if user2_check:
-        user2 = user2_check[0]
+        user2 = user2_check
 
-    user1_check = db.execute(
-        "select acc from lastfm where nick=lower(:nick)", {'nick': user1}).fetchone()
+    user1_check = get_account(user1)
     if user1_check:
-        user1 = user1_check[0]
+        user1 = user1_check
 
     params = {
         'method': 'tasteometer.compare',
@@ -161,16 +186,11 @@ def toptrack(text, nick, db, bot, notice):
         return "error: no api key set"
 
     if text:
-        username = db.execute(
-            "select acc from lastfm where nick=lower(:nick)", {'nick': text}).fetchone()
+        username = get_account(text)
         if not username:
             username = text
-        else:
-            username = username[0]
     else:
-        username = db.execute("select acc from lastfm where nick=lower(:nick)",
-                              {'nick': nick}).fetchone()
-        username = username[0]
+        username = get_account(nick)
     if not username:
         return("No last.fm username specified and no last.fm username is set in the database.")
 
@@ -188,7 +208,6 @@ def toptrack(text, nick, db, bot, notice):
     data = request.json()
     if 'error' in data:
         return "Error: {}.".format(data["message"])
-    #response = http.get_json(api_url, api_key=api_key, method="user.gettoptracks", user=username)
     out = "{}'s favorite songs: ".format(username)
     for r in range(5):
         out = out + "{} by {} listened to {} times. ".format(data["toptracks"]["track"][r]["name"], data[
@@ -204,16 +223,11 @@ def topartists(text, nick, db, bot, notice):
         return "error: no api key set"
 
     if text:
-        username = db.execute(
-            "select acc from lastfm where nick=lower(:nick)", {'nick': text}).fetchone()
+        username = get_account(text)
         if not username:
             username = text
-        else:
-            username = username[0]
     else:
-        username = db.execute("select acc from lastfm where nick=lower(:nick)",
-                              {'nick': nick}).fetchone()
-        username = username[0]
+        username = get_account(nick)
     if not username:
         return("No last.fm username specified and no last.fm username is set in the database.")
     params = {
@@ -231,7 +245,6 @@ def topartists(text, nick, db, bot, notice):
     if 'error' in data:
         return "Error: {}.".format(data["message"])
 
-    #response = http.get_json(api_url, api_key=api_key, method="user.gettopartists", user=username, limit=5 )
     out = "{}'s favorite artists: ".format(username)
     for r in range(5):
         out = out + "{} listened to {} times. ".format(
@@ -260,10 +273,8 @@ def lastfm_track(text, nick, db, bot, notice):
         notice(
             "Please specify an artist and track title in the form artist name, track name.", nick)
         return
-    username = db.execute("select acc from lastfm where nick=lower(:nick)",
-                          {'nick': nick}).fetchone()
+    username = get_account(nick)
     if username:
-        username = username[0]
         params = {
             'api_key': api_key,
             'method': 'track.getInfo',
@@ -280,7 +291,6 @@ def lastfm_track(text, nick, db, bot, notice):
             'track': track,
             'autocorrect': 1
         }
-        #response = http.get_json(api_url, api_key=api_key, method="track.getInfo", artist=artist, track=track, autocorrect=1)
     request = requests.get(api_url, params=params)
 
     if request.status_code != requests.codes.ok:
@@ -317,10 +327,8 @@ def lastfm_artist(text, nick, db, bot, notice):
         pass
     else:
         notice("Please specify an artist.", nick)
-    username = db.execute("select acc from lastfm where nick=lower(:nick)",
-                          {'nick': nick}).fetchone()
+    username = get_account(nick)
     if username:
-        username = username[0]
         params = {
             'api_key': api_key,
             'method': 'artist.getInfo',

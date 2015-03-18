@@ -33,7 +33,7 @@ def load_cache(db):
 
 def get_account(nick):
     """looks in last_cache for the lastfm account name"""
-    last_account = [row[1] for row in last_cache if nick == row[0]]
+    last_account = [row[1] for row in last_cache if nick.lower() == row[0]]
     if not last_account:
         return
     else:

@@ -44,7 +44,7 @@ def herald(text, nick, chan, db, conn):
         return("greeting successfully added")
 
 
-@hook.irc_raw("JOIN")
+@hook.irc_raw("JOIN", singlethread=True)
 def welcome(nick, action, message, chan, event, db, conn):
     # For some reason chan isn't passed correctly. The below hack is sloppy and may need to be adjusted for different networks.
     # If someone knows how to get the channel a better way please fix this.

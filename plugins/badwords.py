@@ -26,8 +26,7 @@ def db_init(db, conn_name):
         db_ready.append(conn_name)
 
 
-@hook.onload()
-@hook.event("004")
+@hook.on_start()
 @hook.command("loadbad", permissions=["badwords"], autohelp=False)
 def load_bad(db, conn):
     """Should run on start of bot to load the existing words into the regex"""
@@ -111,7 +110,7 @@ def list_bad(text, db, conn):
     return out[:-1]
 
 
-@hook.event([EventType.message, EventType.action])
+@hook.event([EventType.message, EventType.action], singlethread=True)
 def test_badwords(event, db, conn, message):
     match = re.search(black_re, event.content, re.IGNORECASE)
     if match:

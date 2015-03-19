@@ -42,7 +42,7 @@ def get_account(nick):
     return last_account
 
 
-@hook.command("lastfm", "np", "l", autohelp=False)
+@hook.command("lastfm", "last", "np", "l", autohelp=False)
 def lastfm(text, nick, db, bot, notice):
     """[user] [dontsave] - displays the now playing (or last played) track of LastFM user [user]"""
     api_key = bot.config.get("api_keys", {}).get("lastfm")
@@ -254,117 +254,4 @@ def topartists(text, nick, db, bot, notice):
         artist_name = data["topartists"]["artist"][r]["name"]
         play_count = data["topartists"]["artist"][r]["playcount"]
         out = out + "{} listened to {} times. ".format(artist_name, play_count)
-    return out
-
-
-@hook.command("lt", "ltrack", autohelp=False)
-def lastfm_track(text, nick, db, bot, notice):
-    """Grabs a list of the top tracks for a last.fm username"""
-    api_key = bot.config.get("api_keys", {}).get("lastfm")
-    if not api_key:
-        return "error: no api key set"
-    artist = ""
-    track = ""
-    if text:
-        params = text.split(',')
-        if len(params) < 2:
-            notice(
-                "Please specify an artist and track title in the form artist name, track name.", nick)
-            return
-        else:
-            artist = params[0]
-            track = params[1]
-    else:
-        notice(
-            "Please specify an artist and track title in the form artist name, track name.", nick)
-        return
-    username = get_account(nick)
-    if username:
-        params = {
-            'api_key': api_key,
-            'method': 'track.getInfo',
-            'artist': artist,
-            'track': track,
-            'username': username,
-            'autocorrect': 1
-        }
-    else:
-        params = {
-            'api_key': api_key,
-            'method': 'track.getInfo',
-            'artist': artist,
-            'track': track,
-            'autocorrect': 1
-        }
-    request = requests.get(api_url, params=params)
-
-    if request.status_code != requests.codes.ok:
-        return "Failed to fetch info ({})".format(request.status_code)
-
-    response = request.json()
-    if 'error' in response:
-        return "Error: {}.".format(response["message"])
-
-    track_name = response["track"]["name"]
-    artist_name = response["track"]["artist"]["name"]
-    album_name = response["track"]["album"]["title"]
-    url = web.try_shorten(response["track"]["url"])
-    listeners = response["track"]["listeners"]
-    playcount = response["track"]["playcount"]
-    out = out = "'{}' from the album {} by {} has been played {} times by {} listeners. {}".format(
-        track_name, album_name, artist_name, playcount, listeners, url)
-    if 'userplaycount' in response["track"]:
-        userplaycount = response["track"]["userplaycount"]
-        out = "'{}' from the album {} by {} has been played {} times by {} listeners. {} has listened {} times. {}".format(
-            track_name, album_name, artist_name, playcount, listeners, username, userplaycount, url)
-    return out
-
-
-@hook.command("la", "lartist", autohelp=False)
-def lastfm_artist(text, nick, db, bot, notice):
-    """<artist> prints information about the specified artist"""
-    api_key = bot.config.get("api_keys", {}).get("lastfm")
-    if not api_key:
-        return "error: no api key set"
-    artist = text
-    params = ""
-    if text:
-        pass
-    else:
-        notice("Please specify an artist.", nick)
-    username = get_account(nick)
-    if username:
-        params = {
-            'api_key': api_key,
-            'method': 'artist.getInfo',
-            'artist': artist,
-            'username': username,
-            'autocorrect': 1
-        }
-    else:
-        params = {
-            'api_key': api_key,
-            'method': 'artist.getInfo',
-            'artist': artist,
-            'autocorrect': 1
-        }
-
-    request = requests.get(api_url, params=params)
-
-    if request.status_code != requests.codes.ok:
-        return "Failed to fetch info ({})".format(request.status_code)
-
-    response = request.json()
-    if 'error' in response:
-        return "Error: {}.".format(response["message"])
-    artist_name = response["artist"]["name"]
-    url = web.try_shorten(response["artist"]["url"])
-    listeners = response["artist"]["stats"]["listeners"]
-    playcount = response["artist"]["stats"]["playcount"]
-    out = out = "{} has been played {} times by {} listeners. {}".format(
-        artist_name, playcount, listeners, url)
-    if 'userplaycount' in response["artist"]["stats"]:
-        userplaycount = response["artist"]["stats"]["userplaycount"]
-        out = "'{}' has been played {} times by {} listeners. {} has listened {} times. {}".format(
-            artist_name, playcount, listeners, username, userplaycount, url)
     return out

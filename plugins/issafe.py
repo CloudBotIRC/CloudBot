@@ -1,6 +1,19 @@
+"""
+issafe.py
+
+A plugin that uses the RRRather.com API to return random "Would you rather" questions.
+
+Created By:
+    - Foxlet <http://furcode.tk/>
+
+License:
+    GNU General Public License (Version 3)
+"""
+
 from cloudbot import hook
 import cloudbot
 import requests
+from urllib.parse import urlparse
 
 API_SB = "https://sb-ssl.google.com/safebrowsing/api/lookup"
 
@@ -14,8 +27,8 @@ def load_api(bot):
 @hook.command()
 def issafe(text):
     """<website> -- Checks the website against Google's Safe Browsing List."""
-    if "http://" not in text:
-        return "Check your URL (it must be complete)."
+    if urlparse(text).scheme == False:
+        return "Check your URL (it should be a complete url)."
 
     parsed = requests.get(API_SB, params={"url": text, "client": "cloudbot", "key": dev_key, "pver": "3.1", "appver": str(cloudbot.__version__)})
 

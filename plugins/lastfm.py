@@ -212,8 +212,10 @@ def toptrack(text, nick, db, bot, notice):
         return "Error: {}.".format(data["message"])
     out = "{}'s favorite songs: ".format(username)
     for r in range(5):
-        out = out + "{} by {} listened to {} times. ".format(data["toptracks"]["track"][r]["name"], data[
-                                                             "toptracks"]["track"][r]["artist"]["name"], data["toptracks"]["track"][r]["playcount"])
+        track_name = data["toptracks"]["track"][r]["name"]
+        artist_name = data["toptracks"]["track"][r]["artist"]["name"]
+        play_count = data["toptracks"]["track"][r]["playcount"] 
+        out = out + "{} by {} listened to {} times. ".format(track_name, artist_name, play_count)
     return out
 
 
@@ -249,8 +251,9 @@ def topartists(text, nick, db, bot, notice):
 
     out = "{}'s favorite artists: ".format(username)
     for r in range(5):
-        out = out + "{} listened to {} times. ".format(
-            data["topartists"]["artist"][r]["name"], data["topartists"]["artist"][r]["playcount"])
+        artist_name = data["topartists"]["artist"][r]["name"]
+        play_count = data["topartists"]["artist"][r]["playcount"]
+        out = out + "{} listened to {} times. ".format(artist_name, play_count)
     return out
 
 

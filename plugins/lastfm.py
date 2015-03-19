@@ -31,6 +31,7 @@ def load_cache(db):
         account = row["acc"]
         last_cache.append((nick, account))
 
+
 def get_account(nick):
     """looks in last_cache for the lastfm account name"""
     last_account = [row[1] for row in last_cache if nick.lower() == row[0]]
@@ -39,6 +40,7 @@ def get_account(nick):
     else:
         last_account = last_account[0]
     return last_account
+
 
 @hook.command("lastfm", "np", "l", autohelp=False)
 def lastfm(text, nick, db, bot, notice):
@@ -159,8 +161,8 @@ def lastfmcompare(text, nick, bot, db):
     if 'error' in data:
         return "Error: {}.".format(data["message"])
 
-    score = float(
-        format(float(data["comparison"]["result"]["score"]) * 100, '.3f'))
+    score = float(data["comparison"]["result"]["score"])
+    score = float("{:.3f}".format(score * 100))
     if score == 0:
         return "{} and {} have no common listening history.".format(user2, user1)
     level = "Super" if score > 95 else "Very High" if score > 80 else "High" if score > 60 else \
@@ -212,7 +214,7 @@ def toptrack(text, nick, db, bot, notice):
     for r in range(5):
         out = out + "{} by {} listened to {} times. ".format(data["toptracks"]["track"][r]["name"], data[
                                                              "toptracks"]["track"][r]["artist"]["name"], data["toptracks"]["track"][r]["playcount"])
-    notice(out, nick)
+    return out
 
 
 @hook.command("lta", "topartist", autohelp=False)
@@ -249,7 +251,7 @@ def topartists(text, nick, db, bot, notice):
     for r in range(5):
         out = out + "{} listened to {} times. ".format(
             data["topartists"]["artist"][r]["name"], data["topartists"]["artist"][r]["playcount"])
-    notice(out, nick)
+    return out
 
 
 @hook.command("lt", "ltrack", autohelp=False)

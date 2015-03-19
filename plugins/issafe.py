@@ -1,7 +1,7 @@
 """
 issafe.py
 
-A plugin that uses the RRRather.com API to return random "Would you rather" questions.
+Check the Google Safe Browsing list to see a website's safety rating.
 
 Created By:
     - Foxlet <http://furcode.tk/>

@@ -1,6 +1,7 @@
 """
-RoboCop 2's google.py
-A replacement for google.py after Google's deprecation of Google Web Search API
+google.py
+
+Originally for RoboCop 2, a replacement after Google's deprecation of Google Web Search API
 Module requires a Google Custom Search API key and a Custom Search Engine ID in order to function.
 
 Created By:

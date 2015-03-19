@@ -20,7 +20,7 @@ import html
 SESSION = collections.OrderedDict()
 API_URL = "http://www.cleverbot.com/webservicemin/"
 
-@hook.onload()
+@hook.on_start()
 def init_vars():
     SESSION['stimulus'] = ""
     SESSION['sessionid'] = ""

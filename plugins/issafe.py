@@ -33,7 +33,7 @@ def issafe(text):
     parsed = requests.get(API_SB, params={"url": text, "client": "cloudbot", "key": dev_key, "pver": "3.1", "appver": str(cloudbot.__version__)})
 
     if parsed.status_code == 204:
-        condition = "This website is safe."
+        condition = "\x02{}\x02 is safe.".format(text)
     else:
-        condition = "This site is known to contain: {}".format(parsed.text)
+        condition = "\x02{}\x02 is known to contain: {}".format(text, parsed.text)
     return condition

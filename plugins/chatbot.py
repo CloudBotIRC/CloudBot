@@ -20,6 +20,16 @@ import html
 SESSION = collections.OrderedDict()
 API_URL = "http://www.cleverbot.com/webservicemin/"
 
+HEADERS = {
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
+        'Accept-Language': 'en-us;q=0.8,en;q=0.5',
+        'Pragma': 'no-cache',
+        'Referer': 'http://www.cleverbot.com',
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19',
+        'X-Moz': 'prefetch'
+    }
+
 @hook.on_start()
 def init_vars():
     SESSION['stimulus'] = ""
@@ -36,8 +46,7 @@ def cb_think(text):
     payload = urllib.parse.urlencode(SESSION)
     digest = hashlib.md5(payload[9:35].encode('utf-8')).hexdigest()
     target_url = "{}&icognocheck={}".format(payload, digest)
-    print(target_url)
-    parsed = requests.post(API_URL, data=target_url)
+    parsed = requests.post(API_URL, data=target_url, headers=HEADERS)
     data = parsed.text.split('\r')
     SESSION['sessionid'] = data[1]
     return html.unescape(data[0])

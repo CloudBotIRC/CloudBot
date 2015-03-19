@@ -49,7 +49,7 @@ def cb_think(text):
     parsed = requests.post(API_URL, data=target_url, headers=HEADERS)
     data = parsed.text.split('\r')
     SESSION['sessionid'] = data[1]
-    return html.unescape(data[0])
+    return html.unescape(str(data[0]))
 
 @hook.command("ask", "cleverbot", "cb")
 def ask(text):

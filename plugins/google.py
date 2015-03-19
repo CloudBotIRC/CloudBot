@@ -1,5 +1,16 @@
-# RoboCop 2's gsearch.py - A replacement for google.py after Google's deprecation of Google Web Search API
-# Module requires a Google Custom Search API key and a Custom Search Engine ID in order to function.
+"""
+RoboCop 2's google.py
+A replacement for google.py after Google's deprecation of Google Web Search API
+Module requires a Google Custom Search API key and a Custom Search Engine ID in order to function.
+
+Created By:
+    - Foxlet <http://furcode.tk/>
+
+License:
+    GNU General Public License (Version 3)
+"""
+
+
 
 import requests
 

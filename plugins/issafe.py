@@ -27,8 +27,8 @@ def load_api(bot):
 @hook.command()
 def issafe(text):
     """<website> -- Checks the website against Google's Safe Browsing List."""
-    if bool(urlparse(text).scheme) == False:
-        return "Check your URL (it should be a complete url)."
+    if urlparse(text).scheme not in ['https', 'http']:
+        return "Check your URL (it should be a complete URI)."
 
     parsed = requests.get(API_SB, params={"url": text, "client": "cloudbot", "key": dev_key, "pver": "3.1", "appver": str(cloudbot.__version__)})
 

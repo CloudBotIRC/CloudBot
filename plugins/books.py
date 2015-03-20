@@ -57,6 +57,6 @@ def books(text):
     except KeyError:
         pages = ''
 
-    link = web.shorten(book['infoLink'], service="goo.gl")
+    link = web.shorten(book['infoLink'], service="goo.gl", key=dev_key)
 
     return "\x02{}\x02 by \x02{}\x02 ({}){} - {} - {}".format(title, author, year, pages, description, link)

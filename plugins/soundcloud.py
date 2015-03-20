@@ -186,24 +186,6 @@ def soundcloud_user(text):
     except APIError as ae:
         return ae
 
-@hook.command("scgroup")
-def soundcloud_group(text):
-    """<query> -- Searches for groups on SoundCloud."""
-    if not api_key:
-        return "This command requires a SoundCloud API key."
-    try:
-        group = get_with_search('groups', text)
-    except APIError as ae:
-        return ae
-
-    if not group:
-        return "No results found."
-
-    try:
-        return format_group(group)
-    except APIError as ae:
-        return ae
-
 
 @hook.regex(SC_RE)
 def soundcloud_url(match):

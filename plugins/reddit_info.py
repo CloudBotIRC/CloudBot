@@ -41,7 +41,7 @@ def karma(text):
     data = r.json()
     out = "\x02{}\x02 ".format(user)
     out += "\x02{:,}\x02 link karma and ".format(data['data']['link_karma'])
-    out += "\x02{:,}\x02 comment karma ".format(data['data']['comment_karma'])
+    out += "\x02{:,}\x02 comment karma, ".format(data['data']['comment_karma'])
     if data['data']['is_gold']:
         out += "has reddit gold, "
     if data['data']['is_mod']:

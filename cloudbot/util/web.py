@@ -47,14 +47,14 @@ def pyeval(code, pastebin=True):
 # Public API
 
 
-def shorten(url, custom=None, service=DEFAULT_SHORTENER):
+def shorten(url, custom=None, key=None, service=DEFAULT_SHORTENER):
     impl = shorteners[service]
-    return impl.shorten(url, custom)
+    return impl.shorten(url, custom, key)
 
 
-def try_shorten(url, custom=None, service=DEFAULT_SHORTENER):
+def try_shorten(url, custom=None, key=None, service=DEFAULT_SHORTENER):
     impl = shorteners[service]
-    return impl.try_shorten(url, custom)
+    return impl.try_shorten(url, custom, key)
 
 
 def expand(url, service=None):
@@ -91,12 +91,12 @@ class Shortener:
     def __init__(self):
         pass
 
-    def shorten(self, url, custom=None):
+    def shorten(self, url, custom=None, key=None):
         return url
 
-    def try_shorten(self, url, custom=None):
+    def try_shorten(self, url, custom=None, key=None):
         try:
-            return self.shorten(url, custom)
+            return self.shorten(url, custom, key)
         except ServiceError:
             return url
 
@@ -138,7 +138,7 @@ def _pastebin(name):
 
 @_shortener('is.gd')
 class Isgd(Shortener):
-    def shorten(self, url, custom=None):
+    def shorten(self, url, custom=None, key=None):
         p = {'url': url, 'shorturl': custom, 'format': 'json'}
         r = requests.get('http://is.gd/create.php', params=p)
         j = r.json()
@@ -161,10 +161,11 @@ class Isgd(Shortener):
 
 @_shortener('goo.gl')
 class Googl(Shortener):
-    def shorten(self, url, custom=None):
+    def shorten(self, url, custom=None, key=None):
         h = {'content-type': 'application/json'}
+        k = {'key': key}
         p = {'longUrl': url}
-        r = requests.post('https://www.googleapis.com/urlshortener/v1/url', data=json.dumps(p), headers=h)
+        r = requests.post('https://www.googleapis.com/urlshortener/v1/url', params=k, data=json.dumps(p), headers=h)
         j = r.json()
 
         if 'error' not in j:
@@ -185,7 +186,7 @@ class Googl(Shortener):
 
 @_shortener('git.io')
 class Gitio(Shortener):
-    def shorten(self, url, custom=None):
+    def shorten(self, url, custom=None, key=None):
         p = {'url': url, 'code': custom}
         r = requests.post('http://git.io', data=p)
 

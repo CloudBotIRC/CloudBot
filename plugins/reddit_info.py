@@ -32,7 +32,7 @@ def moderates(text):
     r = requests.get(user_url.format(user), headers=agent)
     if r.status_code != 200:
         return statuscheck(r.status_code, user)
-    soup = BeautifulSoup(r.text, user)
+    soup = BeautifulSoup(r.text)
     try:
         modlist = soup.find('ul', id="side-mod-list").text
     except:

@@ -9,6 +9,21 @@ subreddit_url = "http://reddit.com/r/{}/"
 # This agent should be unique for your cloudbot instance
 agent = {"User-Agent":"gonzobot a cloudbot (IRCbot) implementation for snoonet.org by /u/bloodygonzo"}
 
+def statuscheck(status):
+    """since we are doing this a lot might as well return something more meaningful"""
+    out = ""
+    if status == 404:
+        out = "It appears what you are looking for does not exist."
+    elif status == 403:
+        out = "Sorry I can't report on that because it is private."
+    elif status == 429:
+        out = "Reddit appears to be ratelimiting me. Please try again in a few minutes."
+    elif status == 503:
+        out = "Reddit is having problems would be best to check back later."
+    else:
+        out = "Reddit returned an error, response: {}".format(status)
+    return out
+
 @hook.command("mods", "moderates", singlethreaded=True)
 def moderates(text):
     """This plugin prints the list of subreddits a user moderates listed in a reddit users profile. Private subreddits will not be listed."""
@@ -16,7 +31,7 @@ def moderates(text):
     user = text
     r = requests.get(user_url.format(user), headers=agent)
     if r.status_code != 200:
-        return "Reddit returned an error, response: {}".format(r.status_code)
+        return statuscheck(r.status_code)
     soup = BeautifulSoup(r.text)
     try:
         modlist = soup.find('ul', id="side-mod-list").text
@@ -24,7 +39,7 @@ def moderates(text):
         return "{} does not moderate any public subreddits.".format(user)
     modlist = modlist.split('/r/')
     del modlist[0]
-    out = "\x02{}\x02 moderates these public channels: ".format(user)
+    out = "\x02{}\x02 moderates these public subreddits: ".format(user)
     for sub in modlist:
         out += "{} \u2022 ".format(sub)
     out = out[:-2]
@@ -37,7 +52,7 @@ def karma(text):
     url = user_url + "about.json"
     r = requests.get(url.format(user), headers=agent)
     if r.status_code != 200:
-        return "Reddit returned an error, response: {}".format(r.status_code)
+        return statuscheck(r.status_code)
     data = r.json()
     out = "\x02{}\x02 ".format(user)
     out += "\x02{:,}\x02 link karma and ".format(data['data']['link_karma'])
@@ -63,7 +78,7 @@ def submods(text):
     url = subreddit_url + "about/moderators.json"
     r = requests.get(url.format(sub), headers=agent)
     if r.status_code != 200:
-        return "Reddit returned an error, response: {}".format(r.status_code)
+        return statuscheck(r.status_code)
     data = r.json()
     out = "r/\x02{}\x02 mods: ".format(sub)
     for mod in data['data']['children']:
@@ -75,14 +90,14 @@ def submods(text):
     out = out[:-3]
     return out
 
-@hook.command("subinfo", "subreddit", singlethreaded=True)
+@hook.command("subinfo", "subreddit", "rinfo", singlethreaded=True)
 def subinfo(text):
     """subinfo <subreddit> fetches information about the specified subreddit. Do not include /r/ when specifying a subreddit."""
     sub = text
     url = subreddit_url + "about.json"
     r = requests.get(url.format(sub), headers=agent)
     if r.status_code != 200:
-        return "Reddit returned an error, response: {}".format(r.status_code)
+        return statuscheck(r.status_code)
     data = r.json()
     name = data['data']['display_name']
     title = data['data']['title']
@@ -95,7 +110,7 @@ def subinfo(text):
         age = (int(sub_age.days / 365), "year(s)")
     else:
         age = (sub_age.days, "days")
-    out = "r/\x02{}\x02 - {} - Has been a community for {} {}, there are {:,} subscribers and {:,} people online now.".format(name, title, age[0], age[1], subscribers, active)
+    out = "r/\x02{}\x02 - {} - a community for {} {}, there are {:,} subscribers and {:,} people online now.".format(name, title, age[0], age[1], subscribers, active)
     if nsfw:
         out += " \x0304NSFW\x0304"
     return out

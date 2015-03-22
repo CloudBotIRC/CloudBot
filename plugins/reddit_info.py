@@ -9,17 +9,17 @@ subreddit_url = "http://reddit.com/r/{}/"
 # This agent should be unique for your cloudbot instance
 agent = {"User-Agent":"gonzobot a cloudbot (IRCbot) implementation for snoonet.org by /u/bloodygonzo"}
 
-def statuscheck(status):
+def statuscheck(status, item):
     """since we are doing this a lot might as well return something more meaningful"""
     out = ""
     if status == 404:
-        out = "It appears what you are looking for does not exist."
+        out = "It appears {} does not exist.".format(item)
     elif status == 403:
-        out = "Sorry I can't report on that because it is private."
+        out = "Sorry {} is set to private and I cannot access it.".format(item)
     elif status == 429:
-        out = "Reddit appears to be ratelimiting me. Please try again in a few minutes."
+        out = "Reddit appears to be rate-limiting me. Please try again in a few minutes."
     elif status == 503:
-        out = "Reddit is having problems would be best to check back later."
+        out = "Reddit is having problems, it would be best to check back later."
     else:
         out = "Reddit returned an error, response: {}".format(status)
     return out
@@ -31,8 +31,8 @@ def moderates(text):
     user = text
     r = requests.get(user_url.format(user), headers=agent)
     if r.status_code != 200:
-        return statuscheck(r.status_code)
-    soup = BeautifulSoup(r.text)
+        return statuscheck(r.status_code, user)
+    soup = BeautifulSoup(r.text, user)
     try:
         modlist = soup.find('ul', id="side-mod-list").text
     except:
@@ -52,7 +52,7 @@ def karma(text):
     url = user_url + "about.json"
     r = requests.get(url.format(user), headers=agent)
     if r.status_code != 200:
-        return statuscheck(r.status_code)
+        return statuscheck(r.status_code, user)
     data = r.json()
     out = "\x02{}\x02 ".format(user)
     out += "\x02{:,}\x02 link karma and ".format(data['data']['link_karma'])
@@ -78,7 +78,7 @@ def submods(text):
     url = subreddit_url + "about/moderators.json"
     r = requests.get(url.format(sub), headers=agent)
     if r.status_code != 200:
-        return statuscheck(r.status_code)
+        return statuscheck(r.status_code, 'r/'+sub)
     data = r.json()
     out = "r/\x02{}\x02 mods: ".format(sub)
     for mod in data['data']['children']:
@@ -97,7 +97,7 @@ def subinfo(text):
     url = subreddit_url + "about.json"
     r = requests.get(url.format(sub), headers=agent)
     if r.status_code != 200:
-        return statuscheck(r.status_code)
+        return statuscheck(r.status_code, 'r/'+sub)
     data = r.json()
     name = data['data']['display_name']
     title = data['data']['title']

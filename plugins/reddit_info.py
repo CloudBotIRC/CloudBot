@@ -51,6 +51,7 @@ def moderates(text):
 
 @hook.regex(subreddit_re)
 def sub_re(match, message):
+    """This trigger is dedicated to /u/halfchubb1."""
     if "reddit" in match.group():
         return
     sub = match.group(2)

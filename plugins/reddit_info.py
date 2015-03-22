@@ -1,13 +1,17 @@
 import requests
+import re
 
 from datetime import datetime
 from bs4 import BeautifulSoup
 from cloudbot import hook
 
+subreddit_re = re.compile(r'.*(/r/|r/)(\w+|\d+)', re.I)
+
 user_url = "http://reddit.com/user/{}/"
 subreddit_url = "http://reddit.com/r/{}/"
 # This agent should be unique for your cloudbot instance
 agent = {"User-Agent":"gonzobot a cloudbot (IRCbot) implementation for snoonet.org by /u/bloodygonzo"}
+
 
 def statuscheck(status, item):
     """since we are doing this a lot might as well return something more meaningful"""
@@ -44,6 +48,25 @@ def moderates(text):
         out += "{} \u2022 ".format(sub)
     out = out[:-2]
     return out
+
+@hook.regex(subreddit_re)
+def sub_re(match, message):
+    if "reddit" in match.group():
+        return
+    sub = match.group(2)
+    url = subreddit_url + "about.json"
+    r = requests.get(url.format(sub), headers=agent)
+    if r.status_code != 200:
+        return #subreddit_url.format(sub)
+    data = r.json()
+    if data['kind'] == "Listing":
+        return
+    name = data['data']['display_name']
+    nsfw = data['data']['over18']
+    out = "\x02{}\x02".format(subreddit_url.format(name))
+    if nsfw:
+        out += " \x0304NSFW\x0304"
+    message(out)
 
 @hook.command("karma", "ruser", singlethreaded=True)
 def karma(text):
@@ -90,7 +113,7 @@ def submods(text):
     out = out[:-3]
     return out
 
-@hook.command("subinfo", "subreddit", "rinfo", singlethreaded=True)
+@hook.command("subinfo","subreddit", "sub", "rinfo", singlethreaded=True)
 def subinfo(text):
     """subinfo <subreddit> fetches information about the specified subreddit. Do not include /r/ when specifying a subreddit."""
     sub = text
@@ -99,6 +122,8 @@ def subinfo(text):
     if r.status_code != 200:
         return statuscheck(r.status_code, 'r/'+sub)
     data = r.json()
+    if data['kind'] == "Listing":
+        return "It appears r/{} does not exist.".format(sub)
     name = data['data']['display_name']
     title = data['data']['title']
     nsfw = data['data']['over18']

@@ -12,6 +12,8 @@ cheers = [
     "OORAH!",
     "yay!",
     "*\o/* CHEERS! *\o/*",
+    "HOOHAH!",
+    "HOOYAH!",
     "HUAH!"]
 db_ready = []
 

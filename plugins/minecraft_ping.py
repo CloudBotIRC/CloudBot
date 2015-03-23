@@ -44,6 +44,11 @@ def mcping(text):
     else:
         description = format_colors(" ".join(s.description.split()))
 
-    return "{}\x0f - \x02{}\x0f - \x02{:.1f}ms\x02" \
-           " - \x02{}/{}\x02 players".format(description, s.version.name, s.latency,
-                                             s.players.online, s.players.max).replace("\n", "\x0f - ")
+    if s.latency:
+        return "{}\x0f - \x02{}\x0f - \x02{:.1f}ms\x02" \
+            " - \x02{}/{}\x02 players".format(description, s.version.name, s.latency,
+                                              s.players.online, s.players.max).replace("\n", "\x0f - ")
+    else:
+        return "{}\x0f - \x02{}\x0f" \
+            " - \x02{}/{}\x02 players".format(description, s.version.name,
+                                              s.players.online, s.players.max).replace("\n", "\x0f - ")

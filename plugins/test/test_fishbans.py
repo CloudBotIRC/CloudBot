@@ -34,7 +34,7 @@ class DummyBot():
     user_agent = "CloudBot/3.0"
 
 
-@pytest.mark.httpretty
+@httpretty.activate
 def test_bans():
     """
     tests fishbans with a successful API response having multiple bans
@@ -44,7 +44,7 @@ def test_bans():
     assert fishbans(test_user, DummyBot) == bans_reply
 
 
-@pytest.mark.httpretty
+@httpretty.activate
 def test_bans_single():
     """
     tests fishbans with a successful API response having a single ban
@@ -53,7 +53,8 @@ def test_bans_single():
 
     assert fishbans(test_user, DummyBot) == bans_reply_single
 
-@pytest.mark.httpretty
+
+@httpretty.activate
 def test_bans_failed():
     """
     tests fishbans with a failed API response
@@ -63,7 +64,7 @@ def test_bans_failed():
     assert fishbans(test_user, DummyBot) == reply_failed
 
 
-@pytest.mark.httpretty
+@httpretty.activate
 def test_bans_none():
     """
     tests fishbans with a successful API response having no bans
@@ -73,7 +74,7 @@ def test_bans_none():
     assert fishbans(test_user, DummyBot) == bans_reply_none
 
 
-@pytest.mark.httpretty
+@httpretty.activate
 def test_bans_error():
     """
     tests fishbans with a HTTP error
@@ -83,7 +84,7 @@ def test_bans_error():
     assert fishbans(test_user, DummyBot) == reply_error
 
 
-@pytest.mark.httpretty
+@httpretty.activate
 def test_count():
     """
     tests bancount with a successful API response having multiple bans
@@ -93,7 +94,7 @@ def test_count():
     assert bancount(test_user, DummyBot) == count_reply
 
 
-@pytest.mark.httpretty
+@httpretty.activate
 def test_count_failed():
     """
     tests bancount with a failed API response
@@ -103,7 +104,7 @@ def test_count_failed():
     assert bancount(test_user, DummyBot) == reply_failed
 
 
-@pytest.mark.httpretty
+@httpretty.activate
 def test_count_none():
     """
     tests bancount with a successful API response having no bans
@@ -112,8 +113,7 @@ def test_count_none():
 
     assert bancount(test_user, DummyBot) == count_reply_none
 
-
-@pytest.mark.httpretty
+@httpretty.activate
 def test_count_error():
     """
     tests bancount with a HTTP error

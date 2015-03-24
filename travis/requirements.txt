@@ -1,5 +1,7 @@
 pytest
+httpretty
 pytest-cov
 pytest-pep8
+pytest-httpretty
 flake8
 python-coveralls

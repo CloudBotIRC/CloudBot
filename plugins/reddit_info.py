@@ -5,8 +5,6 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 from cloudbot import hook
 
-subreddit_re = re.compile(r'.*(/r/|r/)(\w+|\d+)', re.I)
-
 user_url = "http://reddit.com/user/{}/"
 subreddit_url = "http://reddit.com/r/{}/"
 # This agent should be unique for your cloudbot instance
@@ -49,25 +47,6 @@ def moderates(text):
     out = out[:-2]
     return out
 
-@hook.regex(subreddit_re)
-def sub_re(match, message):
-    """This trigger is dedicated to /u/halfchubb1."""
-    if "reddit" in match.group():
-        return
-    sub = match.group(2)
-    url = subreddit_url + "about.json"
-    r = requests.get(url.format(sub), headers=agent)
-    if r.status_code != 200:
-        return #subreddit_url.format(sub)
-    data = r.json()
-    if data['kind'] == "Listing":
-        return
-    name = data['data']['display_name']
-    nsfw = data['data']['over18']
-    out = "\x02{}\x02".format(subreddit_url.format(name))
-    if nsfw:
-        out += " \x0304NSFW\x0304"
-    message(out)
 
 @hook.command("karma", "ruser", singlethreaded=True)
 def karma(text):

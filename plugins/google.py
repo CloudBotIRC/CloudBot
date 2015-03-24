@@ -43,6 +43,5 @@ def google(text):
         content = "No description available."
     else:
         content = http.html.fromstring(content).text_content()
-        content = formatting.truncate_str(content, 150)
-
+        content = formatting.truncate_str(content, 150).replace('\n', '')
     return '{} -- \x02{}\x02: "{}"'.format(result['unescapedUrl'], title, content)

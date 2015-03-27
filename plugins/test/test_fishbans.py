@@ -1,4 +1,5 @@
 import httpretty
+import responses
 import pytest
 
 from plugins.fishbans import fishbans, bancount
@@ -34,90 +35,91 @@ class DummyBot():
     user_agent = "CloudBot/3.0"
 
 
-@httpretty.activate
+@responses.activate
 def test_bans():
     """
     tests fishbans with a successful API response having multiple bans
     """
-    httpretty.register_uri(httpretty.GET, 'http://api.fishbans.com/stats/notch/', body=test_api)
+    responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', body=test_api)
 
     assert fishbans(test_user, DummyBot) == bans_reply
 
 
-@httpretty.activate
+@responses.activate
 def test_bans_single():
     """
     tests fishbans with a successful API response having a single ban
     """
-    httpretty.register_uri(httpretty.GET, 'http://api.fishbans.com/stats/notch/', body=test_api_single)
+    responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', body=test_api_single)
 
     assert fishbans(test_user, DummyBot) == bans_reply_single
 
 
-@httpretty.activate
+@responses.activate
 def test_bans_failed():
     """
     tests fishbans with a failed API response
     """
-    httpretty.register_uri(httpretty.GET, 'http://api.fishbans.com/stats/notch/', body=test_api_failed)
+    responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', body=test_api_failed)
 
     assert fishbans(test_user, DummyBot) == reply_failed
 
 
-@httpretty.activate
+@responses.activate
 def test_bans_none():
     """
     tests fishbans with a successful API response having no bans
     """
-    httpretty.register_uri(httpretty.GET, 'http://api.fishbans.com/stats/notch/', body=test_api_none)
+    responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', body=test_api_none)
 
     assert fishbans(test_user, DummyBot) == bans_reply_none
 
 
-@httpretty.activate
+@responses.activate
 def test_bans_error():
     """
     tests fishbans with a HTTP error
     """
-    httpretty.register_uri(httpretty.GET, 'http://api.fishbans.com/stats/notch/', status=404)
+    responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', status=404)
 
     assert fishbans(test_user, DummyBot) == reply_error
 
 
-@httpretty.activate
+@responses.activate
 def test_count():
     """
     tests bancount with a successful API response having multiple bans
     """
-    httpretty.register_uri(httpretty.GET, 'http://api.fishbans.com/stats/notch/', body=test_api)
+    responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', body=test_api)
 
     assert bancount(test_user, DummyBot) == count_reply
 
 
-@httpretty.activate
+@responses.activate
 def test_count_failed():
     """
     tests bancount with a failed API response
     """
-    httpretty.register_uri(httpretty.GET, 'http://api.fishbans.com/stats/notch/', body=test_api_failed)
+    responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', body=test_api_failed)
 
     assert bancount(test_user, DummyBot) == reply_failed
 
 
-@httpretty.activate
+@responses.activate
 def test_count_none():
     """
     tests bancount with a successful API response having no bans
     """
-    httpretty.register_uri(httpretty.GET, 'http://api.fishbans.com/stats/notch/', body=test_api_none)
+    responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', body=test_api_none)
 
     assert bancount(test_user, DummyBot) == count_reply_none
 
-@httpretty.activate
+
+@responses.activate
 def test_count_error():
     """
     tests bancount with a HTTP error
     """
-    httpretty.register_uri(httpretty.GET, 'http://api.fishbans.com/stats/notch/', status=404)
+    responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', status=404)
 
     assert bancount(test_user, DummyBot) == reply_error

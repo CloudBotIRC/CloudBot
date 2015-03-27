@@ -6,22 +6,16 @@
     "type": [
       "hard-shell",
       "soft-shell",
-      "crispy",
-      "puffy",
-      "Indian"
+      ["crispy", 1],
+      ["puffy", 1],
+      ["Indian", 1]
     ],
     "quality": [
       "spicy",
       "mild",
       "delicious",
-      [
-        "boring",
-        1
-      ],
-      [
-        "disgusting",
-        1
-      ],
+      ["boring", 1],
+      ["disgusting", 1],
       "perfect"
     ],
     "meat": [
@@ -30,18 +24,9 @@
       "refried beans"
     ],
     "topping": [
-      [
-        "guacamole",
-        10
-      ],
-      [
-        "salsa",
-        10
-      ],
-      [
-        "sour cream",
-        10
-      ],
+      ["guacamole", 10],
+      ["salsa", 10],
+      ["sour cream", 10],
       "cheese",
       "lettuce",
       "tomatoes",
@@ -50,26 +35,10 @@
       "scallions",
       "jalapeños",
       "capsicum",
-      [
-        "ghost chili",
-        1
-      ],
-      [
-        "olives",
-        1
-      ],
-      [
-        "pineapple",
-        1
-      ],
-      [
-        "raspberry",
-        1
-      ],
-      [
-        "potato",
-        1
-      ]
+      ["ghost chili", 1],
+      ["olives", 1],
+      ["pineapple", 1],
+      ["raspberries", 1]
     ]
   }
 }

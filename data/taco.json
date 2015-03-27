@@ -20,8 +20,13 @@
     ],
     "meat": [
       "minced beef",
+      "shredded beef",
+      "steak",
+      "pork",
+      "various meats",
       "chicken",
-      "refried beans"
+      "refried beans",
+      ["tofu", 1]
     ],
     "topping": [
       ["guacamole", 10],

@@ -54,7 +54,7 @@ replacements.update(dict((v, k) for k, v in replacements.items()))
 flippers = ["( ﾉ⊙︵⊙）ﾉ", "(╯°□°）╯", "( ﾉ♉︵♉ ）ﾉ"]
 
 @hook.command
-def flip(text, reply):
+def flip(text, reply, message):
     """<text> -- Flips <text> over."""
     if USE_FLIPPERS:
         if text in ['table','tables']:

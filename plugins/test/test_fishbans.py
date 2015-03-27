@@ -1,4 +1,3 @@
-import httpretty
 import responses
 import pytest
 

@@ -91,6 +91,6 @@ def awesome(text, message):
     link = 'http://{}.is-awesome.cool/{}'
     nick = text.split(' ')[0]
     if nick_re.match(nick):
-        message(link.format(nick, nick))
+        message("{}: I am blown away by your recent awesome action(s). Please read \x02{}\x02".format(nick, link.format(nick, nick)))
     else:
         return "Sorry I can't tell {} how awesome they are.".format(nick)

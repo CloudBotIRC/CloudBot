@@ -30,9 +30,10 @@ def spotify(text):
     except IndexError:
         return "Could not find track."
     url = web.try_shorten(gateway.format(_type, _id))
+    uri = data["tracks"][0]["href"]
 
-    return "\x02{}\x02 by \x02{}\x02 - {}".format(data["tracks"][0]["name"],
-                                                  data["tracks"][0]["artists"][0]["name"], url)
+    return "\x02{}\x02 by \x02{}\x02 - {} URI:{}".format(data["tracks"][0]["name"],
+                                                  data["tracks"][0]["artists"][0]["name"], url, uri)
 
 
 @hook.command
@@ -51,9 +52,9 @@ def spalbum(text):
     except IndexError:
         return "Could not find album."
     url = web.try_shorten(gateway.format(_type, _id))
-
-    return "\x02{}\x02 by \x02{}\x02 - {}".format(data["albums"][0]["name"],
-                                                  data["albums"][0]["artists"][0]["name"], url)
+    uri = data["albums"][0]["href"]
+    return "\x02{}\x02 by \x02{}\x02 - {} URI: {}".format(data["albums"][0]["name"],
+                                                  data["albums"][0]["artists"][0]["name"], url, uri)
 
 
 @hook.command
@@ -72,8 +73,8 @@ def spartist(text):
     except IndexError:
         return "Could not find artist."
     url = web.try_shorten(gateway.format(_type, _id))
-
-    return "\x02{}\x02 - {}".format(data["artists"][0]["name"], url)
+    uri = data["artists"][0]["href"]
+    return "\x02{}\x02 - {} URI: {}".format(data["artists"][0]["name"], url, uri)
 
 
 @hook.regex(http_re)

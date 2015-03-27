@@ -12,6 +12,7 @@ API_URL = 'http://api.wordnik.com/v4/'
 WEB_URL = 'https://www.wordnik.com/words/{}'
 
 ATTRIB_NAMES = {
+<<<<<<< HEAD
     'ahd-legacy': 'AHD/Wordnik',
     'century': 'Century/Wordnik',
     'wiktionary': 'Wiktionary/Wordnik',
@@ -30,6 +31,7 @@ def load_key(bot):
 
 @hook.command("define", "dictionary")
 def define(text):
+<<<<<<< HEAD
     """<word> -- Returns a dictionary definition from Wordnik for <word>."""
     if not api_key:
         return "This command requires an API key from wordnik.com."

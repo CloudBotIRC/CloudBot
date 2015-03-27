@@ -17,6 +17,8 @@ def correction(match, conn, chan, message):
     groups = [b.replace("\/", "/") for b in re.split(r"(?<!\\)/", match.groups()[0])]
     find = groups[0]
     replace = groups[1]
+    if find == replace:
+        return "really dude? you want me to replace {} with {}?".format(find, replace)
 
     for item in conn.history[chan].__reversed__():
         nick, timestamp, msg = item

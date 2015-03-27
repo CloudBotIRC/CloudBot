@@ -27,98 +27,93 @@ bans_reply_none = "The user \x02notch\x02 has no bans - http://fishbans.com/u/no
 count_reply_none = "The user \x02notch\x02 has no bans - http://fishbans.com/u/notch/"
 
 reply_failed = "Could not fetch ban data for notch."
-reply_error = "Could not fetch ban data from the Fishbans API: 404 Client Error: Not Found"
+reply_error = "Could not fetch ban data from the Fishbans API:"
 
 
 class DummyBot():
     user_agent = "CloudBot/3.0"
 
 
-@responses.activate
-def test_bans():
-    """
-    tests fishbans with a successful API response having multiple bans
-    """
-    responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', body=test_api)
+class TestBans:
+    @responses.activate
+    def test_bans(self):
+        """
+        tests fishbans with a successful API response having multiple bans
+        """
+        responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', body=test_api)
 
-    assert fishbans(test_user, DummyBot) == bans_reply
+        assert fishbans(test_user, DummyBot) == bans_reply
 
+    @responses.activate
+    def test_bans_single(self):
+        """
+        tests fishbans with a successful API response having a single ban
+        """
+        responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', body=test_api_single)
 
-@responses.activate
-def test_bans_single():
-    """
-    tests fishbans with a successful API response having a single ban
-    """
-    responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', body=test_api_single)
+        assert fishbans(test_user, DummyBot) == bans_reply_single
 
-    assert fishbans(test_user, DummyBot) == bans_reply_single
+    @responses.activate
+    def test_bans_failed(self):
+        """
+        tests fishbans with a failed API response
+        """
+        responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', body=test_api_failed)
 
+        assert fishbans(test_user, DummyBot) == reply_failed
 
-@responses.activate
-def test_bans_failed():
-    """
-    tests fishbans with a failed API response
-    """
-    responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', body=test_api_failed)
+    @responses.activate
+    def test_bans_none(self):
+        """
+        tests fishbans with a successful API response having no bans
+        """
+        responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', body=test_api_none)
 
-    assert fishbans(test_user, DummyBot) == reply_failed
+        assert fishbans(test_user, DummyBot) == bans_reply_none
 
+    @responses.activate
+    def test_bans_error(self):
+        """
+        tests fishbans with a HTTP error
+        """
+        responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', status=404)
 
-@responses.activate
-def test_bans_none():
-    """
-    tests fishbans with a successful API response having no bans
-    """
-    responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', body=test_api_none)
-
-    assert fishbans(test_user, DummyBot) == bans_reply_none
-
-
-@responses.activate
-def test_bans_error():
-    """
-    tests fishbans with a HTTP error
-    """
-    responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', status=404)
-
-    assert fishbans(test_user, DummyBot) == reply_error
+        assert fishbans(test_user, DummyBot).startswith(reply_error)
 
 
-@responses.activate
-def test_count():
-    """
-    tests bancount with a successful API response having multiple bans
-    """
-    responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', body=test_api)
+class TestCount:
+    @responses.activate
+    def test_count(self):
+        """
+        tests bancount with a successful API response having multiple bans
+        """
+        responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', body=test_api)
 
-    assert bancount(test_user, DummyBot) == count_reply
+        assert bancount(test_user, DummyBot) == count_reply
 
+    @responses.activate
+    def test_count_failed(self):
+        """
+        tests bancount with a failed API response
+        """
+        responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', body=test_api_failed)
 
-@responses.activate
-def test_count_failed():
-    """
-    tests bancount with a failed API response
-    """
-    responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', body=test_api_failed)
+        assert bancount(test_user, DummyBot) == reply_failed
 
-    assert bancount(test_user, DummyBot) == reply_failed
+    @responses.activate
+    def test_count_none(self):
+        """
+        tests bancount with a successful API response having no bans
+        """
+        responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', body=test_api_none)
 
+        assert bancount(test_user, DummyBot) == count_reply_none
 
-@responses.activate
-def test_count_none():
-    """
-    tests bancount with a successful API response having no bans
-    """
-    responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', body=test_api_none)
+    @responses.activate
+    def test_count_error(self):
+        """
+        tests bancount with a HTTP error
+        """
+        responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', status=404)
 
-    assert bancount(test_user, DummyBot) == count_reply_none
-
-
-@responses.activate
-def test_count_error():
-    """
-    tests bancount with a HTTP error
-    """
-    responses.add(responses.GET, 'http://api.fishbans.com/stats/notch/', status=404)
-
-    assert bancount(test_user, DummyBot) == reply_error
+        assert bancount(test_user, DummyBot).startswith(reply_error)

@@ -37,7 +37,7 @@ def load_jokes(bot):
 def yomomma(text, message, conn):
     """input <nick>, tells a yo momma joke to <nick>"""
     target = text.strip()
-    message('{}, {}'.format(target, random.choice(yo_momma)))
+    message('{}, {}'.format(target, random.choice(yo_momma).lower()))
 
 @hook.command(autohelp=False)
 def doit(message, conn):

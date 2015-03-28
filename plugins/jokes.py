@@ -83,3 +83,14 @@ def boobies(text, conn):
     if out == text.strip():
         return "Sorry I couldn't turn anything in '{}' into boobs for you.".format(out)
     return out
+
+@hook.command("awesome", "iscool", "cool")
+def awesome(text, message):
+    """Prints a webpage to show <nick> how awesome they are."""
+    nick_re = re.compile("^[A-Za-z0-9_|.\-\]\[]*$", re.I)
+    link = 'http://{}.is-awesome.cool/{}'
+    nick = text.split(' ')[0]
+    if nick_re.match(nick):
+        message(link.format(nick, nick))
+    else:
+        return "Sorry I can't tell {} how awesome they are.".format(nick)

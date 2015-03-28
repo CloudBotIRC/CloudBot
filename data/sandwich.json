@@ -5,7 +5,7 @@
     "{gives} {user} {flavor} {meat} and {meat} {type} with {salad}, {salad}, {salad}, and {sauce}!",
     "{gives} {user} {flavor} {meat} {type} with {salad} and {sauce}!",
     "{gives} {user} {flavor} {meat} {type} with {salad}, {salad}, and {sauce}!",
-    "{gives} {user} {flavor} {meat}  {type} with {salad}, {salad}, {salad}, and {sauce}!"
+    "{gives} {user} {flavor} {meat} {type} with {salad}, {salad}, {salad}, and {sauce}!"
   ],
   "parts": {
     "gives": [
@@ -18,11 +18,6 @@
       "a tasty",
       "a delicious",
       "an awesome",
-      "a mediocre",
-      [
-        "an awful",
-        1
-      ],
       "an excellent",
       "a beautifully-made"
     ],

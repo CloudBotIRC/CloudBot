@@ -85,18 +85,16 @@ class TextGenerator(object):
         # make a copy of parts for this string generation
         _parts = copy.deepcopy(self.parts)
 
-        # replace static variables in the template with provided values
-        if self.variables:
-            for key, value in list(self.variables.items()):
-                text = text.replace("{%s}" % key, value)
-
         # get a list of all text parts we need
         required_parts = TEMPLATE_RE.findall(text)
 
         # do magic
         for required_part in required_parts:
             # get the part
-            replacement = self.get_part(required_part, _parts)
+            try:
+                replacement = self.get_part(required_part, _parts)
+            except KeyError:
+                continue
 
             # remove the used part
             for _part in _parts[required_part]:
@@ -106,6 +104,11 @@ class TextGenerator(object):
                     _parts[required_part].remove(_part)
 
             text = text.replace("{%s}" % required_part, replacement, 1)
+
+        # replace static variables in the template with provided values
+        if self.variables:
+            for key, value in list(self.variables.items()):
+                text = text.replace("{%s}" % key, value)
 
         return text
 

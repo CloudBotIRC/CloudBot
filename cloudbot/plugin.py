@@ -568,6 +568,9 @@ class Hook:
         if self.required_args is None:
             self.required_args = []
 
+        # don't process args starting with "_"
+        self.required_args = [arg for arg in self.required_args if not arg.startswith("_")]
+
         if asyncio.iscoroutine(self.function) or asyncio.iscoroutinefunction(self.function):
             self.threaded = False
         else:

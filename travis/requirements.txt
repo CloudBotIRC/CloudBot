@@ -1,4 +1,5 @@
 pytest
+responses
 pytest-cov
 pytest-pep8
 flake8

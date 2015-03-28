@@ -28,7 +28,7 @@ def get_wyr(headers):
     data = r.json()
 
     # clean up text
-    data['title'] = data['title'].strip().capitalize().rstrip('.?,')
+    data['title'] = data['title'].strip().capitalize().rstrip('.?,:')
     data['choicea'] = data['choicea'].strip().lower().rstrip('.?,!').lstrip('.')
     data['choiceb'] = data['choiceb'].strip().lower().rstrip('.?,!').lstrip('.')
 

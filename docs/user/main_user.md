@@ -54,7 +54,7 @@ Setting up Python 3.4 on most OSs usually goes as follows.
   **On Windows:**
   You can download releases of Python 3.4 for Windows at https://www.python.org/downloads/
   
-  **todo**: section on adding python to PATH on windows so it is usable from the console
+  **todo**: section on adding python to PATH on windows so it is usable from the console!!!
 
   **On another OS (Solaris/BSD/ActivePython/etc):**
   You can try compiling Python 3.4 from source, note however that you may run into issues with CloudBot or its dependencies (many of the Other OSs only support Python 2.x).
@@ -77,7 +77,7 @@ PIP is suggested to make installation of CloudBot's dependencies easier, and is 
   ```
   **On Windows:**
   ```
-  Luke, fill this bit.
+  Luke, you should really fill this bit.
   ```
 
 ## CloudBot Depdendencies and APIs

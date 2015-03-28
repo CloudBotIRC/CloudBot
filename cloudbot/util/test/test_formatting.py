@@ -1,5 +1,5 @@
 from cloudbot.util.formatting import munge, dict_format, pluralize, strip_colors, truncate, truncate_str, \
-    strip_html, multi_replace, multiword_replace, truncate_words, smart_split, get_text_list
+    strip_html, multi_replace, multiword_replace, truncate_words, smart_split, get_text_list, ireplace, chunk_str
 
 test_munge_input = "The quick brown fox jumps over the lazy dog"
 test_munge_count = 3
@@ -37,6 +37,11 @@ test_strip_html_result = "Cats & Dogs: µ"
 test_multiword_replace_dict = {"<bit1>": "<replace1>", "[bit2]": "[replace2]"}
 test_multiword_replace_text = "<bit1> likes [bit2]"
 test_multiword_replace_result = "<replace1> likes [replace2]"
+
+test_ireplace_input = "The quick brown FOX fox FOX jumped over the lazy dog"
+
+test_chunk_str_input = "The quick brown fox jumped over the lazy dog"
+test_chunk_str_result = ['The quick', 'brown fox', 'jumped', 'over the', 'lazy dog']
 
 
 def test_munge():
@@ -85,6 +90,17 @@ def test_multiword_replace():
 
     # compatibility
     assert multiword_replace(test_multiword_replace_text, test_multiword_replace_dict) == test_multiword_replace_result
+
+
+def test_ireplace():
+    assert ireplace(test_ireplace_input, "fox", "cat") == "The quick brown cat cat cat jumped over the lazy dog"
+    assert ireplace(test_ireplace_input, "FOX", "cAt") == "The quick brown cAt cAt cAt jumped over the lazy dog"
+    assert ireplace(test_ireplace_input, "fox", "cat", 1) == "The quick brown cat fox FOX jumped over the lazy dog"
+    assert ireplace(test_ireplace_input, "fox", "cat", 2) == "The quick brown cat cat FOX jumped over the lazy dog"
+
+
+def test_chunk_str():
+    assert chunk_str(test_chunk_str_input, 10) == test_chunk_str_result
 
 
 def test_get_text_list():

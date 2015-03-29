@@ -14,13 +14,13 @@ from sqlalchemy.exc import IntegrityError
 qtable = Table(
     'quote',
     botvars.metadata,
-    Column('chan', String),
-    Column('nick', String),
-    Column('add_nick', String),
-    Column('msg', String),
+    Column('chan', String(25)),
+    Column('nick', String(25)),
+    Column('add_nick', String(25)),
+    Column('msg', String(500)),
     Column('time', REAL),
-    Column('deleted', String, default=0),
-    PrimaryKeyConstraint('chan', 'nick', 'msg')
+    Column('deleted', String(5), default=0),
+    PrimaryKeyConstraint('chan', 'nick', 'time')
 )
 
 

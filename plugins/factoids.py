@@ -16,9 +16,9 @@ FACTOID_CHAR = "?"  # TODO: config
 table = Table(
     "mem",
     botvars.metadata,
-    Column("word", String, primary_key=True),
-    Column("data", String),
-    Column("nick", String)
+    Column("word", String(25), primary_key=True),
+    Column("data", String(500)),
+    Column("nick", String(25))
 )
 
 

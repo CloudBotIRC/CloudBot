@@ -11,10 +11,10 @@ from cloudbot.event import EventType
 table = Table(
     'tells',
     botvars.metadata,
-    Column('connection', String),
-    Column('sender', String),
-    Column('target', String),
-    Column('message', String),
+    Column('connection', String(25)),
+    Column('sender', String(25)),
+    Column('target', String(25)),
+    Column('message', String(500)),
     Column('is_read', Boolean),
     Column('time_sent', DateTime),
     Column('time_read', DateTime)

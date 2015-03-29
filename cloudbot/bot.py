@@ -95,7 +95,6 @@ class CloudBot:
         # set botvars so plugins can access when loading
         database.metadata = self.db_metadata
         database.base = self.db_base
-        database.user_agent = self.user_agent
 
         logger.debug("Database system initialised.")
 

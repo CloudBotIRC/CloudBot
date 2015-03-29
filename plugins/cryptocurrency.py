@@ -12,11 +12,12 @@ Special Thanks:
 License:
     GPL v3
 """
+from urllib.parse import quote_plus
+from datetime import datetime
+
 import requests
 
 from cloudbot import hook
-
-from urllib.parse import quote_plus
 
 API_URL = "https://coinmarketcap-nexuist.rhcloud.com/api/{}"
 
@@ -25,21 +26,21 @@ API_URL = "https://coinmarketcap-nexuist.rhcloud.com/api/{}"
 @hook.command("bitcoin", "btc", autohelp=False)
 def bitcoin():
     """ -- Returns current bitcoin value """
-    # alis
+    # alias
     return crypto_command("btc")
 
 
 @hook.command("litecoin", "ltc", autohelp=False)
 def litecoin():
     """ -- Returns current litecoin value """
-    # alis
+    # alias
     return crypto_command("ltc")
 
 
 @hook.command("dogecoin", "doge", autohelp=False)
 def dogecoin():
     """ -- Returns current dogecoin value """
-    # alis
+    # alias
     return crypto_command("doge")
 
 
@@ -57,11 +58,23 @@ def crypto_command(text):
     data = request.json()
 
     if "error" in data:
-        return "{}".format(data['error'])
+        return "{}.".format(data['error'])
 
-    return "{} // \x0307${:,.2f}\x0f USD - {:,.5f} BTC - {}% change".format(data['symbol'].upper(),
+    updated_time = datetime.fromtimestamp(data['timestamp'])
+    if (datetime.today() - updated_time).days > 2:
+        # the API retains data for old ticker names that are no longer updated
+        # in these cases we just return a "not found" message
+        return "Currency not found."
+
+    change = float(data['change'])
+    if change > 0:
+        change_str = "\x033{}%\x0f".format(change)
+    elif change < 0:
+        change_str = "\x035{}%\x0f".format(change)
+    else:
+        change_str = "{}%".format(change)
+
+    return "{} // \x0307${:,.2f}\x0f USD - {:,.5f} BTC // {} change".format(data['symbol'].upper(),
                                                                             float(data['price']['usd']),
                                                                             float(data['price']['btc']),
-                                                                            data['change'])
-
-
+                                                                            change_str)

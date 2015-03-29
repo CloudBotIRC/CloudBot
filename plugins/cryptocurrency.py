@@ -12,13 +12,16 @@ Special Thanks:
 License:
     GPL v3
 """
+import requests
 
 from cloudbot import hook
+
+from urllib.parse import quote_plus
 
 API_URL = "https://coinmarketcap-nexuist.rhcloud.com/api/{}"
 
 
-# alises
+# aliases
 @hook.command("bitcoin", "btc", autohelp=False)
 def bitcoin():
     """ -- Returns current bitcoin value """
@@ -43,5 +46,22 @@ def dogecoin():
 # main command
 @hook.command("crypto", "cryptocurrency")
 def crypto_command(text):
-    if not text:
-        return "?"
+    """ <ticker> -- Returns current value of a cryptocurrency """
+    try:
+        encoded = quote_plus(text)
+        request = requests.get(API_URL.format(encoded))
+        request.raise_for_status()
+    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
+        return "Could not get value: {}".format(e)
+
+    data = request.json()
+
+    if "error" in data:
+        return "{}".format(data['error'])
+
+    return "{} // \x0307${:,.2f}\x0f USD - {:,.5f} BTC - {}% change".format(data['symbol'].upper(),
+                                                                            float(data['price']['usd']),
+                                                                            float(data['price']['btc']),
+                                                                            data['change'])
+
+

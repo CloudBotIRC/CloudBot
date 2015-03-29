@@ -48,6 +48,7 @@ def count_unread(db, server, target):
         .where(table.c.connection == server.lower()) \
         .where(table.c.target == target.lower()) \
         .where(table.c.is_read == 0) \
+        .alias("count") \
         .count()
     return db.execute(query).fetchone()[0]
 

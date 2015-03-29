@@ -10,7 +10,8 @@ Special Thanks:
     - Benjamin Hoffmeyer (TheDoctorsLife) <https://github.com/TheDoctorsLife>
     - J.F. Sebastian <https://stackoverflow.com/users/4279/j-f-sebastian>
 
-License: GPL v3
+License:
+    GPL v3
 """
 
 import string

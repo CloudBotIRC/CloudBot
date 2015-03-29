@@ -7,7 +7,7 @@ import sys
 
 import cloudbot
 
-if cloudbot.dev_mode.get("pympler", False):
+if True:
     try:
         import pympler
         import pympler.muppy

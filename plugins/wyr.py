@@ -37,6 +37,9 @@ def get_wyr(headers):
     else:
         data['tags'] = []
 
+    if data['nsfw']:
+        data['tags'].append('nsfw')
+
     return data
 
 

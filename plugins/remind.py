@@ -7,7 +7,8 @@ Created By:
     - Pangea <https://github.com/PangeaCake>
     - Luke Rogers <https://github.com/lukeroge>
 
-License: GPL v3
+License:
+    GPL v3
 """
 
 

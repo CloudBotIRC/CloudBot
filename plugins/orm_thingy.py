@@ -14,11 +14,10 @@ class User(base):
 base.metadata.create_all()
 
 print(User)
-print(User.__table__ )
+print(User.__table__)
 
 @hook.command
 def test(text, db):
-    User.__table__.create()
     name = text.split(" ", 1)[0]
     data = text.split(" ", 1)[1]
 

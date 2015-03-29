@@ -17,7 +17,7 @@ from cloudbot.config import Config
 from cloudbot.reloader import PluginReloader
 from cloudbot.plugin import PluginManager
 from cloudbot.event import Event, CommandEvent, RegexEvent, EventType
-from cloudbot.util import botvars, formatting
+from cloudbot.util import database, formatting
 from cloudbot.clients.irc import IrcClient
 
 logger = logging.getLogger("cloudbot")
@@ -93,9 +93,9 @@ class CloudBot:
         self.db_base = declarative_base(metadata=self.db_metadata, bind=self.db_engine)
 
         # set botvars so plugins can access when loading
-        botvars.metadata = self.db_metadata
-        botvars.base = self.db_base
-        botvars.user_agent = self.user_agent
+        database.metadata = self.db_metadata
+        database.base = self.db_base
+        database.user_agent = self.user_agent
 
         logger.debug("Database system initialised.")
 

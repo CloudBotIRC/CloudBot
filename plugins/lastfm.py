@@ -6,13 +6,13 @@ import random
 from sqlalchemy import Table, Column, PrimaryKeyConstraint, String
 
 from cloudbot import hook
-from cloudbot.util import timeformat, web, botvars
+from cloudbot.util import timeformat, web, database
 
 api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
 
 table = Table(
     "lastfm",
-    botvars.metadata,
+    database.metadata,
     Column('nick', String(25)),
     Column('acc', String(25)),
     PrimaryKeyConstraint('nick')

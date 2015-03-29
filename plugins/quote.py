@@ -3,7 +3,7 @@ import re
 import time
 
 from cloudbot import hook
-from cloudbot.util import botvars
+from cloudbot.util import database
 
 from sqlalchemy import select
 from sqlalchemy import Table, Column, String, PrimaryKeyConstraint
@@ -13,7 +13,7 @@ from sqlalchemy.exc import IntegrityError
 
 qtable = Table(
     'quote',
-    botvars.metadata,
+    database.metadata,
     Column('chan', String(25)),
     Column('nick', String(25)),
     Column('add_nick', String(25)),

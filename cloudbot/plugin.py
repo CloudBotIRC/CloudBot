@@ -9,7 +9,7 @@ import re
 import sqlalchemy
 
 from cloudbot.event import Event
-from cloudbot.util import botvars
+from cloudbot.util import database
 
 logger = logging.getLogger("cloudbot")
 
@@ -52,7 +52,7 @@ def find_tables(code):
     """
     tables = []
     for name, obj in code.__dict__.items():
-        if isinstance(obj, sqlalchemy.Table) and obj.metadata == botvars.metadata:
+        if isinstance(obj, sqlalchemy.Table) and obj.metadata == database.metadata:
             # if it's a Table, and it's using our metadata, append it to the list
             tables.append(obj)
 

@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Sequence
 
 from cloudbot import hook
-from cloudbot.util.botvars import base
+from cloudbot.util.database import base
 
 
 class User(base):

@@ -5,12 +5,12 @@ from sqlalchemy import Table, Column, String, Boolean, DateTime
 from sqlalchemy.sql import select
 
 from cloudbot import hook
-from cloudbot.util import timeformat, botvars
+from cloudbot.util import timeformat, database
 from cloudbot.event import EventType
 
 table = Table(
     'tells',
-    botvars.metadata,
+    database.metadata,
     Column('connection', String(25)),
     Column('sender', String(25)),
     Column('target', String(25)),

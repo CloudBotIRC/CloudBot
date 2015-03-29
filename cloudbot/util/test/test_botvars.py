@@ -1,4 +1,4 @@
-from cloudbot.util.botvars import metadata
+from cloudbot.util.database import metadata
 
 
 def test_botvars():

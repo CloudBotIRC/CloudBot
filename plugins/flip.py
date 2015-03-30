@@ -52,7 +52,10 @@ def flip(text, reply):
     reply(formatting.multi_replace(text[::-1].lower(), replacements))
 
 
-@hook.command
+@hook.command(autohelp=False)
 def table(text, message):
     """<text> -- (╯°□°）╯︵ <ʇxǝʇ>"""
-    message(random.choice(flippers) + " ︵ " + formatting.multi_replace(text[::-1].lower(), replacements))
+    if text:
+        message(random.choice(flippers) + " ︵ " + formatting.multi_replace(text[::-1].lower(), replacements))
+    else:
+        message(random.choice(flippers) + " ︵ ┻━┻")

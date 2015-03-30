@@ -13,9 +13,6 @@ script:
 
 after_success:
   - "coveralls"
-  
-env:
-  - PYTHONPATH=.
 
 notifications:
   irc:

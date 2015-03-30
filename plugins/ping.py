@@ -5,13 +5,16 @@ import os
 
 from cloudbot import hook
 
-unix_ping_regex = re.compile(r"(\d+.\d+)/(\d+.\d+)/(\d+.\d+)/(\d+.\d+)")
-win_ping_regex = re.compile(r"Minimum = (\d+)ms, Maximum = (\d+)ms, Average = (\d+)ms")
+ping_regex = re.compile(r"(\d+.\d+)/(\d+.\d+)/(\d+.\d+)/(\d+.\d+)")
 
 
 @hook.command()
 def ping(text, reply):
     """<host> [count] - pings <host> [count] times"""
+
+    if os.name == "nt":
+        return "Sorry, this command is not supported on Windows systems."
+        # TODO: Rewrite this entire command to work on Windows, somehow
 
     args = text.split(' ')
     host = args[0]
@@ -26,26 +29,16 @@ def ping(text, reply):
 
     count = str(count)
 
-    if os.name == "nt":
-        args = ["ping", "-n", count, host]
-    else:
-        args = ["ping", "-c", count, host]
+    # I suck at regex, but this is causing issues, and I'm just going to remove it
+    # I assume it's no longer needed with the way we run the process
+    # host = re.sub(r'([^\s\w\.])+', '', host)
 
     reply("Attempting to ping {} {} times...".format(host, count))
-    try:
-        pingcmd = subprocess.check_output(args).decode("utf-8")
-    except subprocess.CalledProcessError:
-        return "Could not ping host."
 
-    if re.search("(?:not find host|timed out|unknown host)", pingcmd, re.I):
-        return "Could not ping host."
-
-    if os.name == "nt":
-        m = re.search(win_ping_regex, pingcmd)
-        r = int(m.group(2)) - int(m.group(1))
-        return "min: %sms, max: %sms, average: %sms, range: %sms, count: %s" \
-               % (m.group(1), m.group(2), m.group(3), r, count)
+    pingcmd = subprocess.check_output(["ping", "-c", count, host]).decode("utf-8")
+    if "request timed out" in pingcmd or "unknown host" in pingcmd:
+        return "error: could not ping host"
     else:
-        m = re.search(unix_ping_regex, pingcmd)
+        m = re.search(ping_regex, pingcmd)
         return "min: %sms, max: %sms, average: %sms, range: %sms, count: %s" \
                % (m.group(1), m.group(3), m.group(2), m.group(4), count)

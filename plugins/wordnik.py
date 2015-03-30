@@ -2,7 +2,6 @@ import re
 import random
 
 import requests
-import urllib.parse
 
 from cloudbot import hook
 from cloudbot.util import web
@@ -12,15 +11,13 @@ API_URL = 'http://api.wordnik.com/v4/'
 WEB_URL = 'https://www.wordnik.com/words/{}'
 
 ATTRIB_NAMES = {
-    'ahd-legacy': 'AHD/Wordnik',
-    'century': 'Century/Wordnik',
-    'wiktionary': 'Wiktionary/Wordnik',
-    'gcide': 'GCIDE/Wordnik',
-    'wordnet': 'Wordnet/Wordnik'
+    'ahd-legacy': 'AHD/WordNik',
+    'century': 'Century/WordNik',
+    'wiktionary': 'Wiktionary/WordNik',
+    'gcide': 'GCIDE/WordNik',
+    'wordnet': 'Wordnet/WordNik'
 }
 
-def sanitize(text):
-    return urllib.parse.quote(text.translate({ord('\\'):None, ord('/'):None}))
 
 @hook.on_start()
 def load_key(bot):
@@ -30,10 +27,10 @@ def load_key(bot):
 
 @hook.command("define", "dictionary")
 def define(text):
-    """<word> -- Returns a dictionary definition from Wordnik for <word>."""
+    """<word> -- Returns a dictionary definition for <word>."""
     if not api_key:
         return "This command requires an API key from wordnik.com."
-    word = sanitize(text)
+    word = text.split(' ')[0]
     url = API_URL + "word.json/{}/definitions".format(word)
 
     params = {
@@ -57,7 +54,7 @@ def word_usage(text):
     """<word> -- Returns an example sentence showing the usage of <word>."""
     if not api_key:
         return "This command requires an API key from wordnik.com."
-    word = sanitize(text)
+    word = text.split(' ')[0]
     url = API_URL + "word.json/{}/examples".format(word)
     params = {
         'api_key': api_key,
@@ -67,8 +64,8 @@ def word_usage(text):
     json = requests.get(url, params=params).json()
     if json:
         out = "\x02{}\x02: ".format(word)
-        example = random.choice(json['examples'])
-        out += "{} ".format(example['text'])
+        i = random.randint(0, len(json['examples']) - 1)
+        out += "{} ".format(json['examples'][i]['text'])
         return out
     else:
         return "I could not find any usage examples for \x02{}\x02.".format(word)
@@ -79,7 +76,7 @@ def pronounce(text):
     """<word> -- Returns instructions on how to pronounce <word> with an audio example."""
     if not api_key:
         return "This command requires an API key from wordnik.com."
-    word = sanitize(text)
+    word = text.split(' ')[0]
     url = API_URL + "word.json/{}/pronunciations".format(word)
 
     params = {
@@ -115,7 +112,7 @@ def synonym(text):
     """<word> -- Returns a list of synonyms for <word>."""
     if not api_key:
         return "This command requires an API key from wordnik.com."
-    word = sanitize(text)
+    word = text.split(' ')[0]
     url = API_URL + "word.json/{}/relatedWords".format(word)
 
     params = {
@@ -138,7 +135,7 @@ def antonym(text):
     """<word> -- Returns a list of antonyms for <word>."""
     if not api_key:
         return "This command requires an API key from wordnik.com."
-    word = sanitize(text)
+    word = text.split(' ')[0]
     url = API_URL + "word.json/{}/relatedWords".format(word)
 
     params = {
@@ -215,4 +212,4 @@ def random_word(conn):
         word = json['word']
         return "Your random word is \x02{}\x02.".format(word)
     else:
-        return "There was a problem contacting the Wordnik API."
+        return "There was a problem contacting the wordnick.com API."

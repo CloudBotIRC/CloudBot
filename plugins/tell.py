@@ -33,19 +33,6 @@ def load_cache(db):
         tell_cache.append((conn, target))
 
 
-@hook.on_start
-def load_cache(db):
-    """
-    :type db: sqlalchemy.orm.Session
-    """
-    global tell_cache
-    tell_cache = []
-    for row in db.execute(table.select().where(table.c.is_read == 0)):
-        conn = row["connection"]
-        target = row["target"]
-        tell_cache.append((conn, target))
-
-
 def get_unread(db, server, target):
     query = select([table.c.sender, table.c.message, table.c.time_sent]) \
         .where(table.c.connection == server.lower()) \
@@ -73,6 +60,7 @@ def read_all_tells(db, server, target):
     db.execute(query)
     db.commit()
     load_cache(db)
+
 
 def read_tell(db, server, target, message):
     query = table.update() \
@@ -114,7 +102,6 @@ def tellinput(event, conn, db, nick, notice):
     """
     if 'showtells' in event.content.lower():
         return
-
     if tell_check(conn.name, nick): 
         tells = get_unread(db, conn.name, nick)
     else:

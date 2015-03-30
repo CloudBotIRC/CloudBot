@@ -9,7 +9,7 @@ from cloudbot.util import formatting, web
 
 @asyncio.coroutine
 @hook.command("help", autohelp=False)
-def help_command(text, chan, conn, bot, notice, message, has_permission):
+def help_command(text, conn, bot, notice, has_permission):
     """[command] - gives help for [command], or lists all available commands if no command is specified
     :type text: str
     :type conn: cloudbot.client.Client
@@ -65,12 +65,8 @@ def help_command(text, chan, conn, bot, notice, message, has_permission):
         lines = formatting.chunk_str("Here's a list of commands you can use: " + ", ". join(commands))
 
         for line in lines:
-            if chan[:1] == "#":
-                notice(line)
-            else:
-                #This is an user in this case.
-                message(line)
-        notice("For detailed help, use {}help <command>, without the brackets.".format(conn.config["command_prefix"]))
+            notice(line)
+        notice("For detailed help, use {}help <command>, without the brackets.".format(conn.config["command_prefix"][0]))
 
 @hook.command(permissions=["botcontrol"], autohelp=False)
 def generatehelp(conn, bot, notice, has_permission):
@@ -106,9 +102,9 @@ def generatehelp(conn, bot, notice, has_permission):
             message += " ( *Permission required:* {})\n\n".format(permission)
     # toss the markdown text into a paste
     out = web.paste(message.encode('utf-8'), ext="md")
-    #docs = os.path.join(os.path.abspath(os.path.curdir), "docs")
-    #docs = os.path.join(docs, "user")
-    #f = open(os.path.join(docs, "commands.md"), 'w')
-    #f.write(message)
-    #f.close()
+    docs = os.path.join(os.path.abspath(os.path.curdir), "docs")
+    docs = os.path.join(docs, "user")
+    f = open(os.path.join(docs, "commands.md"), 'w')
+    f.write(message)
+    f.close()
     return out

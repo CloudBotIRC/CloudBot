@@ -16,24 +16,18 @@ def rss(text):
     """<feed> -- Gets the first three items from the RSS/ATOM feed <feed>."""
     limit = 3
 
-    t = text.lower().strip()
-    if t == "xkcd":
+    text = text.lower().strip()
+    if text == "xkcd":
         addr = "http://xkcd.com/rss.xml"
-    elif t == "ars":
+    elif text == "ars":
         addr = "http://feeds.arstechnica.com/arstechnica/index"
-    elif t in ("pypi", "pip", "py"):
-        addr = "https://pypi.python.org/pypi?%3Aaction=rss"
-        limit = 6
-    elif t in ("pypinew", "pipnew", "pynew"):
-        addr = "https://pypi.python.org/pypi?%3Aaction=packages_rss"
-        limit = 5
-    elif t == "world":
+    elif text == "world":
         addr = "https://news.google.com/news?cf=all&ned=us&hl=en&topic=w&output=rss"
-    elif t in ("us", "usa"):
+    elif text in ("us", "usa"):
         addr = "https://news.google.com/news?cf=all&ned=us&hl=en&topic=n&output=rss"
-    elif t == "nz":
+    elif text == "nz":
         addr = "https://news.google.com/news?pz=1&cf=all&ned=nz&hl=en&topic=n&output=rss"
-    elif t in ("anand", "anandtech"):
+    elif text in ("anand", "anandtech"):
         addr = "http://www.anandtech.com/rss/"
     else:
         addr = text

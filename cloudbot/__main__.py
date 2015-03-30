@@ -29,7 +29,7 @@ def main():
     logger.info("Starting CloudBot.")
 
     # create the bot
-    _bot = CloudBot()
+    bot = CloudBot()
 
     # whether we are killed while restarting
     stopped_while_restarting = False
@@ -40,11 +40,11 @@ def main():
     # define closure for signal handling
     def exit_gracefully(signum, frame):
         nonlocal stopped_while_restarting
-        if not _bot:
+        if not bot:
             # we are currently in the process of restarting
             stopped_while_restarting = True
         else:
-            _bot.loop.call_soon_threadsafe(lambda: asyncio.async(_bot.stop("Killed"), loop=_bot.loop))
+            bot.loop.call_soon_threadsafe(lambda: asyncio.async(bot.stop("Killed"), loop=bot.loop))
 
         # restore the original handler so if they do it again it triggers
         signal.signal(signal.SIGINT, original_sigint)
@@ -54,12 +54,12 @@ def main():
     # start the bot master
 
     # CloudBot.run() will return True if it should restart, False otherwise
-    restart = _bot.run()
+    restart = bot.run()
 
     # the bot has stopped, do we want to restart?
     if restart:
         # remove reference to cloudbot, so exit_gracefully won't try to stop it
-        _bot = None
+        bot = None
         # sleep one second for timeouts
         time.sleep(1)
         if stopped_while_restarting:

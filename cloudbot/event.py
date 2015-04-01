@@ -240,6 +240,7 @@ class Event:
         :type message: str
         :type target: str
         """
+        reply_ping = self.conn.config.get("reply_ping", True)
         if target is None:
             if self.chan is None:
                 raise ValueError("Target must be specified when chan is not assigned")
@@ -248,7 +249,7 @@ class Event:
         if not messages:  # if there are no messages specified, don't do anything
             return
 
-        if target == self.nick:
+        if target == self.nick or not reply_ping:
             self.conn.message(target, *messages)
         else:
             self.conn.message(target, "({}) {}".format(self.nick, messages[0]), *messages[1:])

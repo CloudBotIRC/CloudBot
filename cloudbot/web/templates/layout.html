@@ -42,7 +42,8 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" data-toggle="tooltip" data-placement="bottom" title="Return to top" onclick="$('html,body').animate({scrollTop:0},'slow');return false;">{{ bot_name }}</a>
+            <a class="navbar-brand" data-toggle="tooltip" data-placement="bottom" title="Return to top"
+               onclick="$('html,body').animate({scrollTop:0},'slow');return false;">{{ bot_name }}</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
@@ -54,6 +55,10 @@
             <ul class="nav navbar-nav navbar-right">
                 <li>
                     <a href="#" data-toggle="modal" data-target="#about-dialog">About</a>
+
+                </li>
+                <li>
+                    <a data-container="body" data-toggle="popover" data-placement="bottom" data-content="todo admin" class="glyphicon glyphicon-tasks"></a>
                 </li>
             </ul>
         </div>
@@ -62,6 +67,7 @@
 </nav>
 
 <div class="container">
+
     {% block content %}{% endblock %}
 </div>
 
@@ -83,6 +89,7 @@
     </div>
 </div>
 
+
 <!-- javascript -->
 {% block scripts %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
@@ -91,7 +98,8 @@
     <script src="/s/js/bootstrap-sortable.js"></script>
     <script>
         $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
+            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-toggle="popover"]').popover();
         })
     </script>
 {% endblock %}

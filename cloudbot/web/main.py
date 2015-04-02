@@ -33,7 +33,7 @@ class TestHandler(RequestHandler):
 
 
 class WebInterface():
-    def __init__(self, bot, port=8080, address="0.0.0.0"):
+    def __init__(self, bot, port=8090, address="0.0.0.0"):
         self.bot = bot
         self.port = port
         self.address = address

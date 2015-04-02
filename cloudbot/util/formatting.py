@@ -173,6 +173,7 @@ def ireplace(text, old, new, count=None):
     old replaced by new. If the optional argument count is given, only the first count
     occurrences are replaced.
     """
+    last_idx = 0
     idx = 0
     num = 0
     while idx < len(text):
@@ -185,6 +186,10 @@ def ireplace(text, old, new, count=None):
         num += 1
         if count and num >= count:
             break
+        # if the function is just looping, end it
+        if idx == last_idx:
+            break
+        last_idx = int(idx)
     return text
 
 

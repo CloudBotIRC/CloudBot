@@ -98,6 +98,9 @@ def test_ireplace():
     assert ireplace(test_ireplace_input, "fox", "cat", 1) == "The quick brown cat fox FOX jumped over the lazy dog"
     assert ireplace(test_ireplace_input, "fox", "cat", 2) == "The quick brown cat cat FOX jumped over the lazy dog"
 
+    # test blank input - this should behave like the native string.replace()
+    assert ireplace("Hello", "", "?") == "?H?e?l?l?o?"
+
 
 def test_chunk_str():
     assert chunk_str(test_chunk_str_input, 10) == test_chunk_str_result

@@ -6,6 +6,8 @@ from tornado.platform.asyncio import AsyncIOMainLoop
 
 from jinja2 import Environment, PackageLoader
 
+from operator import attrgetter
+
 wi = None
 
 
@@ -17,6 +19,7 @@ def get_template_env():
 def get_application():
     app = Application([
         (r'/', TestHandler),
+        (r'/commands/', CommandsHandler),
         (r"/s/(.*)", StaticFileHandler, {"path": "./cloudbot/web/static"}),
     ])
     return app
@@ -32,6 +35,45 @@ class TestHandler(RequestHandler):
             'heading': 'Placeholder Page',
             'text': 'Lorem ipsum!'
         }
+        self.write(template.render(**args))
+
+
+class CommandsHandler(RequestHandler):
+    @gen.coroutine
+    def get(self):
+        template = wi.env.get_template('commands.html')
+        commands = []
+
+        for plugin in sorted(set(wi.bot.plugin_manager.commands.values()), key=attrgetter("name")):
+            # use set to remove duplicate commands (from multiple aliases), and sorted to sort by name
+            command = plugin.name
+
+            aliases = ", ".join([i for i in plugin.aliases if not i == command])
+
+            if aliases:
+                cmd = "{} ({})".format(command, aliases)
+            else:
+                cmd = "{}".format(command)
+
+            if plugin.doc:
+                if plugin.doc.split()[0].isalpha():
+                    doc = plugin.doc
+                else:
+                    doc = "{} {}".format(command, plugin.doc)
+            else:
+                doc = "Command has no documentation.".format(command)
+
+            if plugin.permissions:
+                doc += " (Permission required: {})\n\n".format(", ".join(plugin.permissions))
+
+            commands.append((cmd, doc))
+
+        args = {
+            'bot_name': wi.config.get('bot_name', 'CloudBot'),
+            'bot_version': cloudbot.__version__,
+            'commands': commands
+        }
+
         self.write(template.render(**args))
 
 

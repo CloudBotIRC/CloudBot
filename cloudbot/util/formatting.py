@@ -173,19 +173,12 @@ def ireplace(text, old, new, count=None):
     old replaced by new. If the optional argument count is given, only the first count
     occurrences are replaced.
     """
-    idx = 0
-    num = 0
-    while idx < len(text):
-        index_l = text.lower().find(old.lower(), idx)
-        if index_l == -1:
-            return text
+    pattern = re.compile(re.escape(old), re.IGNORECASE)
 
-        text = text[:index_l] + new + text[index_l + len(old):]
-        idx = index_l + len(old)
-        num += 1
-        if count and num >= count:
-            break
-    return text
+    if count:
+        return pattern.sub(new, text, count=count)
+    else:
+        return pattern.sub(new, text)
 
 
 def multi_replace(text, word_dic):

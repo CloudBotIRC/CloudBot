@@ -64,9 +64,11 @@ class CommandsHandler(RequestHandler):
                 doc = "Command has no documentation.".format(command)
 
             if plugin.permissions:
-                doc += " (Permission required: {})\n\n".format(", ".join(plugin.permissions))
+                perm = ", ".join(plugin.permissions)
+            else:
+                perm = None
 
-            commands.append((cmd, doc))
+            commands.append((cmd, doc, perm))
 
         args = {
             'bot_name': wi.config.get('bot_name', 'CloudBot'),

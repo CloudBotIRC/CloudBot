@@ -42,7 +42,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">{{ bot_name }}</a>
+            <a class="navbar-brand" data-toggle="tooltip" data-placement="bottom" title="Return to top" onclick="$('html,body').animate({scrollTop:0},'slow');return false;">{{ bot_name }}</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
@@ -55,7 +55,7 @@
                 <li>
                     <a href="#" data-toggle="modal" data-target="#about-dialog">About</a>
                 </li>
-             </ul>
+            </ul>
         </div>
         <!--/.nav-collapse -->
     </div>
@@ -66,28 +66,35 @@
 </div>
 
 <div class="modal fade" id="about-dialog">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h4 class="modal-title">About Me</h4>
-      </div>
-      <div class="modal-body">
-        <p><strong>{{ bot_name }}</strong> is running version <strong>{{ bot_version }}</strong> of CloudBot.
-        </p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">About Me</h4>
+            </div>
+            <div class="modal-body">
+                <p><strong>{{ bot_name }}</strong> is running version <strong>{{ bot_version }}</strong> of CloudBot.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <!-- javascript -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<script src="/s/js/bootstrap.min.js"></script>
-<script src="/s/js/moment.min.js"></script>
-<script src="/s/js/bootstrap-sortable.js"></script>
+{% block scripts %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="/s/js/bootstrap.min.js"></script>
+    <script src="/s/js/moment.min.js"></script>
+    <script src="/s/js/bootstrap-sortable.js"></script>
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+{% endblock %}
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <script src="/s/js/ie10-viewport-bug-workaround.js"></script>
 </body>

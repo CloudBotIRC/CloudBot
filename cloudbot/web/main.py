@@ -6,9 +6,11 @@ from tornado.platform.asyncio import AsyncIOMainLoop
 
 from jinja2 import Environment, PackageLoader
 
+wi = None
+
 
 def get_template_env():
-    env = Environment(loader=PackageLoader('cloudbot.web.templates'))
+    env = Environment(loader=PackageLoader('cloudbot.web'))
     return env
 
 
@@ -23,7 +25,8 @@ def get_application():
 class TestHandler(RequestHandler):
     @gen.coroutine
     def get(self):
-        self.write("Hello world!\n")
+        template = wi.env.get_template('layout.html')
+        self.write(template.render())
 
 
 class WebInterface():
@@ -32,10 +35,12 @@ class WebInterface():
         self.port = port
         self.address = address
 
-        self.template = get_application()
-        self.template_env = get_template_env()
+        self.env = get_template_env()
 
         self.app = None
+
+        global wi
+        wi = self
 
         # Install tornado IO loop.
         AsyncIOMainLoop().install()

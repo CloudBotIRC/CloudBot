@@ -52,7 +52,6 @@ many individuals on behalf of Zope Corporation. Specific attributions
 are listed in the accompanying credits file.
 """
 
-
 traditional = [
     (1024 ** 5, 'P'),
     (1024 ** 4, 'T'),
@@ -97,6 +96,13 @@ si = [
     (1000 ** 1, 'K'),
     (1000 ** 0, 'B'),
 ]
+
+# re.I style aliases
+T = traditional
+A = alternative
+V = verbose
+I = iec
+S = si
 
 
 def size(b, system=traditional):

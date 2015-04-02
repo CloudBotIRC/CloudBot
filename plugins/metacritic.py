@@ -38,8 +38,8 @@ def metacritic(text):
 
     # metacritic thinks it's so damn smart blocking my scraper
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) '
-                      'Chrome/39.0.2171.71 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, '
+                      'like Gecko) Chrome/41.0.2228.0 Safari/537.36',
         'Referer':  'http://www.metacritic.com/'
     }
 

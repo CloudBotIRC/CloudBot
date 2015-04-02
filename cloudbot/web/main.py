@@ -1,7 +1,5 @@
-import asyncio
-
 from tornado import gen
-from tornado.web import RequestHandler, Application, StaticFileHandler, url
+from tornado.web import Application, RequestHandler, StaticFileHandler
 from tornado.platform.asyncio import AsyncIOMainLoop
 
 from jinja2 import Environment, PackageLoader
@@ -25,8 +23,13 @@ def get_application():
 class TestHandler(RequestHandler):
     @gen.coroutine
     def get(self):
-        template = wi.env.get_template('layout.html')
-        self.write(template.render())
+        template = wi.env.get_template('basic.html')
+        args = {
+            'main_title': 'CloudBot',
+            'heading': 'Placeholder Page',
+            'text': 'Lorem ipsum!'
+        }
+        self.write(template.render(**args))
 
 
 class WebInterface():

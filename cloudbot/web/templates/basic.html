@@ -1,0 +1,8 @@
+{% extends "layout.html" %}
+{% block title %}{{ heading }} - {{ super() }}{% endblock %}
+{% block content %}
+<div class="placeholder">
+    <h1>{{ heading }}</h1>
+    <p class="lead">{{ text }}</p>
+</div>
+{% endblock %}

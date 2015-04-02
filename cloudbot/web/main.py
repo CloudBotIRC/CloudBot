@@ -1,3 +1,5 @@
+import cloudbot
+
 from tornado import gen
 from tornado.web import Application, RequestHandler, StaticFileHandler
 from tornado.platform.asyncio import AsyncIOMainLoop
@@ -25,7 +27,8 @@ class TestHandler(RequestHandler):
     def get(self):
         template = wi.env.get_template('basic.html')
         args = {
-            'main_title': 'CloudBot',
+            'bot_name': wi.config.get('bot_name', 'CloudBot'),
+            'bot_version': cloudbot.__version__,
             'heading': 'Placeholder Page',
             'text': 'Lorem ipsum!'
         }
@@ -33,10 +36,12 @@ class TestHandler(RequestHandler):
 
 
 class WebInterface():
-    def __init__(self, bot, port=8090, address="0.0.0.0"):
+    def __init__(self, bot):
         self.bot = bot
-        self.port = port
-        self.address = address
+        self.config = bot.config.get('web', {})
+
+        self.port = self.config.get('port', 8090)
+        self.address = self.config.get('address', '0.0.0.0')
 
         self.env = get_template_env()
 

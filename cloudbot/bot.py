@@ -98,7 +98,8 @@ class CloudBot:
         self.db_base = declarative_base(metadata=self.db_metadata, bind=self.db_engine)
 
         # create web interface
-        self.web = WebInterface(self)
+        if self.config.get("web", {}).get("enabled", False):
+            self.web = WebInterface(self)
 
         # set botvars so plugins can access when loading
         database.metadata = self.db_metadata
@@ -204,7 +205,8 @@ class CloudBot:
         yield from asyncio.gather(*[conn.connect() for conn in self.connections.values()], loop=self.loop)
 
         # Activate web interface.
-        self.web.start()
+        if self.config.get("web", {}).get("enabled", False):
+            self.web.start()
 
         # Run a manual garbage collection cycle, to clean up any unused objects created during initialization
         gc.collect()

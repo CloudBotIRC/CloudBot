@@ -6,3 +6,7 @@ body {
     padding: 40px 15px;
     text-align: center;
 }
+
+#about-dialog {
+    top:20%;
+}

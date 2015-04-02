@@ -18,8 +18,12 @@ from cloudbot.reloader import PluginReloader
 from cloudbot.plugin import PluginManager
 from cloudbot.event import Event, CommandEvent, RegexEvent, EventType
 from cloudbot.util import database, formatting
-from cloudbot.web import WebInterface
 from cloudbot.clients.irc import IrcClient
+
+try:
+    from cloudbot.web.main import WebInterface
+except ImportError:
+    WebInterface = None
 
 logger = logging.getLogger("cloudbot")
 

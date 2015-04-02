@@ -15,7 +15,7 @@ def get_template_env():
 def get_application():
     app = Application([
         (r'/', TestHandler),
-        (r"/static/(.*)", StaticFileHandler, {"path": "./cloudbot/web/static"}),
+        (r"/s/(.*)", StaticFileHandler, {"path": "./cloudbot/web/static"}),
     ])
     return app
 

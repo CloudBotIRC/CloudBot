@@ -8,17 +8,17 @@
                 <h2 id="container">Commands</h2>
             </div>
             <!--<p class="lead">How to use {{ bot_name }} commands.</p>-->
-            <table class="table table-striped table-hover ">
+            <table class="table table-striped sortable">
                 <thead>
                 <tr>
-                    <th>Command</th>
-                    <th>Description</th>
+                    <th class='az' data-defaultsign="nospan" data-defaultsort="asc"><i class="fa fa-map-marker fa-fw"></i>Command</th>
+                    <th data-defaultsort='disabled'>Description</th>
                 </tr>
                 </thead>
                 {% for cmd, doc in commands %}
                     <tr>
-                        <td>{{ cmd }}</td>
-                        <td>{{ doc }}</td>
+                        <td>{{ cmd | e }}</td>
+                        <td>{{ doc | e }}</td>
                     </tr>
                 {% endfor %}
             </table>

@@ -1,7 +1,7 @@
 import asyncio
 
 from tornado import gen
-from tornado.web import RequestHandler, Application, url
+from tornado.web import RequestHandler, Application, StaticFileHandler, url
 from tornado.platform.asyncio import AsyncIOMainLoop
 
 from jinja2 import Environment, PackageLoader
@@ -14,7 +14,8 @@ def get_template_env():
 
 def get_application():
     app = Application([
-        url('/', TestHandler)
+        (r'/', TestHandler),
+        (r"/static/(.*)", StaticFileHandler, {"path": "./cloudbot/web/static"}),
     ])
     return app
 

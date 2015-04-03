@@ -22,8 +22,9 @@ from cloudbot.clients.irc import IrcClient
 
 try:
     from cloudbot.web.main import WebInterface
+    web_installed = True
 except ImportError:
-    WebInterface = None
+    web_installed = False
 
 logger = logging.getLogger("cloudbot")
 
@@ -98,7 +99,7 @@ class CloudBot:
         self.db_base = declarative_base(metadata=self.db_metadata, bind=self.db_engine)
 
         # create web interface
-        if self.config.get("web", {}).get("enabled", False):
+        if self.config.get("web", {}).get("enabled", False) and web_installed:
             self.web = WebInterface(self)
 
         # set botvars so plugins can access when loading
@@ -205,7 +206,7 @@ class CloudBot:
         yield from asyncio.gather(*[conn.connect() for conn in self.connections.values()], loop=self.loop)
 
         # Activate web interface.
-        if self.config.get("web", {}).get("enabled", False):
+        if self.config.get("web", {}).get("enabled", False) and web_installed:
             self.web.start()
 
         # Run a manual garbage collection cycle, to clean up any unused objects created during initialization

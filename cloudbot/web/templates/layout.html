@@ -57,7 +57,8 @@
 
                 </li>
                 <li class="dropdown">
-                    <a class="glyphicon glyphicon-option-vertical" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"></a>
+                    <a class="glyphicon glyphicon-option-vertical" class="dropdown-toggle" data-toggle="dropdown"
+                       role="button" aria-expanded="false"></a>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="#" class="active">Default Theme</a></li>
                     </ul>
@@ -81,11 +82,32 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">About Me</h4>
+                <h4 class="modal-title">About {{ bot_name }}</h4>
             </div>
             <div class="modal-body">
-                <p><strong>{{ bot_name }}</strong> is running version <strong>{{ bot_version }}</strong> of CloudBot.
+                <p><strong>{{ bot_name }}</strong> is powered by CloudBot (<strong>{{ bot_version }}</strong>), the fast, simple, open-source Python
+                    IRC bot. CloudBot source code is available on <a href="https://github.com/CloudBotIRC/CloudBot/">the official Github</a>.
                 </p>
+                <!--
+                <p>
+                    Put your own stuff here.
+                </p>
+                -->
+                <pre class="pre-scrollable" style="max-height: 200px;">CloudBot
+Copyright © 2011-2015 Luke Rogers / CloudBot Project
+
+CloudBot is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+CloudBot is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with CloudBot.  If not, see &lt;<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.</pre>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

@@ -22,7 +22,7 @@ def get_application():
         (r'/factoids/', TestHandler),
         (r'/commands/', CommandsHandler),
         (r"/s/(.*)", StaticFileHandler, {"path": "./cloudbot/web/static"}),
-    ])
+    ], compress_response=True)
     return app
 
 

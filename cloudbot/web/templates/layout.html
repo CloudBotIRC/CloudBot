@@ -59,8 +59,7 @@
                 <li class="dropdown">
                     <a class="glyphicon glyphicon-option-vertical" class="dropdown-toggle" data-toggle="dropdown"
                        role="button" aria-expanded="false"></a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="#" class="active">Default Theme</a></li>
+                    <ul class="dropdown-menu" role="menu" id="theme-select">
                     </ul>
                 </li>
                 <li>
@@ -122,11 +121,16 @@ along with CloudBot.  If not, see &lt;<a href="http://www.gnu.org/licenses/">htt
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="/s/js/bootstrap.min.js"></script>
     <script src="/s/js/moment.min.js"></script>
+    <script src="/s/js/jquery.cookie.js"></script>
+    <script src="/s/js/jquery.bootstrap-theme.js"></script>
     <script src="/s/js/bootstrap-sortable.js"></script>
     <script>
         $(function () {
+            $('#theme-select').bootstrapThemeSwitcher({'defaultCssFile': '/s/css/bootstrap.min.css', 'excludeBootswatch': 'Paper,Superhero,Simplex,Sandstone,Spacelab'});
+            $().bootstrapThemeSwitcher('loadThemeFromCookie');
             $('[data-toggle="tooltip"]').tooltip();
             $('[data-toggle="popover"]').popover();
+
         })
     </script>
 {% endblock %}

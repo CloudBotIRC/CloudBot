@@ -309,13 +309,13 @@ def lastfm_track(text, nick, db, bot, notice):
     artist_name = response["track"]["artist"]["name"]
     album_name = response["track"]["album"]["title"]
     url = web.try_shorten(response["track"]["url"])
-    listeners = response["track"]["listeners"]
-    playcount = response["track"]["playcount"]
-    out = out = "'{}' from the album {} by {} has been played {} times by {} listeners. {}".format(
+    listeners = int(response["track"]["listeners"])
+    playcount = int(response["track"]["playcount"])
+    out = out = "'{}' from the album {} by {} has been played {:,} times by {:,} listeners. {}".format(
         track_name, album_name, artist_name, playcount, listeners, url)
     if 'userplaycount' in response["track"]:
-        userplaycount = response["track"]["userplaycount"]
-        out = "'{}' from the album {} by {} has been played {} times by {} listeners. {} has listened {} times. {}".format(
+        userplaycount = int(response["track"]["userplaycount"])
+        out = "'{}' from the album {} by {} has been played {:,} times by {:,} listeners. {} has listened {:,} times. {}".format(
             track_name, album_name, artist_name, playcount, listeners, username, userplaycount, url)
     return out
 
@@ -359,12 +359,12 @@ def lastfm_artist(text, nick, db, bot, notice):
         return "Error: {}.".format(response["message"])
     artist_name = response["artist"]["name"]
     url = web.try_shorten(response["artist"]["url"])
-    listeners = response["artist"]["stats"]["listeners"]
-    playcount = response["artist"]["stats"]["playcount"]
-    out = out = "{} has been played {} times by {} listeners. {}".format(
+    listeners = int(response["artist"]["stats"]["listeners"])
+    playcount = int(response["artist"]["stats"]["playcount"])
+    out = out = "{} has been played {:,} times by {:,} listeners. {}".format(
         artist_name, playcount, listeners, url)
     if 'userplaycount' in response["artist"]["stats"]:
-        userplaycount = response["artist"]["stats"]["userplaycount"]
-        out = "'{}' has been played {} times by {} listeners. {} has listened {} times. {}".format(
+        userplaycount = int(response["artist"]["stats"]["userplaycount"])
+        out = "'{}' has been played {:,} times by {:,} listeners. {} has listened {:,} times. {}".format(
             artist_name, playcount, listeners, username, userplaycount, url)
     return out

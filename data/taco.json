@@ -14,8 +14,6 @@
       "spicy",
       "mild",
       "delicious",
-      ["boring", 1],
-      ["disgusting", 1],
       "perfect"
     ],
     "meat": [

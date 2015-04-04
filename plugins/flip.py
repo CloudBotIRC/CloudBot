@@ -3,8 +3,6 @@ import random
 from cloudbot import hook
 from cloudbot.util import formatting
 
-USE_FLIPPERS = False
-
 replacements = {
     'a': 'ɐ',
     'b': 'q',
@@ -12,10 +10,10 @@ replacements = {
     'd': 'p',
     'e': 'ǝ',
     'f': 'ɟ',
-    'g': 'b',
+    'g': 'ƃ',
     'h': 'ɥ',
-    'i': 'ı',
-    'j': 'ظ',
+    'i': 'ᴉ',
+    'j': 'ɾ',
     'k': 'ʞ',
     'l': 'ן',
     'm': 'ɯ',
@@ -34,6 +32,7 @@ replacements = {
     'z': 'z',
     '?': '¿',
     '.': '˙',
+    ',': '\'',
     '/': '\\',
     '\\': '/',
     '(': ')',
@@ -47,22 +46,19 @@ replacements = {
     '\'': ',',
     '_': '‾'}
 
+# append an inverted form of replacements to itself, so flipping works both ways
+replacements.update(dict((v, k) for k, v in replacements.items()))
+
 flippers = ["( ﾉ⊙︵⊙）ﾉ", "(╯°□°）╯", "( ﾉ♉︵♉ ）ﾉ"]
 
 @hook.command
-def flip(text, message, reply):
+def flip(text, reply):
     """<text> -- Flips <text> over."""
-    text = text.lower()
-    if USE_FLIPPERS:
-        message(random.choice(flippers) + " ︵ " + formatting.multi_replace(text[::-1], replacements))
-    else:
-        reply(formatting.multi_replace(text[::-1], replacements))
+    reply(formatting.multi_replace(text[::-1].lower(), replacements))
 
 
 @hook.command
 def table(text, message):
     """<text> -- (╯°□°）╯︵ <ʇxǝʇ>"""
-    text = text.lower()
-    message(random.choice(flippers) + " ︵ " + formatting.multi_replace(text[::-1], replacements))
-
+    message(random.choice(flippers) + " ︵ " + formatting.multi_replace(text[::-1].lower(), replacements))
 

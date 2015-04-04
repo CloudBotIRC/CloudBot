@@ -79,6 +79,8 @@ def remember(text, nick, db, notice, async):
     except ValueError:
         return remember.__doc__
 
+    word = word.lower()
+
     old_data = factoid_cache.get(word)
 
     if data.startswith('+') and old_data:
@@ -103,7 +105,7 @@ def remember(text, nick, db, notice, async):
 def forget(text, db, async, notice):
     """<word> - forgets previously remembered <word>"""
 
-    data = factoid_cache.get(text)
+    data = factoid_cache.get(text.lower())
 
     if data:
         yield from del_factoid(async, db, text)
@@ -119,7 +121,7 @@ def forget(text, db, async, notice):
 def info(text, notice):
     """<factoid> - shows the source of a factoid"""
 
-    text = text.strip()
+    text = text.strip().lower()
 
     if text in factoid_cache:
         notice(factoid_cache[text])

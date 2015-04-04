@@ -1,0 +1,49 @@
+{
+  "templates": [
+    "hands {user} a {quality} {type} taco filled with {meat} and topped with {topping}, {topping} and {topping}!"
+  ],
+  "parts": {
+    "type": [
+      "hard-shell",
+      "soft-shell",
+      ["crispy", 1],
+      ["puffy", 1],
+      ["Indian", 1]
+    ],
+    "quality": [
+      "spicy",
+      "mild",
+      "delicious",
+      ["boring", 1],
+      ["disgusting", 1],
+      "perfect"
+    ],
+    "meat": [
+      "minced beef",
+      "shredded beef",
+      "steak",
+      "pork",
+      "various meats",
+      "chicken",
+      "refried beans",
+      ["tofu", 1]
+    ],
+    "topping": [
+      ["guacamole", 10],
+      ["salsa", 10],
+      ["sour cream", 10],
+      "cheese",
+      "lettuce",
+      "tomatoes",
+      "avocado",
+      "onion",
+      "scallions",
+      "jalapeños",
+      "capsicum",
+      ["ghost chili", 1],
+      ["olives", 1],
+      ["pineapple", 1],
+      ["raspberries", 1]
+    ]
+  }
+}

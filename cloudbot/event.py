@@ -146,7 +146,7 @@ class Event:
             raise ValueError("event.hook is required to prepare an event")
 
         if "db" in self.hook.required_args:
-            logger.debug("Opening database session for {}:threaded=False".format(self.hook.description))
+            #logger.debug("Opening database session for {}:threaded=False".format(self.hook.description))
 
             # we're running a coroutine hook with a db, so initialise an executor pool
             self.db_executor = concurrent.futures.ThreadPoolExecutor(1)
@@ -167,7 +167,7 @@ class Event:
             raise ValueError("event.hook is required to prepare an event")
 
         if "db" in self.hook.required_args:
-            logger.debug("Opening database session for {}:threaded=True".format(self.hook.description))
+            #logger.debug("Opening database session for {}:threaded=True".format(self.hook.description))
 
             self.db = self.bot.db_session()
 
@@ -185,7 +185,7 @@ class Event:
             raise ValueError("event.hook is required to close an event")
 
         if self.db is not None:
-            logger.debug("Closing database session for {}:threaded=False".format(self.hook.description))
+            #logger.debug("Closing database session for {}:threaded=False".format(self.hook.description))
             # be sure the close the database in the database executor, as it is only accessable in that one thread
             yield from self.async(self.db.close)
             self.db = None
@@ -202,7 +202,7 @@ class Event:
         if self.hook is None:
             raise ValueError("event.hook is required to close an event")
         if self.db is not None:
-            logger.debug("Closing database session for {}:threaded=True".format(self.hook.description))
+            #logger.debug("Closing database session for {}:threaded=True".format(self.hook.description))
             self.db.close()
             self.db = None
 
@@ -340,6 +340,7 @@ class CommandEvent(Event):
                          irc_prefix=irc_prefix, irc_command=irc_command, irc_paramlist=irc_paramlist)
         self.hook = hook
         self.text = text
+        self.doc = self.hook.doc
         self.triggered_command = triggered_command
 
     def notice_doc(self, target=None):

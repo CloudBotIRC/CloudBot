@@ -7,11 +7,15 @@
         "crushes {user} with a huge spiked {spiked_thing}.",
         "glares at {user} until they die of boredom.",
         "stabs {user} in the heart a few times with a {weapon_stab}.",
+        "gets some friends together and shivs {user} a few times.",
         "rams a {weapon_explosive} up {user}'s ass and lets off a few rounds.",
         "smashes {user}'s head in with a {weapon_crush}.",
+        "shoves {user} into a microwave and waits until they pop.",
+        "rips {user}'s intestines and uses them as a skipping rope.",
         "unleashes the armies of Isengard on {user}.",
         "gags and ties {user} then throws them off a {tall_thing} to their death.",
         "reaches out and punches right through {user}'s chest.",
+        "beheads {user} with a {weapon_slice} and uses their head to play {ball_game}.",
         "slices {user}'s limbs off with a {weapon_slice}.",
         "throws {user} to Cthulu and watches them get ripped to shreds.",
         "feeds {user} to an angry {beast}.",
@@ -35,7 +39,14 @@
         ],
         "beast": [
             "black dragon",
-            "owlbear"
+            "owlbear",
+            "kraken"
+        ],
+        "ball_game": [
+            "baseball",
+            "football",
+            "soccer",
+            "tennis"
         ],
         "weapon_stab": [
             "knife",
@@ -47,6 +58,7 @@
         "weapon_slice": [
             "sharpened katana",
             "chainsaw",
+            "rusty scythe",
             "polished axe"
         ],
         "weapon_crush": [

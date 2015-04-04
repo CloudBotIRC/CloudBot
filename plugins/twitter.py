@@ -14,13 +14,13 @@ TWITTER_RE = re.compile(r"(?:(?:www.twitter.com|twitter.com)/(?:[-_a-zA-Z0-9]+)/
 def load_api(bot):
     global tw_api
 
-    consumer_key = bot.config.get("api_keys", {}).get("twitter_consumer_key")
-    consumer_secret = bot.config.get("api_keys", {}).get("twitter_consumer_secret")
+    consumer_key = bot.config.get("api_keys", {}).get("twitter_consumer_key", None)
+    consumer_secret = bot.config.get("api_keys", {}).get("twitter_consumer_secret", None)
 
-    oauth_token = bot.config.get("api_keys", {}).get("twitter_access_token")
-    oauth_secret = bot.config.get("api_keys", {}).get("twitter_access_secret")
+    oauth_token = bot.config.get("api_keys", {}).get("twitter_access_token", None)
+    oauth_secret = bot.config.get("api_keys", {}).get("twitter_access_secret", None)
 
-    if None in (consumer_key, consumer_secret, oauth_token, oauth_secret):
+    if not all((consumer_key, consumer_secret, oauth_token, oauth_secret)):
         tw_api = None
         return
     else:
@@ -63,7 +63,7 @@ def twitter(text):
     """twitter <user> [n] -- Gets last/[n]th tweet from <user>"""
 
     if tw_api is None:
-        return
+        return "This command requires a twitter API key."
 
     if re.match(r'^\d+$', text):
         # user is getting a tweet by id
@@ -72,10 +72,10 @@ def twitter(text):
             # get tweet by id
             tweet = tw_api.get_status(text)
         except tweepy.error.TweepError as e:
-            if e[0][0]['code'] == 34:
+            if "404" in e.reason:
                 return "Could not find tweet."
             else:
-                return "Error {}: {}".format(e[0][0]['code'], e[0][0]['message'])
+                return "Error: {}".format(e.reason)
 
         user = tweet.user
 
@@ -89,17 +89,17 @@ def twitter(text):
             username, tweet_number = text.split()
             tweet_number = int(tweet_number) - 1
 
-        if tweet_number > 300:
-            return "This command can only find the last \x02300\x02 tweets."
+        if tweet_number > 200:
+            return "This command can only find the last \x02200\x02 tweets."
 
         try:
             # try to get user by username
             user = tw_api.get_user(username)
         except tweepy.error.TweepError as e:
-            if e[0][0]['code'] == 34:
+            if "404" in e.reason:
                 return "Could not find user."
             else:
-                return "Error {}: {}".format(e[0][0]['code'], e[0][0]['message'])
+                return "Error: {}".format(e.reason)
 
         # get the users tweets
         user_timeline = tw_api.user_timeline(id=user.id, count=tweet_number + 1)
@@ -152,10 +152,10 @@ def twuser(text):
         # try to get user by username
         user = tw_api.get_user(text)
     except tweepy.error.TweepError as e:
-        if e[0][0]['code'] == 34:
+        if "404" in e.reason:
             return "Could not find user."
         else:
-            return "Unknown error"
+            return "Error: {}".format(e.reason)
 
     if user.verified:
         prefix = "\u2713"

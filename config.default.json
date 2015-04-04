@@ -79,7 +79,9 @@
         "rdio_key": "",
         "rdio_secret": "",
         "google_dev_key": "",
-        "octopart": ""
+        "google_cse_id": "",
+        "octopart": "",
+        "wordnik": ""
     },
     "database": "sqlite:///cloudbot.db",
     "plugin_loading": {

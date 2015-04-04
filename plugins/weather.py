@@ -3,80 +3,95 @@ import requests
 from cloudbot import hook
 from cloudbot.util import web
 
-base_url = "http://api.wunderground.com/api/{}/{}/q/{}.json"
+
+class APIError(Exception):
+    pass
+
+# Define some constants
+google_base = 'https://maps.googleapis.com/maps/api/'
+geocode_api = google_base + 'geocode/json'
+
+wunder_api = "http://api.wunderground.com/api/{}/forecast/geolookup/conditions/q/{}.json"
+
+# Change this to a ccTLD code (eg. uk, nz) to make results more targeted towards that specific country.
+# <https://developers.google.com/maps/documentation/geocoding/#RegionCodes>
+bias = None
 
 
-@hook.command("weather", "we", autohelp=False)
-def weather(text, reply, db, nick, bot, notice):
-    """weather <location> [dontsave] -- Gets weather data
-    for <location> from Wunderground."""
+def check_status(status):
+    """
+    A little helper function that checks an API error code and returns a nice message.
+    Returns None if no errors found
+    """
+    if status == 'REQUEST_DENIED':
+        return 'The geocode API is off in the Google Developers Console.'
+    elif status == 'ZERO_RESULTS':
+        return 'No results found.'
+    elif status == 'OVER_QUERY_LIMIT':
+        return 'The geocode API quota has run out.'
+    elif status == 'UNKNOWN_ERROR':
+        return 'Unknown Error.'
+    elif status == 'INVALID_REQUEST':
+        return 'Invalid Request.'
+    elif status == 'OK':
+        return None
 
-    api_key = bot.config.get("api_keys", {}).get("wunderground")
 
-    if not api_key:
-        return "Error: No wunderground API details."
+def find_location(location):
+    """
+    Takes a location as a string, and returns a dict of data
+    :param location: string
+    :return: dict
+    """
+    params = {"address": location, "key": dev_key}
+    if bias:
+        params['region'] = bias
 
-    # initialise weather DB
-    db.execute("create table if not exists weather(nick primary key, loc)")
+    json = requests.get(geocode_api, params=params).json()
 
-    # if there is no input, try getting the users last location from the DB
-    if not text:
-        location = db.execute("select loc from weather where nick=lower(:nick)",
-                              {"nick": nick}).fetchone()
-        if not location:
-            # no location saved in the database, send the user help text
-            notice(weather.__doc__)
-            return
-        loc = location[0]
+    error = check_status(json['status'])
+    if error:
+        raise APIError(error)
 
-        # no need to save a location, we already have it
-        dontsave = True
-    else:
-        # see if the input ends with "dontsave"
-        dontsave = text.endswith(" dontsave")
+    return json['results'][0]['geometry']['location']
 
-        # remove "dontsave" from the input string after checking for it
-        if dontsave:
-            loc = text[:-9].strip().lower()
-        else:
-            loc = text
 
-    location = requests.utils.quote(loc)
+@hook.on_start
+def on_start(bot):
+    """ Loads API keys """
+    global dev_key, wunder_key
+    dev_key = bot.config.get("api_keys", {}).get("google_dev_key", None)
+    wunder_key = bot.config.get("api_keys", {}).get("wunderground", None)
 
-    request_url = base_url.format(api_key, "geolookup/forecast/conditions", location)
 
+@hook.command("weather", "we")
+def weather(text, reply):
+    """weather <location> -- Gets weather data for <location>."""
+    if not wunder_key:
+        return "This command requires a Weather Underground API key."
+    if not dev_key:
+        return "This command requires a Google Developers Console API key."
+
+    # use find_location to get location data from the user input
     try:
-        request = requests.get(request_url)
-        request.raise_for_status()
-    except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
-        return "Could not get weather data: {}".format(e)
+        location_data = find_location(text)
+    except APIError as e:
+        return e
 
-    response = request.json()
+    formatted_location = "{lat},{lng}".format(**location_data)
 
-    if 'location' not in response:
-        try:
-            location_id = response['response']['results'][0]['zmw']
-        except KeyError:
-            return "Could not get weather for that location."
+    url = wunder_api.format(wunder_key, formatted_location)
+    response = requests.get(url).json()
 
-        # get the weather again, using the closest match
-        request_url = base_url.format(api_key, "geolookup/forecast/conditions", "zmw:" + location_id)
-        response = requests.get(request_url).json()
-
-    if response['location']['state']:
-        place_name = "\x02{}\x02, \x02{}\x02 (\x02{}\x02)".format(response['location']['city'],
-                                                                  response['location']['state'],
-                                                                  response['location']['country'])
-    else:
-        place_name = "\x02{}\x02 (\x02{}\x02)".format(response['location']['city'],
-                                                      response['location']['country'])
+    if response['response'].get('error'):
+        return "{}".format(response['response']['error']['description'])
 
     forecast_today = response["forecast"]["simpleforecast"]["forecastday"][0]
     forecast_tomorrow = response["forecast"]["simpleforecast"]["forecastday"][1]
 
     # put all the stuff we want to use in a dictionary for easy formatting of the output
     weather_data = {
-        "place": place_name,
+        "place": response['current_observation']['display_location']['full'],
         "conditions": response['current_observation']['weather'],
         "temp_f": response['current_observation']['temp_f'],
         "temp_c": response['current_observation']['temp_c'],
@@ -93,17 +108,17 @@ def weather(text, reply, db, nick, bot, notice):
         "tomorrow_high_f": forecast_tomorrow['high']['fahrenheit'],
         "tomorrow_high_c": forecast_tomorrow['high']['celsius'],
         "tomorrow_low_f": forecast_tomorrow['low']['fahrenheit'],
-        "tomorrow_low_c": forecast_tomorrow['low']['celsius'],
-        "url": web.shorten(response["current_observation"]['forecast_url'] + "?apiref=e535207ff4757b18")
+        "tomorrow_low_c": forecast_tomorrow['low']['celsius']
     }
+
+    # Get the more accurate URL if available, if not, get the generic one.
+    if "?query=," in response["current_observation"]['ob_url']:
+        weather_data['url'] = web.shorten(response["current_observation"]['forecast_url'])
+    else:
+        weather_data['url'] = web.shorten(response["current_observation"]['ob_url'])
 
     reply("{place} - \x02Current:\x02 {conditions}, {temp_f}F/{temp_c}C, {humidity}, "
           "Wind: {wind_kph}KPH/{wind_mph}MPH {wind_direction}, \x02Today:\x02 {today_conditions}, "
           "High: {today_high_f}F/{today_high_c}C, Low: {today_low_f}F/{today_low_c}C. "
           "\x02Tomorrow:\x02 {tomorrow_conditions}, High: {tomorrow_high_f}F/{tomorrow_high_c}C, "
           "Low: {tomorrow_low_f}F/{tomorrow_low_c}C - {url}".format(**weather_data))
-
-    if location and not dontsave:
-        db.execute("insert or replace into weather(nick, loc) values (:nick, :loc)",
-                   {"nick": nick.lower(), "loc": loc})
-        db.commit()

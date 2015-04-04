@@ -7,6 +7,8 @@ from lxml import etree
 from cloudbot import hook
 from cloudbot.util import web, formatting
 
+# security
+parser = etree.XMLParser(resolve_entities=False, no_network=True)
 
 api_url = 'http://api.wolframalpha.com/v2/query'
 query_url = 'http://www.wolframalpha.com/input/?i={}'
@@ -28,7 +30,7 @@ def wolframalpha(text, bot):
     if request.status_code != requests.codes.ok:
         return "Error getting query: {}".format(request.status_code)
 
-    result = etree.fromstring(request.content)
+    result = etree.fromstring(request.content, parser=parser)
 
     # get the URL for a user to view this query in a browser
     short_url = web.try_shorten(query_url.format(urllib.parse.quote_plus(text)))

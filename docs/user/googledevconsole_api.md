@@ -24,6 +24,8 @@ Once you have created the project, select it in the main panel (if it already ha
 
  - Books API
  - Youtube Data API v3
+ - Geocoding API
+ - Time Zone API
  - Optional: Google Custom Search API, if using Google Search
  - Optional: Translate API, if using Google Translate
 

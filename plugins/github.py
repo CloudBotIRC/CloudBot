@@ -4,12 +4,12 @@ from cloudbot import hook
 from cloudbot.util import web, formatting
 
 shortcuts = {
-    'cloudbot': 'CloudBotIRC/Refresh'
+    'cloudbot': 'CloudBotIRC/CloudBot'
 }
 
 
-@hook.command()
-def issues(text):
+@hook.command("ghissue", "issue")
+def issue(text):
     """<username|repo> [number] - gets issue [number]'s summary, or the open issue count if no issue is specified"""
     args = text.split()
     repo = args[0] if args[0] not in shortcuts else shortcuts[args[0]]

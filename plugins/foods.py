@@ -8,7 +8,7 @@ import re
 from cloudbot import hook
 from cloudbot.util import textgen
 
-nick_re = re.compile("^[A-Za-z0-9_|.\-\]\[]*$", re.I)
+nick_re = re.compile("^[A-Za-z0-9_|.\-\]\[\{\}]*$", re.I)
 
 cakes = ['Chocolate', 'Ice Cream', 'Angel', 'Boston Cream', 'Birthday', 'Bundt', 'Carrot', 'Coffee', 'Devils', 'Fruit',
          'Gingerbread', 'Pound', 'Red Velvet', 'Stack', 'Welsh', 'Yokan']
@@ -68,6 +68,8 @@ def load_foods(bot):
     global sandwich_data
     global mirchi_data
     global dhokla_data
+    global sandwich_data
+    global taco_data
 
     with codecs.open(os.path.join(bot.data_dir, "sandwich.json"), encoding="utf-8") as f:
         sandwich_data = json.load(f)
@@ -77,6 +79,9 @@ def load_foods(bot):
         
     with codecs.open(os.path.join(bot.data_dir, "dhokla.json"), encoding="utf-8") as dData:
         dhokla_data = json.load(dData)
+
+    with codecs.open(os.path.join(bot.data_dir, "taco.json"), encoding="utf-8") as f:
+        taco_data = json.load(f)
 
 
 @asyncio.coroutine
@@ -188,6 +193,19 @@ def mirchi(text, conn, nick, notice, action):
 
     generator = textgen.TextGenerator(mirchi_data["templates"], mirchi_data["parts"],
                                       variables={"user": target})
+    # act out the message
+    action(generator.generate_string())
 
+@asyncio.coroutine
+@hook.command
+def taco(text, action):
+    """<user> - give a taco to <user>"""
+    user = text.strip()
+
+    if not is_valid(user):
+        return "I can't give a taco to that user."
+
+    generator = textgen.TextGenerator(taco_data["templates"], taco_data["parts"],
+                                      variables={"user": user})
     # act out the message
     action(generator.generate_string())

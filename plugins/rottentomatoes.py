@@ -41,7 +41,7 @@ def rotten_tomatoes(text, bot):
                "Audience Rating: \x02{}%\x02 - {}".format(title, audience_score, url)
 
     review_params = {
-        'review_type': all,
+        'review_type': 'all',
         'apikey': api_key
     }
 
@@ -52,7 +52,7 @@ def rotten_tomatoes(text, bot):
     reviews = review_request.json()
     review_count = reviews['total']
 
-    fresh = critics_score * review_count / 100
+    fresh = int(critics_score * review_count / 100)
     rotten = review_count - fresh
 
     return "\x02{}\x02 - Critics Rating: \x02{}%\x02 ({} liked, {} disliked), " \

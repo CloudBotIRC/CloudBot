@@ -167,6 +167,20 @@ def munge(text, count=0):
     return text
 
 
+def ireplace(text, old, new, count=None):
+    """
+    A case-insensitive replace() clone. Return a copy of text with all occurrences of substring
+    old replaced by new. If the optional argument count is given, only the first count
+    occurrences are replaced.
+    """
+    pattern = re.compile(re.escape(old), re.IGNORECASE)
+
+    if count:
+        return pattern.sub(new, text, count=count)
+    else:
+        return pattern.sub(new, text)
+
+
 def multi_replace(text, word_dic):
     """
     Takes a string and replace words that match a key in a dictionary with the associated value,
@@ -231,6 +245,9 @@ def pluralize(num=0, text=''):
     :rtype: str
     """
     return "{:,} {}{}".format(num, text, "s"[num == 1:])
+
+# alternate form
+pluralise = pluralize
 
 
 def dict_format(args, formats):

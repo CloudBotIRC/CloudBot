@@ -21,6 +21,19 @@ table = Table(
 )
 
 
+@hook.on_start
+def load_cache(db):
+    """
+    :type db: sqlalchemy.orm.Session
+    """
+    global tell_cache
+    tell_cache = []
+    for row in db.execute(table.select().where(table.c.is_read == 0)):
+        conn = row["connection"]
+        target = row["target"]
+        tell_cache.append((conn, target))
+
+
 def get_unread(db, server, target):
     query = select([table.c.sender, table.c.message, table.c.time_sent]) \
         .where(table.c.connection == server.lower()) \
@@ -47,7 +60,7 @@ def read_all_tells(db, server, target):
         .values(is_read=1)
     db.execute(query)
     db.commit()
-
+    load_cache(db)
 
 def read_tell(db, server, target, message):
     query = table.update() \
@@ -57,6 +70,7 @@ def read_tell(db, server, target, message):
         .values(is_read=1)
     db.execute(query)
     db.commit()
+    load_cache(db)
 
 
 def add_tell(db, server, sender, target, message):
@@ -70,6 +84,14 @@ def add_tell(db, server, sender, target, message):
     )
     db.execute(query)
     db.commit()
+    load_cache(db)
+
+def tell_check(conn, nick):
+    for _conn, _target in tell_cache:
+        if (conn, nick.lower()) == (_conn, _target):
+            return True
+        else:
+            continue
 
 
 @hook.event(EventType.message, singlethread=True)
@@ -82,7 +104,10 @@ def tellinput(event, conn, db, nick, notice):
     if 'showtells' in event.content.lower():
         return
 
-    tells = get_unread(db, conn.name, nick)
+    if tell_check(conn.name, nick): 
+        tells = get_unread(db, conn.name, nick)
+    else:
+        return
 
     if tells:
         user_from, message, time_sent = tells[0]

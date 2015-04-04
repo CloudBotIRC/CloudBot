@@ -1,9 +1,7 @@
 from urllib.parse import quote_plus
-import asyncio
 
 import requests
 import requests.exceptions
-import functools
 
 from cloudbot import hook
 from cloudbot.util import formatting
@@ -11,16 +9,14 @@ from cloudbot.util import formatting
 api_url = "http://api.fishbans.com/stats/{}/"
 
 
-@asyncio.coroutine
 @hook.command("bans", "fishbans")
-def fishbans(text, bot, loop):
+def fishbans(text, bot):
     """<user> - gets information on <user>'s minecraft bans from fishbans"""
     user = text.strip()
     headers = {'User-Agent': bot.user_agent}
 
     try:
-        _func = functools.partial(requests.get, api_url.format(quote_plus(user)), headers=headers)
-        request = yield from loop.run_in_executor(None, _func)
+        request = requests.get(api_url.format(quote_plus(user)), headers=headers)
         request.raise_for_status()
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         return "Could not fetch ban data from the Fishbans API: {}".format(e)
@@ -44,16 +40,14 @@ def fishbans(text, bot, loop):
         return "The user \x02{}\x02 has no bans - {}".format(user, user_url)
 
 
-@asyncio.coroutine
 @hook.command()
-def bancount(text, bot, loop):
+def bancount(text, bot):
     """<user> - gets a count of <user>'s minecraft bans from fishbans"""
     user = text.strip()
     headers = {'User-Agent': bot.user_agent}
 
     try:
-        _func = functools.partial(requests.get, api_url.format(quote_plus(user)), headers=headers)
-        request = yield from loop.run_in_executor(None, _func)
+        request = requests.get(api_url.format(quote_plus(user)), headers=headers)
         request.raise_for_status()
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         return "Could not fetch ban data from the Fishbans API: {}".format(e)
@@ -62,6 +56,9 @@ def bancount(text, bot, loop):
         json = request.json()
     except ValueError:
         return "Could not fetch ban data from the Fishbans API: Invalid Response"
+
+    if not json["success"]:
+        return "Could not fetch ban data for {}.".format(user)
 
     user_url = "http://fishbans.com/u/{}/".format(user)
     services = json["stats"]["service"]

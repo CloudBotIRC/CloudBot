@@ -4,11 +4,11 @@ import re
 
 from cloudbot import hook
 from cloudbot.util import formatting
-
+    
 
 @asyncio.coroutine
 @hook.command("help", autohelp=False)
-def help_command(text, conn, bot, notice, has_permission):
+def help_command(text, chan, conn, bot, notice, message, has_permission):
     """[command] - gives help for [command], or lists all available commands if no command is specified
     :type text: str
     :type conn: cloudbot.client.Client
@@ -64,5 +64,9 @@ def help_command(text, conn, bot, notice, has_permission):
         lines = formatting.chunk_str("Here's a list of commands you can use: " + ", ". join(commands))
 
         for line in lines:
-            notice(line)
+            if chan[:1] == "#":
+                notice(line)
+            else:
+                #This is an user in this case.
+                message(line)
         notice("For detailed help, use {}help <command>, without the brackets.".format(conn.config["command_prefix"]))

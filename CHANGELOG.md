@@ -1,6 +1,26 @@
 ## Changelog
+### 1.0.8
+This update is pretty big. Be warned.
+ * Improved flip command.
+ * Added new time command that gets time for location.
+ * Added locate command that locates a place on Google Maps.
+ * Change weather command to use new location API from the two above.
+ * Added more kill messages.
+ * Revamp lastfm with more commands and better memory.
+ * Add new poll command. Still not perfect.
+ * Replaced old dictionary plugin with new Wordnik plugin.
+ * Revamped Soundcloud command.
+ * Revamped chatbot command.
+ * Switched back to google search.
+ * Added new issafe plugin.
+ * And a whole lot of minor tweaks and fixes.
+
+### 1.0.7.1
+ * Security fixes.
+
 ### 1.0.7
  * Added new "Would you rather" plugin.
+
 ### 1.0.6
  * Added pig latin translator, requires new *nltk* module
  * Added reminder command

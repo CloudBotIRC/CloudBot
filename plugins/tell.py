@@ -33,19 +33,6 @@ def load_cache(db):
         tell_cache.append((conn, target))
 
 
-@hook.on_start
-def load_cache(db):
-    """
-    :type db: sqlalchemy.orm.Session
-    """
-    global tell_cache
-    tell_cache = []
-    for row in db.execute(table.select().where(table.c.is_read == 0)):
-        conn = row["connection"]
-        target = row["target"]
-        tell_cache.append((conn, target))
-
-
 def get_unread(db, server, target):
     query = select([table.c.sender, table.c.message, table.c.time_sent]) \
         .where(table.c.connection == server.lower()) \

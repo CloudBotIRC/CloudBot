@@ -68,8 +68,8 @@ def load_foods(bot):
     global sandwich_data
     global mirchi_data
     global dhokla_data
-    global sandwich_data
     global taco_data
+    global pizza_data
 
     with codecs.open(os.path.join(bot.data_dir, "sandwich.json"), encoding="utf-8") as f:
         sandwich_data = json.load(f)
@@ -82,7 +82,9 @@ def load_foods(bot):
 
     with codecs.open(os.path.join(bot.data_dir, "taco.json"), encoding="utf-8") as f:
         taco_data = json.load(f)
-
+    
+    with codecs.open(os.path.join(bot.data_dir, "pizza.json"), encoding="utf-8") as f:
+        pizza_data = json.load(f)
 
 @asyncio.coroutine
 @hook.command
@@ -206,6 +208,20 @@ def taco(text, action):
         return "I can't give a taco to that user."
 
     generator = textgen.TextGenerator(taco_data["templates"], taco_data["parts"],
+                                      variables={"user": user})
+    # act out the message
+    action(generator.generate_string())
+    
+@asyncio.coroutine
+@hook.command
+def pizza(text, action):
+    """<user> - give a pizza to <user>"""
+    user = text.strip()
+
+    if not is_valid(user):
+        return "I can't give a pizza to that user."
+
+    generator = textgen.TextGenerator(pizza_data["templates"], pizza_data["parts"],
                                       variables={"user": user})
     # act out the message
     action(generator.generate_string())

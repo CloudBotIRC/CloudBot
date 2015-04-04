@@ -1,0 +1,49 @@
+{
+  "templates": [
+    "makes {user} a {quality} {type} pizza with {meat}, {meat}, {meat} and {topping}!",
+	"makes {user} a {quality} {type} pizza with {meat}, {meat}, {topping} and {topping}!",
+    "makes {user} a {quality} {type} pizza with {meat}, {topping}, {topping} and {topping}!",
+    "makes {user} a {quality} {type} pizza with {meat} and {topping}",
+    "makes {user} a {quality} {type} pizza with {topping}, {topping}, {topping} and {topping}",
+    "makes {user} a {quality} {type} pizza with {topping}, {topping} and {topping}!",
+    "makes {user} a {quality} {type} pizza with {topping} and {topping}"
+    ],
+  "parts": {
+    "type": [
+      "thin crust",
+      "pan",
+      "deep dish",
+      "neapolitan"
+    ],
+    "quality": [
+      "spicy",
+      "mild",
+      "delicious",
+      "perfect"
+    ],
+    "meat": [
+      "sausage",
+      "pepperoni",
+      "grilled chicken",
+      "prosciutto",
+      "anchovies",
+      "ham",
+      "italian beef"
+    ],
+    "topping": [
+      "black olives",
+      "green olives",
+      "roasted red peppers",
+      "spinach",
+      "mushrooms",
+      "artichokes",
+      "garlic cloves",
+      "hot giardiniera",
+      "jalapeños",
+      "pineapple",
+      "pepperoncini peppers",
+      "basil",
+      "extra cheese"
+    ]
+  }
+}

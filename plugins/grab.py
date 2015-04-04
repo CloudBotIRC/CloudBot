@@ -1,8 +1,20 @@
 import re
 
+from sqlalchemy import Table, Column, String, Boolean, DateTime
+from sqlalchemy.sql import select
 from cloudbot import hook
+from cloudbot.util import botvars
 
 db_ready = []
+
+table = Table(
+    'grab',
+    botvars.metadata,
+    Column('name', String),
+    Column('time', String),
+    Column('quote', String),
+    Column('chan', String)
+)
 
 
 def db_init(db, conn_name):
@@ -16,6 +28,32 @@ def db_init(db, conn_name):
         db.commit()
         db_ready.append(conn_name)
 
+@hook.on_start()
+def load_cache(db):
+    """
+    :type db: sqlalchemy.orm.Session
+    """
+    global grab_cache
+    grab_cache = {}
+    for row in db.execute(table.select()):
+        name = row["name"]
+        quote = row["quote"]
+        chan = row["chan"]
+        if chan not in grab_cache:
+            grab_cache.update({chan:{name:[chan]}})
+        elif name not in grab_cache[chan]:
+            grab_cache[chan].update({name:[quote]})
+        else:
+            grab_cache[chan][name].append(quote)
+
+def check_grabs(name, quote, chan):
+    try:
+        if quote in grab_cache[chan][name]:
+            return True
+        else:
+            return False
+    except:
+        return False
 
 def grab_add(nick, time, msg, chan, db, conn):
     # Adds a quote to the grab table
@@ -25,6 +63,7 @@ def grab_add(nick, time, msg, chan, db, conn):
         " values(:name, :time, :quote, :chan)",
         {'name': nick, 'time': time, 'quote': msg, 'chan': chan})
     db.commit()
+    load_cache(db)
 
 
 @hook.command()
@@ -34,9 +73,24 @@ def grab(text, nick, chan, db, conn):
     if text.lower() == nick.lower():
         return "Didn't your mother teach you not to grab yourself?"
     db_init(db, conn.name)
-    lastq = db.execute("select name, time, quote, chan from seen_user "
-                       "where name = :name and chan = :chan ",
-                       {'name': text.lower(), 'chan': chan}).fetchone()
+    #lastq = db.execute("select name, time, quote, chan from seen_user "
+    #                   "where name = :name and chan = :chan ",
+    #                   {'name': text.lower(), 'chan': chan}).fetchone()
+    
+    for item in conn.history[chan].__reversed__():
+        name, timestamp, msg = item
+        if text.lower() == name.lower():
+            # check to see if the quote has been added
+            if check_grabs(name.lower(), msg, chan):
+                return "I already have that quote from {} in the database".format(text)
+                break
+            else:
+                # the quote is new so add it to the db. 
+                grab_add(name.lower(),timestamp, msg, chan, db, conn)
+                if check_grabs(name.lower(), msg, chan):
+                    return "the operation succeeded."
+                break
+        return "I couldn't find anything from {} in recent history.".format(text)
     if lastq:
         #msg = ""
         #if lastq[2].startswith("\x01ACTION"):

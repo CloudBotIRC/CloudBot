@@ -6,7 +6,7 @@ from sqlalchemy.sql import select
 from cloudbot import hook
 from cloudbot.util import botvars
 
-db_ready = []
+#db_ready = []
 
 table = Table(
     'grab',
@@ -16,18 +16,6 @@ table = Table(
     Column('quote', String),
     Column('chan', String)
 )
-
-
-def db_init(db, conn_name):
-    """Check to see that our DB has the grab  table.
-    connection name is for caching the result per connection
-    :type db: sqlalchemy.orm.Session
-    """
-    global db_ready
-    if db_ready.count(conn_name) < 1:
-        db.execute("create table if not exists grab(name, time, quote, chan)")
-        db.commit()
-        db_ready.append(conn_name)
 
 @hook.on_start()
 def load_cache(db):
@@ -94,7 +82,7 @@ def format_grab(name, quote):
         out = "<{}> {}".format(name, quote)
         return out
 
-@hook.command()
+@hook.command("lastgrab", "lgrab")
 def lastgrab(text, chan, db, message, conn):
     """prints the last grabbed quote from <nick>."""
     lgrab = ""
@@ -107,31 +95,29 @@ def lastgrab(text, chan, db, message, conn):
         message(format_grab(text, quote),chan)
 
 
-@hook.command(autohelp=False)
+@hook.command("grabrandom", "grabr", autohelp=False)
 def grabrandom(text, chan, message, db, conn):
     """grabs a random quote from the grab database"""
     grab = ""
     name = ""
-    pick_name = random.choice(list(grab_cache[chan].keys()))
-    if not text:
-        try:
-            grab = random.choice(grab_cache[chan][pick_name])
-            name = pick_name
-        except:
-            return "There was either a major fuck up or no quotes have been grabbed in this channel."
-    else:
+    if text:
         name = text.split(' ')[0]
+    else:
         try:
-            grab = random.choice(grab_cache[chan][name])
+            name = random.choice(list(grab_cache[chan].keys()))
         except:
-            return "it appears {} has never been grabbed"
+            return "I couldn't find any grabs in {}.".format(chan)
+    try:
+        grab = random.choice(grab_cache[chan][name])
+    except:
+        return "it appears {} has never been grabbed in {}".format(name, chan)
     if grab:
         message(format_grab(name, grab), chan)
     else:
         return "Hmmm try grabbing a quote first."
 
 
-@hook.command(autohelp=False)
+@hook.command("grabsearch", "grabs", autohelp=False)
 def grabsearch(text, chan, db, conn):
     """.grabsearch <text> matches "text" against nicks or grab strings in the database"""
     out = ""

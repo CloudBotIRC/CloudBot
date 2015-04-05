@@ -60,7 +60,7 @@ def welcome(nick, action, message, chan, event, db, conn):
             text = ""
             if len(greet.split(' ')) >= 2:
                 text = greet.lower().split(' ')[1]
-            out = grab.grabrandom(text, chan, message, db, conn)
+            out = grab.grabrandom(text, chan, message)
             message(out, chan)
         else:
             message(welcome[0], chan)

@@ -83,7 +83,7 @@ def format_grab(name, quote):
         return out
 
 @hook.command("lastgrab", "lgrab")
-def lastgrab(text, chan, db, message, conn):
+def lastgrab(text, chan, message):
     """prints the last grabbed quote from <nick>."""
     lgrab = ""
     try:
@@ -96,7 +96,7 @@ def lastgrab(text, chan, db, message, conn):
 
 
 @hook.command("grabrandom", "grabr", autohelp=False)
-def grabrandom(text, chan, message, db, conn):
+def grabrandom(text, chan, message):
     """grabs a random quote from the grab database"""
     grab = ""
     name = ""
@@ -118,7 +118,7 @@ def grabrandom(text, chan, message, db, conn):
 
 
 @hook.command("grabsearch", "grabs", autohelp=False)
-def grabsearch(text, chan, db, conn):
+def grabsearch(text, chan):
     """.grabsearch <text> matches "text" against nicks or grab strings in the database"""
     out = ""
     result = []

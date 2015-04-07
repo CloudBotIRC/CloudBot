@@ -94,3 +94,11 @@ def awesome(text, message):
         message("{}: I am blown away by your recent awesome action(s). Please read \x02{}\x02".format(nick, link.format(nick, nick)))
     else:
         return "Sorry I can't tell {} how awesome they are.".format(nick)
+
+@hook.command(autohelp=False)
+def triforce(message):
+    """returns a triforce!"""
+    top = ["\u00a0\u25b2","\u00a0\u00a0\u25b2", "\u25b2", "\u00a0\u25b2"]
+    bottom = ["\u25b2\u00a0\u25b2", "\u25b2 \u25b2", "\u25b2\u25b2"]
+    message(random.choice(top))
+    message(random.choice(bottom))

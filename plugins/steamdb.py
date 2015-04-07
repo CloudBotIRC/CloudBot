@@ -6,8 +6,11 @@ import bs4
 from cloudbot import hook
 from cloudbot.util import web
 
+# different forks of cloudflare-scrape have different package layouts
 try:
     from cfscrape import cfscrape
+except ImportError:
+    import cfscrape
 except ImportError:
     cfscrape = None
 

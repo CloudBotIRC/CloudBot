@@ -18,7 +18,7 @@ def get_template_env():
 
 def get_application():
     app = Application([
-        (r'/', TestHandler),
+        (r'/', StatusHandler),
         (r'/factoids/?', TestHandler),
         (r'/commands/?', CommandsHandler),
         (r"/s/(.*)", StaticFileHandler, {"path": "./cloudbot/web/static"}),
@@ -35,6 +35,20 @@ class TestHandler(RequestHandler):
             'bot_version': cloudbot.__version__,
             'heading': 'Placeholder Page',
             'text': 'Lorem ipsum!'
+        }
+        self.write(template.render(**args))
+
+
+class StatusHandler(RequestHandler):
+    @gen.coroutine
+    def get(self):
+        template = wi.env.get_template('status.html')
+        connections = {}
+        for conn in wi.bot.connections:
+            pass
+        args = {
+            'bot_name': wi.config.get('bot_name', 'Cloud  Butt'),
+            'bot_version': cloudbot.__version__
         }
         self.write(template.render(**args))
 

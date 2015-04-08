@@ -1,8 +1,10 @@
 import random
 
+from collections import defaultdict
 from cloudbot import hook
 from cloudbot.util import formatting
 
+table_status = defaultdict(lambda: None)
 USE_FLIPPERS = True
 
 replacements = {
@@ -54,11 +56,14 @@ replacements.update(dict((v, k) for k, v in replacements.items()))
 flippers = ["( ﾉ⊙︵⊙）ﾉ", "(╯°□°）╯", "( ﾉ♉︵♉ ）ﾉ"]
 
 @hook.command
-def flip(text, reply, message):
+def flip(text, reply, message, chan):
     """<text> -- Flips <text> over."""
+    global table_status
+    #table_status = defaultdict(False)
     if USE_FLIPPERS:
         if text in ['table','tables']:
              message(random.choice(flippers) + " ︵ " + "\u253B\u2501\u253B")
+             table_status[chan] = True
         else:
              message(random.choice(flippers) + " ︵ " + formatting.multi_replace(text[::-1], replacements))
     else:
@@ -69,3 +74,16 @@ def flip(text, reply, message):
 def table(text, message):
     """<text> -- (╯°□°）╯︵ <ʇxǝʇ>"""
     message(random.choice(flippers) + " ︵ " + formatting.multi_replace(text[::-1].lower(), replacements))
+
+@hook.command
+def fix(text, reply, message, chan):
+    """fixes a flipped over table. ┬─┬ノ(ಠ_ಠノ)"""
+    global table_status
+    if text in ['table', 'tables']:
+        if table_status[chan] == True:
+            message("┬─┬ノ(ಠ_ಠノ)")
+            table_status[chan] = False
+        else:
+            message("no tables have been turned over in {}, thanks for checking!".format(chan))
+    else:
+        message(flip(text,reply,message,chan))

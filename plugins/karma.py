@@ -103,11 +103,25 @@ def points(text, chan, db, conn):
     """.points <thing> will print the total points for <thing> in the channel."""
     db_init(db, conn.name)
     score = 0
-    karma = db.execute("select score from karma where thing = :thing and chan = :chan", {'thing': text.lower(), 'chan': chan }).fetchall()
+    karma = ""
+    thing = ""
+    if text.endswith("-global"):
+        thing = text[:-7].strip()
+        karma = db.execute("select score from karma where thing = :thing", {'thing': thing.lower()}).fetchall()
+    else:
+        karma = db.execute("select score from karma where thing = :thing and chan = :chan", {'thing': text.lower(), 'chan': chan }).fetchall()
     if karma:
+        pos = 0
+        neg = 0
         for k in karma:
-            score = score + int(k[0])
-        return "{} has a total score of {} in {}.".format(text, score, chan)
+            if int(k[0]) < 0:
+                neg += int(k[0])
+            else:
+                pos += int(k[0])
+            score += int(k[0])
+        if thing:
+             return "{} has a total score of {} (+{}/{}) across all channels I know about.".format(thing, score, pos, neg)
+        return "{} has a total score of {} (+{}/{}) in {}.".format(text, score, pos, neg, chan)
     else:
         return "I couldn't find {} in the database.".format(text)
 

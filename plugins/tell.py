@@ -146,7 +146,7 @@ def showtells(nick, notice, db, conn):
 def tell_cmd(text, nick, db, notice, conn):
     """tell <nick> <message> -- Relay <message> to <nick> when <nick> is around."""
     query = text.split(' ', 1)
-    if query.lower() == "paradox":
+    if query[0].lower() == "paradox":
         return "Paradox doesn't want to hear from me. Just send him a fucking message."
     if len(query) != 2:
         prefix = conn.config("command_prefix")

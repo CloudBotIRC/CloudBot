@@ -15,7 +15,7 @@ API_URL = "https://api.datamarket.azure.com/Bing/Search/v1/Composite"
 # use ("Strict", "Strict") to block all NSFW content
 # the default config just sets the filter to Moderate for all queries
 DEFAULT_FILTER = "Moderate"
-NSFW_FILTER = "Moderate"
+NSFW_FILTER = "Off"
 
 
 def unescape(s):

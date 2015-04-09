@@ -50,6 +50,7 @@ def rotten_tomatoes(text, bot):
         return "Error searching: {}".format(review_request.status_code)
 
     reviews = review_request.json()
+
     review_count = reviews['total']
 
     fresh = int(critics_score * review_count / 100)

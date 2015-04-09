@@ -14,7 +14,8 @@ AMAZON_RE = re.compile(""".*ama?zo?n\.(com|co\.uk|com\.au|de|fr|ca|cn|es|it)/.*/
 
 # Feel free to set this to None or change it to your own ID.
 # Or leave it in to support CloudBot, it's up to you!
-AFFILIATE_TAG = "cloudbot-20"
+# requsted to remove it by network
+AFFILIATE_TAG = ""
 
 
 @hook.regex(AMAZON_RE)

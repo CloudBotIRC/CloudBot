@@ -54,8 +54,14 @@ def reddit_url(match, bot):
     # the reddit API gets grumpy if we don't include headers
     headers = {'User-Agent': bot.user_agent}
     r = requests.get(url, headers=headers)
+    if r.status_code != 200:
+        return
     data = r.json()
-    item = data[0]["data"]["children"][0]["data"]
+    if type(data) == list:
+        item = data[0]["data"]["children"][0]["data"]
+    elif type(data) == dict:
+        #item = data["data"]["children"][random.randint(0,9)]["data"]
+        return
 
     return format_output(item)
 
@@ -86,6 +92,8 @@ def reddit(text, bot, loop):
     try:
         # Again, identify with Reddit using an User Agent, otherwise get a 429
         inquiry = yield from loop.run_in_executor(None, functools.partial(requests.get, url, headers=headers))
+        if inquiry.status_code != 200:
+            return "r/{} either does not exist or is private.".format(text)
         data = inquiry.json()
     except Exception as e:
         return "Error: " + str(e)

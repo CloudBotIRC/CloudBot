@@ -25,7 +25,7 @@ def load_cache(db):
     global grab_cache
     grab_cache = {}
     for row in db.execute(table.select().order_by(table.c.time)):
-        name = row["name"]
+        name = row["name"].lower()
         quote = row["quote"]
         chan = row["chan"]
         if chan not in grab_cache:

@@ -89,4 +89,6 @@ This product includes GeoLite2 data created by MaxMind, available from
 
 ![Powered by wordnik](https://www.wordnik.com/img/wordnik_badge_a1.png)
 
+Translations are Powered by [Yandex.Translate](https://translate.yandex.com)
+
 This product uses data from <a href="http://wordnik.com">http://wordnik.com</a> in accordance with the wordnik.com API <a href="http://developer.wordnik.com/#!/terms">terms of service</a>.

@@ -108,7 +108,7 @@ def grabrandom(text, chan, message):
         except:
             return "I couldn't find any grabs in {}.".format(chan)
     try:
-        grab = random.choice(grab_cache[chan][name])
+        grab = random.choice(grab_cache[chan][name.lower()])
     except:
         return "it appears {} has never been grabbed in {}".format(name, chan)
     if grab:

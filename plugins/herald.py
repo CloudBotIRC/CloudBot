@@ -20,7 +20,7 @@ def db_init(db, conn_name):
 
 @hook.command()
 def herald(text, nick, chan, db, conn):
-    """herald [message] adds a greeting for your nick that will be announced everytime you join the channel."""
+    """herald [message] adds a greeting for your nick that will be announced everytime you join the channel. Using .herald show will show your current herald and .herald delete will remove your greeting."""
 
     db_init(db, conn.name)
 
@@ -31,7 +31,7 @@ def herald(text, nick, chan, db, conn):
             return greeting[0]
         else:
             return "you don't have a herald set try .herald <message> to set your greeting."
-    elif text.lower() == "delete":
+    elif text.lower() in ["delete", "remove"]:
         greeting = db.execute("select quote from herald where name = :name and chan = :chan", {
                               'name': nick.lower(), 'chan': chan}).fetchone()[0]
         db.execute("delete from herald where name = :name and chan = :chan", {'name': nick.lower(), 'chan': chan})

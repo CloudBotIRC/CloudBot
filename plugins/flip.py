@@ -64,6 +64,12 @@ def flip(text, reply, message, chan):
         if text in ['table','tables']:
              message(random.choice(flippers) + " ︵ " + "\u253B\u2501\u253B")
              table_status[chan] = True
+        elif text == "5318008":
+             out = "BOOBIES"
+             message(random.choice(flippers) + " ︵ " + out)
+        elif text == "BOOBIES":
+             out = "5318008"
+             message(random.choice(flippers) + " ︵ " + out)
         else:
              message(random.choice(flippers) + " ︵ " + formatting.multi_replace(text[::-1], replacements))
     else:

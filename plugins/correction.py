@@ -40,3 +40,4 @@ def correction(match, conn, nick, chan, message):
             return
         else:
             continue
+    return("I could not find any matches for {} in recent messages from {}. Due to channel spam you can only correct your own messages.".format(find, nick))

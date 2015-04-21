@@ -22,7 +22,7 @@ def correction(match, conn, nick, chan, message):
 
     for item in conn.history[chan].__reversed__():
         name, timestamp, msg = item
-        if correction_re.match(msg) or name.lower() != nick.lower():
+        if correction_re.match(msg):
             # don't correct corrections, it gets really confusing
             continue
 
@@ -36,8 +36,9 @@ def correction(match, conn, nick, chan, message):
                 message("Correction, <{}> {}".format(name, mod_msg))
 
             msg = ireplace(msg, find, replace)
-            conn.history[chan].append((name, timestamp, msg))
+            if nick.lower() in name.lower():
+                conn.history[chan].append((name, timestamp, msg))
             return
         else:
             continue
-    return("No matches for \"\x02{}\x02\" in recent messages from \x02{}\x02. You can only correct your own messages.".format(find, nick))
+    # return("No matches for \"\x02{}\x02\" in recent messages from \x02{}\x02. You can only correct your own messages.".format(find, nick))

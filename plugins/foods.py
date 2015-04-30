@@ -11,7 +11,7 @@ from cloudbot.util import textgen
 nick_re = re.compile("^[A-Za-z0-9_|.\-\]\[\{\}]*$", re.I)
 
 cakes = ['Chocolate', 'Ice Cream', 'Angel', 'Boston Cream', 'Birthday', 'Bundt', 'Carrot', 'Coffee', 'Devils', 'Fruit',
-         'Gingerbread', 'Pound', 'Red Velvet', 'Stack', 'Welsh', 'Yokan']
+         'Gingerbread', 'Pound', 'Red Velvet', 'Stack', 'Barmbrack', 'Yokan']
 
 cookies = ['Chocolate Chip', 'Oatmeal', 'Sugar', 'Oatmeal Raisin', 'Macadamia Nut', 'Jam Thumbprint', 'Medican Wedding',
            'Biscotti', 'Oatmeal Cranberry', 'Chocolate Fudge', 'Peanut Butter', 'Pumpkin', 'Lemon Bar',

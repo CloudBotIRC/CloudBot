@@ -240,7 +240,7 @@ def friends(text, chan, conn, db):
             return "it appears no on has friended any ducks yet."
 
     topfriends = sorted(friends.items(), key=operator.itemgetter(1), reverse = True)
-    out += ' • '.join(["{}: {}".format('\x02' + k[:1] + '\x02\x02' + k[1:] + '\x02', str(v))  for k, v in topfriends])
+    out += ' • '.join(["{}: {}".format('\x02' + k[:1] + u'\u200b' + k[1:] + '\x02', str(v))  for k, v in topfriends])
     return out
 
 @hook.command("killers", autohelp=False)
@@ -277,6 +277,6 @@ def killers(text, chan, conn, db):
             return "it appears no on has killed any ducks yet."
 
     topkillers = sorted(killers.items(), key=operator.itemgetter(1), reverse = True)
-    out += ' • '.join(["{}: {}".format('\x02' + k[:1] + '\x02\x02' + k[1:] + '\x02', str(v))  for k, v in topkillers])
+    out += ' • '.join(["{}: {}".format('\x02' + k[:1] + u'\u200b' + k[1:] + '\x02', str(v))  for k, v in topkillers])
     return out
 

@@ -206,6 +206,13 @@ def befriend(nick, chan, message, db, conn):
         message("{} you befriended a duck! You have made friends with {} {} in {}.".format(nick,score, duck, chan))
         set_ducktime(chan,conn)
 
+def smart_truncate(content, length=320, suffix='...'):
+    if len(content) <= length:
+        return content
+    else:
+        return content[:length].rsplit(' • ', 1)[0]+suffix
+
+
 @hook.command("friends", autohelp=False)
 def friends(text, chan, conn, db):
     """Prints a list of the top duck friends in the channel, if 'global' is specified all channels in the database are included."""
@@ -241,6 +248,7 @@ def friends(text, chan, conn, db):
 
     topfriends = sorted(friends.items(), key=operator.itemgetter(1), reverse = True)
     out += ' • '.join(["{}: {}".format('\x02' + k[:1] + u'\u200b' + k[1:] + '\x02', str(v))  for k, v in topfriends])
+    out = smart_truncate(out)
     return out
 
 @hook.command("killers", autohelp=False)
@@ -278,5 +286,6 @@ def killers(text, chan, conn, db):
 
     topkillers = sorted(killers.items(), key=operator.itemgetter(1), reverse = True)
     out += ' • '.join(["{}: {}".format('\x02' + k[:1] + u'\u200b' + k[1:] + '\x02', str(v))  for k, v in topkillers])
+    out = smart_truncate(out)
     return out
 

@@ -23,6 +23,7 @@ table = Table(
     PrimaryKeyConstraint('name', 'chan','network')
     )
 
+opt_out = ['#anxiety']
 # game_status structure 
 """
 { 
@@ -44,6 +45,8 @@ game_status = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
 @hook.command("starthunt", autohelp=False)
 def start_hunt(bot, chan, message, conn):
     global game_status
+    if chan in opt_out:
+        return
     check = game_status[conn.name][chan]['game_on']
     if check:
         return "there is already a game running in {}.".format(chan)
@@ -54,13 +57,15 @@ def start_hunt(bot, chan, message, conn):
 
 def set_ducktime(chan, conn):
     global game_status
-    game_status[conn.name][chan]['next_duck_time'] = random.randint(int(time()) + 300, int(time()) + 1800)
+    game_status[conn.name][chan]['next_duck_time'] = random.randint(int(time()) + 300, int(time()) + 3600)
     game_status[conn.name][chan]['duck_status'] = 0
     return
 
 @hook.command("stophunt", autohelp=False)
 def stop_hunt(chan, conn):
     global game_status
+    if chan in opt_out:
+        return
     if game_status[conn.name][chan]['game_on']:
         game_status[conn.name][chan]['game_on'] = 0
         return "the game has been stopped."
@@ -71,6 +76,8 @@ def stop_hunt(chan, conn):
 def no_duck_kick(text, chan, conn, notice):
     """If the bot has OP or half-op in the channel you can specify .duckkick enable|disable so that people are kicked for shooting or befriending a non-existent goose. Default is off."""
     global game_status
+    if chan in opt_out:
+        return
     if text.lower() == 'enable':
         game_status[conn.name][chan]['no_duck_kick'] = 1
         return "users will now be kicked for shooting or befriending non-existent ducks. The bot needs to have appropriate flags to be able to kick users for this to work."
@@ -137,6 +144,8 @@ def dbupdate(nick, chan, db, conn, shoot, friend):
 def bang(nick, chan, message, db, conn):
     """when there is a duck on the loose use this command to shoot it."""
     global game_status
+    if chan in opt_out:
+        return
     network = conn.name
     score = ""
     if not game_status[network][chan]['game_on']:
@@ -168,6 +177,8 @@ def bang(nick, chan, message, db, conn):
 def befriend(nick, chan, message, db, conn):
     """when there is a duck on the loose use this command to befriend it before someone else shoots it."""
     global game_status
+    if chan in opt_out:
+        return
     network = conn.name
     score = ""
     if not game_status[network][chan]['game_on']:
@@ -198,6 +209,8 @@ def befriend(nick, chan, message, db, conn):
 @hook.command("friends", autohelp=False)
 def friends(text, chan, conn, db):
     """Prints a list of the top duck friends in the channel, if 'global' is specified all channels in the database are included."""
+    if chan in opt_out:
+        return
     friends = defaultdict(int)
     out = ""
     if text.lower() == 'global':
@@ -227,12 +240,14 @@ def friends(text, chan, conn, db):
             return "it appears no on has friended any ducks yet."
 
     topfriends = sorted(friends.items(), key=operator.itemgetter(1), reverse = True)
-    out += ' \u2022 '.join(["{}: {}".format(k, str(v))  for k, v in topfriends])
+    out += ' • '.join(["{}: {}".format('\x02' + k[:1] + '\x02\x02' + k[1:] + '\x02', str(v))  for k, v in topfriends])
     return out
 
 @hook.command("killers", autohelp=False)
 def killers(text, chan, conn, db):
     """Prints a list of the top duck killers in the channel, if 'global' is specified all channels in the database are included."""
+    if chan in opt_out:
+        return
     killers = defaultdict(int)
     out = ""
     if text.lower() == 'global':
@@ -262,6 +277,6 @@ def killers(text, chan, conn, db):
             return "it appears no on has killed any ducks yet."
 
     topkillers = sorted(killers.items(), key=operator.itemgetter(1), reverse = True)
-    out += ' \u2022 '.join(["{}: {}".format(k, str(v))  for k, v in topkillers])
+    out += ' • '.join(["{}: {}".format('\x02' + k[:1] + '\x02\x02' + k[1:] + '\x02', str(v))  for k, v in topkillers])
     return out
 

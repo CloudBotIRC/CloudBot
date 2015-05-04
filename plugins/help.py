@@ -93,7 +93,8 @@ def generatehelp(conn, bot, notice, has_permission):
                 aliases += alias + ", "
         aliases = aliases[:-2]
         if doc:
-            doc = doc.replace("<","&lt;").replace(">","&gt;")
+            doc = doc.replace("<","&lt;").replace(">","&gt;") \
+                .replace("[", "&lt;").replace("]","&gt;")
             if aliases:
                 message += "**{} ({}):** {}\n\n".format(command, aliases, doc)
             else:
@@ -105,10 +106,10 @@ def generatehelp(conn, bot, notice, has_permission):
             message = message[:-2]
             message += " ( *Permission required:* {})\n\n".format(permission)
     # toss the markdown text into a paste
-    out = web.paste(message.encode('utf-8'), ext="md")
-    #docs = os.path.join(os.path.abspath(os.path.curdir), "docs")
-    #docs = os.path.join(docs, "user")
-    #f = open(os.path.join(docs, "commands.md"), 'w')
-    #f.write(message)
-    #f.close()
-    return out
+    #out = web.paste(message.encode('utf-8'), ext="md")
+    docs = os.path.join(os.path.abspath(os.path.curdir), "docs")
+    docs = os.path.join(docs, "user")
+    f = open(os.path.join(docs, "commands.md"), 'w')
+    f.write(message)
+    f.close()
+    return #out

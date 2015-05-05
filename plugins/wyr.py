@@ -4,7 +4,7 @@ wyr.py
 A plugin that uses the RRRather.com API to return random "Would you rather" questions.
 
 Created By:
-    - Foxlet <http://furcode.tk/>
+    - Foxlet <http://furcode.co/>
     - Luke Rogers <https://github.com/lukeroge>
 
 Special Thanks:

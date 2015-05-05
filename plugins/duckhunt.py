@@ -10,7 +10,9 @@ from cloudbot import hook
 from cloudbot.event import EventType
 from cloudbot.util import botvars
 
-duck = "・゜゜・。。・゜゜\_o<  QUACK!"
+duck_tail = "・゜゜・。。・゜゜"
+duck = "\_o< "
+duck_noise = ["QUACK!", "FLAP FLAP FLAP!", "quack quack quack!"]
 
 table = Table(
     'duck_hunt',
@@ -23,27 +25,31 @@ table = Table(
     PrimaryKeyConstraint('name', 'chan','network')
     )
 
-opt_out = ['#anxiety']
-# game_status structure 
+opt_out = ['#anxiety', '#physics']
+
 """
+game_status structure 
 { 
     'network':{
         '#chan1':{
             'duck_status':0|1|2, 
             'next_duck_time':'integer', 
             'game_started':0|1,
-            'duck_deploy_time':'integer',
-            'no_duck_kick': 0|1        
+            'no_duck_kick': 0|1,
+            'duck_time': 'float', 
+            'shoot_time': 'float'
         }
     }
 }
 """
 
+scripters = defaultdict(int)
 game_status = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
 
 
 @hook.command("starthunt", autohelp=False)
 def start_hunt(bot, chan, message, conn):
+    """This command starts a duckhunt in your channel, to stop the hunt use .stophunt"""
     global game_status
     if chan in opt_out:
         return
@@ -57,12 +63,13 @@ def start_hunt(bot, chan, message, conn):
 
 def set_ducktime(chan, conn):
     global game_status
-    game_status[conn.name][chan]['next_duck_time'] = random.randint(int(time()) + 300, int(time()) + 3600)
+    game_status[conn.name][chan]['next_duck_time'] = random.randint(int(time()) + 480, int(time()) + 3600)
     game_status[conn.name][chan]['duck_status'] = 0
     return
 
 @hook.command("stophunt", autohelp=False)
 def stop_hunt(chan, conn):
+    """This command stops the duck hunt in your channel. Scores will be preserved"""
     global game_status
     if chan in opt_out:
         return
@@ -88,6 +95,18 @@ def no_duck_kick(text, chan, conn, notice):
         notice(no_duck_kick.__doc__)
         return
 
+def generate_duck():
+    """Try and randomize the duck message so people can't highlight on it/script against it."""
+    rt = random.randint(1, len(duck_tail))
+    dtail = duck_tail[:rt] + u' \u200b ' + duck_tail[rt:]
+    rb = random.randint(1, len(duck))
+    dbody = duck[:rb] + u'\u200b' + duck[rb:]
+    dnoise = random.choice(duck_noise)
+    rn = random.randint(1, len(dnoise))
+    dnoise = dnoise[:rn] + u'\u200b' + dnoise[rn:]
+    return (dtail, dbody, dnoise)
+
+
 @hook.periodic(11, initial_interval=11)
 def deploy_duck(message, bot):
     global game_status
@@ -104,11 +123,23 @@ def deploy_duck(message, bot):
             if active == 1 and duck_status == 0 and next_duck <= time():
                 #deploy a duck to channel
                 game_status[network][chan]['duck_status'] = 1
-                game_status[network][chan]['duck_time'] = int(time())
-                conn.message(chan, "{}".format(duck))
+                game_status[network][chan]['duck_time'] = time()
+                dtail, dbody, dnoise = generate_duck()
+                conn.message(chan, "{}{}{}".format(dtail, dbody, dnoise))
             continue
         continue
 
+
+def hit_or_miss(deploy, shoot):
+    """This function calculates if the befriend or bang will be successful."""
+    if shoot - deploy < .7:
+        return .05
+    elif .7 <= shoot - deploy <=3:
+        diff = float(shoot - deploy)
+        out = float(diff / 3)
+        return out
+    else:
+        return 1
 
 def dbadd_entry(nick, chan, db, conn, shoot, friend):
     """Takes care of adding a new row to the database."""
@@ -143,11 +174,13 @@ def dbupdate(nick, chan, db, conn, shoot, friend):
 @hook.command("bang", autohelp=False)
 def bang(nick, chan, message, db, conn):
     """when there is a duck on the loose use this command to shoot it."""
-    global game_status
+    global game_status, scripters
     if chan in opt_out:
         return
     network = conn.name
     score = ""
+    out = ""
+    miss = ["WHOOSH! You missed the duck completely!", "Your gun jammed!", "Better luck next time."]
     if not game_status[network][chan]['game_on']:
         return "There is no activehunt right now. Use .starthunt to start a game."
     elif game_status[network][chan]['duck_status'] != 1:
@@ -156,7 +189,25 @@ def bang(nick, chan, message, db, conn):
             conn.send(out)
             return
         return "There is no duck. What are you shooting at?"
-    else:
+    else: 
+        game_status[network][chan]['shoot_time'] = time()
+        deploy = game_status[network][chan]['duck_time']
+        shoot = game_status[network][chan]['shoot_time']
+        if nick.lower() in scripters:
+            if scripters[nick.lower()] > shoot:
+                return "You are in a cool down period, you can try again in {} seconds.".format(str(scripters[nick.lower()] - shoot))
+        chance = hit_or_miss(deploy, shoot)
+        if not random.random() <= chance and chance > .05:
+            out = random.choice(miss) + " You can try again in 7 seconds."
+            scripters[nick.lower()] = shoot + 7 
+            return out
+        if chance == .05:
+            out += "You pulled the trigger in {} seconds, that's mighty fast. Are you sure you aren't a script? Take a 2 hour cool down.".format(str(shoot - deploy))
+            scripters[nick.lower()] = shoot + 7200
+            if not random.random() <= chance:
+                return random.choice(miss) + " " + out
+            else:
+                message(out)
         game_status[network][chan]['duck_status'] = 2
         score = db.execute(select([table.c.shot]) \
             .where(table.c.network == conn.name) \
@@ -176,11 +227,13 @@ def bang(nick, chan, message, db, conn):
 @hook.command("befriend", autohelp=False)
 def befriend(nick, chan, message, db, conn):
     """when there is a duck on the loose use this command to befriend it before someone else shoots it."""
-    global game_status
+    global game_status, scripters
     if chan in opt_out:
         return
     network = conn.name
+    out = ""
     score = ""
+    miss = ["The duck didn't want to be friends, maybe next time.", "Well this is awkard, the duck needs to think about it.", "The duck said no, maybe bribe it with some pizza? Ducks love pizza don't they?", "Who knew ducks could be so picky?"]
     if not game_status[network][chan]['game_on']:
         return "There is no hunt right now. Use .starthunt to start a game."
     elif game_status[network][chan]['duck_status'] != 1:
@@ -190,6 +243,25 @@ def befriend(nick, chan, message, db, conn):
             return
         return "You tried befriending a non-existent duck, that's fucking creepy."
     else:
+        game_status[network][chan]['shoot_time'] = time()
+        deploy = game_status[network][chan]['duck_time']
+        shoot = game_status[network][chan]['shoot_time']
+        if nick.lower() in scripters:
+            if scripters[nick.lower()] > shoot:
+                return "You are in a cool down period, you can try again in {} seconds.".format(str(scripters[nick.lower()] - shoot))
+        chance = hit_or_miss(deploy, shoot)
+        if not random.random() <= chance and chance > .05:
+            out = random.choice(miss) + " You can try again in 7 seconds."
+            scripters[nick.lower()] = shoot + 7
+            return out
+        if chance == .05:
+            out += "You tried friending that duck in {} seconds, that's mighty fast. Are you sure you aren't a script? Take a 2 hour cool down.".format(str(shoot - deploy))
+            scripters[nick.lower()] = shoot + 7200
+            if not random.random() <= chance:
+                return random.choice(miss) + " " + out
+            else:
+                message(out)
+
         game_status[network][chan]['duck_status'] = 2
         score = db.execute(select([table.c.befriend]) \
             .where(table.c.network == conn.name) \
@@ -289,3 +361,12 @@ def killers(text, chan, conn, db):
     out = smart_truncate(out)
     return out
 
+@hook.command("duckforgive", permissions=["op", "ignore"])
+def duckforgive(text):
+    """Allows people to be removed from the mandatory cooldown period."""
+    global scripters
+    if text.lower() in scripters and scripters[text.lower()] > time():
+        scripters[text.lower()] = 0
+        return "{} has been removed from the mandatory cooldown period."
+    else:
+        return "I couldn't find anyone banned from the hunt by that nick"

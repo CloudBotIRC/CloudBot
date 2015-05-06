@@ -25,7 +25,7 @@ table = Table(
     PrimaryKeyConstraint('name', 'chan','network')
     )
 
-opt_out = ['#anxiety', '#physics']
+opt_out = ['#anxiety', '#physics', '#UkrainianConflict']
 
 """
 game_status structure 
@@ -97,12 +97,12 @@ def no_duck_kick(text, chan, conn, notice):
 
 def generate_duck():
     """Try and randomize the duck message so people can't highlight on it/script against it."""
-    rt = random.randint(1, len(duck_tail))
+    rt = random.randint(1, len(duck_tail) -1)
     dtail = duck_tail[:rt] + u' \u200b ' + duck_tail[rt:]
-    rb = random.randint(1, len(duck))
+    rb = random.randint(1, len(duck) - 1)
     dbody = duck[:rb] + u'\u200b' + duck[rb:]
     dnoise = random.choice(duck_noise)
-    rn = random.randint(1, len(dnoise))
+    rn = random.randint(1, len(dnoise) - 1)
     dnoise = dnoise[:rn] + u'\u200b' + dnoise[rn:]
     return (dtail, dbody, dnoise)
 
@@ -367,6 +367,6 @@ def duckforgive(text):
     global scripters
     if text.lower() in scripters and scripters[text.lower()] > time():
         scripters[text.lower()] = 0
-        return "{} has been removed from the mandatory cooldown period."
+        return "{} has been removed from the mandatory cooldown period.".text()
     else:
         return "I couldn't find anyone banned from the hunt by that nick"

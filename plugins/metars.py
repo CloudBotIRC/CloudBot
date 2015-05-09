@@ -14,7 +14,7 @@ def get_key(bot):
 
 
 @hook.command()
-def metars(text):
+def metar(text):
     """metars [ICAO station code] returns the metars information for the specified station. A list of station codes can be found here: http://weather.rap.ucar.edu/surface/stations.txt"""
     station = text.split(' ')[0].upper()
     if not len(station) == 4:

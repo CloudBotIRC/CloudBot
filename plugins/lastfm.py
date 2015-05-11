@@ -255,3 +255,41 @@ def topartists(text, nick, db, bot, notice):
         play_count = data["topartists"]["artist"][r]["playcount"]
         out = out + "{} listened to {} times. ".format(artist_name, play_count)
     return out
+
+@hook.command("ltw", "topweek", autohelp=False)
+def topartists(text, nick, db, bot, notice):
+    """Grabs a list of the top artists in the last week for a last.fm username. You can set your lastfm username with .l username"""
+    api_key = bot.config.get("api_keys", {}).get("lastfm")
+    if not api_key:
+        return "error: no api key set"
+
+    if text:
+        username = get_account(text)
+        if not username:
+            username = text
+    else:
+        username = get_account(nick)
+    if not username:
+        return("No last.fm username specified and no last.fm username is set in the database.")
+    params = {
+        'api_key': api_key,
+        'method': 'user.gettopartists',
+        'user': username,
+        'period': '7day',
+        'limit': 10
+    }
+    request = requests.get(api_url, params=params)
+
+    if request.status_code != requests.codes.ok:
+        return "Failed to fetch info ({})".format(request.status_code)
+
+    data = request.json()
+    if 'error' in data:
+        return "Error: {}.".format(data["message"])
+
+    out = "{}'s favorite artists: ".format(username)
+    for r in range(10):
+        artist_name = data["topartists"]["artist"][r]["name"]
+        play_count = data["topartists"]["artist"][r]["playcount"]
+        out = out + "{} [{}] ".format(artist_name, play_count)
+    return out

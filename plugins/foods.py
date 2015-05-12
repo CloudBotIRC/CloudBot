@@ -11,7 +11,7 @@ from cloudbot.util import textgen
 nick_re = re.compile("^[A-Za-z0-9_|.\-\]\[\{\}]*$", re.I)
 
 cakes = ['Chocolate', 'Ice Cream', 'Angel', 'Boston Cream', 'Birthday', 'Bundt', 'Carrot', 'Coffee', 'Devils', 'Fruit',
-         'Gingerbread', 'Pound', 'Red Velvet', 'Stack', 'Barmbrack', 'Yokan']
+         'Gingerbread', 'Pound', 'Red Velvet', 'Stack', 'Welsh', 'Yokan']
 
 cookies = ['Chocolate Chip', 'Oatmeal', 'Sugar', 'Oatmeal Raisin', 'Macadamia Nut', 'Jam Thumbprint', 'Medican Wedding',
            'Biscotti', 'Oatmeal Cranberry', 'Chocolate Fudge', 'Peanut Butter', 'Pumpkin', 'Lemon Bar',
@@ -65,14 +65,16 @@ def load_foods(bot):
     """
     :type bot: cloudbot.bot.CloudBot
     """
-    global sandwich_data, taco_data
+    global sandwich_data, taco_data, coffee_data
 
     with codecs.open(os.path.join(bot.data_dir, "sandwich.json"), encoding="utf-8") as f:
         sandwich_data = json.load(f)
 
     with codecs.open(os.path.join(bot.data_dir, "taco.json"), encoding="utf-8") as f:
         taco_data = json.load(f)
-
+   
+    with codecs.open(os.path.join(bot.data_dir, "coffee.json"), encoding="utf-8") as f:
+       coffee_data = json.load(f)
 
 @asyncio.coroutine
 @hook.command
@@ -159,5 +161,19 @@ def taco(text, action):
     generator = textgen.TextGenerator(taco_data["templates"], taco_data["parts"],
                                       variables={"user": user})
 
+    # act out the message
+    action(generator.generate_string())
+
+@asyncio.coroutine
+@hook.command
+def coffee(text, action):
+    """<user> - give coffee to <user>"""
+    user = text.strip()
+
+    if not is_valid(user):
+        return "I can't give coffee to that user."
+
+    generator = textgen.TextGenerator(coffee_data["templates"], coffee_data["parts"],
+                                      variables={"user": user})
     # act out the message
     action(generator.generate_string())

@@ -1,0 +1,43 @@
+{
+  "templates": [
+    "hands {user} a {size} {temperature} {flavor} {coffee} with {shots} shots of espresso!"
+  ],
+  "parts": {
+    "temperature": [
+      "hot",
+      "cold",
+      "iced",
+      "room temperature",
+      "lukewarm"
+    ],
+    "size": [
+      "large",
+      "medium",
+      "small",
+      "grande",
+      "venti",
+      "tall"
+    ],
+    "flavor": [
+      "vanilla",
+      "caramel",
+      "white chocolate",
+      "hazelnut",
+      "cinnamon"
+    ],
+    "coffee": [
+      "americano",
+      "cubano",
+      "cappuccino",
+      "latte",
+      "mocha",
+      "macchiato",
+      "breve"
+    ],
+    "shots": [
+      "one",
+      "two",
+      "three"
+    ]
+  }
+}

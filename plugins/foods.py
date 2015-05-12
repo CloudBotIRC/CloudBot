@@ -65,7 +65,7 @@ def load_foods(bot):
     """
     :type bot: cloudbot.bot.CloudBot
     """
-    global sandwich_data, taco_data, coffee_data
+    global sandwich_data, taco_data, coffee_data, noodles_data
 
     with codecs.open(os.path.join(bot.data_dir, "sandwich.json"), encoding="utf-8") as f:
         sandwich_data = json.load(f)
@@ -75,6 +75,9 @@ def load_foods(bot):
    
     with codecs.open(os.path.join(bot.data_dir, "coffee.json"), encoding="utf-8") as f:
        coffee_data = json.load(f)
+
+    with codecs.open(os.path.join(bot.data_dir, "noodles.json"), encoding="utf-8") as f:
+        noodles_data = json.load(f)
 
 @asyncio.coroutine
 @hook.command
@@ -177,3 +180,18 @@ def coffee(text, action):
                                       variables={"user": user})
     # act out the message
     action(generator.generate_string())
+    
+asyncio.coroutine
+@hook.command
+def noodles(text, action):
+    """<user> - give noodles to <user>"""
+    user = text.strip()
+
+    if not is_valid(user):
+        return "I can't give noodles to that user."
+
+    generator = textgen.TextGenerator(noodles_data["templates"], noodles_data["parts"],
+                                      variables={"user": user})
+    # act out the message
+    action(generator.generate_string())
+    

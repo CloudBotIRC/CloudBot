@@ -84,7 +84,7 @@ def youtube(text):
     if not dev_key:
         return "This command requires a Google Developers Console API key."
 
-    json = requests.get(search_api_url, params={"q": text, "key": dev_key}).json()
+    json = requests.get(search_api_url, params={"q": text, "key": dev_key, "type":"video"}).json()
 
     if json.get('error'):
         if json['error']['code'] == 403:
@@ -94,7 +94,7 @@ def youtube(text):
 
     if json['pageInfo']['totalResults'] == 0:
         return 'No results found.'
-
+    
     video_id = json['items'][0]['id']['videoId']
 
     return get_video_description(video_id) + " - " + video_url % video_id
@@ -106,7 +106,7 @@ def youtime(text):
     if not dev_key:
         return "This command requires a Google Developers Console API key."
 
-    json = requests.get(search_api_url, params={"q": text, "key": dev_key}).json()
+    json = requests.get(search_api_url, params={"q": text, "key": dev_key, "type": "video"}).json()
 
     if json.get('error'):
         if json['error']['code'] == 403:

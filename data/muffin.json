@@ -1,0 +1,18 @@
+{
+  "templates": [
+    "hands {user} a {muffin} muffin."
+  ],
+  "parts": {
+    "muffin": [
+      "blueberry",
+      "lemon poppyseed",
+      "chocolate",
+      "chocolate chip",
+      "orange cranberry zest",
+      "corn",
+      "pumpkin",
+      "banana nut",
+      "apple cinnamon"
+    ]
+  }
+}

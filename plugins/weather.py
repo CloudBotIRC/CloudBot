@@ -77,9 +77,10 @@ def load_cache(db):
 
 def add_location(nick, location, db):
     test = dict(location_cache)
+    location = str(location)
     if nick.lower() in test:
-        db.execute( table.update().where(table.c.nick == nick.lower()).values(loc=location.lower()))
-        db.commit
+        db.execute(table.update().values(loc=location.lower()).where(table.c.nick == nick.lower()))
+        db.commit()
         load_cache(db)
     else:
         db.execute(table.insert().values(nick=nick.lower(), loc=location.lower()))

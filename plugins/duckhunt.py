@@ -161,7 +161,7 @@ def hit_or_miss(deploy, shoot):
     """This function calculates if the befriend or bang will be successful."""
     if shoot - deploy < 1:
         return .05
-    elif 1 <= shoot - deploy <= random.randint(120, 300):
+    elif 1 <= shoot - deploy <= 10:
         out = random.uniform(.40, .90)
         return out
     else:

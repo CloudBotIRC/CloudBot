@@ -14,7 +14,7 @@ def statuscheck(status, item):
     return out
 
 @hook.command("quran", "verse", singlethreaded=True)
-def quran(text):
+def quran(text, message):
     """Prints the specified Qur'anic verse(s) and its/their translation(s)"""
     api_url = "http://quranapi.azurewebsites.net/api/verse/"
     chapter = text.split(':')[0]
@@ -30,6 +30,6 @@ def quran(text):
     out = "\x02{}\x02: ".format(text)
     verse = data['Text']
     out += verse
+    message(out)
     translation = data2['Text']
-    out += " \u2022 {}".format(translation)
-    return out
+    message(translation)

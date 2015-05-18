@@ -13,6 +13,13 @@ def statuscheck(status, item):
         out = "Qur'an API returned an error, response: {}".format(status)
     return out
 
+def smart_truncate(content, length=425, suffix='...\n'):
+    if len(content) <= length:
+        return content
+    else:
+        return content[:length].rsplit(' ', 1)[0]+ suffix + content[:length].rsplit(' ', 1)[1] + smart_truncate(content[length:])
+
+
 @hook.command("quran", "verse", singlethreaded=True)
 def quran(text, message):
     """Prints the specified Qur'anic verse(s) and its/their translation(s)"""
@@ -31,5 +38,5 @@ def quran(text, message):
     verse = data['Text']
     out += verse
     message(out)
-    translation = data2['Text']
-    message(translation)
+    translation = smart_truncate(data2['Text'])
+    return translation

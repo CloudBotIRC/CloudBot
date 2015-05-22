@@ -73,6 +73,8 @@ def start_hunt(bot, chan, message, conn):
     global game_status
     if chan in opt_out:
         return
+    elif not chan.startswith("#"):
+        return "No hunting by yourself, that isn't safe."
     check = game_status[conn.name][chan]['game_on']
     if check:
         return "there is already a game running in {}.".format(chan)
@@ -161,8 +163,8 @@ def hit_or_miss(deploy, shoot):
     """This function calculates if the befriend or bang will be successful."""
     if shoot - deploy < 1:
         return .05
-    elif 1 <= shoot - deploy <= 10:
-        out = random.uniform(.40, .90)
+    elif 1 <= shoot - deploy <= 7:
+        out = random.uniform(.60, .75)
         return out
     else:
         return 1

@@ -200,7 +200,7 @@ def dbupdate(nick, chan, db, conn, shoot, friend):
         db.commit()
 
 @hook.command("bang", autohelp=False)
-def bang(nick, chan, message, db, conn):
+def bang(nick, chan, message, db, conn, notice):
     """when there is a duck on the loose use this command to shoot it."""
     global game_status, scripters
     if chan in opt_out:
@@ -223,7 +223,7 @@ def bang(nick, chan, message, db, conn):
         shoot = game_status[network][chan]['shoot_time']
         if nick.lower() in scripters:
             if scripters[nick.lower()] > shoot:
-                return "You are in a cool down period, you can try again in {} seconds.".format(str(scripters[nick.lower()] - shoot))
+                notice("You are in a cool down period, you can try again in {} seconds.".format(str(scripters[nick.lower()] - shoot)))
         chance = hit_or_miss(deploy, shoot)
         if not random.random() <= chance and chance > .05:
             out = random.choice(miss) + " You can try again in 7 seconds."
@@ -254,7 +254,7 @@ def bang(nick, chan, message, db, conn):
         set_ducktime(chan, conn)
 
 @hook.command("befriend", autohelp=False)
-def befriend(nick, chan, message, db, conn):
+def befriend(nick, chan, message, db, conn, notice):
     """when there is a duck on the loose use this command to befriend it before someone else shoots it."""
     global game_status, scripters
     if chan in opt_out:
@@ -277,7 +277,7 @@ def befriend(nick, chan, message, db, conn):
         shoot = game_status[network][chan]['shoot_time']
         if nick.lower() in scripters:
             if scripters[nick.lower()] > shoot:
-                return "You are in a cool down period, you can try again in {} seconds.".format(str(scripters[nick.lower()] - shoot))
+                notice("You are in a cool down period, you can try again in {} seconds.".format(str(scripters[nick.lower()] - shoot)))
         chance = hit_or_miss(deploy, shoot)
         if not random.random() <= chance and chance > .05:
             out = random.choice(miss) + " You can try again in 7 seconds."

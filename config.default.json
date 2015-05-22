@@ -82,7 +82,8 @@
         "google_cse_id": "",
         "octopart": "",
         "wordnik": "",
-        "yandex_translate": ""
+        "yandex_translate": "",
+        "lyricsnmusic": ""
     },
     "database": "sqlite:///cloudbot.db",
     "plugin_loading": {

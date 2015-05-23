@@ -224,6 +224,7 @@ def bang(nick, chan, message, db, conn, notice):
         if nick.lower() in scripters:
             if scripters[nick.lower()] > shoot:
                 notice("You are in a cool down period, you can try again in {} seconds.".format(str(scripters[nick.lower()] - shoot)))
+                return
         chance = hit_or_miss(deploy, shoot)
         if not random.random() <= chance and chance > .05:
             out = random.choice(miss) + " You can try again in 7 seconds."
@@ -278,6 +279,7 @@ def befriend(nick, chan, message, db, conn, notice):
         if nick.lower() in scripters:
             if scripters[nick.lower()] > shoot:
                 notice("You are in a cool down period, you can try again in {} seconds.".format(str(scripters[nick.lower()] - shoot)))
+                return
         chance = hit_or_miss(deploy, shoot)
         if not random.random() <= chance and chance > .05:
             out = random.choice(miss) + " You can try again in 7 seconds."

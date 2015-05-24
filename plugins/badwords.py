@@ -10,7 +10,7 @@ cheers = [
     "HOORAH!",
     "HURRAY!",
     "OORAH!",
-    "yay!",
+    "YAY!",
     "*\o/* CHEERS! *\o/*",
     "HOOHAH!",
     "HOOYAH!",

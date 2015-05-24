@@ -1,0 +1,30 @@
+{
+  "templates": [
+    "hands {user} a {size} {temperature} {tea} tea!"
+  ],
+  "parts": {
+    "temperature": [
+      "hot",
+      "room temperature",
+      "lukewarm",
+      "steaming"
+    ],
+    "size": [
+      "large",
+      "medium",
+      "small"
+     ],
+    "tea": [
+      "chai",
+      "english breakfast",
+      "Earl Grey",
+      "sleepytime",
+      "oolong",
+      "green",
+      "yerba mate",
+      "rooibos",
+      "bubble",
+      "thai"
+    ]
+   }
+}

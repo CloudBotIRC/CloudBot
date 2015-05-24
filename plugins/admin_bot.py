@@ -238,8 +238,10 @@ def join(text, conn, nick, message, notice):
             target = "#{}".format(target)
         if logchannel:
             message("{} used JOIN to make me join {}.".format(nick, target), logchannel)
+        mode = "mode {}".format(target)
         notice("Attempting to join {}...".format(target))
         conn.join(target)
+        conn.send(mode)
 
 
 @asyncio.coroutine

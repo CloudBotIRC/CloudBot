@@ -40,10 +40,16 @@ def get_episodes_for_series(series_name, api_key):
         return res
 
     series = etree.fromstring(_request.content, parser=parser)
-    series_name = series.xpath('//SeriesName/text()')[0]
-
-    if series.xpath('//Status/text()')[0] == 'Ended':
-        res["ended"] = True
+    try:
+        series_name = series.xpath('//SeriesName/text()')[0]
+    except:
+        series_name = series.xpath('//SeriesName/text()')
+    try:
+        if series.xpath('//Status/text()')[0] == 'Ended':
+            res["ended"] = True
+    except:
+        if series.xpath('//Status/text()') == 'Ended':
+            res["ended"] = True
 
     res["episodes"] = series.xpath('//Episode')
     res["name"] = series_name

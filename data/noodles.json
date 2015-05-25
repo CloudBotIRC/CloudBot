@@ -1,0 +1,51 @@
+{
+  "templates": [
+    "hands {user} a {noodle} served with {side} and {side}"
+  ],
+  "parts": {
+    "noodle": [
+      "spicy bowl of mie goreng fried noodles",
+        "hot bowl of pho noodle soup",
+        "bowl of pork and mushroom wonton noodle soup",
+        "plate of pan fried rice noodles with sliced beef",
+        "plate of glass noodles with seasonal vegetables",
+        "bowl of vegetable yakisoba",
+        "bowl of vermicelli noodles with lemongrass chicken and spicy fish sauce",
+        "plate of pancit luglug topped with hardboiled eggs, shrimp, and chorizo",
+        "bowl of pancit malabon with freshly caught seafood",
+        "hot bowl of chicken noodle soup",
+        "extra large bowl of saimin with cabbage",
+        "whole wok of Singapore-style noodles with extra curry flavor",
+        "plate of mildly spicy drunken noodles",
+        "steaming bowl of dandan noodles topped with peanut butter",
+        "takeout box of Shanghai-style noodles with extra choi",
+        "generous bowl of bún bò huế",
+        "hot bowl of curry laksa with tofu puffs and cuttlefish",
+        "large portion of bibim guksu",
+        "steaming bowl of tonkatsu ramen",
+        "pot of shirataki noodles",
+        "small bowl of sōmen salad",
+        "plate of classic spaghetti with meatballs"
+    ],
+    "side": [
+      "a poached egg",
+      "a sunny side up egg",
+      "shredded chicken",
+      "shredded pork",
+      "a pork cutlet",
+      "packaged crackers",
+      "pickled vegetables",
+      "some grilled lemongrass-rubbed fish",
+      "roasted seaweed",
+      "panko-crusted deep fried prawns",
+      "extra garlicky toasted bread",
+      "a side of kimchi",
+      "deep fried tofu",
+      "a side of sliced beef brisket",
+      "a side of peppery fried chicken nuggets",
+      "a side of spring rolls",
+      "a side of salad rolls",
+      "a side of gyoza dumplings"
+    ]
+  }
+}

@@ -7,7 +7,7 @@ from cloudbot import hook
 from cloudbot.util import web
 
 try:
-    from cfscrape import cfscrape
+    import cfscrape
 except ImportError:
     cfscrape = None
 

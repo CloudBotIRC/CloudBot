@@ -123,7 +123,7 @@ def check_reminders(bot, async, db):
 
 
 @asyncio.coroutine
-@hook.command('remind', 'reminder')
+@hook.command('remind', 'reminder', 'in')
 def remind(text, nick, chan, db, conn, notice, async):
     """<1 minute, 30 seconds>: <do task> -- reminds you to <do task> in <1 minute, 30 seconds>"""
 

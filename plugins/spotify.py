@@ -30,9 +30,10 @@ def spotify(text):
     except IndexError:
         return "Could not find track."
     url = web.try_shorten(gateway.format(_type, _id))
+    uri = data["tracks"][0]["href"]
 
-    return "\x02{}\x02 by \x02{}\x02 - {}".format(data["tracks"][0]["name"],
-                                                  data["tracks"][0]["artists"][0]["name"], url)
+    return "\x02{}\x02 by \x02{}\x02 - {} URI:{}".format(data["tracks"][0]["name"],
+                                                  data["tracks"][0]["artists"][0]["name"], url, uri)
 
 
 @hook.command
@@ -51,9 +52,9 @@ def spalbum(text):
     except IndexError:
         return "Could not find album."
     url = web.try_shorten(gateway.format(_type, _id))
-
-    return "\x02{}\x02 by \x02{}\x02 - {}".format(data["albums"][0]["name"],
-                                                  data["albums"][0]["artists"][0]["name"], url)
+    uri = data["albums"][0]["href"]
+    return "\x02{}\x02 by \x02{}\x02 - {} URI: {}".format(data["albums"][0]["name"],
+                                                  data["albums"][0]["artists"][0]["name"], url, uri)
 
 
 @hook.command
@@ -72,29 +73,34 @@ def spartist(text):
     except IndexError:
         return "Could not find artist."
     url = web.try_shorten(gateway.format(_type, _id))
-
-    return "\x02{}\x02 - {}".format(data["artists"][0]["name"], url)
+    uri = data["artists"][0]["href"]
+    return "\x02{}\x02 - {} URI: {}".format(data["artists"][0]["name"], url, uri)
 
 
 @hook.regex(http_re)
 @hook.regex(spotify_re)
 def spotify_url(match):
+    api_method = {
+        'track': 'tracks',
+        'album': 'albums',
+        'artist': 'artists'
+    }
     _type = match.group(2)
     spotify_id = match.group(3)
     url = spuri.format(type, spotify_id)
     # no error catching here, if the API is down fail silently
-    params = {'uri': url}
-    request = requests.get('http://ws.spotify.com/search/1/artist.json', params=params)
+    request = requests.get('http://api.spotify.com/v1/{}/{}'.format(api_method[_type], spotify_id))
     if request.status_code != requests.codes.ok:
         return
     data = request.json()
     if _type == "track":
-        name = data["track"]["name"]
-        artist = data["track"]["artists"][0]["name"]
-        album = data["track"]["album"]["name"]
+        name = data["name"]
+        artist = data["artists"][0]["name"]
+        album = data["album"]["name"]
+        url = data['external_urls']['spotify']
 
-        return "Spotify Track: \x02{}\x02 by \x02{}\x02 from the album \x02{}\x02".format(name, artist, album)
+        return "Spotify Track: \x02{}\x02 by \x02{}\x02 from the album \x02{}\x02 {}".format(name, artist, album, url)
     elif _type == "artist":
-        return "Spotify Artist: \x02{}\x02".format(data["artist"]["name"])
+        return "Spotify Artist: \x02{}\x02 {}".format(data["name"], data["external_urls"]['spotify'])
     elif _type == "album":
-        return "Spotify Album: \x02{}\x02 - \x02{}\x02".format(data["album"]["artist"], data["album"]["name"])
+        return "Spotify Album: \x02{}\x02 - \x02{}\x02 {}".format(data["artists"][0]["name"], data["name"], data['external_urls']['spotify'])

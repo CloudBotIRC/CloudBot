@@ -1,11 +1,23 @@
 import requests
 
+from sqlalchemy import Table, Column, PrimaryKeyConstraint, String
+from sqlalchemy.sql import select
 from cloudbot import hook
-from cloudbot.util import web
+from cloudbot.util import web, botvars
 
 
 class APIError(Exception):
     pass
+
+# Define database table
+
+table = Table(
+    "weather",
+    botvars.metadata,
+    Column('nick', String),
+    Column('loc', String),
+    PrimaryKeyConstraint('nick')
+)
 
 # Define some constants
 google_base = 'https://maps.googleapis.com/maps/api/'
@@ -55,26 +67,64 @@ def find_location(location):
 
     return json['results'][0]['geometry']['location']
 
+def load_cache(db):
+    global location_cache
+    location_cache = []
+    for row in db.execute(table.select()):
+        nick = row["nick"]
+        location = row["loc"]
+        location_cache.append((nick,location))
+
+def add_location(nick, location, db):
+    test = dict(location_cache)
+    location = str(location)
+    if nick.lower() in test:
+        db.execute(table.update().values(loc=location.lower()).where(table.c.nick == nick.lower()))
+        db.commit()
+        load_cache(db)
+    else:
+        db.execute(table.insert().values(nick=nick.lower(), loc=location.lower()))
+        db.commit()
+        load_cache(db)
 
 @hook.on_start
-def on_start(bot):
+def on_start(bot, db):
     """ Loads API keys """
     global dev_key, wunder_key
     dev_key = bot.config.get("api_keys", {}).get("google_dev_key", None)
     wunder_key = bot.config.get("api_keys", {}).get("wunderground", None)
+    load_cache(db)
 
 
-@hook.command("weather", "we")
-def weather(text, reply):
+def get_location(nick):
+    """looks in location_cache for a saved location"""
+    location = [row[1] for row in location_cache if nick.lower() == row[0]]
+    if not location:
+        return
+    else:
+        location = location[0]
+    return location
+
+@hook.command("weather", "we", autohelp=False)
+def weather(text, reply, db, nick, notice):
     """weather <location> -- Gets weather data for <location>."""
     if not wunder_key:
         return "This command requires a Weather Underground API key."
     if not dev_key:
         return "This command requires a Google Developers Console API key."
 
+    location = ""
+    # If no input try the db
+    if not text:
+        location = get_location(nick)
+        if not location:
+            notice(weather.__doc__)
+            return
+    else:
+        location = text
     # use find_location to get location data from the user input
     try:
-        location_data = find_location(text)
+        location_data = find_location(location)
     except APIError as e:
         return e
 
@@ -122,3 +172,5 @@ def weather(text, reply):
           "High: {today_high_f}F/{today_high_c}C, Low: {today_low_f}F/{today_low_c}C. "
           "\x02Tomorrow:\x02 {tomorrow_conditions}, High: {tomorrow_high_f}F/{tomorrow_high_c}C, "
           "Low: {tomorrow_low_f}F/{tomorrow_low_c}C - {url}".format(**weather_data))
+    if text:
+        add_location(nick, location, db)

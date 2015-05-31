@@ -151,6 +151,32 @@ def getusertrackplaycount(artist, track, user, bot):
 
     return track_info['track']['userplaycount']
 
+@hook.command("plays")
+def getuserartistplaycount(text, nick, bot, notice):
+    """[artist] - displays the current user's playcount for [artist]. You must have your username saved."""
+    user = get_account(nick)
+    if not user:
+        notice(getuserartistplaycount.__doc__)
+        return
+
+    api_key = bot.config.get('api_keys', {}).get('lastfm')
+    params = { 'method': 'artist.getInfo', 'username': user, 'artist': text,
+            'api_key': api_key }
+    request = requests.get(api_url, params = params)
+    artist_info = request.json()
+
+    if 'error' in artist_info:
+        return 'No such artist'
+
+    if 'userplaycount' not in artist_info['artist']['stats']:
+        return '"%s" has never listened to %s.' % (user, text)
+
+    playcount = artist_info['artist']['stats']['userplaycount']
+
+    out = '"%s" has %s %s plays.' % (user, playcount, text)
+
+    return out
+
 @hook.command("lastfmcompare", "compare", "lc")
 def lastfmcompare(text, nick, bot, db):
     """[user] ([user] optional) - displays the now playing (or last played) track of LastFM user [user]"""

@@ -102,6 +102,7 @@ def lastfm(text, nick, db, bot, notice):
     album = track["album"]["#text"]
     artist = track["artist"]["#text"]
     url = web.try_shorten(track["url"])
+    tags = getartisttags(artist, bot)
 
     out = '{} {} "{}"'.format(user, status, title)
     if artist:
@@ -110,6 +111,8 @@ def lastfm(text, nick, db, bot, notice):
         out += " from the album \x02{}\x0f".format(album)
     if url:
         out += " {}".format(url)
+
+    out += " (%s)" % tags
 
     # append ending based on what type it was
     out += ending
@@ -121,6 +124,20 @@ def lastfm(text, nick, db, bot, notice):
         load_cache(db)
     return out
 
+# get tags for $artist
+def getartisttags(artist, bot):
+    tag_list = []
+    api_key = bot.config.get("api_keys", {}).get("lastfm")
+    params = { 'method': 'artist.getTopTags', 'api_key': api_key, 'artist': artist }
+    request = requests.get(api_url, params = params)
+    tags = request.json()
+
+    if 'error' in tags:
+        return '(no tags)'
+
+    for r in range(4):
+        tag_list.append(tags['toptags']['tag'][r]['name'])
+    return ', '.join(tag_list)
 
 @hook.command("lastfmcompare", "compare", "lc")
 def lastfmcompare(text, nick, bot, db):
@@ -214,7 +231,7 @@ def toptrack(text, nick, db, bot, notice):
     for r in range(5):
         track_name = data["toptracks"]["track"][r]["name"]
         artist_name = data["toptracks"]["track"][r]["artist"]["name"]
-        play_count = data["toptracks"]["track"][r]["playcount"] 
+        play_count = data["toptracks"]["track"][r]["playcount"]
         out = out + "{} by {} listened to {} times. ".format(track_name, artist_name, play_count)
     return out
 

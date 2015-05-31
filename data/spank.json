@@ -1,6 +1,6 @@
 {
   "templates": [
-    "grabs {user}, and {spank} them {xtimes} times with {item}."
+    "grabs {user} and {spank} them {xtimes} times with {item}."
   ],
   "parts": {
     "spank": [

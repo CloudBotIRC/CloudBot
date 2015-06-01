@@ -103,12 +103,15 @@ def lastfm(text, nick, db, bot, notice):
     artist = track["artist"]["#text"]
     url = web.try_shorten(track["url"])
     tags = getartisttags(artist, bot)
+    playcount = getusertrackplaycount(artist, title, user, bot)
 
     out = '{} {} "{}"'.format(user, status, title)
     if artist:
         out += " by \x02{}\x0f".format(artist)
     if album:
         out += " from the album \x02{}\x0f".format(album)
+    if playcount:
+        out += " [playcount: %s] " % playcount
     if url:
         out += " {}".format(url)
 
@@ -138,6 +141,41 @@ def getartisttags(artist, bot):
     for r in range(4):
         tag_list.append(tags['toptags']['tag'][r]['name'])
     return ', '.join(tag_list)
+
+def getusertrackplaycount(artist, track, user, bot):
+    api_key = bot.config.get("api_keys", {}).get("lastfm")
+    params = { 'method': 'track.getInfo', 'api_key': api_key, 'artist': artist,
+            'track': track, 'username': user }
+    request = requests.get(api_url, params = params)
+    track_info = request.json()
+
+    return track_info['track']['userplaycount']
+
+@hook.command("plays")
+def getuserartistplaycount(text, nick, bot, notice):
+    """[artist] - displays the current user's playcount for [artist]. You must have your username saved."""
+    user = get_account(nick)
+    if not user:
+        notice(getuserartistplaycount.__doc__)
+        return
+
+    api_key = bot.config.get('api_keys', {}).get('lastfm')
+    params = { 'method': 'artist.getInfo', 'username': user, 'artist': text,
+            'api_key': api_key }
+    request = requests.get(api_url, params = params)
+    artist_info = request.json()
+
+    if 'error' in artist_info:
+        return 'No such artist'
+
+    if 'userplaycount' not in artist_info['artist']['stats']:
+        return '"%s" has never listened to %s.' % (user, text)
+
+    playcount = artist_info['artist']['stats']['userplaycount']
+
+    out = '"%s" has %s %s plays.' % (user, playcount, text)
+
+    return out
 
 @hook.command("lastfmcompare", "compare", "lc")
 def lastfmcompare(text, nick, bot, db):

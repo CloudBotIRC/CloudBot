@@ -165,8 +165,10 @@ def getusertrackplaycount(artist, track, user, bot):
             'track': track, 'username': user }
     request = requests.get(api_url, params = params)
     track_info = request.json()
-
-    return track_info['track']['userplaycount'] if 'userplaycount' in track_info else 0
+    try:
+        return track_info['track']['userplaycount']
+    catch KeyError:
+        return 0
 
 @hook.command("plays")
 def getuserartistplaycount(text, nick, bot, notice):

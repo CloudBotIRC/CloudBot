@@ -111,7 +111,7 @@ def lastfm(text, nick, db, bot, notice):
     if album:
         out += " from the album \x02{}\x0f".format(album)
     if playcount:
-        out += " [playcount: %s] " % playcount
+        out += " [playcount: %s]" % playcount
     if url:
         out += " {}".format(url)
 
@@ -136,11 +136,28 @@ def getartisttags(artist, bot):
     tags = request.json()
 
     if 'error' in tags:
-        return '(no tags)'
+        return 'no tags'
 
     for r in range(4):
         tag_list.append(tags['toptags']['tag'][r]['name'])
     return ', '.join(tag_list)
+
+def getsimilarartists(artist, bot):
+    artist_list = []
+    api_key = bot.config.get('api_keys', {}).get('lastfm')
+    params = { 'method': 'artist.getsimilar', 'api_key': api_key,
+            'artist': artist }
+    request = requests.get(api_url, params = params)
+    similar = request.json()
+
+    if 'error' in similar:
+        return 'no similar artists'
+
+    similar = similar['similarartists']
+
+    for r in range(5):
+        artist_list.append(similar['artist'][r]['name'])
+    return ', '.join(artist_list)
 
 def getusertrackplaycount(artist, track, user, bot):
     api_key = bot.config.get("api_keys", {}).get("lastfm")
@@ -159,14 +176,10 @@ def getuserartistplaycount(text, nick, bot, notice):
         notice(getuserartistplaycount.__doc__)
         return
 
-    api_key = bot.config.get('api_keys', {}).get('lastfm')
-    params = { 'method': 'artist.getInfo', 'username': user, 'artist': text,
-            'api_key': api_key }
-    request = requests.get(api_url, params = params)
-    artist_info = request.json()
+    artist_info = getartistinfo(text, bot, user)
 
     if 'error' in artist_info:
-        return 'No such artist'
+        return 'No such artist.'
 
     if 'userplaycount' not in artist_info['artist']['stats']:
         return '"%s" has never listened to %s.' % (user, text)
@@ -176,6 +189,35 @@ def getuserartistplaycount(text, nick, bot, notice):
     out = '"%s" has %s %s plays.' % (user, playcount, text)
 
     return out
+
+@hook.command("band")
+def displaybandinfo(text, nick, bot, notice):
+    """[artist] - displays information about [artist]."""
+    if not text:
+        notice(getbandinfo.__doc__)
+    artist = getartistinfo(text, bot)
+
+    if 'error' in artist:
+        return 'No such artist.'
+
+    a = artist['artist']
+    similar = getsimilarartists(text, bot)
+    tags = getartisttags(text, bot)
+
+    out = "{} have {} plays and {} listeners.".format(text, a['stats']['playcount'],
+            a['stats']['listeners'])
+    out += " Similar artists include {}. Tags: ({}).".format(similar, tags)
+
+    return out
+
+def getartistinfo(artist, bot, user = ''):
+    api_key = bot.config.get('api_keys', {}).get('lastfm')
+    params = { 'method': 'artist.getInfo', 'artist': artist, 'api_key': api_key }
+    if user:
+        params['username'] = user
+    request = requests.get(api_url, params = params);
+    artist = request.json()
+    return artist
 
 @hook.command("lastfmcompare", "compare", "lc")
 def lastfmcompare(text, nick, bot, db):

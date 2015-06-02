@@ -137,8 +137,10 @@ def getartisttags(artist, bot):
 
     if 'tag' in tags['toptags']:
         for item in tags['toptags']['tag']:
-            if 'name' in item:
+            try:
                 tag_list.append(item['name'])
+            except KeyError:
+                print("Missing tagname");
 
     tag_list = tag_list[0:4]
 

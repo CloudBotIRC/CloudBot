@@ -140,7 +140,7 @@ def getartisttags(artist, bot):
             try:
                 tag_list.append(item['name'])
             except KeyError:
-                print("Missing tagname");
+                pass
 
     tag_list = tag_list[0:4]
 

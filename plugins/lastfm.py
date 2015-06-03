@@ -135,12 +135,16 @@ def getartisttags(artist, bot):
     request = requests.get(api_url, params = params)
     tags = request.json()
 
-    if 'error' in tags:
-        return 'no tags'
+    if 'tag' in tags['toptags']:
+        for item in tags['toptags']['tag']:
+            try:
+                tag_list.append(item['name'])
+            except KeyError:
+                pass
 
-    for r in range(4):
-        tag_list.append(tags['toptags']['tag'][r]['name'])
-    return ', '.join(tag_list)
+    tag_list = tag_list[0:4]
+
+    return ', '.join(tag_list) if tag_list else 'no tags'
 
 def getsimilarartists(artist, bot):
     artist_list = []
@@ -150,14 +154,14 @@ def getsimilarartists(artist, bot):
     request = requests.get(api_url, params = params)
     similar = request.json()
 
-    if 'error' in similar:
-        return 'no similar artists'
+    # check it's a list
+    if isinstance(similar['similarartists']['artist'], list):
+        for item in similar['similarartists']['artist']:
+            artist_list.append(item['name'])
 
-    similar = similar['similarartists']
+    artist_list = artist_list[0:4]
 
-    for r in range(5):
-        artist_list.append(similar['artist'][r]['name'])
-    return ', '.join(artist_list)
+    return ', '.join(artist_list) if artist_list else 'no similar artists'
 
 def getusertrackplaycount(artist, track, user, bot):
     api_key = bot.config.get("api_keys", {}).get("lastfm")
@@ -166,7 +170,7 @@ def getusertrackplaycount(artist, track, user, bot):
     request = requests.get(api_url, params = params)
     track_info = request.json()
 
-    return track_info['track']['userplaycount'] if 'userplaycount' in track_info else 0
+    return track_info['track']['userplaycount'] if 'userplaycount' in track_info['track'] else '0'
 
 @hook.command("plays")
 def getuserartistplaycount(text, nick, bot, notice):
@@ -212,7 +216,8 @@ def displaybandinfo(text, nick, bot, notice):
 
 def getartistinfo(artist, bot, user = ''):
     api_key = bot.config.get('api_keys', {}).get('lastfm')
-    params = { 'method': 'artist.getInfo', 'artist': artist, 'api_key': api_key }
+    params = { 'method': 'artist.getInfo', 'artist': artist, 'api_key': api_key,
+            'autocorrect': '1'}
     if user:
         params['username'] = user
     request = requests.get(api_url, params = params);

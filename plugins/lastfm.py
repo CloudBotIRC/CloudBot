@@ -272,11 +272,19 @@ def lastfmcompare(text, nick, bot, db):
     level = "Super" if score > 95 else "Very High" if score > 80 else "High" if score > 60 else \
             "Medium" if score > 40 else "Low" if score > 10 else "Very Low"
 
+
+    # That old line is just too messy for me
+    artist_list = data["comparison"]["result"]["artists"]
+    artists = []
+    for artist in artist_list:
+        artists.append(artist["name"])
+
     # I'm not even going to try to rewrite this line
-    artists = [f["name"] for f in data["comparison"]["result"]["artists"]["artist"]] if \
-        type(data["comparison"]["result"]["artists"]["artist"]) == list else \
-        [data["comparison"]["result"]["artists"]["artist"]["name"]] if "artist" \
-        in data["comparison"]["result"]["artists"] else ""
+    #artists = [f["name"] for f in data["comparison"]["result"]["artists"]["artist"]] if \
+    #    type(data["comparison"]["result"]["artists"]["artist"]) == list else \
+    #    [data["comparison"]["result"]["artists"]["artist"]["name"]] if "artist" \
+    #    in data["comparison"]["result"]["artists"] else ""
+
     artist_string = "\x02In Common:\x02 " + \
         ", ".join(artists) if artists else ""
 

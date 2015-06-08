@@ -49,6 +49,6 @@ def awesome(text, conn, nick, message):
 		# user is trying to make the bot attack itself!
 		target = nick
 	
-	joke = random.choice(jokes)
+	joke = random.choice(awesome)
 	
 	message(joke.replace("%s", target))

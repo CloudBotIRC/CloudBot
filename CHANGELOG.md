@@ -1,4 +1,8 @@
 ## Changelog
+
+## 1.0.9
+TBA
+
 ### 1.0.8
 This update is pretty big. Be warned.
  * Improved flip command.

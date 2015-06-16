@@ -91,6 +91,12 @@
         ],
         "whitelist": []
     },
+    "web": {
+      "enabled": false,
+      "address": "0.0.0.0",
+      "port": 8090,
+      "bot_name": "CloudBot"
+    },
     "reloading": {
         "config_reloading": true,
         "plugin_reloading": false

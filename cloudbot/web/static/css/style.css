@@ -1,0 +1,16 @@
+body {
+    padding-top: 50px;
+}
+
+body {
+    overflow-y: scroll;
+}
+
+.placeholder {
+    padding: 40px 15px;
+    text-align: center;
+}
+
+#about-dialog {
+    top: 20%;
+}

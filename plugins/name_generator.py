@@ -1,3 +1,15 @@
+"""
+name_generator.py
+
+Generates fun names using the textgen module.
+
+Created By:
+    - Luke Rogers <https://github.com/lukeroge>
+
+License:
+    GPL v3
+"""
+
 import json
 import codecs
 import os

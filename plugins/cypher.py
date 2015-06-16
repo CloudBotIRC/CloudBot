@@ -1,3 +1,20 @@
+"""
+cypher.py
+
+Ciphers and deciphers strings.
+
+Created By:
+    - Tom <https://github.com/instanceoftom>
+
+Modified By:
+    - Fletcher Boyd <https://github.com/thenoodle68>
+    - Dabo Ross <https://github.com/daboross>
+    - Luke Rogers <https://github.com/lukeroge>
+
+License:
+    GPL v3
+"""
+
 import base64
 import binascii
 
@@ -35,11 +52,9 @@ def decode(password, encoded, notice):
     return "".join(dec)
 
 
-@hook.command()
+@hook.command("cypher", "cipher")
 def cypher(text, notice):
-    """<pass> <string> - cyphers <string> with <password>
-    :type text: str
-    """
+    """<pass> <string> -- cyphers <string> with <password>"""
     split = text.split(None, 1)
     if len(split) < 2:
         notice(cypher.__doc__)
@@ -49,11 +64,9 @@ def cypher(text, notice):
     return encode(password, plaintext)
 
 
-@hook.command()
+@hook.command("decypher", "decipher")
 def decypher(text, notice):
-    """<pass> <string> - decyphers <string> with <password>
-    :type text: str
-    """
+    """<pass> <string> - decyphers <string> with <password>"""
     split = text.split(None, 1)
     if len(split) < 2:
         notice(decypher.__doc__)

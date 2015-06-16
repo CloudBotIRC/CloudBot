@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% set active_page = "index" %}
+{% block title %}{{ heading }} - {{ super() }}{% endblock %}
+{% block content %}
+<div class="placeholder">
+    <h1>{{ heading }}</h1>
+    <p class="lead">{{ text }}</p>
+</div>
+{% endblock %}

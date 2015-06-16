@@ -139,7 +139,7 @@ def sandwich(text, action):
     user = text.strip()
 
     if not is_valid(user):
-        return "I can't give a cookie to that user."
+        return "I can't give a sandwich to that user."
 
     generator = textgen.TextGenerator(sandwich_data["templates"], sandwich_data["parts"],
                                       variables={"user": user})

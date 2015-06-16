@@ -7,7 +7,9 @@ import sys
 
 import cloudbot
 
-if cloudbot.dev_mode.get("pympler", False):
+PYMPLER_ENABLED = False
+
+if PYMPLER_ENABLED:
     try:
         import pympler
         import pympler.muppy

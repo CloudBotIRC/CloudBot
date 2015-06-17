@@ -47,11 +47,12 @@ def cb_think(text):
     digest = hashlib.md5(payload[9:35].encode('utf-8')).hexdigest()
     target_url = "{}&icognocheck={}".format(payload, digest)
     parsed = requests.post(API_URL, data=target_url, headers=HEADERS)
-    data = parsed.text.split('\r')
-    SESSION['sessionid'] = data[1]
-    return html.unescape(str(data[0]))
+    data = parsed.text
+    SESSION['sessionid'] = data
+    return html.unescape(str(data))
 
 @hook.command("ask", "cleverbot", "cb", "gonzobot")
 def ask(text):
     """ <question> -- Asks Cleverbot <question> """
-    return cb_think(text)
+    # return cb_think(text)
+    return ("This plugin is broken.")

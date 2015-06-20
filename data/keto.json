@@ -1,0 +1,20 @@
+{
+  "templates": [
+    "hands {user} a {meal}."
+  ],
+  "parts": {
+    "meal": [
+      "bacon, red pepper, and mozzarella frittatta",
+      "crockpot buffalo chicken soup",
+      "ginger sesame glazed salmon",
+      "egg salad stuffed avocado",
+      "bacon cheeseburger soup",
+      "pork carne asada taco",
+      "stuffed poblano pepper",
+      "keto coffee cake",
+      "almond butter chia square",
+      "caprese salad",
+      "bacon wrapped asparagus"
+    ]
+  }
+}

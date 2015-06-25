@@ -126,11 +126,11 @@ def karma(text):
 def time_format(numdays):
     age = ()
     if numdays >= 365:
-        age = (int(numdays / 365), "year")
+        age = (int(numdays / 365), "y")
         if age[0] > 1:
-            age = (age[0], "years")
+            age = (age[0], "y")
     else:
-        age = (numdays, "days")
+        age = (numdays, "d")
     return age
 
 @hook.command("submods", "mods", "rmods", singlethreaded=True)
@@ -152,7 +152,7 @@ def submods(text, chan):
         # if you want to show this information add modtime.days to out below
         modtime = datetime.now() - datetime.fromtimestamp(mod['date'])
         modtime = time_format(modtime.days)
-        out += "{} ({} {}) \u2022 ".format(username, modtime[0], modtime[1])
+        out += "{} ({}{}) \u2022 ".format(username, modtime[0], modtime[1])
     out = smart_truncate(out)
     out = out[:-3]
     if len(out.split('\n')) > 2:
@@ -179,10 +179,10 @@ def subinfo(text):
     sub_age = datetime.now() - datetime.fromtimestamp(data['data']['created'])
     age = ()
     if sub_age.days >= 365:
-        age = (int(sub_age.days / 365), "year(s)")
+        age = (int(sub_age.days / 365), "y")
     else:
-        age = (sub_age.days, "days")
-    out = "r/\x03{}\x02 - {} - a community for {} {}, there are {:,} subscribers and {:,} people online now.".format(name, title, age[0], age[1], subscribers, active)
+        age = (sub_age.days, "d")
+    out = "r/\x03{}\x02 - {} - a community for {}{}, there are {:,} subscribers and {:,} people online now.".format(name, title, age[0], age[1], subscribers, active)
     if nsfw:
         out += " \x0304NSFW\x0304"
     return out

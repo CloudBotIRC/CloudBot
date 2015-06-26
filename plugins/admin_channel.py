@@ -44,12 +44,20 @@ def unban(text, conn, chan, notice):
 @hook.command(permissions=["op_quiet", "op"])
 def quiet(text, conn, chan, notice):
     """[channel] <user> - quiets <user> in [channel], or in the caller's channel if no channel is specified"""
+    if conn.name == "snoonet":
+        out = "mode {} +b m:{}".format(chan, text)
+        conn.send(out)
+        return
     mode_cmd("+q", "quiet", text, chan, conn, notice)
 
 
 @hook.command(permissions=["op_quiet", "op"])
 def unquiet(text, conn, chan, notice):
     """[channel] <user> - unquiets <user> in [channel], or in the caller's channel if no channel is specified"""
+    if conn.name == "snoonet":
+        out = "mode {} -b m:{}".format(chan, text)
+        conn.send(out)
+        return
     mode_cmd("-q", "unquiet", text, chan, conn, notice)
 
 

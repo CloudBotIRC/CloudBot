@@ -36,12 +36,12 @@ def load_cache(db):
         else:
             grab_cache[chan][name].append(quote)
 
-def three_lines(bigstring, chan):
+def two_lines(bigstring, chan):
     """Receives a string with new lines. Groups the string into a list of strings with up to 3 new lines per string element. Returns first string element then stores the remaining list in search_pages."""
     global search_pages
     temp = bigstring.split('\n')
-    for i in range(0, len(temp), 3):
-        search_pages[chan].append('\n'.join(temp[i:i+3]))
+    for i in range(0, len(temp), 2):
+        search_pages[chan].append('\n'.join(temp[i:i+2]))
     search_pages[chan+"index"] = 0
     return search_pages[chan][0]
 
@@ -184,7 +184,7 @@ def grabsearch(text, chan):
             out += "{} {} ".format(format_grab(name, quote), u'\u2022')
         out = smart_truncate(out)
         out = out[:-2]
-        out = three_lines(out, chan)
+        out = two_lines(out, chan)
         if len(search_pages[chan]) > 1:
             return "{}(page {}/{}) .moregrab".format(out, search_pages[chan+"index"] + 1 , len(search_pages[chan]))
         return out

@@ -59,6 +59,13 @@ def onjoin(conn, bot):
                 bot.config['censored_strings'].append(nickserv_password)
             yield from asyncio.sleep(1)
 
+    # Should we oper up?
+    oper_pw = conn.config.get('oper_pw', False)
+    oper_user = conn.config.get('oper_user', False)
+    if oper_pw and oper_user:
+        out = "oper {} {}".format(oper_user, oper_pw)
+        conn.send(out)
+
     # Set bot modes
     mode = conn.config.get('mode')
     if mode:

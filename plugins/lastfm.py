@@ -111,13 +111,13 @@ def lastfm(text, nick, db, bot, notice):
     if album:
         out += " from the album \x02{}\x0f".format(album)
     if playcount:
-        out += " [playcount: %s]" % playcount
+        out += " [playcount: {}]".format(playcount)
     else:
         out += " [playcount: 0]"
     if url:
         out += " {}".format(url)
 
-    out += " (%s)" % tags
+    out += " ({})".format(tags)
 
     # append ending based on what type it was
     out += ending
@@ -189,15 +189,15 @@ def getuserartistplaycount(text, nick, bot, notice):
         return 'No such artist.'
 
     if 'userplaycount' not in artist_info['artist']['stats']:
-        return '"%s" has never listened to %s.' % (user, text)
+        return '"{}" has never listened to {}.'.format(user, text)
 
     playcount = artist_info['artist']['stats']['userplaycount']
 
-    out = '"%s" has %s %s plays.' % (user, playcount, text)
+    out = '"{}" has {:,} {} plays.'.format(user, int(playcount), text)
 
     return out
 
-@hook.command("band")
+@hook.command("band", "la")
 def displaybandinfo(text, nick, bot, notice):
     """[artist] - displays information about [artist]."""
     if not text:
@@ -211,8 +211,8 @@ def displaybandinfo(text, nick, bot, notice):
     similar = getsimilarartists(text, bot)
     tags = getartisttags(text, bot)
 
-    out = "{} have {} plays and {} listeners.".format(text, a['stats']['playcount'],
-            a['stats']['listeners'])
+    out = "{} have {:,} plays and {:,} listeners.".format(text, int(a['stats']['playcount']),
+            int(a['stats']['listeners']))
     out += " Similar artists include {}. Tags: ({}).".format(similar, tags)
 
     return out
@@ -320,7 +320,7 @@ def toptrack(text, nick, db, bot, notice):
         track_name = data["toptracks"]["track"][r]["name"]
         artist_name = data["toptracks"]["track"][r]["artist"]["name"]
         play_count = data["toptracks"]["track"][r]["playcount"]
-        out = out + "{} by {} listened to {} times. ".format(track_name, artist_name, play_count)
+        out = out + "{} by {} listened to {:,} times. ".format(track_name, artist_name, int(play_count))
     return out
 
 
@@ -358,7 +358,7 @@ def topartists(text, nick, db, bot, notice):
     for r in range(5):
         artist_name = data["topartists"]["artist"][r]["name"]
         play_count = data["topartists"]["artist"][r]["playcount"]
-        out = out + "{} listened to {} times. ".format(artist_name, play_count)
+        out = out + "{} listened to {:,} times. ".format(artist_name, int(play_count))
     return out
 
 @hook.command("ltw", "topweek", autohelp=False)
@@ -417,5 +417,5 @@ def topartists(text, nick, db, bot, notice, period):
     for r in range(range_count):
         artist_name = data["topartists"]["artist"][r]["name"]
         play_count = data["topartists"]["artist"][r]["playcount"]
-        out = out + "{} [{}] ".format(artist_name, play_count)
+        out = out + "{} [{:,}] ".format(artist_name, int(play_count))
     return out

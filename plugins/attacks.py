@@ -131,15 +131,14 @@ def slap(text, action, nick, conn, notice):
     # act out the message
     action(generator.generate_string())
     
-@asyncio.coroutine
-@hook.command
-def strax(text, action, nick, conn, notice):
+@hook.command(autohelp=False)
+def strax(chan, message):
     """<user> -- Strax quote."""
 
     generator = textgen.TextGenerator(strax["templates"], strax["parts"])
 
-    # act out the message
-    action(generator.generate_string())
+    # Become Strax
+    message(generator.generate_string())
 
 @hook.command(autohelp=False)
 def nk(chan, message):

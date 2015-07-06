@@ -1,6 +1,6 @@
 {
   "templates": [
-    "Might I suggest {type} {attack} with {preweapon} {postweapon} and {weapon}!",
+    "Might I suggest {type} {attack} with {preweapon} {postweapon} and {weapon}!"
   ],
   "parts": {
     "type": [

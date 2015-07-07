@@ -132,9 +132,27 @@ def slap(text, action, nick, conn, notice):
     action(generator.generate_string())
     
 @hook.command(autohelp=False)
-def strax(chan, message):
-    """<user> -- Strax quote."""
+def strax(text, chan, conn, message, nick):
+    """Strax quote."""
+    
+    target = text.strip()
 
+    if not is_valid(target):
+        return "I can't attack that."
+
+    if is_self(conn, target):
+        # user is trying to make the bot attack itself!
+        target = nick
+
+    variables = {
+	    p = "on"
+	    p += target
+	    p += " "
+	    # Outputs to "on target "
+	    # Because this will be easier to understand
+	    target = p
+        "user": target
+    }
     generator = textgen.TextGenerator(strax["templates"], strax["parts"])
 
     # Become Strax

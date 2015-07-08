@@ -132,7 +132,7 @@ def slap(text, action, nick, conn, notice):
     action(generator.generate_string())
     
 @hook.command(autohelp=False)
-def strax(text, chan, conn, message, nick):
+def strax(text, conn, message, nick):
     """Strax quote."""
     
     target = text.strip()

@@ -134,28 +134,26 @@ def slap(text, action, nick, conn, notice):
 @hook.command(autohelp=False)
 def strax(text, conn, message, nick):
     """Strax quote."""
-    
-    target = text.strip()
-
-    if not is_valid(target):
-        return "I can't attack that."
-
-    if is_self(conn, target):
-        # user is trying to make the bot attack itself!
-        target = nick
-
-    variables = {
-	    p = "on"
-	    p += target
-	    p += " "
-	    # Outputs to "on target "
-	    # Because this will be easier to understand
-	    target = p
-        "user": target
-    }
-    
-	if is_valid(target)    
-	    generator = textgen.TextGenerator(strax["target_template"], strax["parts"])
+    if text:
+	    target = text.strip()
+	
+	    if not is_valid(target):
+	        return "I can't attack that."
+	
+	    if is_self(conn, target):
+	        # user is trying to make the bot attack itself!
+	        target = nick
+	
+	    variables = {
+		    p = "on"
+		    p += target
+		    # Outputs to "on target"
+		    # Because this will be easier to understand
+		    target = p
+	        "user": target
+	    }
+	      
+		generator = textgen.TextGenerator(strax["target_template"], strax["parts"])
 	else:
 	    generator = textgen.TextGenerator(strax["template"], strax["parts"])
 

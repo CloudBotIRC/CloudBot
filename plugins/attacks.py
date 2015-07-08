@@ -153,7 +153,11 @@ def strax(text, conn, message, nick):
 	    target = p
         "user": target
     }
-    generator = textgen.TextGenerator(strax["templates"], strax["parts"])
+    
+	if is_valid(target)    
+	    generator = textgen.TextGenerator(strax["target_template"], strax["parts"])
+	else:
+	    generator = textgen.TextGenerator(strax["template"], strax["parts"])
 
     # Become Strax
     message(generator.generate_string())

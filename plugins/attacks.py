@@ -134,6 +134,7 @@ def slap(text, action, nick, conn, notice):
 @hook.command(autohelp=False)
 def strax(text, conn, message, nick):
     """Strax quote."""
+
     if text:
 	    target = text.strip()
 	

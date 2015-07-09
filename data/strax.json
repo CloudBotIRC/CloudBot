@@ -4,7 +4,7 @@
   ],
   
   "target_template": [
-    "Might I suggest {type} {attack} {user} with {preweapon} {postweapon} and {weapon}!"
+    "Might I suggest {type} {attack} on {user} with {preweapon} {postweapon} and {weapon}!"
   ],
   "parts": {
     "type": [

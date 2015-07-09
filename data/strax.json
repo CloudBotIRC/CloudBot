@@ -1,6 +1,10 @@
 {
-  "templates": [
+  "template": [
     "Might I suggest {type} {attack} with {preweapon} {postweapon} and {weapon}!"
+  ],
+  
+  "target_template": [
+    "Might I suggest {type} {attack} on {user} with {preweapon} {postweapon} and {weapon}!"
   ],
   "parts": {
     "type": [

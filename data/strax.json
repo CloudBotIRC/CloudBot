@@ -1,0 +1,90 @@
+{
+  "template": [
+    "Might I suggest {type} {attack} with {preweapon} {postweapon} and {weapon}!"
+  ],
+  
+  "target_template": [
+    "Might I suggest {type} {attack} on {user} with {preweapon} {postweapon} and {weapon}!"
+  ],
+  "parts": {
+    "type": [
+	"a full-frontal",
+	"a pincer",
+	"a surprise",
+	"a brutally excessive",
+	"a suicide",
+	"a multi-pronged",
+	"a glorious",
+	"an acid-heavy",
+	"an immediate",
+	"a violent",
+	"a traditional Sontaran",
+	"a devasting"
+    ],
+    "attack": [
+	"assault",
+	"attack",
+	"bombardment",
+	"offensive",
+	"barrage",
+	"charge",
+	"strike",
+	"operation",
+	"manoeuvre"
+    ],
+    "preweapon": [
+	"laser",
+	"berserker",
+	"acid",
+	"armoured attack",
+	"proton",
+	"three kinds of",
+	"atomic",
+	"toxic",
+	"explosive",
+	"red-hot",
+	"thermal",
+	"automated fire",
+	"cluster",
+	"enhanced germ",
+	"energy-drink-fueled"
+    ],
+    "postweapon": [
+	"bees",
+	"chainsaws",
+	"marmots",
+	"acid",
+	"monkeys",
+	"mines",
+	"bombs",
+	"snakes",
+	"spiders",
+	"knives",
+	"rockets",
+	"sharks",
+	"owls",
+	"repurposed cybermats",
+	"cannons",
+	"alligators",
+	"scalpel mines"
+    ],
+    "weapon": [
+	"robots",
+	"ninjas",
+	"grenades",
+	"a dolphin full of napalm",
+	"acid",
+	"dynamite",
+	"xenomorphs",
+	"lots and lots of C4",
+	"tactical nukes",
+	"MacGyver",
+	"bio-weapons",
+	"rocket launchers",
+	"an elephant",
+	"automated laser monkeys",
+	"a memory worm for afterwards",
+	"this pencil"
+    ]
+  }
+}

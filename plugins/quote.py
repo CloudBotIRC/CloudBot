@@ -48,7 +48,7 @@ def add_quote(db, chan, target, sender, message):
     return "Quote added."
 
 
-def del_quote(db, chan, nick, add_nick, msg):
+def del_quote(db, nick, msg):
     """Deletes a quote from a nick"""
     query = qtable.update() \
         .where(qtable.c.chan == 1) \

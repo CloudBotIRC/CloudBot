@@ -5,7 +5,7 @@ from sqlalchemy import Table, Column, Integer, String, PrimaryKeyConstraint
 from sqlalchemy import select
 
 from cloudbot import hook
-from cloudbot.util import timeformat, formatting, database
+from cloudbot.util import timeformat, database
 
 
 CAN_DOWNVOTE = False
@@ -109,12 +109,11 @@ def karma(text, db):
     if not query:
         return "That user has no karma :("
     else:
-        karma_text = formatting.pluralize(query['up_karma'] - query['down_karma'], '\x02karma')
         return "{} has \x02{}\x02 karma!".format(text, query['up_karma'] - query['down_karma'])
 
 
 @hook.command('loved')
-def loved(text, db):
+def loved(db):
     """loved -- Shows the users with the most karma!"""
     query = db.execute(
         select([karma_table])

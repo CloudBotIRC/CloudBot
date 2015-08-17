@@ -56,7 +56,7 @@ def get_episodes_for_series(series_name, api_key):
     return res
 
 
-def get_episode_info(episode, api_key):
+def get_episode_info(episode):
     first_aired = episode.findtext("FirstAired")
 
     try:
@@ -103,7 +103,7 @@ def tv_next(text, bot=None):
     today = datetime.date.today()
 
     for episode in reversed(episodes):
-        ep_info = get_episode_info(episode, api_key)
+        ep_info = get_episode_info(episode)
 
         if ep_info is None:
             continue
@@ -150,7 +150,7 @@ def tv_last(text, bot=None):
     today = datetime.date.today()
 
     for episode in reversed(episodes):
-        ep_info = get_episode_info(episode, api_key)
+        ep_info = get_episode_info(episode)
 
         if ep_info is None:
             continue

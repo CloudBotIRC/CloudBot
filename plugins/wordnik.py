@@ -160,7 +160,7 @@ def antonym(text):
 
 # word of the day
 @hook.command("word", "wordoftheday", autohelp=False)
-def wordoftheday(text, conn):
+def wordoftheday(text):
     """returns the word of the day. To see past word of the day enter use the format yyyy-MM-dd. The specified date must be after 2009-08-10."""
     if not api_key:
         return "This command requires an API key from wordnik.com."
@@ -200,7 +200,7 @@ def wordoftheday(text, conn):
 
 # random word
 @hook.command("wordrandom", "randomword", autohelp=False)
-def random_word(conn):
+def random_word():
     """Grabs a random word from wordnik.com"""
     if not api_key:
         return "This command requires an API key from wordnik.com."

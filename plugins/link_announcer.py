@@ -5,7 +5,7 @@ from cloudbot import hook
 
 # This will match ANY we url including youtube, reddit, twitch, etc... Some additional work needs to go into
 # not sending the web request etc if the match also matches an existing web regex.
-blacklist = re.compile('.*(reddit\.com|redd.it|youtube.com|youtu.be|spotify.com|twitter.com|twitch.com).*', re.I)
+blacklist = re.compile('.*(reddit\.com|redd.it|youtube.com|youtu.be|spotify.com|twitter.com|twitch.com|amazon.com|amzn.com).*', re.I)
 url_re = re.compile('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
 
 

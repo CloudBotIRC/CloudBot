@@ -38,7 +38,7 @@ def main():
     original_sigint = signal.getsignal(signal.SIGINT)
 
     # define closure for signal handling
-    def exit_gracefully(signum, frame):
+    def exit_gracefully():
         nonlocal stopped_while_restarting
         if not _bot:
             # we are currently in the process of restarting

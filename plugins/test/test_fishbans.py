@@ -30,7 +30,7 @@ reply_failed = "Could not fetch ban data for notch."
 reply_error = "Could not fetch ban data from the Fishbans API:"
 
 
-class DummyBot():
+class DummyBot:
     user_agent = "CloudBot/3.0"
 
 

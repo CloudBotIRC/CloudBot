@@ -7,7 +7,7 @@ from cloudbot.event import EventType
 valid_command_re = re.compile(r"^\w+$")
 
 
-class _Hook():
+class _Hook:
     """
     :type function: function
     :type type: str

@@ -1,7 +1,6 @@
 from datetime import datetime
 
 import requests
-import random
 
 from sqlalchemy import Table, Column, PrimaryKeyConstraint, String
 
@@ -123,13 +122,13 @@ def lastfm(text, nick, db, bot, notice):
 
 
 @hook.command("lastfmcompare", "compare", "lc")
-def lastfmcompare(text, nick, bot, db):
+def lastfmcompare(text, nick, bot,):
     """[user] ([user] optional) - displays the now playing (or last played) track of LastFM user [user]"""
     api_key = bot.config.get("api_keys", {}).get("lastfm")
     if not api_key:
         return "No last.fm API key set."
     if not text:
-        return("please specify a lastfm username to compare")
+        return "please specify a lastfm username to compare"
     try:
         user1, user2 = text.split()
     except:
@@ -181,7 +180,7 @@ def lastfmcompare(text, nick, bot, db):
 
 
 @hook.command("ltop", "ltt", autohelp=False)
-def toptrack(text, nick, db, bot, notice):
+def toptrack(text, nick, bot):
     """Grabs a list of the top tracks for a last.fm username"""
     api_key = bot.config.get("api_keys", {}).get("lastfm")
     if not api_key:
@@ -194,7 +193,7 @@ def toptrack(text, nick, db, bot, notice):
     else:
         username = get_account(nick)
     if not username:
-        return("No last.fm username specified and no last.fm username is set in the database.")
+        return "No last.fm username specified and no last.fm username is set in the database."
 
     params = {
         'api_key': api_key,
@@ -220,7 +219,7 @@ def toptrack(text, nick, db, bot, notice):
 
 
 @hook.command("lta", "topartist", autohelp=False)
-def topartists(text, nick, db, bot, notice):
+def topartists(text, nick, bot):
     """Grabs a list of the top artists for a last.fm username. You can set your lastfm username with .l username"""
     api_key = bot.config.get("api_keys", {}).get("lastfm")
     if not api_key:
@@ -233,7 +232,7 @@ def topartists(text, nick, db, bot, notice):
     else:
         username = get_account(nick)
     if not username:
-        return("No last.fm username specified and no last.fm username is set in the database.")
+        return "No last.fm username specified and no last.fm username is set in the database."
     params = {
         'api_key': api_key,
         'method': 'user.gettopartists',

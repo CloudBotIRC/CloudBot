@@ -103,7 +103,7 @@ def kill(text, conn, nick, action):
 
 @asyncio.coroutine
 @hook.command
-def slap(text, action, nick, conn, notice):
+def slap(text, action, nick, conn):
     """<user> -- Makes the bot slap <user>."""
     target = text.strip()
 

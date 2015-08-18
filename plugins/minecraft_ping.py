@@ -46,7 +46,6 @@ def mcping(text):
         
     # I really hate people for putting colors IN THE VERSION
     # WTF REALLY THIS IS A THING NOW?
-    version = format_colors(s.version.name)
 
     if s.latency:
         return "{}\x0f - \x02{}\x0f - \x02{:.1f}ms\x02" \

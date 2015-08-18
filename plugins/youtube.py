@@ -84,7 +84,7 @@ def youtube(text):
     if not dev_key:
         return "This command requires a Google Developers Console API key."
 
-    json = requests.get(search_api_url, params={"q": text, "key": dev_key, "type":"video"}).json()
+    json = requests.get(search_api_url, params={"q": text, "key": dev_key, "type": "video"}).json()
 
     if json.get('error'):
         if json['error']['code'] == 403:

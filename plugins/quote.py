@@ -3,7 +3,7 @@ import re
 import time
 
 from cloudbot import hook
-from cloudbot.util import botvars
+from cloudbot.util import database
 
 from sqlalchemy import select
 from sqlalchemy import Table, Column, String, PrimaryKeyConstraint
@@ -13,14 +13,14 @@ from sqlalchemy.exc import IntegrityError
 
 qtable = Table(
     'quote',
-    botvars.metadata,
-    Column('chan', String),
-    Column('nick', String),
-    Column('add_nick', String),
-    Column('msg', String),
+    database.metadata,
+    Column('chan', String(25)),
+    Column('nick', String(25)),
+    Column('add_nick', String(25)),
+    Column('msg', String(500)),
     Column('time', REAL),
-    Column('deleted', String, default=0),
-    PrimaryKeyConstraint('chan', 'nick', 'msg')
+    Column('deleted', String(5), default=0),
+    PrimaryKeyConstraint('chan', 'nick', 'time')
 )
 
 
@@ -48,7 +48,7 @@ def add_quote(db, chan, target, sender, message):
     return "Quote added."
 
 
-def del_quote(db, chan, nick, add_nick, msg):
+def del_quote(db, nick, msg):
     """Deletes a quote from a nick"""
     query = qtable.update() \
         .where(qtable.c.chan == 1) \

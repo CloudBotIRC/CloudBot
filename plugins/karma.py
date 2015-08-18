@@ -1,10 +1,8 @@
-#import asyncio
 import re
 import operator
 
 from collections import defaultdict
 from cloudbot import hook
-#from cloudbot.util import timesince
 from cloudbot.event import EventType
 
 karmaplus_re = re.compile('^.*\+\+$')
@@ -185,4 +183,3 @@ def pointsbottom(text, chan, db, message, conn, notice):
             out += "{} with {} points \u2022 ".format(sorts[i][0], sorts[i][1])
         out = out[:-2]
         return out
-

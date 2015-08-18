@@ -1,3 +1,18 @@
+"""
+scene.py
+
+Provides commands for searching scene releases using orlydb.com.
+
+Created By:
+    - Ryan Hitchman <https://github.com/rmmh>
+
+Modified By:
+    - Luke Rogers <https://github.com/lukeroge>
+
+License:
+    GPL v3
+"""
+
 import datetime
 
 import requests

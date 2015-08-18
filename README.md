@@ -33,7 +33,7 @@ python3.4 -m cloudbot
 
 Note that you can also run the `cloudbot/__main__.py` file directly, which will work from any directory.
 ```
-python3.4 CloudBotRefresh/cloudbot/__main__.py
+python3.4 CloudBot/cloudbot/__main__.py
 ```
 Specify the path as /path/to/repository/cloudbot/__main__.py, where `cloudbot` is inside the repository directory.
 
@@ -43,9 +43,9 @@ Specify the path as /path/to/repository/cloudbot/__main__.py, where `cloudbot` i
 
 The CloudBot documentation is currently somewhat outdated and may not be correct. If you need any help, please visit our [IRC channel](irc://irc.esper.net/cloudbot) and we will be happy to assist you.
 
-To write your own plugins, visit the [Plugins Wiki Page](https://github.com/CloudBotIRC/CloudBotRefresh/wiki/Writing-Refresh-Modules).
+To write your own plugins, visit the [Plugins Wiki Page](https://github.com/CloudBotIRC/CloudBot/wiki/Writing-your-first-command-plugin).
 
-More at the [Wiki Main Page](https://github.com/CloudBotIRC/CloudBotRefresh/wiki).
+More at the [Wiki Main Page](https://github.com/CloudBotIRC/CloudBot/wiki).
 
 ### Support
 

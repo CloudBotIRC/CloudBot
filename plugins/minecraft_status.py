@@ -32,17 +32,15 @@ def mcstatus():
 
     if green:
         green.sort()
-        out = "\x033\x02Online\x02\x0f: " + ", ".join(green)
-        if yellow:
-            out += " "
+        out.append("\x02Online\x02: " + ", ".join(green))
     if yellow:
         yellow.sort()
-        out += "\x02Issues\x02: " + ", ".join(yellow)
-        if red:
-            out += " "
+        out.append("\x02Issues\x02: " + ", ".join(yellow))
     if red:
         red.sort()
-        out += "\x034\x02Offline\x02\x0f: " + ", ".join(red)
+        out.append("\x02Offline\x02: " + ", ".join(red))
+
+    out = " ".join(out)
 
     return "\x0f" + out.replace(".mojang.com", ".mj") \
         .replace(".minecraft.net", ".mc")

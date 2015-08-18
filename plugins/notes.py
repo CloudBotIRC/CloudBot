@@ -5,15 +5,15 @@ import sqlalchemy
 from sqlalchemy.sql import select
 
 from cloudbot import hook
-from cloudbot.util import botvars
+from cloudbot.util import database
 
 table = Table(
     'notes',
-    botvars.metadata,
+    database.metadata,
     Column('note_id', Integer),
-    Column('connection', String),
-    Column('user', String),
-    Column('text', String),
+    Column('connection', String(25)),
+    Column('user', String(25)),
+    Column('text', String(500)),
     Column('priority', Integer),
     Column('deleted', Boolean),
     Column('added', DateTime),

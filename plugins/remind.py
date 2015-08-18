@@ -7,7 +7,8 @@ Created By:
     - Pangea <https://github.com/PangeaCake>
     - Luke Rogers <https://github.com/lukeroge>
 
-License: GPL v3
+License:
+    GPL v3
 """
 
 
@@ -19,7 +20,7 @@ import asyncio
 from sqlalchemy import Table, Column, String, DateTime, PrimaryKeyConstraint
 
 from cloudbot import hook
-from cloudbot.util import botvars
+from cloudbot.util import database
 from cloudbot.util.timeparse import time_parse
 from cloudbot.util.timeformat import format_time, time_since
 from cloudbot.util import colors
@@ -27,7 +28,7 @@ from cloudbot.util import colors
 
 table = Table(
     'reminders',
-    botvars.metadata,
+    database.metadata,
     Column('network', String(50)),
     Column('added_user', String(30)),
     Column('added_time', DateTime),

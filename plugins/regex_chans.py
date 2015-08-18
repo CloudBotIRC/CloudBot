@@ -1,11 +1,11 @@
 from sqlalchemy import Table, Column, UniqueConstraint, String
 
 from cloudbot import hook
-from cloudbot.util import botvars
+from cloudbot.util import database
 
 table = Table(
     "regex_chans",
-    botvars.metadata,
+    database.metadata,
     Column("connection", String),
     Column("channel", String),
     Column("status", String),

@@ -1,4 +1,17 @@
-# Based on plugin by FurCode - <https://github.com/FurCode/RoboCop2>
+"""
+octopart.py
+
+Search for electronic parts using the Octopart API.
+
+Created By:
+    - foxlet <https://github.com/foxlet>
+
+Modified By:
+    - Luke Rogers <https://github.com/lukeroge>
+
+License:
+    GPL v3
+"""
 
 import requests
 

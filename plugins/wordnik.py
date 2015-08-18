@@ -44,7 +44,7 @@ def define(text):
 
     if json:
         data = json[0]
-
+        data['word'] = " ".join(data['word'].split())
         data['url'] = web.try_shorten(WEB_URL.format(data['word']))
         data['attrib'] = ATTRIB_NAMES[data['sourceDictionary']]
         return "\x02{word}\x02: {text} - {url} ({attrib})".format(**data)
@@ -69,7 +69,7 @@ def word_usage(text):
         out = "\x02{}\x02: ".format(word)
         example = random.choice(json['examples'])
         out += "{} ".format(example['text'])
-        return out
+        return " ".join(out.split())
     else:
         return "I could not find any usage examples for \x02{}\x02.".format(word)
 
@@ -107,7 +107,7 @@ def pronounce(text):
         url = web.try_shorten(json[0]['fileUrl'])
         out += " - {}".format(url)
 
-    return out
+    return " ".join(out.split())
 
 
 @hook.command()
@@ -128,7 +128,7 @@ def synonym(text):
     if json:
         out = "\x02{}\x02: ".format(word)
         out += " • ".join(json[0]['words'])
-        return out
+        return " ".join(out.split())
     else:
         return "Sorry, I couldn't find any synonyms for \x02{}\x02.".format(word)
 
@@ -153,14 +153,14 @@ def antonym(text):
         out = "\x02{}\x02: ".format(word)
         out += " • ".join(json[0]['words'])
         out = out[:-2]
-        return out
+        return " ".join(out.split())
     else:
         return "Sorry, I couldn't find any antonyms for \x02{}\x02.".format(word)
 
 
 # word of the day
 @hook.command("word", "wordoftheday", autohelp=False)
-def wordoftheday(text, conn):
+def wordoftheday(text):
     """returns the word of the day. To see past word of the day enter use the format yyyy-MM-dd. The specified date must be after 2009-08-10."""
     if not api_key:
         return "This command requires an API key from wordnik.com."
@@ -192,7 +192,7 @@ def wordoftheday(text, conn):
         out += "\x0305({})\x0305 ".format(pos)
         out += "\x0310{}\x0310 ".format(note)
         out += "\x02Definition:\x02 \x0303{}\x0303".format(definition)
-        return out
+        return " ".join(out.split())
     else:
         return "Sorry I couldn't find the word of the day, check out this awesome otter instead {}".format(
             "http://i.imgur.com/pkuWlWx.gif")
@@ -200,7 +200,7 @@ def wordoftheday(text, conn):
 
 # random word
 @hook.command("wordrandom", "randomword", autohelp=False)
-def random_word(conn):
+def random_word():
     """Grabs a random word from wordnik.com"""
     if not api_key:
         return "This command requires an API key from wordnik.com."

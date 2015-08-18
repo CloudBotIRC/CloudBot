@@ -1,6 +1,13 @@
 """
-randoms.py
-Dice, coins, and other randomized things!
+gaming.py
+
+Dice, coins, and random generation for gaming.
+
+Modified By:
+    - Luke Rogers <https://github.com/lukeroge>
+
+License:
+    GPL v3
 """
 
 import asyncio
@@ -8,6 +15,7 @@ import random
 import re
 
 from cloudbot import hook
+
 
 whitespace_re = re.compile(r'\s+')
 valid_diceroll = re.compile(r'^([+-]?(?:\d+|\d*d(?:\d+|F))(?:[+-](?:\d+|\d*d(?:\d+|F)))*)( .+)?$', re.I)

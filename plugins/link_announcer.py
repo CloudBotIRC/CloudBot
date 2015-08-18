@@ -20,6 +20,6 @@ def print_url_title(match, chan):
     # It would be a good idea to also include useragent headers in the request
     r = requests.get(match.group())
     html = BeautifulSoup(r.text)
-    title = html.title.text
+    title = html.title.text.strip()
     out = "Title: \x02{}\x02".format(title)
     return out

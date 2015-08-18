@@ -21,5 +21,5 @@ def print_url_title(match, chan):
     r = requests.get(match.group())
     html = BeautifulSoup(r.text)
     title = html.title.text
-    out = "Title: \x02{}\x02 at: \x02{}\x02".format(title, r.url)
+    out = "Title: \x02{}\x02".format(title)
     return out

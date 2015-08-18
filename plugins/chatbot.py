@@ -55,7 +55,11 @@ def cb_think(text):
     parsed = requests.post(API_URL, data=target_url, headers=HEADERS)
     data = parsed.text.split('\r')
     SESSION['sessionid'] = data[1]
-    return html.unescape(str(data[0]))
+    if parsed.status_code == 200:
+        return html.unescape(str(data[0]))
+    else:
+	    print("CleverBot API Returned "+str(parsed.status_code))
+	    return "Error: API returned "+str(parsed.status_code)
 
 
 @hook.command("ask", "cleverbot", "cb")

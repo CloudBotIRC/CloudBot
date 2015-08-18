@@ -34,6 +34,8 @@ HEADERS = {
     'X-Moz': 'prefetch'
 }
 
+sess = requests.Session()
+sess.get("http://www.cleverbot.com")
 
 @hook.on_start()
 def init_vars():
@@ -52,10 +54,14 @@ def cb_think(text):
     payload = urllib.parse.urlencode(SESSION)
     digest = hashlib.md5(payload[9:35].encode('utf-8')).hexdigest()
     target_url = "{}&icognocheck={}".format(payload, digest)
-    parsed = requests.post(API_URL, data=target_url, headers=HEADERS)
+    parsed = sess.post(API_URL, data=target_url, headers=HEADERS)
     data = parsed.text.split('\r')
     SESSION['sessionid'] = data[1]
-    return html.unescape(str(data[0]))
+    if parsed.status_code == 200:
+        return html.unescape(str(data[0]))
+    else:
+	    print("CleverBot API Returned "+str(parsed.status_code))
+	    return "Error: API returned "+str(parsed.status_code)
 
 
 @hook.command("ask", "cleverbot", "cb")

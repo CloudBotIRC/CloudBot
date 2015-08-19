@@ -3,7 +3,7 @@ import requests
 from sqlalchemy import Table, Column, PrimaryKeyConstraint, String
 from sqlalchemy.sql import select
 from cloudbot import hook
-from cloudbot.util import web, botvars
+from cloudbot.util import web, database
 
 
 class APIError(Exception):
@@ -13,7 +13,7 @@ class APIError(Exception):
 
 table = Table(
     "weather",
-    botvars.metadata,
+    database.metadata,
     Column('nick', String),
     Column('loc', String),
     PrimaryKeyConstraint('nick')

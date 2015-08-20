@@ -46,9 +46,17 @@ def dogecoin():
 
 @hook.command("dash", "darkcoin", autohelp=False)
 def dash():
-    """ -- Returns current darkcoin/dash vaule """
+    """ -- Returns current darkcoin/dash value """
     # alias
     return crypto_command("dash")
+    
+    
+    @hook.command("zetacoin", "zet", autohelp=False)
+def zet():
+    """ -- Returns current Zetacoin value """
+    # alias
+    return crypto_command("zet")
+    
 
 # main command
 @hook.command("crypto", "cryptocurrency")

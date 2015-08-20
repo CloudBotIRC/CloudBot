@@ -44,6 +44,12 @@ def dogecoin():
     return crypto_command("doge")
 
 
+@hook.command("dash", "darkcoin", autohelp=False)
+def dash():
+    """ -- Returns current darkcoin/dash vaule """
+    # alias
+    return crypto_command("dash")
+
 # main command
 @hook.command("crypto", "cryptocurrency")
 def crypto_command(text):

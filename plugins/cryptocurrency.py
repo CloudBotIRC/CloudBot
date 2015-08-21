@@ -51,7 +51,7 @@ def dash():
     return crypto_command("dash")
     
     
-    @hook.command("zetacoin", "zet", autohelp=False)
+@hook.command("zetacoin", "zet", autohelp=False)
 def zet():
     """ -- Returns current Zetacoin value """
     # alias

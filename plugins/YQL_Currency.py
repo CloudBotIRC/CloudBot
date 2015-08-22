@@ -23,7 +23,7 @@ def yahoo_finance_exchange(text):
     """ <value> <type> <target currency(ies)> -- converts from one type to another"""
     text = text.upper().split()
 
-    if text[2].lower() == "IN":
+    if text[2].lower() == "in":
         text.pop(2)
 
     try:

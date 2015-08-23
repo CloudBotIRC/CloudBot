@@ -23,6 +23,9 @@ def yahoo_finance_exchange(text):
     """ <value> <type> <target currency(ies)> -- converts from one type to another"""
     text = text.upper().split()
 
+    if len(text) < 3:
+        return "<value> <type> <target currency(ies)> -- converts from one type to another"
+
     if text[2].lower() == "IN":
         text.pop(2)
 
@@ -55,6 +58,10 @@ def yahoo_finance_exchange(text):
             return "Please provide valid currencies."
 
     getcontext().prec = 3
-    converted = [str(Decimal(value) * Decimal(item[1])) + " " + item[0] for item in rates]
+
+    if int(data['count']) == 1:
+        converted = [str(Decimal(value) * Decimal(rates[1])) + " " + rates[0]]
+    else:
+        converted = [str(Decimal(value) * Decimal(item[1])) + " " + item[0] for item in rates]
 
     return '{} {} is {}'.format(value, text[1], " or ".join(converted))

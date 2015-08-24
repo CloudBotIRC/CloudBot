@@ -43,12 +43,15 @@ def mcping(text):
         description = format_colors(" ".join(s.description["text"].split()))
     else:
         description = format_colors(" ".join(s.description.split()))
+        
+    # I really hate people for putting colors IN THE VERSION
+    # WTF REALLY THIS IS A THING NOW?
 
     if s.latency:
         return "{}\x0f - \x02{}\x0f - \x02{:.1f}ms\x02" \
-            " - \x02{}/{}\x02 players".format(description, s.version.name, s.latency,
+            " - \x02{}/{}\x02 players".format(description, s.version.name_clean, s.latency,
                                               s.players.online, s.players.max).replace("\n", "\x0f - ")
     else:
         return "{}\x0f - \x02{}\x0f" \
-            " - \x02{}/{}\x02 players".format(description, s.version.name,
+            " - \x02{}/{}\x02 players".format(description, s.version.name_clean,
                                               s.players.online, s.players.max).replace("\n", "\x0f - ")

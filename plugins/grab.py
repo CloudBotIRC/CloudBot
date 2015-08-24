@@ -5,13 +5,13 @@ from collections import defaultdict
 from sqlalchemy import Table, Column, String, Boolean, DateTime
 from sqlalchemy.sql import select
 from cloudbot import hook
-from cloudbot.util import botvars
+from cloudbot.util import database
 
 search_pages = defaultdict(list)
 
 table = Table(
     'grab',
-    botvars.metadata,
+    database.metadata,
     Column('name', String),
     Column('time', String),
     Column('quote', String),

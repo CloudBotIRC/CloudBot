@@ -8,6 +8,7 @@ import gc
 from sqlalchemy import create_engine
 
 from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import MetaData
 
 import cloudbot
@@ -16,8 +17,14 @@ from cloudbot.config import Config
 from cloudbot.reloader import PluginReloader
 from cloudbot.plugin import PluginManager
 from cloudbot.event import Event, CommandEvent, RegexEvent, EventType
-from cloudbot.util import botvars, formatting
+from cloudbot.util import database, formatting
 from cloudbot.clients.irc import IrcClient
+
+try:
+    from cloudbot.web.main import WebInterface
+    web_installed = True
+except ImportError:
+    web_installed = False
 
 logger = logging.getLogger("cloudbot")
 
@@ -89,10 +96,15 @@ class CloudBot:
         self.db_factory = sessionmaker(bind=self.db_engine)
         self.db_session = scoped_session(self.db_factory)
         self.db_metadata = MetaData()
+        self.db_base = declarative_base(metadata=self.db_metadata, bind=self.db_engine)
+
+        # create web interface
+        if self.config.get("web", {}).get("enabled", False) and web_installed:
+            self.web = WebInterface(self)
 
         # set botvars so plugins can access when loading
-        botvars.metadata = self.db_metadata
-        botvars.user_agent = self.user_agent
+        database.metadata = self.db_metadata
+        database.base = self.db_base
 
         logger.debug("Database system initialised.")
 
@@ -192,6 +204,10 @@ class CloudBot:
 
         # Connect to servers
         yield from asyncio.gather(*[conn.connect() for conn in self.connections.values()], loop=self.loop)
+
+        # Activate web interface.
+        if self.config.get("web", {}).get("enabled", False) and web_installed:
+            self.web.start()
 
         # Run a manual garbage collection cycle, to clean up any unused objects created during initialization
         gc.collect()

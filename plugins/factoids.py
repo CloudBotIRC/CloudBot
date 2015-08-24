@@ -6,7 +6,7 @@ from sqlalchemy import Table, Column, String
 import requests
 
 from cloudbot import hook
-from cloudbot.util import botvars, colors, web
+from cloudbot.util import database, colors, web
 
 
 re_lineends = re.compile(r'[\r\n]*')
@@ -15,10 +15,10 @@ FACTOID_CHAR = "?"  # TODO: config
 
 table = Table(
     "mem",
-    botvars.metadata,
-    Column("word", String, primary_key=True),
-    Column("data", String),
-    Column("nick", String)
+    database.metadata,
+    Column("word", String(25), primary_key=True),
+    Column("data", String(500)),
+    Column("nick", String(25))
 )
 
 

@@ -37,16 +37,10 @@ replacements = {
     '?': '¿',
     '.': '˙',
     ',': '\'',
-    '/': '\\',
-    '\\': '/',
     '(': ')',
-    ')': '(',
     '<': '>',
-    '>': '<',
     '[': ']',
-    ']': '[',
     '{': '}',
-    '}': '{',
     '\'': ',',
     '_': '‾'}
 
@@ -55,6 +49,7 @@ replacements.update(dict((v, k) for k, v in replacements.items()))
 
 flippers = ["( ﾉ⊙︵⊙）ﾉ", "(╯°□°）╯", "( ﾉ♉︵♉ ）ﾉ"]
 table_flipper = "┻━┻ ︵ヽ(`Д´)ﾉ︵ ┻━┻"
+
 
 @hook.command
 def flip(text, reply, message, chan):
@@ -77,7 +72,7 @@ def flip(text, reply, message, chan):
         reply(formatting.multi_replace(text[::-1], replacements))
 
 
-@hook.command
+@hook.command(autohelp=False)
 def table(text, message):
     """<text> -- (╯°□°）╯︵ <ʇxǝʇ>"""
     message(random.choice(flippers) + " ︵ " + formatting.multi_replace(text[::-1].lower(), replacements))

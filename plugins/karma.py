@@ -1,10 +1,8 @@
-#import asyncio
 import re
 import operator
 
 from collections import defaultdict
 from cloudbot import hook
-#from cloudbot.util import timesince
 from cloudbot.event import EventType
 
 karmaplus_re = re.compile('^.*\+\+$')
@@ -25,7 +23,7 @@ def db_init(db, conn_name):
 @hook.command("pp", "addpoint")
 def addpoint(text, nick, chan, db, conn):
     """.addpoint or (.pp) <thing> adds a point to the <thing>"""
-    
+    text = text.strip()
     db_init(db, conn.name)
     karma = db.execute("select score from karma where name = :name and chan = :chan and thing = :thing", {'name':nick, 'chan': chan, 'thing': text.lower()}).fetchone()
     if karma:
@@ -52,7 +50,7 @@ def re_addpt(match, nick, chan, db, conn, notice):
 @hook.command("mm", "rmpoint")
 def rmpoint(text, nick, chan, db, conn):
     """.rmpoint or (.mm) <thing> subtracts a point from the <thing>"""
-
+    text = text.strip()
     db_init(db, conn.name)
     karma = db.execute("select score from karma where name = :name and chan = :chan and thing = :thing", {'name':nick, 'chan': chan, 'thing': text.lower()}).fetchone()
     if karma:
@@ -109,6 +107,7 @@ def points(text, chan, db, conn):
         thing = text[:-7].strip()
         karma = db.execute("select score from karma where thing = :thing", {'thing': thing.lower()}).fetchall()
     else:
+        text = text.strip()
         karma = db.execute("select score from karma where thing = :thing and chan = :chan", {'thing': text.lower(), 'chan': chan }).fetchall()
     if karma:
         pos = 0
@@ -184,4 +183,3 @@ def pointsbottom(text, chan, db, message, conn, notice):
             out += "{} with {} points \u2022 ".format(sorts[i][0], sorts[i][1])
         out = out[:-2]
         return out
-

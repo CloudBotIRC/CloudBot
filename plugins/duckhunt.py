@@ -8,7 +8,7 @@ from sqlalchemy import Table, Column, String, Integer, PrimaryKeyConstraint, des
 from sqlalchemy.sql import select
 from cloudbot import hook
 from cloudbot.event import EventType
-from cloudbot.util import botvars
+from cloudbot.util import database
 
 duck_tail = "・゜゜・。。・゜゜"
 duck = ["\_o< ", "\_O< ", "\_0< ", "\_\u00f6< ", "\_\u00f8< ", "\_\u00f3< "]
@@ -16,7 +16,7 @@ duck_noise = ["QUACK!", "FLAP FLAP!", "quack!"]
 
 table = Table(
     'duck_hunt',
-    botvars.metadata,
+    database.metadata,
     Column('network', String),
     Column('name', String),
     Column('shot', Integer),
@@ -27,7 +27,7 @@ table = Table(
 
 optout = Table(
     'nohunt',
-    botvars.metadata,
+    database.metadata,
     Column('network', String),
     Column('chan', String),
     PrimaryKeyConstraint('chan','network')

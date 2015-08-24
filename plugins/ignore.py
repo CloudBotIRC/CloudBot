@@ -4,16 +4,16 @@ from fnmatch import fnmatch
 from sqlalchemy import Table, Column, UniqueConstraint, PrimaryKeyConstraint, String, Boolean
 
 from cloudbot import hook
-from cloudbot.util import botvars
+from cloudbot.util import database
 
 logchannel = ""
 
 table = Table(
     "ignored",
-    botvars.metadata,
-    Column("connection", String),
-    Column("channel", String),
-    Column("mask", String),
+    database.metadata,
+    Column("connection", String(25)),
+    Column("channel", String(25)),
+    Column("mask", String(250)),
     Column("status", Boolean, default=True),
     UniqueConstraint("connection", "channel", "mask", "status"),
     PrimaryKeyConstraint("connection", "channel", "mask")

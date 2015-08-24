@@ -1,3 +1,16 @@
+"""
+recipe.py
+
+Provides commands for searching recipes. Also has a number of commands for returning random recipes
+in multiple formats.
+
+Created By:
+    - Luke Rogers <https://github.com/lukeroge>
+
+License:
+    GPL v3
+"""
+
 import random
 
 import microdata
@@ -7,13 +20,13 @@ import bs4
 from cloudbot import hook
 from cloudbot.util import web
 
-base_url = "http://www.cookstr.com"
-search_url = base_url + "/searches"
-random_url = search_url + "/surprise"
+BASE_URL = "http://www.cookstr.com"
+SEARCH_URL = BASE_URL + "/searches"
+RANDOM_URL = SEARCH_URL + "/surprise"
 
 # set this to true to censor this plugin!
-censor = True
-phrases = [
+CENSOR = True
+PHRASES = [
     "EAT SOME FUCKING \x02{}\x02",
     "YOU WON'T NOT MAKE SOME FUCKING \x02{}\x02",
     "HOW ABOUT SOME FUCKING \x02{}?\x02",
@@ -60,7 +73,7 @@ def recipe(text):
     if text:
         # get the recipe URL by searching
         try:
-            request = requests.get(search_url, params={'query': text.strip()})
+            request = requests.get(SEARCH_URL, params={'query': text.strip()})
             request.raise_for_status()
         except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
             return "Could not get recipe: {}".format(e)
@@ -79,12 +92,12 @@ def recipe(text):
         result = random.choice(results)
 
         # extract the URL from the result
-        url = base_url + result.find('div', {'class': 'image-wrapper'}).find('a')['href']
+        url = BASE_URL + result.find('div', {'class': 'image-wrapper'}).find('a')['href']
 
     else:
         # get a random recipe URL
         try:
-            request = requests.get(random_url)
+            request = requests.get(RANDOM_URL)
             request.raise_for_status()
         except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
             return "Could not get recipe: {}".format(e)
@@ -106,7 +119,7 @@ def recipe(text):
 def dinner():
     """- TELLS YOU WHAT THE F**K YOU SHOULD MAKE FOR DINNER"""
     try:
-        request = requests.get(random_url)
+        request = requests.get(RANDOM_URL)
         request.raise_for_status()
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
         return "I CANT GET A DAMN RECIPE: {}".format(e).upper()
@@ -119,9 +132,9 @@ def dinner():
         return "I CANT READ THE F**KING RECIPE: {}".format(e).upper()
 
     name = data.name.strip().upper()
-    text = random.choice(phrases).format(name)
+    text = random.choice(PHRASES).format(name)
 
-    if censor:
+    if CENSOR:
         text = text.replace("FUCK", "F**K")
 
     return "{} - {}".format(text, web.try_shorten(url))

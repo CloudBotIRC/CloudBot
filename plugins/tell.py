@@ -5,16 +5,16 @@ from sqlalchemy import Table, Column, String, Boolean, DateTime
 from sqlalchemy.sql import select
 
 from cloudbot import hook
-from cloudbot.util import timeformat, botvars
+from cloudbot.util import timeformat, database
 from cloudbot.event import EventType
 
 table = Table(
     'tells',
-    botvars.metadata,
-    Column('connection', String),
-    Column('sender', String),
-    Column('target', String),
-    Column('message', String),
+    database.metadata,
+    Column('connection', String(25)),
+    Column('sender', String(25)),
+    Column('target', String(25)),
+    Column('message', String(500)),
     Column('is_read', Boolean),
     Column('time_sent', DateTime),
     Column('time_read', DateTime)
@@ -47,6 +47,7 @@ def count_unread(db, server, target):
         .where(table.c.connection == server.lower()) \
         .where(table.c.target == target.lower()) \
         .where(table.c.is_read == 0) \
+        .alias("count") \
         .count()
     return db.execute(query).fetchone()[0]
 

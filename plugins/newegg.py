@@ -1,3 +1,15 @@
+"""
+newegg.py
+
+Provides a command and URL parser for viewing newegg products.
+
+Created By:
+    - Luke Rogers <https://github.com/lukeroge>
+
+License:
+    GPL v3
+"""
+
 import json
 import requests
 import re

@@ -5,15 +5,17 @@ import threading
 import traceback
 import sys
 
-import cloudbot
+PYMPLER_ENABLED = False
 
-#if cloudbot.dev_mode.get("pympler", False):
-try:
-    import pympler
-    import pympler.muppy
-    import pympler.summary
-    import pympler.tracker
-except ImportError:
+if PYMPLER_ENABLED:
+    try:
+        import pympler
+        import pympler.muppy
+        import pympler.summary
+        import pympler.tracker
+    except ImportError:
+        pympler = None
+else:
     pympler = None
 try:
     import objgraph
@@ -111,7 +113,7 @@ def pympler_diff():
 
 # # Provide an easy way to get a threaddump, by using SIGUSR1 (only on POSIX systems)
 if os.name == "posix":
-    def debug(sig, frame):
+    def debug():
         print(get_thread_dump())
 
     signal.signal(signal.SIGUSR1, debug)  # Register handler

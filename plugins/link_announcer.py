@@ -1,3 +1,4 @@
+import asyncio
 import requests
 import re
 from bs4 import BeautifulSoup
@@ -11,6 +12,7 @@ url_re = re.compile('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-
 
 opt_in = []
 
+@asyncio.coroutine
 @hook.regex(url_re)
 def print_url_title(match, chan):
     if chan not in opt_in:
@@ -18,7 +20,9 @@ def print_url_title(match, chan):
     if re.search(blacklist, match.group()):
         return
     # It would be a good idea to also include useragent headers in the request
-    r = requests.get(match.group())
+    r = requests.get(match.group(), stream = True)
+    if not r.encoding:
+        return
     html = BeautifulSoup(r.text)
     title = html.title.text.strip()
     out = "Title: \x02{}\x02".format(title)

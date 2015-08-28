@@ -23,6 +23,7 @@ def correction(match, conn, chan, message):
         if correction_re.match(msg):
             # don't correct corrections, it gets really confusing
             continue
+        msg = msg.replace("\n","\\n").replace("\r","\\r")
 
         if find.lower() in msg.lower():
             if "\x01ACTION" in msg:

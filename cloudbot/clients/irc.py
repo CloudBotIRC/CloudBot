@@ -140,17 +140,20 @@ class IrcClient(Client):
         self._transport.close()
         self._connected = False
 
-    def message(self, target, *messages):
+    def message(self, target, *messages, newlines=False):
         for text in messages:
-            text = text.replace("\n", "").replace("\r", "")
+            if newlines == False:
+                text = text.replace("\n", "").replace("\r", "")
             self.cmd("PRIVMSG", target, text)
 
-    def action(self, target, text):
-        text = text.replace("\n", "").replace("\r", "")
+    def action(self, target, text, newlines=False):
+        if newlines == False:
+            text = text.replace("\n", "").replace("\r", "")
         self.ctcp(target, "ACTION", text)
 
-    def notice(self, target, text):
-        text = text.replace("\n", "").replace("\r", "")
+    def notice(self, target, text, newlines=False):
+        if newlines == False:
+            text = text.replace("\n", "").replace("\r", "")
         self.cmd("NOTICE", target, text)
 
     def set_nick(self, nick):

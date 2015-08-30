@@ -148,15 +148,15 @@ class IrcClient(Client):
 
     def message(self, target, *messages):
         for text in messages:
-            text = text.replace("\n","").replace("\r","")
+            text = "".join(text.splitlines())
             self.cmd("PRIVMSG", target, text)
 
     def action(self, target, text):
-        text = text.replace("\n","").replace("\r","")
+        text = "".join(text.splitlines())
         self.ctcp(target, "ACTION", text)
 
     def notice(self, target, text):
-        text = text.replace("\n","").replace("\r","")
+        text = "".join(text.splitlines())
         self.cmd("NOTICE", target, text)
 
     def set_nick(self, nick):
@@ -165,7 +165,7 @@ class IrcClient(Client):
     def join(self, channel):
         self.send("JOIN {}".format(channel))
         if channel not in self.channels:
-            self.channels.append(channel)
+            self.channe:ls.append(channel)
 
     def part(self, channel):
         self.cmd("PART", channel)

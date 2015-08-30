@@ -142,19 +142,16 @@ class IrcClient(Client):
 
     def message(self, target, *messages):
         for text in messages:
-            text = text.splitlines()
-            for line in text:
-                self.cmd("PRIVMSG", target, line)
+            text = text.replace("\n", "").replace("\r", "")
+            self.cmd("PRIVMSG", target, text)
 
     def action(self, target, text):
-        text = text.splitlines()
-        for line in text:
-            self.ctcp(target, "ACTION", line)
+        text = text.replace("\n", "").replace("\r", "")
+        self.ctcp(target, "ACTION", text)
 
     def notice(self, target, text):
-        text = text.splitlines()
-        for line in text:
-            self.cmd("NOTICE", target, line)
+        text = text.replace("\n", "").replace("\r", "")
+        self.cmd("NOTICE", target, text)
 
     def set_nick(self, nick):
         self.cmd("NICK", nick)

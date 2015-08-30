@@ -343,13 +343,16 @@ class _IrcProtocol(asyncio.Protocol):
             # Parse the command and params
 
             # Content
-            if command_params and command_params[-1].startswith(":"):
+            if command_params:
+                if command_params[-1].startswith(":"):
                 # If the last param is in the format of `:content` remove the `:` from it, and set content from it
-                content_raw = command_params[-1][1:]
-                content = irc_clean(content_raw)
-            else:
-                content_raw = None
-                content = None
+                    content_raw = command_params[-1][1:]
+                    content = irc_clean(content_raw)
+                else:
+                    content_raw = None
+                    content = None
+                    if not command_params[-1]=="":
+                        content = command_params[-1]
 
             # Event type
             if command in irc_command_to_event_type:

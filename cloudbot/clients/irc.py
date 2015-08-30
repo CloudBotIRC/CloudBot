@@ -15,7 +15,7 @@ irc_noprefix_re = re.compile(r"([^ ]*) (.*)")
 irc_netmask_re = re.compile(r"([^!@]*)!([^@]*)@(.*)")
 irc_param_re = re.compile(r"(?:^|(?<= ))(:.*|[^ ]+)")
 
-irc_bad_chars = ''.join([chr(x) for x in list(range(0, 1)) + list(range(4, 32) + list(range(127, 160))])
+irc_bad_chars = ''.join([chr(x) for x in list(range(0, 1)) + list(range(4, 32)) + list(range(127, 160))])
 irc_clean_re = re.compile('[{}]'.format(re.escape(irc_bad_chars)))
 
 def irc_clean(dirty):
@@ -165,7 +165,7 @@ class IrcClient(Client):
     def join(self, channel):
         self.send("JOIN {}".format(channel))
         if channel not in self.channels:
-            self.channe:ls.append(channel)
+            self.channels.append(channel)
 
     def part(self, channel):
         self.cmd("PART", channel)

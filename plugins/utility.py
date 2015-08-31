@@ -138,10 +138,10 @@ def base64_encode(text):
 
 
 @hook.command("debase64", "unbase64")
-def base64_decode(text, notice):
+def base64_decode(text, notice, message):
     """<string> -- Decode <string> with base64."""
     try:
-        return base64.b64decode(text.encode()).decode()
+        message( base64.b64decode(text.encode()).decode())
     except binascii.Error:
         notice("Invalid base64 string '{}'".format(text))
 
@@ -158,10 +158,10 @@ def base64_check(text):
 
 
 @hook.command
-def unescape(text):
+def unescape(text, message):
     """<string> -- Unicode unescapes <string>."""
     decoder = codecs.getdecoder("unicode_escape")
-    return decoder(text)[0]
+    message(decoder(text)[0])
 
 
 @hook.command

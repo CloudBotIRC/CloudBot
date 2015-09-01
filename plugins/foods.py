@@ -65,7 +65,7 @@ def load_foods(bot):
     """
     :type bot: cloudbot.bot.CloudBot
     """
-    global sandwich_data, taco_data, coffee_data, noodles_data, muffin_data, tea_data, keto_data, beer_data
+    global sandwich_data, taco_data, coffee_data, noodles_data, muffin_data, tea_data, keto_data, beer_data, cheese_data
 
     with codecs.open(os.path.join(bot.data_dir, "sandwich.json"), encoding="utf-8") as f:
         sandwich_data = json.load(f)
@@ -91,6 +91,9 @@ def load_foods(bot):
     with codecs.open(os.path.join(bot.data_dir, "beer.json"), encoding="utf-8") as f:
         beer_data = json.load(f)
 
+    with codecs.open(os.path.join(bot.data_dir, "cheese.json"), encoding="utf-8") as f:
+	    cheese_data = json.load(f)
+		
 @asyncio.coroutine
 @hook.command
 def potato(text, action):
@@ -259,6 +262,20 @@ def beer(text, action):
         return "I can't give beer to that user."
 
     generator = textgen.TextGenerator(beer_data["templates"], beer_data["parts"],
+                                      variables={"user": user})
+    # act out the message
+    action(generator.generate_string())
+
+@asyncio.coroutine
+@hook.command
+def cheese(text, action):
+    """<user> - give cheese to <user>"""
+    user = text.strip()
+
+    if not is_valid(user):
+        return "I can't give cheese to that user."
+
+    generator = textgen.TextGenerator(cheese_data["templates"], cheese_data["parts"],
                                       variables={"user": user})
     # act out the message
     action(generator.generate_string())

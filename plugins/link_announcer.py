@@ -6,11 +6,29 @@ from cloudbot import hook
 
 # This will match ANY we url including youtube, reddit, twitch, etc... Some additional work needs to go into
 # not sending the web request etc if the match also matches an existing web regex.
-blacklist = re.compile('.*(reddit\.com|redd.it|youtube.com|youtu.be|spotify.com|twitter.com|twitch.com|amazon.com|amzn.com).*', re.I)
+blacklist = re.compile('.*(reddit\.com|redd.it|youtube.com|youtu.be|spotify.com|twitter.com|twitch.com|amazon.com|amzn.com|steamcommunity.com|steampowered.com|newegg.com).*', re.I)
 url_re = re.compile('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
 
-
 opt_in = []
+
+traditional = [
+    (1024 ** 5, 'PB'),
+    (1024 ** 4, 'TB'), 
+    (1024 ** 3, 'GB'), 
+    (1024 ** 2, 'MB'), 
+    (1024 ** 1, 'KB'),
+    (1024 ** 0, 'B'),
+    ]
+
+
+def bytesto(bytes, system = traditional):
+    """ converts bytes to something """
+    bytes = int(bytes)
+    for factor, suffix in system:
+        if bytes >= factor:
+            break
+    amount = int(bytes/factor)
+    return str(amount) + suffix
 
 @hook.regex(url_re)
 def print_url_title(match, chan):
@@ -21,7 +39,9 @@ def print_url_title(match, chan):
     # It would be a good idea to also include useragent headers in the request
     with closing(requests.get(match.group(), stream = True)) as r:
         if not r.encoding:
-            return
+            size = bytesto(r.headers['content-length'])
+            out = "Content Type: \x02{}\x02 Size: \x02{}\x02".format(r.headers['content-type'], size)
+            return out
         html = BeautifulSoup(r.text)
         title = html.title.text.strip()
         out = "Title: \x02{}\x02".format(title)

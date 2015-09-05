@@ -36,13 +36,18 @@ def print_url_title(match, chan):
         return
     if re.search(blacklist, match.group()):
         return
-    # It would be a good idea to also include useragent headers in the request
-    with closing(requests.get(match.group(), stream = True)) as r:
+    HEADERS = {
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19'
+    }
+    with closing(requests.get(match.group(), headers = HEADERS, stream = True)) as r:
         if not r.encoding:
+            content = r.headers['content-type']
             size = bytesto(r.headers['content-length'])
-            out = "Content Type: \x02{}\x02 Size: \x02{}\x02".format(r.headers['content-type'], size)
+            out = "Content Type: \x02{}\x02 Size: \x02{}\x02".format(content, size)
             return out
         html = BeautifulSoup(r.text)
         title = html.title.text.strip()
-        out = "Title: \x02{}\x02".format(title)
+        content = r.headers['content-type']
+        size = bytesto(r.headers['content-length'])
+        out = "Title: \x02{}\x02, Content Type: \x02{}\x02, Size: \x02{}\x02".format(title, content, size)
         return out

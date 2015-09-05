@@ -51,11 +51,11 @@ def print_url_title(match, chan):
             content = r.headers['content-type']
         except:
             content = "None"
-            continue
+            pass
         try:
             size = bytesto(r.headers['content-length'])
         except:
             size = "Unknown"
-            continue
+            pass
         out = "Title: \x02{}\x02, Content Type: \x02{}\x02, Size: \x02{}\x02".format(title, content, size)
         return out

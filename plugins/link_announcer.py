@@ -47,7 +47,15 @@ def print_url_title(match, chan):
             return out
         html = BeautifulSoup(r.text)
         title = html.title.text.strip()
-        content = r.headers['content-type']
-        size = bytesto(r.headers['content-length'])
+        try:
+            content = r.headers['content-type']
+        except:
+            content = "None"
+            continue
+        try:
+            size = bytesto(r.headers['content-length'])
+        except:
+            size = "Unknown"
+            continue
         out = "Title: \x02{}\x02, Content Type: \x02{}\x02, Size: \x02{}\x02".format(title, content, size)
         return out

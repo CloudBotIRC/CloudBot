@@ -39,7 +39,7 @@ def spank(text, action):
     # act out the message
     action(generator.generate_string())
 
-@hook.command("dominate")
+@hook.command("dominate", "bdsm")
 def bdsm(text, action):
     """Just a little bit of kinky fun."""
     user = text.strip()

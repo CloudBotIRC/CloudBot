@@ -437,6 +437,7 @@ def hunt_opt_out(text, chan, db, conn):
         db.execute(query)
         db.commit()
         load_optout(db)
+        return "The duckhunt has been successfully disabled in {}.".format(channel)
     if command.lower() == "remove":
         if not channel in opt_out:
             return "Duck hunt is already enabled in {}.".format(channel)

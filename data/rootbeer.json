@@ -1,0 +1,48 @@
+{
+  "templates": [
+    "hands {user} a {condition} {container} of {quality} {type}!"
+  ],
+  "parts": {
+    "type": [
+      ["root beer", 10],
+      "birch beer",
+      ["sarsaparilla", 2],
+      ["Julmust", 2],
+      ["horehound beer", 2],
+	  ["Malta", 2],
+	  ["Jones Soda! Damn Hipster",1]
+    ],
+    "quality": [
+      ["ice cold", 10],
+      ["frosty", 10],
+      "delicious",
+	  "refreshing",
+	  "thirst quenching",
+	  "icy",
+      ["piss warm", 1],
+      ["disgusting", 1],
+      "perfect",
+	  ["vile", 1],
+	  ["flat", 1],
+	  ["frozen", 1]
+    ],
+    "container": [
+      ["mug", 10],
+	  ["glass", 10],
+	  "bottle",
+	  ["stein", 2],
+	  ["coffee cup", 2],
+	  ["bed pan", 1],
+	  ["urinal", 1]
+    ],
+    "condition": [
+	  ["chilled", 10],
+	  ["fancy", 7],
+	  "big",
+	  ["cracked", 3],
+	  ["dirty", 1],
+	  ["disgusting", 1],
+	  ["shattered", 1]
+    ]
+  }
+}

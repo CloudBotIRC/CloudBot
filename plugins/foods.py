@@ -178,8 +178,6 @@ def beer(text, action):
 
     if not is_valid(user):
         return "I can't give a beer to that user."
-	if (user == 'tux'):
-		return "Tisk tisk, tux is too young to drink. Maybe he would like a root beer?"
 
 	selection = beer_data[random.randint(0,246)]
 	beer_name = selection['Name']
@@ -198,8 +196,6 @@ def cocktail(text, action):
 
     if not is_valid(user):
         return "I can't give a cocktail to that user."
-	if (user == 'tux'):
-		return "Tisk tisk, tux is too young to drink. Maybe he would like a root beer?"
 
 	selection = cocktail_data["type"][random.randint(0,496)]
 	cocktail_name = selection['Name']

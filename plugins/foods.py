@@ -72,15 +72,15 @@ def load_foods(bot):
 
     with codecs.open(os.path.join(bot.data_dir, "taco.json"), encoding="utf-8") as f:
         taco_data = json.load(f)
-	
-	with codecs.open(os.path.join(bot.data_dir, "beer.json"), encoding="utf-8") as f:
-		beer_data = json.load(f)
+    
+    with codecs.open(os.path.join(bot.data_dir, "beer.json"), encoding="utf-8") as f:
+        beer_data = json.load(f)
 
-	with codecs.open(os.path.join(bot.data_dir, "cocktail.json"), encoding="utf-8") as f:
-		cocktail_data = json.load(f)
-		
-	with codecs.open(os.path.join(bot.data_dir, "rootbeer.json"), encoding="utf-8") as f:
-		rootbeer_data = json.load(f)
+    with codecs.open(os.path.join(bot.data_dir, "cocktail.json"), encoding="utf-8") as f:
+        cocktail_data = json.load(f)
+        
+    with codecs.open(os.path.join(bot.data_dir, "rootbeer.json"), encoding="utf-8") as f:
+        rootbeer_data = json.load(f)
 
 @asyncio.coroutine
 @hook.command
@@ -179,13 +179,13 @@ def beer(text, action):
     if not is_valid(user):
         return "I can't give a beer to that user."
 
-	selection = beer_data[random.randint(0,246)]
-	beer_name = selection['Name']
-	brewery_name = selection['Brewery']
-	beer_type = selection['Type']
-	beer_abv = selection['ABV']
-	
-	# act out the message
+    selection = beer_data[random.randint(0,246)]
+    beer_name = selection['Name']
+    brewery_name = selection['Brewery']
+    beer_type = selection['Type']
+    beer_abv = selection['ABV']
+    
+    # act out the message
     action("pours {} a pint of {}, a {} {} from {}!".format(user, beer_name, beer_abv, beer_type, brewery_name))
 
 @asyncio.coroutine
@@ -197,9 +197,9 @@ def cocktail(text, action):
     if not is_valid(user):
         return "I can't give a cocktail to that user."
 
-	selection = cocktail_data["type"][random.randint(0,496)]
-	cocktail_name = selection['Name']
-	recipe_address = selection['Address']
+    selection = cocktail_data["type"][random.randint(0,496)]
+    cocktail_name = selection['Name']
+    recipe_address = selection['Address']
     generator = textgen.TextGenerator(cocktail_data["templates"], cocktail_data["parts"],
                                       variables={"user": user, "cocktail_name": cocktail_name, "recipe": recipe_address})
 
@@ -215,8 +215,9 @@ def rootbeer(text, action):
     if not is_valid(user):
         return "I can't give a root beer to that user."
 
-	generator = textgen.TextGenerator(rootbeer_data["templates"], rootbeer_data["parts"],
+    generator = textgen.TextGenerator(rootbeer_data["templates"], rootbeer_data["parts"],
                                       variables={"user": user})
 
     # act out the message
     action(generator.generate_string())
+    

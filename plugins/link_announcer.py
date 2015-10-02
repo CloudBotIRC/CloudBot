@@ -1,6 +1,7 @@
 import requests
 import re
 from bs4 import BeautifulSoup
+from contextlib import closing
 from cloudbot import hook
 
 # This will match ANY we url including youtube, reddit, twitch, etc... Some additional work needs to go into
@@ -18,8 +19,10 @@ def print_url_title(match, chan):
     if re.search(blacklist, match.group()):
         return
     # It would be a good idea to also include useragent headers in the request
-    r = requests.get(match.group())
-    html = BeautifulSoup(r.text)
-    title = html.title.text.strip()
-    out = "Title: \x02{}\x02".format(title)
-    return out
+    with closing(requests.get(match.group(), stream = True)) as r:
+        if not r.encoding:
+            return
+        html = BeautifulSoup(r.text)
+        title = html.title.text.strip()
+        out = "Title: \x02{}\x02".format(title)
+        return out

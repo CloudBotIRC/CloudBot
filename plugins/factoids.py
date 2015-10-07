@@ -170,13 +170,6 @@ def factoid(match, async, chan, event, message, action):
         if result.startswith("<act>"):
             result = result[5:].strip()
             action(result)
-        elif result.startswith("<url>"):
-            url = result[5:].strip()
-            response = requests.get(url)
-            if response.status_code != requests.codes.ok:
-                message("Failed to fetch resource.")
-            else:
-                message(response.text)
         else:
             message(result)
 

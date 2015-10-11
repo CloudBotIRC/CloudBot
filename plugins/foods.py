@@ -66,7 +66,7 @@ def load_foods(bot):
     :type bot: cloudbot.bot.CloudBot
     """
     global sandwich_data, taco_data, coffee_data, noodles_data, muffin_data, \
-           tea_data, keto_data, beer_data, cheese_data, pancake_data
+        tea_data, keto_data, beer_data, cheese_data, pancake_data, chicken_data
 
     with codecs.open(os.path.join(bot.data_dir, "sandwich.json"), encoding="utf-8") as f:
         sandwich_data = json.load(f)
@@ -75,7 +75,7 @@ def load_foods(bot):
         taco_data = json.load(f)
    
     with codecs.open(os.path.join(bot.data_dir, "coffee.json"), encoding="utf-8") as f:
-       coffee_data = json.load(f)
+        coffee_data = json.load(f)
 
     with codecs.open(os.path.join(bot.data_dir, "noodles.json"), encoding="utf-8") as f:
         noodles_data = json.load(f)
@@ -93,10 +93,14 @@ def load_foods(bot):
         beer_data = json.load(f)
 
     with codecs.open(os.path.join(bot.data_dir, "cheese.json"), encoding="utf-8") as f:
-	    cheese_data = json.load(f)
+        cheese_data = json.load(f)
 
-    with codecs.open(os.path.join(bot.data_dir, "pancake.json"), encoding="utf=8") as f:
+    with codecs.open(os.path.join(bot.data_dir, "pancake.json"), encoding="utf-8") as f:
         pancake_data = json.load(f)
+
+    with codecs.open(os.path.join(bot.data_dir, "chicken.json"), encoding="utf-8") as f:
+        chicken_data = json.load(f)
+
 		
 @asyncio.coroutine
 @hook.command
@@ -295,6 +299,20 @@ def pancake(text, action):
 
     generator = textgen.TextGenerator(pancake_data["templates"], pancake_data["parts"],
                                       variables={"user": user})
+
+    # act out the message
+    action(generator.generate_string())
+
+@asyncio.coroutine
+@hook.command
+def chicken(text, action):
+    """<user> - give pancakes to <user>"""
+    user = text.strip()
+
+    if not is_valid(user):
+        return "I can't give pancakes to that user."
+
+    generator = textgen.TextGenerator(chicken_data["templates"], chicken_data["parts"], variables={"user": user})
 
     # act out the message
     action(generator.generate_string())

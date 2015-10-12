@@ -198,6 +198,15 @@ def dbupdate(nick, chan, db, conn, shoot, friend):
             .values(befriend = friend)
         db.execute(query)
         db.commit()
+    elif friend and shoot:
+        query = table.update() \
+            .where(table.c.network == conn.name) \
+            .where(table.c.chan == chan.lower()) \
+            .where(table.c.name == nick.lower()) \
+            .values(befriend = friend) \
+            .values(shot = shoot)
+        db.execute(query)
+        db.commit()
 
 @hook.command("bang", autohelp=False)
 def bang(nick, chan, message, db, conn, notice):
@@ -428,6 +437,7 @@ def hunt_opt_out(text, chan, db, conn):
         db.execute(query)
         db.commit()
         load_optout(db)
+        return "The duckhunt has been successfully disabled in {}.".format(channel)
     if command.lower() == "remove":
         if not channel in opt_out:
             return "Duck hunt is already enabled in {}.".format(channel)
@@ -435,6 +445,59 @@ def hunt_opt_out(text, chan, db, conn):
         db.execute(delete)
         db.commit()
         load_optout(db)
+
+@hook.command("duckmerge", permissions=["botcontrol"])
+def duck_merge(text, conn, db, message):
+    """Moves the duck scores from one nick to another nick. Accepts two nicks as input the first will have their duck scores removed the second will have the first score added. Warning this cannot be undone."""
+    oldnick, newnick = text.lower().split()
+    if not oldnick or not newnick:
+        return "Please specify two nicks for this command."
+    oldnickscore = db.execute(select([table.c.name, table.c.chan, table.c.shot, table.c.befriend])
+        .where(table.c.network == conn.name)
+        .where(table.c.name == oldnick)).fetchall()
+    newnickscore = db.execute(select([table.c.name, table.c.chan, table.c.shot, table.c.befriend])
+        .where(table.c.network == conn.name)
+        .where(table.c.name == newnick)).fetchall()
+    duckmerge = defaultdict(lambda: defaultdict(int))
+    duckmerge["TKILLS"] = 0
+    duckmerge["TFRIENDS"] = 0
+    channelkey = {"update":[], "insert":[]}
+    if oldnickscore:
+        if newnickscore:
+            for row in newnickscore:
+                duckmerge[row["chan"]]["shot"] = row["shot"]
+                duckmerge[row["chan"]]["befriend"] = row["befriend"]
+            for row in oldnickscore:
+                if row["chan"] in duckmerge:
+                    duckmerge[row["chan"]]["shot"] = duckmerge[row["chan"]]["shot"] + row["shot"]
+                    duckmerge[row["chan"]]["befriend"] = duckmerge[row["chan"]]["befriend"] + row["befriend"]
+                    channelkey["update"].append(row["chan"])
+                    duckmerge["TKILLS"] = duckmerge["TKILLS"] + row["shot"]
+                    duckmerge["TFRIENDS"] = duckmerge["TFRIENDS"] + row["befriend"]
+                else:
+                    duckmerge[row["chan"]]["shot"] = row["shot"]
+                    duckmerge[row["chan"]]["befriend"] = row["befriend"]
+                    channelkey["insert"].append(row["chan"])
+                    duckmerge["TKILLS"] = duckmerge["TKILLS"] + row["shot"]
+                    duckmerge["TFRIENDS"] = duckmerge["TFRIENDS"] + row["befriend"]
+        else:
+            for row in oldnickscore:
+                duckmerge[row["chan"]]["shot"] = row["shot"]
+                duckmerge[row["chan"]]["befriend"] = row["befriend"]
+                channelkey["insert"].append(row["chan"])
+       # TODO: Call dbupdate() and db_add_entry for the items in duckmerge
+        for channel in channelkey["insert"]:
+            dbadd_entry(newnick, channel, db, conn, duckmerge[channel]["shot"], duckmerge[channel]["befriend"])
+        for channel in channelkey["update"]:
+            dbupdate(newnick, channel, db, conn, duckmerge[channel]["shot"], duckmerge[channel]["befriend"])
+        query = table.delete() \
+            .where(table.c.network == conn.name) \
+            .where(table.c.name == oldnick)
+        db.execute(query)
+        db.commit()
+        message("Migrated {} duck kills and {} duck friends from {} to {}".format(duckmerge["TKILLS"], duckmerge["TFRIENDS"], oldnick, newnick))
+    else:
+        return "There are no duck scores to migrate from {}".format(oldnick)
 
 @hook.command("ducks", autohelp=False)
 def ducks_user(text, nick, chan, conn, db, message):

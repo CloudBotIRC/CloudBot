@@ -108,19 +108,45 @@ def karma(text):
     data = r.json()
     out = "\x02{}\x02 ".format(user)
     out += "\x02{:,}\x02 link karma and ".format(data['data']['link_karma'])
-    out += "\x02{:,}\x02 comment karma, ".format(data['data']['comment_karma'])
+    out += "\x02{:,}\x02 comment karma | ".format(data['data']['comment_karma'])
     if data['data']['is_gold']:
-        out += "has reddit gold, "
+        out += "has reddit gold | "
     if data['data']['is_mod']:
-        out += "is a moderator, "
+        out += "is a moderator | "
     if data['data']['has_verified_email']:
-        out += "email has been verified, "
+        out += "email has been verified | "
+    out += "cake day is {} | ".format(datetime.fromtimestamp(data['data']['created_utc']).strftime('%B %d') )
     account_age = datetime.now() - datetime.fromtimestamp(data['data']['created'])
     if account_age.days > 365:
         age = int(account_age.days / 365)
-        out += "and has been a redditor for {} years.".format(age)
+        if age == 1:
+            out += "redditor for {} year.".format(age)
+        else:
+            out += "redditor for {} years.".format(age) 
     else:
-        out += "and has been a redditor for {} days.".format(account_age.days)
+        out += "redditor for {} days.".format(account_age.days)
+    return out
+
+@hook.command("cakeday", singlethreaded=True)
+def cake_day(text):
+    """cakeday <reddituser> will return the cakeday for the given reddit username."""
+    user = text
+    url = user_url + "about.json"
+    r = requests.get(url.format(user), headers=agent)
+    if r.status_code != 200:
+        return statuscheck(r.status_code, user)
+    data = r.json()
+    out = "\x02{}'s\x02 ".format(user)
+    out += "cake day is {}, ".format(datetime.fromtimestamp(data['data']['created_utc']).strftime('%B %d') )
+    account_age = datetime.now() - datetime.fromtimestamp(data['data']['created'])
+    if account_age.days > 365:
+        age = int(account_age.days / 365)
+        if age == 1:
+            out += "they have been a redditor for {} year.".format(age)
+        else:
+            out += "they have been a redditor for {} years.".format(age)
+    else:
+        out += "they have been a redditor for {} days.".format(account_age.days)
     return out
 
 def time_format(numdays):

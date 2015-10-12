@@ -32,7 +32,7 @@ def load_attacks(bot):
     """
     :type bot: cloudbot.bot.CloudBot
     """
-    global larts, flirts, kills, slaps, north_korea, insults, strax
+    global larts, flirts, kills, slaps, north_korea, insults, strax, compliments
 
     with codecs.open(os.path.join(bot.data_dir, "larts.txt"), encoding="utf-8") as f:
         larts = [line.strip() for line in f.readlines() if not line.startswith("//")]
@@ -51,6 +51,9 @@ def load_attacks(bot):
         
     with codecs.open(os.path.join(bot.data_dir, "strax.json"), encoding="utf-8") as f:
         strax = json.load(f)
+
+    with codecs.open(os.path.join(bot.data_dir, "compliments.json"), encoding="utf-8") as f:
+        compliments = json.load(f)
 
     with codecs.open(os.path.join(bot.data_dir, "north_korea.txt"), encoding="utf-8") as f:
         north_korea = [line.strip() for line in f.readlines() if not line.startswith("//")]
@@ -127,6 +130,28 @@ def slap(text, action, nick, conn):
         "user": target
     }
     generator = textgen.TextGenerator(slaps["templates"], slaps["parts"], variables=variables)
+
+    # act out the message
+    action(generator.generate_string())
+
+
+@asyncio.coroutine
+@hook.command
+def compliment(text, action, nick, conn):
+    """<user> -- Makes the bot slap <user>."""
+    target = text.strip()
+
+    if not is_valid(target):
+        return "I can't attack that."
+
+    if is_self(conn, target):
+        # user is trying to make the bot attack itself!
+        target = nick
+
+    variables = {
+        "user": target
+    }
+    generator = textgen.TextGenerator(compliments["templates"], compliments["parts"], variables=variables)
 
     # act out the message
     action(generator.generate_string())

@@ -321,7 +321,7 @@ def chicken(text, action):
     action(generator.generate_string())
 	
 @asyncio.coroutine
-@hook.command
+@hook.command("brekky", "brekkie")
 def brekkie(text, action):
     """<user> - give brekkie to <user>"""
     user = text.strip()

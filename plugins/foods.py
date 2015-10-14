@@ -101,7 +101,7 @@ def load_foods(bot):
     with codecs.open(os.path.join(bot.data_dir, "chicken.json"), encoding="utf-8") as f:
         chicken_data = json.load(f)
 		
-	with codecs.open(os.path.join(bot.data_dir, "brekkie.json"), encoding="utf-8") as f:
+    with codecs.open(os.path.join(bot.data_dir, "brekkie.json"), encoding="utf-8") as f:
         brekkie_data = json.load(f)
 
     with codecs.open(os.path.join(bot.data_dir, "icecream.json"), encoding="utf-8") as f:

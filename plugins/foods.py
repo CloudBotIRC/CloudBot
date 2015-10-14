@@ -141,7 +141,7 @@ def cake(text, action):
     flavor = random.choice(['tasty', 'delectable', 'delicious', 'yummy', 'toothsome', 'scrumptious', 'luscious'])
     method = random.choice(['makes', 'gives', 'gets', 'buys'])
     side_dish = random.choice(['glass of chocolate milk', 'bowl of ice cream', 'jar of cookies',
-                               'some chocolate sauce'])
+                               'side of chocolate sauce'])
 
     action("{} {} a {} {} {} cake and serves it with a small {}!".format(method, user, flavor, size, cake_type,
                                                                          side_dish))

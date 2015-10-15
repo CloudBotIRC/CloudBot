@@ -147,7 +147,7 @@ class IrcClient(Client):
         self._connected = False
 
     def message(self, target, *messages, sanatize=True):
-        for text in messages
+        for text in messages:
             if sanatize == True:
                 text = "".join(text.splitlines())
             self.cmd("PRIVMSG", target, text)

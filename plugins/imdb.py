@@ -4,7 +4,7 @@ import requests
 
 from cloudbot import hook
 
-
+imdb_year_re = re.compile(".* (.*([1|2][0-9][0-9][0-9]).*)", re.DOTALL)
 id_re = re.compile("tt\d+")
 imdb_re = re.compile(r'(.*:)//(imdb.com|www.imdb.com)(:[0-9]+)?(.*)', re.I)
 
@@ -15,11 +15,18 @@ def imdb(text, bot):
 
     headers = {'User-Agent': bot.user_agent}
     strip = text.strip()
+    
+    year = None
+    
 
     if id_re.match(strip):
         params = {'i': strip}
     else:
         params = {'t': strip}
+        
+    if not imdb_year_re.match(strip)==None:
+        year = imdb_year_re.match(strip).group(2)
+        params["y"] = year
 
     request = requests.get("http://www.omdbapi.com/", params=params, headers=headers)
     content = request.json()

@@ -152,7 +152,7 @@ def biscuit(text, action):
     bickie_type = random.choice(biscuits)
     method = random.choice(['makes', 'gives', 'gets', 'buys', 'unwillingly passes', 'grants'])
 
-    action("{} {} a {} {} {}!".format(method, user, flavor, size, bickie_type, name))
+    action("{} {} a {} {} {}!".format(method, user, flavor, bickie_type, name))
 
 
 @asyncio.coroutine

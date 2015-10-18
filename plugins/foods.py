@@ -150,7 +150,7 @@ def biscuit(text, action):
         return "I can't give a {} {} to that user.".format(flavor, name)
 
     bickie_type = random.choice(biscuits)
-    method = random.choice(['makes', 'gives', 'gets', 'buys', 'unwillingly passes', 'grants'])
+    method = random.choice(['makes', 'gives', 'gets', 'buys', 'unwantingly passes', 'grants', 'force feeds'])
 
     action("{} {} a {} {} {}!".format(method, user, flavor, bickie_type, name))
 

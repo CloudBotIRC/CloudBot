@@ -1,0 +1,38 @@
+{
+  "templates": [
+    "passes {user} a {size} {adjective} {doobie} made with the finest {strain}"
+  ],
+  "parts": {
+    "adjective": [
+      "perfectly-rolled",
+      "sweet-smelling",
+      "dank, dank",
+      "killer",
+      "cherried"
+    ],
+    "size": [
+      "footlong",
+      "medium",
+      "snoopworthy",
+      "pathetically-sized",
+      "one ounce",
+      "regular-sized"
+    ],
+    "doobie": [
+      "doobie",
+      "spliff",
+      "joint",
+      "blunt",
+      "reefer"
+    ],
+    "strain": [
+      "blue dream",
+      "sour diesel",
+      "OG kush",
+      "shitty UK cheese",
+      "grandy purp",
+      "white widow",
+      "pineapple express"
+    ]
+  }
+}

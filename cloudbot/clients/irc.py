@@ -50,6 +50,7 @@ class IrcClient(Client):
     :type port: int
     :type _connected: bool
     :type _ignore_cert_errors: bool
+    :type capabilities: set[str]
     """
 
     def __init__(self, bot, name, nick, *, channels=None, config=None,
@@ -92,6 +93,8 @@ class IrcClient(Client):
         # transport and protocol
         self._transport = None
         self._protocol = None
+
+        self.capabilities = set(self.config.get('capabilities', []))
 
     def describe_server(self):
         if self.use_ssl:

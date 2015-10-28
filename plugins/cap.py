@@ -12,16 +12,17 @@ def on_connect(bot, conn):
     :type bot: CloudBot
     :type conn: IrcClient
     """
+    m = conn.memory
+    if 'CAP_lock' not in m:
+        m['CAP_lock'] = asyncio.Lock()
+    if 'CAP_negotiated' not in m:
+        m['CAP_negotiated'] = asyncio.Event()
 
     if not conn.capabilities:
         return
 
     while not conn.ready:
         yield from asyncio.sleep(3)
-
-    m = conn.memory
-    if 'CAP_lock' not in m:
-        m['CAP_lock'] = asyncio.Lock()
 
     with (yield from m['CAP_lock']):
         m['CAP_LS_future'] = asyncio.Future()
@@ -50,6 +51,7 @@ def on_connect(bot, conn):
             bot.logger.info('[{}|CAP] Successfully negotiated for: {}'.format(conn.name, accepted))
 
         conn.send('CAP END')
+        m['CAP_negotiated'].set()
 
 
 @asyncio.coroutine

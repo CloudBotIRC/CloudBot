@@ -78,10 +78,10 @@ def start_hunt(bot, chan, message, conn):
     check = game_status[conn.name][chan]['game_on']
     if check:
         return "There is already a hunt running in {}.".format(chan)
-    else:
-        game_status[conn.name][chan]['game_on'] = 1
-    set_ducktime(chan, conn)
-    message("Monsters have been spotted chasing people. Save the person and kill the monster with .bang, or try and befriend the monster and let it kill the person using .befriend. For more information on this creepy event see https://redd.it/3q31qw", chan)
+    #else:
+    #    game_status[conn.name][chan]['game_on'] = 1
+    #set_ducktime(chan, conn)
+    message("Thanks for participating in the 2015 monster hunt. The monster hunt has ended. To see the highest average score use '.killers average' or '.friends average'. For more information on this creepy event see https://redd.it/3q31qw", chan)
 
 def set_ducktime(chan, conn):
     global game_status
@@ -132,7 +132,7 @@ def generate_duck():
     return (dtail, dbody, dnoise)
 
 
-@hook.periodic(11, initial_interval=11)
+#@hook.periodic(11, initial_interval=11)
 def deploy_duck(message, bot):
     global game_status
     for network in game_status:
@@ -209,7 +209,7 @@ def dbupdate(nick, chan, db, conn, shoot, friend):
         db.execute(query)
         db.commit()
 
-@hook.command("bang", autohelp=False)
+#@hook.command("bang", autohelp=False)
 def bang(nick, chan, message, db, conn, notice):
     """when there is a monster chasing someone use this command to shoot it."""
     global game_status, scripters
@@ -264,7 +264,7 @@ def bang(nick, chan, message, db, conn, notice):
         message("{} you shot a monster and saved a human in {} seconds! You have killed {} {} in {}.".format(nick, timer, score, duck, chan))
         set_ducktime(chan, conn)
 
-@hook.command("befriend", autohelp=False)
+#@hook.command("befriend", autohelp=False)
 def befriend(nick, chan, message, db, conn, notice):
     """when there is a monster on the loose chasing a human use this command to befriend it before someone else shoots it. This will also let it kill the human."""
     global game_status, scripters
@@ -333,8 +333,9 @@ def friends(text, chan, conn, db):
     if chan in opt_out:
         return
     friends = defaultdict(int)
+    chancount = defaultdict(int)
     out = ""
-    if text.lower() == 'global':
+    if text.lower() == 'global' or text.lower() == 'average':
         out = "Monster friend scores across the network: "
         scores = db.execute(select([table.c.name, table.c.befriend]) \
             .where(table.c.network == conn.name) \
@@ -343,7 +344,11 @@ def friends(text, chan, conn, db):
             for row in scores:
                 if row[1] == 0:
                     continue
+                chancount[row[0]] += 1
                 friends[row[0]] += row[1]
+            if text.lower() == 'average':
+                for k, v in friends.items():
+                    friends[k] = int(v / chancount[k])
         else:
             return "it appears no one has friended any monsters yet."
     else:
@@ -371,8 +376,9 @@ def killers(text, chan, conn, db):
     if chan in opt_out:
         return
     killers = defaultdict(int)
+    chancount = defaultdict(int)
     out = ""
-    if text.lower() == 'global':
+    if text.lower() == 'global' or text.lower() == 'average':
         out = "Monster killer scores across the network: "
         scores = db.execute(select([table.c.name, table.c.shot]) \
             .where(table.c.network == conn.name) \
@@ -381,7 +387,11 @@ def killers(text, chan, conn, db):
             for row in scores:
                 if row[1] == 0:
                     continue
+                chancount[row[0]] += 1
                 killers[row[0]] += row[1]
+            if text.lower() == 'average':
+                for k, v in killers.items():
+                    killers[k] = int(v / chancount[k])
         else:
             return "it appears no one has killed any monsters yet."
     else:
@@ -413,7 +423,7 @@ def duckforgive(text):
     else:
         return "I couldn't find anyone banned from the hunt by that nick"
 
-@hook.command("hunt_opt_out", permissions=["op", "ignore"], autohelp=False)
+#@hook.command("hunt_opt_out", permissions=["op", "ignore"], autohelp=False)
 def hunt_opt_out(text, chan, db, conn):
     """Running this command without any arguments displays the status of the current channel. hunt_opt_out add #channel will disable all duck and monster hunt commands in the specified channel. hunt_opt_out remove #channel will re-enable the game for the specified channel."""
     if not text:

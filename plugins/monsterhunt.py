@@ -1,6 +1,7 @@
 import random
 import re
 import operator
+import json
 
 from time import time
 from collections import defaultdict
@@ -9,6 +10,7 @@ from sqlalchemy.sql import select
 from cloudbot import hook
 from cloudbot.event import EventType
 from cloudbot.util import database
+from cloudbot.util import web
 
 duck = [" ε=ε=ε=ε=ε=┌(；　・＿・)┘ ", " ε=ε=ε=ε=ε=ε=┌(๑ʘ∀ʘ)┘ ", " ===≡≡≡｡ﾟ┌(ﾟ´Д`ﾟ)┘ﾟ｡ ", " ・・・・・・・ᕕ(╯°□°)ᕗ " ]
 duck_tail = ["[¬º-°]¬", "(▼皿▼)", "←~∋(｡Ψ▼ｰ▼)∈", "∋━━o(｀∀´oメ）～→", "(˼●̙̂ ̟ ̟̎ ̟ ̘●̂˻)", "(;´༎ຶД༎ຶ`)", "(((༼•̫͡•༽)))"]
@@ -67,7 +69,7 @@ def load_optout(db):
             chan = row["chan"]
             opt_out.append(chan)
 
-@hook.command("starthunt", autohelp=False)
+#@hook.command("starthunt", autohelp=False)
 def start_hunt(bot, chan, message, conn):
     """This command starts a spooky MONSTER hunt in your channel, to stop the hunt use .stophunt"""
     global game_status
@@ -90,7 +92,7 @@ def set_ducktime(chan, conn):
     game_status[conn.name][chan]['duck_status'] = 0
     return
 
-@hook.command("stophunt", autohelp=False)
+#@hook.command("stophunt", autohelp=False)
 def stop_hunt(chan, conn):
     """This command stops the Monster hunt in your channel. Scores will be preserved"""
     global game_status
@@ -102,7 +104,7 @@ def stop_hunt(chan, conn):
     else:
         return "There is no monster hunt running in {}.".format(chan)
 
-@hook.command("monsterkick")
+#@hook.command("monsterkick")
 def no_duck_kick(text, chan, conn, notice):
     """If the bot has OP or half-op in the channel you can specify .monsterkick enable|disable so that people are kicked for shooting or befriending a non-existent monster. Default is off."""
     global game_status
@@ -327,7 +329,7 @@ def smart_truncate(content, length=320, suffix='...'):
         return content[:length].rsplit(' • ', 1)[0]+suffix
 
 
-@hook.command("friends", autohelp=False)
+@hook.command("monsterfriends", autohelp=False)
 def friends(text, chan, conn, db):
     """Prints a list of the top monster friends in the channel, if 'global' is specified all channels in the database are included."""
     if chan in opt_out:
@@ -366,11 +368,13 @@ def friends(text, chan, conn, db):
             return "it appears no one has friended any monsters yet."
 
     topfriends = sorted(friends.items(), key=operator.itemgetter(1), reverse = True)
+    url = web.paste(json.dumps(topfriends, indent=4))
     out += ' • '.join(["{}: {}".format('\x02' + k[:1] + u'\u200b' + k[1:] + '\x02', str(v))  for k, v in topfriends])
     out = smart_truncate(out)
+    out += " " + url
     return out
 
-@hook.command("killers", autohelp=False)
+@hook.command("monsterkillers", autohelp=False)
 def killers(text, chan, conn, db):
     """Prints a list of the top monster killers in the channel, if 'global' is specified all channels in the database are included."""
     if chan in opt_out:
@@ -409,11 +413,12 @@ def killers(text, chan, conn, db):
             return "it appears no on has killed any monsters yet."
 
     topkillers = sorted(killers.items(), key=operator.itemgetter(1), reverse = True)
+    url = web.paste(json.dumps(topkillers, indent=4))
     out += ' • '.join(["{}: {}".format('\x02' + k[:1] + u'\u200b' + k[1:] + '\x02', str(v))  for k, v in topkillers])
-    out = smart_truncate(out)
+    out = smart_truncate(out) + " " + url
     return out
 
-@hook.command("monsterforgive", permissions=["op", "ignore"])
+#@hook.command("monsterforgive", permissions=["op", "ignore"])
 def duckforgive(text):
     """Allows people to be removed from the mandatory cooldown period."""
     global scripters

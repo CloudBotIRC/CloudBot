@@ -53,8 +53,8 @@ game_status structure
 }
 """
 
-MSG_DELAY = random.randint(50,75)
-MASK_REQ = 5
+MSG_DELAY = 10
+MASK_REQ = 3
 scripters = defaultdict(int)
 game_status = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
 

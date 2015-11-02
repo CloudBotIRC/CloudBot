@@ -83,7 +83,7 @@ def start_hunt(bot, chan, message, conn):
     #else:
     #    game_status[conn.name][chan]['game_on'] = 1
     #set_ducktime(chan, conn)
-    message("Thanks for participating in the 2015 monster hunt. The monster hunt has ended. To see the highest average score use '.killers average' or '.friends average'. For more information on this creepy event see https://redd.it/3q31qw", chan)
+    message("Thanks for participating in the 2015 monster hunt. The monster hunt has ended. To see the highest average score use '.monsterkillers average' or '.monsterfriends average'. For more information on this creepy event see https://redd.it/3q31qw", chan)
 
 def set_ducktime(chan, conn):
     global game_status

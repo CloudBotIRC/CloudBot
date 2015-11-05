@@ -356,6 +356,7 @@ class _IrcProtocol(asyncio.Protocol):
                     content = None
                     if not command_params[-1]=="" and isinstance("string", type(command_params[-1])):
                         content = command_params[-1]
+                        content_raw = command_params[-1]
 
             # Event type
             if command in irc_command_to_event_type:

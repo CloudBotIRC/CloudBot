@@ -221,6 +221,10 @@ def present(text, conn, nick, action):
     if is_self(conn, target):
         #user is trying to make the bot gift itself!
         target = nick
-        
-    action('{}. {}'.format(target, random.choice(presents)))
+    variables = {
+       "user": target
+    } 
+    
+    generator = textgen.TextGenerator(presents["templates"], presents["parts"], variables=variables) 
+    action(generator.generate_string())
 

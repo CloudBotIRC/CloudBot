@@ -32,7 +32,7 @@ def load_attacks(bot):
     """
     :type bot: cloudbot.bot.CloudBot
     """
-    global larts, flirts, kills, slaps, north_korea, insults, strax, compliments
+    global larts, flirts, kills, slaps, north_korea, insults, strax, compliments, presents
 
     with codecs.open(os.path.join(bot.data_dir, "larts.txt"), encoding="utf-8") as f:
         larts = [line.strip() for line in f.readlines() if not line.startswith("//")]
@@ -57,6 +57,9 @@ def load_attacks(bot):
 
     with codecs.open(os.path.join(bot.data_dir, "north_korea.txt"), encoding="utf-8") as f:
         north_korea = [line.strip() for line in f.readlines() if not line.startswith("//")]
+        
+    with codecs.open(os.path.join(bot.data_dir, "presents.json"), encoding="utf-8") as f:
+        presents = json.load(f)
 
 
 @asyncio.coroutine
@@ -205,4 +208,19 @@ def insult(text, conn, nick, notice, message):
         target = nick
 
     message("{}, {}".format(target, random.choice(insults)))
+    
+@asyncio.coroutine
+@hook.command("present", "gift")
+def present(text, conn, nick, action):
+    """<user> - gives gift to <user>"""
+    target = text.strip()
+    
+    if not is_valid(target):
+        return "I can't gift that"
+        
+    if is_self(conn, target):
+        #user is trying to make the bot gift itself!
+        target = nick
+        
+    action('{}. {}'.format(target, random.choice(presents)))
 

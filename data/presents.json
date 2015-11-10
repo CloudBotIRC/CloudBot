@@ -1,0 +1,51 @@
+{
+    "templates": [
+        "hands {user} a {gift}"
+    ],
+    "parts": {
+        "gift": [
+            "Lighter",
+            "VCR",
+            "Video Game",
+            "Blu-Ray Player",
+            "Red Rider BB Gun",
+            "Coal",
+            "Chocolate",
+            "Socks",
+            "Necklace",
+            "Watch",
+            "20 dollars",
+            "100 dollars",
+            "50 dollars",
+            "5 dollars",
+            "lego technic set",
+            "Makeup",
+            "Gloves",
+            "Tv",
+            "PS4",
+            "Amazon Gift Card",
+            "Wii",
+            "X-Box",
+            "two front teeth",
+            "DS",
+            "Home Depot Gift Card",
+            "Grocery store Gift Card",
+            "Costco Gift Card",
+            "Dollar Store Gift Card",
+            "Mall Gift Card",
+            "Spa Gift Card",
+            "Computer",
+            "Laptop",
+            "Car",
+            "Toaster",
+            "Mixer",
+            "BottleofBooze",
+            "Beer",
+            "Pen",
+            "Notepad",
+            "Dvd",
+            "lotteryticket",
+            "Blu-Ray"
+        ]
+    }
+}

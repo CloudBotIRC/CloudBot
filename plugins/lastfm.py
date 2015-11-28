@@ -140,7 +140,10 @@ def getartisttags(artist, bot):
     if 'tag' in tags['toptags']:
         for item in tags['toptags']['tag']:
             try:
-                tag_list.append(item['name'])
+                if not item['name'] == "seen live":
+                    tag_list.append(item['name'])
+                else:
+                    pass
             except KeyError:
                 pass
 

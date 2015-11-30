@@ -1,0 +1,73 @@
+{
+    "templates": [
+        "hands {user} a {size} {brekky} with {side}."
+    ],
+    "parts": {
+        "size": [
+            "small plate full of",
+            "massive plate of",
+            "tiny crumb of",
+            "portion meant for ten people of",
+            "eating competition sized",
+            "wrapped around a newspaper cone of",
+            "tiny aspiring artist designed jar of",
+            "bowl full of",
+            "tiny crepe cone filled with",
+            "tiny styrofoam cup filled with",
+            "large portion of gradually rotting",
+            "painfully average sized portion of"
+        ],
+        "brekky": [
+            "spinach avocado and walnut sausage florentine served over fresh baked baguette and topped with hollandaise sauce",
+            "gluten-free biscuits & gravy",
+            "pan fried chai French toast topped with pieces of chai seed, coconut and granola encrusted bread",
+            "salmon eggs benedict on a potato bird's nest",
+            "lemon ricotta pancakes topped with zest, clarified butter, and maple syrup",
+            "crispy Vietnamese savoury crepes",
+            "French toast topped with orange butter and maple syrup",
+            "smashed avocado breakfast toast",
+            "huevos rancheros made of corn tortilla with black bean chili, mango salsa, smoked gouda, poached egg, marinara",
+            "baked Spanish egg casserole made of Spanish peppers, ricotta cheese, gouda, paprika, cracked pepper",
+            "corned beef hash",
+            "grilled portabello mushroom panini ",
+            "waffle taco ",
+            "sausage roll fresh out of the oven.",
+            "tortilla roll with cranberries, turkey and spinach",
+            "breakfast cheese platter",
+            "sunny side up eggs..",
+            "roti prataha ",
+            "bacon, egg and cheese bagel",
+            "smoked salmon and cream cheese bagel",
+            "bacon and Sausage Bap.",
+            "crepes with lemon and sugar",
+            "provolone cheese and arugula panini"
+        ],
+        "side": [
+            "roasted potatoes",
+            "walnut sausage",
+            "cold-pressed espresso",
+            "sliced avocado with olive oil and sea salt",
+            "an affogato, a shot of espresso over a scoop of icecream",
+            "sweet and spicy dipping sauce",
+            "seasonal fruit",
+            "radish salad with chives and lemon zest",
+            "black bean chili",
+            "cold-pressed espresso",
+            "potatoes, onions, peppers and eggs",
+            "soft fried egg, spinach, parmesan and creme fraiche",
+            "ground beef, cheese and lettuce",
+            "small Side salad",
+            "healthy portion of steamed vegetables",
+            "Thai chilli dipping sauce",
+            "cranberries, turkey and spinach",
+            "various aged prosciutto and assorted slices of melons",
+            "bacon, sausages and a couple slices of toast and a glass of orange juice",
+            "medium sized bowl of Sag aloo",
+            "cup of steaming hot tea",
+            "cup of espresso",
+            "handful of assorted berries",
+            "bowl of tomato soup"
+        ]
+    }
+}
+

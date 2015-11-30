@@ -1,0 +1,20 @@
+{
+  "templates": [
+    "{user} {phrase}."
+  ],
+  "parts": {
+    "phrase": [
+      "you are like a spring flower; beautiful and vivacious",
+      "you smell nice",
+      "you have very nice teeth",
+      "I like your pants",
+      "you have a wonderful face",
+      "you've got a nice butt",
+      "I am utterly disarmed by your wit",
+      "your beauty is why poetry was invented",
+      "your eyes shine like the sun",
+      "your skin is as soft as Froyo",
+      "how does your head hold such a big brain"
+    ]
+  }
+}

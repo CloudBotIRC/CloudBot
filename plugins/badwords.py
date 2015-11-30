@@ -14,7 +14,9 @@ cheers = [
     "*\o/* CHEERS! *\o/*",
     "HOOHAH!",
     "HOOYAH!",
-    "HUAH!"]
+    "HUAH!",
+    "♪  ┏(°.°)┛  ┗(°.°)┓ ♬"
+    ]
 db_ready = []
 
 

@@ -102,3 +102,14 @@ def triforce(message):
     bottom = ["\u25b2\u00a0\u25b2", "\u25b2 \u25b2", "\u25b2\u25b2"]
     message(random.choice(top))
     message(random.choice(bottom))
+
+@hook.command("kero", "kerowhack")
+def kero(text, message):
+    """Returns the text input the way kerouac5 would say it."""
+    saying = ["PRIUS JIMMY BUFFET!!!", "DISNEY APPLE BEARDS, FUCK COFFEE!", "FUCK THINGS THAT ARE GOOD AND NICE!", "RED ZONE SCHMED ZONE!", "i DONT USE APPLE CPMPUTERS!!!!", "???!??!?  YOU CLEARLY DONT LISTEN!", "WHY ARE PEOPLE CALLING ME A NERD I WAS ON THE iPHONE AND DONT GET IT!!!!", "OH MAN FUCK BEARDS!", "I AM GOING DOWN THE HALL TO A MEETING UNDER MY OWN POWER RIGHT NOW!!!", "NOT A VEGETABLE!!!!!!!", "i think thats a vulva euphemism, PW.", "THEY START SHOVING CAKES IN EACH OTHERS FACES LIKE ITS A MANATEE WEDDING HOLY SHIT!", "I DONT MAKE THE NEWS I JUST REPORT IT!", "HURR DURR YOU ARE OLD WITH PRINTED PAGES", "pants on head mouthbreather.", "HELLO I AM BACK WHAT IS NEW?", "YOU ARE A HORRIBLE DEAD FAN!", "i try not to be racist, but seriously.  there's a mexican guy in our neighborhood.  on the 4th like 40 people in his family came over and shot off fireworks and they sat in lawn chairs in the front yard.", "there's an old asian woman in our neighborhood who hides in her house and walks 10 feet  behind her husband and is a bad driver.", "HOW AM I NOT SUPPOSED TO BE RACIST WITH THAT OVERWHELMING EVIDENCE EXACTLY!?!?", "???? WTF IS", "NO I NEVER THINK THAT I AM VERY HAPPY", "HORSES CANT TALK IDIOTS", "I WENT TO ZERO STRIP CLUBS AND HAD ZERO STREET BEER", "I FUCKING WRITE CURRICULUM ON HOW TO SELL AND NETWORK AND RUN A BUSINESS ALL FUCKING DAY LONG", "you gentlemen are hilarious.  theres certainly nothing in what you're doing that could be considered \"ball busting\" or \"trolling.\"", "YOU CAN EMAIL FROM YOUR PHONE? MAGIC MAN FROM THE FUTURE, DO THEY HAVE RUBBER VAGINAS MEN CAN PUT THEIR DICKS INTO AS WELL?"]
+    keror = random.choice(saying).upper()
+    if keror == "???? WTF IS":
+        out = keror + " " + text.upper()
+    else:
+        out = text.upper() + " " + keror
+    message(out)

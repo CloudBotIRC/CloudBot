@@ -40,7 +40,11 @@ def get_video_description(video_id):
 
     length = isodate.parse_duration(content_details['duration'])
     out += ' - length \x02{}\x02'.format(timeformat.format_time(int(length.total_seconds()), simple=True))
-    total_votes = float(statistics['likeCount']) + float(statistics['dislikeCount'])
+    try:
+        total_votes = float(statistics['likeCount']) + float(statistics['dislikeCount'])
+    except:
+        total_votes = 0
+        pass
 
     if total_votes != 0:
         # format

@@ -98,7 +98,7 @@ def seen(text, nick, chan, db, event, conn):
     if text.lower() == nick.lower():
         return "Have you looked in a mirror lately?"
 
-    if not re.match("^[A-Za-z0-9_|.\-\]\[]*$", text.lower()):
+    if not re.match("^[A-Za-z0-9_|\^\`.\-\]\[\{\}\\\\]*$", text.lower()):
         return "I can't look up that name, its impossible to use!"
 
     db_init(db, conn.name)

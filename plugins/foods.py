@@ -111,7 +111,7 @@ def load_foods(bot):
     with codecs.open(os.path.join(bot.data_dir, "doobie.json"), encoding="utf-8") as f:
         doobie_data = json.load(f)
 
-	with codecs.open(os.path.join(bot.data_dir, "pizza.json"), encoding="utf-8") as f:
+    with codecs.open(os.path.join(bot.data_dir, "pizza.json"), encoding="utf-8") as f:
         pizza_data = json.load(f)
 		
 @asyncio.coroutine

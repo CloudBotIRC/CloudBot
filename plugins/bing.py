@@ -71,7 +71,7 @@ def bing(text, bot):
     return colors.parse('{} -- $(b){}$(b): "{}"'.format(url, title, desc))
 
 
-@hook.command("bingimage", "bis")
+@hook.command("bingimage", "bis", "gis", "image")
 def bingimage(text, bot):
     """<query> - returns the first bing image search result for <query>"""
     api_key = bot.config.get("api_keys", {}).get("bing_azure")

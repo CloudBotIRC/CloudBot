@@ -10,7 +10,7 @@ def load_jokes(bot):
     """
     :type bot: cloudbot.bot.Cloudbot
     """
-    global yo_momma, do_it, pun, confucious, one_liner, wisdom, book_puns
+    global yo_momma, do_it, pun, confucious, one_liner, wisdom, book_puns, lawyerjoke
 
     with codecs.open(os.path.join(bot.data_dir, "yo_momma.txt"), encoding="utf-8") as f:
         yo_momma = [line.strip() for line in f.readlines() if not line.startswith("//")]
@@ -32,6 +32,9 @@ def load_jokes(bot):
     
     with codecs.open(os.path.join(bot.data_dir, "book_puns.txt"), encoding="utf-8") as f:
         book_puns = [line.strip() for line in f.readlines() if not line.startswith("//")]
+
+    with codecs.open(os.path.join(bot.data_dir, "lawyerjoke.txt"), encoding="utf-8") as f:
+        lawyerjoke = [line.strip() for line in f.readlines() if not line.startswith("//")]
 
 @hook.command()
 def yomomma(text, message, conn):
@@ -113,3 +116,8 @@ def kero(text, message):
     else:
         out = text.upper() + " " + keror
     message(out)
+
+@hook.command(autohelp=False)
+def lawyerjoke(message, conn):
+    """returns a lawyer joke, so lawyers know how much we hate them""
+    message(random.choice(lawyerjoke))

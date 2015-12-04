@@ -119,5 +119,5 @@ def kero(text, message):
 
 @hook.command(autohelp=False)
 def lawyerjoke(message, conn):
-    """returns a lawyer joke, so lawyers know how much we hate them""
+    """returns a lawyer joke, so lawyers know how much we hate them"""
     message(random.choice(lawyerjoke))

@@ -5,21 +5,21 @@
   "parts": {
     "portion": [
       "tiny crumb",
-	  "custom made bar",
+	    "custom made bar",
       "large bar stolen from a person",
-	  "medium sized bar presented by a butler",
-	  "a designer made bowl",
-	  "melted and served on a plate",
-	  "large banana with an injection",
-	  "normal sized bar",
-	  "handful",
-	  "large milkshake blended with a generous quantity",
-	  "tiny hot chocolate flavoured cup",
-	  "a medium sized crepe with a drizzle of",
-	  "freshly created miniscule mousse"
-	],
-	"chocolate": [
-	  "Mars",
+	    "medium sized bar presented by a butler",
+	    "designer made bowl",
+	    "melted and served on a plate",
+	    "large banana with an injection",
+	    "normal sized bar",
+	    "handful",
+	    "large milkshake blended with a generous quantity",
+	    "tiny hot chocolate flavoured cup",
+	    "a medium sized crepe with a drizzle of",
+	    "freshly created miniscule mousse"
+	  ],
+	  "chocolate": [
+	    "Mars",
       "Snickers",
       "Godiva white chocolate",
       "Kinder surprise egg",
@@ -54,6 +54,6 @@
       "chilli flavoured chocolate",
       "Ferrero Rocher",
       "Ferrero Yogurette"
-	]
+	  ]
   }
 }

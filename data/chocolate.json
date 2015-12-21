@@ -1,0 +1,59 @@
+{
+  "templates": [
+    "hands {user} a {portion} of {chocolate}"
+  ],
+  "parts": {
+    "portion": [
+      "tiny crumb",
+	    "custom made bar",
+      "large bar stolen from a person",
+	    "medium sized bar presented by a butler",
+	    "designer made bowl",
+	    "melted and served on a plate",
+	    "large banana with an injection",
+	    "normal sized bar",
+	    "handful",
+	    "large milkshake blended with a generous quantity",
+	    "tiny hot chocolate flavoured cup",
+	    "medium sized crepe with a drizzle of",
+	    "freshly created miniscule mousse"
+	  ],
+	  "chocolate": [
+	    "Mars",
+      "Snickers",
+      "Godiva white chocolate",
+      "Kinder surprise egg",
+      "Hershey cookies and cream",
+      "Valentine's chocolates",
+      "Reese’s peanut butter cups",
+      "99% dark chocolate",
+      "chocolate fat bombs",
+      "chocolate mousse",
+      "Vegemite chocolate",
+      "Bounty bars",
+      "green tea Kit-Kats",
+      "Aero mint bars",
+      "After Eight’s",
+      "Butterfingers",
+      "Freddos",
+      "Kinder buenos",
+      "white Toblerone",
+      "York peppermint patty",
+      "Leonidas chocolate truffles",
+      "wasabi flavoured chocolate",
+      "banana flavoured chocolate",
+      "whiskey filled chocolates",
+      "maple chocolate",
+      "strawberry flavoured chocolate",
+      "Maltesers",
+      "chocolate cheesecake bites",
+      "red Lindt chocolate",
+      "chocolate flavored bacon",
+      "bacon chocolate",
+      "store brand 72% chocolate bar",
+      "chilli flavoured chocolate",
+      "Ferrero Rocher",
+      "Ferrero Yogurette"
+	  ]
+  }
+}

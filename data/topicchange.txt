@@ -1,0 +1,477 @@
+Do you have any pets? 
+Do you have any siblings?
+Do you know what your your name means?
+What type of phone do you have?
+What did you do this past weekend?
+What are your plans for this weekend?
+What do you like to do in your spare time?
+What is the first thing you do when you wake up?
+What is the last thing you do before you go to sleep?
+What is your middle name?
+What was the last thing you purchased?
+What is your favorite holiday?
+What is your favorite day of the week?
+If you could meet anyone in history, who would it be?
+What do you like to do to relax?
+Are you a saver or a spender?
+Do you play any instruments?
+What was your favorite children's book?
+What is your first childhood memory?
+What type of kid were you (e.g. spoiled, rebellious, well-behaved, quiet, obnoxious...)?
+What is one thing you miss about being a kid?
+What did you want to grow up to be when you were younger?
+What was (is) your favorite subject in school?
+What was (is) your least favorite subject in school?
+What's the first thing you do after school/work?
+Were you the class clown or teacher's pet?
+What do you do for a living or want to do?
+What is your dream job?
+If you had $10 million, would you still be working/going to school?  What would you do?
+What was your least favorite job that you've ever had?
+What is something that you have gotten in trouble for at school/work?
+Who is your favorite athlete?
+What is your favorite sports team?
+Do you play any sports?
+Where was the last place you went on vacation?
+Where do you plan on going for your next vacation?
+If you could live anywhere in the world, where would it be?
+What countries have you traveled to?
+What was your worst vacation experience?
+What is your favorite drink?
+What is your favorite food?
+What is your favorite meal of the day?
+Are there any foods that you dislike or will not eat?
+Are there any foods that you would like to try?
+What is your favorite restaurant?
+What is your favorite pizza topping?
+What is your favorite ice cream flavor?
+What did you have for dinner last night?
+What is the signature dish that you cook?
+Who is your favorite actor?
+What is your favorite movie of all time?
+What was the worst movie you've ever seen?
+What is your favorite TV show?
+What was the last movie you've seen?
+What type of music do you like to listen to?
+Who is your favorite music artist?
+What was the last book you read?
+Who do you look up to?
+Where do you see yourself 5 years from now?
+What are you scared of?
+What is the best piece of advice you've received?
+What is your biggest regret?
+What is your most embarrassing moment?
+What is the craziest thing you've ever done?
+What are some of your short-term goals?
+What are some of your long-term goals?
+Tell me about your first car.
+Do you drink coffee or tea?
+If you could have any super power, what would it be?
+If you were stranded on a deserted island and you could have only 1 item, what would it be?
+Do you believe in luck?
+Do you play video games?
+Do you believe people are inherently good?
+How often do you shower?
+What is your favorite board game?
+What is your favorite charity?
+Have you ever gotten a speeding ticket?
+Do you prefer cats or dogs?
+Would you prefer to live in the city or a rural area?  Why?
+What is your favorite season?
+Do you speak any other languages?
+What is the best thing that happened to you during the past week?
+What is the worst thing that happened to you during the past week?
+Do you sing in the shower?  What's your favourite song to sing?
+What is the most valuable thing that you own?
+What is something you've never done but would like to try to do?
+What is something you've tried but would never do again?
+Are you a hoarder or saver?
+Are you usually early, late, or on time?
+What is your best skill/talent?
+What do you like least about living in your city/town?
+What do you like most about living in your city/town?
+Do you usually break the rules or follow them?
+Are you a leader or a follower?
+Do you wake up by yourself, to an alarm, music, or have someone else wake you up?
+Are you more of a spontaneous or structured person?
+How would your friends and family describe you?
+How have your goals changed as you've gotten older?
+Describe your dream house to me.
+What's the best thing to do on a hot summer day?
+What's the best thing to do on a cold winter day?
+What is your favorite smell?
+Do you prefer to receive money or an actual gift?
+What is your favorite day of the year?
+Are you messy or organized?
+Do you remember the last dream you had?
+How have you changed since you were a kid?
+What are three websites that you visit daily?
+What are three smart phone apps that you can't live without?
+How do you keep up to date with the news?
+What was the last picture you took on your phone?
+How often do you use your phone?
+What technology or business do you think will be obsolete within the next 10 years?
+If you knew you couldn't fail, what would you do?
+If you could go back in time and change one thing, what would that be?
+If you could invent a holiday, what would it be?
+If there was an extra hour every day, what would you do with it?
+If you had to give up one of your five senses, which one would it be and why?
+What would you do if you won the lottery?
+If you became president, what is the first thing you would do?
+What would you do if you couldn't use the internet or watch TV for a month?
+If you could try out any job for one week, what job would you choose to try?
+If you were the opposite gender for one day, what would you do?
+If you could eliminate one thing that you did everyday, what would it be?
+If you could spend one hour with any living person, who would it be and what would you choose to do?
+What do you think your life will look like in 10 years?
+What would you like to do when you retire?
+What do you think the best invention is?
+What is your favorite place to be?
+Tell me your best advice?
+If you could learn any skill, what would it be?
+What is the meaning of your name?
+Do you believe in luck or do you believe that people make their own luck?
+What is your favorite conversation starter?
+If money was not an issue, what would you do with your life?
+What did you do today?
+How do you like to spend your free time?
+If you had just won a million dollars, what would you do with it?
+If you knew that you only had a year left to live, what would you do?
+What is something you have never done but would like to do?
+If you had three wishes, what would they be?
+If you had the chance to start any business, what would it be?
+Would you rather go a week without your phone or a week without your toothbrush?
+If you could send a message to the whole world, what would it be?
+If you had to pick a new name for yourself, what name would you pick?
+If you had to pick any character in a book, movie or TV show who is most similar to you, who would you choose? Why?
+Best Halloween costume you ever had?
+Best Halloween costume you’ve ever seen?
+Do you like haunted houses or scary rides?
+What was the last funny video you saw?
+What do you do to get rid of stress?
+What is something you are obsessed with?
+Who is your favorite entertainer (comedian, musician, actor, etc.)?
+What’s your favorite way to waste time?
+Do you have any pets? What are their names?
+Where did you go last weekend? What did you do?
+What are you going to do this weekend?
+What is something that is popular now that annoys you?
+What did you do on your last vacation?
+What was the last time you worked incredibly hard?
+Are you very active of do you prefer to just relax in your free time?
+What do you do when you hang out with your friends?
+Who is your oldest friend? Where did you meet them?
+What’s the best / worst thing about your work / school?
+If you had intro music, what song would it be? Why?
+What were you really into when you were a kid?
+If you could have any animal as a pet, what animal would you choose?
+What three words best describe you?
+What would be your perfect weekend?
+What do you think of tattoos? Do you have any?
+What’s your favorite number? Why?
+What’s the most useful thing you own?
+Have you ever saved an animal’s life? How about a person’s life?
+If you opened a business, what kind of business would it be?
+Are you a very organized person?
+Have you ever spoke in front of a large group of people? How did it go?
+What is the strangest dream you have ever had?
+What is a controversial opinion you have?
+Who in your life brings you the most joy?
+Who had the biggest impact on the person you have become?
+What is the most annoying habit someone can have?
+Where is the most beautiful place you have been?
+Where do you spend most of your free time / day?
+Who was your best friend in elementary school?
+How often do you stay up past 3 a.m.?
+What’s your favorite season? Why?
+Which is more important, a great car or a great house? Why?
+What animal or insect do you wish humans could eradicate?
+Where is the most beautiful place near where you live?
+What do you bring with you everywhere you go?
+How much time do you spend on the internet? What do you usually do?
+What is the most disgusting habit some people have?
+Where and when was the most amazing sunset you have ever seen?
+Which recent news story is the most interesting?
+Where is the worst place you have been stuck for a long time?
+If you had to change your name, what would your new name be?
+What is something that really annoys you but doesn’t bother most people?
+What word or saying from the past do you think should come back?
+How should success be measured? By that measurement, who is the most successful person you know?
+What is your guilty pleasure?
+Was there ever an event in your life that defied explanation?
+If you could learn the answer to one question about your future, what would the question be?
+Has anyone ever saved your life?
+What benefit do you bring to the group when you hang out with friends?
+How often do you curse?
+What trends did you follow when you were younger?
+What do you fear is hiding in the dark?
+What was the best time period of your life? What do you think will be the best time period of your entire life?
+What do you do to improve your mood when you are in a bad mood?
+What is the silliest fear you have?
+What are some things you want to accomplish before you die?
+What is the best room in your house? Why?
+Who is someone who is popular now that you really like? Why do you like them so much?
+Where is the best place to take a date?
+What smell brings back great memories?
+How often do you help others? Who do you help? How do you help?
+What are you best at?
+What makes you nervous?
+Who, besides your parents, had the biggest impact on your life?
+What weird or useless talent do you have?
+What are some strange beliefs that some people have?
+Who would be the worst person to be stuck in an elevator with? How about the best person to be stuck in an elevator with?
+What’s the funniest TV series you have seen?
+Which TV show do you want your life to be like?
+If you could bring back one TV show that was cancelled, which one would you bring back?
+How have TV shows changed over the years?
+What’s the best sitcom past or present?
+What’s the best show currently on TV?
+What do you think about game shows? Do you have a favorite one?
+What’s the most underrated or overrated TV show?
+What do you think about reality TV? Why is it so popular?
+Do you like reality TV shows? Why or why not? If so, which ones?
+What will be the future of TV shows?
+How often do you binge watch shows?
+What cartoons did you watch as a child?
+What was the last movie you watched? How was it?
+Do you prefer to watch movies in the theater or in the comfort of your own home?
+What’s the worst movie you have seen recently?
+What’s the strangest movie you have ever seen?
+What is the most overrated movie?
+What’s your favorite genre of movie?
+What movie scene choked you up the most?
+Do you like documentaries? Why / why not?
+When was the last time you went to a movie theater?
+Do movies have the same power as books to change the world?
+Which do you prefer? Books or movies?
+Do you like horror movies? Why or why not?
+What was the last book you read?
+What book has had the biggest impact on your life?
+What was your favorite book as a child?
+Do you prefer physical books or ebooks?
+What is the longest book you have read?
+What was the worst book you had to read for school? How about the best book you had to read for school?
+What book genres do you like to read?
+Do you prefer fiction or nonfiction books?
+What book has influenced you the most?
+What book has had the biggest effect on the modern world?
+Do you think people read more or less books now than 50 years ago?
+How fast do you read?
+How often do you go to the library?
+Now that indie publishing has become easier, have books gotten better or worse?
+What song always puts you in a good mood?
+Which do you prefer, popular music or relatively unknown music?
+What was the last song you listened to?
+What is your favorite movie soundtrack?
+Are there any songs that always bring a tear to your eye?
+Do you like going to concerts? Why or why not? What was the last concert you went to?
+Who was the first band or musician you were really into? Do you still like them?
+Records, tapes, CDs, MP3s. Which did you grow up with? What is good and bad about each?
+What bands or types of music do you listen to when you exercise?
+Do you like classical music?
+What’s the best way to discover new music?
+How has technology changed the music industry?
+What are the three best apps on your phone?
+What’s the most addictive mobile game you have played?
+An app mysteriously appears on your phone that does something amazing. What does it do?
+How many apps do you have on your phone?
+What is the most annoying app you have tried?
+Which app seemed like magic the first time you used it?
+What is the strangest app you have heard of or tried?
+Which app has helped society the most? Which one has hurt society the most?
+What is the most useful app on your phone?
+What apps have changed your life a lot?
+What do app makers do that really annoys you?
+How often do you check your phone?
+Do you always have to have the latest phone?
+What was your first smart phone? How did you feel when you got it?
+What is the most annoying thing about your phone?
+What kind of case do you have for your phone? Why did you choose it?
+Do you text more or call more? Why?
+What will phones be like in 10 years?
+Do you experience phantom vibration? (Feeling your phone vibrate even though it didn’t.)
+How do you feel if you accidentally leave your phone at home?
+What do you wish your phone could do?
+What sports do you like to watch?
+Who are some of your favorite athletes?
+Which sports do you like to play?
+Which sport is the most exciting to watch? Which is the most boring to watch?
+Do athletes deserve the high salaries they receive? Why or why not?
+What is the hardest sport to excel at?
+Who are the 3 greatest athletes of all time?
+What defines a sport? Is fishing a sport? How about video game tournaments?
+Why do you think sports are common across almost all cultures present and past?
+What do you think the oldest sport still being played is?
+How much time do you spend watching sports in a week?
+Do you play sports video games? Which ones? Is playing the video game or sport more fun? Why?
+What is the worst restaurant you have ever eaten at?
+What restaurant do you eat at most?
+What’s the worst fast food restaurant?
+What is the best restaurant in your area?
+Would you eat at a restaurant that was really dirty if the food was amazing?
+What kind of interior do you like a restaurant to have?
+If you opened a restaurant, what kind of food would you serve?
+What was your favorite restaurant when you were in university? How about when you were a child?
+What is the strangest themed restaurant you have heard of?
+What is the fanciest restaurant you have eaten at?
+What is the most disgusting thing you have heard about that happened at a restaurant?
+Have you traveled to any different countries? Which ones?
+Where is the most relaxing place you have been?
+Where is the most awe inspiring place you have been?
+Do you prefer traveling alone or with a group?
+What do you think of tour group packages?
+Talk about some of the interesting people you have met while traveling.
+Where would you like to travel next?
+What was the most over hyped place you’ve traveled to?
+What’s the best way to travel? (Plane, car, train, etc.)
+What’s the best thing about traveling? How about the worst thing?
+How do you think traveling to a lot of different countries changes a person?
+What is the longest plane trip you have taken?
+What do you think of stay-cations? (Vacationing and seeing tourist attractions where you live.)
+Do you prefer to go off the beaten path when you travel?
+Where do you get your recommendations for what to do and where to stay when you travel?
+What is the worst hotel you have stayed at? How about the best hotel?
+What is your favorite piece of technology that you own?
+What piece of technology is really frustrating to use?
+What was the best invention of the last 50 years?
+Does technology simplify life or make it more complicated?
+Which emerging technology are you most excited about?
+What problems will technology solve in the next 5 years? What problems will it create?
+Will technology save the human race or destroy it?
+What piece of technology would look like magic or a miracle to people in medieval Europe?
+Can you think of any technology that has only made the world worse? How about a piece of technology that has only made the world better?
+What technology from a science fiction movie would you most like to have?
+What scifi movie or book would you like the future to be like?
+What do you think the next big technological advance will be?
+Do you care about fashion? What style of clothes do you usually wear?
+What is the best pair of shoes you have ever owned? Why were they so good?
+What is your favorite shirt?
+What is the most embarrassing piece of clothing you own?
+Does fashion help society in any way?
+What is a fashion trend you are really glad went away?
+Who do you think has the biggest impact on fashion trends: actors and actresses, musicians, fashion designers, or consumers?
+What old trend is coming back these days?
+If you didn’t care at all what people thought of you, what clothes would you wear?
+What is the most comfortable piece of clothing you own?
+What is the craziest, most outrageous thing you want to achieve?
+What are some goals you have already achieved?
+What personal goals do you have?
+What do you hope to achieve in your professional life?
+Have your parents influenced what goals you have?
+Do you usually achieve goals you set? Why or why not?
+What is the best way to stay motivated and complete goals?
+What are some goals you have failed to accomplish?
+When do you want to retire? What do you want to do when you retire?
+What are your goals for the next two years?
+How have your goals changed over your life?
+How much do you plan for the future?
+How do you plan to make the world a better place?
+What’s the most refreshing thing on a hot summer day?
+What’s the best thing to do on a cold winter day?
+Where is the nicest place you have been to in fall?
+What is your favorite thing to eat or drink in winter?
+Do you prefer summer or winter activities?
+What do you like to do in spring?
+Did your family take seasonal vacations?
+Do you feel like fall and spring are getting shorter?
+Which season are you most active in?
+Is it better to live where there are four seasons or where one season takes up most of the year?
+If you could make a holiday, what would it be like? What traditions would it have? What would people eat on your holiday?
+What is the biggest holiday for your family?
+Do you wish there were more or less holidays? Why?
+If you had to get rid of a holiday, which would you get rid of? Why?
+What is your favorite holiday?
+What kinds of food do you usually eat on your favorite holiday?
+Does having a day off for a holiday increase or decrease productivity at work?
+What holidays have been over commercialized?
+If some of the lesser known holidays were commercialized, what would the commercialization look like?
+What do you know about the history of some holidays?
+What are some good and bad things about the education system in your country?
+What do you think of online education?
+How can governments make education more efficient?
+What do you think of standardized tests?
+How can technology improve education? Can it hurt education?
+Are bigger or small schools better?
+Is teaching a skill that can be taught?
+What will the future of education be?
+What do you think of homeschooling?
+How has the education you received changed your life?
+What or who has taught you most of the information you use on a regular basis?
+What is your favorite food?
+Do you like spicy food? Why or why not? What is the spiciest thing you have ever eaten?
+What foods do you absolutely hate?
+What food do you know you shouldn’t eat but can’t help yourself?
+Does government have a place in regulating food? To what extent should government regulate food?
+When was the last time you had a food fight?
+What do you get every time you go grocery shopping?
+If your life was a meal, what would kind of meal would it be?
+What do you think of buffets?
+What would you want your last meal to be if you were on death row?
+What food looks disgusting but tastes delicious?
+Time freezes for everyone but you for one day. What do you do?
+If you could call up anyone in the world and have a one hour conversation, who would you call?
+You have to relive one day of your life forever. Which day do you choose?
+If your mind was an island, what would it look like?
+What flavor of ice cream do you wish existed?
+What does your own personal hell look like? How about your own personal heaven?
+A portal to another world opens in front of you. You don’t know how long it will stay open or if you’ll be able to get back after you go through. What do you do?
+If you had a personal mascot, what would your mascot be?
+You find a remote that can rewind, fast forward, stop and start time. What do you do with it?
+If you were a king / queen, what would your throne look like?
+If you were on the run from the police for a crime you didn’t commit, where would you go?
+What are the highest and lowest points of your life?
+How have your strengths help you to succeed? How have your faults hindered you?
+What are your biggest goals for your life? What progress have you made in attaining them?
+Who are you really? Who is behind the mask that you show to the rest of the world?
+What is holding you back from being the person you want to be?
+What are some of the biggest challenges you have faced?
+Do you enjoy overcoming challenges or do you prefer things to be easy? Why?
+What is a challenge you would never want to face?
+Do you think living in the present is more or less challenging than living in the past? Why?
+What is the most challenging job you can think of?
+Do you think that challenges improve a person’s character?
+What is the biggest challenge you are facing right now?
+What was the most challenging thing about your childhood?
+What are some big challenges that people have overcome that you have heard of?
+What are the biggest challenges your country is facing right now?
+Do you think that the challenges you have faced over your life have made you a better or worse person?
+What quality do you value most in your friends?
+Are any of your friends completely opposite to you or are most of them similar to you?
+Do you make friends easily or do you find it difficult to make new friends?
+What are the most common reasons for friendships to fall apart?
+Who is your strangest friend? What makes them strange?
+Are you a good friend? Why or why not?
+What is the best way to meet new friends?
+What separates true friends from acquaintances?
+Who is your oldest friend? How did you meet them?
+What’s a big favor you have done for a friend? How about a big favor that a friend has done for you?
+Have you ever received a strange gift? What was it?
+Who in your family gives good gifts? How about bad gifts?
+What is a creative gift you have given or received?
+Does it matter how a gift is wrapped or is it only the gift that matters?
+Is gift giving common among all human cultures? Why?
+Can you think of any examples of animals giving gifts?
+Do you enjoy shopping for gifts? Why or why not?
+Do you prefer to receive money or a gift? Why?
+What do you think of homemade gifts?
+How would you describe your personality? How would other people describe your personality, the same or different?
+What is the best aspect of your personality? How about the worst aspect?
+What personality traits in other people do you hate?
+What personality traits make a good leader?
+What personality trait do you wish you had?
+Can a person change their personality?
+Where do our personalities come from? How much of personality is genetic and how much is from the environment?
+Which of your personality traits has been the most useful?
+How about the personalities of some of your friends and family? What are the good, bad, and strange aspects of their personalities?
+What is the most annoying personality trait someone can have?
+What is the best criteria to measure success by?
+Are there any failures in your life you are proud of?
+What is your biggest success? How about your biggest failure?
+What are some successes you’ve had in your personal life?
+What are some failures you’ve had in your professional life?
+What is the biggest lesson you’ve learned from a failure?
+Have you ever turned a failure into a win?
+Do you usually learn from your failures or do you keep repeating them?
+Who is the most successful person you know of? How about the most successful person you know personally?
+What is the most recent success you’ve had?
+What is the next big success you are working to?

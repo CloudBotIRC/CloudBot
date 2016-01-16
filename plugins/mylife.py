@@ -51,7 +51,7 @@ def initial_refresh(loop):
 @asyncio.coroutine
 @hook.command(autohelp=False)
 def fml(reply, loop):
-    """- gets a random quote from fmyfife.com"""
+    """- gets a random quote from fmylife.com"""
 
     # grab the last item in the fml cache and remove it
     fml_id, text = fml_cache.pop()

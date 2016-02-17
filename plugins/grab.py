@@ -114,6 +114,8 @@ def grab(text, nick, chan, db, conn):
     return "I couldn't find anything from {} in recent history.".format(text)
 
 def format_grab(name, quote):
+    # add nonbreaking space to nicks to avoid highlighting people with printed grabs
+    name = "{}{}{}".format(name[0], u"\u200B", name[1:])
     if quote.startswith("\x01ACTION") or quote.startswith("*"):
         quote = quote.replace("\x01ACTION", "").replace("\x01", "")
         out = "* {}{}".format(name, quote)

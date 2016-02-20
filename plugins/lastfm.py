@@ -79,21 +79,22 @@ def lastfm(text, nick, db, bot, notice):
     tracks = response["recenttracks"]["track"]
 
     if type(tracks) == list:
-        # if the user is listening to something, the tracks entry is a list
-        # the first item is the current track
         track = tracks[0]
-        status = 'is listening to'
-        ending = '.'
-    elif type(tracks) == dict:
-        # otherwise, they aren't listening to anything right now, and
-        # the tracks entry is a dict representing the most recent track
-        track = tracks
-        status = 'last listened to'
-        # lets see how long ago they listened to it
-        time_listened = datetime.fromtimestamp(int(track["date"]["uts"]))
-        time_since = timeformat.time_since(time_listened)
-        ending = ' ({} ago)'.format(time_since)
-
+        
+        if "@attr" in track and "nowplaying" in track["@attr"] and track["@attr"]["nowplaying"] == "true":
+            # if the user is listening to something, the first track (a dict) of the
+            # tracks list will contain an item with the "@attr" key.
+            # this item will will contain another item with the "nowplaying" key
+            # which value will be "true"
+            status = 'is listening to'
+            ending = '.'
+        else:
+            # otherwise, the user is not listening to anything right now
+            status = 'last listened to'
+            # lets see how long ago they listened to it
+            time_listened = datetime.fromtimestamp(int(track["date"]["uts"]))
+            time_since = timeformat.time_since(time_listened)
+            ending = ' ({} ago)'.format(time_since)
     else:
         return "error: could not parse track listing"
 

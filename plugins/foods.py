@@ -67,7 +67,8 @@ def load_foods(bot):
     """
     global sandwich_data, taco_data, coffee_data, noodles_data, muffin_data, \
         tea_data, keto_data, beer_data, cheese_data, pancake_data, chicken_data, \
-        icecream_data, brekkie_data, doobie_data, pizza_data, chocolate_data, pasta_data
+        icecream_data, brekkie_data, doobie_data, pizza_data, chocolate_data, pasta_data, \
+        cereal_data
 
     with codecs.open(os.path.join(bot.data_dir, "sandwich.json"), encoding="utf-8") as f:
         sandwich_data = json.load(f)
@@ -119,6 +120,9 @@ def load_foods(bot):
 
     with codecs.open(os.path.join(bot.data_dir, "pasta.json"), encoding="utf-8") as f:
         pasta_data = json.load(f)
+    
+    with codecs.open(os.path.join(bot.data_dir, "cereal.json"), encoding="utf-8") as f:
+        cereal_data = json.load(f)
 		
 @asyncio.coroutine
 @hook.command
@@ -417,3 +421,17 @@ def pasta(text, action):
 
     # act out the message
     action(generator.generate_string())
+
+@asyncio.coroutine
+@hook.command
+def cereal(text, action):
+    """<user> - give cereal to <user>"""
+    user = text.strip()
+
+    if not is_valid(user):
+        return "I can't give cereal to that user."
+
+    generator = textgen.TextGenerator(cereal_data["templates"], cereal_data["parts"], variables={"user": user})
+
+    # act out the message
+    action(generator.generate_string())    

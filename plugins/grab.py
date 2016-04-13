@@ -143,7 +143,11 @@ def grabrandom(text, chan, message):
     grab = ""
     name = ""
     if text:
-        name = text.split(' ')[0]
+        tokens = text.split(' ')
+        if len(tokens) > 1:
+            name = random.choice(tokens)
+        else:
+            name = tokens[0]
     else:
         try:
             name = random.choice(list(grab_cache[chan].keys()))

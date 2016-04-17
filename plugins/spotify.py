@@ -87,7 +87,7 @@ def spotify_url(match):
     }
     _type = match.group(2)
     spotify_id = match.group(3)
-    url = spuri.format(type, spotify_id)
+    url = spuri.format(_type, spotify_id)
     # no error catching here, if the API is down fail silently
     request = requests.get('http://api.spotify.com/v1/{}/{}'.format(api_method[_type], spotify_id))
     if request.status_code != requests.codes.ok:

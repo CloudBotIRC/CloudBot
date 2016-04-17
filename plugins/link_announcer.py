@@ -9,7 +9,7 @@ from cloudbot import hook
 blacklist = re.compile('.*(reddit\.com|redd.it|youtube.com|youtu.be|spotify.com|twitter.com|twitch.tv|amazon.co|xkcd.com|amzn.com|steamcommunity.com|steampowered.com|newegg.com).*', re.I)
 url_re = re.compile('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
 
-opt_in = []
+opt_in = ["#gonzobot"]
 
 traditional = [
     (1024 ** 5, 'PB'),
@@ -31,7 +31,7 @@ def bytesto(bytes, system = traditional):
     return str(amount) + suffix
 
 @hook.regex(url_re)
-def print_url_title(match, chan):
+def print_url_title(message, match, chan):
     if chan not in opt_in:
         return
     if re.search(blacklist, match.group()):
@@ -46,6 +46,6 @@ def print_url_title(match, chan):
             out = "Content Type: \x02{}\x02 Size: \x02{}\x02".format(content, size)
             return out
         html = BeautifulSoup(r.text)
-        title = html.title.text.strip()
+        title = " ".join(html.title.text.strip().splitlines())
         out = "Title: \x02{}\x02".format(title)
-        return out
+        message(out, chan)

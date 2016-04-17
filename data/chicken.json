@@ -4,20 +4,24 @@
     ],
     "parts": {
         "size": [
-            "Average sized bowl",
+            "average sized bowl",
             "half eaten plate",
             "half a portion",
             "tiny portion",
             "lunchbox sized",
-            "grandmother prepared size",
+            "plate your grandmother would serve you",
             "full portion",
             "competitive eating sized plate",
-            "prisoner dinner sized",
-            "strangely inserted into a large hollow pineapple",
-            "shoved into a medium-sized newspaper cone",
-            "pot-luck portion sized",
+            "surpisingly appealing yet tiny prisoner dinner tray consisting",
+            "medium sized portion shoved into a large hollow pineapple",
+            "fair portion shoved inside a newspaper cone",
+            "perplexingly large and hollowed out bread bowl",
             "ludicrously undersized portion",
-            "inconspicuously small box from the corner shop"
+            "worryingly small and fragile box",
+            "medium sized plate stolen from a five star hotel",
+            "tiny brittle bowl",
+            "surprisingly large yet sturdy tray made by a coporate company",
+            "conspicuously small box from the corner shop"
         ],
         "chicken": [
             "Chicken breasts over tomato and olives",
@@ -58,7 +62,14 @@
             "Chicken Fajitas",
             "Chicken Enchiladas",
             "Chicken gyros",
-            "Chicken nuggets"
+            "Chicken nuggets",
+            "Chicken Adobo",
+            "Chicken Madras",
+            "Chicken Gumbo",
+            "Buttermilk fried chicken",
+            "Teriyaki chicken with bok choy",
+            "Chicken Sukiyaki",
+            "Chicken Tagine"
         ]
     }
 }

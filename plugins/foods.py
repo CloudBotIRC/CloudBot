@@ -81,7 +81,7 @@ def potato(text, action):
     user = text.strip()
 
     if not is_valid(user):
-        return "I can't give a potato to that user."
+        return "This user doesn't exist, sorry! :P"
 
     potato_type = random.choice(potatoes)
     size = random.choice(['small', 'little', 'mid-sized', 'medium-sized', 'large', 'gigantic'])
@@ -100,7 +100,7 @@ def cake(text, action):
     user = text.strip()
 
     if not is_valid(user):
-        return "I can't give a cake to that user."
+        return "This user doesn't exist, sorry! :P"
 
     cake_type = random.choice(cakes)
     size = random.choice(['small', 'little', 'mid-sized', 'medium-sized', 'large', 'gigantic'])
@@ -120,12 +120,12 @@ def cookie(text, action):
     user = text.strip()
 
     if not is_valid(user):
-        return "I can't give a cookie to that user."
+        return "THis user doesn't exist, sorry! :P"
 
     cookie_type = random.choice(cookies)
     size = random.choice(['small', 'little', 'medium-sized', 'large', 'gigantic'])
     flavor = random.choice(['tasty', 'delectable', 'delicious', 'yummy', 'toothsome', 'scrumptious', 'luscious'])
-    method = random.choice(['makes', 'gives', 'gets', 'buys'])
+    method = random.choice(['makes', 'gives', 'gets', 'buys', 'hands'])
     side_dish = random.choice(['glass of milk', 'bowl of ice cream', 'bowl of chocolate sauce'])
 
     action("{} {} a {} {} {} cookie and serves it with a {}!".format(method, user, flavor, size, cookie_type,
@@ -139,7 +139,7 @@ def sandwich(text, action):
     user = text.strip()
 
     if not is_valid(user):
-        return "I can't give a sandwich to that user."
+        return "This user doesn't exist, sorry! :P"
 
     generator = textgen.TextGenerator(sandwich_data["templates"], sandwich_data["parts"],
                                       variables={"user": user})
@@ -154,7 +154,7 @@ def taco(text, action):
     user = text.strip()
 
     if not is_valid(user):
-        return "I can't give a taco to that user."
+        return "This user doesn't exist, sorry! :P"
 
     generator = textgen.TextGenerator(taco_data["templates"], taco_data["parts"],
                                       variables={"user": user})

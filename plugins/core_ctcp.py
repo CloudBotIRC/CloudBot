@@ -9,7 +9,7 @@ import cloudbot
 @asyncio.coroutine
 @hook.regex(r'^\x01VERSION\x01$')
 def ctcp_version(notice):
-    notice("\x01VERSION: CloudBot {} - https://git.io/CloudBot".format(cloudbot.__version__))
+    notice("\x01VERSION: xsBot {} - https://github.com/xshotD/xsbot".format(cloudbot.__version__))
 
 
 @asyncio.coroutine
@@ -21,4 +21,4 @@ def ctcp_ping(notice):
 @asyncio.coroutine
 @hook.regex(r'^\x01TIME\x01$')
 def ctcp_time(notice):
-    notice('\x01TIME: The time is: {}'.format(time.strftime("%r", time.localtime())))
+    notice('\x01TIME: According to my sources, the time is: {}'.format(time.strftime("%r", time.localtime())))

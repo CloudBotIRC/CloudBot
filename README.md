@@ -20,7 +20,7 @@ To install CloudBot on *nix (linux, etc), see [here](https://github.com/CloudBot
 
 Note from xs: You should be able to install the bot in the same way it is done upstream. Also, I do recommend running it on *nix.
 
-Conflicting software I have seen (so far): Bitdefender (they use a shitty .sys, and it blue-screens the PC)
+Conflicting software I have seen (so far): Bitdefender (in my testing. Windows only.)
 
 To install CloudBot on Windows, see [here](https://github.com/CloudBotIRC/CloudBot/wiki/Installing-on-Windows)
 

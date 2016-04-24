@@ -3,26 +3,31 @@
 xsBot was forked from CloudBot, which you can find [here](https://github.com/CloudBotIRC/CloudBot).
 I have no plans to change licenses or anything. Although it's my repo, I won't change much. (Expect some major overhauls, but not too much.)
 
-## Getting CloudBot
+## Getting xsBot
 
 There are currently two different branches of upstream, each with a different level of stability:
- - **master** *(stable)*: This branch contains stable, tested code. This is the branch you should be using if you just want to run your own CloudBot! [![Build Status](https://travis-ci.org/CloudBotIRC/CloudBot.svg?branch=master)](https://travis-ci.org/CloudBotIRC/CloudBot)
+
+*UPSTREAM:* 
+- **master** *(stable)*: This branch contains stable, tested code. This is the branch you should be using if you just want to run your own CloudBot! [![Build Status](https://travis-ci.org/CloudBotIRC/CloudBot.svg?branch=master)](https://travis-ci.org/CloudBotIRC/CloudBot)
  - **python3.4** *(unstable)*: This branch is where we test and develop new features. If you would like to help develop CloudBot, you can use this branch. [![Build Status](https://travis-ci.org/CloudBotIRC/CloudBot.svg?branch=python3.4)](https://travis-ci.org/CloudBotIRC/CloudBot)
+
+*FORK:*
+
  - Travis CI for this fork will be added **soon**.
  
 New releases will be pushed from **python3.4** to **master** whenever we have a stable version to release. This should happen on a fairly regular basis, so you'll never be too far behind the latest improvements.
 
 ## Installing CloudBot
 
-Firstly, CloudBot will only run on **Python 3.4 or higher**. Because we use the asyncio module, you will not be able to use any other versions of Python.
+Firstly, xsBot will only run on **Python 3.4 or higher**. Because we use the asyncio module, you will not be able to use any other versions of Python.
 
-To install CloudBot on *nix (linux, etc), see [here](https://github.com/CloudBotIRC/CloudBot/wiki/Installing-on-*nix)
+To install xsBot on *nix (linux, etc), see [the upstream wiki.](https://github.com/CloudBotIRC/CloudBot/wiki/Installing-on-*nix)
 
-Note from xs: You should be able to install the bot in the same way it is done upstream. Also, I do recommend running it on *nix.
+You should be able to install the bot in the same way it is done upstream. Also, I do recommend running it on *nix.
 
 Conflicting software I have seen (so far): Bitdefender (in my testing. Windows only.)
 
-To install CloudBot on Windows, see [here](https://github.com/CloudBotIRC/CloudBot/wiki/Installing-on-Windows)
+To install CloudBot on Windows, see [the upstream wiki.](https://github.com/CloudBotIRC/CloudBot/wiki/Installing-on-Windows)
 
 
 ### Running CloudBot

@@ -1,0 +1,122 @@
+{
+   "templates":[
+      "watches as {user} gets {hits} {where} with {item} as they drive around {place} at a {speed_type} of {speed} {units} straight into a misplaced {misplaced_object} < < < R E K T > > >"
+      ],
+   "parts": {
+      "item":[
+         "a cast iron skillet",
+         "a large trout",
+         "a baseball bat",
+         "a cricket bat",
+         "a wooden cane",
+         "a nail",
+         "a printer",
+         "a shovel",
+         "a pair of trousers",
+         "a CRT monitor",
+         "a baguette",
+         "a physics textbook",
+         "a toaster",
+         "a portrait of Richard Stallman",
+         "a television",
+         "a mau5head",
+         "a five ton truck",
+         "a roll of duct tape",
+         "a book",
+         "a laptop",
+         "an old television",
+         "a sack of rocks",
+         "a rainbow trout",
+         "a rubber chicken",
+         "a spiked bat",
+         "a fire extinguisher",
+         "a heavy rock",
+         "a chair",
+         "a portrait of Richard Stallman",
+         "a cardboard box"
+      ],
+      "item_plural":[
+         "a few cardboard boxes",
+         "cast iron skillets",
+         "large trouts",
+         "baseball bats",
+         "wooden canes",
+         "nails",
+         "printers",
+         "shovels",
+         "pairs of trousers",
+         "CRT monitors",
+         "diamond swords",
+         "baguettes",
+         "physics textbooks",
+         "toasters",
+         "portraits of Richard Stallman",
+         "televisions",
+         "mau5heads",
+         "five ton trucks",
+         "rolls of duct tape",
+         "books",
+         "laptops",
+         "old televisions",
+         "sacks of rocks",
+         "rainbow trouts",
+         "rubber chickens",
+         "spiked bats",
+         "fire extinguishers",
+         "heavy rocks"
+      ],
+      "throws": [
+        "throws",
+        "flings",
+        "chucks"
+      ],
+      "hits": [
+        "hit",
+        "whacked",
+        "slapped",
+        "smacked"
+      ],
+      "where": [
+        "in the chest",
+        "on the head",
+        "on the ass",
+        "on the face"
+      ],
+      "action": [
+        "struck",
+        "smashed"
+      ],
+      "place": [
+        "ISIS' new base",
+        "Area 51",
+        "Fort Knox",
+        "Cheyenne Mountain",
+        "the local KFC"
+      ],
+      "speed": [
+        "OVER 9000",
+        "4",
+        "120",
+        "534465893465",
+        "420 million"
+      ],
+      "units": [
+        "Skrebs per second",
+        "miles per hour",
+        "kilometers per hour",
+        "fgts per minute",
+        "CRTs per second"
+      ],
+      "misplaced_object": [
+        "tree",
+        "lamp post",
+        "mail box",
+        "road sign"
+      ],
+      "speed_type": [
+        "shitty speed",
+        "roaring speed",
+        "Skrebby speed"
+      ]
+   }
+}

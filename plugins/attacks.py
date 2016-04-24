@@ -32,7 +32,7 @@ def load_attacks(bot):
     """
     :type bot: cloudbot.bot.CloudBot
     """
-    global larts, flirts, kills, slaps
+    global larts, flirts, kills, slaps, rekts
 
     with codecs.open(os.path.join(bot.data_dir, "larts.txt"), encoding="utf-8") as f:
         larts = [line.strip() for line in f.readlines() if not line.startswith("//")]
@@ -46,6 +46,8 @@ def load_attacks(bot):
     with codecs.open(os.path.join(bot.data_dir, "slaps.json"), encoding="utf-8") as f:
         slaps = json.load(f)
 
+    with codecs.open(os.path.join(bot.data_dir, "rekts.json"), encoding="utf-8") as f:
+        rekts = json.load(f)
 
 @asyncio.coroutine
 @hook.command
@@ -67,7 +69,7 @@ def lart(text, conn, nick, action):
 
 
 @asyncio.coroutine
-@hook.command
+@hook.command(permissions=["flirt"])
 def flirt(text, conn, nick, message):
     """<user> - flirts with <user>"""
     target = text.strip()
@@ -118,6 +120,28 @@ def slap(text, action, nick, conn):
         "user": target
     }
     generator = textgen.TextGenerator(slaps["templates"], slaps["parts"], variables=variables)
+
+    # act out the message
+    action(generator.generate_string())
+
+
+@asyncio.coroutine
+@hook.command("rekt")
+def rekt(text, action, nick, conn):
+    """<user> -- recks <user>."""
+    target = text.strip()
+
+    if not is_valid(target):
+        return "I can't attack that."
+
+    if is_self(conn, target):
+        # user is trying to make the bot attack itself!
+        target = nick
+
+    variables = {
+        "user": target
+    }
+    generator = textgen.TextGenerator(rekts["templates"], rekts["parts"], variables=variables)
 
     # act out the message
     action(generator.generate_string())

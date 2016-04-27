@@ -121,3 +121,24 @@ def slap(text, action, nick, conn):
 
     # act out the message
     action(generator.generate_string())
+
+@asyncio.coroutine
+@hook.command
+def cookie(text, action, nick, conn):
+    """cookie <user> -- Gives <user> a cookie."""
+    target = text.strip()
+
+    if not is_valid(target):
+        return "I can't attack that."
+
+    if is_self(conn, target):
+        # user is trying to make the bot attack itself!
+        target = nick
+
+    variables = {
+        "user": target
+    }
+    generator = textgen.TextGenerator(cookies["templates"], cookies["parts"], variables=variables)
+
+    # act out the message
+    action(generator.generate_string())

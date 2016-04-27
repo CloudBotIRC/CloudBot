@@ -129,7 +129,7 @@ def cookie(text, action, nick, conn):
     target = text.strip()
 
     if not is_valid(target):
-        return "I can't attack that."
+        return "I can't give that a cookie."
 
     if is_self(conn, target):
         # user is trying to make the bot attack itself!
@@ -139,6 +139,27 @@ def cookie(text, action, nick, conn):
         "user": target
     }
     generator = textgen.TextGenerator(cookies["templates"], cookies["parts"], variables=variables)
+
+    # act out the message
+    action(generator.generate_string())
+    
+    @asyncio.coroutine
+@hook.command
+def rekt(text, action, nick, conn):
+    """rekt <user> -- Rekts <user>."""
+    target = text.strip()
+
+    if not is_valid(target):
+        return "I can't rekt that."
+
+    if is_self(conn, target):
+        # user is trying to make the bot attack itself!
+        target = nick
+
+    variables = {
+        "user": target
+    }
+    generator = textgen.TextGenerator(rekts["templates"], rekts["parts"], variables=variables)
 
     # act out the message
     action(generator.generate_string())

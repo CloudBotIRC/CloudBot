@@ -13,7 +13,9 @@
       "picks up a {item} and {hits} {user} with it.",
       "ties {user} to a chair and {throws} a {item} at them.",
       "{hits} {user} {where} with a {item}.",
-      "ties {user} to a pole and whips them with a {item}."
+      "ties {user} to a pole and whips them with a {item}.",
+      "slaps {user} around a bit with a {item}",
+      "slaps {user} around a bit with a large fishbot"
    ],
    "parts": {
       "item":[
@@ -48,7 +50,9 @@
          "gold block",
          "fire extinguisher",
          "heavy rock",
-         "chunk of dirt"
+         "chunk of dirt",
+         "large fishbot",
+         "brown trout"
       ],
       "item_plural":[
          "cast iron skillets",
@@ -81,7 +85,9 @@
          "gold blocks",
          "fire extinguishers",
          "heavy rocks",
-         "chunks of dirt"
+         "chunks of dirt",
+         "large fishbots",
+         "brown trouts"
       ],
       "throws": [
         "throws",
@@ -97,7 +103,7 @@
       "where": [
         "in the chest",
         "on the head",
-        "on the bum"
+        "on the leg"
       ]
    }
 }

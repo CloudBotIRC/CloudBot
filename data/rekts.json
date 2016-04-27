@@ -1,0 +1,36 @@
+{
+   "templates":[
+      "watches as {user} drives their {car} into {place} while getting knocked unconscious with {item}, causing {damage} <<<REKT>>>",
+      "watches as {user} drives their {car} off of a dock while getting knocked on the head with {item}, causing {damage} <<<REKT>>>",
+      "watches as {user} drives their {car} onto a ship, while crashing into {place}, and getting knocked dead with {item}, causing {damage} <<<REKT>>>",
+      "watches as {user} drives into LaGuardia Airport at a roaring speed of 3691 miles per hour, while getting bashed on the leg with {item}, and crashing into an airplane <<<REKT>>>",
+      "watches as {user} drives their {car} into {place} house at a speed of 18902 per hour while getting smashed with {item}, causing {damage} <<<REKT>>>"
+   ],
+   "parts": {
+      "place":[
+         "a stop sign",
+         "the CN Tower",
+         "Rizon's database",
+         "the Twin Towers"
+      ],
+      "car": [
+        "Honda Civic",
+        "Bugatti Veyron",
+        "Porsche 911",
+        "Tesla Model S"
+      ],
+      "damage": [
+        "7889 damage",
+        "99999 damage",
+        "5632 damage",
+        "8906 damage"
+      ],
+      "item": [
+        "a wrecking ball",
+        "Uncanny's head",
+        "a large fishbot",
+        "a brown trout",
+        "a painting of Flamewolf"
+      ]
+   }
+}

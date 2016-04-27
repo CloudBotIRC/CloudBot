@@ -1,0 +1,56 @@
+{
+   "templates":[
+      "gives {user} {cookie}, along with {side}.",
+      "chucks {cookie} in {user}'s general direction, while eating {side}",
+      "eats {cookie} instead of giving it to {user}",
+      "tells {user} to 'go get a life, instead of getting fat eating cookies'",
+      "says me0w and doesn't give {user} a cookie",
+      "gives {person} a cookies instead of {user}"
+   ],
+   "parts": {
+      "cookie":[
+         "a large chocolate chip cookie",
+         "a vanilla cookie",
+         "some green tea cookies",
+         "sn0wy cookies",
+         "WBot cookies",
+         "two small sugar cookies",
+         "wooden cane flavored cookies",
+         "cookies with nails in them",
+         "printed cookies",
+         "shovel shaped cookies",
+         "pair of trousers with cookies inside the pockets",
+         "CRT monitor shaped cookie",
+         "a diamond sword shaped cookie",
+         "baguette flavored cookies",
+         "cookies with physics textbooks minced up",
+         "a cookie that looks suspiciously like a brick",
+         "cake",
+         "nothing"
+         
+      ],
+      "side": [
+        "a plate full of strawberry's",
+        "another cookie",
+        "poisoned stuff",
+        "a computer",
+        "a note that says 'you should go outside and get a life'",
+        "no side",
+        "a plate with another plate on it"
+      ],
+      "hits": [
+        "hits",
+        "whacks",
+        "slaps",
+        "smacks",
+        "bonks",
+        "smashes"
+      ],
+      "person": [
+        "W24",
+        "Entr0py",
+        "WBot",
+        "Sn0wyBot"
+      ]
+   }
+}

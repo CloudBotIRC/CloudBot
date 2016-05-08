@@ -40,13 +40,7 @@ Once you have installed the required dependencies and renamed the config file, y
 python3.4 -m cloudbot
 ```
 
-Note from xs: Usually you can run it from the command `python /path/to/cloudbot/__main__.py`.
-
-Note that you can also run the `cloudbot/__main__.py` file directly, which will work from any directory.
-```
-python3.4 CloudBot/cloudbot/__main__.py
-```
-Specify the path as /path/to/repository/cloudbot/__main__.py, where `cloudbot` is inside the repository directory.
+Usually you can run it from the command `python3 /path/to/cloudbot/__main__.py`.
 
 ## Getting help with CloudBot
 
@@ -78,26 +72,27 @@ CloudBot is **licensed** under the **GPL v3** license. The terms are as follows.
 
 ![GPL V3](https://www.gnu.org/graphics/gplv3-127x51.png)
     
-    CloudBot
+    xsBot
 
-    Copyright © 2011-2015 Luke Rogers / CloudBot Project
+    Upstream code: Copyright © 2011-2015 Luke Rogers / CloudBot Project
+    Fork code: Copyright © 2016 xshotD / xs Devs.
 
-    CloudBot is free software: you can redistribute it and/or modify
+    xsBot is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    CloudBot is distributed in the hope that it will be useful,
+    xsBot is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with CloudBot.  If not, see <http://www.gnu.org/licenses/>.
+    along with xsBot.  If not, see <http://www.gnu.org/licenses/>.
     
 This product includes GeoLite2 data created by MaxMind, available from
-<a href="http://www.maxmind.com">this website</a>. GeoLite2 databases are distributed under the [Creative Commons Attribution-ShareAlike 3.0 Unported License](https://creativecommons.org/licenses/by-sa/3.0/)
+<a href="http://www.maxmind.com">their website</a>. GeoLite2 databases are distributed under the [Creative Commons Attribution-ShareAlike 3.0 Unported License](https://creativecommons.org/licenses/by-sa/3.0/)
 
 ![Powered by wordnik](https://www.wordnik.com/img/wordnik_badge_a1.png)
 
-This product uses data from <a href="http://wordnik.com">Wordnik</a> in accordance with the wordnik.com API <a href="http://developer.wordnik.com/#!/terms">terms of service</a>.
+This product uses data from <a href="http://wordnik.com">Wordnik</a> in accordance with the wordnik.com API <a href="http://developer.wordnik.com/#!/terms">ToS</a>.

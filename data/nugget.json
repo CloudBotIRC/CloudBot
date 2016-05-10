@@ -1,6 +1,6 @@
 {
     "templates": [
-        "gives {user} a {size} of {nuggets} with a side of {sauce}."
+        "gives {user} a {size} of {nuggets} with a side of {sauces}."
     ],
     "parts": {
         "size": [

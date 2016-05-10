@@ -12,6 +12,7 @@
             "cargo ship full",
             "beautifully-carved solid oak chest three-quarters full",
             "rusty shipping container full",
+            "cookie jar half-full",
             "6-piece order",
             "10-piece order",
             "20-piece order",
@@ -54,7 +55,8 @@
             "deep-fried pink-slime",
             "decomposing chicken nuggets (probably?)",
             "Denver Nuggets",
-            "Butterfinger dessert nuggets"
+            "Butterfinger dessert nuggets",
+            "imaginary nuggets"
         ],
         "sauces": [
             "mayonnaise",
@@ -68,7 +70,20 @@
             "teriyaki sauce",
             "tzatziki sauce",
             "extra-hot buffalo sauce",
+            "marinara sauce",
+            "Frank's RedHot sauce",
+            "maple syrup",
+            "soy sauce",
+            "Sriracha sauce",
+            "malt vinegar",
+            "Worcestershire sauce",
+            "hoisin sauce",
             "Hollandaise sauce",
+            "Bechamel sauce",
+            "Veloute sauce",
+            "pesto sauce",
+            "guacamole",
+            "pico de gallo",
             "honey mustard",
             "Caesar dressing",
             "Thousand Island dressing",
@@ -80,7 +95,7 @@
             "onion chutney",
             "tamarind chutney",
             "coriander chutney",
-            "the blood of nugget-hating heathens",
+            "the blood of nugget-denying heathens",
             "the tears of banned users",
             "anders's baby-batter"
         ]

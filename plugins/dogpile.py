@@ -1,6 +1,7 @@
 import requests
 import random
 
+from urllib import parse
 from bs4 import BeautifulSoup
 from cloudbot import hook
 
@@ -20,7 +21,7 @@ def dogpileimage(text, chan):
     r = requests.get(image_url, params=params, headers=HEADERS)
     soup = BeautifulSoup(r.content)
     linklist = soup.find('div', id="webResults").find_all('a', {'class':'resultThumbnailLink'})
-    image = requests.get(random.choice(linklist)['href'], headers=HEADERS).url
+    image = parse.unquote(parse.unquote(random.choice(linklist)['href']).split('ru=')[1].split('&')[0])
     return image
 
 @hook.command("dp", "g", "dogpile")
@@ -32,6 +33,6 @@ def dogpile(text, chan):
     params = {'q':" ".join(text.split())}
     r = requests.get(web_url, params=params, headers=HEADERS)
     soup = BeautifulSoup(r.content)
-    result_url = requests.get(soup.find('div', id="webResults").find_all('a', {'class':'resultDisplayUrl'})[0]['href'], headers=HEADERS).url
+    result_url = parse.unquote(parse.unquote(soup.find('div', id="webResults").find_all('a', {'class':'resultDisplayUrl'})[0]['href']).split('ru=')[1].split('&')[0])
     result_description = soup.find('div', id="webResults").find_all('div', {'class':'resultDescription'})[0].text
     return "\x02{}\x02 -- {}".format(result_url, result_description)

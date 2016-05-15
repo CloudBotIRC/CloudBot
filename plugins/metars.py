@@ -2,28 +2,29 @@ import requests
 
 from cloudbot import hook
 
-api_url = "http://api.geonames.org/weatherIcaoJSON"
-
-@hook.on_start()
-def get_key(bot):
-    """Gets the username to use in the geonames request"""
-    global api_user
-    api_user = bot.config.get("api_keys", {}).get("geonames")
-
+api_url_metar = "http://api.av-wx.com/metar/"
+api_url_taf = "http://api.av-wx.com/taf/"
 
 @hook.command()
 def metar(text):
     """metars [ICAO station code] returns the metars information for the specified station. A list of station codes can be found here: http://weather.rap.ucar.edu/surface/stations.txt"""
-    if not api_user:
-        return "no api_user has been specified."
     station = text.split(' ')[0].upper()
-    if not len(station) == 4:
+    if not len(station) is 4:
         return "please specify a valid station code see http://weather.rap.ucar.edu/surface/stations.txt for a list."
-    params = {
-        'username': api_user,
-        'ICAO': station
-    }
-    request = requests.get(api_url, params=params)
-    r = request.json()['weatherObservation']
-    out = r['stationName'] + ": " + r['observation']
+
+    request = requests.get(api_url_metar + station)
+    r = request.json()['reports'][0]
+    out = r['name'] + ": " + r['raw_text']
+    return out
+
+@hook.command()
+def taf(text):
+    """tafs [ICAO station code] returns the taf information for the specified station. A list of station codes can be found here: http://weather.rap.ucar.edu/surface/stations.txt"""
+    station = text.split(' ')[0].upper()
+    if not len(station) is 4:
+        return "please specify a valid station code see http://weather.rap.ucar.edu/surface/stations.txt for a list."
+    
+    request = requests.get(api_url_taf + station)
+    r = request.json()['reports'][0]
+    out = r['name'] + ": " + r['raw_text']
     return out

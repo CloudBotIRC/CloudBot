@@ -67,7 +67,8 @@ def load_foods(bot):
     """
     global sandwich_data, taco_data, coffee_data, noodles_data, muffin_data, \
         tea_data, keto_data, beer_data, cheese_data, pancake_data, chicken_data, \
-        icecream_data, brekkie_data, doobie_data, pizza_data, chocolate_data, pasta_data
+        icecream_data, brekkie_data, doobie_data, pizza_data, chocolate_data, pasta_data, \
+        nugget_data
 
     with codecs.open(os.path.join(bot.data_dir, "sandwich.json"), encoding="utf-8") as f:
         sandwich_data = json.load(f)
@@ -101,6 +102,9 @@ def load_foods(bot):
 
     with codecs.open(os.path.join(bot.data_dir, "chicken.json"), encoding="utf-8") as f:
         chicken_data = json.load(f)
+        
+    with codecs.open(os.path.join(bot.data_dir, "nugget.json"), encoding="utf-8") as f:
+        nugget_data = json.load(f)
 		
     with codecs.open(os.path.join(bot.data_dir, "brekkie.json"), encoding="utf-8") as f:
         brekkie_data = json.load(f)
@@ -331,6 +335,20 @@ def chicken(text, action):
         return "I can't give chicken to that user."
 
     generator = textgen.TextGenerator(chicken_data["templates"], chicken_data["parts"], variables={"user": user})
+
+    # act out the message
+    action(generator.generate_string())
+    
+@asyncio.coroutine
+@hook.command
+def nugget(text, action):
+    """<user> - give nuggets to <user>"""
+    user = text.strip()
+
+    if not is_valid(user):
+        return "I can't give nuggets to that user."
+
+    generator = textgen.TextGenerator(nugget_data["templates"], nugget_data["parts"], variables={"user": user})
 
     # act out the message
     action(generator.generate_string())

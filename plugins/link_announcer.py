@@ -42,12 +42,14 @@ def print_url_title(message, match, chan):
     with closing(requests.get(match.group(), headers = HEADERS, stream = True)) as r:
         if not r.encoding:
             # remove the content type and size from output for now
+            r.close
             return
             #content = r.headers['content-type']
             #size = bytesto(r.headers['content-length'])
             #out = "Content Type: \x02{}\x02 Size: \x02{}\x02".format(content, size)
             #return out
         html = BeautifulSoup(r.text)
+        r.close
         title = " ".join(html.title.text.strip().splitlines())
         out = "Title: \x02{}\x02".format(title)
         message(out, chan)

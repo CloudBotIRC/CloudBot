@@ -53,7 +53,10 @@ def welcome(nick, action, message, chan, event, db, conn):
     # freenode uncomment then next line
     # chan = event.irc_raw.split('JOIN ')[1].lower()
     # snoonet
-    chan = event.irc_raw.split(':')[2].lower()
+    try:
+        chan = event.irc_raw.split(':')[2].lower()
+    except:
+        return
     welcome = db.execute("select quote from herald where name = :name and chan = :chan", {
                          'name': nick.lower(), 'chan': chan.lower()}).fetchone()
     if welcome:

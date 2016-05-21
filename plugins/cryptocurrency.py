@@ -60,7 +60,7 @@ def crypto_command(text):
     if "error" in data:
         return "{}.".format(data['error'])
 
-    updated_time = datetime.fromtimestamp(data['timestamp'])
+    updated_time = datetime.fromtimestamp(float(data['timestamp']))
     if (datetime.today() - updated_time).days > 2:
         # the API retains data for old ticker names that are no longer updated
         # in these cases we just return a "not found" message

@@ -45,7 +45,7 @@ def herald(text, nick, chan, db, conn):
         db.commit()
         return("greeting successfully added")
 
-@hook.command()
+@hook.command(permissions=["botcontrol", "snoonetstaff"])
 def deleteherald(text, chan, db, conn):
     """deleteherald [nickname] Delete [nickname]'s herald."""
 
@@ -55,9 +55,9 @@ def deleteherald(text, chan, db, conn):
     if tnick:
         db.execute("delete from herald where name = :name and chan = :chan", {'name': text.lower(), 'chan': chan})
         db.commit()
-        return ("greeting for {} has been removed".format(text.lower()))
+        return "greeting for {} has been removed".format(text.lower())
     else:
-        return("{} does not have a herald".format(text.lower()))
+        return "{} does not have a herald".format(text.lower())
 
 @hook.irc_raw("JOIN", singlethread=True)
 def welcome(nick, action, message, chan, event, db, conn):

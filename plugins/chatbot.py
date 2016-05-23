@@ -8,7 +8,7 @@ from cloudbot import hook
  
 cb = Cleverbot()
 
-@hook.command("ask", "gonzo")
+@hook.command("ask", "gonzo", "gonzobot", "cleverbot", "cb")
 def chitchat(text):
     """chat with cleverbot.com"""
     return cb.ask(text)

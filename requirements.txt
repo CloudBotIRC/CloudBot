@@ -2,6 +2,7 @@ nltk
 geoip2
 git+https://github.com/CloudBotIRC/mcstatus.git@master
 git+https://github.com/folz/cleverbot.py.git@master
+future
 microdata
 sqlalchemy
 watchdog

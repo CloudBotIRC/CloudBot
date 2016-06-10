@@ -61,7 +61,7 @@ def cypher(text, message, notice):
         return
     password = split[0]
     plaintext = split[1]
-    message(encode(password, plaintext))
+    message(" " + encode(password, plaintext))
 
 
 @hook.command("decypher", "decipher")
@@ -73,4 +73,4 @@ def decypher(text, message, notice):
         return
     password = split[0]
     encoded = split[1]
-    message(decode(password, encoded, notice))
+    message(" " + decode(password, encoded, notice))

@@ -233,7 +233,7 @@ class Event:
             if self.chan is None:
                 raise ValueError("Target must be specified when chan is not assigned")
             target = self.chan
-        self.conn.message(target, message)
+        self.conn.message(" " + target, message)
 
     def reply(self, *messages, target=None):
         """sends a message to the current channel/user with a prefix
@@ -264,7 +264,7 @@ class Event:
                 raise ValueError("Target must be specified when chan is not assigned")
             target = self.chan
 
-        self.conn.action(target, message)
+        self.conn.action(" " + target, message)
 
     def ctcp(self, message, ctcp_type, target=None):
         """sends an ctcp to the current channel/user or a specific channel/user

@@ -53,7 +53,7 @@ def decode(password, encoded, notice):
 
 
 @hook.command("cypher", "cipher")
-def cypher(text, notice):
+def cypher(text, message, notice):
     """<pass> <string> -- cyphers <string> with <password>"""
     split = text.split(None, 1)
     if len(split) < 2:
@@ -61,11 +61,11 @@ def cypher(text, notice):
         return
     password = split[0]
     plaintext = split[1]
-    return encode(password, plaintext)
+    message(encode(password, plaintext))
 
 
 @hook.command("decypher", "decipher")
-def decypher(text, notice):
+def decypher(text, message, notice):
     """<pass> <string> - decyphers <string> with <password>"""
     split = text.split(None, 1)
     if len(split) < 2:
@@ -73,4 +73,4 @@ def decypher(text, notice):
         return
     password = split[0]
     encoded = split[1]
-    return decode(password, encoded, notice)
+    message(decode(password, encoded, notice))

@@ -16,6 +16,9 @@ def correction(match, conn, chan, message):
     """
     groups = [b.replace("\/", "/") for b in re.split(r"(?<!\\)/", match.groups()[0])]
     find = groups[0]
+    # Don't do anything if find is empty
+    if not find:
+        return
     replace = groups[1].replace("\n","\\n").replace("\r","\\r")
 
     for item in conn.history[chan].__reversed__():

@@ -171,14 +171,16 @@ def ireplace(text, old, new, count=None):
     """
     A case-insensitive replace() clone. Return a copy of text with all occurrences of substring
     old replaced by new. If the optional argument count is given, only the first count
-    occurrences are replaced.
+    occurrences are replaced. If old is empty, it returns the text unmodified.
     """
-    pattern = re.compile(re.escape(old), re.IGNORECASE)
+    if old:
+        pattern = re.compile(re.escape(old), re.IGNORECASE)
 
-    if count:
-        return pattern.sub(new, text, count=count)
-    else:
-        return pattern.sub(new, text)
+        if count:
+            return pattern.sub(new, text, count=count)
+        else:
+            return pattern.sub(new, text)
+    return text
 
 
 def multi_replace(text, word_dic):

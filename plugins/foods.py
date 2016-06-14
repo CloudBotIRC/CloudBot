@@ -69,7 +69,11 @@ def load_foods(bot):
         tea_data, keto_data, beer_data, cheese_data, pancake_data, chicken_data, \
         icecream_data, brekkie_data, doobie_data, pizza_data, chocolate_data, pasta_data, \
 <<<<<<< HEAD
+<<<<<<< HEAD
         nugget_data, cereal_data
+=======
+        nugget_data, pie_data
+>>>>>>> be7d3ce... Update foods.py
 =======
         nugget_data, pie_data
 >>>>>>> be7d3ce... Update foods.py

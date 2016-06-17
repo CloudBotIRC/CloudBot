@@ -49,7 +49,7 @@ More at the [Wiki Main Page](https://github.com/CloudBotIRC/CloudBot/wiki).
 
 The developers reside in [#CloudBot](irc://irc.esper.net/cloudbot) on [EsperNet](http://esper.net) and would be glad to help you.
 
-If you think you have found a bug/have a idea/suggestion, please **open a issue** here on Github and contact us on IRC!
+If you think you have found a bug/have an idea/suggestion, please **open an issue** here on Github and contact us on IRC!
 
 ## Example CloudBots
 

@@ -68,7 +68,7 @@ def load_foods(bot):
     global sandwich_data, taco_data, coffee_data, noodles_data, muffin_data, \
         tea_data, keto_data, beer_data, cheese_data, pancake_data, chicken_data, \
         icecream_data, brekkie_data, doobie_data, pizza_data, chocolate_data, pasta_data, \
-        nugget_data, cereal_data
+        nugget_data, cereal_data, pie_data
 
     with codecs.open(os.path.join(bot.data_dir, "sandwich.json"), encoding="utf-8") as f:
         sandwich_data = json.load(f)
@@ -105,6 +105,9 @@ def load_foods(bot):
         
     with codecs.open(os.path.join(bot.data_dir, "nugget.json"), encoding="utf-8") as f:
         nugget_data = json.load(f)
+        
+    with codecs.open(os.path.join(bot.data_dir, "pie.json"), encoding="utf-8") as f:
+        pie_data = json.load(f)
 		
     with codecs.open(os.path.join(bot.data_dir, "brekkie.json"), encoding="utf-8") as f:
         brekkie_data = json.load(f)
@@ -352,6 +355,20 @@ def nugget(text, action):
         return "I can't give nuggets to that user."
 
     generator = textgen.TextGenerator(nugget_data["templates"], nugget_data["parts"], variables={"user": user})
+
+    # act out the message
+    action(generator.generate_string())
+    
+@asyncio.coroutine
+@hook.command
+def pie(text, action):
+    """<user> - give pie to <user>"""
+    user = text.strip()
+
+    if not is_valid(user):
+        return "I can't give pie to that user."
+
+    generator = textgen.TextGenerator(pie_data["templates"], pie_data["parts"], variables={"user": user})
 
     # act out the message
     action(generator.generate_string())

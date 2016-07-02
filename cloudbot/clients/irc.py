@@ -149,7 +149,7 @@ class IrcClient(Client):
     def message(self, target, *messages):
         for text in messages:
             text = "".join(text.splitlines())
-            self.cmd("PRIVMSG", target, " \u200b" + text)
+            self.cmd("PRIVMSG", target, text)
 
     def action(self, target, text):
         text = "".join(text.splitlines())

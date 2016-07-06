@@ -100,7 +100,7 @@ def format_irc_event(event, args):
         ctcp_command = ctcp_args[0]
         ctcp_message = None
         if len(ctcp_args) > 1:
-            ctcp_message = ctcp_ars[1]
+            ctcp_message = ctcp_args[1]
         
         args["ctcp_command"] = ctcp_command
         args["ctcp_message"] = ctcp_message

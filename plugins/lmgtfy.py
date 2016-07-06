@@ -20,3 +20,12 @@ def lmbtfy(text):
     link = "http://bing.lmgtfy.com/?q={}".format(requests.utils.quote(text))
 
     return web.try_shorten(link)
+
+
+@hook.command("lmddgtfy")
+def lmddgtfy(text):
+    """[phrase] gets a lmddgtfy.net link for the specified phrase"""
+
+    link = "https://lmddgtfy.net/?q={}".format(requests.utils.quote(text))
+
+    return web.try_shorten(link)

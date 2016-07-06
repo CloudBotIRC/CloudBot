@@ -22,7 +22,7 @@ def lmbtfy(text):
     return web.try_shorten(link)
 
 
-@hook.command("lmddgtfy")
+@hook.command("lmddgtfy", "lmdtfy", "dfy")
 def lmddgtfy(text):
     """[phrase] gets a lmddgtfy.net link for the specified phrase"""
 

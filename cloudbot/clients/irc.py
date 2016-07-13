@@ -50,6 +50,7 @@ class IrcClient(Client):
     :type port: int
     :type _connected: bool
     :type _ignore_cert_errors: bool
+    :type capabilities: set[str]
     """
 
     def __init__(self, bot, name, nick, *, channels=None, config=None,
@@ -92,6 +93,8 @@ class IrcClient(Client):
         # transport and protocol
         self._transport = None
         self._protocol = None
+
+        self.capabilities = set(self.config.get('capabilities', []))
 
     def describe_server(self):
         if self.use_ssl:
@@ -346,13 +349,17 @@ class _IrcProtocol(asyncio.Protocol):
             # Parse the command and params
 
             # Content
-            if command_params and command_params[-1].startswith(":"):
+            if command_params:
+                if command_params[-1].startswith(":"):
                 # If the last param is in the format of `:content` remove the `:` from it, and set content from it
-                content_raw = command_params[-1][1:]
-                content = irc_clean(content_raw)
-            else:
-                content_raw = None
-                content = None
+                    content_raw = command_params[-1][1:]
+                    content = irc_clean(content_raw)
+                else:
+                    content_raw = None
+                    content = None
+                    if not command_params[-1]=="" and isinstance("string", type(command_params[-1])):
+                        content = command_params[-1]
+                        content_raw = command_params[-1]
 
             # Event type
             if command in irc_command_to_event_type:

@@ -1,8 +1,9 @@
-import codecs
+import asyncio
 import json
+
+import codecs
 import os
 import random
-import asyncio
 import re
 
 from cloudbot import hook
@@ -16,6 +17,12 @@ cakes = ['Chocolate', 'Ice Cream', 'Angel', 'Boston Cream', 'Birthday', 'Bundt',
 cookies = ['Chocolate Chip', 'Oatmeal', 'Sugar', 'Oatmeal Raisin', 'Macadamia Nut', 'Jam Thumbprint', 'Medican Wedding',
            'Biscotti', 'Oatmeal Cranberry', 'Chocolate Fudge', 'Peanut Butter', 'Pumpkin', 'Lemon Bar',
            'Chocolate Oatmeal Fudge', 'Toffee Peanut', 'Danish Sugar', 'Triple Chocolate', 'Oreo']
+
+biscuits = ['Digestive', 'Chocolate Digestive', 'Caramel Digestive', 'Hobnob', 'Chocolate Hobnob', 'Rich Tea Finger',
+            'Rich Tea', 'Custard Cream', 'Chocolate Finger', 'Ginger Nut', 'Penguin Bar', 'Fruit Shortcake',
+            'Caramel Wafer', 'Shortbread Round', 'Lemon Puff', 'Elite Chocolate Tea Cake', 'Club Bar', 'Garbaldi',
+            'Viennese', 'Bourbon Cream', 'Malted Milk', 'Lotus Biscoff', 'Nice', 'Fig Roll', 'Jammie Dodger', 'Oatie',
+            'Jaffa Cake']
 
 # <Luke> Hey guys, any good ideas for plugins?
 # <User> I don't know, something that lists every potato known to man?
@@ -59,6 +66,7 @@ def is_valid(target):
         return True
     else:
         return False
+
 
 @hook.on_start()
 def load_foods(bot):
@@ -134,6 +142,23 @@ def cookie(text, action):
 
 @asyncio.coroutine
 @hook.command
+def biscuit(text, action):
+    """<user> - gives <user> a biscuit"""
+    user = text.strip()
+    name = random.choice(['bickie', 'biscuit'])
+    flavor = random.choice(['tasty', 'delectable', 'delicious', 'yummy', 'gorgeous', 'scrumptious', 'luscious',
+                            'irresistible', 'mouth watering'])
+    if not is_valid(user):
+        return "I can't give a {} {} to that user.".format(flavor, name)
+
+    bickie_type = random.choice(biscuits)
+    method = random.choice(['makes', 'gives', 'gets', 'buys', 'unwantingly passes', 'grants', 'force feeds'])
+
+    action("{} {} a {} {} {}!".format(method, user, flavor, bickie_type, name))
+
+
+@asyncio.coroutine
+@hook.command
 def sandwich(text, action):
     """<user> - give a tasty sandwich to <user>"""
     user = text.strip()
@@ -146,6 +171,7 @@ def sandwich(text, action):
 
     # act out the message
     action(generator.generate_string())
+
 
 @asyncio.coroutine
 @hook.command

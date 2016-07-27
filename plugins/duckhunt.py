@@ -539,6 +539,10 @@ def ducks_user(text, nick, chan, conn, db, message):
     scores = db.execute(select([table.c.name, table.c.chan, table.c.shot, table.c.befriend])
         .where(table.c.network == conn.name)
         .where(table.c.name == name)).fetchall()
+    if text:
+        name = text.split()[0]
+    else:
+        name = nick
     if scores:
         for row in scores:
             if row["chan"].lower() == chan.lower():

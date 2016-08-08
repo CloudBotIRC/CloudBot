@@ -52,10 +52,6 @@ def profile(text, chan, notice, nick):
     if nick.lower() == chan.lower():
         return "Profile data not available outside of channels"
 
-    if not text:
-        notice(".profile <nick> <category>")
-        return
-
     # Split the text in to the nick and requested category
     unpck = text.split(None, 1)
 
@@ -86,10 +82,6 @@ def profileadd(text, chan, nick, notice, db):
     """<category> <content> Adds data to your profile in the current channel under \"<category>\""""
     if nick.lower() == chan.lower():
         return "Profile data can not be set outside of channels"
-
-    if not text:
-        notice("profileadd <category> <content>")
-        return
 
     match = data_re.match(text)
 

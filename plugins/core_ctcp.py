@@ -2,23 +2,17 @@ import asyncio
 import time
 
 from cloudbot import hook
+from cloudbot.event import EventType
 import cloudbot
-
 
 # CTCP responses
 @asyncio.coroutine
-@hook.regex(r'^\x01VERSION\x01$')
-def ctcp_version(notice):
-    notice("\x01VERSION: CloudBot {} - https://git.io/CloudBot".format(cloudbot.__version__))
-
-
-@asyncio.coroutine
-@hook.regex(r'^\x01PING\x01$')
-def ctcp_ping(notice):
-    notice('\x01PING: PONG')
-
-
-@asyncio.coroutine
-@hook.regex(r'^\x01TIME\x01$')
-def ctcp_time(notice):
-    notice('\x01TIME: The time is: {}'.format(time.strftime("%r", time.localtime())))
+@hook.event([EventType.other])
+def ctcp_version(notice, irc_ctcp_text):
+    if irc_ctcp_text:
+        if irc_ctcp_text.startswith("VERSION"):
+            notice("\x01VERSION: gonzobot a fork of Cloudbot {} - https://snoonet.org/gonzobot".format(cloudbot.__version__))
+        elif irc_ctcp_text.startswith("PING"):
+            notice('\x01PING: PONG')
+        elif irc_ctcp_text.startswith("TIME"):
+           notice('\x01TIME: The time is: {}'.format(time.strftime("%r", time.localtime())))

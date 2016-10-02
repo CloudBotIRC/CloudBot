@@ -103,8 +103,11 @@ def seen(text, nick, chan, db, event, conn):
 
     db_init(db, conn.name)
 
-    last_seen = db.execute("select name, time, quote from seen_user where name like :name and chan = :chan",
-                           {'name': text, 'chan': chan}).fetchone()
+    if '_' in text:
+        text = text.replace("_", "/_")
+
+    last_seen = db.execute("select name, time, quote from seen_user where name like :name escape '/' and chan = :chan",
+                            {'name': text, 'chan': chan}).fetchone()
 
     if last_seen:
         reltime = timeformat.time_since(last_seen[1])

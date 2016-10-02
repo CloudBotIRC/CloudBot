@@ -23,6 +23,7 @@ import codecs
 import urllib.parse
 import random
 import binascii
+import string
 
 from cloudbot import hook
 from cloudbot.util import formatting, web, colors
@@ -121,6 +122,14 @@ def swapcase(text):
     """<string> -- Swaps the capitalization of <string>."""
     return text.swapcase()
 
+@hook.command("aesthetic", "vapor", "fw")
+def fullwidth(text):
+    """<string> -- Converts <string> to full width characters."""
+    HALFWIDTH_TO_FULLWIDTH = str.maketrans(
+        '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&()*+,-./:;<=>?@[]^_`{|}~',
+        '０１２３４５６７８９ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ！゛＃＄％＆（）＊＋、ー。／：；〈＝〉？＠［］＾＿‘｛｜｝～'
+    )
+    return text.translate(HALFWIDTH_TO_FULLWIDTH)
 
 # encoding
 

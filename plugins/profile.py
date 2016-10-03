@@ -80,7 +80,7 @@ def format_profile(nick, category, text):
 # modified from grab.py
 @hook.command("moreprofile", autohelp=False)
 def moreprofile(text, chan, nick, notice):
-    """if a category search has lots of results the results are paginated. If the most recent search is paginated the pages are stored for retrieval. If no argument is given the next page will be returned else a page number can be specified."""
+    """If a category search has lots of results the results are paginated. If the most recent search is paginated the pages are stored for retrieval. If no argument is given the next page will be returned else a page number can be specified."""
     if nick not in cat_pages[chan] or not cat_pages[chan][nick]:
         notice("There are no category pages to show.")
         return
@@ -210,3 +210,28 @@ def profiledel(nick, chan, text, notice, db):
     db.commit()
     load_cache(db)
     return "Deleted profile category {}".format(category)
+
+
+@hook.command(autohelp=False)
+def profileclear(nick, chan, text, notice, db):
+    """Clears all of your profile data in the current channel"""
+    if nick.lower() == chan.lower():
+        return "Profile data can not be set outside of channels"
+
+    if text:
+        if nick in confirm_keys[chan] and text == confirm_keys[chan][nick]:
+            del confirm_keys[chan][nick]
+            db.execute(table.delete().where((and_(table.c.nick == nick.lower(),
+                                                  table.c.chan == chan.lower()))))
+            db.commit()
+            load_cache(db)
+            return "Profile data cleared for {}.".format(nick)
+        else:
+            notice("Invalid confirm key")
+            return
+    else:
+        confirm_keys[chan][nick] = "".join(random.choice(string.ascii_letters + string.digits) for i in range(10))
+        notice("Are you sure you want to clear all of your profile data in {}? use \".profileclear {}\" to confirm"
+               .format(chan, confirm_keys[chan][nick]))
+        return
+

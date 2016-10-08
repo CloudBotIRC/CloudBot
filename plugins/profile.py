@@ -54,7 +54,6 @@ def two_lines(bigstring, chan, nick):
     if nick not in cat_pages[chan]:
         cat_pages[chan][nick] = []
     temp = bigstring.split('\n')
-    print("Temp:", len(temp))
     for i in range(0, len(temp), 2):
         cat_pages[chan][nick].append('\n'.join(temp[i:i + 2]))
     cat_page_index[chan][nick] = 0
@@ -146,7 +145,6 @@ def profile(text, chan, notice, nick):
         out = smart_truncate(out)
         out = out[:-2]
         out = two_lines(out, chan, nick)
-        print(len(cat_pages[chan].get(nick, [])))
         if len(cat_pages[chan].get(nick, [])) > 1:
             msg = "{}(page {}/{}) .moreprofile".format(out, cat_page_index[chan][nick] + 1, len(cat_pages[chan][nick]))
             for line in msg.splitlines():

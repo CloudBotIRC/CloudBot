@@ -71,7 +71,7 @@ def load_optout(db):
             chan = row["chan"]
             opt_out.append(chan)
 
-@hook.event([EventType.message, EventType.action], singlethread=True)
+#@hook.event([EventType.message, EventType.action], singlethread=True)
 def incrementMsgCounter(event, conn):
     """Increment the number of messages said in an active game channel. Also keep track of the unique masks that are speaking."""
     global game_status
@@ -82,7 +82,7 @@ def incrementMsgCounter(event, conn):
         if event.host not in game_status[conn.name][event.chan]['masks']:
             game_status[conn.name][event.chan]['masks'].append(event.host)
 
-@hook.command("starthunt", autohelp=False)
+#@hook.command("starthunt", autohelp=False)
 def start_hunt(bot, chan, message, conn):
     """This command starts a duckhunt in your channel, to stop the hunt use .stophunt"""
     global game_status
@@ -108,7 +108,7 @@ def set_ducktime(chan, conn):
     game_status[conn.name][chan]['masks'] = []
     return
 
-@hook.command("stophunt", autohelp=False)
+#@hook.command("stophunt", autohelp=False)
 def stop_hunt(chan, conn):
     """This command stops the duck hunt in your channel. Scores will be preserved"""
     global game_status
@@ -120,7 +120,7 @@ def stop_hunt(chan, conn):
     else:
         return "There is no game running in {}.".format(chan)
 
-@hook.command("duckkick")
+#@hook.command("duckkick")
 def no_duck_kick(text, chan, conn, notice):
     """If the bot has OP or half-op in the channel you can specify .duckkick enable|disable so that people are kicked for shooting or befriending a non-existent goose. Default is off."""
     global game_status
@@ -149,7 +149,7 @@ def generate_duck():
     return (dtail, dbody, dnoise)
 
 
-@hook.periodic(11, initial_interval=11)
+#@hook.periodic(11, initial_interval=11)
 def deploy_duck(message, bot):
     global game_status
     for network in game_status:
@@ -228,7 +228,7 @@ def dbupdate(nick, chan, db, conn, shoot, friend):
         db.execute(query)
         db.commit()
 
-@hook.command("bang", autohelp=False)
+#@hook.command("bang", autohelp=False)
 def bang(nick, chan, message, db, conn, notice):
     """when there is a duck on the loose use this command to shoot it."""
     global game_status, scripters
@@ -283,7 +283,7 @@ def bang(nick, chan, message, db, conn, notice):
         message("{} you shot a duck in {} seconds! You have killed {} {} in {}.".format(nick, timer, score, duck, chan))
         set_ducktime(chan, conn)
 
-@hook.command("befriend", autohelp=False)
+#@hook.command("befriend", autohelp=False)
 def befriend(nick, chan, message, db, conn, notice):
     """when there is a duck on the loose use this command to befriend it before someone else shoots it."""
     global game_status, scripters
@@ -346,7 +346,7 @@ def smart_truncate(content, length=320, suffix='...'):
         return content[:length].rsplit(' • ', 1)[0]+suffix
 
 
-@hook.command("friends", autohelp=False)
+#@hook.command("friends", autohelp=False)
 def friends(text, chan, conn, db):
     """Prints a list of the top duck friends in the channel, if 'global' is specified all channels in the database are included."""
     if chan in opt_out:
@@ -389,7 +389,7 @@ def friends(text, chan, conn, db):
     out = smart_truncate(out)
     return out
 
-@hook.command("killers", autohelp=False)
+#@hook.command("killers", autohelp=False)
 def killers(text, chan, conn, db):
     """Prints a list of the top duck killers in the channel, if 'global' is specified all channels in the database are included."""
     if chan in opt_out:
@@ -432,7 +432,7 @@ def killers(text, chan, conn, db):
     out = smart_truncate(out)
     return out
 
-@hook.command("duckforgive", permissions=["op", "ignore"])
+#@hook.command("duckforgive", permissions=["op", "ignore"])
 def duckforgive(text):
     """Allows people to be removed from the mandatory cooldown period."""
     global scripters
@@ -476,7 +476,7 @@ def hunt_opt_out(text, chan, db, conn):
         db.commit()
         load_optout(db)
 
-@hook.command("duckmerge", permissions=["botcontrol"])
+#@hook.command("duckmerge", permissions=["botcontrol"])
 def duck_merge(text, conn, db, message):
     """Moves the duck scores from one nick to another nick. Accepts two nicks as input the first will have their duck scores removed the second will have the first score added. Warning this cannot be undone."""
     oldnick, newnick = text.lower().split()

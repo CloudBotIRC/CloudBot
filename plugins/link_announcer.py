@@ -37,6 +37,7 @@ def print_url_title(message, match, chan):
     if re.search(blacklist, match.group()):
         return
     HEADERS = {
+        'Accept-Language': 'en-US,en;q=0.5',
         'User-Agent': 'Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19'
     }
     with closing(requests.get(match.group(), headers = HEADERS, stream = True, timeout=3)) as r:

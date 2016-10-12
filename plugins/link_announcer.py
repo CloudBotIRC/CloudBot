@@ -38,7 +38,7 @@ def print_url_title(message, match, chan):
         return
     HEADERS = {
         'Accept-Language': 'en-US,en;q=0.5',
-        'User-Agent': 'Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19'
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36'
     }
     with closing(requests.get(match.group(), headers = HEADERS, stream = True, timeout=3)) as r:
         if not r.encoding:

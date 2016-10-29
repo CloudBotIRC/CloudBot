@@ -2,7 +2,7 @@
     "templates": [
         "rips off {user}'s {limbs} and leaves them to die.",
         "grabs {user}'s head and rips it clean off their body.",
-        "grabs a {gun} and riddles {user}'s body with bullets.",
+        "grabs {gun} and riddles {user}'s body with bullets.",
         "gags and ties {user} then throws them off a {tall_thing}.",
         "crushes {user} with a huge spiked {spiked_thing}.",
         "glares at {user} until they die of boredom.",
@@ -27,10 +27,10 @@
     ],
     "parts": {
         "gun": [
-            "AK47",
-            "machine gun",
-            "automatic pistol",
-            "Uzi"
+            "an AK47",
+            "a machine gun",
+            "an automatic pistol",
+            "an Uzi"
         ],
         "limbs": [
             "legs",

@@ -125,7 +125,7 @@ def unignore(text, db, chan, conn, notice, nick, message):
 
 
 @hook.command(permissions=["botcontrol"])
-def global_ignore(text, db, conn, notice):
+def global_ignore(text, db, conn, notice, nick, message):
     """<nick|mask> -- ignores all input from <nick|mask> in ALL channels."""
     target = text.lower()
     if "!" not in target or "@" not in target:
@@ -135,11 +135,13 @@ def global_ignore(text, db, conn, notice):
         notice("{} is already globally ignored.".format(target))
     else:
         notice("{} has been globally ignored.".format(target))
+        if logchannel:
+            message("{} used GLOBAL_IGNORE to make me ignore {} everywhere".format(nick, target), logchannel)
         add_ignore(db, conn.name, "*", target)
 
 
 @hook.command(permissions=["botcontrol"])
-def global_unignore(text, db, conn, notice):
+def global_unignore(text, db, conn, notice, nick, message):
     """<nick|mask> -- un-ignores all input from <nick|mask> in ALL channels."""
     target = text.lower()
     if "!" not in target or "@" not in target:
@@ -149,4 +151,6 @@ def global_unignore(text, db, conn, notice):
         notice("{} is not globally ignored.".format(target))
     else:
         notice("{} has been globally un-ignored.".format(target))
+        if logchannel:
+            message("{} used GLOBAL_UNIGNORE to make me stop ignoring {} everywhere".format(nick, target), logchannel)
         remove_ignore(db, conn.name, "*", target)

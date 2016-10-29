@@ -104,7 +104,7 @@ def get_user_groups(text, conn, mask, has_permission, notice):
 
 @asyncio.coroutine
 @hook.command("deluser", permissions=["permissions_users"])
-def remove_permission_user(text, bot, conn, notice, reply):
+def remove_permission_user(text, nick, bot, message, conn, notice, reply):
     """<user> [group] - removes <user> from [group], or from all groups if no group is specified
     :type text: str
     :type bot: cloudbot.bot.CloudBot
@@ -136,8 +136,12 @@ def remove_permission_user(text, bot, conn, notice, reply):
             changed = True
         if len(changed_masks) > 1:
             reply("Removed {} and {} from {}".format(", ".join(changed_masks[:-1]), changed_masks[-1], group))
+            if logchannel:
+                message("{} used deluser remove {} and {} from {}.".format(nick, ", ".join(changed_masks[:-1]), changed_masks[-1], group), logchannel)
         elif changed_masks:
             reply("Removed {} from {}".format(changed_masks[0], group))
+            if logchannel:
+                message("{} used deluser remove {} from {}.".format(nick, ", ".join(changed_masks[0]), group), logchannel)
         else:
             reply("No masks in {} matched {}".format(group, user))
     else:
@@ -148,8 +152,12 @@ def remove_permission_user(text, bot, conn, notice, reply):
                 changed = True
             if len(changed_masks) > 1:
                 reply("Removed {} and {} from {}".format(", ".join(changed_masks[:-1]), changed_masks[-1], group))
+                if logchannel:
+                    message("{} used deluser remove {} and {} from {}.".format(nick, ", ".join(changed_masks[:-1]), changed_masks[-1], group), logchannel)
             elif changed_masks:
                 reply("Removed {} from {}".format(changed_masks[0], group))
+                if logchannel:
+                    message("{} used deluser remove {} from {}.".format(nick, ", ".join(changed_masks[0]), group), logchannel)
         if not changed:
             reply("No masks with elevated permissions matched {}".format(group, user))
 
@@ -160,7 +168,7 @@ def remove_permission_user(text, bot, conn, notice, reply):
 
 @asyncio.coroutine
 @hook.command("adduser", permissions=["permissions_users"])
-def add_permissions_user(text, conn, bot, notice, reply):
+def add_permissions_user(text, nick, message, conn, bot, notice, reply):
     """<user> <group> - adds <user> to <group>
     :type text: str
     :type conn: cloudbot.client.Client
@@ -192,8 +200,12 @@ def add_permissions_user(text, conn, bot, notice, reply):
         reply("User {} is already matched in group {}".format(user, group))
     elif group_exists:
         reply("User {} added to group {}".format(user, group))
+        if logchannel:
+                message("{} used adduser to add {} to {}.".format(nick, user, group), logchannel)
     else:
         reply("Group {} created with user {}".format(group, user))
+        if logchannel:
+                message("{} used adduser to create group {} and add {} to it.".format(nick, group, user), logchannel)
 
     if changed:
         bot.config.save_config()

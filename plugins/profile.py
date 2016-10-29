@@ -54,7 +54,6 @@ def two_lines(bigstring, chan, nick):
     if nick not in cat_pages[chan]:
         cat_pages[chan][nick] = []
     temp = bigstring.split('\n')
-    print("Temp:", len(temp))
     for i in range(0, len(temp), 2):
         cat_pages[chan][nick].append('\n'.join(temp[i:i + 2]))
     cat_page_index[chan][nick] = 0
@@ -81,7 +80,7 @@ def format_profile(nick, category, text):
 @hook.command("moreprofile", autohelp=False)
 def moreprofile(text, chan, nick, notice):
     """If a category search has lots of results the results are paginated. If the most recent search is paginated the pages are stored for retrieval. If no argument is given the next page will be returned else a page number can be specified."""
-    if nick not in cat_pages[chan] or not cat_pages[chan][nick]:
+    if nick.lower() not in cat_pages[chan.lower()] or not cat_pages[chan.lower()][nick.lower()]:
         notice("There are no category pages to show.")
         return
 
@@ -93,19 +92,20 @@ def moreprofile(text, chan, nick, notice):
             notice("Please specify a positive integer value")
             return
 
-        if index > len(cat_pages[chan][nick]) or index == 0:
-            notice("Please specify a valid page number between 1 and {}.".format(len(cat_pages[chan][nick])))
+        if index > len(cat_pages[chan.lower()][nick.lower()]) or index == 0:
+            notice("Please specify a valid page number between 1 and {}.".format(len(cat_pages[chan.lower()][nick.lower()])))
             return
         else:
-            msg = "{}(page {}/{})".format(cat_pages[chan][nick][index - 1], index, len(cat_pages[chan][nick]))
+            msg = "{}(page {}/{})".format(cat_pages[chan.lower()][nick.lower()][index - 1], index, len(cat_pages[chan.lower()][nick.lower()]))
             for line in msg.splitlines():
                 notice(line)
             return
     else:
-        cat_page_index[chan][nick] += 1
-        if cat_page_index[chan][nick] < len(cat_pages[chan][nick]):
-            msg = "{}(page {}/{})".format(cat_pages[chan][nick][cat_page_index[chan][nick]],
-                                           cat_page_index[chan][nick] + 1, len(cat_pages[chan][nick]))
+        cat_page_index[chan.lower()][nick.lower()] += 1
+        if cat_page_index[chan.lower()][nick.lower()] < len(cat_pages[chan.lower()][nick.lower()]):
+            msg = "{}(page {}/{})".format(cat_pages[chan.lower()][nick.lower()][cat_page_index[chan.lower()][nick.lower()]],
+                                          cat_page_index[chan.lower()][nick.lower()] + 1,
+                                          len(cat_pages[chan.lower()][nick.lower()]))
             for line in msg.splitlines():
                 notice(line)
             return
@@ -130,14 +130,14 @@ def profile(text, chan, notice, nick):
     # Check if the caller specified a profile category, if not, send a NOTICE with the users registered categories
     if len(unpck) < 2:
         cats = []
-        cat_pages[chan][nick] = []
-        cat_page_index[chan][nick] = 0
-        pnick = unpck[0].lower()
-        if len(profile_cache.get(chan, {}).get(pnick, {})) == 0:
+        cat_pages[chan.lower()][nick.lower()] = []
+        cat_page_index[chan.lower()][nick.lower()] = 0
+        pnick = unpck[0]
+        if len(profile_cache.get(chan.lower(), {}).get(pnick.lower(), {})) == 0:
             notice("User {} has no profile data saved in this channel".format(pnick))
             return
 
-        for e in profile_cache.get(chan, {}).get(pnick, {}):
+        for e in profile_cache.get(chan.lower(), {}).get(pnick.lower(), {}):
             cats.append(e)
 
         out = "Categories: "
@@ -146,9 +146,9 @@ def profile(text, chan, notice, nick):
         out = smart_truncate(out)
         out = out[:-2]
         out = two_lines(out, chan, nick)
-        print(len(cat_pages[chan].get(nick, [])))
         if len(cat_pages[chan].get(nick, [])) > 1:
-            msg = "{}(page {}/{}) .moreprofile".format(out, cat_page_index[chan][nick] + 1, len(cat_pages[chan][nick]))
+            msg = "{}(page {}/{}) .moreprofile".format(out, cat_page_index[chan.lower()][nick.lower()] + 1,
+                                                       len(cat_pages[chan.lower()][nick.lower()]))
             for line in msg.splitlines():
                 notice(line)
             return
@@ -158,11 +158,11 @@ def profile(text, chan, notice, nick):
         return
 
     pnick, category = unpck
-    if category.lower() not in profile_cache.get(chan, {}).get(pnick.lower(), {}):
+    if category.lower() not in profile_cache.get(chan.lower(), {}).get(pnick.lower(), {}):
         notice("User {} has no profile data for category {} in this channel".format(pnick, category))
 
     else:
-        content = profile_cache[chan][pnick.lower()][category.lower()]
+        content = profile_cache[chan.lower()][pnick.lower()][category.lower()]
         return format_profile(pnick, category, content)
 
 
@@ -178,7 +178,7 @@ def profileadd(text, chan, nick, notice, db):
         notice("Invalid data")
     else:
         cat, data = match.groups()
-        if cat.lower() not in profile_cache.get(chan, {}).get(nick, {}):
+        if cat.lower() not in profile_cache.get(chan.lower(), {}).get(nick.lower(), {}):
             db.execute(table.insert().values(chan=chan.lower(), nick=nick.lower(), category=cat.lower(), text=data))
             db.commit()
             load_cache(db)
@@ -219,8 +219,8 @@ def profileclear(nick, chan, text, notice, db):
         return "Profile data can not be set outside of channels"
 
     if text:
-        if nick in confirm_keys[chan] and text == confirm_keys[chan][nick]:
-            del confirm_keys[chan][nick]
+        if nick in confirm_keys[chan.lower()] and text == confirm_keys[chan.lower()][nick.lower()]:
+            del confirm_keys[chan.lower()][nick.lower()]
             db.execute(table.delete().where((and_(table.c.nick == nick.lower(),
                                                   table.c.chan == chan.lower()))))
             db.commit()
@@ -230,8 +230,8 @@ def profileclear(nick, chan, text, notice, db):
             notice("Invalid confirm key")
             return
     else:
-        confirm_keys[chan][nick] = "".join(random.choice(string.ascii_letters + string.digits) for i in range(10))
+        confirm_keys[chan.lower()][nick.lower()] = "".join(random.choice(string.ascii_letters + string.digits) for i in range(10))
         notice("Are you sure you want to clear all of your profile data in {}? use \".profileclear {}\" to confirm"
-               .format(chan, confirm_keys[chan][nick]))
+               .format(chan, confirm_keys[chan.lower()][nick.lower()]))
         return
 

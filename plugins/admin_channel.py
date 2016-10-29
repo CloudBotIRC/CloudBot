@@ -125,16 +125,15 @@ def kick(text, chan, conn, notice):
 
 
 @hook.command(permissions=["op_rem", "op"])
-def remove(text, chan, conn):
+def remove(text, nick, chan, conn):
     """[channel] <user> - force removes <user> from [channel], or in the caller's channel if no channel is specified"""
     split = text.split(" ")
-    if split[0].startswith("#"):
-        message = " ".join(split[1:])
-        chan = split[0]
-        out = "REMOVE {} :{}".format(chan, message)
+    user = split[0]
+    if len(split) > 1:
+        message = " ".join(split[1:]) + " requested by {}".format(nick)
     else:
-        message = " ".join(split)
-        out = "REMOVE {} :{}".format(chan, message)
+        message = "requested by {}.".format(nick)
+    out = "REMOVE {} {} :{}".format(user, chan, message)
     conn.send(out)
 
 

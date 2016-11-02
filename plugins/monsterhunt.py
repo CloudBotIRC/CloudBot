@@ -59,7 +59,7 @@ scripters = defaultdict(int)
 game_status = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
 
 
-@hook.on_start()
+#@hook.on_start()
 def load_optout(db):
     """load a list of channels duckhunt should be off in. Right now I am being lazy and not
     differentiating between networks this should be cleaned up later."""
@@ -71,7 +71,7 @@ def load_optout(db):
             chan = row["chan"]
             opt_out.append(chan)
 
-@hook.event([EventType.message, EventType.action], singlethread=True)
+#@hook.event([EventType.message, EventType.action], singlethread=True)
 def incrementMsgCounter(event, conn):
     """Increment the number of messages said in an active game channel. Also keep track of the unique masks that are speaking."""
     global game_status
@@ -82,7 +82,7 @@ def incrementMsgCounter(event, conn):
         if event.host not in game_status[conn.name][event.chan]['masks']:
             game_status[conn.name][event.chan]['masks'].append(event.host)
 
-@hook.command("starthunt", autohelp=False)
+#@hook.command("starthunt", autohelp=False)
 def start_hunt(bot, chan, message, conn):
     """This command starts a spooky MONSTER hunt in your channel, to stop the hunt use .stophunt"""
     global game_status
@@ -108,7 +108,7 @@ def set_ducktime(chan, conn):
     game_status[conn.name][chan]['masks'] = []
     return
 
-@hook.command("stophunt", autohelp=False)
+#@hook.command("stophunt", autohelp=False)
 def stop_hunt(chan, conn):
     """This command stops the Monster hunt in your channel. Scores will be preserved"""
     global game_status
@@ -120,7 +120,7 @@ def stop_hunt(chan, conn):
     else:
         return "There is no monster hunt running in {}.".format(chan)
 
-@hook.command("monsterkick")
+#@hook.command("monsterkick")
 def no_duck_kick(text, chan, conn, notice):
     """If the bot has OP or half-op in the channel you can specify .monsterkick enable|disable so that people are kicked for shooting or befriending a non-existent monster. Default is off."""
     global game_status
@@ -150,7 +150,7 @@ def generate_duck():
     return (dtail, dbody, dnoise)
 
 
-@hook.periodic(11, initial_interval=11)
+#@hook.periodic(11, initial_interval=11)
 def deploy_duck(message, bot):
     global game_status
     for network in game_status:
@@ -229,7 +229,7 @@ def dbupdate(nick, chan, db, conn, shoot, friend):
         db.execute(query)
         db.commit()
 
-@hook.command("bang", autohelp=False)
+#@hook.command("bang", autohelp=False)
 def bang(nick, chan, message, db, conn, notice):
     """when there is a monster chasing someone use this command to shoot it."""
     global game_status, scripters
@@ -284,7 +284,7 @@ def bang(nick, chan, message, db, conn, notice):
         message("{} you shot a monster and saved a human in {} seconds! You have killed {} {} in {}.".format(nick, timer, score, duck, chan))
         set_ducktime(chan, conn)
 
-@hook.command("befriend", autohelp=False)
+#@hook.command("befriend", autohelp=False)
 def befriend(nick, chan, message, db, conn, notice):
     """when there is a monster on the loose chasing a human use this command to befriend it before someone else shoots it. This will also let it kill the human."""
     global game_status, scripters
@@ -436,7 +436,7 @@ def killers(text, chan, conn, db):
     out = smart_truncate(out) + " " + url
     return out
 
-@hook.command("monsterforgive", permissions=["op", "ignore"])
+#@hook.command("monsterforgive", permissions=["op", "ignore"])
 def duckforgive(text):
     """Allows people to be removed from the mandatory cooldown period."""
     global scripters
@@ -446,7 +446,7 @@ def duckforgive(text):
     else:
         return "I couldn't find anyone banned from the hunt by that nick"
 
-@hook.command("hunt_opt_out", permissions=["op", "ignore"], autohelp=False)
+#@hook.command("hunt_opt_out", permissions=["op", "ignore"], autohelp=False)
 def hunt_opt_out(text, chan, db, conn):
     """Running this command without any arguments displays the status of the current channel. hunt_opt_out add #channel will disable all duck and monster hunt commands in the specified channel. hunt_opt_out remove #channel will re-enable the game for the specified channel."""
     if not text:
@@ -480,7 +480,7 @@ def hunt_opt_out(text, chan, db, conn):
         db.commit()
         load_optout(db)
 
-@hook.command("monstermerge", permissions=["botcontrol"])
+#@hook.command("monstermerge", permissions=["botcontrol"])
 def duck_merge(text, conn, db, message):
     """Moves the monster scores from one nick to another nick. Accepts two nicks as input the first will have their monster scores removed the second will have the first score added. Warning this cannot be undone."""
     oldnick, newnick = text.lower().split()

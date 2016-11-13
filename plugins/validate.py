@@ -1,32 +1,41 @@
 import urllib.parse
-
 import requests
 
 from cloudbot import hook
 from cloudbot.util import web
 
+api_url = "https://validator.w3.org/check"
 
 @hook.command("validate", "w3c")
 def validate(text):
-    """validate <url> -- Runs url through the w3c markup validator."""
+    """validate <url> -- Runs url through the W3C Markup Validator."""
+    warning_count = 0
+    error_count = 0
+
     text = text.strip()
 
     if not urllib.parse.urlparse(text).scheme:
         text = "http://" + text
 
-    params = {'uri': text}
-    request = requests.get('http://validator.w3.org/check', params=params)
+    url = api_url + '?uri=' + text
+    url = web.try_shorten(url)
 
-    info = request.headers
-    url = web.try_shorten(request.url)
+    params = {'uri': text, 'output': 'json'}
+    request = requests.get(api_url, params=params)
 
-    status = info['x-w3c-validator-status'].lower()
-    print(status)
-    if status in ("valid", "invalid"):
-        error_count = info['x-w3c-validator-errors']
-        warning_count = info['x-w3c-validator-warnings']
-        return "{} was found to be {} with {} error{} and {} warning{}" \
-               " - {}".format(text, status, error_count, "s"[error_count == 1:], warning_count,
-                              "s"[warning_count == 1:], url)
-    elif status == "abort":
-        return "Invalid input."
+    if request.status_code != requests.codes.ok:
+        return "Failed to fetch info: {}".format(request.status_code)
+
+    response = request.json()
+    response = response['messages']
+
+    for mess in response:
+        if mess.get("subType", None) == "warning": warning_count += 1
+        if mess.get("type", None) == "error": error_count += 1
+
+    out_warning = "warnings" if warning_count > 1 else "warning"
+    out_error = "errors" if error_count > 1 else "error"
+
+    out = "{} has {} {} and {} {} ({})".format(text, warning_count, out_warning, error_count, out_error, url)
+
+    return out

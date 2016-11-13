@@ -48,7 +48,7 @@ def load_attacks(bot):
 
     with codecs.open(os.path.join(bot.data_dir, "slaps.json"), encoding="utf-8") as f:
         slaps = json.load(f)
-        
+
     with codecs.open(os.path.join(bot.data_dir, "strax.json"), encoding="utf-8") as f:
         strax = json.load(f)
 
@@ -57,7 +57,7 @@ def load_attacks(bot):
 
     with codecs.open(os.path.join(bot.data_dir, "north_korea.txt"), encoding="utf-8") as f:
         north_korea = [line.strip() for line in f.readlines() if not line.startswith("//")]
-        
+
     with codecs.open(os.path.join(bot.data_dir, "presents.json"), encoding="utf-8") as f:
         presents = json.load(f)
 
@@ -69,7 +69,7 @@ def lart(text, conn, nick, action):
     target = text.strip()
 
     if not is_valid(target):
-        return "I can't attack that."
+        return "I can't lart that."
 
     if is_self(conn, target):
         # user is trying to make the bot attack itself!
@@ -88,7 +88,7 @@ def flirt(text, conn, nick, message):
     target = text.strip()
 
     if not is_valid(target):
-        return "I can't attack that."
+        return "I can't flirt with that."
 
     if is_self(conn, target):
         # user is trying to make the bot attack itself!
@@ -98,7 +98,7 @@ def flirt(text, conn, nick, message):
 
 
 @asyncio.coroutine
-@hook.command
+@hook.command("kill", "end")
 def kill(text, conn, nick, action):
     """<user> - kills <user>"""
     target = text.strip()
@@ -123,7 +123,7 @@ def slap(text, action, nick, conn):
     target = text.strip()
 
     if not is_valid(target):
-        return "I can't attack that."
+        return "I can't slap that."
 
     if is_self(conn, target):
         # user is trying to make the bot attack itself!
@@ -141,11 +141,11 @@ def slap(text, action, nick, conn):
 @asyncio.coroutine
 @hook.command
 def compliment(text, action, nick, conn):
-    """<user> -- Makes the bot slap <user>."""
+    """<user> -- Makes the bot compliment <user>."""
     target = text.strip()
 
     if not is_valid(target):
-        return "I can't attack that."
+        return "I can't compliment that."
 
     if is_self(conn, target):
         # user is trying to make the bot attack itself!
@@ -158,7 +158,7 @@ def compliment(text, action, nick, conn):
 
     # act out the message
     action(generator.generate_string())
-    
+
 @hook.command(autohelp=False)
 def strax(text, conn, message, nick):
     """Strax quote."""
@@ -166,11 +166,11 @@ def strax(text, conn, message, nick):
     if text:
         target = text.strip()
         if not is_valid(target):
-           return "I can't attack that."
- 
+           return "I can't do that."
+
         if is_self(conn, target):
            # user is trying to make the bot attack itself!
-           target = nick 
+           target = nick
         variables = {
            "user": target
         }
@@ -208,23 +208,22 @@ def insult(text, conn, nick, notice, message):
         target = nick
 
     message("{}, {}".format(target, random.choice(insults)))
-    
+
 @asyncio.coroutine
 @hook.command("present", "gift")
 def present(text, conn, nick, action):
     """<user> - gives gift to <user>"""
     target = text.strip()
-    
+
     if not is_valid(target):
-        return "I can't gift that"
-        
+        return "I can't gift that."
+
     if is_self(conn, target):
         #user is trying to make the bot gift itself!
         target = nick
     variables = {
        "user": target
-    } 
-    
-    generator = textgen.TextGenerator(presents["templates"], presents["parts"], variables=variables) 
-    action(generator.generate_string())
+    }
 
+    generator = textgen.TextGenerator(presents["templates"], presents["parts"], variables=variables)
+    action(generator.generate_string())

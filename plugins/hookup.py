@@ -14,7 +14,7 @@ glomps = ["glomps", "tackles", "tackle hugs", "sexually glomps", "takes a flying
 usrcache = []
 #glob_chan = chan
 
-@hook.command(autohelp=False)
+#@hook.command(autohelp=False)
 def hookup(db, conn, chan):
     """matches two users from the channel in a sultry scene."""
     times = time.time() - 86400

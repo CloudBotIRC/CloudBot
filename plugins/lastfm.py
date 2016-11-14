@@ -80,7 +80,7 @@ def lastfm(text, nick, db, bot, notice):
 
     if type(tracks) == list:
         track = tracks[0]
-        
+
         if "@attr" in track and "nowplaying" in track["@attr"] and track["@attr"]["nowplaying"] == "true":
             # if the user is listening to something, the first track (a dict) of the
             # tracks list will contain an item with the "@attr" key.
@@ -142,6 +142,10 @@ def getartisttags(artist, bot):
     request = requests.get(api_url, params = params)
     tags = request.json()
 
+    # if artist doesn't exist return no tags
+    if tags.get("error") == 6:
+        return "no tags"
+
     if 'tag' in tags['toptags']:
         for item in tags['toptags']['tag']:
             try:
@@ -179,6 +183,10 @@ def getusertrackplaycount(artist, track, user, bot):
             'track': track, 'username': user }
     request = requests.get(api_url, params = params)
     track_info = request.json()
+
+    # if track doesn't exist return 0 playcount
+    if track_info.get("error") == 6:
+        return 0
 
     return track_info['track'].get('userplaycount')
 
@@ -218,7 +226,7 @@ def displaybandinfo(text, nick, bot, notice):
     similar = getsimilarartists(text, bot)
     tags = getartisttags(text, bot)
 
-    out = "{} have {:,} plays and {:,} listeners.".format(text, int(a['stats']['playcount']),
+    out = "{} has {:,} plays and {:,} listeners.".format(text, int(a['stats']['playcount']),
             int(a['stats']['listeners']))
     out += " Similar artists include {}. Tags: ({}).".format(similar, tags)
 

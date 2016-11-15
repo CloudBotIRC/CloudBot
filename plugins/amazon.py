@@ -102,6 +102,6 @@ def amazon(text, _parsed=False):
 
     # finally, assemble everything into the final string, and return it!
     if not _parsed:
-        return colors.parse("$(b){}$(b) ({}) - {}{} - {}".format(title, price, rating_str, tag_str, url))
+        return colors.parse(" ".join("$(b){}$(b) ({}) - {}{} - {}".format(title, price, rating_str, tag_str, url).splitlines()))
     else:
-        return colors.parse("$(b){}$(b) ({}) - {}{}".format(title, price, rating_str, tag_str))
+        return eolors.parse(" ".join("$(b){}$(b) ({}) - {}{}".format(title, price, rating_str, tag_str).splitlines()))

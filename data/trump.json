@@ -1,10 +1,10 @@
 {
   "templates": [
     "grabs {user} by the pussy.",
-    "walks in on {user} while undressing."
+    "walks in on {user} while undressing.",
     "pops a tic-tac and kisses {user}.",
-    "calls {user} {insult}."
-    "makes {user} great again.",
+    "calls {user} {insult}.",
+    "makes {user} great again."
   ],
   "parts":{
     "insult":  [

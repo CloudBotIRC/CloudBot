@@ -1,0 +1,14 @@
+{
+  "templates": [
+    "thinks {user} is {insult}",
+    "thinks that {user} helped Clinton deleted her emails",
+	"knows that {user} assisted Clinton with Benghazi",
+	"saw {user} help Clinton when she collapsed"
+  ],
+  "parts":{
+    "insult":  [
+      "deplorable",
+	  "a basement dweller"
+    ]
+  }
+}

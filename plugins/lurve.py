@@ -5,7 +5,7 @@ from cloudbot import hook
 
 @hook.command("lurve","luff", "luv")
 def lurve(text, nick, message):
-	""""lurves all over <user>"""
+	"""lurves all over <user>"""
 	target = text.strip()
 
 	# Use {N} to represent the person's nickname who is performing the action

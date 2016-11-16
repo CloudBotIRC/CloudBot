@@ -8,8 +8,8 @@ def lurve(text, nick, message):
 	""""lurves all over <user>"""
 	target = text.strip()
 
-	# Use {N} to represent the person"s nickname who is performing the action
-	# Use {T} to represent the person"s nickname who is the target of the action
+	# Use {N} to represent the person's nickname who is performing the action
+	# Use {T} to represent the person's nickname who is the target of the action
 	loving = [
 		"{N} wraps arms around {T} and clings forever",
 		"{N} cuddles {T} in the fluffiest blanket ever",

@@ -38,13 +38,18 @@ def main():
     original_sigint = signal.getsignal(signal.SIGINT)
 
     # define closure for signal handling
-    def exit_gracefully():
+    # The handler is called with two arguments: the signal number and the current stack frame
+    # These parameters should NOT be removed
+    def exit_gracefully(signum, frame):
         nonlocal stopped_while_restarting
         if not _bot:
             # we are currently in the process of restarting
             stopped_while_restarting = True
         else:
-            _bot.loop.call_soon_threadsafe(lambda: asyncio.async(_bot.stop("Killed"), loop=_bot.loop))
+            _bot.loop.call_soon_threadsafe(
+                lambda: asyncio.async(_bot.stop("Killed (Received SIGINT {})".format(signum)), loop=_bot.loop))
+
+        logger.warn("Bot received Signal Interrupt ({})".format(signum))
 
         # restore the original handler so if they do it again it triggers
         signal.signal(signal.SIGINT, original_sigint)

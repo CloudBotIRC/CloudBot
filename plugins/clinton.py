@@ -23,4 +23,4 @@ def clinton(text, action):
     """clinton a user."""
     user = text.strip()
     generator = textgen.TextGenerator(clinton_data["templates"], clinton_data["parts"], variables={"user": user})
-action(generator.generate_string())
+    action(generator.generate_string())

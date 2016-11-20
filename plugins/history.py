@@ -109,6 +109,8 @@ def seen(text, nick, chan, db, event, conn):
     last_seen = db.execute("select name, time, quote from seen_user where name like :name escape '/' and chan = :chan",
                             {'name': text, 'chan': chan}).fetchone()
 
+    text = text.replace("/", "")
+
     if last_seen:
         reltime = timeformat.time_since(last_seen[1])
         if last_seen[0] != text.lower():  # for glob matching

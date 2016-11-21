@@ -4,7 +4,7 @@ import re
 
 from cloudbot import hook
 from cloudbot.util import formatting
-    
+
 
 @asyncio.coroutine
 @hook.command("help", autohelp=False)
@@ -22,8 +22,10 @@ def help_command(text, chan, conn, bot, notice, message, has_permission):
     else:
         searching_for = None
 
+    disabled_commands = conn.config.get('disabled_commands', [])
+
     if searching_for:
-        if searching_for in bot.plugin_manager.commands:
+        if searching_for in bot.plugin_manager.commands and not searching_for in disabled_commands:
             doc = bot.plugin_manager.commands[searching_for].doc
             if doc:
                 if doc.split()[0].isalpha():
@@ -57,6 +59,9 @@ def help_command(text, chan, conn, bot, notice, message, has_permission):
 
             # add the command to lines sent
             command = plugin.name
+
+            if command in disabled_commands:
+                continue
 
             commands.append(command)
 

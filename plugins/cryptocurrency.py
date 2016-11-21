@@ -82,9 +82,9 @@ def crypto_command(text):
 
     change = float(data['change'])
     if change > 0:
-        change_str = "\x033{}%\x0f".format(change)
+        change_str = "\x033 {}%\x0f".format(change)
     elif change < 0:
-        change_str = "\x035{}%\x0f".format(change)
+        change_str = "\x035 {}%\x0f".format(change)
     else:
         change_str = "{}%".format(change)
 

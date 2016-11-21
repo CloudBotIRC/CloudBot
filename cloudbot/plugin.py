@@ -385,7 +385,7 @@ class PluginManager:
                 # if there are multiple items in the response, return them on multiple lines
                 event.reply(*out)
             else:
-                event.reply(*str(out).split('\n'))
+                event.reply(str(out))
         return True
 
     @asyncio.coroutine

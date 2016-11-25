@@ -15,7 +15,7 @@ FuckOffList = [	'donut',
 				]
 
 headers = {'Accept' : 'text/plain'}
-RNDnumber = random.choice(FuckOffList)
+
 
 
 
@@ -24,6 +24,6 @@ def foaas(text, nick, message):
 	Fuckee = text.strip()
 	Fucker = nick
 
-	r = requests.get('http://www.foaas.com/' + str(FuckOffList[RNDnumber]) + '/' + Fuckee + '/' + Fucker, headers=headers)
+	r = requests.get('http://www.foaas.com/' + str(random.choice(FuckOffList)) + '/' + Fuckee + '/' + Fucker, headers=headers)
 	out = r.text
 	message(out)

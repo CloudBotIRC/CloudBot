@@ -2,22 +2,31 @@ import requests
 import random
 from cloudbot import hook
 
-
 FuckOffList = [	'donut',
-				'bus',
-				'chainsaw',
-				'king',
-				'madison',
-				'gfy',
-				'back',
-				'keep',
-				'name'
-				]
+		'bus',
+		'chainsaw',
+		'king',
+		'madison',
+		'gfy',
+		'back',
+		'keep',
+		'name',
+	    'bday',
+	    'dalton',
+	    'ing',
+	    'nugget',
+	    'outside',
+	    'off',
+	    'problem',
+	    'shakespeare',
+	    'think',
+	    'thinking',
+	    'xmas',
+	    'yoda',
+	    'you'
+	       		]
 
 headers = {'Accept' : 'text/plain'}
-
-
-
 
 @hook.command('fos','fuckoff','foaas')
 def foaas(text, nick, message):

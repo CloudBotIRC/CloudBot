@@ -106,7 +106,11 @@ def lastfm(text, nick, db, bot, notice):
     except:
         url = track["url"]
         pass
-    tags = getartisttags(artist, bot)
+
+    tags = gettracktags(artist, title, bot)
+    if tags == "no tags":
+         tags = getartisttags(artist, bot)
+
     playcount = getusertrackplaycount(artist, title, user, bot)
 
     out = '{} {} "{}"'.format(user, status, title)
@@ -139,6 +143,33 @@ def getartisttags(artist, bot):
     api_key = bot.config.get("api_keys", {}).get("lastfm")
     params = { 'method': 'artist.getTopTags', 'api_key': api_key, 'artist': artist,
             'autocorrect': '1'}
+    request = requests.get(api_url, params = params)
+    tags = request.json()
+
+    # if artist doesn't exist return no tags
+    if tags.get("error") == 6:
+        return "no tags"
+
+    if 'tag' in tags['toptags']:
+        for item in tags['toptags']['tag']:
+            try:
+                if not item['name'] == "seen live":
+                    tag_list.append(item['name'])
+                else:
+                    pass
+            except KeyError:
+                pass
+
+    tag_list = tag_list[0:4]
+
+    return ', '.join(tag_list) if tag_list else 'no tags'
+
+# get tags for $title
+def gettracktags(artist, title, bot):
+    tag_list = []
+    api_key = bot.config.get("api_keys", {}).get("lastfm")
+    params = { 'method': 'track.getTopTags', 'api_key': api_key, 'artist': artist,
+            'track': title, 'autocorrect': '1'}
     request = requests.get(api_url, params = params)
     tags = request.json()
 

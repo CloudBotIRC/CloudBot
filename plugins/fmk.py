@@ -16,6 +16,6 @@ def load_fmk(bot):
         fmklist = [line.strip() for line in f.readlines() if not line.startswith("//")]
 
 @hook.command("fmk", autohelp=False)
-def fmk(text, action):
+def fmk(text, message):
     """Fuck, Marry, Kill"""
-    message((text.strip() if text.strip() else "") + random.choice(fmklist) + ", " + random.choice(fmklist) + ", " + random.choice(fmklist))
+    message(" {} FMK - {}, {}, {}".format((text.strip() if text.strip() else ""), random.choice(fmklist), random.choice(fmklist), random.choice(fmklist)))

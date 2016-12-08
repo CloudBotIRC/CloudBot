@@ -1,4 +1,5 @@
-
+import re
+import time
 from cloudbot import hook
 from cloudbot.event import EventType
 from plugins import grab
@@ -6,7 +7,9 @@ from plugins import grab
 import random
 
 db_ready = []
-
+opt_out = []
+delay = 10
+floodcheck = {}
 
 def db_init(db, conn_name):
     """Check to see if the DB has the herald table. Connection name is for caching the result per connection.
@@ -66,14 +69,30 @@ def welcome(nick, action, message, chan, event, db, conn):
     # freenode uncomment then next line
     # chan = event.irc_raw.split('JOIN ')[1].lower()
     # snoonet
+    decoy = re.compile('[o○O0öøóóȯôőŏᴏōο](<|>|＜)')
+    colors_re = re.compile("\x02|\x03(?:\d{1,2}(?:,\d{1,2})?)?", re.UNICODE)
+    bino_re = re.compile('b+i+n+o+', re.IGNORECASE)
+    offensive_re = re.compile('卐')
+
     try:
         chan = event.irc_raw.split(':')[2].lower()
     except:
         return
+    if chan in opt_out:
+        return
+
+    if chan in floodcheck:
+        if time.time() -  floodcheck[chan] <= delay:
+            return
+    else:
+        floodcheck[chan] = time.time()
+
     welcome = db.execute("select quote from herald where name = :name and chan = :chan", {
                          'name': nick.lower(), 'chan': chan.lower()}).fetchone()
     if welcome:
         greet = welcome[0]
+        greet = re.sub(bino_re, 'flenny', greet)
+        greet = re.sub(offensive_re, ' freespeech oppression ', greet)
         if greet.lower().split(' ')[0] == ".grabrandom":
             text = ""
             if len(greet.split(' ')) >= 2:
@@ -81,9 +100,11 @@ def welcome(nick, action, message, chan, event, db, conn):
                 text = random.choice(candidates)
             out = grab.grabrandom(text, chan, message)
             message(out, chan)
+        elif decoy.search(colors_re.sub("", greet.replace('\u200b', '').replace(' ', '').replace('\u202f','').replace('\x02', ''))):
+            message("DECOY DUCK --> {}".format(greet), chan)
         else:
-            message(welcome[0], chan)
-
+            message("\u200b {}".format(greet), chan)
+        floodcheck[chan] = time.time()
     # Saying something whenever someone joins can get really spammy
     # else:
         # action("welcomes {} to {}".format(nick, chan), chan)

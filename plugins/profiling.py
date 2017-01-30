@@ -113,7 +113,9 @@ def pympler_diff():
 
 # # Provide an easy way to get a threaddump, by using SIGUSR1 (only on POSIX systems)
 if os.name == "posix":
-    def debug():
+    # The handler is called with two arguments: the signal number and the current stack frame
+    # These parameters should NOT be removed
+    def debug(sig, frame):
         print(get_thread_dump())
 
     signal.signal(signal.SIGUSR1, debug)  # Register handler

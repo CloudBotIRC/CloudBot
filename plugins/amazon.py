@@ -77,7 +77,7 @@ def amazon(text, _parsed=False):
     try:
         price = item.find('span', {'class': ['s-price', 'a-color-price']}).text
     except AttributeError:
-        for i in item.find_all('sup', class_='sx-price-fractional'):
+        for i in item.find_all('sup', {'class': 'sx-price-fractional'}):
             i.string.replace_with('.' + i.string)
         price = item.find('span', {'class': 'sx-price'}).text
 

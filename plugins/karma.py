@@ -25,7 +25,7 @@ karma_table = Table(
 voters = {}
 
 
-def up(db, nick_vote):
+def ukarma(db, nick_vote):
     """ gives one karma to a user """
     db.execute("""INSERT or IGNORE INTO karma(
         nick_vote,
@@ -40,7 +40,7 @@ def up(db, nick_vote):
     db.commit()
 
 
-def down(db, nick_vote):
+def dkarma(db, nick_vote):
     """ takes one karma away from a user """
     db.execute("""INSERT or IGNORE INTO karma(
         nick_vote,

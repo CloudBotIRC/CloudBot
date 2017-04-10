@@ -4,9 +4,16 @@ import json, requests
 from cloudbot import hook
 import cloudbot
 
+@hook.on_start()
+def load_api(bot):
+    global isbndb_key
+    global cx
+
+    isbndb_key = bot.config.get("api_keys", {}).get("isbndb_dev_key", None)
+
 def getISBN(book):
     try:
-        url = 'http://isbndb.com/api/v2/json/JGLRWEU7/book/'
+        url = "http://isbndb.com/api/v2/json/{}/book/".format(isbndb_key)
         url = url + book
         #print(url)
         resp = requests.get(url=url)

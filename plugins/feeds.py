@@ -31,10 +31,8 @@ def rss(text):
         addr = "https://news.google.com/news?cf=all&ned=us&hl=en&topic=w&output=rss"
     elif t in ("us", "usa"):
         addr = "https://news.google.com/news?cf=all&ned=us&hl=en&topic=n&output=rss"
-    elif t == "nz":
-        addr = "https://news.google.com/news?pz=1&cf=all&ned=nz&hl=en&topic=n&output=rss"
-    elif t in ("anand", "anandtech"):
-        addr = "http://www.anandtech.com/rss/"
+    elif t in ("tcm", "tcmaker"):
+        addr = "http://www.tcmaker.org/blog/feed/"
     else:
         addr = text
 

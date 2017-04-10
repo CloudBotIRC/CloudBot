@@ -1,20 +1,29 @@
-from urllib.parse import quote_plus
-
-import requests
+import re
+from googlefinance import getQuotes
 
 from cloudbot import hook
+import MySQLdb
 
-BASE_URL = "http://query.yahooapis.com/v1/public/yql"
-ENV = "http://datatables.org/alltables.env"
+stock_re = re.compile(r'^(,)([-_a-zA-Z0-9]+)', re.I)
 
+def getTickerName(ticker):
+	cnx = MySQLdb.connect(host='mysql.lan.productionservers.net', user='utilities', password='CoteP6Nev6reJeP1keq6y7HapO8I24', database='Finance')
+	cursor = cnx.cursor()
+	try:
+		query = ("SELECT `Security Name` FROM Tickers WHERE Symbol=%(ticker)s;");
+		cursor.execute(query, {"ticker": ticker})
+		SymbolName = ""
+		data = cursor.fetchone()
+		SymbolName = data[0]
+	except:
+		SymbolName = "{Not in Database}"
+	cursor.close()
+	cnx.close()
+	return SymbolName
 
-def get_data(symbol):
-    query = 'SELECT * FROM yahoo.finance.quote WHERE symbol="{}" LIMIT 1'.format(quote_plus(symbol))
-    request = requests.get(BASE_URL, params={'q': query, 'env': ENV, 'format': 'json'})
-    request.raise_for_status()
-
-    return request.json()['query']
-
+@hook.regex(stock_re)
+def stock_match(match):
+    return stock(match.group(2))
 
 @hook.command()
 def stock(text):
@@ -22,25 +31,26 @@ def stock(text):
     sym = text.strip().lower()
 
     try:
-        data = get_data(text)
-    except requests.exceptions.HTTPError as e:
-        return "Could not get stock data: {}".format(e)
+	    data = getQuotes(sym)[0]
+    except:
+	    return "Nothing found. Learn the tickers, fool!"
 
-    if not data["results"]:
+    print("Data: {}".format(data))
+
+    if not data['StockSymbol']:
         return "No results."
 
-    quote = data['results']['quote']
+    quote = data
 
     # if we don't get a company name back, the symbol doesn't match a company
-    if quote['Change'] is None:
+    if quote['StockSymbol'] is None:
         return "Unknown ticker symbol: {}".format(sym)
 
-    change = float(quote['Change'])
-    price = float(quote['LastTradePriceOnly'])
-
-    # this is for dead companies, if this isn't here PercentChange will fail with DBZ
-    if price == 0 and change == 0:
-        return "\x02{Name}\x02 (\x02{symbol}\x02) - {LastTradePriceOnly}".format(**quote)
+    print("StockSymbol: {}".format(quote['StockSymbol']))
+    Symbol = getTickerName(quote['StockSymbol'])
+    price = float(quote['LastTradePrice'].replace(',', ''))
+    change = float(quote['Change'].replace(',', ''))
+    quote['SymbolName'] = Symbol
 
     if change < 0:
         quote['color'] = "5"
@@ -49,7 +59,10 @@ def stock(text):
 
     quote['PercentChange'] = 100 * change / (price - change)
 
-    return "\x02{Name}\x02 (\x02{symbol}\x02): {LastTradePriceOnly} " \
-           "\x03{color}{Change} ({PercentChange:.2f}%)\x03 " \
-           "- Day Range: {DaysRange} " \
-           "MCAP: {MarketCapitalization}".format(**quote)
+    # this is for dead companies, if this isn't here PercentChange will fail with DBZ
+    if price == 0 and change == 0:
+        return "\x02{StockSymbol}\x02 - {LastTradePrice}".format(**quote)
+
+    return "\x02{StockSymbol}\x02: \x02\x037{SymbolName}\x03\x02 {LastTradePrice} " \
+           "\x02Change:\x02 \x03{color}{Change} ({ChangePercent}%)\x03 ".format(**quote)
+

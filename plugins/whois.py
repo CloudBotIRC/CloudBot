@@ -25,6 +25,9 @@ def whois(text):
         info.append("\x02Registrar\x02: {}".format(data["registrar"][0]))
 
     with suppress(KeyError):
+        info.append("\x02Registrant\x02: {}".format(data["contacts"]["registrant"]["name"]))
+
+    with suppress(KeyError):
         info.append("\x02Registered\x02: {}".format(data["creation_date"][0].strftime("%d-%m-%Y")))
 
     with suppress(KeyError):

@@ -74,7 +74,12 @@ def amazon(text, _parsed=False):
                  r"|Spedizione gratuita)", item.text, re.I):
         tags.append("$(b)Free Shipping$(b)")
 
-    price = item.find('span', {'class': ['s-price', 'a-color-price']}).text
+    try:
+        price = item.find('span', {'class': ['s-price', 'a-color-price']}).text
+    except AttributeError:
+        for i in item.find_all('sup', {'class': 'sx-price-fractional'}):
+            i.string.replace_with('.' + i.string)
+        price = item.find('span', {'class': 'sx-price'}).text
 
     # use a whole lot of BS4 and regex to get the ratings
     try:

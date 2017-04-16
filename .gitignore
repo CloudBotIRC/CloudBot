@@ -58,3 +58,7 @@ config*.json
 *.mmdb
 *.log
 .idea/
+
+# Swap
+*.swp
+*.sw0

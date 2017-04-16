@@ -101,14 +101,22 @@ def lastfm(text, nick, db, bot, notice):
     album = track["album"]["#text"]
     artist = track["artist"]["#text"]
     url = web.try_shorten(track["url"])
+    tags = getartisttags(artist, bot)
+    playcount = getusertrackplaycount(artist, title, user, bot)
 
     out = '{} {} "{}"'.format(user, status, title)
     if artist:
         out += " by \x02{}\x0f".format(artist)
     if album:
         out += " from the album \x02{}\x0f".format(album)
+    if playcount:
+        out += " [playcount: %s]" % playcount
+    else:
+        out += " [playcount: 0]"
     if url:
         out += " {}".format(url)
+
+    out += " (%s)" % tags
 
     # append ending based on what type it was
     out += ending
@@ -120,6 +128,102 @@ def lastfm(text, nick, db, bot, notice):
         load_cache(db)
     return out
 
+# get tags for $artist
+def getartisttags(artist, bot):
+    tag_list = []
+    api_key = bot.config.get("api_keys", {}).get("lastfm")
+    params = { 'method': 'artist.getTopTags', 'api_key': api_key, 'artist': artist }
+    request = requests.get(api_url, params = params)
+    tags = request.json()
+
+    if 'tag' in tags['toptags']:
+        for item in tags['toptags']['tag']:
+            try:
+                tag_list.append(item['name'])
+            except KeyError:
+                pass
+
+    tag_list = tag_list[0:4]
+
+    return ', '.join(tag_list) if tag_list else 'no tags'
+
+def getsimilarartists(artist, bot):
+    artist_list = []
+    api_key = bot.config.get('api_keys', {}).get('lastfm')
+    params = { 'method': 'artist.getsimilar', 'api_key': api_key,
+            'artist': artist }
+    request = requests.get(api_url, params = params)
+    similar = request.json()
+
+    # check it's a list
+    if isinstance(similar['similarartists']['artist'], list):
+        for item in similar['similarartists']['artist']:
+            artist_list.append(item['name'])
+
+    artist_list = artist_list[0:4]
+
+    return ', '.join(artist_list) if artist_list else 'no similar artists'
+
+def getusertrackplaycount(artist, track, user, bot):
+    api_key = bot.config.get("api_keys", {}).get("lastfm")
+    params = { 'method': 'track.getInfo', 'api_key': api_key, 'artist': artist,
+            'track': track, 'username': user }
+    request = requests.get(api_url, params = params)
+    track_info = request.json()
+
+    return track_info['track'].get('userplaycount')
+
+@hook.command("plays")
+def getuserartistplaycount(text, nick, bot, notice):
+    """[artist] - displays the current user's playcount for [artist]. You must have your username saved."""
+    user = get_account(nick)
+    if not user:
+        notice(getuserartistplaycount.__doc__)
+        return
+
+    artist_info = getartistinfo(text, bot, user)
+
+    if 'error' in artist_info:
+        return 'No such artist.'
+
+    if 'userplaycount' not in artist_info['artist']['stats']:
+        return '"%s" has never listened to %s.' % (user, text)
+
+    playcount = artist_info['artist']['stats']['userplaycount']
+
+    out = '"%s" has %s %s plays.' % (user, playcount, text)
+
+    return out
+
+@hook.command("band")
+def displaybandinfo(text, nick, bot, notice):
+    """[artist] - displays information about [artist]."""
+    if not text:
+        notice(getbandinfo.__doc__)
+    artist = getartistinfo(text, bot)
+
+    if 'error' in artist:
+        return 'No such artist.'
+
+    a = artist['artist']
+    similar = getsimilarartists(text, bot)
+    tags = getartisttags(text, bot)
+
+    out = "{} have {} plays and {} listeners.".format(text, a['stats']['playcount'],
+            a['stats']['listeners'])
+    out += " Similar artists include {}. Tags: ({}).".format(similar, tags)
+
+    return out
+
+def getartistinfo(artist, bot, user = ''):
+    api_key = bot.config.get('api_keys', {}).get('lastfm')
+    params = { 'method': 'artist.getInfo', 'artist': artist, 'api_key': api_key,
+            'autocorrect': '1'}
+    if user:
+        params['username'] = user
+    request = requests.get(api_url, params = params);
+    artist = request.json()
+    return artist
 
 @hook.command("lastfmcompare", "compare", "lc")
 def lastfmcompare(text, nick, bot,):
@@ -213,7 +317,7 @@ def toptrack(text, nick, bot):
     for r in range(5):
         track_name = data["toptracks"]["track"][r]["name"]
         artist_name = data["toptracks"]["track"][r]["artist"]["name"]
-        play_count = data["toptracks"]["track"][r]["playcount"] 
+        play_count = data["toptracks"]["track"][r]["playcount"]
         out = out + "{} by {} listened to {} times. ".format(track_name, artist_name, play_count)
     return out
 
@@ -253,4 +357,42 @@ def topartists(text, nick, bot):
         artist_name = data["topartists"]["artist"][r]["name"]
         play_count = data["topartists"]["artist"][r]["playcount"]
         out = out + "{} listened to {} times. ".format(artist_name, play_count)
+    return out
+
+@hook.command("ltw", "topweek", autohelp=False)
+def topartists(text, nick, db, bot, notice):
+    """Grabs a list of the top artists in the last week for a last.fm username. You can set your lastfm username with .l username"""
+    api_key = bot.config.get("api_keys", {}).get("lastfm")
+    if not api_key:
+        return "error: no api key set"
+
+    if text:
+        username = get_account(text)
+        if not username:
+            username = text
+    else:
+        username = get_account(nick)
+    if not username:
+        return("No last.fm username specified and no last.fm username is set in the database.")
+    params = {
+        'api_key': api_key,
+        'method': 'user.gettopartists',
+        'user': username,
+        'period': '7day',
+        'limit': 10
+    }
+    request = requests.get(api_url, params=params)
+
+    if request.status_code != requests.codes.ok:
+        return "Failed to fetch info ({})".format(request.status_code)
+
+    data = request.json()
+    if 'error' in data:
+        return "Error: {}.".format(data["message"])
+
+    out = "{}'s favorite artists: ".format(username)
+    for r in range(10):
+        artist_name = data["topartists"]["artist"][r]["name"]
+        play_count = data["topartists"]["artist"][r]["playcount"]
+        out = out + "{} [{}] ".format(artist_name, play_count)
     return out

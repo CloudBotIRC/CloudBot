@@ -32,7 +32,7 @@ def load_attacks(bot):
     """
     :type bot: cloudbot.bot.CloudBot
     """
-    global larts, flirts, kills, slaps
+    global larts, flirts, kills, slaps, wrecks
 
     with codecs.open(os.path.join(bot.data_dir, "larts.txt"), encoding="utf-8") as f:
         larts = [line.strip() for line in f.readlines() if not line.startswith("//")]
@@ -45,6 +45,9 @@ def load_attacks(bot):
 
     with codecs.open(os.path.join(bot.data_dir, "slaps.json"), encoding="utf-8") as f:
         slaps = json.load(f)
+
+    with codecs.open(os.path.join(bot.data_dir, "wreck.json"), encoding="utf-8") as f:
+        wrecks = json.load(f)
 
 
 @asyncio.coroutine
@@ -118,6 +121,24 @@ def slap(text, action, nick, conn):
         "user": target
     }
     generator = textgen.TextGenerator(slaps["templates"], slaps["parts"], variables=variables)
+
+    # act out the message
+    action(generator.generate_string())
+
+@asyncio.coroutine
+@hook.command
+def wreck(text, conn, nick, action):
+    """<user> - wrecks <user>"""
+    target = text.strip()
+
+    if not is_valid(target):
+        return "I can't attack that."
+
+    if is_self(conn, target):
+        # user is trying to make the bot attack itself!
+        target = nick
+
+    generator = textgen.TextGenerator(wrecks["templates"], wrecks["parts"], variables={"user": target})
 
     # act out the message
     action(generator.generate_string())

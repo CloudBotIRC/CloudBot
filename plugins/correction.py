@@ -28,10 +28,10 @@ def correction(match, conn, chan, message):
         if find.lower() in msg.lower():
             if "\x01ACTION" in msg:
                 msg = msg.replace("\x01ACTION", "").replace("\x01", "")
-                mod_msg = ireplace(msg, find, "\x02" + replace + "\x02")
+                mod_msg = ireplace(msg, find, "\x02" + replace + "\x02").replace("\n","\\n").replace("\r","\\r")
                 message("Correction, * {} {}".format(nick, mod_msg))
             else:
-                mod_msg = ireplace(msg, find, "\x02" + replace + "\x02")
+                mod_msg = ireplace(msg, find, "\x02" + replace + "\x02").replace("\n","\\n").replace("\r","\\r")
                 message("Correction, <{}> {}".format(nick, mod_msg))
 
             msg = ireplace(msg, find, replace)

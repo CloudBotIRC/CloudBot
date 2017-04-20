@@ -1,5 +1,5 @@
 import re
-import json, requests
+import requests
 
 from cloudbot import hook
 import cloudbot
@@ -17,7 +17,7 @@ def getISBN(book):
         url = url + book
         #print(url)
         resp = requests.get(url=url)
-        data = json.loads(resp.text)
+        data = resp.json()
         return data
     except:
         return("fail")

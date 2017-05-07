@@ -32,7 +32,7 @@ def load_attacks(bot):
     """
     :type bot: cloudbot.bot.CloudBot
     """
-    global larts, flirts, kills, slaps, rekts
+    global larts, flirts, kills, slaps, rekts, yomamas
 
     with codecs.open(os.path.join(bot.data_dir, "larts.txt"), encoding="utf-8") as f:
         larts = [line.strip() for line in f.readlines() if not line.startswith("//")]
@@ -42,6 +42,9 @@ def load_attacks(bot):
 
     with codecs.open(os.path.join(bot.data_dir, "rekts.txt"), encoding="utf-8") as f:
         rekts = [line.strip() for line in f.readlines() if not line.startswith("//")]
+
+    with codecs.open(os.path.join(bot.data_dir, "yomama.txt"), encoding="utf-8") as f:
+        yomamas = [line.strip() for line in f.readlines() if not line.startswith("//")]
 
     with codecs.open(os.path.join(bot.data_dir, "kills.json"), encoding="utf-8") as f:
         kills = json.load(f)
@@ -98,7 +101,26 @@ def rekt(text, conn, nick, message):
         # user is trying to make the bot attack itself!
         target = nick
 
-    message('{}, {}'.format(target, random.choice(rekts)))
+    if random.randint(0, 100) < 30: #hope ur happy md_5
+        message('{}, {}'.format(target, "[ ] Not rekt"))
+    else:
+        message('{}, {}'.format(target, random.choice(rekts)))
+
+
+@asyncio.coroutine
+@hook.command("ymm", "yomama")
+def yomama(text, conn, nick, message):
+    """<user> - tells a yomama joke about <user>"""
+    target = text.strip()
+
+    if not is_valid(target):
+        return "I can't attack that."
+
+    if is_self(conn, target):
+        # user is trying to make the bot attack itself!
+        target = nick
+
+    message('{}, {}'.format(target, random.choice(yomamas)))
 
 
 @asyncio.coroutine

@@ -21,7 +21,7 @@ from cloudbot import hook
 
 
 SESSION = collections.OrderedDict()
-API_URL = "http://www.cleverbot.com/webservicemin/"
+API_URL = "http://www.cleverbot.com/webservicemin?uc=321&"
 
 HEADERS = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',

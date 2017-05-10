@@ -1,0 +1,55 @@
+{
+    "templates": [
+        "{method} {user} a {flavor} {size} {type} cake and serves it with a small {side}!"
+    ],
+    "parts": {
+        "type": [
+            "Chocolate",
+            "Ice Cream",
+            "Angel",
+            "Boston Cream",
+            "Birthday",
+            "Bundt",
+            "Carrot",
+            "Coffee",
+            "Devils",
+            "Fruit",
+            "Gingerbread",
+            "Pound",
+            "Red Velvet",
+            "Stack",
+            "Welsh",
+            "Yokan"
+        ],
+        "size": [
+            "small",
+            "little",
+            "mid-sized",
+            "medium-sized",
+            "large",
+            "gigantic"
+        ],
+        "flavor": [
+            "tasty",
+            "delectable",
+            "delicious",
+            "yummy",
+            "toothsome",
+            "scrumptious",
+            "luscious"
+        ],
+        "method": [
+            "bakes",
+            "makes",
+            "gives",
+            "gets",
+            "buys"
+        ],
+        "side": [
+            "glass of chocolate milk",
+            "bowl pf ice cream",
+            "jar of cookies",
+            "some chocolate sauce"
+        ]
+    }
+}

@@ -1,0 +1,46 @@
+{
+  "templates": [
+    "{gives} {user} a {type} burrito containing {filling} with {side} on the side"
+  ],
+  "parts": {
+    "gives": [
+      "hands",
+      "tosses",
+      "delivers",
+      "gives",
+      "cooks",
+      "provides"
+    ],
+    "type": [
+      "breakfast",
+      "spicy",
+      "textured",
+      "mouth-watering",
+      "appetising",
+      "exquisite",
+      "top-quality",
+      "perfect",
+      "revolting"
+    ],
+    "filling": [
+      "minced beef",
+      "shredded beef",
+      "steak",
+      "pork",
+      "chicken",
+      "beans",
+      "tofu"
+    ],
+    "side": [
+      "salad",
+      "casserole",
+      "coleslaw",
+      "potatoes",
+      "apple sauce",
+      "rice",
+      "chips",
+      "muffins",
+      "biscuits"
+    ]
+  }
+}

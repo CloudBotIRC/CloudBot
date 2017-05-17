@@ -30,6 +30,7 @@ def horoscope(text, db, bot, notice, nick):
 
     if sign not in signs:
         notice("horoscope <sign> -- Get your horoscope")
+        notice("valid signs: " + ", ".join(signs.keys()))
         return
 
     db.execute("create table if not exists horoscope(nick primary key, sign)")

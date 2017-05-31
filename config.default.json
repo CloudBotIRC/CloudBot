@@ -9,8 +9,8 @@
                 "ignore_cert": true,
                 "password": ""
             },
-            "nick": "MyCloudBot",
-            "user": "cloudbot",
+            "nick": "xsBot",
+            "user": "xsb",
             "avoid_notices": false,
             "channels": [
                 "#cloudbot",
@@ -40,7 +40,8 @@
                         "botcontrol",
                         "plpaste",
                         "permissions_users",
-                        "op"
+                        "op",
+                        "listfactoids"
                     ],
                     "users": [
                         "examplea!user@example.com",
@@ -51,7 +52,8 @@
                     "perms": [
                         "addfactoid",
                         "delfactoid",
-                        "ignore"
+                        "ignore",
+                        "listfactoids"
                     ],
                     "users": [
                         "examplec!user@example.com"

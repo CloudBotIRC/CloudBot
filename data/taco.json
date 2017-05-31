@@ -1,6 +1,6 @@
 {
   "templates": [
-    "hands {user} a {quality} {type} taco filled with {meat} and topped with {topping}, {topping} and {topping}!"
+    "hands {user} a {quality} {type} taco filled with {meat}, {bean} beans, and topped with {topping}, {topping} and {topping}!"
   ],
   "parts": {
     "type": [
@@ -14,9 +14,10 @@
       "spicy",
       "mild",
       "delicious",
-      ["boring", 1],
-      ["disgusting", 1],
-      "perfect"
+      "perfect",
+      "grade A",
+      "mouthwatering",
+      "stunning"
     ],
     "meat": [
       "minced beef",
@@ -25,8 +26,12 @@
       "pork",
       "various meats",
       "chicken",
-      "refried beans",
       ["tofu", 1]
+    ],
+    "bean": [
+        "refried",
+        "black",
+        "pinto"
     ],
     "topping": [
       ["guacamole", 10],
@@ -39,11 +44,7 @@
       "onion",
       "scallions",
       "jalapeños",
-      "capsicum",
-      ["ghost chili", 1],
-      ["olives", 1],
-      ["pineapple", 1],
-      ["raspberries", 1]
+      ["ghost chili", 1]
     ]
   }
 }

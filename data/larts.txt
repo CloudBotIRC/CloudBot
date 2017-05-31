@@ -39,6 +39,7 @@ pushes {user} past the Shoe Event Horizon.
 counts '1, 2, 5... er... 3!' and hurls the Holy Handgrenade Of Antioch at {user}.
 puts {user} in a nest of camel spiders.
 puts 'alias vim=emacs' in {user}'s /etc/profile.
+puts 'alias emacs=vim' in {user}'s /etc/profile.
 uninstalls every web browser from {user}'s system.
 signs {user} up for getting hit on the head lessons.
 makes {user} try to set up a Lexmark printer.

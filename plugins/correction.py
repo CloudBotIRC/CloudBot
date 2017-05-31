@@ -16,6 +16,9 @@ def correction(match, conn, chan, message):
     """
     groups = [b.replace("\/", "/") for b in re.split(r"(?<!\\)/", match.groups()[0])]
     find = groups[0]
+    # Don't do anything if find is empty
+    if not find:
+        return
     replace = groups[1].replace("\n","\\n").replace("\r","\\r")
 
     for item in conn.history[chan].__reversed__():
@@ -28,12 +31,9 @@ def correction(match, conn, chan, message):
         if find.lower() in msg.lower():
             if "\x01ACTION" in msg:
                 msg = msg.replace("\x01ACTION", "").replace("\x01", "")
-                mod_msg = ireplace(msg, find, "\x02" + replace + "\x02")
-                message("Correction, * {} {}".format(nick, mod_msg))
-            else:
-                mod_msg = ireplace(msg, find, "\x02" + replace + "\x02")
-                message("Correction, <{}> {}".format(nick, mod_msg))
 
+            mod_msg = ireplace(msg, find, "\x02" + replace + "\x02")
+            message("Correction, <{}> {}".format(nick, mod_msg))
             msg = ireplace(msg, find, replace)
             conn.history[chan].append((nick, timestamp, msg))
             return

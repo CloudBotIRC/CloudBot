@@ -2,6 +2,21 @@
 
 CloudBot is a simple, fast, expandable open-source Python IRC Bot!
 
+## Project Status & A more updated CloudBot
+
+CloudBot is currently unmaintained. The project possibly usable, but there are currently no developers building new features or fixing bugs.
+
+There are several forks of CloudBot which you may want to use instead. These projects have much more work done on them, and are thus incompatible. If you already have a running CloudBot instance you will probably need to start over from
+scratch.
+
+- snoonetIRC/CloudBot : https://github.com/snoonetIRC/CloudBot
+
+  This is a more active fork being created by members of Snoonet that might be a better option for your needs. Keep in mind that, as a project more than a thousand commits ahead of this one, if you already have a running CloudBot instance you will probably need to start over from scratch.
+
+- gonzobot : https://github.com/edwardslabs/CloudBot
+
+If there are any other maintained forks of CloudBot, pull requests to add them to the README are welcome.
+
 ## Getting CloudBot
 
 There are currently two different branches of this repository, each with a different level of stability:

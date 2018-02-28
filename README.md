@@ -24,6 +24,7 @@ There are currently two different branches of this repository, each with a diffe
  - **python3.4** *(unstable)*: This branch is where we test and develop new features. If you would like to help develop CloudBot, you can use this branch. [![Build Status](https://travis-ci.org/CloudBotIRC/CloudBot.svg?branch=python3.4)](https://travis-ci.org/CloudBotIRC/CloudBot)
  
 New releases will be pushed from **python3.4** to **master** whenever we have a stable version to release. This should happen on a fairly regular basis, so you'll never be too far behind the latest improvements.
+[![Open Source Helpers](https://www.codetriage.com/cloudbotirc/cloudbot/badges/users.svg)](https://www.codetriage.com/cloudbotirc/cloudbot)
 
 ## Installing CloudBot
 

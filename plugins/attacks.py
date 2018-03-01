@@ -89,7 +89,7 @@ def flirt(text, conn, nick, message):
     
 @asyncio.coroutine
 @hook.command
-def flicks(text, conn, nick, message):
+def flick(text, conn, nick, message):
     """<user> - flick <user> nipple"""
     target = text.strip()
 

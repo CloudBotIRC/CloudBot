@@ -89,12 +89,12 @@ def flirt(text, conn, nick, message):
     
 @asyncio.coroutine
 @hook.command
-def flick(text, conn, nick, message):
+def flicks(text, conn, nick, message):
     """<user> - flick <user> nipple"""
     target = text.strip()
 
     if not is_valid(target):
-        return "I can't flick that persons nipple."
+        return "I can't flick that person's nipple."
 
     if is_self(conn, target):
         # user is trying to make the bot attack itself!

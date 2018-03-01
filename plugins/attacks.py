@@ -32,7 +32,7 @@ def load_attacks(bot):
     """
     :type bot: cloudbot.bot.CloudBot
     """
-    global larts, flirts, kills, slaps, rekts
+    global larts, flirts, kills, slaps, rekts, flick
 
     with codecs.open(os.path.join(bot.data_dir, "larts.txt"), encoding="utf-8") as f:
         larts = [line.strip() for line in f.readlines() if not line.startswith("//")]
@@ -42,7 +42,10 @@ def load_attacks(bot):
 
     with codecs.open(os.path.join(bot.data_dir, "rekts.txt"), encoding="utf-8") as f:
         rekts = [line.strip() for line in f.readlines() if not line.startswith("//")]
-
+        
+    with codecs.open(os.path.join(bot.data_dir, "flicks.txt"), encoding="utf-8") as f:
+        rekts = [line.strip() for line in f.readlines() if not line.startswith("//")]
+        
     with codecs.open(os.path.join(bot.data_dir, "kills.json"), encoding="utf-8") as f:
         kills = json.load(f)
 
@@ -83,8 +86,22 @@ def flirt(text, conn, nick, message):
         target = nick
 
     message('{}, {}'.format(target, random.choice(flirts)))
+    
+@asyncio.coroutine
+@hook.command
+def flick(text, conn, nick, message):
+    """<user> - flick <user> nipple"""
+    target = text.strip()
 
+    if not is_valid(target):
+        return "I can't flick that persons nipple."
 
+    if is_self(conn, target):
+        # user is trying to make the bot attack itself!
+        target = nick
+
+    message('{}, {}'.format(target, random.choice(flicks)))
+    
 @asyncio.coroutine
 @hook.command
 def rekt(text, conn, nick, message):

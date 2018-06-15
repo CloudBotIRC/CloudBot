@@ -5,8 +5,8 @@ Created By:
     - Dumle29 <https://github.com/Dumle29>
     - Fixed by Foxlet <https://furcode.co>
 Special Thanks:
-    - https://developer.yahoo.com/yql/guide/running-chapt.html
-    - Luke Rogers <https://github.com/lukeroge> For the cryptocurrency plugin that this is based on
+    - Luke Rogers <https://github.com/lukeroge> For the cryptocurrency 
+plugin that this is based on
 License:
     GPL v3
 """

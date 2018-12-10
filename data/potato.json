@@ -26,6 +26,12 @@
             "boils",
             "roasts"
         ],
+        "side": [
+            "side salad",
+            "dollop of sour cream",
+            "piece of chicken",
+            "bowl of shredded bacon"
+        ],
         "type": [
             "AC Belmont",
             "AC Blue Pride",

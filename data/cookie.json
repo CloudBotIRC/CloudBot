@@ -32,23 +32,23 @@
         ],
         "flavor": [
             "tasty",
-            "delectabel",
+            "delectable",
             "delicious",
             "yummy",
             "toothsome",
             "scrumptious",
             "luscious"
+        ],
+        "method": [
+            "makes",
+            "gives",
+            "gets",
+            "buys"
+        ],
+        "side": [
+            "glass of milk",
+            "bowl of ice cream",
+            "bowl of chocolate sauce"
         ]
-    },
-    "method": [
-        "makes",
-        "gives",
-        "gets",
-        "buys"
-    ],
-    "side": [
-        "glass of milk",
-        "bowl of ice cream",
-        "bowl of chocolate sauce"
-    ]
+    }
 }

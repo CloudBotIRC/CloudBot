@@ -80,6 +80,7 @@
         "twitter_access_secret": "",
         "imgur_client_id": "",
         "imgur_client_secret": "",
+        "isbndb_dev_key": "",
         "wunderground": "",
         "rdio_key": "",
         "rdio_secret": "",

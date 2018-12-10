@@ -17,29 +17,28 @@ def getISBN(book):
         url = url + book
         #print(url)
         resp = requests.get(url=url)
+        if resp.status_code == 429:
+            return {'error': "Too many requests"}
         data = resp.json()
         return data
     except:
-        return("fail")
+        return {'error': "Nothing found, try a different ISBN"}
 
 @hook.command()
 def isbn(reply, text):
     """<isbn> -- gets book information"""
+    if not isbndb_key:
+        return "This command requires a ISBNdb API key."
     sym = text.strip().lower()
 
-    #print("String: {}".format(sym))
     tmpdata = getISBN(sym)
-    if tmpdata == "fail":
-	    return("Nothing found, try a different ISBN")
-    if 'error' in tmpdata:
-	    return("{}".format(tmpdata['error']))
-    data = tmpdata['data'][0]
-    #print("Data: {}".format(data))
 
+    if 'error' in tmpdata:
+        return("{}".format(tmpdata['error']))
+    data = tmpdata['data'][0]
 
     reply("ISBN Lookup | Title: \x02{title}\x02 | Physical Description: \x02{physical_description_text}\x02 | Edition Info: \x02{edition_info}\x02 | Dewey Decimal: \x02{dewey_decimal}\x02".format(**data))
     reply("Summary: {summary}".format(**data))
     for author in data['author_data']:
         reply("Author: {}".format(author['name']))
     return("Long Title: {title_long}".format(**data))
-

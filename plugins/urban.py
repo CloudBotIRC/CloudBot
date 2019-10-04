@@ -10,6 +10,8 @@ base_url = 'http://api.urbandictionary.com/v0'
 define_url = base_url + "/define"
 random_url = base_url + "/random"
 
+# schema is from http://api.urbandictionary.com/v0/words_of_the_day?per_page=90000000&page=1&api_key=ab71d33b15d36506acf1e379b0ed07ee
+definitions_per_page = 10
 
 @hook.command("urban", "u", autohelp=False)
 def urban(text):
@@ -27,23 +29,33 @@ def urban(text):
         # if the last word is a number, set the ID to that number
         if parts[-1].isdigit():
             id_num = int(parts[-1])
+
+            # get definitions beyond the first page
+            # first page index is 1
+            page_num = 1 + ((id_num - 1) // definitions_per_page)
+            id_page_num = (id_num - 1) % definitions_per_page
+
             # remove the ID from the input string
-            del parts[-1]
-            text = " ".join(parts)
+            text = " ".join(parts[:-1])
         else:
             id_num = 1
+            page_num = 1
+            id_page_num = 0
 
         # fetch the definitions
         try:
-            params = {"term": text}
-            request = requests.get(define_url, params=params, headers=headers)
-            request.raise_for_status()
+            params = {
+                        "term": text,
+                        "page": page_num
+                     }
+            response = requests.get(define_url, params=params, headers=headers)
+            response.raise_for_status()
         except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError) as e:
             return "Could not get definition: {}".format(e)
 
-        page = request.json()
+        page = response.json()
 
-        if page['result_type'] == 'no_results':
+        if not page['list']:
             return 'Not found.'
     else:
         # get a random definition!
@@ -61,7 +73,7 @@ def urban(text):
     if id_num:
         # try getting the requested definition
         try:
-            definition = definitions[id_num - 1]
+            definition = definitions[id_page_num]
 
             def_text = " ".join(definition['definition'].split())  # remove excess spaces
             def_text = formatting.truncate(def_text, 200)
@@ -70,7 +82,7 @@ def urban(text):
 
         url = definition['permalink']
 
-        output = "[{}/{}] {} - {}".format(id_num, len(definitions), def_text, url)
+        output = "\x02{}\x02 {} - {}".format(id_num, def_text, url)
 
     else:
         definition = random.choice(definitions)

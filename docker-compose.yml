@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+
+  cloudbot:
+    build: .
+    container_name: ${BOT_NAME}
+    restart: always

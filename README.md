@@ -8,7 +8,7 @@ CloudBot is currently unmaintained. It has not been maintained for a decade, The
 
 Below is a community fork that has been looking after the project for the last decade. I recommend you use this intead!
 
-- TotallyNotRobots/CloudBot : [https://github.com/snoonetIRC/CloudBot](https://github.com/TotallyNotRobots/CloudBot)
+- TotallyNotRobots/CloudBot : [https://github.com/TotallyNotRobots/CloudBot](https://github.com/TotallyNotRobots/CloudBot)
 
   This is a more active fork that might be a better option for your needs. Keep in mind that, as a project more than a thousand commits ahead of this one, if you already have a running CloudBot instance you will probably need to start over from scratch.
 
